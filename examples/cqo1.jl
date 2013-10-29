@@ -1,0 +1,92 @@
+#
+#  Copyright: $$copyright
+#
+#  File:    cqo1.jl
+#
+#  Purpose: Demonstrates how to solve small linear
+#           optimization problem using the MOSEK Python API.
+##
+
+using Mosek
+
+# Since the actual value of Infinity is ignores, we define it solely
+# for symbolic purposes:
+infty = 0.0
+
+# Make a MOSEK environment
+env = makeenv()
+
+# Create a task
+task = maketask(env)
+
+bkc = [ MSK_BK_FX ]
+blc = [ 1.0 ]
+buc = [ 1.0 ]
+
+c   = [               0.0,              0.0,              0.0,
+                      1.0,              1.0,              1.0 ]
+bkx = [ MSK_BK_LO,MSK_BK_LO,MSK_BK_LO,
+        MSK_BK_FR,MSK_BK_FR,MSK_BK_FR ]
+blx = [               0.0,              0.0,              0.0,
+                     -infty,           -infty,           -infty ]
+bux = [               infty,            infty,            infty,
+                      infty,            infty,            infty ]
+
+asub  = [ 1 ,1, 1 ]
+aval  = [ 1.0, 1.0, 1.0 ]
+
+numvar = length(bkx)
+numcon = length(bkc)
+# Append 'numcon' empty constraints.
+# The constraints will initially have no bounds. 
+appendcons(task,numcon)
+   
+#Append 'numvar' variables.
+# The variables will initially be fixed at zero (x=0). 
+appendvars(task,numvar)
+
+# Set the linear term c_j in the objective.
+putclist(task,[1:6],c)
+
+# Set the bounds on variable j
+# blx[j] <= x_j <= bux[j] 
+putvarboundslice(task,1,numvar+1,bkx,blx,bux)
+
+putarow(task,1,asub,aval)
+putconbound(task,1,bkc[1],blc[1],buc[1])
+
+# Input the cones
+appendcone(task,MSK_CT_QUAD, 0.0, [ 4, 1, 2 ])
+appendcone(task,MSK_CT_RQUAD, 0.0, [ 5, 6, 3 ])
+
+# Input the objective sense (minimize/maximize)
+putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
+     
+# Optimize the task
+optimize(task)
+# Print a summary containing information
+# about the solution for debugging purposes
+solutionsummary(task,MSK_STREAM_MSG)
+prosta = getprosta(task,MSK_SOL_ITR)
+solsta = getsolsta(task,MSK_SOL_ITR)
+
+# Output a solution
+xx = getxx(task,MSK_SOL_ITR)
+
+if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
+    @printf("Optimal solution: %s\n", xx')
+elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif MSK_SOL_STA_UNKNOWN:
+  print("Unknown solution status")
+else
+  print("Other solution status")
+end
+
+
