@@ -1,16 +1,40 @@
 module Mosek
-  
-  # Exported functions
-  export makeenv, maketask, readdata, optimize, writedata
+  export MosekError
 
-  # Temporary: use BINDEPS to find path
-  const msklibpath = "/home/idunning/mosek/7/tools/platform/linux64x86/bin/libmosek64.so"
+# I am not entirely sure where this code belongs... In deps/build.jl? How to do that?
+  const libmosek =
+    if     OS_NAME == :Linux
+      msklib = find_library(["libmosek64"],[])
+      if msklib == ""
+        msklib = 
+          try
+            f = open(joinpath(ENV["HOME"],".mosek"),"rt")
+            msklibdir = readall(f)
+            close(f)
+            find_library(["libmosek64"],[msklibdir])
+          catch
+            ""
+          end
+      end
+      msklib
+    elseif OS_NAME == :Darwin
+      find_library(["libmosek64"],[])
+    elseif OS_NAME == :Windows
+      find_library(["libmosek64_7_0"],[])
+    end
+
+
+
+  # Exported functions
+  export makeenv, maketask
+
+  # Temporary: use BINDEPS to find path  
 
   # A macro to make calling C API a little cleaner
   macro msk_ccall(func, args...)
     f = "MSK_$(func)"
     quote
-      ccall(($f,msklibpath), $(args...))
+      ccall(($f,libmosek), $(args...))
     end
   end
 
@@ -21,10 +45,17 @@ module Mosek
   type MSKenv
     env::Ptr{Void}
   end
+  
   # Task: typedef void * MSKtask_t;
   type MSKtask
     task::Ptr{Void}
   end
+
+  type MosekError
+    rcode :: Int32
+    msg   :: ASCIIString
+  end
+    
 
   # ------------
   # API wrappers
@@ -50,29 +81,22 @@ module Mosek
     end
     return( MSKtask(temp[1]) )
   end
-
-  function readdata(task::MSKtask, filename)
-    res = @msk_ccall(readdata, Int32, (Ptr{Void}, Ptr{Uint8}), task.task, filename)
-    if res != 0
-      # TODO: Actually use result code
-      error("MOSEK: Error reading file")
-    end
+  
+  function getlasterror(t::MSKtask)
+    lasterrcode = Array(Cint,1)
+    lastmsglen = Array(Cint,1)
+    
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}),
+               t.task, lasterrcode, 0, lastmsglen, C_NULL)
+    lastmsg = Array(Uint8,lastmsglen[1])
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}), 
+               t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
+    convert(ASCIIString,lastmsg[1:lastmsglen[1]-1])
   end
 
-  function optimize(task::MSKtask)
-    res = @msk_ccall(optimize, Int32, (Ptr{Void},), task.task)
-    if res != 0
-      # TODO: Actually use result code
-      error("MOSEK: Error optimizing")
-    end
-  end
 
-  function writedata(task::MSKtask, filename)
-    res = @msk_ccall(writedata, Int32, (Ptr{Void}, Ptr{Uint8}), task.task, filename)
-    if res != 0
-      # TODO: Actually use result code
-      error("MOSEK: Error optimizing")
-    end
-  end
-
+  #include("msk_callback.jl")
+  # Generated content
+  include("msk_enums.jl")
+  include("msk_functions.jl")
 end
