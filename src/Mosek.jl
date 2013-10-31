@@ -1,7 +1,9 @@
 module Mosek
-  export MosekError
+  export 
+    makeenv, maketask,
+    MosekError
 
-# I am not entirely sure where this code belongs... In deps/build.jl? How to do that?
+  # I am not entirely sure where this code belongs... In deps/build.jl? How to do that?
   const libmosek =
     if     OS_NAME == :Linux
       msklib = find_library(["libmosek64"],[])
@@ -25,8 +27,6 @@ module Mosek
 
 
 
-  # Exported functions
-  export makeenv, maketask
 
   # Temporary: use BINDEPS to find path  
 
@@ -41,21 +41,45 @@ module Mosek
   # -----
   # Types
   # -----
-  # Environment: typedef void * MSKenv_t;
-  type MSKenv
-    env::Ptr{Void}
-  end
-  
-  # Task: typedef void * MSKtask_t;
-  type MSKtask
-    task::Ptr{Void}
-  end
-
   type MosekError
     rcode :: Int32
     msg   :: ASCIIString
   end
+
+  # Environment: typedef void * MSKenv_t;
+  type MSKenv
+    env::Ptr{Void}
+    streamcallbackfunc::Any
+  end
+  
+  # Task: typedef void * MSKtask_t;
+  type MSKtask
+    env::MSKenv
+    task::Ptr{Void}
     
+    streamcallbackfunc::Any
+    callbackfunc::Any
+    nlgetvafunc::Any
+    nlgetspfunc::Any
+
+
+    function MSKtask(env::MSKenv)
+      temp = Array(Ptr{Void}, 1)
+      res = @msk_ccall(maketask, Int32, (Ptr{Void}, Int32, Int32, Ptr{Void}), env.env, 0, 0, temp)
+
+      if res != MSK_RES_OK
+        throw(MosekError(res,""))
+      end     
+      
+      task = new(env,temp[1],nothing,nothing,nothing,nothing) 
+
+      finalizer(task,deletetask)
+
+      task
+    end
+
+  end
+  
 
   # ------------
   # API wrappers
@@ -68,20 +92,31 @@ module Mosek
       # TODO: Actually use result code
       error("MOSEK: Error creating environment")
     end
-    return( MSKenv(temp[1]) )
+    MSKenv(temp[1],nothing)
   end
 
-  # TODO: Support other arguments
   function maketask(env::MSKenv)
-    temp = Array(Ptr{Void}, 1)
-    res = @msk_ccall(maketask, Int32, (Ptr{Void}, Int32, Int32, Ptr{Void}), env.env, 0, 0, temp)
-    if res != 0
-      # TODO: Actually use result code
-      error("MOSEK: Error creating task")
+    MSKtask(env)
+  end
+
+  function deletetask(t::MSKtask)
+    if t.task != C_NULL
+      temp = Array(Ptr{Void},1)
+      temp[1] = t.task
+      @msk_ccall(deletetask,Int32,(Ptr{Ptr{Void}},), temp)
+      t.task = C_NULL
     end
-    return( MSKtask(temp[1]) )
   end
   
+  function deleteenv(e::MSKenv)
+    if e.env != C_NULL
+      temp = Array(Ptr{Void},1)
+      temp[1] = t.env
+      @msk_ccall(deleteenv,Int32,(Ptr{Ptr{Void}},), temp)
+      e.env = C_NULL
+    end
+  end
+
   function getlasterror(t::MSKtask)
     lasterrcode = Array(Cint,1)
     lastmsglen = Array(Cint,1)
@@ -99,4 +134,5 @@ module Mosek
   # Generated content
   include("msk_enums.jl")
   include("msk_functions.jl")
+  include("msk_callback.jl")
 end

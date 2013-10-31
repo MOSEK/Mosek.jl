@@ -9,6 +9,13 @@
 
 using Mosek
 
+function printstream(msg)
+  print(msg)
+end
+function callback(where,dinf,iinf,liinf)
+  # if the optimizer should stop, return 1
+  return 0
+end
 # Since the actual value of Infinity is ignores, we define it solely
 # for symbolic purposes:
 infty = 0.0
@@ -18,6 +25,9 @@ env = makeenv()
 
 # Create a task
 task = maketask(env)
+putstreamfunc(task,MSK_STREAM_LOG,printstream)
+putcallbackfunc(task,callback)
+
 
 bkc = [ MSK_BK_FX ]
 blc = [ 1.0 ]
