@@ -3,6 +3,8 @@ module Mosek
     makeenv, maketask,
     MosekError
 
+  #require(joinpath(Pkg.dir("MathProgBase"),"src","LinprogSolverInterface.jl"))
+  
   # I am not entirely sure where this code belongs... In deps/build.jl? How to do that?
   const libmosek =
     if     OS_NAME == :Linux
@@ -24,9 +26,6 @@ module Mosek
     elseif OS_NAME == :Windows
       find_library(["libmosek64_7_0"],[])
     end
-
-
-
 
   # Temporary: use BINDEPS to find path  
 
@@ -51,6 +50,12 @@ module Mosek
     env::Ptr{Void}
     streamcallbackfunc::Any
   end
+
+
+
+
+
+
   
   # Task: typedef void * MSKtask_t;
   type MSKtask
@@ -77,7 +82,6 @@ module Mosek
 
       task
     end
-
   end
   
 
@@ -94,6 +98,8 @@ module Mosek
     end
     MSKenv(temp[1],nothing)
   end
+
+  const msk_global_env = makeenv() :: MSKenv
 
   function maketask(env::MSKenv)
     MSKtask(env)
@@ -135,4 +141,5 @@ module Mosek
   include("msk_enums.jl")
   include("msk_functions.jl")
   include("msk_callback.jl")
+  include("MosekSolverInterface.jl")
 end
