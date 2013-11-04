@@ -9,25 +9,11 @@
 
 using Mosek
 
-function printstream(msg)
-  print(msg)
-end
-function callback(where,dinf,iinf,liinf)
-  # if the optimizer should stop, return 1
-  return 0
-end
+printstream(msg::String) = print(msg)
+callback(where,dinf,iinf,liinf) = 0 
+
 # Since the actual value of Infinity is ignores, we define it solely
 # for symbolic purposes:
-infty = 0.0
-
-# Make a MOSEK environment
-env = makeenv()
-
-# Create a task
-task = maketask(env)
-putstreamfunc(task,MSK_STREAM_LOG,printstream)
-putcallbackfunc(task,callback)
-
 
 bkc = [ MSK_BK_FX ]
 blc = [ 1.0 ]
@@ -38,15 +24,22 @@ c   = [               0.0,              0.0,              0.0,
 bkx = [ MSK_BK_LO,MSK_BK_LO,MSK_BK_LO,
         MSK_BK_FR,MSK_BK_FR,MSK_BK_FR ]
 blx = [               0.0,              0.0,              0.0,
-                     -infty,           -infty,           -infty ]
-bux = [               infty,            infty,            infty,
-                      infty,            infty,            infty ]
+                     -Inf,             -Inf,             -Inf ]
+bux = [               Inf,              Inf,              Inf,
+                      Inf,              Inf,              Inf ]
 
 asub  = [ 1 ,1, 1 ]
 aval  = [ 1.0, 1.0, 1.0 ]
 
 numvar = length(bkx)
 numcon = length(bkc)
+
+
+# Create a task
+task = maketask()
+putstreamfunc(task,MSK_STREAM_LOG,printstream)
+putcallbackfunc(task,callback)
+
 # Append 'numcon' empty constraints.
 # The constraints will initially have no bounds. 
 appendcons(task,numcon)

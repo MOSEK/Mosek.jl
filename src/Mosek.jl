@@ -113,6 +113,10 @@ module Mosek
   function maketask(env::MSKenv)
     MSKtask(env)
   end
+  
+  function maketask()
+    MSKtask(msk_global_env)
+  end
 
   function deletetask(t::MSKtask)
     if t.task != C_NULL

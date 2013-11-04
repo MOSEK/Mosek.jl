@@ -179,6 +179,7 @@ export
   printparam,
   putacol,
   putacollist,
+  putacolslice,
   putaij,
   putaijlist,
   putaijlist64,
@@ -2346,6 +2347,23 @@ function putacollist(task_:: MSKtask,sub_:: Array{Int},ptrb_:: Array{Int64},ptre
   __tmp_var_0 = if (typeof(sub_) != Array{Int32,1}) convert(Array{Int32,1},sub_) else sub_ end
   __tmp_var_1 = if (typeof(asub_) != Array{Int32,1}) convert(Array{Int32,1},asub_) else asub_ end
   res = @msk_ccall( "putacollist64",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,convert(Int32,num_),__tmp_var_0-1,ptrb_-1,ptre_-1,__tmp_var_1-1,aval_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+end
+
+function putacolslice(task_:: MSKtask,first_:: Int,last_:: Int,ptrb_:: Array{Int64},ptre_:: Array{Int64},asub_:: Array{Int},aval_:: Array{Float64})
+  __tmp_var_0 = ((last_) - (first_))
+  if length(ptrb_) < __tmp_var_0
+    throw(BoundError("Array argument ptrb is not long enough"))
+  end
+  __tmp_var_1 = ((last_) - (first_))
+  if length(ptre_) < __tmp_var_1
+    throw(BoundError("Array argument ptre is not long enough"))
+  end
+  __tmp_var_2 = if (typeof(asub_) != Array{Int32,1}) convert(Array{Int32,1},asub_) else asub_ end
+  res = @msk_ccall( "putacolslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,convert(Int32,first_-1),convert(Int32,last_-1),ptrb_-1,ptre_-1,__tmp_var_2-1,aval_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))

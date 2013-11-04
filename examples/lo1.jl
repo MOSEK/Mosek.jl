@@ -1,16 +1,16 @@
 using Mosek
 
 
-e = makeenv()
-task = maketask(e)
+printstream(msg::String) = print(msg)
 
-infty = 0.0
+############################
+## Define problem data
 
 bkc = [MSK_BK_FX MSK_BK_LO MSK_BK_UP]
 
 # Bound values for constraints
-blc = [30.0, 15.0, -infty]
-buc = [30.0, +infty, 25.0]
+blc = [30.0, 15.0, -Inf]
+buc = [30.0, +Inf, 25.0]
 
 # Bound keys for variables
 bkx = [ MSK_BK_LO,
@@ -20,24 +20,25 @@ bkx = [ MSK_BK_LO,
 
 # Bound values for variables
 blx = [   0.0,  0.0,    0.0,    0.0]
-bux = [+infty, 10.0, +infty, +infty]
+bux = [+Inf, 10.0, +Inf, +Inf]
+
+numvar = length(bkx)
+numcon = length(bkc)
 
 # Objective coefficients
 c = [ 3.0, 1.0, 5.0, 1.0 ] 
 
 # Below is the sparse representation of the A
 # matrix stored by column. 
-asubj = [1,2,3,
-         1,2,3,4,
-         2,4 ]
-aptrb = [1,  4,    8 ]
-aptre = [    4,    8,  10] 
-aval  = [3.0, 1.0, 2.0,
-         2.0, 1.0, 3.0, 1.0, 
-         2.0, 3.0 ]
+A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3], 
+           [1, 1, 2, 2, 2, 3, 3, 4, 4], 
+           [3.0, 2.0, 1.0, 1.0, 2.0, 2.0, 3.0, 1.0, 3.0 ],
+           numcon,numvar)
 
-numvar = length(bkx)
-numcon = length(bkc)
+############################
+
+task = maketask()
+putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
 putobjname(task,"lo1")
 
@@ -55,8 +56,12 @@ for j=1:numvar
   putvarname(task,j,@sprintf("x%02d",j))
 end
    
-putarowslice(task, 1, numcon+1, aptrb, aptre,asubj,aval)
 putclist(task,[1,2,3,4], c)
+putacolslice(task,1,numvar+1,
+             A.colptr[1:numvar],A.colptr[2:numvar+1],
+             A.rowval,
+             A.nzval)
+
 putvarboundslice(task, 1, numvar+1, bkx,blx,bux)
 
 # Set the bounds on constraints.
