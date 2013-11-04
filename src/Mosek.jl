@@ -6,25 +6,34 @@ module Mosek
   #require(joinpath(Pkg.dir("MathProgBase"),"src","LinprogSolverInterface.jl"))
   
   # I am not entirely sure where this code belongs... In deps/build.jl? How to do that?
+  # search paths should be something like this: 
+  #   1) library path (DYLD_LIBRARY_PATH, LD_LIBRARY_PATH or PATH)
+  #   2) $HOME/mosek/7/tools/platform/[platformname]/bin/[libmosekname]
+  #   3) 
   const libmosek =
-    if     OS_NAME == :Linux
-      msklib = find_library(["libmosek64"],[])
+    begin
+      libname,pfname = 
+      if     OS_NAME == :Linux
+        if WORD_SIZE == 32 "libmosek","linux32x86"
+        else               "libmosek64","linux64x86"
+        end
+      elseif OS_NAME == :Darwin
+        "libmosek64","osx64x86"
+      elseif OS_NAME == :Windows
+        if WORD_SIZE == 32 "libmosek7_0","win32x86"
+        else               "libmosek64_7_0","win64x86"
+        end
+      else
+        error("Platform not supported")
+      end
+
+      dfltlibpath = joinpath(ENV["HOME"],"mosek","7","tools","platform",pfname,"bin")
+     
+      msklib = find_library([libname],[])
       if msklib == ""
-        msklib = 
-          try
-            f = open(joinpath(ENV["HOME"],".mosek"),"rt")
-            msklibdir = readall(f)
-            close(f)
-            find_library(["libmosek64"],[msklibdir])
-          catch
-            ""
-          end
+        msklib = find_library([libname],[dfltlibpath])
       end
       msklib
-    elseif OS_NAME == :Darwin
-      find_library(["libmosek64"],[])
-    elseif OS_NAME == :Windows
-      find_library(["libmosek64_7_0"],[])
     end
 
   # Temporary: use BINDEPS to find path  
