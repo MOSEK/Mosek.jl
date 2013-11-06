@@ -71,11 +71,9 @@ module Mosek
     env::MSKenv
     task::Ptr{Void}
     
-    streamcallbackfunc::Any
-    callbackfunc::Any
-    nlgetvafunc::Any
-    nlgetspfunc::Any
-
+    streamcallbackfunc:: Any
+    callbackfunc:: Any
+    nlinfo:: Any
 
     function MSKtask(env::MSKenv)
       temp = Array(Ptr{Void}, 1)
@@ -85,7 +83,7 @@ module Mosek
         throw(MosekError(res,""))
       end     
       
-      task = new(env,temp[1],nothing,nothing,nothing,nothing) 
+      task = new(env,temp[1],nothing,nothing,nothing) 
 
       finalizer(task,deletetask)
 
@@ -154,5 +152,6 @@ module Mosek
   include("msk_enums.jl")
   include("msk_functions.jl")
   include("msk_callback.jl")
+  include("msk_geco.jl")
   include("MosekSolverInterface.jl")
 end
