@@ -135,7 +135,7 @@ function grdlag(x ::   Array{Float64,1},
                 yc::   Array{Float64,1},
                 subi:: Array{Int32,1},
                 val::  Array{Float64,1})
-  val[1] = yo * 2.3 * x[3] ^ 1.3
+  val[3] = yo * 2.3 * x[3] ^ 1.3
   
   k = indexof(2,subi)
   val[1] += yc[k] * 0.5 * x[1] ^ (-0.5)
@@ -189,7 +189,7 @@ solsta = getsolsta(t,MSK_SOL_ITR)
 if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                    MSK_SOL_STA_NEAR_OPTIMAL ]
   xx = getxx(t,MSK_SOL_ITR)
-  print("Optimal solution:")
+  print("Optimal solution:\n")
   print(xx)
 elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
                    MSK_SOL_STA_PRIM_INFEAS_CER,
@@ -197,7 +197,7 @@ elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
                    MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
   print("Primal or dual infeasibility certificate found.\n")
 elseif solsta == MSK_SOL_STA_UNKNOWN
-  print("Unknown solution status")
+  print("Unknown solution status\n")
 else
   @printf("Other solution status (%d)\n",solsta)
 end
