@@ -88,8 +88,6 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
 
     hessubi_a[1:numhesnz] = nlinfo.hessubi  
     hessubj_a[1:numhesnz] = nlinfo.hessubj  
-
-    print([ hessubi_a hessubj_a])
   end
 
   return convert(Int32,0) :: Int32
@@ -183,8 +181,10 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
     # if I do it this way it is. 
     for i=1:length(hessubi_a)
       hessubi_a[i] = hessubi_a[i]-convert(Int32,1)
-      hessubj_a[i] = hessubj_a[i]-convert(Int32,1)
+      hessubj_a[i] = hessubj_a[i]-convert(Int32,1)      
     end
+
+    hesval_a  = pointer_to_array(hesval,(nhesnz,))
   end
   return convert(Int32,0) :: Int32
 end                               
