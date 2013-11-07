@@ -1,67 +1,53 @@
-export 
-  MosekSolver,
-  loadproblem,
-  writeproblem,
-  getvarLB,
-  setvarLB,
-  getvarLB,
-  setvarLB,
-  getconstrLB,
-  setconstrLB,
-  getconstrUB,
-  setconstrUB,
-  getobj,
-  setobj,
-  addvar,
-  addconstr,
-  updatemodel,
-  setsense,
-  getsense,
-  numvar,
-  numconstr,
-  optimize,
-  status,
-  getobjval,
-  getobjbound,
-  getsolution,
-  getconstrsolution,
-  getreducedcosts,
-  getconstrduals,
-  getrawsolver,
-  setvartype
+module MosekMathProgSolverInterface
+using ..Mosek
 
-require(joinpath(Pkg.dir("MathProgBase"),"src","LinprogSolverInterface.jl"))
-import LinprogSolverInterface.LinprogSolver
+export MosekSolver
 
-type MosekSolver <: LinprogSolver
-  task :: MSKtask
+
+require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
+importall MathProgSolverInterface
+
+type MosekMathProgModel <: AbstractMathProgModel 
+  task :: Mosek.MSKtask
 end
 
-type MosekSolverError
+immutable MosekSolver <: AbstractMathProgSolver
+  options
+end
+MosekSolver(;kwargs...) = MosekSolver(kwargs)
+
+type MosekMathProgModelError
   msg :: String
+end
+
+function model(s::MosekSolver)
+  # TODO: process solver options
+  task = maketask(Mosek.msk_global_env)
+  return MosekMathProgModel(task)
 end
 
 # NOTE: This method will load data into an existing task, but
 # it will not necessarily reset all exiting data, depending on the 
 # file read (e.g. reading an MPS will not reset parameters)
-function loadproblem(m:: MosekSolver, filename:: String)
+function loadproblem!(m:: MosekMathProgModel, filename:: String)
   readdata(m.task, filename)
 end
 
-function writeproblem(m:: MosekSolver, filename:: String)
+function writeproblem(m:: MosekMathProgModel, filename:: String)
   writedata(m.task, filename)
 end
 
 
-function loadproblem( m::     MosekSolver, 
+function loadproblem!( m::     MosekMathProgModel, 
                       A::     SparseMatrixCSC, 
                       collb:: Array{Float64,1},
                       colub:: Array{Float64,1},
                       obj::   SparseMatrixCSC, 
                       rowlb:: Array{Float64,1}, 
-                      rowub:: Array{Float64,1})
-  deletetask(m.task)
-  m.task = maketask(msk_global_env)
+                      rowub:: Array{Float64,1},
+                      sense:: Symbol)
+  Mosek.deletetask(m.task)
+  m.task = maketask(Mosek.msk_global_env)
   
   nrows,ncols = size(A) 
   if ncols != length(collb) ||
@@ -70,33 +56,35 @@ function loadproblem( m::     MosekSolver,
      nrows != length(rowlb) ||
      nrows != length(rowub) ||
      size(obj,2) != 1
-    throw(MosekSolverError("Inconsistent data dimensions"))
+    throw(MosekMathProgModelError("Inconsistent data dimensions"))
   end
 
-  appendvars(task, ncols)
-  appendcons(task, nrows)
+  appendvars(m.task, ncols)
+  appendcons(m.task, nrows)
   
   # input coefficients
   putclist(m.task, obj.rowval, obj.nzval)
   putacolslice(m.task, 1, nrows+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
+  setsense!(m, sense)
 
   # input bounds
-  putvarboundslice(m.task, 1, ncols+1, [ MSK_BK_RA for i=1:ncols], collb, colub)
-  putconboundslice(m.task, 1, nrows+1, [ MSK_BK_RA for i=1:nrows], rowlb, rowub)
+  putvarboundslice(m.task, 1, ncols+1, Int32[ MSK_BK_RA for i=1:ncols], collb, colub)
+  putconboundslice(m.task, 1, nrows+1, Int32[ MSK_BK_RA for i=1:nrows], rowlb, rowub)
   nothing
 end
 
-function loadproblem ( m::     MosekSolver,
+function loadproblem! ( m::     MosekMathProgModel,
                        A,
                        collb,
                        colub,
                        obj,
                        rowlb,
-                       rowub)
-  loadproblem(m,sparse(A),collb,colub,sparse(obj'),rowlb,rowub)
+                       rowub,
+                       sense)
+  loadproblem!(m,sparse(float(A)),float(collb),float(colub),sparse(float(obj)),float(rowlb),float(rowub),sense)
 end
 
-function getvarLB(m::MosekSolver)
+function getvarLB(m::MosekMathProgModel)
   bkx,blx,bux = getvarboundslice(m.task,1,getnumvar(m))  
   [ (if bkx[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blx[i] end) for i=1:length(bkx) ] :: Array{Float64,1}
 end
@@ -133,10 +121,10 @@ function compubk(bk,bu)
   end
 end
 
-function setvarLB(m::MosekSolver, collb)
+function setvarLB!(m::MosekMathProgModel, collb)
   nvars = getnumvar(m.task)
   if nvars != length(collb)
-    throw(MosekSolverError("Bound vector has wrong size"))
+    throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
   bk,bl,bu = getvarboundslice(m.task,1,nvars+1)
 
@@ -144,15 +132,15 @@ function setvarLB(m::MosekSolver, collb)
   putvarbound(m.task, bk, collb, bu)
 end
 
-function getvarUB(m::MosekSolver) 
+function getvarUB(m::MosekMathProgModel) 
   bkx,blx,bux = getvarboundslice(m.task,1,getnumvar(m))  
   [ (if bkx[i] in [ MSK_BK_FR, MSK_BK_LO ] Inf else bux[i] end) for i=1:length(bkx) ] :: Array{Float64,1} 
 end
 
-function setvarUB(m::MosekSolver, colub) 
+function setvarUB!(m::MosekMathProgModel, colub) 
   nvars = getnumvar(m.task)
   if nvars != length(colub)
-    throw(MosekSolverError("Bound vector has wrong size"))
+    throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
   bk,bl,bu = getvarboundslice(m.task,1,nvars+1)
 
@@ -160,15 +148,15 @@ function setvarUB(m::MosekSolver, colub)
   putvarbound(m.task, bk, bl, colub)
 end
 
-function getconstrLB(m::MosekSolver) 
+function getconstrLB(m::MosekMathProgModel) 
   bkc,blc,buc = getconboundslice(m.task,1,getnumvar(m))  
   [ (if bkc[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blc[i] end) for i=1:length(bkc) ] :: Array{Float64,1}
 end
 
-function setconstrLB(m::MosekSolver, rowlb) 
+function setconstrLB!(m::MosekMathProgModel, rowlb) 
   nvars = getnumcon(m.task)
   if ncons != length(rowlb)
-    throw(MosekSolverError("Bound vector has wrong size"))
+    throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
   bk,bl,bu = getconboundslice(m.task,1,ncons+1)
 
@@ -176,15 +164,15 @@ function setconstrLB(m::MosekSolver, rowlb)
   putconbound(m.task, bk, rowlb, bu)
 end
 
-function getconstrUB(m::MosekSolver) 
+function getconstrUB(m::MosekMathProgModel) 
   bkc,blc,buc = getconboundslice(m.task,1,getnumvar(m))  
   [ (if bkc[i] in [ MSK_BK_FR, MSK_BK_LO ] Inf else buc[i] end) for i=1:length(bkc) ] :: Array{Float64,1} 
 end
 
-function setconstrUB(m::MosekSolver, rowub) 
+function setconstrUB!(m::MosekMathProgModel, rowub) 
   nvars = getnumcon(m.task)
   if ncons != length(rowub)
-    throw(MosekSolverError("Bound vector has wrong size"))
+    throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
   bk,bl,bu = getconboundslice(m.task,1,ncons+1)
 
@@ -192,40 +180,40 @@ function setconstrUB(m::MosekSolver, rowub)
   putconbound(m.task, bk, rowub, bu)
 end
 
-function getobj(m::MosekSolver) 
+function getobj(m::MosekMathProgModel) 
   getc(m.task)
 end
 
-function setobj(m::MosekSolver, obj::Array{Float64,1})     
+function setobj!(m::MosekMathProgModel, obj::Array{Float64,1})     
   nvars = getnumvar(m.task)
   if size(obj,1) != nvars
-    throw(MosekSolverError("Objective vector has wrong size"))
+    throw(MosekMathProgModelError("Objective vector has wrong size"))
   end
 
   putclist(m.task,[1:numvar+1],obj)
 end
 
-function setobj(m::MosekSolver, obj)
+function setobj!(m::MosekMathProgModel, obj)
   setobj(m,dense(float(obj)))
 end
 
-# addvar(m::MosekSolver, rowidx, rowcoef, collb, colub, objcoef)
-# addconstr(m::MosekSolver, colidx, colcoef, rowlb, rowub) 
+# addvar(m::MosekMathProgModel, rowidx, rowcoef, collb, colub, objcoef)
+# addconstr(m::MosekMathProgModel, colidx, colcoef, rowlb, rowub) 
 
-updatemodel(m::MosekSolver) = nothing
+updatemodel!(m::MosekMathProgModel) = nothing
 
-function setsense(m::MosekSolver,sense) 
+function setsense!(m::MosekMathProgModel,sense) 
   if     sense == :Min
     putobjsense(m.task, MSK_OBJECTIVE_SENSE_MINIMIZE)
   elseif sense == :Max
     putobjsense(m.task, MSK_OBJECTIVE_SENSE_MAXIMIZE)
   else
-   throw(MosekSolverError("Invalid objective sense"))
+   throw(MosekMathProgModelError("Invalid objective sense"))
   end
   nothing  
 end
 
-function getsense(m::MosekSolver) 
+function getsense(m::MosekMathProgModel) 
   sense = getobjsense(m.task)
   if sense == MSK_OBJECTIVE_SENSE_MINIMIZE
     :Min
@@ -236,14 +224,14 @@ function getsense(m::MosekSolver)
   end
 end
 
-numvar(m::MosekSolver) = getnumvar(m.task)
-numconstr(m::MosekSolver) = getnumcon(m.task)
-optimize(m::MosekSolver) = optimize(m.task)
+numvar(m::MosekMathProgModel) = getnumvar(m.task)
+numconstr(m::MosekMathProgModel) = getnumcon(m.task)
+optimize!(m::MosekMathProgModel) = optimize(m.task)
 
 
 
 
-function getsoldef(m::MosekSolver)
+function getsoldef(m::MosekMathProgModel)
   if solutiondef(m.task,MSK_SOL_ITG) MSK_SOL_ITG
   elseif solutiondef(m.task,MSK_SOL_BAS) MSK_SOL_BAS
   elseif solutiondef(m.task,MSK_SOL_ITR) MSK_SOL_ITR
@@ -255,7 +243,7 @@ end
 # Another NOTE: status seems to mash together the problem status, 
 # the solution status and the solver status. I'll try to cope 
 # in some sensible manner.
-function status(m::MosekSolver) 
+function status(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 return :Unknown end  
   prosta = getprosta(m.task,soldef)
@@ -286,45 +274,47 @@ function status(m::MosekSolver)
   end
 end
 
-function getobjval(m::MosekSolver) 
+function getobjval(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 return NaN end
 
-  getprimalobj(m,soldef)
+  getprimalobj(m.task,soldef)
 end
 
-# getobjbound(m::MosekSolver)
+# getobjbound(m::MosekMathProgModel)
 
-function getsolution(m::MosekSolver) 
+function getsolution(m::MosekMathProgModel) 
   soldef = getsoldef(m)
-  if soldef < 0 throw(MosekSolverError("No solution available")) end
-  getxx(m,soldef)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+  getxx(m.task,soldef)
 end
 
-function getconstrsolution(m::MosekSolver) 
+function getconstrsolution(m::MosekMathProgModel) 
   soldef = getsoldef(m)
-  if soldef < 0 throw(MosekSolverError("No solution available")) end
-  getxc(m,soldef)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+  getxc(m.task,soldef)
 end
 
 # NOTE: is the dual in your model slx-sux or sux-slx?
-function getreducedcosts(m::MosekSolver) 
+function getreducedcosts(m::MosekMathProgModel) 
   soldef = getsoldef(m)
-  if soldef < 0 throw(MosekSolverError("No solution available")) end
-  getslx(m,soldef) - getsux(m,soldef)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+  getslx(m.task,soldef) - getsux(m.task,soldef)
 end
 
-function getconstrduals(m::MosekSolver)
+function getconstrduals(m::MosekMathProgModel)
   soldef = getsoldef(m)
-  if soldef < 0 throw(MosekSolverError("No solution available")) end
-  gety(m,soldef)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+  gety(m.task,soldef)
 end
 
-getrawsolver(m::MosekSolver) = m.task
+getrawsolver(m::MosekMathProgModel) = m.task
 
 ## NOTE: What does this do?!
-#function setvartype(m::MosekSolver, vartype) 
+#function setvartype(m::MosekMathProgModel, vartype) 
 
-# getvartype(m::MosekSolver) 
+# getvartype(m::MosekMathProgModel) 
+
+end
 
 
