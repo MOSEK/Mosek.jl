@@ -281,6 +281,9 @@ function getobjval(m::MosekMathProgModel)
   getprimalobj(m.task,soldef)
 end
 
+# NOTE: I am not entirely sure how to implement this... If the solution status 
+# is feasible for an integer problem, then the objective value is the best 
+# known bound.
 # getobjbound(m::MosekMathProgModel)
 
 function getsolution(m::MosekMathProgModel) 
@@ -310,10 +313,17 @@ end
 
 getrawsolver(m::MosekMathProgModel) = m.task
 
-## NOTE: What does this do?!
-#function setvartype(m::MosekMathProgModel, vartype) 
+function setvartype(m::MosekMathProgModel, vartype :: Array{Char,1}) 
+  numvar = getnumvar(m.task)
+  n = min(length(vartype),numvar)
+  putvartypelist(task,[1:n],[ (if c == 'I' MSK_VAR_TYPE_INT else MSK_VAR_TYPE_CONT end) for c=vartype ])
+end
 
-# getvartype(m::MosekMathProgModel) 
+function getvartype(m::MosekMathProgModel) 
+  numvar = getnumvar(m.task)
+  vtlist = getvartypelist(m.task,[1:numvar])
+  [ if vt == MSK_VAR_TYPE_CONT 'I' else 'C' end for vt=vtlist ] :: Array{Char,1}
+end
 
 end
 
