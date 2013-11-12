@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.0.0.90
+# MOSEK 7.0.0.92
 
 export
   analyzenames,
@@ -384,7 +384,7 @@ function appendsparsesymmat(task_:: MSKtask,dim_:: Int,subi_:: Array{Int},subj_:
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
-  (convert(Int64,idx_[1]))
+  (convert(Int64,idx_[1]+1))
 end
 
 function appendstat(task_:: MSKtask)
@@ -650,28 +650,28 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
-  res = @msk_ccall( "getbaraidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
+  res = @msk_ccall( "getbaraidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
-  (convert(Int,i_[1]-1),convert(Int,j_[1]-1),convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3)
+  (convert(Int,i_[1]+1),convert(Int,j_[1]+1),convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3)
 end
 
 function getbaraidxij(task_:: MSKtask,idx_:: Int64)
   i_ = Array(Int32,(1,))
   j_ = Array(Int32,(1,))
-  res = @msk_ccall( "getbaraidxij",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},),task_.task,idx_,i_,j_)
+  res = @msk_ccall( "getbaraidxij",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},),task_.task,idx_-1,i_,j_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
-  (convert(Int,i_[1]-1),convert(Int,j_[1]-1))
+  (convert(Int,i_[1]+1),convert(Int,j_[1]+1))
 end
 
 function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
   num_ = Array(Int64,(1,))
-  res = @msk_ccall( "getbaraidxinfo",Int32,(Ptr{Void},Int64,Ptr{Int64},),task_.task,idx_,num_)
+  res = @msk_ccall( "getbaraidxinfo",Int32,(Ptr{Void},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
@@ -719,17 +719,17 @@ function getbarcidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
-  res = @msk_ccall( "getbarcidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
+  res = @msk_ccall( "getbarcidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
-  (convert(Int,j_[1]-1),convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3)
+  (convert(Int,j_[1]+1),convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3)
 end
 
 function getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
   num_ = Array(Int64,(1,))
-  res = @msk_ccall( "getbarcidxinfo",Int32,(Ptr{Void},Int64,Ptr{Int64},),task_.task,idx_,num_)
+  res = @msk_ccall( "getbarcidxinfo",Int32,(Ptr{Void},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
@@ -739,12 +739,12 @@ end
 
 function getbarcidxj(task_:: MSKtask,idx_:: Int64)
   j_ = Array(Int32,(1,))
-  res = @msk_ccall( "getbarcidxj",Int32,(Ptr{Void},Int64,Ptr{Int32},),task_.task,idx_,j_)
+  res = @msk_ccall( "getbarcidxj",Int32,(Ptr{Void},Int64,Ptr{Int32},),task_.task,idx_-1,j_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
-  (convert(Int,j_[1]-1))
+  (convert(Int,j_[1]+1))
 end
 
 function getbarcsparsity(task_:: MSKtask)
@@ -1888,7 +1888,7 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
   __tmp_var_4 = (maxlen_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
-  res = @msk_ccall( "getsparsesymmat",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  res = @msk_ccall( "getsparsesymmat",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
@@ -1966,7 +1966,7 @@ function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
   dim_ = Array(Int32,(1,))
   nz_ = Array(Int64,(1,))
   type_ = Array(Int32,(1,))
-  res = @msk_ccall( "getsymmatinfo",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int64},Ptr{Int32},),task_.task,idx_,dim_,nz_,type_)
+  res = @msk_ccall( "getsymmatinfo",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int64},Ptr{Int32},),task_.task,idx_-1,dim_,nz_,type_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))

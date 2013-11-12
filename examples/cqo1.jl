@@ -73,10 +73,9 @@ solutionsummary(task,MSK_STREAM_MSG)
 prosta = getprosta(task,MSK_SOL_ITR)
 solsta = getsolsta(task,MSK_SOL_ITR)
 
-# Output a solution
-xx = getxx(task,MSK_SOL_ITR)
-
 if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
+    # Output a solution
+    xx = getxx(task,MSK_SOL_ITR)
     @printf("Optimal solution: %s\n", xx')
 elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
     print("Primal or dual infeasibility.\n")

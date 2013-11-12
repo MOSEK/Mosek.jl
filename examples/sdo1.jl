@@ -10,8 +10,11 @@
 using Mosek
     
 
+printstream(msg::String) = print(msg)
+
 # Create a task object and attach log stream printer
 task = maketask()
+putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
 # Bound keys for constraints
 bkc = [MSK_BK_FX,
@@ -23,16 +26,16 @@ buc = [1.0, 0.5]
 
 
 A = sparse( [1,2,2],[1,2,3],[1.0, 1.0, 1.0])
-conesub = [0, 1, 2]
+conesub = [1, 2, 3]
 
-barci = [0, 1, 1, 2, 2]
-barcj = [0, 0, 1, 1, 2]
+barci = [1, 2, 2, 3, 3]
+barcj = [1, 1, 2, 2, 3]
 barcval = [2.0, 1.0, 2.0, 1.0, 2.0]
 
-barai   = { [0, 1, 2], 
-            [0, 1, 2, 1, 2, 2] }
-baraj   = { [0, 1, 2]
-            [0, 0, 0, 1, 1, 2] }
+barai   = { [1, 2, 3], 
+            [1, 2, 3, 2, 3, 3] }
+baraj   = { [1, 2, 3]
+            [1, 1, 1, 2, 2, 3] }
 baraval = { [1.0, 1.0, 1.0],
             [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] }
 
@@ -57,19 +60,19 @@ putcj(task, 1, 1.0)
 
 # Set the bounds on variable j
 # blx[j] <= x_j <= bux[j] 
-putvarboundslice(task,1:numvar,
-                 [ MSK_BK_FR for i in 1:numvar ],
-                 [ -Inf      for i in 1:numvar ],
-                 [ +Inf      for i in 1:numvar ])
+putvarboundslice(task,1,numvar+1,
+                 [ MSK_BK_FR::Int32 for i in 1:numvar ],
+                 [ -Inf             for i in 1:numvar ],
+                 [ +Inf             for i in 1:numvar ])
 
 # Set the bounds on constraints.
 # blc[i] <= constraint_i <= buc[i]
 putconboundslice(task,1,numcon+1, bkc,blc,buc)
 
 # Input row i of A 
-putcolslice(task,1,numvar+1,
-            A.colptr[1:numvar], A.colptr[2:numvar+1],
-            A.rowval,A.nzval)
+putacolslice(task,1,numvar+1,
+             A.colptr[1:numvar], A.colptr[2:numvar+1],
+             A.rowval,A.nzval)
 
 appendcone(task,MSK_CT_QUAD, 0.0, conesub)
 
