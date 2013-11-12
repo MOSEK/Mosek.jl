@@ -1,6 +1,4 @@
 ##
-#   Copyright: $$copyright
-#
 #   File:    qo1.jl
 #
 #   Purpose: Demonstrate how to solve a quadratic

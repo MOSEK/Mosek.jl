@@ -1,6 +1,4 @@
 #     
-#   Copyright: $$copyright
-#
 #   File:      feasrepairex1.jl
 #
 #   Purpose:    To demonstrate how to use the MSK_relaxprimal function to

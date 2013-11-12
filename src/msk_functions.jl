@@ -14,12 +14,15 @@ export
   appendstat,
   appendvars,
   basiscond,
+  bktostr,
+  callbackcodetostr,
   checkconvexity,
   checkmem,
   chgbound,
   chgconbound,
   chgvarbound,
   commitchanges,
+  conetypetostr,
   deletesolution,
   dualsensitivity,
   getacol,
@@ -75,6 +78,7 @@ export
   getdviolcones,
   getdviolvar,
   getinfeasiblesubproblem,
+  getinfname,
   getinti,
   getintinf,
   getintparam,
@@ -87,6 +91,11 @@ export
   getmaxnumqnz,
   getmaxnumvar,
   getmemusage,
+  getnadouinf,
+  getnadouparam,
+  getnaintinf,
+  getnaintparam,
+  getnastrparam,
   getnumanz,
   getnumanz64,
   getnumbarablocktriplets,
@@ -107,6 +116,7 @@ export
   getobjname,
   getobjnamelen,
   getobjsense,
+  getparamname,
   getpbi,
   getpcni,
   getpeqi,
@@ -284,25 +294,19 @@ export
   writeparamfile,
   writesolution,
   writetask,
-  axpy,
   checkinlicense,
   checkoutlicense,
-  dot,
   echointro,
-  gemm,
   getcodedesc,
   getversion,
   licensecleanup,
   linkfiletostream,
-  potrf,
   putdllpath,
   putkeepdlls,
   putlicensecode,
   putlicensedebug,
   putlicensepath,
-  putlicensewait,
-  syeig,
-  syevd
+  putlicensewait
 
 function analyzenames(task_:: MSKtask,whichstream_:: Int32,nametype_:: Int32)
   res = @msk_ccall( "analyzenames",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_,nametype_)
@@ -414,6 +418,25 @@ function basiscond(task_:: MSKtask)
   (convert(Float64,nrmbasis_[1]),convert(Float64,nrminvbasis_[1]))
 end
 
+function bktostr(task_:: MSKtask,bk_:: Int32)
+  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "bktostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,bk_,str_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(str_))
+end
+
+function callbackcodetostr(code_:: Int32)
+  callbackcodestr_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{Uint8},),code_,callbackcodestr_)
+  if res != 0
+    throw (MosekError(res,""))
+  end
+  (bytestring(callbackcodestr_))
+end
+
 function checkconvexity(task_:: MSKtask)
   res = @msk_ccall( "checkconvexity",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -460,6 +483,16 @@ function commitchanges(task_:: MSKtask)
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
+end
+
+function conetypetostr(task_:: MSKtask,conetype_:: Int32)
+  str_ = zeros(Uint8,1024)
+  res = @msk_ccall( "conetypetostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,conetype_,str_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(str_))
 end
 
 function deletesolution(task_:: MSKtask,whichsol_:: Int32)
@@ -1141,6 +1174,16 @@ function getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Int32)
   (convert(MSKtask,inftask_[1]))
 end
 
+function getinfname(task_:: MSKtask,inftype_:: Int32,whichinf_:: Int)
+  infname_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getinfname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,inftype_,convert(Int32,whichinf_),infname_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(infname_))
+end
+
 function getinti(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int})
   __tmp_var_0 = if (typeof(sub_) != Array{Int32,1}) convert(Array{Int32,1},sub_) else sub_ end
   len_ = minimum([ length(sub_) ])
@@ -1263,6 +1306,57 @@ function getmemusage(task_:: MSKtask)
     throw (MosekError(res,msg))
   end
   (convert(Int64,meminuse_[1]),convert(Int64,maxmemuse_[1]))
+end
+
+function getnadouinf(task_:: MSKtask,whichdinf_:: String)
+  dvalue_ = Array(Float64,(1,))
+  res = @msk_ccall( "getnadouinf",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Float64},),task_.task,bytestring(whichdinf_),dvalue_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (convert(Float64,dvalue_[1]))
+end
+
+function getnadouparam(task_:: MSKtask,paramname_:: String)
+  parvalue_ = Array(Float64,(1,))
+  res = @msk_ccall( "getnadouparam",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Float64},),task_.task,bytestring(paramname_),parvalue_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (convert(Float64,parvalue_[1]))
+end
+
+function getnaintinf(task_:: MSKtask,infitemname_:: String)
+  ivalue_ = Array(Int32,(1,))
+  res = @msk_ccall( "getnaintinf",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(infitemname_),ivalue_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (convert(Int,ivalue_[1]))
+end
+
+function getnaintparam(task_:: MSKtask,paramname_:: String)
+  parvalue_ = Array(Int32,(1,))
+  res = @msk_ccall( "getnaintparam",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(paramname_),parvalue_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (convert(Int,parvalue_[1]))
+end
+
+function getnastrparam(task_:: MSKtask,paramname_:: String,maxlen_:: Int)
+  len_ = Array(Int32,(1,))
+  parvalue_ = zeros(Uint8,(maxlen_))
+  res = @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{Uint8},Int32,Ptr{Int32},Ptr{Uint8},),task_.task,bytestring(paramname_),convert(Int32,maxlen_),len_,parvalue_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (convert(Int,len_[1]),bytestring(parvalue_))
 end
 
 function getnumanz(task_:: MSKtask)
@@ -1464,6 +1558,16 @@ function getobjsense(task_:: MSKtask)
     throw (MosekError(res,msg))
   end
   (convert(Int32,sense_[1]))
+end
+
+function getparamname(task_:: MSKtask,partype_:: Int32,param_:: Int)
+  parname_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getparamname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,partype_,convert(Int32,param_),parname_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(parname_))
 end
 
 function getpbi(task_:: MSKtask,whichsol_:: Int32,accmode_:: Int32,sub_:: Array{Int},normalize_:: Int)
@@ -3459,21 +3563,6 @@ function writetask(task_:: MSKtask,filename_:: String)
   end
 end
 
-function axpy(env_:: MSKenv,n_:: Int,alpha_:: Float64,x_:: Array{Float64},y_:: Array{Float64})
-  __tmp_var_0 = (n_)
-  if length(x_) < __tmp_var_0
-    throw(BoundError("Array argument x is not long enough"))
-  end
-  __tmp_var_1 = (n_)
-  if length(y_) < __tmp_var_1
-    throw(BoundError("Array argument y is not long enough"))
-  end
-  res = @msk_ccall( "axpy",Int32,(Ptr{Void},Int32,Float64,Ptr{Float64},Ptr{Float64},),env_.env,convert(Int32,n_),alpha_,x_,y_)
-  if res != 0
-    throw (MosekError(res,""))
-  end
-end
-
 function checkinlicense(env_:: MSKenv,feature_:: Int32)
   res = @msk_ccall( "checkinlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_)
   if res != 0
@@ -3488,44 +3577,8 @@ function checkoutlicense(env_:: MSKenv,feature_:: Int32)
   end
 end
 
-function dot(env_:: MSKenv,n_:: Int,x_:: Array{Float64},y_:: Array{Float64})
-  __tmp_var_0 = (n_)
-  if length(x_) < __tmp_var_0
-    throw(BoundError("Array argument x is not long enough"))
-  end
-  __tmp_var_1 = (n_)
-  if length(y_) < __tmp_var_1
-    throw(BoundError("Array argument y is not long enough"))
-  end
-  xty_ = Array(Float64,(1,))
-  res = @msk_ccall( "dot",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},),env_.env,convert(Int32,n_),x_,y_,xty_)
-  if res != 0
-    throw (MosekError(res,""))
-  end
-  (convert(Float64,xty_[1]))
-end
-
 function echointro(env_:: MSKenv,longver_:: Int)
   res = @msk_ccall( "echointro",Int32,(Ptr{Void},Int32,),env_.env,convert(Int32,longver_))
-  if res != 0
-    throw (MosekError(res,""))
-  end
-end
-
-function gemm(env_:: MSKenv,transa_:: Int32,transb_:: Int32,m_:: Int,n_:: Int,k_:: Int,alpha_:: Float64,a_:: Array{Float64},b_:: Array{Float64},beta_:: Float64,c_:: Array{Float64})
-  __tmp_var_0 = ((n_) * (k_))
-  if length(a_) < __tmp_var_0
-    throw(BoundError("Array argument a is not long enough"))
-  end
-  __tmp_var_1 = ((k_) * (n_))
-  if length(b_) < __tmp_var_1
-    throw(BoundError("Array argument b is not long enough"))
-  end
-  __tmp_var_2 = ((m_) * (n_))
-  if length(c_) < __tmp_var_2
-    throw(BoundError("Array argument c is not long enough"))
-  end
-  res = @msk_ccall( "gemm",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Int32,Float64,Ptr{Float64},Ptr{Float64},Float64,Ptr{Float64},),env_.env,transa_,transb_,convert(Int32,m_),convert(Int32,n_),convert(Int32,k_-1),alpha_,a_,b_,beta_,c_)
   if res != 0
     throw (MosekError(res,""))
   end
@@ -3562,17 +3615,6 @@ end
 
 function linkfiletostream(env_:: MSKenv,whichstream_:: Int32,filename_:: String,append_:: Int)
   res = @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Void},Int32,Ptr{Uint8},Int32,),env_.env,whichstream_,bytestring(filename_),convert(Int32,append_))
-  if res != 0
-    throw (MosekError(res,""))
-  end
-end
-
-function potrf(env_:: MSKenv,n_:: Int,a_:: Array{Float64})
-  __tmp_var_0 = ((n_) * (n_))
-  if length(a_) < __tmp_var_0
-    throw(BoundError("Array argument a is not long enough"))
-  end
-  res = @msk_ccall( "potrf",Int32,(Ptr{Void},Int32,Ptr{Float64},),env_.env,convert(Int32,n_),a_)
   if res != 0
     throw (MosekError(res,""))
   end
@@ -3623,33 +3665,5 @@ function putlicensewait(env_:: MSKenv,licwait_:: Int)
   if res != 0
     throw (MosekError(res,""))
   end
-end
-
-function syeig(env_:: MSKenv,n_:: Int,a_:: Array{Float64})
-  __tmp_var_0 = ((n_) * (n_))
-  if length(a_) < __tmp_var_0
-    throw(BoundError("Array argument a is not long enough"))
-  end
-  __tmp_var_1 = (n_)
-  __tmp_var_2 = zeros(Float64,__tmp_var_1)
-  res = @msk_ccall( "syeig",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},),env_.env,convert(Int32,n_),a_,__tmp_var_2)
-  if res != 0
-    throw (MosekError(res,""))
-  end
-  (__tmp_var_2)
-end
-
-function syevd(env_:: MSKenv,n_:: Int,a_:: Array{Float64})
-  __tmp_var_0 = ((n_) * (n_))
-  if length(a_) < __tmp_var_0
-    throw(BoundError("Array argument a is not long enough"))
-  end
-  __tmp_var_1 = (n_)
-  __tmp_var_2 = zeros(Float64,__tmp_var_1)
-  res = @msk_ccall( "syevd",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},),env_.env,convert(Int32,n_),a_,__tmp_var_2)
-  if res != 0
-    throw (MosekError(res,""))
-  end
-  (__tmp_var_2)
 end
 
