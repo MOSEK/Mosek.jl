@@ -23,11 +23,11 @@ use. See [here](http://mosek.com/resources/academic-license/) for details.
 Documentation
 -------------
 
-There is not a lot of documentation yet, but Mosek.jl uses the same general
-idea the MOSEK Python API which is documented
-[here](http://docs.mosek.com/7.0/pythonapi/index.html). Functions have the
-same names and arguments but all index arguments are 1-based in MOSEK.jl.
+All functions and constants in the Mosek.jl are briefly documented [here](https://github.com/IainNZ/Mosek.jl/wiki/Mosek-Functions).
+
+For a more complete description of functions, please refer to 
+[the MOSEK C API documentation](http://docs.mosek.com/7.0/capi/index.html).
 
 The General Convex interface is not documented at all, but the example 
-<tt>nlo1.jl</tt>.
+<tt>nlo1.jl</tt> show the general idea.
 
