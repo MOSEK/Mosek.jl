@@ -1,3 +1,12 @@
+#
+#  File:    lo1.jl
+#
+#  Purpose: Demonstrates how to solve small linear
+#           optimization problem using the MOSEK Python API.
+##
+
+
+
 using Mosek
 
 

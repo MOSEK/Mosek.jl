@@ -1,6 +1,4 @@
 ##
-#    Copyright: $$copyright
-#
 #    File:    milo1.jl
 #
 #    Purpose:  Demonstrates how to solve a small mixed

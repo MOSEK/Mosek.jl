@@ -1,9 +1,7 @@
 #
-#  Copyright: $$copyright
-#
 #  File:    cqo1.jl
 #
-#  Purpose: Demonstrates how to solve small linear
+#  Purpose: Demonstrates how to solve small conic
 #           optimization problem using the MOSEK Python API.
 ##
 

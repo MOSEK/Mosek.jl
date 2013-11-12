@@ -1,6 +1,4 @@
 ##
-#   Copyright: $$copyright
-#
 #   File:      sdo1.jl
 #
 #   Purpose:   Demonstrates how to solve a small mixed semidefinite and conic quadratic
