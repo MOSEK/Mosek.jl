@@ -85,7 +85,7 @@ function test_qo1()
     solsta = getsolsta(task,MSK_SOL_ITR)
     if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                        MSK_SOL_STA_NEAR_OPTIMAL ]
-      xx = getxx(task,MSK_SOL_BAS)
+      xx = getxx(task,MSK_SOL_ITR)
       # check feasibility and optimality of solution
       return true
     else
@@ -97,10 +97,10 @@ function test_qcqo1()
     task = maketask()
     bkc   = [ MSK_BK_LO ]
     blc   = [ 1.0 ]
-    buc   = [ infty ]
+    buc   = [ Inf ]
     bkx   = [ MSK_BK_LO, MSK_BK_LO, MSK_BK_LO ]
     blx   = [ 0.0,  0.0, 0.0 ]
-    bux   = [ infty,  infty, infty ]
+    bux   = [ Inf,  Inf, Inf ]
     c     = [ 0.0, -1.0, 0.0 ]
     asub  = [ 1 ,1, 1 ]
     aval  = [ 1.0, 1.0, 1.0 ]
@@ -128,7 +128,7 @@ function test_qcqo1()
     solsta = getsolsta(task,MSK_SOL_ITR)
     if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                        MSK_SOL_STA_NEAR_OPTIMAL ]
-      xx = getxx(task,MSK_SOL_BAS)
+      xx = getxx(task,MSK_SOL_ITR)
       # check feasibility and optimality of solution
       return true
     else
@@ -164,11 +164,9 @@ function test_milo1()
     solutionsummary(task,MSK_STREAM_MSG)
     prosta = getprosta(task,MSK_SOL_ITG)
     solsta = getsolsta(task,MSK_SOL_ITG)
-    xx = zeros(numvar, float)
-    getxx(task,mosek.soltype.itg,xx)
     if solsta in     [ MSK_SOL_STA_INTEGER_OPTIMAL, 
                        MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
-      xx = getxx(task,MSK_SOL_BAS)
+      xx = getxx(task,MSK_SOL_ITG)
       # check feasibility and optimality of solution
       return true
     else
@@ -214,7 +212,70 @@ function test_cqo1()
     
     if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                        MSK_SOL_STA_NEAR_OPTIMAL ]
-      xx = getxx(task,MSK_SOL_BAS)
+      xx = getxx(task,MSK_SOL_ITR)
+      # check feasibility and optimality of solution
+      return true
+    else
+      return false
+    end
+end
+function test_sdo1()
+    task = maketask()
+    bkc = [MSK_BK_FX,
+           MSK_BK_FX]
+    blc = [1.0, 0.5]
+    buc = [1.0, 0.5]
+    A = sparse( [1,2,2],[1,2,3],[1.0, 1.0, 1.0])
+    conesub = [1, 2, 3]
+    barci = [1, 2, 2, 3, 3]
+    barcj = [1, 1, 2, 2, 3]
+    barcval = [2.0, 1.0, 2.0, 1.0, 2.0]
+    barai   = { [1, 2, 3], 
+                [1, 2, 3, 2, 3, 3] }
+    baraj   = { [1, 2, 3]
+                [1, 1, 1, 2, 2, 3] }
+    baraval = { [1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] }
+    numvar = 3
+    numcon = length(bkc)
+    barvardim = [3]
+    appendvars(task,numvar)
+    appendcons(task,numcon)
+    appendbarvars(task,barvardim)
+    putcj(task, 1, 1.0)
+    putvarboundslice(task,1,numvar+1,
+                     [ MSK_BK_FR::Int32 for i in 1:numvar ],
+                     [ -Inf             for i in 1:numvar ],
+                     [ +Inf             for i in 1:numvar ])
+    putconboundslice(task,1,numcon+1, bkc,blc,buc)
+    putacolslice(task,1,numvar+1,
+                 A.colptr[1:numvar], A.colptr[2:numvar+1],
+                 A.rowval,A.nzval)
+    appendcone(task,MSK_CT_QUAD, 0.0, conesub)
+    symc  = appendsparsesymmat(task,barvardim[1], 
+                               barci, 
+                               barcj, 
+                               barcval)
+    syma0 = appendsparsesymmat(task,barvardim[1], 
+                               barai[1], 
+                               baraj[1], 
+                               baraval[1])
+    syma1 = appendsparsesymmat(task,barvardim[1], 
+                               barai[2], 
+                               baraj[2], 
+                               baraval[2])
+    putbarcj(task,1, [symc], [1.0])
+    putbaraij(task,1, 1, [syma0], [1.0])
+    putbaraij(task,2, 1, [syma1], [1.0])
+    putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
+    optimize(task)
+    solutionsummary(task,MSK_STREAM_MSG)
+    prosta = getprosta(task,MSK_SOL_ITR)
+    solsta = getsolsta(task,MSK_SOL_ITR)
+    
+    if solsta in     [ MSK_SOL_STA_OPTIMAL, 
+                       MSK_SOL_STA_NEAR_OPTIMAL ]
+      xx = getxx(task,MSK_SOL_ITR)
       # check feasibility and optimality of solution
       return true
     else
@@ -227,5 +288,6 @@ assert(test_lo1() &&
        test_qo1() &&
        test_qcqo1() &&
        test_milo1() &&
-       test_cqo1())
+       test_cqo1() && 
+       test_sdo1())
 

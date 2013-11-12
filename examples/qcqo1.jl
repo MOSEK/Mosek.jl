@@ -3,32 +3,27 @@
 #
 #  File:    qcqo1.jl
 #
-#  Purpose: Demonstrates how to solve small linear
+#  Purpose: Demonstrates how to solve small quadratic
 #           optimization problem using the MOSEK Python API.
 ##
 
 using Mosek
 # Since the actual value of Infinity is ignores, we define it solely
 # for symbolic purposes:
-infty = 0.0
-
-
-# Make a MOSEK environment
-env = makeenv()
 
 # Create a task
-task = maketask(env)
+task = maketask()
 
 # Set up and input bounds and linear coefficients
 bkc   = [ MSK_BK_LO ]
 blc   = [ 1.0 ]
-buc   = [ infty ]
+buc   = [ Inf ]
   
 bkx   = [ MSK_BK_LO,
           MSK_BK_LO,
           MSK_BK_LO ]
 blx   = [ 0.0,  0.0, 0.0 ]
-bux   = [ infty,  infty, infty ]
+bux   = [ Inf,  Inf, Inf ]
 
 c     = [ 0.0, -1.0, 0.0 ]
 
@@ -90,10 +85,9 @@ solutionsummary(task,MSK_STREAM_MSG)
 prosta = getprosta(task,MSK_SOL_ITR)
 solsta = getsolsta(task,MSK_SOL_ITR)
 
-# Output a solution
-xx = getxx(task,MSK_SOL_ITR)
-
 if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
+    # Output a solution
+    xx = getxx(task,MSK_SOL_ITR)
     @printf("Optimal solution: %s\n", xx')
 elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
     print("Primal or dual infeasibility.\n")
@@ -104,7 +98,7 @@ elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
 elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
     print("Primal or dual infeasibility.\n")
 elseif MSK_SOL_STA_UNKNOWN:
-  print("Unknown solution status")
+    print("Unknown solution status")
 else
-  print("Other solution status")
+    print("Other solution status")
 end

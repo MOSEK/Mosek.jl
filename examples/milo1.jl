@@ -72,13 +72,6 @@ solutionsummary(task,MSK_STREAM_MSG)
 prosta = getprosta(task,MSK_SOL_ITG)
 solsta = getsolsta(task,MSK_SOL_ITG)
 
-# X
-
-# Output a solution
-xx = zeros(numvar, float)
-getxx(task,mosek.soltype.itg,xx)
-
-
 if solsta == MSK_SOL_STA_INTEGER_OPTIMAL || solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
     # Output a solution
     xx = getxx(task,MSK_SOL_ITG)
