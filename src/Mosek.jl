@@ -154,7 +154,7 @@ module Mosek
   include("msk_callback.jl")
   include("msk_geco.jl")
 
-  #include("MosekSolverInterface.jl")
-  #using Mosek.MosekMathProgSolverInterface
-  #export MosekSolver
+  include("MosekSolverInterface.jl")
+  using Mosek.MosekMathProgSolverInterface
+  export MosekSolver
 end
