@@ -1,0 +1,127 @@
+##
+#   Copyright: $$copyright
+#
+#   File:      sdo1.jl
+#
+#   Purpose:   Demonstrates how to solve a small mixed semidefinite and conic quadratic
+#              optimization problem using the MOSEK Python API.
+##
+
+using Mosek
+    
+
+# Create a task object and attach log stream printer
+task = maketask()
+
+# Bound keys for constraints
+bkc = [MSK_BK_FX,
+       MSK_BK_FX]
+
+# Bound values for constraints
+blc = [1.0, 0.5]
+buc = [1.0, 0.5]
+
+
+A = sparse( [1,2,2],[1,2,3],[1.0, 1.0, 1.0])
+conesub = [0, 1, 2]
+
+barci = [0, 1, 1, 2, 2]
+barcj = [0, 0, 1, 1, 2]
+barcval = [2.0, 1.0, 2.0, 1.0, 2.0]
+
+barai   = { [0, 1, 2], 
+            [0, 1, 2, 1, 2, 2] }
+baraj   = { [0, 1, 2]
+            [0, 0, 0, 1, 1, 2] }
+baraval = { [1.0, 1.0, 1.0],
+            [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] }
+
+numvar = 3
+numcon = length(bkc)
+barvardim = [3]
+
+# Append 'numvar' variables.
+# The variables will initially be fixed at zero (x=0). 
+appendvars(task,numvar)
+
+# Append 'numcon' empty constraints.
+# The constraints will initially have no bounds. 
+appendcons(task,numcon)
+
+# Append matrix variables of sizes in 'BARVARDIM'.
+# The variables will initially be fixed at zero. 
+appendbarvars(task,barvardim)
+
+# Set the linear term c_0 in the objective.
+putcj(task, 1, 1.0)
+
+# Set the bounds on variable j
+# blx[j] <= x_j <= bux[j] 
+putvarboundslice(task,1:numvar,
+                 [ MSK_BK_FR for i in 1:numvar ],
+                 [ -Inf      for i in 1:numvar ],
+                 [ +Inf      for i in 1:numvar ])
+
+# Set the bounds on constraints.
+# blc[i] <= constraint_i <= buc[i]
+putconboundslice(task,1,numcon+1, bkc,blc,buc)
+
+# Input row i of A 
+putcolslice(task,1,numvar+1,
+            A.colptr[1:numvar], A.colptr[2:numvar+1],
+            A.rowval,A.nzval)
+
+appendcone(task,MSK_CT_QUAD, 0.0, conesub)
+
+symc  = appendsparsesymmat(task,barvardim[1], 
+                           barci, 
+                           barcj, 
+                           barcval)
+
+syma0 = appendsparsesymmat(task,barvardim[1], 
+                           barai[1], 
+                           baraj[1], 
+                           baraval[1])
+  
+syma1 = appendsparsesymmat(task,barvardim[1], 
+                           barai[2], 
+                           baraj[2], 
+                           baraval[2])
+
+putbarcj(task,1, [symc], [1.0])
+
+putbaraij(task,1, 1, [syma0], [1.0])
+putbaraij(task,2, 1, [syma1], [1.0])
+
+# Input the objective sense (minimize/maximize)
+putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
+
+# Solve the problem and print summary
+optimize(task)
+solutionsummary(task,MSK_STREAM_MSG)
+
+# Get status information about the solution
+prosta = getprosta(task,MSK_SOL_ITR)
+solsta = getsolsta(task,MSK_SOL_ITR)
+
+
+if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
+    # Output a solution
+    xx = getxx(task,MSK_SOL_ITR)
+    barx = getbarxj(task,MSK_SOL_ITR, 1)
+
+    @printf("Optimal solution: \n  xx = %s\n  barx = %s\n", xx',barx')
+elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+    print("Primal or dual infeasibility.\n")
+elseif MSK_SOL_STA_UNKNOWN:
+  print("Unknown solution status")
+else
+  print("Other solution status")
+end
+
