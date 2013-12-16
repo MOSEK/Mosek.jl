@@ -66,10 +66,7 @@ for j=1:numvar
 end
    
 putclist(task,[1,2,3,4], c)
-putacolslice(task,1,numvar+1,
-             A.colptr[1:numvar],A.colptr[2:numvar+1],
-             A.rowval,
-             A.nzval)
+putacolslice(task,1,numvar+1,A)
 
 putvarboundslice(task, 1, numvar+1, bkx,blx,bux)
 
@@ -82,7 +79,6 @@ putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
 # Solve the problem
 optimize(task)
-writedata(task,"lo1_julia.opf")
 
 # Print a summary containing information
 # about the solution for debugging purposes
