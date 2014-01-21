@@ -325,6 +325,52 @@ function getvartype(m::MosekMathProgModel)
   [ if vt == MSK_VAR_TYPE_CONT 'I' else 'C' end for vt=vtlist ] :: Array{Char,1}
 end
 
+# QCQO interface, so far only non-conic.
+
+function setquadobj!(m::MosekMathProgModel, rowidx,colidx,quadval)
+  qosubi = copy(rowidx)
+  qosubj = copy(rowidx)
+  qoval  = copy(rowidx)
+  for i=1..len(rowidx)
+    if qosubj[i] > qoubi[i]
+      cj = qosubj[i]
+      qosubj[i] = qosubi[i]
+      qosubi[i] = cj
+    end
+  end
+  putqobj(m.inner,qosubi,qosubj,qoval)
+end
+
+function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx, quadcolidx, quadval, sense, rhs) 
+  subj = linearidx
+  valj = linearval
+  qcksubi = copy(quadrowidx)
+  qcksubj = copy(quadcolidx)
+  qckval  = quadval
+
+  for i=1..len(rowidx)
+    if qcksubj[i] > qcksubi[i]
+      cj = qcksubj[i]
+      qcksubj[i] = qcksubi[i]
+      qcksubi[i] = cj
+    end
+  end
+
+  k = getnumcon(m.inner)
+
+  putarow(m.inner, k, subj-1, valj)
+  putqconk(m.inner,k, qcksubi-1,qcsubj-1,qcval)
+
+  if sense == '<'
+    putbound(m.inner,k,MSK_BK_UP, rhs,rhs)
+  elseif sense == '>'
+    putbound(m.inner,k,MSK_BK,LO, rhs,rhs)
+  else
+    putbound(m.inner,k,MSK_BK,FR, 0.0,0.0)
+  end
+end
+
+
 end
 
 
