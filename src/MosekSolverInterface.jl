@@ -64,7 +64,7 @@ function loadproblem!( m::     MosekMathProgModel,
   
   # input coefficients
   putclist(m.task, obj.rowval, obj.nzval)
-  putacolslice(m.task, 1, nrows+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
+  putacolslice(m.task, 1, ncols+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
   setsense!(m, sense)
 
   # input bounds
@@ -226,7 +226,10 @@ end
 
 numvar(m::MosekMathProgModel) = getnumvar(m.task)
 numconstr(m::MosekMathProgModel) = getnumcon(m.task)
-optimize!(m::MosekMathProgModel) = optimize(m.task)
+function optimize!(m::MosekMathProgModel) 
+  optimize(m.task)
+  writedata(m.task,"mskprog.opf")
+end
 
 
 
@@ -290,8 +293,8 @@ function getsolution(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) 
   end
-  solsta = getsolsta(m.inner,soldef)
-  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_NEAR_STA_INTEGER_OPTIMAL ]
+  solsta = getsolsta(m.task,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
     getxx(m.task,soldef)
   else
     throw(MosekMathProgModelError("No solution available")) 
@@ -301,8 +304,8 @@ end
 function getconstrsolution(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  solsta = getsolsta(m.inner,soldef)
-  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_NEAR_STA_INTEGER_OPTIMAL ]
+  solsta = getsolsta(m.task,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
     getxc(m.task,soldef)
   else
     throw(MosekMathProgModelError("No solution available")) 
@@ -313,8 +316,9 @@ end
 function getreducedcosts(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  solsta = getsolsta(m.inner,soldef)
-  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS ]
+  solsta = getsolsta(m.task,soldef)
+
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
     getslx(m.task,soldef) - getsux(m.task,soldef)
   else
     throw(MosekMathProgModelError("No solution available")) 
@@ -324,8 +328,8 @@ end
 function getconstrduals(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  solsta = getsolsta(m.inner,soldef)
-  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS ]
+  solsta = getsolsta(m.task,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
     gety(m.task,soldef)
   else
     throw(MosekMathProgModelError("No solution available")) 
@@ -335,9 +339,9 @@ end
 function getinfeasibilityray(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  solsta = getsolsta(m.inner,soldef)
+  solsta = getsolsta(m.task,soldef)
   if solsta in [ MSK_SOL_STA_PRIM_INFEAS_CER, MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
-    getslx(m.task,soldef) - getsux(m.task,soldef)
+    getsux(m.task,soldef) - getslx(m.task,soldef)
   else
     throw(MosekMathProgModelError("No solution available")) 
   end
@@ -346,7 +350,7 @@ end
 function getunboundedray(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  solsta = getsolsta(m.inner,soldef)
+  solsta = getsolsta(m.task,soldef)
   if solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER, MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
     getxx(m.task,soldef)
   else
@@ -374,16 +378,16 @@ end
 
 function setquadobj!(m::MosekMathProgModel, rowidx,colidx,quadval)
   qosubi = copy(rowidx)
-  qosubj = copy(rowidx)
-  qoval  = copy(rowidx)
-  for i=1..len(rowidx)
-    if qosubj[i] > qoubi[i]
+  qosubj = copy(colidx)
+  qoval  = copy(quadval)
+  for i=1:length(rowidx)
+    if qosubj[i] > qosubi[i]
       cj = qosubj[i]
       qosubj[i] = qosubi[i]
       qosubi[i] = cj
     end
   end
-  putqobj(m.inner,qosubi,qosubj,qoval)
+  putqobj(m.task,qosubi,qosubj,convert(Array{Float64},qoval))
 end
 
 function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx, quadcolidx, quadval, sense, rhs) 
@@ -393,7 +397,8 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
   qcksubj = copy(quadcolidx)
   qckval  = quadval
 
-  for i=1..len(rowidx)
+
+  for i=1:length(quadrowidx)
     if qcksubj[i] > qcksubi[i]
       cj = qcksubj[i]
       qcksubj[i] = qcksubi[i]
@@ -401,17 +406,17 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
     end
   end
 
-  k = getnumcon(m.inner)
+  k = getnumcon(m.task)
 
-  putarow(m.inner, k, subj-1, valj)
-  putqconk(m.inner,k, qcksubi-1,qcsubj-1,qcval)
+  putarow(m.task, k, subj-1, valj)
+  putqconk(m.task,k, qcksubi-1,qcksubj-1,qcval)
 
   if sense == '<'
-    putbound(m.inner,k,MSK_BK_UP, rhs,rhs)
+    putbound(m.task,k,MSK_BK_UP, rhs,rhs)
   elseif sense == '>'
-    putbound(m.inner,k,MSK_BK,LO, rhs,rhs)
+    putbound(m.task,k,MSK_BK,LO, rhs,rhs)
   else
-    putbound(m.inner,k,MSK_BK,FR, 0.0,0.0)
+    putbound(m.task,k,MSK_BK,FR, 0.0,0.0)
   end
 end
 
