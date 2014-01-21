@@ -2587,7 +2587,6 @@ function putacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Array
     throw(BoundError("Array argument ptre is not long enough"))
   end
   __tmp_var_2 = if (typeof(asub_) != Array{Int32}) convert(Array{Int32},asub_) else asub_ end
-
   res = @msk_ccall( "putacolslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_-1,ptre_-1,__tmp_var_2-1,aval_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)

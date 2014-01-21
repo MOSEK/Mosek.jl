@@ -64,7 +64,11 @@ function loadproblem!( m::     MosekMathProgModel,
   
   # input coefficients
   putclist(m.task, obj.rowval, obj.nzval)
+<<<<<<< HEAD
   putacolslice(m.task, 1, ncols+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
+=======
+  putacolslice(m.task, 1, nrows+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
+>>>>>>> f5d62fcdf35db984bb88370229a23d739dd86393
   setsense!(m, sense)
 
   # input bounds
@@ -226,10 +230,14 @@ end
 
 numvar(m::MosekMathProgModel) = getnumvar(m.task)
 numconstr(m::MosekMathProgModel) = getnumcon(m.task)
+<<<<<<< HEAD
 function optimize!(m::MosekMathProgModel) 
   optimize(m.task)
   writedata(m.task,"mskprog.opf")
 end
+=======
+optimize!(m::MosekMathProgModel) = optimize(m.task)
+>>>>>>> f5d62fcdf35db984bb88370229a23d739dd86393
 
 
 
