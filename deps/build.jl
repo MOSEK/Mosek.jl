@@ -35,14 +35,14 @@ elseif haskey(ENV,"HOME") && isdir(joinpath(ENV["HOME"],"mosek","7","tools","pla
 else
   mskplatform,pfdlls,distroext =
     if WORD_SIZE == 32
-      if     OS_NAME == :Linux "linux32x86",  ["libmosek.so",       "libmosek.so.7.0",     "libiomp5.so"],   ".tar.bz2"
-      elseif OS_NAME == :Windows "win32x86",  ["mosek_7_0.dll",     "mosek_7_0.dll",       "libiomp5.dll" ], ".zip"
+      if     OS_NAME == :Linux "linux32x86",  ["libmosek.so",       "libmosek.so.7.0",     "libiomp5.so",    "libmosekglb.so.7.0"],   ".tar.bz2"
+      elseif OS_NAME == :Windows "win32x86",  ["mosek_7_0.dll",     "mosek_7_0.dll",       "libiomp5md.dll", "mosekglb_7_0"        ], ".zip"
       else   error("Platform not supported")                         
       end                                   
     else                                    
-      if     OS_NAME == :Linux   "linux64x86",["libmosek64.so",     "libmosek64.so.7.0",   "libiomp5.so"], ".tar.bz2"
-      elseif OS_NAME == :Darwin  "osx4x86",   ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib"],  ".tar.bz2"
-      elseif OS_NAME == :Windows "win64x86",  ["libmosek64_7_0.dll","libmosek64_7_0.dll",  "libiomp5.dll"],    ".zip"
+      if     OS_NAME == :Linux   "linux64x86",["libmosek64.so",     "libmosek64.so.7.0",   "libiomp5.so",    "libmosekglb64.so.7.0"],    ".tar.bz2"
+      elseif OS_NAME == :Darwin  "osx4x86",   ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib", "libmosekglb64.7.0.dylib"], ".tar.bz2"
+      elseif OS_NAME == :Windows "win64x86",  ["libmosek64_7_0.dll","libmosek64_7_0.dll",  "libiomp5md.dll", "mosekglb64_7_0.dll"],    ".zip"
       else   error("Platform not supported")
       end
     end
@@ -61,6 +61,7 @@ else
         ( @build_steps begin
           `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[2])" "$prefix/lib"`
           `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[3])" "$prefix/lib"`
+          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[4])" "$prefix/lib"`
           `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[1])" "$prefix/lib"`
           end
         )
