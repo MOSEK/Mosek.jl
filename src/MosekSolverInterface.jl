@@ -288,28 +288,73 @@ end
 
 function getsolution(m::MosekMathProgModel) 
   soldef = getsoldef(m)
-  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  getxx(m.task,soldef)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) 
+  end
+  solsta = getsolsta(m.inner,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_NEAR_STA_INTEGER_OPTIMAL ]
+    getxx(m.task,soldef)
+  else
+    throw(MosekMathProgModelError("No solution available")) 
+  end
 end
 
 function getconstrsolution(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  getxc(m.task,soldef)
+  solsta = getsolsta(m.inner,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_NEAR_STA_INTEGER_OPTIMAL ]
+    getxc(m.task,soldef)
+  else
+    throw(MosekMathProgModelError("No solution available")) 
+  end
 end
 
 # NOTE: is the dual in your model slx-sux or sux-slx?
 function getreducedcosts(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  getslx(m.task,soldef) - getsux(m.task,soldef)
+  solsta = getsolsta(m.inner,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS ]
+    getslx(m.task,soldef) - getsux(m.task,soldef)
+  else
+    throw(MosekMathProgModelError("No solution available")) 
+  end
 end
 
 function getconstrduals(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-  gety(m.task,soldef)
+  solsta = getsolsta(m.inner,soldef)
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_DUAL_FEAS ]
+    gety(m.task,soldef)
+  else
+    throw(MosekMathProgModelError("No solution available")) 
+  end
 end
+
+function getinfeasibilityray(m::MosekMathProgModel) 
+  soldef = getsoldef(m)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+  solsta = getsolsta(m.inner,soldef)
+  if solsta in [ MSK_SOL_STA_PRIM_INFEAS_CER, MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+    getslx(m.task,soldef) - getsux(m.task,soldef)
+  else
+    throw(MosekMathProgModelError("No solution available")) 
+  end
+end
+
+function getunboundedray(m::MosekMathProgModel)
+  soldef = getsoldef(m)
+  if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+  solsta = getsolsta(m.inner,soldef)
+  if solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER, MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
+    getxx(m.task,soldef)
+  else
+    throw(MosekMathProgModelError("No solution available")) 
+  end
+end
+
+
 
 getrawsolver(m::MosekMathProgModel) = m.task
 
