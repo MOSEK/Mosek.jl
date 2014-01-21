@@ -49,7 +49,7 @@ else
   prefix  = joinpath(BinDeps.depsdir(libmosek),"usr")
 
   provides(Sources, URI(string("http://download.mosek.com/stable/7/",tarname)), libmosek, unpacked_dir="mosek")
-  provides(SimpleBuild
+  provides(SimpleBuild,
     ( @build_steps begin
         GetSources(libmosek)
         CreateDirectory(joinpath(BinDeps.depsdir(libmosek),"usr","lib"))
@@ -61,6 +61,21 @@ else
           end
         )
       end),
-      libmosek)
+      libmosek,
+      os = :Unix)
+  provides(SimpleBuild,
+    ( @build_steps begin
+        GetSources(libmosek)
+        CreateDirectory(joinpath(BinDeps.depsdir(libmosek),"usr","lib"))
+        ( @build_steps begin
+          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[2])" "$prefix/lib"`
+          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[3])" "$prefix/lib"`
+          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[4])" "$prefix/lib"`
+          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[1])" "$prefix/lib"`
+          end
+        )
+      end),
+      libmosek,
+      os = :Windows)
 end
 @BinDeps.install
