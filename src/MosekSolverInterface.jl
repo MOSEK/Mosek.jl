@@ -406,7 +406,7 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
   k = getnumcon(m.task)
 
   putarow(m.task, k, subj-1, valj)
-  putqconk(m.task,k, qcksubi-1,qcksubj-1,qkcval)
+  putqconk(m.task,k, qcksubi-1,qcksubj-1,qckval)
 
   if sense == '<'
     putbound(m.task,k,MSK_BK_UP, rhs,rhs)
