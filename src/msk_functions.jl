@@ -2571,10 +2571,8 @@ end
 
 putacolslice(task:: MSKtask,first,last,ptrb:: Array,ptre:: Array,asub:: Array,aval:: Array{Float64}) = putacolslice(convert(MSKtask,task),convert(Int32,first),convert(Int32,last),convert(Array{Int64},ptrb),convert(Array{Int64},ptre),convert(Array{Int32},asub),convert(Array{Float64},aval))
 function putacolslice(task:: MSKtask,first,last,A:: SparseMatrixCSC{Float64})
-  print("A =\n",dense(A))
   ptrb = A.colptr[1:size(A,2)-1]
   ptre = A.colptr[2:size(A,2)]
-  print("first =",first,", last = ",last,", ptrb = ",ptrb',", ptre = ",ptre',"\n")
   asub = A.rowval
   aval = A.nzval
   putacolslice(task,first,last,ptrb,ptre,asub,aval)
@@ -2589,6 +2587,7 @@ function putacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Array
     throw(BoundError("Array argument ptre is not long enough"))
   end
   __tmp_var_2 = if (typeof(asub_) != Array{Int32}) convert(Array{Int32},asub_) else asub_ end
+
   res = @msk_ccall( "putacolslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_-1,ptre_-1,__tmp_var_2-1,aval_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
