@@ -226,7 +226,9 @@ end
 
 numvar(m::MosekMathProgModel) = getnumvar(m.task)
 numconstr(m::MosekMathProgModel) = getnumcon(m.task)
-optimize!(m::MosekMathProgModel) = optimize(m.task)
+#optimize!(m::MosekMathProgModel) = optimize(m.task)
+function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
+
 
 
 
@@ -284,7 +286,7 @@ end
 # NOTE: I am not entirely sure how to implement this... If the solution status 
 # is feasible for an integer problem, then the objective value is the best 
 # known bound.
-# getobjbound(m::MosekMathProgModel)
+getobjbound(m::MosekMathProgModel) = getdouinf(m.task,MSK_DINF_MIO_OBJ_BOUND)
 
 function getsolution(m::MosekMathProgModel) 
   soldef = getsoldef(m)
@@ -359,10 +361,10 @@ end
 
 getrawsolver(m::MosekMathProgModel) = m.task
 
-function setvartype(m::MosekMathProgModel, vartype :: Array{Char,1}) 
+function setvartype!(m::MosekMathProgModel, vartype :: Array{Char,1}) 
   numvar = getnumvar(m.task)
   n = min(length(vartype),numvar)
-  putvartypelist(task,[1:n],[ (if c == 'I' MSK_VAR_TYPE_INT else MSK_VAR_TYPE_CONT end) for c=vartype ])
+  putvartypelist(m.task,[1:n],convert(Array{Int32},[ (if c == 'I' MSK_VAR_TYPE_INT else MSK_VAR_TYPE_CONT end) for c=vartype ]))
 end
 
 function getvartype(m::MosekMathProgModel) 
@@ -400,21 +402,26 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
       cj = qcksubj[i]
       qcksubj[i] = qcksubi[i]
       qcksubi[i] = cj
+    elseif qcksubj[i] == qcksubi[i]
+      qckval[i] = qckval[i] * 2
     end
   end
 
-  k = getnumcon(m.task)
 
-  putarow(m.task, k, subj-1, valj)
-  putqconk(m.task,k, qcksubi-1,qcksubj-1,qckval)
+  k = getnumcon(m.task)+1
+  appendcons(m.task,1)
+
+  putarow(m.task, k, subj, valj)
+  putqconk(m.task,k, qcksubi,qcksubj,qckval)
 
   if sense == '<'
-    putbound(m.task,k,MSK_BK_UP, rhs,rhs)
+    putconbound(m.task,k,MSK_BK_UP, -Inf,convert(Float64,rhs))
   elseif sense == '>'
-    putbound(m.task,k,MSK_BK,LO, rhs,rhs)
+    putconbound(m.task,k,MSK_BK,LO, convert(Float64,rhs),Inf)
   else
-    putbound(m.task,k,MSK_BK,FR, 0.0,0.0)
+    putconbound(m.task,k,MSK_BK,FR, -Inf,Inf)
   end
+  writedata(m.task,"mskprob.opf")
 end
 
 
