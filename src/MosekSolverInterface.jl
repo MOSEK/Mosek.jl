@@ -4,11 +4,26 @@ using ..Mosek
 export MosekSolver
 
 
+# Known issues: 
+#  - SOCP and QP cannot be mixed, but this is not checked (an error from mosek will be produced, though)
+#  - Adding a conic quadratic constraint will add an empty constraint to ensure that the number of values 
+#    in constraint solution is as expected. The actual constraint solution value is bogus.
+#  - Adding rotated conic quadratic constraints will result in a constraint being added, but the constraint soloution
+#    for this is pointless. Also, a variable is added, but this is filtered out in the results.
+#  - Loading an SOCP problem file will cause some funky problems as information on extra variables etc. is lost.
+#  - Dual information is currently useless.
+
 require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
 importall MathProgSolverInterface
 
+MosekMathProgModel_LINR = 0
+MosekMathProgModel_QOQP = 1
+MosekMathProgModel_SOCP = 2
+MosekMathProgModel_SDP  = 3
+
 type MosekMathProgModel <: AbstractMathProgModel 
   task :: Mosek.MSKtask
+  numvar :: Int64
 end
 
 immutable MosekSolver <: AbstractMathProgSolver
@@ -23,7 +38,7 @@ end
 function model(s::MosekSolver)
   # TODO: process solver options
   task = maketask(Mosek.msk_global_env)
-  return MosekMathProgModel(task)
+  return MosekMathProgModel(task,0)
 end
 
 # NOTE: This method will load data into an existing task, but
@@ -31,6 +46,7 @@ end
 # file read (e.g. reading an MPS will not reset parameters)
 function loadproblem!(m:: MosekMathProgModel, filename:: String)
   readdata(m.task, filename)
+  m.numvar = getnumvar(m.task)
 end
 
 function writeproblem(m:: MosekMathProgModel, filename:: String)
@@ -61,6 +77,8 @@ function loadproblem!( m::     MosekMathProgModel,
 
   appendvars(m.task, ncols)
   appendcons(m.task, nrows)
+
+  m.numvar = ncols
   
   # input coefficients
   putclist(m.task, obj.rowval, obj.nzval)
@@ -81,7 +99,7 @@ function loadproblem! ( m::     MosekMathProgModel,
                        rowlb,
                        rowub,
                        sense)
-  loadproblem!(m,sparse(float(A)),float(collb),float(colub),sparse(float(obj)),float(rowlb),float(rowub),sense)
+  loadproblem!(m,sparse(float(A)),float(collb),float(colub),sparse(float(obj)),float(rowlb),float(rowub),sense)  
 end
 
 function getvarLB(m::MosekMathProgModel)
@@ -389,6 +407,9 @@ function setquadobj!(m::MosekMathProgModel, rowidx,colidx,quadval)
   putqobj(m.task,qosubi,qosubj,convert(Array{Float64},qoval))
 end
 
+
+# Note: 
+#  If the quadratic terms define a quadratic cone, the linear terms, sense and rhs are ignored.
 function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx, quadcolidx, quadval, sense, rhs) 
   subj = linearidx
   valj = linearval
@@ -396,35 +417,93 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
   qcksubj = copy(quadcolidx)
   qckval  = quadval
 
+  # detect SOCP form
 
-  for i=1:length(quadrowidx)
-    if qcksubj[i] > qcksubi[i]
-      cj = qcksubj[i]
-      qcksubj[i] = qcksubi[i]
-      qcksubi[i] = cj
-    elseif qcksubj[i] == qcksubi[i]
-      qckval[i] = qckval[i] * 2
+  ct,x = 
+    begin
+      let num_posonediag = 0, 
+          offdiag_idx    = 0, 
+          negdiag_idx    = 0
+        for i=1:length(qcksubi) 
+          if qcksubi[i] == qcksubj[i] 
+            if abs(qckval[i]-1.0) < 1e-12 
+              num_posonediag += 1 
+            elseif abs(qckval[i]+1.0) < 1e-12 
+              negdiag_idx = i
+            end
+          elseif qcksubi[i] != qcksubj[i]
+            if abs(qckval[i]+1.0) < 1e-12 
+              offdiag_idx = i 
+            end
+          end
+        end
+        
+        if num_posonediag == length(qcksubj)-1 && negdiag_idx > 0
+          x = Array(Int64,length(qcksubj))
+          x[1] = qcksubj[negdiag_idx]
+          for i=1:negdiag_idx-1 x[i+1] = qcksubj[i] end
+          for i=negdiag_idx+1:length(qcksubj) x[i] = qcksubj[i] end
+
+          MSK_CT_QUAD, x
+        elseif num_posonediag == length(qcksubj)-2 && offdiag_idx > 0
+          x = Array(Int64,length(qcksubj))
+          x[1] = qcksubi[offdiag_idx]
+          x[2] = qcksubj[offdiag_idx]
+          for i=1:offdiag_idx-1 x[i+2] = qcksubj[i] end
+          for i=offdiag_idx+1:length(qcksubj) x[i+1] = qcksubj[i] end
+
+          MSK_CT_RQUAD, x
+        else
+          -1,()
+        end
+      end
+    end
+
+  if     ct == MSK_CT_QUAD
+    appendcone(m.task, ct, 0.0, x)
+  elseif ct == MSK_CT_RQUAD
+    appendvars(m.task,1) # create variable z
+    appendvars(m.task,1)
+    nvar  = getnumvar(m.task)
+    ncon  = getnumcon(m.task)
+    z     = nvar
+    
+    # set z = 1/2 x0
+    putarow(m.task, ncon, [ x[1], z ], [ 1.0, -1.0])
+    putvarbound(m.task, z, MSK_BK_FR, 0.0, 0.0)
+    putconbound(m.task, ncon, MSK_BK_FX, 0.0, 0.0)
+
+    # create cone 2*z*x1 > sum_(i=2) xi^2
+    x[1] = z
+    appendcone(m.task, ct, 0.0, x)
+  else
+    for i=1:length(quadrowidx)
+      if qcksubj[i] > qcksubi[i]
+        cj = qcksubj[i]
+        qcksubj[i] = qcksubi[i]
+        qcksubi[i] = cj
+      elseif qcksubj[i] == qcksubi[i]
+        qckval[i] = qckval[i] * 2
+      end
+    end
+
+    k = getnumcon(m.task)+1
+    appendcons(m.task,1)
+
+    putarow(m.task, k, convert(Array{Float64},subj), convert(Array{Float64},valj))
+    putqconk(m.task,k, qcksubi,qcksubj,qckval)
+
+    if sense == '<'
+      putconbound(m.task,k,MSK_BK_UP, -Inf,convert(Float64,rhs))
+    elseif sense == '>'
+      putconbound(m.task,k,MSK_BK_LO, convert(Float64,rhs),Inf)
+    else
+      putconbound(m.task,k,MSK_BK_FR, -Inf,Inf)
     end
   end
-
-
-  k = getnumcon(m.task)+1
-  appendcons(m.task,1)
-
-  putarow(m.task, k, subj, valj)
-  putqconk(m.task,k, qcksubi,qcksubj,qckval)
-
-  if sense == '<'
-    putconbound(m.task,k,MSK_BK_UP, -Inf,convert(Float64,rhs))
-  elseif sense == '>'
-    putconbound(m.task,k,MSK_BK,LO, convert(Float64,rhs),Inf)
-  else
-    putconbound(m.task,k,MSK_BK,FR, -Inf,Inf)
-  end
-  writedata(m.task,"mskprob.opf")
 end
 
-
 end
+
 
 
