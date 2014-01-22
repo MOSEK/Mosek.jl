@@ -52,7 +52,7 @@ Furthermore, to run an optimization a license is required (these are free for ac
 Documentation
 -------------
 
-All functions and constants in the Mosek.jl are briefly documented [here](https://github.com/IainNZ/Mosek.jl/wiki/Mosek-Functions).
+All functions and constants in the Mosek.jl are briefly documented [here](doc/Mosek-Functions).
 
 For a more complete description of functions, please refer to 
 [the MOSEK C API documentation](http://docs.mosek.com/7.0/capi/index.html).
