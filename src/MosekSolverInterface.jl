@@ -472,9 +472,10 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
 
   if     ct == MSK_CT_QUAD
     appendcone(m.task, ct, 0.0, x)
+    appendcons(m.task,1)
   elseif ct == MSK_CT_RQUAD
     appendvars(m.task,1) # create variable z
-    appendvars(m.task,1)
+    appendcons(m.task,1)
     nvar  = getnumvar(m.task)
     ncon  = getnumcon(m.task)
     z     = nvar
