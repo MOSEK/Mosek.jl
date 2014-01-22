@@ -12,6 +12,9 @@ export MosekSolver
 #    for this is pointless. Also, a variable is added, but this is filtered out in the results.
 #  - Loading an SOCP problem file will cause some funky problems as information on extra variables etc. is lost.
 #  - Dual information is currently useless.
+#
+#  - The concept of dual values is a bit shaky. Specifically; for a variable x there is a dual for the upper bound, 
+#    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
 
 require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
 importall MathProgSolverInterface
@@ -140,7 +143,7 @@ function compubk(bk,bu)
 end
 
 function setvarLB!(m::MosekMathProgModel, collb)
-  nvars = getnumvar(m.task)
+  nvars = m.numvar
   if nvars != length(collb)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
@@ -151,12 +154,12 @@ function setvarLB!(m::MosekMathProgModel, collb)
 end
 
 function getvarUB(m::MosekMathProgModel) 
-  bkx,blx,bux = getvarboundslice(m.task,1,getnumvar(m))  
+  bkx,blx,bux = getvarboundslice(m.task,1,m.numvar)  
   [ (if bkx[i] in [ MSK_BK_FR, MSK_BK_LO ] Inf else bux[i] end) for i=1:length(bkx) ] :: Array{Float64,1} 
 end
 
 function setvarUB!(m::MosekMathProgModel, colub) 
-  nvars = getnumvar(m.task)
+  nvars = m.numvar
   if nvars != length(colub)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
@@ -167,7 +170,7 @@ function setvarUB!(m::MosekMathProgModel, colub)
 end
 
 function getconstrLB(m::MosekMathProgModel) 
-  bkc,blc,buc = getconboundslice(m.task,1,getnumvar(m))  
+  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m))  
   [ (if bkc[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blc[i] end) for i=1:length(bkc) ] :: Array{Float64,1}
 end
 
@@ -183,7 +186,7 @@ function setconstrLB!(m::MosekMathProgModel, rowlb)
 end
 
 function getconstrUB(m::MosekMathProgModel) 
-  bkc,blc,buc = getconboundslice(m.task,1,getnumvar(m))  
+  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m))  
   [ (if bkc[i] in [ MSK_BK_FR, MSK_BK_LO ] Inf else buc[i] end) for i=1:length(bkc) ] :: Array{Float64,1} 
 end
 
@@ -203,7 +206,7 @@ function getobj(m::MosekMathProgModel)
 end
 
 function setobj!(m::MosekMathProgModel, obj::Array{Float64,1})     
-  nvars = getnumvar(m.task)
+  nvars = m.numvar
   if size(obj,1) != nvars
     throw(MosekMathProgModelError("Objective vector has wrong size"))
   end
@@ -242,7 +245,7 @@ function getsense(m::MosekMathProgModel)
   end
 end
 
-numvar(m::MosekMathProgModel) = getnumvar(m.task)
+numvar(m::MosekMathProgModel) = m.numvar
 numconstr(m::MosekMathProgModel) = getnumcon(m.task)
 #optimize!(m::MosekMathProgModel) = optimize(m.task)
 function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
@@ -312,7 +315,7 @@ function getsolution(m::MosekMathProgModel)
   end
   solsta = getsolsta(m.task,soldef)
   if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_PRIM_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_PRIM_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
-    getxx(m.task,soldef)
+    getxxslice(m.task,soldef,1,m.numvar+1)
   else
     throw(MosekMathProgModelError("No solution available")) 
   end
@@ -336,7 +339,11 @@ function getreducedcosts(m::MosekMathProgModel)
   solsta = getsolsta(m.task,soldef)
 
   if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
-    getslx(m.task,soldef) - getsux(m.task,soldef)
+    if soldef == MSK_SOL_ITR
+      getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1) + getsnxslice(m.task,soldef,1,m.numvar+1)
+    else
+      getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1)
+    end
   else
     throw(MosekMathProgModelError("No solution available")) 
   end
@@ -358,7 +365,11 @@ function getinfeasibilityray(m::MosekMathProgModel)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
   solsta = getsolsta(m.task,soldef)
   if solsta in [ MSK_SOL_STA_PRIM_INFEAS_CER, MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
-    getsux(m.task,soldef) - getslx(m.task,soldef)
+    if soldef == MSK_SOL_ITR
+      getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1) + getsnxslice(m.task,soldef,1,m.numvar+1)
+    else
+      getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1)
+    end
   else
     throw(MosekMathProgModelError("No solution available")) 
   end
@@ -369,7 +380,7 @@ function getunboundedray(m::MosekMathProgModel)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
   solsta = getsolsta(m.task,soldef)
   if solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER, MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
-    getxx(m.task,soldef)
+    getxxslice(m.task,soldef,1,m.numvar+1)
   else
     throw(MosekMathProgModelError("No solution available")) 
   end
