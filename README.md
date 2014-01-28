@@ -22,9 +22,10 @@ use. See [here](http://mosek.com/resources/academic-license/) for details.
 
 Installation
 ------------
-Mosek.jl is not yet in the official Julia repository. To install from the development repository use
 
-    Pkg.clone("https://github.com/IainNZ/Mosek.jl.git")
+Use the Julia package manager to install Mosek.jl:
+
+    Pkg.add("Mosek")
 
 When the Mosek module is loaded it attepts to locate the relevant MOSEK libraries. Mosek.jl will first look 
 for an environment variable `MOSEKBINDIR`. If this is present it must point to the `bin/` directory
