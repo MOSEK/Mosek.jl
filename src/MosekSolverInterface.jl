@@ -353,7 +353,7 @@ function getconstrduals(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
   solsta = getsolsta(m.task,soldef)
-  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+  if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_PRIM_INFEAS_CER ]
     gety(m.task,soldef)
   else
     throw(MosekMathProgModelError("No solution available")) 
@@ -448,7 +448,7 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
             end
           end
         end
-        
+       
         if num_posonediag == length(qcksubj)-1 && negdiag_idx > 0
           x = Array(Int64,length(qcksubj))
           x[1] = qcksubj[negdiag_idx]
@@ -456,8 +456,8 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
           for i=negdiag_idx+1:length(qcksubj) x[i] = qcksubj[i] end
 
           MSK_CT_QUAD, x
-        elseif num_posonediag == length(qcksubj)-2 && offdiag_idx > 0
-          x = Array(Int64,length(qcksubj))
+        elseif num_posonediag == length(qcksubj)-1 && offdiag_idx > 0
+          x = Array(Int64,length(qcksubj)+1)
           x[1] = qcksubi[offdiag_idx]
           x[2] = qcksubj[offdiag_idx]
           for i=1:offdiag_idx-1 x[i+2] = qcksubj[i] end
@@ -470,23 +470,35 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
       end
     end
 
-  if     ct == MSK_CT_QUAD
-    appendcone(m.task, ct, 0.0, x)
-  elseif ct == MSK_CT_RQUAD
-    appendvars(m.task,1) # create variable z
-    appendvars(m.task,1)
-    nvar  = getnumvar(m.task)
-    ncon  = getnumcon(m.task)
-    z     = nvar
-    
-    # set z = 1/2 x0
-    putarow(m.task, ncon, [ x[1], z ], [ 1.0, -1.0])
-    putvarbound(m.task, z, MSK_BK_FR, 0.0, 0.0)
-    putconbound(m.task, ncon, MSK_BK_FX, 0.0, 0.0)
+  if     ct == MSK_CT_QUAD || ct == MSK_CT_RQUAD
+    nvar  = getnumvar(m.task)+1
+    ncon  = getnumcon(m.task)+1
 
-    # create cone 2*z*x1 > sum_(i=2) xi^2
-    x[1] = z
-    appendcone(m.task, ct, 0.0, x)
+    n = length(x)
+    z = nvar
+    
+    appendvars(m.task,n) # create variable z
+    appendcons(m.task,n)
+    putvarboundslice(m.task, nvar,nvar+n, convert(Array{Int32},[ MSK_BK_FR for i=1:n ]) , zeros(n),zeros(n))
+    cof = Array(Float64,2,n)
+    cof[1,:] =  1.0
+    cof[2,:] = -1.0
+    if ct == MSK_CT_RQUAD
+      cof[1,1] =  0.5;
+    end
+
+    subj = Array(Int32,2,n)
+    subj[1,:] = x
+    subj[2,:] = z:(z+n-1)
+
+    ptrb = [1:n]*2-1
+    ptre = [1:n]*2+1
+
+
+    putarowslice(m.task, ncon, ncon+n, ptrb, ptre, subj[:], cof[:] )
+    putconboundslice(m.task, ncon, ncon+n, convert(Array{Int32},[ MSK_BK_FX for i=1:n ]), zeros(n), zeros(n) )
+
+    appendcone(m.task, ct, 0.0, [z:z+n-1])
   else
     for i=1:length(quadrowidx)
       if qcksubj[i] > qcksubi[i]
