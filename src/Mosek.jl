@@ -7,42 +7,6 @@ module Mosek
     makeenv, maketask,
     MosekError
   
-
-  #require(joinpath(Pkg.dir("MathProgBase"),"src","LinprogSolverInterface.jl"))
-  
-  # I am not entirely sure where this code belongs... In deps/build.jl? How to do that?
-  # search paths should be something like this: 
-  #   1) library path (DYLD_LIBRARY_PATH, LD_LIBRARY_PATH or PATH)
-  #   2) $HOME/mosek/7/tools/platform/[platformname]/bin/[libmosekname]
-  #   3) 
-#  const libmosek =
-#    begin
-#      libname,pfname = 
-#      if     OS_NAME == :Linux
-#        if WORD_SIZE == 32 "libmosek","linux32x86"
-#        else               "libmosek64","linux64x86"
-#        end
-#      elseif OS_NAME == :Darwin
-#        "libmosek64","osx64x86"
-#      elseif OS_NAME == :Windows
-#        if WORD_SIZE == 32 "libmosek7_0","win32x86"
-#        else               "libmosek64_7_0","win64x86"
-#        end
-#      else
-#        error("Platform not supported")
-#      end
-#
-#      dfltlibpath = joinpath(ENV["HOME"],"mosek","7","tools","platform",pfname,"bin")
-#     
-#      msklib = find_library([libname],[])
-#      if msklib == ""
-#        msklib = find_library([libname],[dfltlibpath])
-#      end
-#      msklib
-#    end
-
-  # Temporary: use BINDEPS to find path  
-
   # A macro to make calling C API a little cleaner
   macro msk_ccall(func, args...)
     f = "MSK_$(func)"
