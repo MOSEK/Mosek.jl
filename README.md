@@ -22,9 +22,10 @@ use. See [here](http://mosek.com/resources/academic-license/) for details.
 
 Installation
 ------------
-Mosek.jl is not yet in the official Julia repository. To install from the development repository use
 
-    Pkg.clone("https://github.com/IainNZ/Mosek.jl.git")
+Use the Julia package manager to install Mosek.jl:
+
+    Pkg.add("Mosek")
 
 When the Mosek module is loaded it attepts to locate the relevant MOSEK libraries. Mosek.jl will first look 
 for an environment variable `MOSEKBINDIR`. If this is present it must point to the `bin/` directory
@@ -52,7 +53,7 @@ Furthermore, to run an optimization a license is required (these are free for ac
 Documentation
 -------------
 
-All functions and constants in the Mosek.jl are briefly documented [here](https://github.com/IainNZ/Mosek.jl/wiki/Mosek-Functions).
+All functions and constants in the Mosek.jl are briefly documented [here](doc/Mosek-Functions.rst).
 
 For a more complete description of functions, please refer to 
 [the MOSEK C API documentation](http://docs.mosek.com/7.0/capi/index.html).
