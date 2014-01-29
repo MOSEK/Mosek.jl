@@ -1,6 +1,9 @@
 module Mosek
-  using BinDeps
-  @BinDeps.load_dependencies
+  if isfile(joinpath(Pkg.dir("Mosek"),"deps","deps.jl"))
+    include("../deps/deps.jl")
+  else
+    error("Mosek not properly installed. Please run Pkg.build(\"Mosek\")")
+  end
 
 
   export 
