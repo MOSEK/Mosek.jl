@@ -332,7 +332,6 @@ function getconstrsolution(m::MosekMathProgModel)
   end
 end
 
-# NOTE: is the dual in your model slx-sux or sux-slx?
 function getreducedcosts(m::MosekMathProgModel) 
   soldef = getsoldef(m)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
@@ -340,9 +339,14 @@ function getreducedcosts(m::MosekMathProgModel)
 
   if solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_DUAL_FEAS, MSK_SOL_STA_PRIM_AND_DUAL_FEAS, MSK_SOL_STA_NEAR_OPTIMAL, MSK_SOL_STA_NEAR_DUAL_FEAS, MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
     if soldef == MSK_SOL_ITR
-      getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1) + getsnxslice(m.task,soldef,1,m.numvar+1)
+      vals = getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1) + getsnxslice(m.task,soldef,1,m.numvar+1)
     else
-      getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1)
+      vals = getsuxslice(m.task,soldef,1,m.numvar+1) - getslxslice(m.task,soldef,1,m.numvar+1)
+    end
+    if getsense(m) == :Min
+      return vals
+    else
+      return -vals
     end
   else
     throw(MosekMathProgModelError("No solution available")) 
