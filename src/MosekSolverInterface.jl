@@ -42,7 +42,7 @@ end
 function model(s::MosekSolver)
   # TODO: process solver options
   task = maketask(Mosek.msk_global_env)
-  return MosekMathProgModel(task,0)
+  return MosekMathProgModel(task,0,MosekMathProgModel_LINR)
 end
 
 # NOTE: This method will load data into an existing task, but
@@ -476,10 +476,10 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
     end
 
   if     ct == MSK_CT_QUAD || ct == MSK_CT_RQUAD
-    if     m.probtype == MosekMathProg_QOQP
+    if     m.probtype == MosekMathProgModel_QOQP
       throw(MosekMathProgModelError("Cannot mix conic and quadratic terms"))
-    elseif m.probtype == MosekMathProg_LINR
-      m.probtype = MosekMathProg_SOCP
+    elseif m.probtype == MosekMathProgModel_LINR
+      m.probtype = MosekMathProgModel_SOCP
     end
     # SOCP and SDP can be mixed, SDP includes SOCP
 
@@ -512,10 +512,10 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
 
     appendcone(m.task, ct, 0.0, [z:z+n-1])
   else
-    if     m.probtype == MosekMathProg_SOCP || m.probtype == MosekMathProg_SDP 
+    if     m.probtype == MosekMathProgModel_SOCP || m.probtype == MosekMathProgModel_SDP 
       throw(MosekMathProgModelError("Cannot mix conic and quadratic terms"))
-    elseif m.probtype == MosekMathProg_LINR
-      m.probtype = MosekMathProg_QOQP
+    elseif m.probtype == MosekMathProgModel_LINR
+      m.probtype = MosekMathProgModel_QOQP
     end 
 
     for i=1:length(quadrowidx)
