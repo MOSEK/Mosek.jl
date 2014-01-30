@@ -2576,8 +2576,8 @@ end
 
 putacolslice(task:: MSKtask,first,last,ptrb:: Array,ptre:: Array,asub:: Array,aval:: Array{Float64}) = putacolslice(convert(MSKtask,task),convert(Int32,first),convert(Int32,last),convert(Array{Int64},ptrb),convert(Array{Int64},ptre),convert(Array{Int32},asub),convert(Array{Float64},aval))
 function putacolslice(task:: MSKtask,first,last,A:: SparseMatrixCSC{Float64})
-  ptrb = A.colptr[1:size(A,2)-1]
-  ptre = A.colptr[2:size(A,2)]
+  ptrb = A.colptr[1:size(A,2)]
+  ptre = A.colptr[2:size(A,2)+1]
   asub = A.rowval
   aval = A.nzval
   putacolslice(task,first,last,ptrb,ptre,asub,aval)
