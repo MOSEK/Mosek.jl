@@ -78,4 +78,4 @@ else
       libmosek,
       os = :Windows)
 end
-@BinDeps.install
+@BinDeps.install [ :libmosek => :libmosek ]
