@@ -27,6 +27,7 @@ MosekMathProgModel_SDP  = 3
 type MosekMathProgModel <: AbstractMathProgModel 
   task :: Mosek.MSKtask
   numvar :: Int64
+  probtype :: Int
 end
 
 immutable MosekSolver <: AbstractMathProgSolver
@@ -475,6 +476,13 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
     end
 
   if     ct == MSK_CT_QUAD || ct == MSK_CT_RQUAD
+    if     m.probtype == MosekMathProg_QOQP
+      throw(MosekMathProgModelError("Cannot mix conic and quadratic terms"))
+    elseif m.probtype == MosekMathProg_LINR
+      m.probtype = MosekMathProg_SOCP
+    end
+    # SOCP and SDP can be mixed, SDP includes SOCP
+
     nvar  = getnumvar(m.task)+1
     ncon  = getnumcon(m.task)+1
 
@@ -504,6 +512,12 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
 
     appendcone(m.task, ct, 0.0, [z:z+n-1])
   else
+    if     m.probtype == MosekMathProg_SOCP || m.probtype == MosekMathProg_SDP 
+      throw(MosekMathProgModelError("Cannot mix conic and quadratic terms"))
+    elseif m.probtype == MosekMathProg_LINR
+      m.probtype = MosekMathProg_QOQP
+    end 
+
     for i=1:length(quadrowidx)
       if qcksubj[i] > qcksubi[i]
         cj = qcksubj[i]
