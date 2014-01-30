@@ -1,5 +1,5 @@
 
 
 include("apitest.jl")
-include("mathprogtest")
+include("mathprogtest.jl")
 
