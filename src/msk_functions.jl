@@ -2440,7 +2440,8 @@ function optimizeconcurrent(task_:: MSKtask,taskarray_:: Array{MSKtask})
   num_ = minimum([ length(taskarray_) ])
   __tmp_var_0 = (num_)
   if length(taskarray_) < __tmp_var_0
-    throw(BoundError("Array argument taskarray is not long enough"))
+    println("Array argument taskarray is not long enough")
+    throw(BoundsError())
   end
   _taskarray_tmp_:: Ptr{Void} = [ __tmp_var_1.task for __tmp_var_1 = taskarray_ ]
   res = @msk_ccall( "optimizeconcurrent2",Int32,(Ptr{Void},Int32,Ptr{Ptr{Void}},),task_.task,num_,_taskarray_tmp)
@@ -2471,19 +2472,23 @@ end
 function primalrepair(task_:: MSKtask,wlc_:: Array{Float64},wuc_:: Array{Float64},wlx_:: Array{Float64},wux_:: Array{Float64})
   __tmp_var_0 = getnumcon(task_)
   if length(wlc_) < __tmp_var_0
-    throw(BoundError("Array argument wlc is not long enough"))
+    println("Array argument wlc is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = getnumcon(task_)
   if length(wuc_) < __tmp_var_1
-    throw(BoundError("Array argument wuc is not long enough"))
+    println("Array argument wuc is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = getnumvar(task_)
   if length(wlx_) < __tmp_var_2
-    throw(BoundError("Array argument wlx is not long enough"))
+    println("Array argument wlx is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_3 = getnumvar(task_)
   if length(wux_) < __tmp_var_3
-    throw(BoundError("Array argument wux is not long enough"))
+    println("Array argument wux is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "primalrepair",Int32,(Ptr{Void},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,wlc_,wuc_,wlx_,wux_)
   if res != MSK_RES_OK
@@ -2580,11 +2585,13 @@ end
 function putacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Array{Int64},ptre_:: Array{Int64},asub_:: Array{Int32},aval_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(ptrb_) < __tmp_var_0
-    throw(BoundError("Array argument ptrb is not long enough"))
+    println("Array argument ptrb is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = ((last_) - (first_))
   if length(ptre_) < __tmp_var_1
-    throw(BoundError("Array argument ptre is not long enough"))
+    println("Array argument ptre is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = if (typeof(asub_) != Array{Int32}) convert(Array{Int32},asub_) else asub_ end
   res = @msk_ccall( "putacolslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_-1,ptre_-1,__tmp_var_2-1,aval_)
@@ -2668,11 +2675,13 @@ end
 function putarowslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Array{Int64},ptre_:: Array{Int64},asub_:: Array{Int32},aval_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(ptrb_) < __tmp_var_0
-    throw(BoundError("Array argument ptrb is not long enough"))
+    println("Array argument ptrb is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = ((last_) - (first_))
   if length(ptre_) < __tmp_var_1
-    throw(BoundError("Array argument ptre is not long enough"))
+    println("Array argument ptre is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = if (typeof(asub_) != Array{Int32}) convert(Array{Int32},asub_) else asub_ end
   res = @msk_ccall( "putarowslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_-1,ptre_-1,__tmp_var_2-1,aval_)
@@ -2686,27 +2695,32 @@ putbarablocktriplet(task:: MSKtask,num,subi:: Array,subj:: Array,subk:: Array,su
 function putbarablocktriplet(task_:: MSKtask,num_:: Int64,subi_:: Array{Int32},subj_:: Array{Int32},subk_:: Array{Int32},subl_:: Array{Int32},valijkl_:: Array{Float64})
   __tmp_var_0 = (num_)
   if length(subi_) < __tmp_var_0
-    throw(BoundError("Array argument subi is not long enough"))
+    println("Array argument subi is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = if (typeof(subi_) != Array{Int32}) convert(Array{Int32},subi_) else subi_ end
   __tmp_var_2 = (num_)
   if length(subj_) < __tmp_var_2
-    throw(BoundError("Array argument subj is not long enough"))
+    println("Array argument subj is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_3 = if (typeof(subj_) != Array{Int32}) convert(Array{Int32},subj_) else subj_ end
   __tmp_var_4 = (num_)
   if length(subk_) < __tmp_var_4
-    throw(BoundError("Array argument subk is not long enough"))
+    println("Array argument subk is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_5 = if (typeof(subk_) != Array{Int32}) convert(Array{Int32},subk_) else subk_ end
   __tmp_var_6 = (num_)
   if length(subl_) < __tmp_var_6
-    throw(BoundError("Array argument subl is not long enough"))
+    println("Array argument subl is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_7 = if (typeof(subl_) != Array{Int32}) convert(Array{Int32},subl_) else subl_ end
   __tmp_var_8 = (num_)
   if length(valijkl_) < __tmp_var_8
-    throw(BoundError("Array argument valijkl is not long enough"))
+    println("Array argument valijkl is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putbarablocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,__tmp_var_1-1,__tmp_var_3-1,__tmp_var_5-1,__tmp_var_7-1,valijkl_)
   if res != MSK_RES_OK
@@ -2729,22 +2743,26 @@ putbarcblocktriplet(task:: MSKtask,num,subj:: Array,subk:: Array,subl:: Array,va
 function putbarcblocktriplet(task_:: MSKtask,num_:: Int64,subj_:: Array{Int32},subk_:: Array{Int32},subl_:: Array{Int32},valjkl_:: Array{Float64})
   __tmp_var_0 = (num_)
   if length(subj_) < __tmp_var_0
-    throw(BoundError("Array argument subj is not long enough"))
+    println("Array argument subj is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = if (typeof(subj_) != Array{Int32}) convert(Array{Int32},subj_) else subj_ end
   __tmp_var_2 = (num_)
   if length(subk_) < __tmp_var_2
-    throw(BoundError("Array argument subk is not long enough"))
+    println("Array argument subk is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_3 = if (typeof(subk_) != Array{Int32}) convert(Array{Int32},subk_) else subk_ end
   __tmp_var_4 = (num_)
   if length(subl_) < __tmp_var_4
-    throw(BoundError("Array argument subl is not long enough"))
+    println("Array argument subl is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_5 = if (typeof(subl_) != Array{Int32}) convert(Array{Int32},subl_) else subl_ end
   __tmp_var_6 = (num_)
   if length(valjkl_) < __tmp_var_6
-    throw(BoundError("Array argument valjkl is not long enough"))
+    println("Array argument valjkl is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putbarcblocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,__tmp_var_1-1,__tmp_var_3-1,__tmp_var_5-1,valjkl_)
   if res != MSK_RES_OK
@@ -2767,7 +2785,8 @@ putbarsj(task:: MSKtask,whichsol:: Int32,j,barsj:: Array{Float64}) = putbarsj(co
 function putbarsj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32,barsj_:: Array{Float64})
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   if length(barsj_) < __tmp_var_0
-    throw(BoundError("Array argument barsj is not long enough"))
+    println("Array argument barsj is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putbarsj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_,j_-1,barsj_)
   if res != MSK_RES_OK
@@ -2789,7 +2808,8 @@ putbarxj(task:: MSKtask,whichsol:: Int32,j,barxj:: Array{Float64}) = putbarxj(co
 function putbarxj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32,barxj_:: Array{Float64})
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   if length(barxj_) < __tmp_var_0
-    throw(BoundError("Array argument barxj is not long enough"))
+    println("Array argument barxj is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putbarxj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_,j_-1,barxj_)
   if res != MSK_RES_OK
@@ -2822,15 +2842,18 @@ putboundslice(task:: MSKtask,con:: Int32,first,last,bk:: Array{Int32},bl:: Array
 function putboundslice(task_:: MSKtask,con_:: Int32,first_:: Int32,last_:: Int32,bk_:: Array{Int32},bl_:: Array{Float64},bu_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(bk_) < __tmp_var_0
-    throw(BoundError("Array argument bk is not long enough"))
+    println("Array argument bk is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = ((last_) - (first_))
   if length(bl_) < __tmp_var_1
-    throw(BoundError("Array argument bl is not long enough"))
+    println("Array argument bl is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = ((last_) - (first_))
   if length(bu_) < __tmp_var_2
-    throw(BoundError("Array argument bu is not long enough"))
+    println("Array argument bu is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putboundslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,con_,first_-1,last_-1,bk_,bl_,bu_)
   if res != MSK_RES_OK
@@ -2891,15 +2914,18 @@ putconboundslice(task:: MSKtask,first,last,bk:: Array{Int32},bl:: Array{Float64}
 function putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Array{Int32},bl_:: Array{Float64},bu_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(bk_) < __tmp_var_0
-    throw(BoundError("Array argument bk is not long enough"))
+    println("Array argument bk is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = ((last_) - (first_))
   if length(bl_) < __tmp_var_1
-    throw(BoundError("Array argument bl is not long enough"))
+    println("Array argument bl is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = ((last_) - (first_))
   if length(bu_) < __tmp_var_2
-    throw(BoundError("Array argument bu is not long enough"))
+    println("Array argument bu is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putconboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
   if res != MSK_RES_OK
@@ -2941,7 +2967,8 @@ putcslice(task:: MSKtask,first,last,slice:: Array{Float64}) = putcslice(convert(
 function putcslice(task_:: MSKtask,first_:: Int32,last_:: Int32,slice_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(slice_) < __tmp_var_0
-    throw(BoundError("Array argument slice is not long enough"))
+    println("Array argument slice is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putcslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,slice_)
   if res != MSK_RES_OK
@@ -3119,7 +3146,8 @@ end
 function putskc(task_:: MSKtask,whichsol_:: Int32,skc_:: Array{Int32})
   __tmp_var_0 = getnumcon(task_)
   if length(skc_) < __tmp_var_0
-    throw(BoundError("Array argument skc is not long enough"))
+    println("Array argument skc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putskc",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_,skc_)
   if res != MSK_RES_OK
@@ -3132,7 +3160,8 @@ putskcslice(task:: MSKtask,whichsol:: Int32,first,last,skc:: Array{Int32}) = put
 function putskcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,skc_:: Array{Int32})
   __tmp_var_0 = ((last_) - (first_))
   if length(skc_) < __tmp_var_0
-    throw(BoundError("Array argument skc is not long enough"))
+    println("Array argument skc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putskcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_,first_-1,last_-1,skc_)
   if res != MSK_RES_OK
@@ -3144,7 +3173,8 @@ end
 function putskx(task_:: MSKtask,whichsol_:: Int32,skx_:: Array{Int32})
   __tmp_var_0 = getnumvar(task_)
   if length(skx_) < __tmp_var_0
-    throw(BoundError("Array argument skx is not long enough"))
+    println("Array argument skx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putskx",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_,skx_)
   if res != MSK_RES_OK
@@ -3157,7 +3187,8 @@ putskxslice(task:: MSKtask,whichsol:: Int32,first,last,skx:: Array{Int32}) = put
 function putskxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,skx_:: Array{Int32})
   __tmp_var_0 = ((last_) - (first_))
   if length(skx_) < __tmp_var_0
-    throw(BoundError("Array argument skx is not long enough"))
+    println("Array argument skx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putskxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_,first_-1,last_-1,skx_)
   if res != MSK_RES_OK
@@ -3169,7 +3200,8 @@ end
 function putslc(task_:: MSKtask,whichsol_:: Int32,slc_:: Array{Float64})
   __tmp_var_0 = getnumcon(task_)
   if length(slc_) < __tmp_var_0
-    throw(BoundError("Array argument slc is not long enough"))
+    println("Array argument slc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putslc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,slc_)
   if res != MSK_RES_OK
@@ -3182,7 +3214,8 @@ putslcslice(task:: MSKtask,whichsol:: Int32,first,last,slc:: Array{Float64}) = p
 function putslcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,slc_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(slc_) < __tmp_var_0
-    throw(BoundError("Array argument slc is not long enough"))
+    println("Array argument slc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putslcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,slc_)
   if res != MSK_RES_OK
@@ -3194,7 +3227,8 @@ end
 function putslx(task_:: MSKtask,whichsol_:: Int32,slx_:: Array{Float64})
   __tmp_var_0 = getnumvar(task_)
   if length(slx_) < __tmp_var_0
-    throw(BoundError("Array argument slx is not long enough"))
+    println("Array argument slx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putslx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,slx_)
   if res != MSK_RES_OK
@@ -3207,7 +3241,8 @@ putslxslice(task:: MSKtask,whichsol:: Int32,first,last,slx:: Array{Float64}) = p
 function putslxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,slx_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(slx_) < __tmp_var_0
-    throw(BoundError("Array argument slx is not long enough"))
+    println("Array argument slx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putslxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,slx_)
   if res != MSK_RES_OK
@@ -3219,7 +3254,8 @@ end
 function putsnx(task_:: MSKtask,whichsol_:: Int32,sux_:: Array{Float64})
   __tmp_var_0 = getnumvar(task_)
   if length(sux_) < __tmp_var_0
-    throw(BoundError("Array argument sux is not long enough"))
+    println("Array argument sux is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putsnx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,sux_)
   if res != MSK_RES_OK
@@ -3232,7 +3268,8 @@ putsnxslice(task:: MSKtask,whichsol:: Int32,first,last,snx:: Array{Float64}) = p
 function putsnxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,snx_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(snx_) < __tmp_var_0
-    throw(BoundError("Array argument snx is not long enough"))
+    println("Array argument snx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putsnxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,snx_)
   if res != MSK_RES_OK
@@ -3278,7 +3315,8 @@ end
 function putsuc(task_:: MSKtask,whichsol_:: Int32,suc_:: Array{Float64})
   __tmp_var_0 = getnumcon(task_)
   if length(suc_) < __tmp_var_0
-    throw(BoundError("Array argument suc is not long enough"))
+    println("Array argument suc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putsuc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,suc_)
   if res != MSK_RES_OK
@@ -3291,7 +3329,8 @@ putsucslice(task:: MSKtask,whichsol:: Int32,first,last,suc:: Array{Float64}) = p
 function putsucslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,suc_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(suc_) < __tmp_var_0
-    throw(BoundError("Array argument suc is not long enough"))
+    println("Array argument suc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putsucslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,suc_)
   if res != MSK_RES_OK
@@ -3303,7 +3342,8 @@ end
 function putsux(task_:: MSKtask,whichsol_:: Int32,sux_:: Array{Float64})
   __tmp_var_0 = getnumvar(task_)
   if length(sux_) < __tmp_var_0
-    throw(BoundError("Array argument sux is not long enough"))
+    println("Array argument sux is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putsux",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,sux_)
   if res != MSK_RES_OK
@@ -3316,7 +3356,8 @@ putsuxslice(task:: MSKtask,whichsol:: Int32,first,last,sux:: Array{Float64}) = p
 function putsuxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,sux_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(sux_) < __tmp_var_0
-    throw(BoundError("Array argument sux is not long enough"))
+    println("Array argument sux is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putsuxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,sux_)
   if res != MSK_RES_OK
@@ -3357,15 +3398,18 @@ putvarboundslice(task:: MSKtask,first,last,bk:: Array{Int32},bl:: Array{Float64}
 function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Array{Int32},bl_:: Array{Float64},bu_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(bk_) < __tmp_var_0
-    throw(BoundError("Array argument bk is not long enough"))
+    println("Array argument bk is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = ((last_) - (first_))
   if length(bl_) < __tmp_var_1
-    throw(BoundError("Array argument bl is not long enough"))
+    println("Array argument bl is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = ((last_) - (first_))
   if length(bu_) < __tmp_var_2
-    throw(BoundError("Array argument bu is not long enough"))
+    println("Array argument bu is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putvarboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
   if res != MSK_RES_OK
@@ -3427,7 +3471,8 @@ putxcslice(task:: MSKtask,whichsol:: Int32,first,last,xc:: Array{Float64}) = put
 function putxcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,xc_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(xc_) < __tmp_var_0
-    throw(BoundError("Array argument xc is not long enough"))
+    println("Array argument xc is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putxcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,xc_)
   if res != MSK_RES_OK
@@ -3439,7 +3484,8 @@ end
 function putxx(task_:: MSKtask,whichsol_:: Int32,xx_:: Array{Float64})
   __tmp_var_0 = getnumvar(task_)
   if length(xx_) < __tmp_var_0
-    throw(BoundError("Array argument xx is not long enough"))
+    println("Array argument xx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putxx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,xx_)
   if res != MSK_RES_OK
@@ -3452,7 +3498,8 @@ putxxslice(task:: MSKtask,whichsol:: Int32,first,last,xx:: Array{Float64}) = put
 function putxxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,xx_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(xx_) < __tmp_var_0
-    throw(BoundError("Array argument xx is not long enough"))
+    println("Array argument xx is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putxxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,xx_)
   if res != MSK_RES_OK
@@ -3464,7 +3511,8 @@ end
 function puty(task_:: MSKtask,whichsol_:: Int32,y_:: Array{Float64})
   __tmp_var_0 = getnumcon(task_)
   if length(y_) < __tmp_var_0
-    throw(BoundError("Array argument y is not long enough"))
+    println("Array argument y is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "puty",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,y_)
   if res != MSK_RES_OK
@@ -3477,7 +3525,8 @@ putyslice(task:: MSKtask,whichsol:: Int32,first,last,y:: Array{Float64}) = putys
 function putyslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32,y_:: Array{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(y_) < __tmp_var_0
-    throw(BoundError("Array argument y is not long enough"))
+    println("Array argument y is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "putyslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,y_)
   if res != MSK_RES_OK
@@ -3546,19 +3595,23 @@ function relaxprimal(task_:: MSKtask,wlc_:: Array{Float64},wuc_:: Array{Float64}
   relaxedtask_ = Array(Ptr{Void},(1,))
   __tmp_var_0 = getnumcon(task_)
   if length(wlc_) < __tmp_var_0
-    throw(BoundError("Array argument wlc is not long enough"))
+    println("Array argument wlc is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = getnumcon(task_)
   if length(wuc_) < __tmp_var_1
-    throw(BoundError("Array argument wuc is not long enough"))
+    println("Array argument wuc is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = getnumvar(task_)
   if length(wlx_) < __tmp_var_2
-    throw(BoundError("Array argument wlx is not long enough"))
+    println("Array argument wlx is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_3 = getnumvar(task_)
   if length(wux_) < __tmp_var_3
-    throw(BoundError("Array argument wux is not long enough"))
+    println("Array argument wux is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "relaxprimal",Int32,(Ptr{Void},Ptr{Ptr{Void}},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,relaxedtask_,wlc_,wuc_,wlx_,wux_)
   if res != MSK_RES_OK
@@ -3660,12 +3713,14 @@ function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Ar
   __tmp_var_0 = [ numnz ]
   __tmp_var_1 = getnumcon(task_)
   if length(sub_) < __tmp_var_1
-    throw(BoundError("Array argument sub is not long enough"))
+    println("Array argument sub is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_2 = if (typeof(sub_) != Array{Int32}) convert(Array{Int32},sub_) else sub_ end
   __tmp_var_3 = getnumcon(task_)
   if length(val_) < __tmp_var_3
-    throw(BoundError("Array argument val is not long enough"))
+    println("Array argument val is not long enough")
+    throw(BoundsError())
   end
   res = @msk_ccall( "solvewithbasis",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,transp_,__tmp_var_0,__tmp_var_2-1,val_)
   if res != MSK_RES_OK
@@ -3837,7 +3892,8 @@ putlicensecode(env:: MSKenv,code:: Array) = putlicensecode(convert(MSKenv,env),c
 function putlicensecode(env_:: MSKenv,code_:: Array{Int32})
   __tmp_var_0 = MSK_LICENSE_BUFFER_LENGTH
   if length(code_) < __tmp_var_0
-    throw(BoundError("Array argument code is not long enough"))
+    println("Array argument code is not long enough")
+    throw(BoundsError())
   end
   __tmp_var_1 = if (typeof(code_) != Array{Int32}) convert(Array{Int32},code_) else code_ end
   res = @msk_ccall( "putlicensecode",Int32,(Ptr{Void},Ptr{Int32},),env_.env,__tmp_var_1)
