@@ -83,7 +83,7 @@ elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
     print("Primal or dual infeasibility.\n")
 elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
     print("Primal or dual infeasibility.\n")
-elseif MSK_SOL_STA_UNKNOWN:
+elseif MSK_SOL_STA_UNKNOWN
   print("Unknown solution status")
 else
   print("Other solution status")
