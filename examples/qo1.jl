@@ -70,7 +70,7 @@ solsta = getsolsta(task,MSK_SOL_ITR)
 
 if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                    MSK_SOL_STA_NEAR_OPTIMAL ]
-  xx = getxx(task,MSK_SOL_BAS)
+  xx = getxx(task,MSK_SOL_ITR)
   print("Optimal solution:")
   print(xx)
 elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
