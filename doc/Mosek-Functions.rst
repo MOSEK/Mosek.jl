@@ -137,7 +137,7 @@ appendconesseq
 * ``j:: Int32`` Index of the first variable in the first cone to be appended.
 
 
-Appends a multiple conic constraints to the problem.
+Appends multiple conic constraints to the problem.
 
 appendcons
 ----------
@@ -303,50 +303,6 @@ chgbound
 
 Changes the bounds for one constraint or variable.
 
-chgconbound
------------
-::
-
-    function chgconbound
-    ( task::   MSKtask,
-      i::      Int32,
-      lower::  Int32,
-      finite:: Int32,
-      value::  Float64 )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``i:: Int32`` Index of the constraint for which the bounds should be changed.
-* ``lower:: Int32`` If non-zero, then the lower bound is changed, otherwise
-                            the upper bound is changed.
-* ``finite:: Int32`` If non-zero, then the given value is assumed to be finite.
-* ``value:: Float64`` New value for the bound.
-
-
-Changes the bounds for one constraint.
-
-chgvarbound
------------
-::
-
-    function chgvarbound
-    ( task::   MSKtask,
-      j::      Int32,
-      lower::  Int32,
-      finite:: Int32,
-      value::  Float64 )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``j:: Int32`` Index of the variable for which the bounds should be changed.
-* ``lower:: Int32`` If non-zero, then the lower bound is changed, otherwise
-                            the upper bound is changed.
-* ``finite:: Int32`` If non-zero, then the given value is assumed to be finite.
-* ``value:: Float64`` New value for the bound.
-
-
-Changes the bounds for one variable.
-
 commitchanges
 -------------
 ::
@@ -389,7 +345,7 @@ deletesolution
 * ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
 
 
-Undefine a solution and frees the memory it uses.
+Undefines a solution and frees the memory it uses.
 
 dualsensitivity
 ---------------
@@ -626,7 +582,7 @@ getbarablocktriplet
 * ``subj:: Array{Int32}`` Symmetric matrix variable index.
 * ``subk:: Array{Int32}`` Block row index.
 * ``subl:: Array{Int32}`` Block column index.
-* ``valijkl:: Array{Float64}`` A list indexes   of the elements from symmetric matrix storage that appears in the weighted sum.
+* ``valijkl:: Array{Float64}`` A list indexes of the elements from symmetric matrix storage that appers in the weighted sum.
 
 
 Obtains barA in block triplet form.
@@ -646,7 +602,7 @@ getbaraidx
 * ``i:: Int32`` Row index of the element at position idx.
 * ``j:: Int32`` Column index of the element at position idx.
 * ``num:: Int64`` Number of terms in weighted sum that forms the element.
-* ``sub:: Array{Int64}`` A list indexes   of the elements from symmetric matrix storage that appears in the weighted sum.
+* ``sub:: Array{Int64}`` A list indexes of the elements from symmetric matrix storage that appers in the weighted sum.
 * ``weights:: Array{Float64}`` The weights associated with each term in the weighted sum.
 
 
@@ -715,7 +671,7 @@ getbarcblocktriplet
 * ``subj:: Array{Int32}`` Symmetric matrix variable index.
 * ``subk:: Array{Int32}`` Block row index.
 * ``subl:: Array{Int32}`` Block column index.
-* ``valijkl:: Array{Float64}`` A list indexes   of the elements from symmetric matrix storage that appears in the weighted sum.
+* ``valijkl:: Array{Float64}`` A list indexes of the elements from symmetric matrix storage that appers in the weighted sum.
 
 
 Obtains barc in block triplet form.
@@ -1080,7 +1036,7 @@ getconenameindex
 * ``index:: Int32`` If the name somename is assigned to a cone, then index is the name of the cone.
 
 
-Checks whether the name somename has been assigned  to any cone.
+Checks whether the name somename has been assigned to any cone.
 
 getconenamelen
 --------------
@@ -1132,7 +1088,7 @@ getconnameindex
 * ``index:: Int32`` If the name somename is assigned to a constraint, then index is the name of the constraint.
 
 
-Checks whether the name somename has been assigned  to any constraint.
+Checks whether the name somename has been assigned to any constraint.
 
 getconnamelen
 -------------
@@ -1565,7 +1521,7 @@ getmaxnumqnz
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrices.
+* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrixes.
 
 
 Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
@@ -2880,7 +2836,7 @@ getvarname
 
 * ``task:: MSKtask`` An optimization task.
 * ``j:: Int32`` Index.
-* ``name:: String`` Returns the required name.
+* ``name:: String`` Is assigned the required name.
 
 
 Obtains a name of a variable.
@@ -2901,7 +2857,7 @@ getvarnameindex
 * ``index:: Int32`` If the name somename is assigned to a variable, then index is the name of the variable.
 
 
-Checks whether the name somename has been assigned  to any variable.
+Checks whether the name somename has been assigned to any variable.
 
 getvarnamelen
 -------------
@@ -3126,7 +3082,7 @@ inputdata
 * ``aptrb:: Array{Int64}`` Row or column end pointers.
 * ``aptre:: Array{Int64}`` Row or column start pointers.
 * ``asub:: Array{Int32}`` Coefficient subscripts.
-* ``aval:: Array{Float64}`` Coefficient values.
+* ``aval:: Array{Float64}`` Coefficient coefficient values.
 * ``bkc:: Array{Int32}`` (`Enum boundkey`_) Bound keys for the constraints.
 * ``blc:: Array{Float64}`` Lower bounds for the constraints.
 * ``buc:: Array{Float64}`` Upper bounds for the constraints.
@@ -3224,21 +3180,6 @@ onesolutionsummary
 
 
 Prints a short summary for the specified solution.
-
-optimizeconcurrent
-------------------
-::
-
-    function optimizeconcurrent
-    ( task::      MSKtask,
-      taskarray:: Array{MSKtask} )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``taskarray:: Array{MSKtask}`` An array of tasks.
-
-
-Optimize a given task with several optimizers concurrently.
 
 optimizersummary
 ----------------
@@ -3354,7 +3295,7 @@ printdata
 * ``c:: Int32`` If non-zero the linear objective terms are printed.
 * ``qo:: Int32`` If non-zero the quadratic objective terms are printed.
 * ``a:: Int32`` If non-zero the linear constraint matrix is printed.
-* ``qc:: Int32`` If non-zero q'th     quadratic constraint terms are printed for the relevant constraints.
+* ``qc:: Int32`` If non-zero q'th quadratic constraint terms are printed for the relevant constraints.
 * ``bc:: Int32`` If non-zero the constraints bounds are printed.
 * ``bx:: Int32`` If non-zero the variable bounds are printed.
 * ``vartype:: Int32`` If non-zero the variable types are printed.
@@ -3374,6 +3315,40 @@ printparam
 
 
 Prints the current parameter settings.
+
+probtypetostr
+-------------
+::
+
+    function probtypetostr
+    ( task::     MSKtask,
+      probtype:: Int32 )
+    -> str
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``probtype:: Int32`` (`Enum problemtype`_) Problem type.
+* ``str:: String`` String corresponding to the problem type key.
+
+
+Obtains a string containing the name of a problem type given.
+
+prostatostr
+-----------
+::
+
+    function prostatostr
+    ( task::   MSKtask,
+      prosta:: Int32 )
+    -> str
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``prosta:: Int32`` (`Enum prosta`_) Problem status.
+* ``str:: String`` String corresponding to the status key.
+
+
+Obtains a string containing the name of a problem status given.
 
 putacol
 -------
@@ -3417,7 +3392,7 @@ putacollist
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the columns.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the columns.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient values.
+* ``aval:: Array{Float64}`` Coefficient coefficient values.
 * ``A:: SparseMatrixCSC{Float64}`` Sparse matrix defining the column values
 
 
@@ -3449,7 +3424,7 @@ putacolslice
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the columns.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the columns.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient values.
+* ``aval:: Array{Float64}`` Coefficient coefficient values.
 * ``A:: SparseMatrixCSC{Float64}`` Sparse matrix defining the column values
 
 
@@ -3479,25 +3454,6 @@ putaijlist
 ::
 
     function putaijlist
-    ( task::  MSKtask,
-      subi::  Array{Int32},
-      subj::  Array{Int32},
-      valij:: Array{Float64} )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``subi:: Array{Int32}`` Constraint indexes in which the change should occur.
-* ``subj:: Array{Int32}`` Variable indexes in which the change should occur.
-* ``valij:: Array{Float64}`` New coefficient values.
-
-
-Changes one or more coefficients in the linear constraint matrix.
-
-putaijlist64
-------------
-::
-
-    function putaijlist64
     ( task::  MSKtask,
       subi::  Array{Int32},
       subj::  Array{Int32},
@@ -3554,7 +3510,7 @@ putarowlist
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the rows or columns.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the rows or columns.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient values.
+* ``aval:: Array{Float64}`` Coefficient coefficient values.
 * ``At:: SparseMatrixCSC{Float64}`` Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
 
@@ -3586,7 +3542,7 @@ putarowslice
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the rows.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the rows.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient values.
+* ``aval:: Array{Float64}`` Coefficient coefficient values.
 * ``At:: SparseMatrixCSC{Float64}`` Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
 
@@ -3632,7 +3588,7 @@ putbaraij
 * ``task:: MSKtask`` An optimization task.
 * ``i:: Int32`` Row index of barA.
 * ``j:: Int32`` Column index of barA.
-* ``sub:: Array{Int64}`` See argument weights for an explanation.
+* ``sub:: Array{Int64}`` See argument weights for an explenation.
 * ``weights:: Array{Float64}`` Weights in the weighted sum.
 
 
@@ -3674,7 +3630,7 @@ putbarcj
 
 * ``task:: MSKtask`` An optimization task.
 * ``j:: Int32`` Index of the element in barc$ that should be changed.
-* ``sub:: Array{Int64}`` sub is list of indexes of those symmetric matrices appearing in sum.
+* ``sub:: Array{Int64}`` sub is list of indexes of those symmetric matrixes appearing in sum.
 * ``weights:: Array{Float64}`` The weights of the terms in the weighted sum.
 
 
@@ -4098,7 +4054,7 @@ putmaxnumqnz
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrices.
+* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrixes.
 
 
 Changes the size of the preallocated storage for quadratic terms.
@@ -5185,6 +5141,40 @@ setdefaults
 
 Resets all parameters values.
 
+sktostr
+-------
+::
+
+    function sktostr
+    ( task:: MSKtask,
+      sk::   Int32 )
+    -> str
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``sk:: Int32`` (`Enum stakey`_) A valid status key.
+* ``str:: String`` String corresponding to the status key.
+
+
+Obtains a status key string.
+
+solstatostr
+-----------
+::
+
+    function solstatostr
+    ( task::   MSKtask,
+      solsta:: Int32 )
+    -> str
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``solsta:: Int32`` (`Enum solsta`_) Solution status.
+* ``str:: String`` String corresponding to the solution status.
+
+
+Obtains a solution status string.
+
 solutiondef
 -----------
 ::
@@ -5434,6 +5424,22 @@ echointro
 
 Prints an intro to message stream.
 
+getbuildinfo
+------------
+::
+
+    function getbuildinfo
+    (  )
+    -> buildstate,builddate,buildtool
+
+
+* ``buildstate:: String`` State of binaries, i.e. a debug, release candidate or final release.
+* ``builddate:: String`` Date when the binaries were build.
+* ``buildtool:: String`` Tool(s) used to build the binaries.
+
+
+Obtains build information.
+
 getcodedesc
 -----------
 ::
@@ -5634,16 +5640,16 @@ MSK_ACC_VAR = 0
 
     Access data by columns (variable oriented)
 
-Enum blastranspose
-------------------
+Enum sensitivitytype
+--------------------
 
-MSK_BLAS_TRANSPOSE_NO = 0
+MSK_SENSITIVITY_TYPE_BASIS = 0
 
-    No transpose is applied.
+    Basis sensitivity analysis is performed.
 
-MSK_BLAS_TRANSPOSE_YES = 1
+MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION = 1
 
-    A transpose is applied.
+    Optimal partition sensitivity analysis is performed.
 
 Enum intpnthotstart
 -------------------
@@ -5784,7 +5790,7 @@ MSK_IPAR_ALLOC_ADD_QNZ = 0
 
 MSK_IPAR_ANA_SOL_BASIS = 1
 
-    Controls whether the basis matrix is analyzed in solution analyzer.
+    Controls whether the basis matrix is analyzed in solaution analyzer.
 
 MSK_IPAR_ANA_SOL_PRINT_VIOLATED = 2
 
@@ -6083,7 +6089,7 @@ MSK_IPAR_LOG_STORAGE = 70
 
 MSK_IPAR_MAX_NUM_WARNINGS = 71
 
-    Warning level. A higher value results in more warnings.
+    Waning level. A higher value results in more warnings.
 
 MSK_IPAR_MIO_BRANCH_DIR = 72
 
@@ -6162,7 +6168,7 @@ MSK_IPAR_MIO_NODE_SELECTION = 89
 
 MSK_IPAR_MIO_OPTIMIZER_MODE = 90
 
-    An experimental feature.
+    An exprimental feature.
 
 MSK_IPAR_MIO_PRESOLVE_AGGREGATE = 91
 
@@ -6176,434 +6182,450 @@ MSK_IPAR_MIO_PRESOLVE_USE = 93
 
     Controls whether presolve is performed by the mixed-integer optimizer.
 
-MSK_IPAR_MIO_RINS_MAX_NODES = 94
-
-    Maximum number of nodes in each call to RINS.
-
-MSK_IPAR_MIO_ROOT_OPTIMIZER = 95
+MSK_IPAR_MIO_ROOT_OPTIMIZER = 94
 
     Controls which optimizer is employed at the root node in the mixed-integer optimizer.
 
-MSK_IPAR_MIO_STRONG_BRANCH = 96
+MSK_IPAR_MIO_STRONG_BRANCH = 95
 
     The depth from the root in which strong branching is employed.
 
-MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER = 97
+MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER = 96
 
-    Controls whether the new multithreaded optimizer should be used for Mixed integer problems.
+    Controls wheter the new multithreaded optimizer should be used for Mixed integer problems.
 
-MSK_IPAR_MT_SPINCOUNT = 98
+MSK_IPAR_MT_SPINCOUNT = 97
 
     Set the number of iterations to spin before sleeping.
 
-MSK_IPAR_NONCONVEX_MAX_ITERATIONS = 99
+MSK_IPAR_NONCONVEX_MAX_ITERATIONS = 98
 
     Maximum number of iterations that can be used by the nonconvex optimizer.
 
-MSK_IPAR_NUM_THREADS = 100
+MSK_IPAR_NUM_THREADS = 99
 
     Controls the number of threads employed by the optimizer. If set to 0 the number of threads used will
     be equal to the number of cores detected on the machine.
 
-MSK_IPAR_OPF_MAX_TERMS_PER_LINE = 101
+MSK_IPAR_OPF_MAX_TERMS_PER_LINE = 100
 
     The maximum number of terms (linear and quadratic) per line when an OPF file is written.
 
-MSK_IPAR_OPF_WRITE_HEADER = 102
+MSK_IPAR_OPF_WRITE_HEADER = 101
 
     Write a text header with date and MOSEK version in an OPF file.
 
-MSK_IPAR_OPF_WRITE_HINTS = 103
+MSK_IPAR_OPF_WRITE_HINTS = 102
 
     Write a hint section with problem dimensions in the beginning of an OPF file.
 
-MSK_IPAR_OPF_WRITE_PARAMETERS = 104
+MSK_IPAR_OPF_WRITE_PARAMETERS = 103
 
     Write a parameter section in an OPF file.
 
-MSK_IPAR_OPF_WRITE_PROBLEM = 105
+MSK_IPAR_OPF_WRITE_PROBLEM = 104
 
     Write objective, constraints, bounds etc. to an OPF file.
 
-MSK_IPAR_OPF_WRITE_SOL_BAS = 106
+MSK_IPAR_OPF_WRITE_SOL_BAS = 105
 
     Controls what is written to the OPF files.
 
-MSK_IPAR_OPF_WRITE_SOL_ITG = 107
+MSK_IPAR_OPF_WRITE_SOL_ITG = 106
 
     Controls what is written to the OPF files.
 
-MSK_IPAR_OPF_WRITE_SOL_ITR = 108
+MSK_IPAR_OPF_WRITE_SOL_ITR = 107
 
     Controls what is written to the OPF files.
 
-MSK_IPAR_OPF_WRITE_SOLUTIONS = 109
+MSK_IPAR_OPF_WRITE_SOLUTIONS = 108
 
     Enable inclusion of solutions in the OPF files.
 
-MSK_IPAR_OPTIMIZER = 110
+MSK_IPAR_OPTIMIZER = 109
 
     Controls which optimizer is used to optimize the task.
 
-MSK_IPAR_PARAM_READ_CASE_NAME = 111
+MSK_IPAR_PARAM_READ_CASE_NAME = 110
 
     If turned on, then names in the parameter file are case sensitive.
 
-MSK_IPAR_PARAM_READ_IGN_ERROR = 112
+MSK_IPAR_PARAM_READ_IGN_ERROR = 111
 
-    If turned on, then errors in parameter settings is ignored.
+    If turned on, then errors in paramter settings is ignored.
 
-MSK_IPAR_PRESOLVE_ELIM_FILL = 113
+MSK_IPAR_PRESOLVE_ELIM_FILL = 112
 
     Maximum amount of fill-in in the elimination phase.
 
-MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES = 114
+MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES = 113
 
     Control the maximum number of times the eliminator is tried.
 
-MSK_IPAR_PRESOLVE_ELIMINATOR_USE = 115
+MSK_IPAR_PRESOLVE_ELIMINATOR_USE = 114
 
     Controls whether free or implied free
     variables are eliminated from the problem.
 
-MSK_IPAR_PRESOLVE_LEVEL = 116
+MSK_IPAR_PRESOLVE_LEVEL = 115
 
     Currently not used.
 
-MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH = 117
+MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH = 116
 
     Controls linear dependency check in presolve.
 
-MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH = 118
+MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH = 117
 
     Controls linear dependency check in presolve.
 
-MSK_IPAR_PRESOLVE_LINDEP_USE = 119
+MSK_IPAR_PRESOLVE_LINDEP_USE = 118
 
     Controls whether the linear constraints are checked for linear dependencies.
 
-MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS = 120
+MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS = 119
 
     Controls the maximum number reductions performed by the presolve.
 
-MSK_IPAR_PRESOLVE_USE = 121
+MSK_IPAR_PRESOLVE_USE = 120
 
     Controls whether the presolve is applied to a problem before it is optimized.
 
-MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER = 122
+MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER = 121
 
     Controls which optimizer that is used to find the optimal repair.
 
-MSK_IPAR_QO_SEPARABLE_REFORMULATION = 123
+MSK_IPAR_QO_SEPARABLE_REFORMULATION = 122
 
-    Determine if quadratic programing problems should be reformulated to separable form.
+    Determine if Quadratic programing problems should be reformulated to separable form.
 
-MSK_IPAR_READ_DATA_COMPRESSED = 124
+MSK_IPAR_READ_ANZ = 123
+
+    Controls the expected number of constraint non-zeros.
+
+MSK_IPAR_READ_CON = 124
+
+    Controls the expected number of constraints.
+
+MSK_IPAR_READ_CONE = 125
+
+    Controls the expected number of conic constraints.
+
+MSK_IPAR_READ_DATA_COMPRESSED = 126
 
     Controls the input file decompression.
 
-MSK_IPAR_READ_DATA_FORMAT = 125
+MSK_IPAR_READ_DATA_FORMAT = 127
 
     Format of the data file to be read.
 
-MSK_IPAR_READ_DEBUG = 126
-
-    Turns on additional debugging information when reading files.
-
-MSK_IPAR_READ_KEEP_FREE_CON = 127
+MSK_IPAR_READ_KEEP_FREE_CON = 128
 
     Controls whether the free constraints are included in
     the problem.
 
-MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU = 128
+MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU = 129
 
     Controls how the LP files are interpreted.
 
-MSK_IPAR_READ_LP_QUOTED_NAMES = 129
+MSK_IPAR_READ_LP_QUOTED_NAMES = 130
 
     If a name is in quotes when reading an LP file, the quotes will be removed.
 
-MSK_IPAR_READ_MPS_FORMAT = 130
+MSK_IPAR_READ_MPS_FORMAT = 131
 
     Controls how strictly the MPS file reader interprets the MPS format.
 
-MSK_IPAR_READ_MPS_KEEP_INT = 131
+MSK_IPAR_READ_MPS_KEEP_INT = 132
 
     Controls if integer constraints are read.
 
-MSK_IPAR_READ_MPS_RELAX = 132
+MSK_IPAR_READ_MPS_OBJ_SENSE = 133
+
+    Controls the MPS format extensions.
+
+MSK_IPAR_READ_MPS_RELAX = 134
 
     Controls the meaning of integer constraints.
 
-MSK_IPAR_READ_MPS_WIDTH = 133
+MSK_IPAR_READ_MPS_WIDTH = 135
 
     Controls the maximal number of characters allowed in one line of the MPS file.
 
-MSK_IPAR_READ_TASK_IGNORE_PARAM = 134
+MSK_IPAR_READ_QNZ = 136
+
+    Controls the expected number of quadratic non-zeros.
+
+MSK_IPAR_READ_TASK_IGNORE_PARAM = 137
 
     Controls what information is used from the task files.
 
-MSK_IPAR_SENSITIVITY_ALL = 135
+MSK_IPAR_READ_VAR = 138
+
+    Controls the expected number of variables.
+
+MSK_IPAR_SENSITIVITY_ALL = 139
 
     Controls sensitivity report behavior.
 
-MSK_IPAR_SENSITIVITY_OPTIMIZER = 136
+MSK_IPAR_SENSITIVITY_OPTIMIZER = 140
 
     Controls which optimizer is used for optimal partition sensitivity analysis.
 
-MSK_IPAR_SENSITIVITY_TYPE = 137
+MSK_IPAR_SENSITIVITY_TYPE = 141
 
     Controls which type of sensitivity analysis is to be performed.
 
-MSK_IPAR_SIM_BASIS_FACTOR_USE = 138
+MSK_IPAR_SIM_BASIS_FACTOR_USE = 142
 
     Controls whether a (LU) factorization of the basis is used in a hot-start.
     Forcing a refactorization sometimes improves the stability of the simplex optimizers, but in most cases
-    there is a performance penalty.
+    there is a performance penanlty.
 
-MSK_IPAR_SIM_DEGEN = 139
+MSK_IPAR_SIM_DEGEN = 143
 
     Controls how aggressively degeneration is handled.
 
-MSK_IPAR_SIM_DUAL_CRASH = 140
+MSK_IPAR_SIM_DUAL_CRASH = 144
 
     Controls whether crashing is performed in the dual simplex optimizer.
 
-MSK_IPAR_SIM_DUAL_PHASEONE_METHOD = 141
+MSK_IPAR_SIM_DUAL_PHASEONE_METHOD = 145
 
-    An experimental feature.
+    An exprimental feature.
 
-MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION = 142
+MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION = 146
 
     Controls how aggressively restricted selection is used.
 
-MSK_IPAR_SIM_DUAL_SELECTION = 143
+MSK_IPAR_SIM_DUAL_SELECTION = 147
 
     Controls the dual simplex strategy.
 
-MSK_IPAR_SIM_EXPLOIT_DUPVEC = 144
+MSK_IPAR_SIM_EXPLOIT_DUPVEC = 148
 
     Controls if the simplex optimizers are allowed to exploit duplicated columns.
 
-MSK_IPAR_SIM_HOTSTART = 145
+MSK_IPAR_SIM_HOTSTART = 149
 
     Controls the type of hot-start that the simplex optimizer perform.
 
-MSK_IPAR_SIM_HOTSTART_LU = 146
+MSK_IPAR_SIM_HOTSTART_LU = 150
 
     Determines if the simplex optimizer should exploit the initial factorization.
 
-MSK_IPAR_SIM_INTEGER = 147
+MSK_IPAR_SIM_INTEGER = 151
 
-    An experimental feature.
+    An exprimental feature.
 
-MSK_IPAR_SIM_MAX_ITERATIONS = 148
+MSK_IPAR_SIM_MAX_ITERATIONS = 152
 
     Maximum number of iterations that can be used by a
     simplex optimizer.
 
-MSK_IPAR_SIM_MAX_NUM_SETBACKS = 149
+MSK_IPAR_SIM_MAX_NUM_SETBACKS = 153
 
     Controls how many set-backs that are allowed within a
     simplex optimizer.
 
-MSK_IPAR_SIM_NON_SINGULAR = 150
+MSK_IPAR_SIM_NON_SINGULAR = 154
 
     Controls if the simplex optimizer ensures a non-singular basis, if possible.
 
-MSK_IPAR_SIM_PRIMAL_CRASH = 151
+MSK_IPAR_SIM_PRIMAL_CRASH = 155
 
     Controls the simplex crash.
 
-MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD = 152
+MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD = 156
 
-    An experimental feature.
+    An exprimental feature.
 
-MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION = 153
+MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION = 157
 
     Controls how aggressively restricted selection is used.
 
-MSK_IPAR_SIM_PRIMAL_SELECTION = 154
+MSK_IPAR_SIM_PRIMAL_SELECTION = 158
 
     Controls the primal simplex strategy.
 
-MSK_IPAR_SIM_REFACTOR_FREQ = 155
+MSK_IPAR_SIM_REFACTOR_FREQ = 159
 
     Controls the basis refactoring frequency.
 
-MSK_IPAR_SIM_REFORMULATION = 156
+MSK_IPAR_SIM_REFORMULATION = 160
 
     Controls if the simplex optimizers are allowed to reformulate the problem.
 
-MSK_IPAR_SIM_SAVE_LU = 157
+MSK_IPAR_SIM_SAVE_LU = 161
 
     Controls if the LU factorization stored should be replaced with the LU factorization
     corresponding to the initial basis.
 
-MSK_IPAR_SIM_SCALING = 158
+MSK_IPAR_SIM_SCALING = 162
 
     Controls how much effort is used in scaling the problem
     before a simplex optimizer is used.
 
-MSK_IPAR_SIM_SCALING_METHOD = 159
+MSK_IPAR_SIM_SCALING_METHOD = 163
 
     Controls how the problem is scaled
     before a simplex optimizer is used.
 
-MSK_IPAR_SIM_SOLVE_FORM = 160
+MSK_IPAR_SIM_SOLVE_FORM = 164
 
     Controls whether the primal or the dual problem is solved by the primal-/dual- simplex optimizer.
 
-MSK_IPAR_SIM_STABILITY_PRIORITY = 161
+MSK_IPAR_SIM_STABILITY_PRIORITY = 165
 
     Controls how high priority the numerical stability should be given.
 
-MSK_IPAR_SIM_SWITCH_OPTIMIZER = 162
+MSK_IPAR_SIM_SWITCH_OPTIMIZER = 166
 
     Controls the simplex behavior.
 
-MSK_IPAR_SOL_FILTER_KEEP_BASIC = 163
+MSK_IPAR_SOL_FILTER_KEEP_BASIC = 167
 
     Controls the license manager client behavior.
 
-MSK_IPAR_SOL_FILTER_KEEP_RANGED = 164
+MSK_IPAR_SOL_FILTER_KEEP_RANGED = 168
 
     Control the contents of the solution files.
 
-MSK_IPAR_SOL_READ_NAME_WIDTH = 165
+MSK_IPAR_SOL_READ_NAME_WIDTH = 169
 
     Controls the input solution file format.
 
-MSK_IPAR_SOL_READ_WIDTH = 166
+MSK_IPAR_SOL_READ_WIDTH = 170
 
     Controls the input solution file format.
 
-MSK_IPAR_SOLUTION_CALLBACK = 167
+MSK_IPAR_SOLUTION_CALLBACK = 171
 
     Indicates whether solution call-backs will be
     performed during the optimization.
 
-MSK_IPAR_TIMING_LEVEL = 168
+MSK_IPAR_TIMING_LEVEL = 172
 
     Controls the a amount of timing performed inside MOSEK.
 
-MSK_IPAR_WARNING_LEVEL = 169
+MSK_IPAR_WARNING_LEVEL = 173
 
     Warning level.
 
-MSK_IPAR_WRITE_BAS_CONSTRAINTS = 170
+MSK_IPAR_WRITE_BAS_CONSTRAINTS = 174
 
     Controls the basic solution file format.
 
-MSK_IPAR_WRITE_BAS_HEAD = 171
+MSK_IPAR_WRITE_BAS_HEAD = 175
 
     Controls the basic solution file format.
 
-MSK_IPAR_WRITE_BAS_VARIABLES = 172
+MSK_IPAR_WRITE_BAS_VARIABLES = 176
 
     Controls the basic solution file format.
 
-MSK_IPAR_WRITE_DATA_COMPRESSED = 173
+MSK_IPAR_WRITE_DATA_COMPRESSED = 177
 
     Controls output file compression.
 
-MSK_IPAR_WRITE_DATA_FORMAT = 174
+MSK_IPAR_WRITE_DATA_FORMAT = 178
 
     Controls the output file format.
 
-MSK_IPAR_WRITE_DATA_PARAM = 175
+MSK_IPAR_WRITE_DATA_PARAM = 179
 
     Controls output file data.
 
-MSK_IPAR_WRITE_FREE_CON = 176
+MSK_IPAR_WRITE_FREE_CON = 180
 
     Controls the output file data.
 
-MSK_IPAR_WRITE_GENERIC_NAMES = 177
+MSK_IPAR_WRITE_GENERIC_NAMES = 181
 
     Controls the output file data.
 
-MSK_IPAR_WRITE_GENERIC_NAMES_IO = 178
+MSK_IPAR_WRITE_GENERIC_NAMES_IO = 182
 
     Index origin used in  generic names.
 
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS = 179
+MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS = 183
 
     If the output format is not compatible with conic quadratic problems this parameter controls if the writer ignores the conic parts or produces an error.
 
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS = 180
+MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS = 184
 
     Controls if the writer ignores incompatible problem items when writing files.
 
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS = 181
+MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS = 185
 
     Controls if the writer ignores general non-linear terms or produces an error.
 
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS = 182
+MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS = 186
 
     If the output format is not compatible with semidefinite problems this parameter controls if the writer ignores the conic parts or produces an error.
 
-MSK_IPAR_WRITE_INT_CONSTRAINTS = 183
+MSK_IPAR_WRITE_INT_CONSTRAINTS = 187
 
     Controls the integer solution file format.
 
-MSK_IPAR_WRITE_INT_HEAD = 184
+MSK_IPAR_WRITE_INT_HEAD = 188
 
     Controls the integer solution file format.
 
-MSK_IPAR_WRITE_INT_VARIABLES = 185
+MSK_IPAR_WRITE_INT_VARIABLES = 189
 
     Controls the integer solution file format.
 
-MSK_IPAR_WRITE_LP_LINE_WIDTH = 186
+MSK_IPAR_WRITE_LP_LINE_WIDTH = 190
 
     Controls the LP output file format.
 
-MSK_IPAR_WRITE_LP_QUOTED_NAMES = 187
+MSK_IPAR_WRITE_LP_QUOTED_NAMES = 191
 
     Controls LP output file format.
 
-MSK_IPAR_WRITE_LP_STRICT_FORMAT = 188
+MSK_IPAR_WRITE_LP_STRICT_FORMAT = 192
 
     Controls whether LP  output files satisfy the LP format strictly.
 
-MSK_IPAR_WRITE_LP_TERMS_PER_LINE = 189
+MSK_IPAR_WRITE_LP_TERMS_PER_LINE = 193
 
     Controls the LP output file format.
 
-MSK_IPAR_WRITE_MPS_INT = 190
+MSK_IPAR_WRITE_MPS_INT = 194
 
     Controls the output file data.
 
-MSK_IPAR_WRITE_PRECISION = 191
+MSK_IPAR_WRITE_PRECISION = 195
 
     Controls data precision employed in when writing an MPS file.
 
-MSK_IPAR_WRITE_SOL_BARVARIABLES = 192
+MSK_IPAR_WRITE_SOL_BARVARIABLES = 196
 
     Controls the solution file format.
 
-MSK_IPAR_WRITE_SOL_CONSTRAINTS = 193
+MSK_IPAR_WRITE_SOL_CONSTRAINTS = 197
 
     Controls the solution file format.
 
-MSK_IPAR_WRITE_SOL_HEAD = 194
+MSK_IPAR_WRITE_SOL_HEAD = 198
 
     Controls solution file format.
 
-MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = 195
+MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = 199
 
-    Controls whether the user specified names are employed even if they are invalid names.
+    Controls whther the user specified names are employed even if they are invalid names.
 
-MSK_IPAR_WRITE_SOL_VARIABLES = 196
+MSK_IPAR_WRITE_SOL_VARIABLES = 200
 
     Controls the solution file format.
 
-MSK_IPAR_WRITE_TASK_INC_SOL = 197
+MSK_IPAR_WRITE_TASK_INC_SOL = 201
 
     Controls whether the solutions are  stored in the task file too.
 
-MSK_IPAR_WRITE_XML_MODE = 198
+MSK_IPAR_WRITE_XML_MODE = 202
 
     Controls if linear coefficients should be written by row or column when writing in the XML file format.
 
@@ -6787,17 +6809,6 @@ MSK_BRANCH_DIR_FREE = 0
 MSK_BRANCH_DIR_UP = 1
 
     The mixed-integer optimizer always chooses the up branch first.
-
-Enum sensitivitytype
---------------------
-
-MSK_SENSITIVITY_TYPE_BASIS = 0
-
-    Basis sensitivity analysis is performed.
-
-MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION = 1
-
-    Optimal partition sensitivity analysis is performed.
 
 Enum liinfitem
 --------------
@@ -7363,7 +7374,7 @@ MSK_CALLBACK_READ_OPF = 99
 
 MSK_CALLBACK_READ_OPF_SECTION = 100
 
-    A chunk of Q non-zeros has been read from a problem file.
+    A chunk of Q non-zeos has been read from a problem file.
 
 MSK_CALLBACK_UPDATE_DUAL_BI = 101
 
@@ -7695,7 +7706,7 @@ MSK_DINF_MIO_ROOT_OPTIMIZER_TIME = 23
 
 MSK_DINF_MIO_ROOT_PRESOLVE_TIME = 24
 
-    Time spent in while presolving the root relaxation.
+    Time spent in while presolveing the root relaxation.
 
 MSK_DINF_MIO_TIME = 25
 
@@ -7769,7 +7780,7 @@ MSK_DINF_SIM_OBJ = 39
 MSK_DINF_SIM_PRIMAL_DUAL_TIME = 40
 
     Time spent in the primal-dual simplex optimizer
-    since invoking it.
+    optimizer since invoking it.
 
 MSK_DINF_SIM_PRIMAL_TIME = 41
 
@@ -7823,7 +7834,7 @@ MSK_DINF_SOL_ITG_PVIOLCONES = 52
 
 MSK_DINF_SOL_ITG_PVIOLITG = 53
 
-    Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
+    Maximal violation for the inetger constraints in the integer solution. Updated by the function updatesolutioninfo.
 
 MSK_DINF_SOL_ITG_PVIOLVAR = 54
 
@@ -8071,34 +8082,6 @@ MSK_RES_ERR_BLANK_NAME = 1070
 
     An all blank name has been specified.
 
-MSK_RES_ERR_BLAS_ARG_K = 7004
-
-    Invalid argument k.
-
-MSK_RES_ERR_BLAS_ARG_M = 7002
-
-    Invalid argument m.
-
-MSK_RES_ERR_BLAS_ARG_N = 7003
-
-    Invalid argument n.
-
-MSK_RES_ERR_BLAS_ARG_TRANSA = 7005
-
-    Invalid argument transa.
-
-MSK_RES_ERR_BLAS_ARG_TRANSB = 7006
-
-    Invalid argument transb.
-
-MSK_RES_ERR_BLAS_SINGULAR_MATRIX = 7000
-
-    A matrix is singular.
-
-MSK_RES_ERR_BLAS_UNKNOWN = 7001
-
-    An unknown error.
-
 MSK_RES_ERR_CANNOT_CLONE_NL = 2505
 
     A task with a nonlinear function call-back cannot be cloned.
@@ -8106,98 +8089,6 @@ MSK_RES_ERR_CANNOT_CLONE_NL = 2505
 MSK_RES_ERR_CANNOT_HANDLE_NL = 2506
 
     A function cannot handle a task with nonlinear function call-backs.
-
-MSK_RES_ERR_CBF_DUP_ACOORD = 7116
-
-    Duplicate index in ACOORD.
-
-MSK_RES_ERR_CBF_DUP_BCOORD = 7115
-
-    Duplicate index in BCOORD.
-
-MSK_RES_ERR_CBF_DUP_OBJACOORD = 7114
-
-    Duplicate index in OBJCOORD.
-
-MSK_RES_ERR_CBF_DUPLICATE_CON = 7108
-
-    Duplicate CON keyword.
-
-MSK_RES_ERR_CBF_DUPLICATE_INT = 7110
-
-    Duplicate INT keyword.
-
-MSK_RES_ERR_CBF_DUPLICATE_OBJ = 7107
-
-    Duplicate OBJ keyword.
-
-MSK_RES_ERR_CBF_DUPLICATE_VAR = 7109
-
-    Duplicate VAR keyword.
-
-MSK_RES_ERR_CBF_INVALID_CON_TYPE = 7112
-
-    Invalid constraint type.
-
-MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION = 7113
-
-    Invalid domain dimension.
-
-MSK_RES_ERR_CBF_INVALID_INT_INDEX = 7121
-
-    Invalid INT index.
-
-MSK_RES_ERR_CBF_INVALID_VAR_TYPE = 7111
-
-    Invalid variable type.
-
-MSK_RES_ERR_CBF_NO_VARIABLES = 7102
-
-    An invalid objective sense is specified.
-
-MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED = 7105
-
-    No version specified.
-
-MSK_RES_ERR_CBF_OBJ_SENSE = 7101
-
-    An invalid objective sense is specified.
-
-MSK_RES_ERR_CBF_PARSE = 7100
-
-    An error occurred while parsing an CBF file.
-
-MSK_RES_ERR_CBF_SYNTAX = 7106
-
-    Invalid syntax.
-
-MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS = 7118
-
-    Too few constraints defined.
-
-MSK_RES_ERR_CBF_TOO_FEW_INTS = 7119
-
-    Too ints specified.
-
-MSK_RES_ERR_CBF_TOO_FEW_VARIABLES = 7117
-
-    Too few variables defined.
-
-MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS = 7103
-
-    Too many constraints specified.
-
-MSK_RES_ERR_CBF_TOO_MANY_INTS = 7120
-
-    Too ints specified.
-
-MSK_RES_ERR_CBF_TOO_MANY_VARIABLES = 7104
-
-    Too many variables specified.
-
-MSK_RES_ERR_CBF_UNSUPPORTED = 7122
-
-    Unsupported feature is present.
 
 MSK_RES_ERR_CON_Q_NOT_NSD = 1294
 
@@ -8221,7 +8112,7 @@ MSK_RES_ERR_CONE_OVERLAP = 1302
 
 MSK_RES_ERR_CONE_OVERLAP_APPEND = 1307
 
-    The cone to be appended has one variable which is already member of another cone.
+    The cone to be appended has one variable which is already memeber of another cone.
 
 MSK_RES_ERR_CONE_REP_VAR = 1303
 
@@ -8709,7 +8600,7 @@ MSK_RES_ERR_LIVING_TASKS = 1066
 
 MSK_RES_ERR_LOWER_BOUND_IS_A_NAN = 1390
 
-    The lower bound specified is not a number (nan).
+    The lower bound specificied is not a number (nan).
 
 MSK_RES_ERR_LP_DUP_SLACK_NAME = 1152
 
@@ -8757,7 +8648,7 @@ MSK_RES_ERR_LU_MAX_NUM_TRIES = 2800
 
 MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL = 1289
 
-    An maximum length that is too small has been specified.
+    An maximum length that is too small has been specfified.
 
 MSK_RES_ERR_MAXNUMBARVAR = 1242
 
@@ -8773,11 +8664,19 @@ MSK_RES_ERR_MAXNUMCONE = 1304
 
 MSK_RES_ERR_MAXNUMQNZ = 1243
 
-    Too small maximum number of non-zeros for the Q matrices is specified.
+    Too small maximum number of non-zeros for the Q matrixes is specified.
 
 MSK_RES_ERR_MAXNUMVAR = 1241
 
     The maximum number of variables limit is too small.
+
+MSK_RES_ERR_MBT_INCOMPATIBLE = 2550
+
+    The MBT file is incompatible withe this platform.
+
+MSK_RES_ERR_MBT_INVALID = 2551
+
+    The MBT file is invalid.
 
 MSK_RES_ERR_MIO_INTERNAL = 5010
 
@@ -8970,6 +8869,10 @@ MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL = 2950
 MSK_RES_ERR_NO_DUAL_INFEAS_CER = 2001
 
     A certificate of dual infeasibility is not available.
+
+MSK_RES_ERR_NO_DUAL_INFO_FOR_ITG_SOL = 3300
+
+    Dual information is not available for the integer solution.
 
 MSK_RES_ERR_NO_INIT_ENV = 1063
 
@@ -9265,11 +9168,11 @@ MSK_RES_ERR_SYM_MAT_DUPLICATE = 3944
 
 MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX = 3941
 
-    A column index specified for sparse symmetric matrix is invalid.
+    A column index specified for sparse symmetric maxtrix is invalid.
 
 MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX = 3940
 
-    A row index specified for sparse symmetric matrix is invalid.
+    A row index specified for sparse symmetric maxtrix is invalid.
 
 MSK_RES_ERR_SYM_MAT_INVALID_VALUE = 3943
 
@@ -9281,7 +9184,7 @@ MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR = 3942
 
 MSK_RES_ERR_TASK_INCOMPATIBLE = 2560
 
-    The Task file is incompatible with  this platform.
+    The Task file is incompatible withe this platform.
 
 MSK_RES_ERR_TASK_INVALID = 2561
 
@@ -9341,7 +9244,7 @@ MSK_RES_ERR_UNKNOWN = 1050
 
 MSK_RES_ERR_UPPER_BOUND_IS_A_NAN = 1391
 
-    The upper bound specified is not a number (nan).
+    The upper bound specificied is not a number (nan).
 
 MSK_RES_ERR_UPPER_TRIANGLE = 6020
 
@@ -9361,7 +9264,7 @@ MSK_RES_ERR_USER_NLO_EVAL = 1433
 
 MSK_RES_ERR_USER_NLO_EVAL_HESSUBI = 1440
 
-    The user-defined nonlinear function reported an Hessian an invalid subscript.
+    The user-defined nonlinear function reported reported an Hessian an invalid subscript.
 
 MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ = 1441
 
@@ -9469,7 +9372,7 @@ MSK_RES_TRM_USER_CALLBACK = 10007
 
 MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS = 904
 
-    Warn against almost integral bounds.
+    Warn against almost integeral bounds.
 
 MSK_RES_WRN_ANA_C_ZERO = 901
 
@@ -9489,7 +9392,7 @@ MSK_RES_WRN_ANA_LARGE_BOUNDS = 900
 
 MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG = 807
 
-    The initial value for one or more  of the integer variables is not feasible.
+    The intial value for one or more  of the integer variables is not feasible.
 
 MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG = 810
 
@@ -9637,7 +9540,7 @@ MSK_RES_WRN_PARAM_NAME_STR = 512
 
 MSK_RES_WRN_PARAM_STR_VALUE = 515
 
-    A parameter value is not correct.
+    A parameter vaue is not correct.
 
 MSK_RES_WRN_PRESOLVE_OUTOFSPACE = 802
 
@@ -9771,17 +9674,13 @@ MSK_SIM_DEGEN_NONE = 0
 Enum dataformat
 ---------------
 
-MSK_DATA_FORMAT_CB = 7
-
-    Conic benchmark format,
-
 MSK_DATA_FORMAT_EXTENSION = 0
 
     The file extension is used to determine the data file format.
 
 MSK_DATA_FORMAT_FREE_MPS = 5
 
-    The data a free MPS formatted file.
+    The data data a free MPS formatted file.
 
 MSK_DATA_FORMAT_LP = 2
 
@@ -9828,7 +9727,7 @@ MSK_ORDER_METHOD_NONE = 5
 
 MSK_ORDER_METHOD_TRY_GRAPHPAR = 3
 
-    Always try the graph partitioning based ordering.
+    Always try the the graph partitioning based ordering.
 
 Enum problemtype
 ----------------
@@ -10056,7 +9955,7 @@ MSK_DPAR_MIO_DISABLE_TERM_TIME = 40
 
 MSK_DPAR_MIO_HEURISTIC_TIME = 41
 
-    Time limit for the mixed-integer heuristic.
+    Time limit for the mixed-integer heuristics.
 
 MSK_DPAR_MIO_MAX_TIME = 42
 
@@ -10143,7 +10042,7 @@ MSK_DPAR_PRESOLVE_TOL_X = 61
 
 MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL = 62
 
-    This parameter determines when columns are dropped in incomplete Cholesky factorization doing reformulation of quadratic problems.
+    This parameter determines when columns are dropped in incomplete cholesky factorization doing reformulation of quadratic problems.
 
 MSK_DPAR_SIM_LU_TOL_REL_PIV = 63
 
@@ -10281,7 +10180,7 @@ MSK_STARTING_POINT_GUESS = 1
 
 MSK_STARTING_POINT_SATISFY_BOUNDS = 3
 
-    The starting point is chosen to satisfy all the simple bounds on nonlinear variables. If this starting point is employed,
+    The starting point is choosen to satisfy all the simple bounds on nonlinear variables. If this starting point is employed,
     then more care than usual should employed when choosing the bounds on the nonlinear variables. In particular very tight bounds
     should be avoided.
 
@@ -10472,7 +10371,7 @@ MSK_IINF_MIO_INITIAL_SOLUTION = 22
 
 MSK_IINF_MIO_NUM_ACTIVE_NODES = 23
 
-    Number of active branch bound nodes.
+    Number of active brabch bound nodes.
 
 MSK_IINF_MIO_NUM_BASIS_CUTS = 24
 
@@ -10580,7 +10479,7 @@ MSK_IINF_OPT_NUMVAR = 49
 
 MSK_IINF_OPTIMIZE_RESPONSE = 50
 
-    The response code returned by optimize.
+    The reponse code returned by optimize.
 
 MSK_IINF_RD_NUMBARVAR = 51
 
@@ -10600,7 +10499,7 @@ MSK_IINF_RD_NUMINTVAR = 54
 
 MSK_IINF_RD_NUMQ = 55
 
-    Number of nonempty Q matrices read.
+    Number of nonempty Q matrixes read.
 
 MSK_IINF_RD_NUMVAR = 56
 
@@ -10736,7 +10635,7 @@ MSK_IINF_SOL_INT_PROSTA = 88
 
 MSK_IINF_SOL_INT_SOLSTA = 89
 
-    Deprecated.
+    Degrecated.
 
 MSK_IINF_SOL_ITG_PROSTA = 90
 
@@ -10814,7 +10713,7 @@ MSK_OPTIMIZER_MIXED_INT_CONIC = 8
 
 MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX = 7
 
-    The network primal simplex optimizer is used. It is only applicable to pure network problems.
+    The network primal simplex optimizer is used. It is only applicable to pute network problems.
 
 MSK_OPTIMIZER_NONCONVEX = 11
 
