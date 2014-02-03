@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.0.0.92
+# MOSEK 7.0.0.102
 
 export
   analyzenames,
@@ -19,8 +19,6 @@ export
   checkconvexity,
   checkmem,
   chgbound,
-  chgconbound,
-  chgvarbound,
   commitchanges,
   conetypetostr,
   deletesolution,
@@ -180,19 +178,19 @@ export
   isstrparname,
   linkfiletostream,
   onesolutionsummary,
-  optimizeconcurrent,
   optimizersummary,
   optimize,
   primalrepair,
   primalsensitivity,
   printdata,
   printparam,
+  probtypetostr,
+  prostatostr,
   putacol,
   putacollist,
   putacolslice,
   putaij,
   putaijlist,
-  putaijlist64,
   putarow,
   putarowlist,
   putarowslice,
@@ -281,6 +279,8 @@ export
   resizetask,
   sensitivityreport,
   setdefaults,
+  sktostr,
+  solstatostr,
   solutiondef,
   solutionsummary,
   solvewithbasis,
@@ -297,6 +297,7 @@ export
   checkinlicense,
   checkoutlicense,
   echointro,
+  getbuildinfo,
   getcodedesc,
   getversion,
   licensecleanup,
@@ -464,24 +465,6 @@ end
 chgbound(task:: MSKtask,accmode:: Int32,i,lower,finite,value:: Float64) = chgbound(convert(MSKtask,task),convert(Int32,accmode),convert(Int32,i),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
 function chgbound(task_:: MSKtask,accmode_:: Int32,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = @msk_ccall( "chgbound",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Float64,),task_.task,accmode_,i_-1,lower_,finite_,value_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw (MosekError(res,msg))
-  end
-end
-
-chgconbound(task:: MSKtask,i,lower,finite,value:: Float64) = chgconbound(convert(MSKtask,task),convert(Int32,i),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
-function chgconbound(task_:: MSKtask,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
-  res = @msk_ccall( "chgconbound",Int32,(Ptr{Void},Int32,Int32,Int32,Float64,),task_.task,i_-1,lower_,finite_,value_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw (MosekError(res,msg))
-  end
-end
-
-chgvarbound(task:: MSKtask,j,lower,finite,value:: Float64) = chgvarbound(convert(MSKtask,task),convert(Int32,j),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
-function chgvarbound(task_:: MSKtask,j_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
-  res = @msk_ccall( "chgvarbound",Int32,(Ptr{Void},Int32,Int32,Int32,Float64,),task_.task,j_-1,lower_,finite_,value_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
@@ -2372,8 +2355,8 @@ end
 
 inputdata(task:: MSKtask,maxnumcon,maxnumvar,c:: Array{Float64},cfix:: Float64,aptrb:: Array,aptre:: Array,asub:: Array,aval:: Array{Float64},bkc:: Array{Int32},blc:: Array{Float64},buc:: Array{Float64},bkx:: Array{Int32},blx:: Array{Float64},bux:: Array{Float64}) = inputdata(convert(MSKtask,task),convert(Int32,maxnumcon),convert(Int32,maxnumvar),convert(Array{Float64},c),convert(Float64,cfix),convert(Array{Int64},aptrb),convert(Array{Int64},aptre),convert(Array{Int32},asub),convert(Array{Float64},aval),convert(Array{Int32},bkc),convert(Array{Float64},blc),convert(Array{Float64},buc),convert(Array{Int32},bkx),convert(Array{Float64},blx),convert(Array{Float64},bux))
 function inputdata(task:: MSKtask,maxnumcon,maxnumvar,c:: Array{Float64},cfix:: Float64,A:: SparseMatrixCSC{Float64},bkc:: Array{Int32},blc:: Array{Float64},buc:: Array{Float64},bkx:: Array{Int32},blx:: Array{Float64},bux:: Array{Float64})
-  aptrb = A.colptr[1:size(A,2)-1]
-  aptre = A.colptr[2:size(A,2)]
+  aptrb = A.colptr[1:size(A,2)]
+  aptre = A.colptr[2:size(A,2)+1]
   asub = A.rowval
   aval = A.nzval
   inputdata(task,maxnumcon,maxnumvar,c,cfix,aptrb,aptre,asub,aval,bkc,blc,buc,bkx,blx,bux)
@@ -2430,21 +2413,6 @@ end
 
 function onesolutionsummary(task_:: MSKtask,whichstream_:: Int32,whichsol_:: Int32)
   res = @msk_ccall( "onesolutionsummary",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_,whichsol_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw (MosekError(res,msg))
-  end
-end
-
-function optimizeconcurrent(task_:: MSKtask,taskarray_:: Array{MSKtask})
-  num_ = minimum([ length(taskarray_) ])
-  __tmp_var_0 = (num_)
-  if length(taskarray_) < __tmp_var_0
-    println("Array argument taskarray is not long enough")
-    throw(BoundsError())
-  end
-  _taskarray_tmp_:: Ptr{Void} = [ __tmp_var_1.task for __tmp_var_1 = taskarray_ ]
-  res = @msk_ccall( "optimizeconcurrent2",Int32,(Ptr{Void},Int32,Ptr{Ptr{Void}},),task_.task,num_,_taskarray_tmp)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
@@ -2544,6 +2512,26 @@ function printparam(task_:: MSKtask)
   end
 end
 
+function probtypetostr(task_:: MSKtask,probtype_:: Int32)
+  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "probtypetostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,probtype_,str_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(str_))
+end
+
+function prostatostr(task_:: MSKtask,prosta_:: Int32)
+  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "prostatostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,prosta_,str_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(str_))
+end
+
 putacol(task:: MSKtask,j,subj:: Array,valj:: Array{Float64}) = putacol(convert(MSKtask,task),convert(Int32,j),convert(Array{Int32},subj),convert(Array{Float64},valj))
 function putacol(task_:: MSKtask,j_:: Int32,subj_:: Array{Int32},valj_:: Array{Float64})
   nzj_ = minimum([ length(subj_),length(valj_) ])
@@ -2557,8 +2545,8 @@ end
 
 putacollist(task:: MSKtask,sub:: Array,ptrb:: Array,ptre:: Array,asub:: Array,aval:: Array{Float64}) = putacollist(convert(MSKtask,task),convert(Array{Int32},sub),convert(Array{Int64},ptrb),convert(Array{Int64},ptre),convert(Array{Int32},asub),convert(Array{Float64},aval))
 function putacollist(task:: MSKtask,sub:: Array,A:: SparseMatrixCSC{Float64})
-  ptrb = A.colptr[1:size(A,2)-1]
-  ptre = A.colptr[2:size(A,2)]
+  ptrb = A.colptr[1:size(A,2)]
+  ptre = A.colptr[2:size(A,2)+1]
   asub = A.rowval
   aval = A.nzval
   putacollist(task,sub,ptrb,ptre,asub,aval)
@@ -2622,18 +2610,6 @@ function putaijlist(task_:: MSKtask,subi_:: Array{Int32},subj_:: Array{Int32},va
   end
 end
 
-putaijlist64(task:: MSKtask,subi:: Array,subj:: Array,valij:: Array{Float64}) = putaijlist64(convert(MSKtask,task),convert(Array{Int32},subi),convert(Array{Int32},subj),convert(Array{Float64},valij))
-function putaijlist64(task_:: MSKtask,subi_:: Array{Int32},subj_:: Array{Int32},valij_:: Array{Float64})
-  num_ = minimum([ length(subi_),length(subj_),length(valij_) ])
-  __tmp_var_0 = if (typeof(subi_) != Array{Int32}) convert(Array{Int32},subi_) else subi_ end
-  __tmp_var_1 = if (typeof(subj_) != Array{Int32}) convert(Array{Int32},subj_) else subj_ end
-  res = @msk_ccall( "putaijlist64",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,__tmp_var_0-1,__tmp_var_1-1,valij_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw (MosekError(res,msg))
-  end
-end
-
 putarow(task:: MSKtask,i,subi:: Array,vali:: Array{Float64}) = putarow(convert(MSKtask,task),convert(Int32,i),convert(Array{Int32},subi),convert(Array{Float64},vali))
 function putarow(task_:: MSKtask,i_:: Int32,subi_:: Array{Int32},vali_:: Array{Float64})
   nzi_ = minimum([ length(subi_),length(vali_) ])
@@ -2646,11 +2622,11 @@ function putarow(task_:: MSKtask,i_:: Int32,subi_:: Array{Int32},vali_:: Array{F
 end
 
 putarowlist(task:: MSKtask,sub:: Array,ptrb:: Array,ptre:: Array,asub:: Array,aval:: Array{Float64}) = putarowlist(convert(MSKtask,task),convert(Array{Int32},sub),convert(Array{Int64},ptrb),convert(Array{Int64},ptre),convert(Array{Int32},asub),convert(Array{Float64},aval))
-function putarowlist(task:: MSKtask,sub:: Array,A:: SparseMatrixCSC{Float64})
-  ptrb = A.colptr[1:size(A,2)-1]
-  ptre = A.colptr[2:size(A,2)]
-  asub = A.rowval
-  aval = A.nzval
+function putarowlist(task:: MSKtask,sub:: Array,At:: SparseMatrixCSC{Float64})
+  ptrb = At.colptr[1:size(At,2)]
+  ptre = At.colptr[2:size(At,2)+1]
+  asub = At.rowval
+  aval = At.nzval
   putarowlist(task,sub,ptrb,ptre,asub,aval)
 end
 function putarowlist(task_:: MSKtask,sub_:: Array{Int32},ptrb_:: Array{Int64},ptre_:: Array{Int64},asub_:: Array{Int32},aval_:: Array{Float64})
@@ -2665,11 +2641,11 @@ function putarowlist(task_:: MSKtask,sub_:: Array{Int32},ptrb_:: Array{Int64},pt
 end
 
 putarowslice(task:: MSKtask,first,last,ptrb:: Array,ptre:: Array,asub:: Array,aval:: Array{Float64}) = putarowslice(convert(MSKtask,task),convert(Int32,first),convert(Int32,last),convert(Array{Int64},ptrb),convert(Array{Int64},ptre),convert(Array{Int32},asub),convert(Array{Float64},aval))
-function putarowslice(task:: MSKtask,first,last,A:: SparseMatrixCSC{Float64})
-  ptrb = A.colptr[1:size(A,2)-1]
-  ptre = A.colptr[2:size(A,2)]
-  asub = A.rowval
-  aval = A.nzval
+function putarowslice(task:: MSKtask,first,last,At:: SparseMatrixCSC{Float64})
+  ptrb = At.colptr[1:size(At,2)]
+  ptre = At.colptr[2:size(At,2)+1]
+  asub = At.rowval
+  aval = At.nzval
   putarowslice(task,first,last,ptrb,ptre,asub,aval)
 end
 function putarowslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Array{Int64},ptre_:: Array{Int64},asub_:: Array{Int32},aval_:: Array{Float64})
@@ -3111,6 +3087,14 @@ function putqcon(task_:: MSKtask,qcsubk_:: Array{Int32},qcsubi_:: Array{Int32},q
 end
 
 putqconk(task:: MSKtask,k,qcsubi:: Array,qcsubj:: Array,qcval:: Array{Float64}) = putqconk(convert(MSKtask,task),convert(Int32,k),convert(Array{Int32},qcsubi),convert(Array{Int32},qcsubj),convert(Array{Float64},qcval))
+function putqconk(task:: MSKtask,k,Qk:: SparseMatrixCSC{Float64})
+  ptrb = Qk.colptr[1:size(Qk,2)]
+  ptre = Qk.colptr[2:size(Qk,2)+1]
+  qcsubi = Qk.rowval
+  qcsubi = Qk.rowval
+  qcval = Qk.nzval
+  putqconk(task,k,qcsubi,qcsubj,qcval)
+end
 function putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Array{Int32},qcsubj_:: Array{Int32},qcval_:: Array{Float64})
   numqcnz_ = minimum([ length(qcsubi_),length(qcsubj_),length(qcval_) ])
   __tmp_var_0 = if (typeof(qcsubi_) != Array{Int32}) convert(Array{Int32},qcsubi_) else qcsubi_ end
@@ -3123,6 +3107,14 @@ function putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Array{Int32},qcsubj_:: Ar
 end
 
 putqobj(task:: MSKtask,qosubi:: Array,qosubj:: Array,qoval:: Array{Float64}) = putqobj(convert(MSKtask,task),convert(Array{Int32},qosubi),convert(Array{Int32},qosubj),convert(Array{Float64},qoval))
+function putqobj(task:: MSKtask,Qk:: SparseMatrixCSC{Float64})
+  ptrb = Qk.colptr[1:size(Qk,2)]
+  ptre = Qk.colptr[2:size(Qk,2)+1]
+  qosubi = Qk.rowval
+  qosubi = Qk.rowval
+  qoval = Qk.nzval
+  putqobj(task,qosubi,qosubj,qoval)
+end
 function putqobj(task_:: MSKtask,qosubi_:: Array{Int32},qosubj_:: Array{Int32},qoval_:: Array{Float64})
   numqonz_ = minimum([ length(qosubi_),length(qosubj_),length(qoval_) ])
   __tmp_var_0 = if (typeof(qosubi_) != Array{Int32}) convert(Array{Int32},qosubi_) else qosubi_ end
@@ -3690,6 +3682,26 @@ function setdefaults(task_:: MSKtask)
   end
 end
 
+function sktostr(task_:: MSKtask,sk_:: Int32)
+  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "sktostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,sk_,str_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(str_))
+end
+
+function solstatostr(task_:: MSKtask,solsta_:: Int32)
+  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "solstatostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,solsta_,str_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw (MosekError(res,msg))
+  end
+  (bytestring(str_))
+end
+
 function solutiondef(task_:: MSKtask,whichsol_:: Int32)
   isdef_ = Array(Int32,(1,))
   res = @msk_ccall( "solutiondef",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_,isdef_)
@@ -3834,6 +3846,17 @@ function echointro(env_:: MSKenv,longver_:: Int32)
   if res != 0
     throw (MosekError(res,""))
   end
+end
+
+function getbuildinfo()
+  buildstate_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  builddate_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  buildtool_ = zeros(Uint8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getbuildinfo",Int32,(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},),buildstate_,builddate_,buildtool_)
+  if res != 0
+    throw (MosekError(res,""))
+  end
+  (bytestring(buildstate_),bytestring(builddate_),bytestring(buildtool_))
 end
 
 function getcodedesc(code_:: Int32)
