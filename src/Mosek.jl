@@ -6,10 +6,10 @@ module Mosek
   end
 
 
-  export 
+  export
     makeenv, maketask,
     MosekError
-  
+
   # A macro to make calling C API a little cleaner
   macro msk_ccall(func, args...)
     f = "MSK_$(func)"
@@ -37,12 +37,12 @@ module Mosek
 
 
 
-  
+
   # Task: typedef void * MSKtask_t;
   type MSKtask
     env::MSKenv
     task::Ptr{Void}
-    
+
     streamcallbackfunc:: Any
     callbackfunc:: Any
     nlinfo:: Any
@@ -53,9 +53,9 @@ module Mosek
 
       if res != MSK_RES_OK
         throw(MosekError(res,""))
-      end     
-      
-      task = new(env,temp[1],nothing,nothing,nothing) 
+      end
+
+      task = new(env,temp[1],nothing,nothing,nothing)
 
       finalizer(task,deletetask)
 
@@ -68,16 +68,16 @@ module Mosek
 
       if res != MSK_RES_OK
         throw(MosekError(res,""))
-      end     
-      
-      task = new(env,temp[1],nothing,nothing,nothing) 
+      end
+
+      task = new(env,temp[1],nothing,nothing,nothing)
 
       finalizer(task,deletetask)
 
       task
     end
   end
-  
+
 
   # ------------
   # API wrappers
@@ -98,11 +98,11 @@ module Mosek
   function maketask(env::MSKenv)
     MSKtask(env)
   end
-  
+
   function maketask(task::MSKtask)
     MSKtask(task)
   end
-  
+
   function maketask()
     MSKtask(msk_global_env)
   end
@@ -115,7 +115,7 @@ module Mosek
       t.task = C_NULL
     end
   end
-  
+
   function deleteenv(e::MSKenv)
     if e.env != C_NULL
       temp = Array(Ptr{Void},1)
@@ -128,11 +128,11 @@ module Mosek
   function getlasterror(t::MSKtask)
     lasterrcode = Array(Cint,1)
     lastmsglen = Array(Cint,1)
-    
+
     @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}),
                t.task, lasterrcode, 0, lastmsglen, C_NULL)
     lastmsg = Array(Uint8,lastmsglen[1])
-    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}), 
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
     convert(ASCIIString,lastmsg[1:lastmsglen[1]-1])
   end

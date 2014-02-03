@@ -1,7 +1,7 @@
-export 
+export
   putstreamfunc,
   putcallbackfunc
-  
+
 function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{Uint8})
   f = unsafe_pointer_to_objref(userdata) :: Function
   f (bytestring(msg))
@@ -19,7 +19,7 @@ function putstreamfunc(t::MSKtask, whichstream:: Int32, f :: Function)
 end
 
 
-# MSKcallbackfunc :: ( MSKtask_t, void *, Cint, double *, int32 *, int64 * -> int32 )  
+# MSKcallbackfunc :: ( MSKtask_t, void *, Cint, double *, int32 *, int64 * -> int32 )
 # The callback function is called with following parameers:
 #  - a 'where' identifying where in the solver we currently are
 #  - a 'dinf' array carrying double information on the current state of the solution/solver
@@ -31,13 +31,13 @@ function msk_info_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: I
   iinfa  = pointer_to_array(intinf,(MSK_IINF_END,),false)
   liinfa = pointer_to_array(lintinf,(MSK_LIINF_END,),false)
 
-  r = f(int(where), dinfa, iinfa, liinfa) 
+  r = f(int(where), dinfa, iinfa, liinfa)
   convert(Int32,r)::Int32
 end
 
 function msk_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: Int32)
   f      = unsafe_pointer_to_objref(userdata) :: Function
-  r = f(convert(Int32,where)) 
+  r = f(convert(Int32,where))
   convert(Int32,r)::Int32
 end
 

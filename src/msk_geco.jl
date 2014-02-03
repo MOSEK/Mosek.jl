@@ -1,6 +1,6 @@
 # This file contains the implementation of the general convex interface
 
-export 
+export
   putnlcallbacks,
   clearnlcallbacks
 
@@ -14,10 +14,10 @@ type MSKnlinfo
   # these are stored with 0-base indexes
   grdobjsub  :: Array{Int32,1}
   grdconsub  :: Array{Int32,1}
-  grdconptr  :: Array{Int32,1}  
+  grdconptr  :: Array{Int32,1}
 
   hessubi    :: Array{Int32,1}
-  hessubj    :: Array{Int32,1} 
+  hessubj    :: Array{Int32,1}
 
 
   evalobj  :: Function
@@ -32,12 +32,12 @@ end
 # Depending on which arguments are NULL it should return gradient and hessian sparsity.
 # NOTE: This is not documented (at all!), but in reality it is only called in a few ways.
 #       While the arguments allow fetching only a portion of the hessian pattern, we ignore this
-#       and always return the whole thing. It doesn't really matter since the sizes are only 
+#       and always return the whole thing. It doesn't really matter since the sizes are only
 #       used for pre-allocating space in MOSEK - only a reasonable upper bound is really needed.
 # NOTE: The 'hessian' here is the second derivative of the lagrangian
 function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
                               numgrdobjnz:: Ptr{Int32}, # number of nonzeros in gradient of objective
-                              grdobjsub::   Ptr{Int32}, # subscripts of nonzeros in gradient of objective 
+                              grdobjsub::   Ptr{Int32}, # subscripts of nonzeros in gradient of objective
                               i_::          Int32,      # constraint index
                               convali::     Ptr{Bool},  # 0/1 indicating whether constraint i is non-linear
                               grdconinz::   Ptr{Int32}, # number of nonzeros in gradient of constraint i
@@ -51,11 +51,11 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
                               hessubj::     Ptr{Int32}) # row subscripts of hessian non-zeros
   nlinfo = unsafe_pointer_to_objref(nlhandle) :: MSKnlinfo
 
-  i = i_+1 
+  i = i_+1
 
   grdobjlen = length(nlinfo.grdobjsub)
 
-  if numgrdobjnz != C_NULL 
+  if numgrdobjnz != C_NULL
     unsafe_store!(numgrdobjnz, convert(Int32,grdobjlen))
   end
 
@@ -86,8 +86,8 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
     hessubi_a = pointer_to_array(hessubi,(numhesnz,))
     hessubj_a = pointer_to_array(hessubj,(numhesnz,))
 
-    hessubi_a[1:numhesnz] = nlinfo.hessubi  
-    hessubj_a[1:numhesnz] = nlinfo.hessubj  
+    hessubi_a[1:numhesnz] = nlinfo.hessubi
+    hessubj_a[1:numhesnz] = nlinfo.hessubj
   end
 
   return convert(Int32,0) :: Int32
@@ -95,10 +95,10 @@ end
 
 function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
                               xx_         :: Ptr{Float64}, # input
-                              yo          :: Float64,             
+                              yo          :: Float64,
                               yc_         :: Ptr{Float64}, # input, length = numcon
                               objval      :: Ptr{Float64},
-                              numgrdobjnz :: Ptr{Int32}, 
+                              numgrdobjnz :: Ptr{Int32},
                               grdobjsub   :: Ptr{Int32},
                               grdobjval   :: Ptr{Float64},
                               numi_       :: Int32,
@@ -107,14 +107,14 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
                               grdconptrb_ :: Ptr{Int32},   # input
                               grdconptre_ :: Ptr{Int32},   # input
                               grdconsub_  :: Ptr{Int32},   # input
-                              grdconval   :: Ptr{Float64}, 
-                              grdlag      :: Ptr{Float64}, 
-                              maxnumhesnz :: Int32,             
+                              grdconval   :: Ptr{Float64},
+                              grdlag      :: Ptr{Float64},
+                              maxnumhesnz :: Int32,
                               numhesnz    :: Ptr{Int32},
-                              hessubi     :: Ptr{Int32},           
-                              hessubj     :: Ptr{Int32},           
+                              hessubi     :: Ptr{Int32},
+                              hessubj     :: Ptr{Int32},
                               hesval      :: Ptr{Float64})
-  nlinfo = unsafe_pointer_to_objref(nlhandle) :: MSKnlinfo  
+  nlinfo = unsafe_pointer_to_objref(nlhandle) :: MSKnlinfo
 
   numi = convert(Int,numi_)
   xx = pointer_to_array(xx_,(nlinfo.numvar,))
@@ -144,17 +144,17 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
     for i=1:numi
       conv[i] = nlinfo.evalconi(xx,subi[i])
     end
-  end 
-  
+  end
+
   if grdconval != C_NULL
     grdconptrb = pointer_to_array(grdconptrb_,(numi,))
     grdconptre = pointer_to_array(grdconptre_,(numi,))
-    for i=1:numi  
+    for i=1:numi
       ptrb = grdconptrb[i]
       n    = grdconptre[i] - grdconptrb[i]
       nlinfo.grdconi(xx,subi[i],
                      pointer_to_array(grdconsub_+ptrb*4,(n,))+1,
-                     pointer_to_array(grdconval +ptrb*4,(n,)))      
+                     pointer_to_array(grdconval +ptrb*4,(n,)))
     end
   end
 
@@ -163,7 +163,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   end
 
   nhesnz = length(nlinfo.hessubi)
-  
+
   if numhesnz != C_NULL
     unsafe_store!(numhesnz,convert(Int32,nhesnz))
   end
@@ -178,17 +178,17 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
 
     # Hum... Very strange! If I use "hessubi_a -= 1" it appears that the
     # underlying data of the array is not the native pointer anymore, but
-    # if I do it this way it is. 
+    # if I do it this way it is.
     for i=1:length(hessubi_a)
       hessubi_a[i] = hessubi_a[i]-convert(Int32,1)
-      hessubj_a[i] = hessubj_a[i]-convert(Int32,1)      
+      hessubj_a[i] = hessubj_a[i]-convert(Int32,1)
     end
 
     hesval_a  = pointer_to_array(hesval,(nhesnz,))
   end
   return convert(Int32,0) :: Int32
-end                               
-                                
+end
+
 function putnlcallbacks(task::MSKtask,
                         grdobjsub :: Array{Int,1},
                         grdconsub :: Array{Int,1},
@@ -200,7 +200,7 @@ function putnlcallbacks(task::MSKtask,
                         grdlag    :: Function,
                         grdobj    :: Function,
                         grdconi   :: Function,
-                        heslag    :: Function) 
+                        heslag    :: Function)
   nvar = convert(Int,getnumvar(task))
   ncon = convert(Int,getnumcon(task))
 
@@ -223,21 +223,21 @@ function putnlcallbacks(task::MSKtask,
 
   nlinfo = MSKnlinfo(nvar,ncon,
                      nlgetsp,nlgetva,
-                     convert(Array{Int32,1},grdobjsub-1), 
-                     convert(Array{Int32,1},grdconsub-1), 
+                     convert(Array{Int32,1},grdobjsub-1),
+                     convert(Array{Int32,1},grdconsub-1),
                      convert(Array{Int32,1},grdconptr-1),
                      convert(Array{Int32,1},hessubi-1),
                      convert(Array{Int32,1},hessubj-1),
                      evalobj,evalconi, grdlag,heslag,grdobj,grdconi)
 
-  @msk_ccall("putnlfunc", 
+  @msk_ccall("putnlfunc",
              Int32, (Ptr{Void},Any,Ptr{Void},Ptr{Void}),
              task.task, nlinfo, nlgetsp, nlgetva)
   task.nlinfo = nlinfo
 end
 
 function removenlcallbacks(task::MSKtask)
-  @msk_ccall("putnlfunc", 
+  @msk_ccall("putnlfunc",
              Int32, (Ptr{Void},Ptr{Void},Ptr{Void},Ptr{Void}),
              task.task, C_NULL,C_NULL,C_NULL,C_NULL)
   task.nlinfo = nothing
