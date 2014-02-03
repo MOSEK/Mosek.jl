@@ -61,6 +61,21 @@ module Mosek
 
       task
     end
+
+    function MSKtask(t::MSKtask)
+      temp = Array(Ptr{Void}, 1)
+      res = @msk_ccall(clonetask, Int32, (Ptr{Void}, Ptr{Void}), t.task, temp)
+
+      if res != MSK_RES_OK
+        throw(MosekError(res,""))
+      end     
+      
+      task = new(env,temp[1],nothing,nothing,nothing) 
+
+      finalizer(task,deletetask)
+
+      task
+    end
   end
   
 
@@ -82,6 +97,10 @@ module Mosek
 
   function maketask(env::MSKenv)
     MSKtask(env)
+  end
+  
+  function maketask(task::MSKtask)
+    MSKtask(task)
   end
   
   function maketask()
