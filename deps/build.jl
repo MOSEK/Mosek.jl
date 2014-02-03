@@ -12,7 +12,7 @@ mskplatform,pfdlls,distroext,libmosekname =
     end                                   
   else                                    
     if     OS_NAME == :Linux   "linux64x86",["libmosek64.so",     "libmosek64.so.7.0",   "libiomp5.so",    "libmosekglb64.so.7.0"],    ".tar.bz2", "libmosek64"
-    elseif OS_NAME == :Darwin  "osx4x86",   ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib", "libmosekglb64.7.0.dylib"], ".tar.bz2", "libmosek64"
+    elseif OS_NAME == :Darwin  "osx64x86",  ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib", "libmosekglb64.7.0.dylib"], ".tar.bz2", "libmosek64"
     elseif OS_NAME == :Windows "win64x86",  ["libmosek64_7_0.dll","libmosek64_7_0.dll",  "libiomp5md.dll", "mosekglb64_7_0.dll"],      ".zip",     "moske64_7_0"
     else   error("Platform not supported")
     end

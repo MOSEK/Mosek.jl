@@ -33,20 +33,11 @@ of the installed MOSEK distro. Otherwise it will look in the default install pat
 
     $HOME/mosek
     
-Usually this resolves to 
-
-    /Users/username
-    
-on OS X, 
-
-    /home/username
-    
-on Linux, and
-
-    C:\Users\username
-    
-for newer Windows versions.
-
+This usually resolves to:
+- OS X: `/Users/username`
+- Linux: `/home/username`
+- Windows: `C:\Users\username`
+ 
 Furthermore, to run an optimization a license is required (these are free for academic use). Mosek will look first for the enironment variable `MOSEKLM_LICENSE_FILE` which must point to the relevant license file, and, if this is not present, it will look for a file called `mosek.lic` in the default install path.
 
 
