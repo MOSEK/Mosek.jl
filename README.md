@@ -17,8 +17,7 @@ convex) and MIP (mixed-integer problems). These can be mixed as follows:
 - LP+QP+MIP
 - LP+QP+GECO
 
-MOSEK is commercial software, but free licenses are available for academic 
-use. See [here](http://mosek.com/resources/academic-license/) for details.
+MOSEK is commercial software, but free licenses are available for academic use. See [here](http://mosek.com/resources/academic-license/) for details.
 
 Installation
 ------------
@@ -26,18 +25,19 @@ Installation
 Use the Julia package manager to install Mosek.jl:
 
     Pkg.add("Mosek")
-
-When the Mosek module is loaded it attepts to locate the relevant MOSEK libraries. Mosek.jl will first look 
-for an environment variable `MOSEKBINDIR`. If this is present it must point to the `bin/` directory
-of the installed MOSEK distro. Otherwise it will look in the default install path:
-
-    $HOME/mosek
     
-This usually resolves to:
-- OS X: `/Users/username`
-- Linux: `/home/username`
-- Windows: `C:\Users\username`
- 
+When installing, the installer will look for the MOSEK library in following places:
+- First, if the environment variable `MOSEKBINDIR` is defined, it will look for the MOSEK library in the directory it points to. I.e. it must point the the `bin/` directory in the MOSEK distro.
+- Secondly, it will look for the MOSEK distribution in the user's home directory. This usually resolves to:
+  - OS X: `/Users/username`
+  - Linux: `/home/username`
+  - Windows: `C:\Users\username`
+- Thirdly, on Linux and OS X it will attempt to download MOSEK and install it in the Julia configuration directory.
+
+If the MOSEK installation is moved it is necessary to rebuild the package using 
+
+    Pkg.build("Mosek")
+
 Furthermore, to run an optimization a license is required (these are free for academic use). Mosek will look first for the enironment variable `MOSEKLM_LICENSE_FILE` which must point to the relevant license file, and, if this is not present, it will look for a file called `mosek.lic` in the default install path.
 
 
