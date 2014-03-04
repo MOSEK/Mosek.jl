@@ -26,7 +26,7 @@ blx = [               0.0,              0.0,              0.0,
 bux = [               Inf,              Inf,              Inf,
                       Inf,              Inf,              Inf ]
 
-asub  = [ 1 ,1, 1 ]
+asub  = [ 1 ,2, 3 ]
 aval  = [ 1.0, 1.0, 1.0 ]
 
 numvar = length(bkx)

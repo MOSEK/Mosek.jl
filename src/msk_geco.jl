@@ -60,20 +60,32 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
   end
 
   if grdobjsub != C_NULL
-    grdobjsub_a = pointer_to_array(grdobjsub,(grdobjlen,))
-    grdobjsub_a[1:grdobjlen] = nlinfo.grdobjsub
-  end
-
-  if convali != C_NULL
-    if nlinfo.grdconptr[i+1] > nlinfo.grdconptr[i]
-      unsafe_store!(convali, convert(Int32,1))
-    else
-      unsafe_store!(convali, convert(Int32,0))
+    if grdobjlen > 0
+      grdobjsub_a = pointer_to_array(grdobjsub,(grdobjlen,))
+      grdobjsub_a[1:grdobjlen] = nlinfo.grdobjsub
     end
   end
 
-  if grdconinz != C_NULL
-    unsafe_store!(grdconinz, convert(Int32, nlinfo.grdconptr[i+1] - nlinfo.grdconptr[i]))
+  if i <= nlinfo.numcon
+    if convali != C_NULL
+      if nlinfo.grdconptr[i+1] > nlinfo.grdconptr[i]
+        unsafe_store!(convali, convert(Int32,1))
+      else
+        unsafe_store!(convali, convert(Int32,0))
+      end
+    end
+
+    if grdconinz != C_NULL
+      unsafe_store!(grdconinz, convert(Int32, nlinfo.grdconptr[i+1] - nlinfo.grdconptr[i]))
+    end
+
+    if grdconisub != C_NULL
+      num = nlinfo.grdconptr[i+1] - nlinfo.grdconptr[i]
+      if num > 0
+        grdconisub_a = pointer_to_array(grdconisub,num)        
+        grdconisub_a[1:num] = nlinfo.grdconsub[nlinfo.grdconptr[i]+1:nlinfo.grdconptr[i+1]]
+      end
+    end
   end
 
   numhesnz = length(nlinfo.hessubi)
@@ -133,10 +145,15 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
 
   if grdobjsub != C_NULL && grdobjval != C_NULL
     grdobjval_a = pointer_to_array(grdobjval,(ngrdobjnz,))
-    grdobjsub_a = pointer_to_array(grdobjsub,(ngrdobjnz,))+1
+    grdobjsub_a = pointer_to_array(grdobjsub,(ngrdobjnz,))
+
+    grdobjsub = nlinfo.grdobjsub+1
     nlinfo.grdobj(xx,
-                  grdobjsub_a,
+                  grdobjsub,
                   grdobjval_a)
+    for i in 1:length(grdobjsub_a)      
+      grdobjsub_a[i] = nlinfo.grdobjsub[i]
+    end
   end
 
   if numi > 0 && conval != C_NULL
@@ -204,9 +221,12 @@ function putnlcallbacks(task::MSKtask,
   nvar = convert(Int,getnumvar(task))
   ncon = convert(Int,getnumcon(task))
 
-  if ( length(hessubi) !=  length(hessubj) ||
-       length(grdconptr) != ncon+1)
-    throw(MosekError("Inconsistent data dimensions"))
+  print( ncon,length(grdconptr))
+  if ( length(hessubi) !=  length(hessubj))
+    error("Arrays hessubi and hessubj have mismatching lengths")
+  end
+  if ( length(grdconptr) != ncon+1 )
+    error("Length of grdconptr should match number of constraints")
   end
 
   nlgetsp = cfunction(msk_nl_getsp_wrapper,
@@ -236,7 +256,7 @@ function putnlcallbacks(task::MSKtask,
   task.nlinfo = nlinfo
 end
 
-function removenlcallbacks(task::MSKtask)
+function clearnlcallbacks(task::MSKtask)
   @msk_ccall("putnlfunc",
              Int32, (Ptr{Void},Ptr{Void},Ptr{Void},Ptr{Void}),
              task.task, C_NULL,C_NULL,C_NULL,C_NULL)

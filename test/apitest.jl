@@ -102,7 +102,7 @@ function test_qcqo1()
     blx   = [ 0.0,  0.0, 0.0 ]
     bux   = [ Inf,  Inf, Inf ]
     c     = [ 0.0, -1.0, 0.0 ]
-    asub  = [ 1 ,1, 1 ]
+    asub  = [ 1 ,2, 3 ]
     aval  = [ 1.0, 1.0, 1.0 ]
     numvar = length(bkx)
     numcon = length(bkc)
@@ -189,7 +189,7 @@ function test_cqo1()
                          -Inf,             -Inf,             -Inf ]
     bux = [               Inf,              Inf,              Inf,
                           Inf,              Inf,              Inf ]
-    asub  = [ 1 ,1, 1 ]
+    asub  = [ 1 ,2, 3 ]
     aval  = [ 1.0, 1.0, 1.0 ]
     numvar = length(bkx)
     numcon = length(bkc)
@@ -284,121 +284,80 @@ function test_sdo1()
 end
 
 function test_nlo1()
-    t = maketask()
-    putstreamfunc(t,MSK_STREAM_LOG,msg -> print(msg))
-    appendvars(t,3)
-    appendcons(t,3)
-    putvarbound(t,1,MSK_BK_RA,0.0, 10.0)  # x
-    putvarbound(t,2,MSK_BK_RA,0.0, 10.0)  # y
-    putvarbound(t,3,MSK_BK_LO,0.0, +Inf)  # t
-    putarow(t,1,[1,2,3],[1.0, 2.0, -1.0]) # x + 2y - t
-    putconbound(t,1,MSK_BK_UP,-Inf, 0.0)  # < 0.0
-    putarow(t,2,[2],[-1.0])               # - y
-    putconbound(t,2,MSK_BK_LO,0.0,+Inf)   # 0.0 <
-    putarow(t,3,[1,2],[-10.0, -1.0])      # -10x - y
-    putqconk(t,3,[1],[1],[2.0])           # x^2 
-    putconbound(t,3,MSK_BK_UP,-Inf,-27.0) # < -27.0
-    
-    function indexof(v,a)
-      for i in 1:length(a)
-        if a[i] == v return i
-        end
-      end
-      return 0
-    end
-
-    evalobj(x :: Array{Float64,1}) = x[3] ^ 2.3
-    function evalconi(x:: Array{Float64,1},i:: Int32)
-      if i == 2
-        sqrt(10)*sqrt(x[1])
-      else
-        0.0
+  t = maketask()
+  appendvars(t,3)
+  appendcons(t,1)
+  putvarbound(t,1,MSK_BK_LO,0.0, +Inf)  # x0
+  putvarbound(t,2,MSK_BK_LO,0.0, +Inf)  # x1
+  putvarbound(t,3,MSK_BK_LO,0.0, +Inf)  # x2
+  putarow(t,1,[1,2,3],[1.0,1.0,1.0])   # x0 + x1 + x2
+  putconbound(t,1,MSK_BK_FX,1.0, 1.0)  # = 1.0
+  putclist(t,[1], [-1.0])
+  
+  function indexof(v,a)
+    for i in 1:length(a)
+      if a[i] == v return i
       end
     end
-
-    function grdobj(x :: Array{Float64,1},sub:: Array{Int32,1}, val:: Array{Float64,1})
-      for i=1:length(sub)
-        if sub[i] == 3
-          val[i] = 2.3 * x[3] ^ 1.3
-        else
-          val[i] = 0.0
-        end
+    return 0
+  end
+  evalobj(x :: Array{Float64,1}) = log(x[2]+x[3])
+  evalconi(x:: Array{Float64,1},i:: Int32) = 0.0
+  function grdobj(x :: Array{Float64,1},sub:: Array{Int32,1}, val:: Array{Float64,1})  
+    for j in 1:length(sub)    
+      if sub[j] == 2 || sub[j] == 3
+        val[j] = -1.0 / (x[2]+x[3])
       end
     end
-            
-    function grdconi(x :: Array{Float64,1},
-                     i:: Int32, 
-                     sub:: Array{Int32,1}, 
-                     val:: Array{Float64,1})
-      if i == 2
-        for k=1:length(sub)
-          if sub[k] == 3
-            val[k] = 0.5 * x[1] ^ (-0.5)
-          else
-            val[k] = 0.0
-          end
-        end
-      else
-        val[1:length(val)] = 0.0
-      end
-    end
+  end
+  function grdconi(x  :: Array{Float64,1},
+                   i  :: Int32, 
+                   sub:: Array{Int32,1}, 
+                   val:: Array{Float64,1})
+    none
+  end
+  function grdlag(x ::   Array{Float64,1},
+                  yo::   Float64,
+                  yc::   Array{Float64,1},
+                  subi:: Array{Int32,1},
+                  val::  Array{Float64,1})
+    val[2] = - yo * 1.0 / (x[2]+x[3])
+    val[3] = - yo * 1.0 / (x[2]+x[3])
+  end 
+  function heslag(x ::      Array{Float64,1},
+                  yo::      Float64,
+                  yc::      Array{Float64,1},
+                  subi::    Array{Int32,1},
+                  hessubi:: Array{Int32,1},
+                  hessubj:: Array{Int32,1},
+                  hesval::  Array{Float64,1})
 
-    function grdlag(x ::   Array{Float64,1},
-                    yo::   Float64,
-                    yc::   Array{Float64,1},
-                    subi:: Array{Int32,1},
-                    val::  Array{Float64,1})
-      val[3] = yo * 2.3 * x[3] ^ 1.3
-      
-      k = indexof(2,subi)
-      val[1] += yc[k] * 0.5 * x[1] ^ (-0.5)
-    end 
-    
-    function heslag(x ::      Array{Float64,1},
-                    yo::      Float64,
-                    yc::      Array{Float64,1},
-                    subi::    Array{Int32,1},
-                    hessubi:: Array{Int32,1},
-                    hessubj:: Array{Int32,1},
-                    hesval::  Array{Float64,1})
-      # d^2/dt^2 (yo * t^2.3) = yo * 2.3 * 1.3 * t^0.3
-      hessubi[1] = 3
-      hessubj[1] = 3
-      hesval[1]  = yo * 2.3 * 1.3 * x[3]^0.3
-      
-      # d^2/dx^2 (yc * 10^(1/2) * x^(1/2)) = yc * (-1/4) x^(-3/2)
-      k = indexof(2,subi)      
-      hessubi[2] = 1
-      hessubj[2] = 1
-      hesval[2]  = - yc[k] * 0.25 * x[1] ^ (-1.5)
-    end
+    hessubi[1] = 2; hessubj[1] = 2; hesval[1] = (x[2]+x[3])^(-2)
+    hessubi[2] = 3; hessubj[2] = 2; hesval[2] = (x[2]+x[3])^(-2)
+    hessubi[3] = 3; hessubj[3] = 3; hesval[3] = (x[2]+x[3])^(-2)
+  end
 
-    putnlcallbacks(t,
-                   [3], # subscripts of non-zeros in the gradient of the objective
-                   [1], # subscripts of non-zeros in the gradient of the constraints
-                   [1,1,2,2], # rowptr for subscripts of non-zeros in the gradient of the constraints
-                   [1,3], # hessubi
-                   [1,3], # hessubj
-                   evalobj,
-                   evalconi,
-                   grdlag,
-                   grdobj,
-                   grdconi,
-                   heslag)
+  putnlcallbacks(t,
+                 [2,3], # subscripts of non-zeros in the gradient of the objective
+                 Int[], # subscripts of non-zeros in the gradient of the constraints
+                 [1,1], # rowptr for subscripts of non-zeros in the gradient of the constraints
+                 [2,3,3], # hessubi
+                 [2,2,3], # hessubj
+                 evalobj,
+                 evalconi,
+                 grdlag,
+                 grdobj,
+                 grdconi,
+                 heslag)
 
-    optimize(t)
-
-    solutionsummary(t,MSK_STREAM_MSG)
-
-    solsta = getsolsta(t,MSK_SOL_ITR)
-    if solsta in     [ MSK_SOL_STA_OPTIMAL, 
-                       MSK_SOL_STA_NEAR_OPTIMAL ]
-      xx = getxx(task,MSK_SOL_ITR)
-      # check feasibility and optimality of solution
-      return true
-    else
-      return false
-    end
+  optimize(t)
+  solsta = getsolsta(t,MSK_SOL_ITR)
+  if solsta in     [ MSK_SOL_STA_OPTIMAL, 
+                     MSK_SOL_STA_NEAR_OPTIMAL ]
+    true
+  else
+    false
+  end
 end
 
 assert(test_lo1() &&
@@ -406,6 +365,6 @@ assert(test_lo1() &&
        test_qcqo1() &&
        test_milo1() &&
        test_cqo1() && 
-       test_sdo1())
-# NOTE: nlo1 broken 
+       test_sdo1() &&
+       test_nlo1())
 

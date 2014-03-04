@@ -13,6 +13,7 @@ Contents:
   
    MosekSolverInterface 
    Mosek-Functions
+   Mosek-GECO
   
 
 
