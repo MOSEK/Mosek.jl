@@ -1,14 +1,21 @@
 .. Contents of this file is generated. Do not edit by hand!
-.. MOSEK 7.0.0.102
+.. MOSEK 7.0.0.107
 
 
 
 This page lists all MOSEK functions available from Julia. Please note that the documentation was generated from the documentation for the MOSEK C API, so in some cases it may be slightly invalid. Specifically,
-* Index arguments may not be displayed or documented at starting at 1 (indexes in C start at 0). Nevertheless, in the MOSEK Julia API all indexes are 1-based.
+* Index arguments may not be displayed or documented as starting at 1 (indexes in C start at 0). Nevertheless, in the MOSEK Julia API all indexes are 1-based.
 * Values that are returned from functions may be documented as if they appeared in the argument list for functions.
 * Probably a lot of other stuff. I will be trying to improve all this when I can.
 
-For more verbose descriptions of the individual functions, it is a good idea to look at e.g. the Python documentation at http://docs.mosek.com.
+For most functions there are two alternatives; one where all arguments are
+structly typed, and one where most arguments are untyped. The latter will
+convert arguments as necessary and call the former, but there appears to be a
+significant overhead in doing this. To improve efficiency it may be a good idea to 
+make sure that arguments have the correct types so the typed function is called.
+
+For more verbose descriptions of the individual functions, it is a good idea to
+look at e.g. the Python documentation at http://docs.mosek.com.
 
       
 
@@ -3063,15 +3070,15 @@ inputdata
     ( task::      MSKtask,
       maxnumcon,
       maxnumvar,
-      c::         Array{Float64},
-      cfix::      Float64,
+      c::         Array,
+      cfix,
       A::         SparseMatrixCSC{Float64},
       bkc::       Array{Int32},
-      blc::       Array{Float64},
-      buc::       Array{Float64},
+      blc::       Array,
+      buc::       Array,
       bkx::       Array{Int32},
-      blx::       Array{Float64},
-      bux::       Array{Float64} )
+      blx::       Array,
+      bux::       Array )
 
 
 * ``task:: MSKtask`` An optimization task.
