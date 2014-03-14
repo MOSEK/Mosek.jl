@@ -102,7 +102,7 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
     hessubj_a[1:numhesnz] = nlinfo.hessubj
   end
 
-  return convert(Int32,0) :: Int32
+  return int32(0) :: Int32
 end
 
 function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
@@ -131,7 +131,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   numi = convert(Int,numi_)
   xx = pointer_to_array(xx_,(nlinfo.numvar,))
   yc = pointer_to_array(yc_,(nlinfo.numcon,))
-  subi = pointer_to_array(subi_,(numi,))+1
+  subi = pointer_to_array(subi_,(numi,)) .+ 1
 
   if objval != C_NULL
     unsafe_store!(objval, nlinfo.evalobj(xx))
@@ -147,7 +147,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
     grdobjval_a = pointer_to_array(grdobjval,(ngrdobjnz,))
     grdobjsub_a = pointer_to_array(grdobjsub,(ngrdobjnz,))
 
-    grdobjsub = nlinfo.grdobjsub+1
+    grdobjsub = nlinfo.grdobjsub .+ 1
     nlinfo.grdobj(xx,
                   grdobjsub,
                   grdobjval_a)
@@ -170,7 +170,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
       ptrb = grdconptrb[i]
       n    = grdconptre[i] - grdconptrb[i]
       nlinfo.grdconi(xx,subi[i],
-                     pointer_to_array(grdconsub_+ptrb*4,(n,))+1,
+                     pointer_to_array(grdconsub_+ptrb*4,(n,)) .+ 1,
                      pointer_to_array(grdconval +ptrb*4,(n,)))
     end
   end
@@ -243,11 +243,11 @@ function putnlcallbacks(task::MSKtask,
 
   nlinfo = MSKnlinfo(nvar,ncon,
                      nlgetsp,nlgetva,
-                     convert(Array{Int32,1},grdobjsub-1),
-                     convert(Array{Int32,1},grdconsub-1),
-                     convert(Array{Int32,1},grdconptr-1),
-                     convert(Array{Int32,1},hessubi-1),
-                     convert(Array{Int32,1},hessubj-1),
+                     int32(grdobjsub .- 1),
+                     int32(grdconsub .- 1),
+                     int32(grdconptr .- 1),
+                     int32(hessubi .- 1),
+                     int32(hessubj .- 1),
                      evalobj,evalconi, grdlag,heslag,grdobj,grdconi)
 
   @msk_ccall("putnlfunc",
