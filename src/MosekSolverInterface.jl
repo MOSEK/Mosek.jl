@@ -544,7 +544,126 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
   end
 end
 
+#####
+# SDP
+#####
+addSDPvar!(m::MosekMathProgModel, dim) = appendbarvars(m.task, dim)
+
+function sparseToSparseTriple(mat::SparseMatrixCSC)
+    if issym(mat) || istriu(mat)
+        nnz = nfilled(mat)
+        II = Array(Cint, nnz)
+        JJ = Array(Cint, nnz)
+        VV = Array(Cdouble, nnz)
+        m, n = size(mat)
+        k = 0
+        colptr::Vector{Int64} = mat.colptr
+        nzval::Vector{Float64} = mat.nzval
+    
+        for i = 1:n
+            qi = convert(Cint, i)
+            for j = colptr[i]:(colptr[i+1]-1)
+                qj = convert(Cint, mat.rowval[j])
+                if qi <= qj
+                    k += 1
+                    II[k] = qj
+                    JJ[k] = qi
+                    VV[k] = nzval[j]
+                end
+            end
+        end
+    else
+        error("Matrix must be symmetric or upper triangular")
+    end
+    return II,JJ,VV
 end
 
+function denseToSparseTriple(mat::Matrix)
+    if issym(mat)
+        nnz = convert(Int64, (countnz(mat)+countnz(diag(mat))) / 2)
+        II = Array(Int32, nnz)
+        JJ = Array(Int32, nnz)
+        VV = Array(Float64, nnz)
+        m, n = size(mat)
+        cnt = 1
+        for j in 1:m # get LOWER TRIANGULAR
+            for i in j:n
+                if mat[i,j] != 0.0
+                    II[cnt] = i
+                    JJ[cnt] = j
+                    VV[cnt] = mat[i,j]
+                    cnt += 1
+                end
+            end
+        end
+    elseif istriu(mat)
+        nnz = nfilled(mat)
+        II = Array(Int32, nnz)
+        JJ = Array(Int32, nnz)
+        VV = Array(Float64, nnz)
+        m, n = size(mat)
+        cnt = 1
+        for i in 1:m # get LOWER TRIANGULAR
+            for j in j:n
+                if mat[i,j] != 0.0
+                    II[cnt] = j
+                    JJ[cnt] = i
+                    VV[cnt] = mat[i,j]
+                    cnt += 1
+                end
+            end
+        end
+    # elseif istril(mat)
+    #     nnz = nfilled(mat)
+    #     II = Array(Int32, nnz)
+    #     JJ = Array(Int32, nnz)
+    #     VV = Array(Float64, nnz)
+    #     m, n = size(mat)
+    #     cnt = 1
+    #     for j in 1:m # get LOWER TRIANGULAR
+    #         for i in j:n
+    #             if mat[i,j] != 0.0
+    #                 II[cnt] = i
+    #                 JJ[cnt] = j
+    #                 VV[cnt] = mat[i,j]
+    #                 cnt += 1
+    #             end
+    #         end
+    #     end
+    else
+        error("Matrix must be symmetric or upper triangular")
+    end
+    return II,JJ,VV
+end
 
+function addSDPmatrix!(m::MosekMathProgModel, mat)
+    if isa(mat, Matrix)
+        II,JJ,VV = denseToSparseTriple(mat)
+    elseif isa(mat, SparseMatrixCSC)
+        II,JJ,VV = sparseToSparseTriple(mat)
+    else
+        II,JJ,VV = sparseToSparseTriple(sparse(low))
+    end
+    idx = Mosek.appendsparsesymmat(task, size(mat,1), II, JJ, VV)
+    return idx
+end
 
+function addSDPconstr!(m::MosekMathProgModel, matvaridx, matcoefidx, scalidx, scalcoef, lb, ub)
+    for i in 1:length(matvaridx)
+        constridx = getnumcon(m.task)
+        putbaraij(m.task, constridx+1, i, [matcoefidx[i]], [1])
+    end
+    putarow(task,constridx,scalidx,scalcoef)
+    bk = getBoundsKey(lb, ub)
+    putconbound(task,constridx,bk,lb,ub)
+end
+
+function setSDPobj!(m::MosekMathProgModel, matvaridx, matcoefidx)
+    for (it,varidx) in enumerate(matvaridx)
+        putbarcj(m.task, varidx, 1, matcoefidx[it], [1])
+    end
+end
+
+getSDPvarsolution(m::MosekMathProgModel, idx) = getbarxj(task,MSK_SOL_ITR, idx)
+
+end
