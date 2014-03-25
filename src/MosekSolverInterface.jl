@@ -19,10 +19,10 @@ export MosekSolver
 require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
 importall MathProgSolverInterface
 
-MosekMathProgModel_LINR = 0
-MosekMathProgModel_QOQP = 1
-MosekMathProgModel_SOCP = 2
-MosekMathProgModel_SDP  = 3
+const MosekMathProgModel_LINR = 0
+const MosekMathProgModel_QOQP = 1
+const MosekMathProgModel_SOCP = 2
+const MosekMathProgModel_SDP  = 3
 
 type MosekMathProgModel <: AbstractMathProgModel
   task :: Mosek.MSKtask
@@ -212,14 +212,21 @@ function setobj!(m::MosekMathProgModel, obj::Array{Float64,1})
     throw(MosekMathProgModelError("Objective vector has wrong size"))
   end
 
-  putclist(m.task,[1:numvar+1],obj)
+  putclist(m.task,[1:m.numvar+1],obj)
 end
 
 function setobj!(m::MosekMathProgModel, obj)
   setobj(m,dense(float(obj)))
 end
 
-# addvar(m::MosekMathProgModel, rowidx, rowcoef, collb, colub, objcoef)
+function addvar!(m::MosekMathProgModel, rowidx, rowcoef, collb, colub, objcoef)
+    m.numvar += 1
+    appendvars(m.task,1)
+    varidx = getnumvar(m.task)
+    bk = getBoundsKey(collb, colub)
+    putvarbound(m.task,varidx,bk,collb,colub)
+    putcj(m.task,varidx,objcoef)
+end
 # addconstr(m::MosekMathProgModel, colidx, colcoef, rowlb, rowub)
 
 updatemodel!(m::MosekMathProgModel) = nothing
@@ -248,8 +255,8 @@ end
 
 numvar(m::MosekMathProgModel) = m.numvar
 numconstr(m::MosekMathProgModel) = getnumcon(m.task)
-#optimize!(m::MosekMathProgModel) = optimize(m.task)
-function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
+optimize!(m::MosekMathProgModel) = optimize(m.task)
+# function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
 
 
 
@@ -547,8 +554,6 @@ end
 #####
 # SDP
 #####
-addSDPvar!(m::MosekMathProgModel, dim) = appendbarvars(m.task, dim)
-
 function sparseToSparseTriple(mat::SparseMatrixCSC)
     if issym(mat) || istriu(mat)
         nnz = nfilled(mat)
@@ -636,34 +641,74 @@ function denseToSparseTriple(mat::Matrix)
     return II,JJ,VV
 end
 
-function addSDPmatrix!(m::MosekMathProgModel, mat)
+function getBoundsKey(lb, ub)
+    ret = convert(Int32,0)
+    if lb == -Inf && ub == Inf
+        ret = MSK_BK_FR
+    elseif lb == ub
+        ret = MSK_BK_FX
+    elseif ub  == Inf
+        ret = MSK_BK_LO
+    elseif lb == -Inf 
+        ret = MSK_BK_UP
+    else
+        ret = MSK_BK_RA
+    end
+    return ret
+end
+
+function addsdpvar!(m::MosekMathProgModel, dim)
+    appendbarvars(m.task, Cint[dim])
+    return convert(Int64, getnumbarvar(m.task))
+end
+
+function addsdpmatrix!(m::MosekMathProgModel, mat)
     if isa(mat, Matrix)
         II,JJ,VV = denseToSparseTriple(mat)
     elseif isa(mat, SparseMatrixCSC)
         II,JJ,VV = sparseToSparseTriple(mat)
     else
-        II,JJ,VV = sparseToSparseTriple(sparse(low))
+        II,JJ,VV = sparseToSparseTriple(sparse(mat))
     end
-    idx = Mosek.appendsparsesymmat(task, size(mat,1), II, JJ, VV)
-    return idx
+    idx = Mosek.appendsparsesymmat(m.task, size(mat,1), II, JJ, VV)
+    return convert(Int64, idx)
 end
 
-function addSDPconstr!(m::MosekMathProgModel, matvaridx, matcoefidx, scalidx, scalcoef, lb, ub)
+function addsdpconstr!(m::MosekMathProgModel, matvaridx, matcoefidx, scalidx, scalcoef, lb, ub)
+    appendcons(m.task,1)
+    constridx = getnumcon(m.task)
     for i in 1:length(matvaridx)
-        constridx = getnumcon(m.task)
-        putbaraij(m.task, constridx+1, i, [matcoefidx[i]], [1])
+        putbaraij(m.task, constridx, matvaridx[i], [matcoefidx[i]], [1])
     end
-    putarow(task,constridx,scalidx,scalcoef)
+    putarow(m.task,constridx,scalidx,scalcoef)
     bk = getBoundsKey(lb, ub)
-    putconbound(task,constridx,bk,lb,ub)
+    putconbound(m.task,constridx,bk,lb,ub)
+    return convert(Int64, constridx)
 end
 
-function setSDPobj!(m::MosekMathProgModel, matvaridx, matcoefidx)
+function setsdpobj!(m::MosekMathProgModel, matvaridx, matcoefidx)
     for (it,varidx) in enumerate(matvaridx)
-        putbarcj(m.task, varidx, 1, matcoefidx[it], [1])
+        putbarcj(m.task, varidx, [matcoefidx[it]], [1])
     end
 end
 
-getSDPvarsolution(m::MosekMathProgModel, idx) = getbarxj(task,MSK_SOL_ITR, idx)
+function getsdpsolution(m::MosekMathProgModel, idx)
+    V = getbarxj(m.task, MSK_SOL_ITR, idx)
+    n = convert(Int64, sqrt(8*length(V)+1)/2-1/2 )
+    cnt = 0
+    A = Array(Float64,n,n)
+    for j in 1:n
+      cnt += 1
+      A[j,j] = V[cnt]
+      for i in (j+1):n
+        cnt += 1
+        A[i,j] = V[cnt]
+        A[j,i] = V[cnt]
+      end
+    end
+    return A
+end
+
+getsdpdual(m::MosekMathProgModel) = getconstrduals(m)
 
 end
