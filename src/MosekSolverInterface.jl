@@ -608,8 +608,8 @@ function denseToSparseTriple(mat::Matrix)
         VV = Array(Float64, nnz)
         m, n = size(mat)
         cnt = 1
-        for i in 1:m # get LOWER TRIANGULAR
-            for j in j:n
+        for i in 1:m # UPPER TRIANGULAR -> LOWER TRIANGULAR
+            for j in i:n
                 if mat[i,j] != 0.0
                     II[cnt] = j
                     JJ[cnt] = i
