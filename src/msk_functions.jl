@@ -2094,7 +2094,7 @@ end
 
 getsparsesymmat{T1}(task:: MSKtask,idx:: T1) = getsparsesymmat(task,int64(idx))
 function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
-  maxlen_ = getsymmatinfo(task_,(idx_))[1]
+  maxlen_ = getsymmatinfo(task_,(idx_))[2]
   __tmp_var_0 = (maxlen_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   __tmp_var_2 = (maxlen_)
