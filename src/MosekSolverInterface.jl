@@ -555,30 +555,32 @@ end
 # SDP
 #####
 function sparseToSparseTriple(mat::SparseMatrixCSC)
-    if issym(mat) || istriu(mat)
+    if issym(mat)
+        nnz = convert(Int64, (countnz(mat)+countnz(diag(mat))) / 2)
+    elseif istriu(mat)
         nnz = nfilled(mat)
-        II = Array(Cint, nnz)
-        JJ = Array(Cint, nnz)
-        VV = Array(Cdouble, nnz)
-        m, n = size(mat)
-        k = 0
-        colptr::Vector{Int64} = mat.colptr
-        nzval::Vector{Float64} = mat.nzval
-    
-        for i = 1:n
-            qi = convert(Cint, i)
-            for j = colptr[i]:(colptr[i+1]-1)
-                qj = convert(Cint, mat.rowval[j])
-                if qi <= qj
-                    k += 1
-                    II[k] = qj
-                    JJ[k] = qi
-                    VV[k] = nzval[j]
-                end
-            end
-        end
     else
         error("Matrix must be symmetric or upper triangular")
+    end
+    II = Array(Cint, nnz)
+    JJ = Array(Cint, nnz)
+    VV = Array(Cdouble, nnz)
+    m, n = size(mat)
+    k = 0
+    colptr::Vector{Int64} = mat.colptr
+    nzval::Vector{Float64} = mat.nzval
+
+    for i = 1:n
+        qi = convert(Cint, i)
+        for j = colptr[i]:(colptr[i+1]-1)
+            qj = convert(Cint, mat.rowval[j])
+            if qi <= qj
+                k += 1
+                II[k] = qj
+                JJ[k] = qi
+                VV[k] = nzval[j]
+            end
+        end
     end
     return II,JJ,VV
 end
