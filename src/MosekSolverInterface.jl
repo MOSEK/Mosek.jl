@@ -227,7 +227,14 @@ function addvar!(m::MosekMathProgModel, rowidx, rowcoef, collb, colub, objcoef)
     putvarbound(m.task,varidx,bk,collb,colub)
     putcj(m.task,varidx,objcoef)
 end
-# addconstr(m::MosekMathProgModel, colidx, colcoef, rowlb, rowub)
+
+function addconstr!(m::MosekMathProgModel, colidx, colcoef, lb, ub)
+    appendcons(m.task,1)
+    constridx = getnumcon(m.task)
+    putarow(m.task,constridx,colidx,colcoef)
+    bk = getBoundsKey(lb, ub)
+    putconbound(m.task,constridx,bk,lb,ub)
+end
 
 updatemodel!(m::MosekMathProgModel) = nothing
 
@@ -656,7 +663,7 @@ function getBoundsKey(lb, ub)
     else
         ret = MSK_BK_RA
     end
-    return ret
+    return convert(Int32, ret) #just to be safe
 end
 
 function addsdpvar!(m::MosekMathProgModel, dim)
@@ -677,6 +684,7 @@ function addsdpmatrix!(m::MosekMathProgModel, mat)
 end
 
 function addsdpconstr!(m::MosekMathProgModel, matvaridx, matcoefidx, scalidx, scalcoef, lb, ub)
+    m.probtype = MosekMathProgModel_SDP
     appendcons(m.task,1)
     constridx = getnumcon(m.task)
     for i in 1:length(matvaridx)
