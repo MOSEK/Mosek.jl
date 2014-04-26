@@ -107,7 +107,7 @@ function loadproblem! ( m::     MosekMathProgModel,
 end
 
 function getvarLB(m::MosekMathProgModel)
-  bkx,blx,bux = getvarboundslice(m.task,1,getnumvar(m))
+  bkx,blx,bux = getvarboundslice(m.task,1,m.numvar)
   [ (if bkx[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blx[i] end) for i=1:length(bkx) ] :: Array{Float64,1}
 end
 
@@ -171,7 +171,7 @@ function setvarUB!(m::MosekMathProgModel, colub)
 end
 
 function getconstrLB(m::MosekMathProgModel)
-  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m))
+  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m.task))
   [ (if bkc[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blc[i] end) for i=1:length(bkc) ] :: Array{Float64,1}
 end
 
@@ -187,7 +187,7 @@ function setconstrLB!(m::MosekMathProgModel, rowlb)
 end
 
 function getconstrUB(m::MosekMathProgModel)
-  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m))
+  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m.task))
   [ (if bkc[i] in [ MSK_BK_FR, MSK_BK_LO ] Inf else buc[i] end) for i=1:length(bkc) ] :: Array{Float64,1}
 end
 
@@ -581,7 +581,7 @@ function sparseToSparseTriple(mat::SparseMatrixCSC)
         qi = convert(Cint, i)
         for j = colptr[i]:(colptr[i+1]-1)
             qj = convert(Cint, mat.rowval[j])
-            if qi <= qj
+            if qi <= qj && nzval[j] != 0.0
                 k += 1
                 II[k] = qj
                 JJ[k] = qi
