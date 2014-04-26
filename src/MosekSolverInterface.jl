@@ -517,8 +517,8 @@ function addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx,
     subj[1,:] = x
     subj[2,:] = z:(z+n-1)
 
-    ptrb = [1:n]*2-1
-    ptre = [1:n]*2+1
+    ptrb = [1:n]*2 .- 1
+    ptre = [1:n]*2 .+ 1
 
 
     putarowslice(m.task, ncon, ncon+n, ptrb, ptre, subj[:], cof[:] )
