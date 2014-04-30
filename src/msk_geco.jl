@@ -221,7 +221,7 @@ function putnlcallbacks(task::MSKtask,
   nvar = convert(Int,getnumvar(task))
   ncon = convert(Int,getnumcon(task))
 
-  print( ncon,length(grdconptr))
+  #print( ncon,length(grdconptr))
   if ( length(hessubi) !=  length(hessubj))
     error("Arrays hessubi and hessubj have mismatching lengths")
   end

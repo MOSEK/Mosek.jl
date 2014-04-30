@@ -360,11 +360,11 @@ function test_nlo1()
   end
 end
 
-assert(test_lo1() &&
-       test_qo1() &&
-       test_qcqo1() &&
-       test_milo1() &&
-       test_cqo1() && 
-       test_sdo1() &&
-       test_nlo1())
+assert(test_lo1())
+assert(test_qo1())
+assert(test_qcqo1())
+assert(test_milo1())
+assert(test_cqo1())
+assert(test_sdo1())
+assert(test_nlo1())
 
