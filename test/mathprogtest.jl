@@ -7,5 +7,3 @@ linprogtest(MosekSolver())
 quadprogtest(MosekSolver())
 socptest(MosekSolver())
 mixintprogtest(MosekSolver())
-
-
