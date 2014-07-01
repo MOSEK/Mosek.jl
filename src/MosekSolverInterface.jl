@@ -39,9 +39,12 @@ type MosekMathProgModelError
   msg :: String
 end
 
+printstream(msg::String) = print(msg)
+
 function model(s::MosekSolver)
   # TODO: process solver options
   task = maketask(Mosek.msk_global_env)
+  putstreamfunc(task,MSK_STREAM_LOG,printstream)
   return MosekMathProgModel(task,0,MosekMathProgModel_LINR)
 end
 
@@ -68,6 +71,7 @@ function loadproblem!( m::     MosekMathProgModel,
                       sense:: Symbol)
   Mosek.deletetask(m.task)
   m.task = maketask(Mosek.msk_global_env)
+  putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
 
   nrows,ncols = size(A)
   if ncols != length(collb) ||
@@ -264,8 +268,6 @@ numvar(m::MosekMathProgModel) = m.numvar
 numconstr(m::MosekMathProgModel) = getnumcon(m.task)
 optimize!(m::MosekMathProgModel) = optimize(m.task)
 # function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
-
-
 
 
 
