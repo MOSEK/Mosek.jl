@@ -132,7 +132,7 @@ function complbk(bk,bl)
 end
 
 function compubk(bk,bu)
-  if bl < Inf
+  if bu < Inf
     if bk in [ MSK_BK_LO, MSK_BK_RA, MSK_BK_FX ]
       MSK_BK_RA
     else
@@ -154,8 +154,8 @@ function setvarLB!(m::MosekMathProgModel, collb)
   end
   bk,bl,bu = getvarboundslice(m.task,1,nvars+1)
 
-  bk = [ complbk(bk[i],collb[i]) for i=1:nvars ]
-  putvarbound(m.task, bk, collb, bu)
+  bk = Int32[ complbk(bk[i],collb[i]) for i=1:nvars ]
+  putvarboundslice(m.task, 1, nvars+1, bk, collb, bu)
 end
 
 function getvarUB(m::MosekMathProgModel)
@@ -170,8 +170,8 @@ function setvarUB!(m::MosekMathProgModel, colub)
   end
   bk,bl,bu = getvarboundslice(m.task,1,nvars+1)
 
-  bk = [ compubk(bk[i],colub[i]) for i=1:nvars ]
-  putvarbound(m.task, bk, bl, colub)
+  bk = Int32[ compubk(bk[i],colub[i]) for i=1:nvars ]
+  putvarboundslice(m.task, 1, nvars+1, bk, bl, colub)
 end
 
 function getconstrLB(m::MosekMathProgModel)
@@ -180,7 +180,7 @@ function getconstrLB(m::MosekMathProgModel)
 end
 
 function setconstrLB!(m::MosekMathProgModel, rowlb)
-  nvars = getnumcon(m.task)
+  ncons = getnumcon(m.task)
   if ncons != length(rowlb)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
@@ -196,7 +196,7 @@ function getconstrUB(m::MosekMathProgModel)
 end
 
 function setconstrUB!(m::MosekMathProgModel, rowub)
-  nvars = getnumcon(m.task)
+  ncons = getnumcon(m.task)
   if ncons != length(rowub)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
