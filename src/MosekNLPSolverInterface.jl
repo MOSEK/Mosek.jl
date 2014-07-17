@@ -196,7 +196,9 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
         hessubi_a = pointer_to_array(hessubi,(nhesnz,))
         hessubj_a = pointer_to_array(hessubj,(nhesnz,))
         
+        scale!(yc,-1)
         eval_hesslag(cb.d,pointer_to_array(hesval,(nhesnz,)),xx,yo,yc)
+        scale!(yc,-1)
 
         for i=1:length(hessubi_a)
             hessubi_a[i] = cb.Ihess[i]-1
