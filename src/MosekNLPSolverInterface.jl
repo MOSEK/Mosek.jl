@@ -183,7 +183,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
         eval_grad_f(cb.d, grdlag_a, xx)
         scale!(grdlag_a, yo)
         Jmat = SparseMatrixCSC(cb.numVar,cb.numConstr,cb.jac_rowstarts,cb.jac_colval,cb.jac_nzval)
-        A_mul_B!(1.0, Jmat, yc, 1.0, grdlag_a)
+        A_mul_B!(-1.0, Jmat, yc, 1.0, grdlag_a)
     end
 
     nhesnz = length(cb.Ihess)
@@ -301,4 +301,7 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
     @Mosek.msk_ccall("putnlfunc",
              Int32, (Ptr{Void},Any,Ptr{Void},Ptr{Void}),
              m.task.task, cb, nlgetsp, nlgetva)
+
+    #@Mosek.msk_ccall(linkfiletotaskstream, Int32,
+    # (Ptr{Void},Int32,Ptr{Cchar}), m.task.task,MSK_STREAM_LOG ,"moseklog.txt")
 end
