@@ -805,4 +805,6 @@ end
 
 getsdpdual(m::MosekMathProgModel) = getconstrduals(m)
 
+include("MosekNLPSolverInterface.jl")
+
 end

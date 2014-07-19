@@ -12,7 +12,8 @@ module Mosek
 
   # A macro to make calling C API a little cleaner
   macro msk_ccall(func, args...)
-    f = "MSK_$(func)"
+    f = Base.Meta.quot(symbol("MSK_$(func)"))
+    args = [esc(a) for a in args]
     quote
       ccall(($f,libmosek), $(args...))
     end
