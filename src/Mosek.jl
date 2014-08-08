@@ -43,9 +43,11 @@ module Mosek
   type MSKtask
     env::MSKenv
     task::Ptr{Void}
-
+    # need to keep a reference to callback funcs for GC
     streamcallbackfunc:: Any
+    userstreamcallbackfunc:: Any
     callbackfunc:: Any
+    usercallbackfunc:: Any
     nlinfo:: Any
 
     function MSKtask(env::MSKenv)
@@ -56,7 +58,7 @@ module Mosek
         throw(MosekError(res,""))
       end
 
-      task = new(env,temp[1],nothing,nothing,nothing)
+      task = new(env,temp[1],nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
 
@@ -71,7 +73,7 @@ module Mosek
         throw(MosekError(res,""))
       end
 
-      task = new(env,temp[1],nothing,nothing,nothing)
+      task = new(env,temp[1],nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
 

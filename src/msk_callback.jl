@@ -15,6 +15,7 @@ function putstreamfunc(t::MSKtask, whichstream:: Int32, f :: Function)
     throw(MosekError(r,getlasterror(t)))
   end
   t.streamcallbackfunc = cbfunc
+  t.userstreamcallbackfunc = f
   nothing
 end
 
@@ -53,6 +54,7 @@ function putcallbackfunc(t::MSKtask, f::Function)
   end
 
   t.callbackfunc = cbfunc
+  t.usercallbackfunc = f
   nothing
 end
 

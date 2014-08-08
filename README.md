@@ -52,3 +52,13 @@ For a more complete description of functions, please refer to
 The General Convex interface is not documented at all, but the example 
 <tt>nlo1.jl</tt> show the general idea.
 
+
+MathProgBase interface
+----------------------
+
+Mosek implements the solver-independent [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) interface,
+and so can be used within modeling software like [JuMP](https://github.com/JuliaOpt/JuMP.jl).
+The solver object is called ``MosekSolver``. Parameters are accepted and mirror the names in the Mosek documentation, except for the ``MSK_[I|D|S]PAR`` prefix.
+For example, you can suppress output by saying ``MosekSolver(LOG=0)``, where ``LOG`` corresponds to the [MSK_IPAR_LOG](http://docs.mosek.com/7.0/capi/MSK_IPAR_LOG.html) parameter.
+The type of the parameter is inferred by the provided value.
+
