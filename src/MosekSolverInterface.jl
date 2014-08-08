@@ -33,6 +33,7 @@ type MosekMathProgModel <: AbstractMathProgModel
 
   numcon :: Int64
   conmap :: Array{Int32,1} # map user defined constraints to MOSEK variables
+  options
 end
 
 immutable MosekSolver <: AbstractMathProgSolver
@@ -44,15 +45,38 @@ type MosekMathProgModelError
   msg :: String
 end
 
+function loadoptions!(m::MosekMathProgModel)
+  # write to console by default
+  printstream(msg::String) = print(msg)
+  putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
+  for (o,val) in m.options
+      if isa(val, Integer)
+          parname = "MSK_IPAR_$o"
+          putnaintparam(m.task, parname, val)
+      elseif isa(val, FloatingPoint)
+          parname = "MSK_DPAR_$o"
+          putnadouparam(m.task, parname, val)
+      elseif isa(val, String)
+          parname = "MSK_SPAR_$o"
+          putnastrparam(m.task, parname, val)
+      else
+          error("Value $val for parameter $o has unrecognized type")
+      end
+  end
+end
+
 function model(s::MosekSolver)
-  # TODO: process solver options
   task = maketask(Mosek.msk_global_env)
-  return MosekMathProgModel(task,
-                            MosekMathProgModel_LINR,
-                            0,
-                            Array(Int32,1024),
-                            0,
-                            Array(Int32,1024))
+
+  m = MosekMathProgModel(task,
+                         MosekMathProgModel_LINR,
+                         0,
+                         Array(Int32,1024),
+                         0,
+                         Array(Int32,1024),
+                         s.options)
+  loadoptions!(m)
+  return m
 end
 
 # NOTE: This method will load data into an existing task, but
@@ -82,6 +106,7 @@ function loadproblem!(m::     MosekMathProgModel,
                       sense:: Symbol)
   Mosek.deletetask(m.task)
   m.task = maketask(Mosek.msk_global_env)
+  loadoptions!(m)
 
   nrows,ncols = size(A)
   if ncols != length(collb) ||

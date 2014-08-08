@@ -217,6 +217,7 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
 
     Mosek.deletetask(m.task)
     m.task = maketask(Mosek.msk_global_env)
+    loadoptions!(m)
 
     appendvars(m.task, numVar)
     appendcons(m.task, numConstr)
