@@ -179,7 +179,7 @@ function complbk(bk,bl)
 end
 
 function compubk(bk,bu)
-  if bl < Inf
+  if bu < Inf
     if bk in [ MSK_BK_LO, MSK_BK_RA, MSK_BK_FX ]
       MSK_BK_RA
     else
@@ -234,12 +234,12 @@ function setvarLB!(m::MosekMathProgModel, collb)
 end
 
 function setvarUB!(m::MosekMathProgModel, colub)
-  if m.numvar != length(collb)
+  if m.numvar != length(colub)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
   bnd = copy(colub)
-  for i in 1:length(collb)
+  for i in 1:length(colub)
     if m.vtypemap[i] == :Bin
       bnd[i] = max(colub[i], 0.0)
    end
@@ -254,28 +254,28 @@ end
 
 
 function setconstrLB!(m::MosekMathProgModel, rowlb)
-  if m.numcon != length(collb)
+  if m.numcon != length(rowlb)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
   bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
-  newbk = [ complbk(bk[i],collb[i]) for i=m.conmap[1:m.numcon] ]
+  newbk = [ complbk(bk[i],rowlb[i]) for i=m.conmap[1:m.numcon] ]
   newbu = [ bu[i] for i=m.conmap[1:m.numcon] ]
-  putconboundlist(m.task, m.numcon[1:m.numcon], bk, collb, bu)
+  putconboundlist(m.task, m.conmap[1:m.numcon], bk, rowlb, bu)
 end
 
 
 function setconstrUB!(m::MosekMathProgModel, rowub)
-  if m.numcon != length(collb)
+  if m.numcon != length(rowub)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
   bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
-  newbk = [ compubk(bk[i],colub[i]) for i=m.conmap[1:m.numcon] ]
+  newbk = [ compubk(bk[i],rowub[i]) for i=m.conmap[1:m.numcon] ]
   newbl = [ bl[i] for i=m.conmap[1:m.numcon] ]
-  putconboundlist(m.task, m.conmap[1:m.numcon],bk,bl,colub)
+  putconboundlist(m.task, m.conmap[1:m.numcon],bk,bl,rowub)
 end
 
 function getobj(m::MosekMathProgModel)
