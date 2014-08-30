@@ -16,8 +16,7 @@ export MosekSolver
 #  - The concept of dual values is a bit shaky. Specifically; for a variable x there is a dual for the upper bound,
 #    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
 
-require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
-importall MathProgSolverInterface
+importall MathProgBase.SolverInterface
 
 const MosekMathProgModel_LINR = 0
 const MosekMathProgModel_QOQP = 1
