@@ -16,8 +16,7 @@ export MosekSolver
 #  - The concept of dual values is a bit shaky. Specifically; for a variable x there is a dual for the upper bound,
 #    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
 
-require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
-importall MathProgSolverInterface
+importall MathProgBase.SolverInterface
 
 const MosekMathProgModel_LINR = 0
 const MosekMathProgModel_QOQP = 1
@@ -30,6 +29,7 @@ type MosekMathProgModel <: AbstractMathProgModel
 
   numvar :: Int64
   varmap :: Array{Int32,1} # map user defined variables to MOSEK variables
+  vtypemap :: Array{Symbol,1}
 
   numcon :: Int64
   conmap :: Array{Int32,1} # map user defined constraints to MOSEK variables
@@ -72,6 +72,7 @@ function model(s::MosekSolver)
                          MosekMathProgModel_LINR,
                          0,
                          Array(Int32,1024),
+                         Symbol[],
                          0,
                          Array(Int32,1024),
                          s.options)
@@ -89,6 +90,16 @@ function loadproblem!(m:: MosekMathProgModel, filename:: String)
   m.numcon = getnumcon(m.task)
   m.varmap = Int32[1:m.numvar]
   m.conmap = Int32[1:m.numcon]
+  vtype = getvartypelist(m.task, m.varmap)
+  m.vtypemap = map(vtype) do c
+    if c == MSK_VAR_TYPE_CONT
+      return :Cont
+    elseif c == MSK_VAR_TYPE_INT
+      return :Int
+    else
+      error("Unrecognized variable type")
+    end
+  end
 end
 
 function writeproblem(m:: MosekMathProgModel, filename:: String)
@@ -125,6 +136,7 @@ function loadproblem!(m::     MosekMathProgModel,
   m.numcon = nrows
   m.varmap = Int32[1:m.numvar]
   m.conmap = Int32[1:m.numcon]
+  m.vtypemap = fill(:Cont,ncols)
 
   # input coefficients
   putclist(m.task, obj.rowval, obj.nzval)
@@ -166,7 +178,7 @@ function complbk(bk,bl)
 end
 
 function compubk(bk,bu)
-  if bl < Inf
+  if bu < Inf
     if bk in [ MSK_BK_LO, MSK_BK_RA, MSK_BK_FX ]
       MSK_BK_RA
     else
@@ -206,51 +218,63 @@ function setvarLB!(m::MosekMathProgModel, collb)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
+  bnd = copy(collb)
+  for i in 1:length(collb)
+    if m.vtypemap[i] == :Bin
+      bnd[i] = min(collb[i], 1.0)
+   end
+  end
   bk,bl,bu = getvarboundslice(m.task,1,getnumvar(m.task)+1)
 
-  newbk = [ complbk(bk[i],collb[i]) for i=m.varmap[1:m.numvar] ]
+  newbk = [ complbk(bk[i],bnd[i]) for i=m.varmap[1:m.numvar] ]
   newbu = [ bu[i] for i=m.varmap[1:m.numvar] ]
 
-  putvarboundlist(m.task, m.varmap[1:m.numvar], bk, collb, bu)
+  putvarboundlist(m.task, m.varmap[1:m.numvar], bk, bnd, bu)
 end
 
 function setvarUB!(m::MosekMathProgModel, colub)
-  if m.numvar != length(collb)
+  if m.numvar != length(colub)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
+  bnd = copy(colub)
+  for i in 1:length(colub)
+    if m.vtypemap[i] == :Bin
+      bnd[i] = max(colub[i], 0.0)
+   end
+  end
   bk,bl,bu = getvarboundslice(m.task,1,getnumvar(m.task)+1)
 
-  newbk = [ compubk(bk[i],colub[i]) for i=m.varmap[1:m.numvar] ]
+  newbk = [ compubk(bk[i],bnd[i]) for i=m.varmap[1:m.numvar] ]
   newbl = [ bl[i] for i=m.varmap[1:m.numvar] ]
 
-  putvarboundlist(m.task, m.varmap[1:m.numvar], bk, bl, colub)
+  putvarboundlist(m.task, m.varmap[1:m.numvar], bk, bl, bnd)
 end
 
 
 function setconstrLB!(m::MosekMathProgModel, rowlb)
-  if m.numcon != length(collb)
+  if m.numcon != length(rowlb)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
   bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
-  newbk = [ complbk(bk[i],collb[i]) for i=m.conmap[1:m.numcon] ]
+  newbk = [ complbk(bk[i],rowlb[i]) for i=m.conmap[1:m.numcon] ]
   newbu = [ bu[i] for i=m.conmap[1:m.numcon] ]
-  putconboundlist(m.task, m.numcon[1:m.numcon], bk, collb, bu)
+  putconboundlist(m.task, m.conmap[1:m.numcon], bk, rowlb, bu)
 end
 
 
 function setconstrUB!(m::MosekMathProgModel, rowub)
-  if m.numcon != length(collb)
+  if m.numcon != length(rowub)
     throw(MosekMathProgModelError("Bound vector has wrong size"))
   end
 
   bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
-  newbk = [ compubk(bk[i],colub[i]) for i=m.conmap[1:m.numcon] ]
+  newbk = [ compubk(bk[i],rowub[i]) for i=m.conmap[1:m.numcon] ]
   newbl = [ bl[i] for i=m.conmap[1:m.numcon] ]
-  putconboundlist(m.task, m.conmap[1:m.numcon],bk,bl,colub)
+  putconboundlist(m.task, m.conmap[1:m.numcon],bk,bl,rowub)
 end
 
 function getobj(m::MosekMathProgModel)
@@ -269,10 +293,6 @@ end
 function setobj!(m::MosekMathProgModel, obj)
   setobj(m,dense(float(obj)))
 end
-
-
-
-
 
 function ensureVarMapSize(m::MosekMathProgModel, numvar::Int32)
   if (length(m.varmap) < numvar)
@@ -305,7 +325,6 @@ function addUserCon(m::MosekMathProgModel, natidx::Int32)
   m.conmap[m.numcon] = natidx
   return m.numcon
 end
-
 
 function addvar!(m::MosekMathProgModel, rowidx, rowcoef, collb, colub, objcoef)
     appendvars(m.task,1)
@@ -496,22 +515,17 @@ function getunboundedray(m::MosekMathProgModel)
   end
 end
 
-
-
 getrawsolver(m::MosekMathProgModel) = m.task
 
-function setvartype!(m::MosekMathProgModel, vartype :: Array{Char,1})
+function setvartype!(m::MosekMathProgModel, vartype :: Array{Symbol,1})
   numvar = getnumvar(m.task)
   n = min(length(vartype),numvar)
-
-  putvartypelist(m.task,m.varmap[1:m.numvar],Int32[ (if c == 'I' MSK_VAR_TYPE_INT else MSK_VAR_TYPE_CONT end) for c in vartype ])
+  all(x->in(x,[:Cont,:Int,:Bin]), vartype) || error("Invalid variable type present")
+  m.vtypemap = copy(vartype)
+  putvartypelist(m.task,m.varmap[1:m.numvar],Int32[ (if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end) for c in vartype ])
 end
 
-function getvartype(m::MosekMathProgModel)
-  numvar = getnumvar(m.task)
-  vtlist = getvartypelist(m.task,m.varmap[1:m.numvar])
-  Char[ if vt == MSK_VAR_TYPE_CONT 'I' else 'C' end for vt in vtlist ]
-end
+getvartype(m::MosekMathProgModel) = copy(m.vtypemap)
 
 # QCQO interface, so far only non-conic.
 
