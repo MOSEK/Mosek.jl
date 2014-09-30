@@ -194,7 +194,7 @@ function compubk(bk,bu)
 end
 
 function getvarLB(m::MosekMathProgModel)
-  bkx,blx,bux = getvarboundslice(m.task,1,getnumvar(m.task))
+  bkx,blx,bux = getvarboundslice(m.task,1,getnumvar(m.task)+1)
   Float64[ (if bkx[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blx[i] end) for i=m.varmap[1:m.numvar] ]
 end
 
@@ -204,12 +204,12 @@ function getvarUB(m::MosekMathProgModel)
 end
 
 function getconstrLB(m::MosekMathProgModel)
-  bkx,blx,bux = getconboundslice(m.task,1,getnumcon(m.task)+1)
+  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m.task)+1)
   Float64[ (if bkc[i] in [ MSK_BK_FR, MSK_BK_UP ] -Inf else blc[i] end) for i=m.conmap[1:m.numcon] ]
 end
 
 function getconstrUB(m::MosekMathProgModel)
-  bkx,blx,bux = getconboundslice(m.task,1,getnumcon(m.task)+1)
+  bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m.task)+1)
   Float64[ (if bkc[i] in [ MSK_BK_FR, MSK_BK_LO ]  Inf else buc[i] end) for i=m.conmap[1:m.numcon] ]
 end
 
