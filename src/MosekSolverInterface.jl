@@ -16,8 +16,7 @@ export MosekSolver
 #  - The concept of dual values is a bit shaky. Specifically; for a variable x there is a dual for the upper bound,
 #    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
 
-require(joinpath(Pkg.dir("MathProgBase"),"src","MathProgSolverInterface.jl"))
-importall MathProgSolverInterface
+importall MathProgBase.SolverInterface
 
 const MosekMathProgModel_LINR = 0
 const MosekMathProgModel_QOQP = 1
@@ -411,16 +410,16 @@ end
 
 getrawsolver(m::MosekMathProgModel) = m.task
 
-function setvartype!(m::MosekMathProgModel, vartype :: Array{Char,1})
+function setvartype!(m::MosekMathProgModel, vartype :: Array{Symbol,1})
   numvar = getnumvar(m.task)
   n = min(length(vartype),numvar)
-  putvartypelist(m.task,[1:n],convert(Array{Int32},[ (if c == 'I' MSK_VAR_TYPE_INT else MSK_VAR_TYPE_CONT end) for c=vartype ]))
+  putvartypelist(m.task,[1:n],convert(Array{Int32},[ (if c == :Int MSK_VAR_TYPE_INT else MSK_VAR_TYPE_CONT end) for c=vartype ]))
 end
 
 function getvartype(m::MosekMathProgModel)
   numvar = getnumvar(m.task)
   vtlist = getvartypelist(m.task,[1:numvar])
-  [ if vt == MSK_VAR_TYPE_CONT 'I' else 'C' end for vt=vtlist ] :: Array{Char,1}
+  [ if vt == MSK_VAR_TYPE_CONT :Int else :Cont end for vt=vtlist ] :: Array{Symbol,1}
 end
 
 # QCQO interface, so far only non-conic.
