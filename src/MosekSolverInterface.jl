@@ -378,15 +378,14 @@ function setvarLB!(m::MosekMathProgModel, collb)
     
     for i in 1:length(idxs)
         if m.binvarflag[idxs[i]]
-            bnd[i] = min(bnd[i], 1.0)
+            bnd[i] = max(bnd[i], 0.0)
         end
     end
     bk,bl,bu = getvarboundslice(m.task,1,getnumvar(m.task)+1)
     
-    newbk = [ complbk(bk[m.varmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
-    newbl = bl[m.varmap[idxs]]
+    newbk = Int32[ complbk(bk[m.varmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
 
-    putvarboundlist(m.task, m.varmap[idxs], newbk, newbl, bu)
+    putvarboundlist(m.task, m.varmap[idxs], newbk, bnd, bu)
 end
 
 function setvarUB!(m::MosekMathProgModel, colub)
@@ -394,8 +393,8 @@ function setvarUB!(m::MosekMathProgModel, colub)
         throw(MosekMathProgModelError("Bound vector has wrong size"))
     end
 
-    const idxs = find(i -> i > 0, m.varmap[1:m.numvar])
-    local bnd  = collb[idxs]
+    const idxs = find(i -> m.varmap[i] > 0, 1:m.numvar)
+    local bnd  = colub[idxs]
     local subj = m.varmap[idxs]
     
     for i in 1:length(idxs)
@@ -405,11 +404,9 @@ function setvarUB!(m::MosekMathProgModel, colub)
     end
     bk,bl,bu = getvarboundslice(m.task,1,getnumvar(m.task)+1)
     
-    newbk = [ compubk(bk[m.varmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
-    newbu = bu[m.varmap[idxs]]
+    newbk = Int32[ compubk(bk[m.varmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
 
-    putvarboundlist(m.task, m.varmap[1:m.numvar], newbk, bl, newbu)
-
+    putvarboundlist(m.task, m.varmap[1:m.numvar], newbk, bl, bnd)
 end
 
 
@@ -420,12 +417,12 @@ function setconstrLB!(m::MosekMathProgModel, rowlb)
     end
     
     const idxs = find(i -> m.conmap[i] > 0 && m.conslack[i] == 0, 1:m.numcon)
-    local bnd  = collb[idxs]
+    local bnd  = rowlb[idxs]
     local subj = m.conmap[idxs]
     
     bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
     
-    newbk = [ complbk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
+    newbk = Int32[ complbk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
     newbl = bl[m.conmap[idxs]] 
     putconboundlist(m.task, m.conmap[idxs], newbk, newbl, bu)
 end
@@ -437,12 +434,12 @@ function setconstrUB!(m::MosekMathProgModel, rowub)
     end
     
     const idxs = find(i -> m.conmap[i] > 0 && m.conslack[i] == 0, 1:m.numcon)
-    local bnd  = collb[idxs]
+    local bnd  = rowub[idxs]
     local subj = m.conmap[idxs]
 
     bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
-    newbk = [ compubk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
+    newbk = Int32[ compubk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
     newbu = bu[m.conmap[idxs]] 
     putconboundlist(m.task, m.conmap[idxs], newbk, bl, newbu)
 end
@@ -592,7 +589,11 @@ end
 
 numvar(m::MosekMathProgModel)    = m.numvar
 numconstr(m::MosekMathProgModel) = m.numcon
-optimize!(m::MosekMathProgModel) = optimize(m.task)
+optimize!(m::MosekMathProgModel) = 
+    begin
+        #writedata(m.task,"test.opf")
+        optimize(m.task)
+    end
 # function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
 
 
@@ -814,17 +815,16 @@ end
 
 getrawsolver(m::MosekMathProgModel) = m.task
 
+# NOTE: Var types for semidefinite variables are ignored.
 function setvartype!(m::MosekMathProgModel, intvarflag :: Array{Symbol,1})
-  numvar = getnumvar(m.task)
   n = min(length(intvarflag),m.numvar)
   all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
+  #any(k -> intvarflag[k] in [:Bin,:Int] && m.varmap[k] < 0, 1:n) || error("Invalid variable type for semidefinite variable element")
+
   m.binvarflag[1:n] = map(f -> f == :Bin, intvarflag[1:n])
-    
-  putvartypelist(m.task,m.varmap[1:n],Int32[ (if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end) for c in intvarflag[1:n] ])    
-  # Integer semidefinite variable elements not allowed
-  if any(k -> intvarflag[k] in [:Bin,:Int] && m.varmap[k] < 0, 1:n)
-      error("Invalid variable type for semidefinite variable element")
-  end
+
+  idxs = find(i -> m.varmap[i] > 0,1:n) 
+  putvartypelist(m.task,m.varmap[idxs],Int32[ (if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end) for c in intvarflag[idxs] ])    
   
   for k in find(f -> f == :Bin, intvarflag)
       local j = m.varmap[k]
