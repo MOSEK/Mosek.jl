@@ -478,9 +478,15 @@ end
 function ensureVarMapSize(m::MosekMathProgModel, numvar::Int)
     if (length(m.varmap) < numvar)
         newsz = max(1024,numvar,2*length(m.varmap))
+        oldsz = length(m.varmap)
         resize!(m.varmap, newsz)
         resize!(m.barvarij, newsz)
         resize!(m.binvarflag, newsz)
+        for i in (oldsz+1):newsz
+            m.varmap[i] = 0
+            m.barvarij[i] = 0
+            m.binvarflag[i] = false
+        end
     end
 end
 
@@ -488,9 +494,15 @@ end
 function ensureConMapSize(m::MosekMathProgModel, numcon::Int)
     if (length(m.conmap) < numcon)
         newsz = max(1024,numcon,2*length(m.conmap))
+        oldsz = length(m.conmap)
         resize!(m.conmap,newsz)
         resize!(m.conslack,newsz)
         resize!(m.barconij,newsz)
+        for i in (oldsz+1):newsz
+            m.conmap[i] = 0
+            m.conslack[i] = 0
+            m.barconij[i] = 0
+        end
     end
 end
 
@@ -498,7 +510,11 @@ end
 function ensureBarvarMapSize(m::MosekMathProgModel, numbarvar::Int)
     if (length(m.barvarmap) < numbarvar)
         newsz = max(1024,numbarvar,2*length(m.barvarmap))
+        oldsz = length(m.barvarmap)
         resize!(m.barvarmap,newsz)
+        for i in (oldsz+1):newsz
+            m.barvarmap[i] = 0
+        end
     end
 end
 
@@ -521,7 +537,7 @@ function addUserBarvar(m::MosekMathProgModel, natidx::Int32)
     m.numbarvar += 1
     
     barvaridx = m.numbarvar
-    m.varmap[barvaridx] = natidx
+    m.barvarmap[barvaridx] = natidx
     
     return barvaridx
 end
