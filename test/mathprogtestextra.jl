@@ -195,6 +195,33 @@ function cqo1test(s=MosekSolver(),duals=true)
 
         @test_approx_eq_eps pobj (xx' * [ 0.0,0.0,0.0,1.0,0.5,1.0 ]) 1e-6        
     end
+    # Input as linear, add conic constraints as quadratic constraints
+    let m = MathProgBase.model(s)
+        println("Problem cqo1 - 3")
+        MathProgBase.loadproblem!(m,
+                                  [ 1.0 1.0 2.0 0.0 0.0 0.0 ], # A
+                                  [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ], # blx
+                                  [ Inf, Inf, Inf, Inf, Inf, Inf ], # bux
+                                  [ 0.0, 0.0, 0.0, 1.0, 0.5, 1.0 ], # c
+                                  [ 1.0 ], # blc
+                                  [ 1.0 ], # buc
+                                  :Min )
+        MathProgBase.addquadconstr!(m, [],[], Int32[ 2,1,4 ], Int32[2,1,4], Float64[ 1.0, 1.0,-1.0], "<", 0.0 )
+        MathProgBase.addquadconstr!(m, [],[], Int32[ 3,5   ], Int32[3,6  ], Float64[ 1.0,-1.0     ], "<", 0.0 )
+
+        MathProgBase.optimize!(m)
+        
+        @test MathProgBase.status(m) == :Optimal
+
+        pobj = MathProgBase.getobjval(m)
+        
+        @test_approx_eq_eps pobj 7.07106782e-01 1e-6
+        
+        xx = MathProgBase.getsolution(m)
+        xc = MathProgBase.getconstrsolution(m)
+
+        @test_approx_eq_eps pobj (xx' * [ 0.0,0.0,0.0,1.0,0.5,1.0 ]) 1e-6        
+    end
 end
 
 

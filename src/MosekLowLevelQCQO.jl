@@ -76,19 +76,27 @@ function addquadconstr!(m::MosekMathProgModel,
         end
 
         if num_posonediag == length(qcksubj)-1 && negdiag_idx > 0
-          x = Array(Int64,length(qcksubj))
+          x = zeros(Int64,length(qcksubj))
           x[1] = qcksubj[negdiag_idx]
-          for i=1:negdiag_idx-1 x[i+1] = qcksubj[i] end
-          for i=negdiag_idx+1:length(qcksubj) x[i] = qcksubj[i] end
+          if negdiag_idx > 1
+              x[2:negdiag_idx] = qcksubj[1:negdiag_idx-1]
+          end
+          if negdiag_idx < length(qcksubj)
+              x[negdiag_idx+1:length(qcksubj)] = qcksubj[negdiag_idx+1:length(qcksubj)]
+          end
 
           MSK_CT_QUAD, x
         elseif num_posonediag == length(qcksubj)-1 && offdiag_idx > 0
-          x = Array(Int64,length(qcksubj)+1)
+          x = zeros(Int64,length(qcksubj)+1)            
           x[1] = qcksubi[offdiag_idx]
           x[2] = qcksubj[offdiag_idx]
-          for i=1:offdiag_idx-1 x[i+2] = qcksubj[i] end
-          for i=offdiag_idx+1:length(qcksubj) x[i+1] = qcksubj[i] end
-
+          if offdiag_idx > 1
+              x[3:offdiag_idx+1] = qcksubj[1:offdiag_idx-1]
+          end
+          if offdiag_idx < length(qcksubj)
+              x[offdiag_idx+2:length(qcksubj)+1] = qcksubj[offdiag_idx+1:length(qcksubj)]
+          end
+            
           MSK_CT_RQUAD, x
         else
           -1,()
