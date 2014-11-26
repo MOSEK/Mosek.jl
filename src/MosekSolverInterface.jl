@@ -102,11 +102,12 @@ end
 function loadoptions!(m::MosekMathProgModel)
   # write to console by default
   printstream(msg::String) = print(msg)
-  #printstream(msg::String) = ()
 
-  putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
+  putstream = true
   for (o,val) in m.options
-      if isa(val, Integer)
+      if o == :output
+          putstream = val
+      elseif isa(val, Integer)
           parname = "MSK_IPAR_$o"
           putnaintparam(m.task, parname, val)
       elseif isa(val, FloatingPoint)
@@ -119,6 +120,7 @@ function loadoptions!(m::MosekMathProgModel)
           error("Valueval for parametero has unrecognized type")
       end
   end
+  putstream && putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
 end
 
 
