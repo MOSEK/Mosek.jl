@@ -57,47 +57,40 @@ function addquadconstr!(m::MosekMathProgModel,
   qckval  = quadval
 
   # detect SOCP form
-  ct,x =
+  ct,idxs =
       let num_posonediag = 0,
           offdiag_idx    = 0,
           negdiag_idx    = 0
-        for i=1:length(qcksubi)
-          if qcksubi[i] == qcksubj[i]
+        for i=1:length(quadrowidx)
+          if quadrowidx[i] == quadcolidx[i]
             if abs(qckval[i]-1.0) < 1e-12
               num_posonediag += 1
             elseif abs(qckval[i]+1.0) < 1e-12
               negdiag_idx = i
             end
-          elseif qcksubi[i] != qcksubj[i]
+          elseif quadrowidx[i] != quadcolidx[i]
             if abs(qckval[i]+1.0) < 1e-12
               offdiag_idx = i
             end
           end
         end
 
-        if num_posonediag == length(qcksubj)-1 && negdiag_idx > 0
-          x = zeros(Int64,length(qcksubj))
-          x[1] = qcksubj[negdiag_idx]
-          if negdiag_idx > 1
-              x[2:negdiag_idx] = qcksubj[1:negdiag_idx-1]
-          end
-          if negdiag_idx < length(qcksubj)
-              x[negdiag_idx+1:length(qcksubj)] = qcksubj[negdiag_idx+1:length(qcksubj)]
-          end
+        if num_posonediag == length(quadcolidx)-1 && negdiag_idx > 0
+          idxs = zeros(Int,length(quadcolidx))
+          idxs[1] = quadrowidx[negdiag_idx]
 
-          MSK_CT_QUAD, x
-        elseif num_posonediag == length(qcksubj)-1 && offdiag_idx > 0
-          x = zeros(Int64,length(qcksubj)+1)            
-          x[1] = qcksubi[offdiag_idx]
-          x[2] = qcksubj[offdiag_idx]
-          if offdiag_idx > 1
-              x[3:offdiag_idx+1] = qcksubj[1:offdiag_idx-1]
-          end
-          if offdiag_idx < length(qcksubj)
-              x[offdiag_idx+2:length(qcksubj)+1] = qcksubj[offdiag_idx+1:length(qcksubj)]
-          end
+          for i=1:negdiag_idx-1                  idxs[i+1] = quadrowidx[i] end
+          for i=negdiag_idx+1:length(quadcolidx) idxs[i]   = quadrowidx[i] end
+
+          MSK_CT_QUAD, idxs
+        elseif num_posonediag == length(quadcolidx)-1 && offdiag_idx > 0
+          idxs = zeros(Int,length(quadcolidx)+1)            
+          idxs[1] = quadrowidx[offdiag_idx]
+          idxs[2] = quadcolidx[offdiag_idx]
+          for i=1:offdiag_idx-1                  x[i+2] = quadcolidx[i] end
+          for i=offdiag_idx+1:length(quadcolidx) x[i+1] = quadcolidx[i] end
             
-          MSK_CT_RQUAD, x
+          MSK_CT_RQUAD, idxs
         else
           -1,()
         end
@@ -106,6 +99,9 @@ function addquadconstr!(m::MosekMathProgModel,
   if ct in [ MSK_CT_QUAD, MSK_CT_RQUAD ]
     upgradeProbType(m,MosekMathProgModel_SOCP)
     # SOCP and SDP can be mixed, SDP includes SOCP
+
+    ... Add BarA elements for constraint
+
 
     n = length(x)
 
