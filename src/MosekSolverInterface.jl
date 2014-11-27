@@ -102,7 +102,6 @@ end
 function loadoptions!(m::MosekMathProgModel)
   # write to console by default
   printstream(msg::String) = print(msg)
-  #printstream(msg::String) = ()
 
   putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
   for (o,val) in m.options
