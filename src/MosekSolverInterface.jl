@@ -95,7 +95,7 @@ immutable MosekSolver <: AbstractMathProgSolver
 end
 MosekSolver(;kwargs...) = MosekSolver(kwargs)
 
-type MosekMathProgModelError
+type MosekMathProgModelError <: Exception
   msg :: String
 end
 
@@ -621,7 +621,6 @@ function getsoldef(m::MosekMathProgModel)
 end
 
 
-
 # NOTE: What are the 'legal' values to return?
 # Another NOTE: status seems to mash together the problem status,
 # the solution status and the solver status. I'll try to cope
@@ -667,6 +666,24 @@ end
 # is feasible for an integer problem, then the objective value is the best
 # known bound.
 getobjbound(m::MosekMathProgModel) = getdouinf(m.task,MSK_DINF_MIO_OBJ_BOUND)
+
+# NOTE: We may want different warmstart values interior point and simplex
+function setwarmstart!(m::MosekMathProgModel, xx::Array{Float64,1})
+    idxs = find(i -> i > 0, m.varmap)
+    let subj = m.varmap[idxs]
+        for whichsol in [ MSK_SOL_BAS,MSK_SOL_ITR,MSK_SOL_ITG ]
+            let newxx = 
+                if solutiondef(m.task,whichsol)
+                    getxx(m.task,whichsol)
+                else
+                    zeros(Float64,getnumvar(m.task))
+                end
+                newxx[subj] = xx[idxs]
+                putxx(m.task,whichsol,xx)
+            end
+        end
+    end
+end
 
 function getsolution(m::MosekMathProgModel)
   soldef = getsoldef(m)
@@ -727,7 +744,7 @@ function getvardual(m::MosekMathProgModel,soldef::Int32)
         end 
     const barvardim = Int32[ getdimbarvarj(m.task,j) for j in 1:getnumbarvar(m.task) ]
     
-    map(1:length(m.varmap)) do k
+    map(1:m.numvar) do k
         const j = m.varmap[k]
         if   (j > 0) s[j]
         else         bars[-j][m.barvarij[k]]
@@ -742,7 +759,7 @@ function getcondual(m::MosekMathProgModel,soldef::Int32)
         bars = map(j -> getbarsj(m.task,soldef,j), 1:getnumbarvar(m.task))
         bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
-        map(1:length(m.conmap)) do k
+        map(1:m.numcon) do k
             const j = m.conslack[k]
             const i = m.conmap[k]
             if     (j == 0) 
@@ -817,7 +834,7 @@ function getunboundedray(m::MosekMathProgModel)
       const barx = [ getbarxj(m.task,soldef,j) for j in 1:getnumbarvar(m.task) ]
       const xx   = getxx(m.task,soldef)
       
-      map(1:length(m.varmap)) do k
+      map(1:m.numcon) do k
           const j = m.varmap[k]
           if   (j > 0) xx[j] # conic slack
           else         barx[-j][m.barvarij[k]]
