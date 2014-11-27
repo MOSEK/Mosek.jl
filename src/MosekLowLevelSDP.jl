@@ -129,7 +129,7 @@ function addsdpconstr!(m::MosekMathProgModel, matvaridx, matcoefidx, scalidx, sc
         # add SDP terms
         let barcof   = scalcoef[idxs],
             barj     = m.varmap[scalidx[idxs]],
-            barvarij = m.barvar[scalidx[idxs]]
+            barvarij = m.barvarmap[scalidx[idxs]]
             
             local perm = sortperm(barj)
             local np = length(perm)
