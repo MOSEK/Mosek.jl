@@ -52,8 +52,6 @@ function addquadconstr!(m::MosekMathProgModel,
                         rhs       ::Float64)
   subj    = Int32[ m.varmap[i] for i=linearidx ]
   valj    = linearval
-  qcksubi = Int32[ m.varmap[i] for i=quadrowidx ]
-  qcksubj = Int32[ m.varmap[i] for i=quadcolidx ]
   qckval  = quadval
 
   # detect SOCP form
@@ -84,11 +82,11 @@ function addquadconstr!(m::MosekMathProgModel,
 
           MSK_CT_QUAD, idxs
         elseif num_posonediag == length(quadcolidx)-1 && offdiag_idx > 0
-          idxs = zeros(Int,length(quadcolidx)+1)            
+          idxs = zeros(Int,length(quadcolidx)+1)
           idxs[1] = quadrowidx[offdiag_idx]
           idxs[2] = quadcolidx[offdiag_idx]
-          for i=1:offdiag_idx-1                  x[i+2] = quadcolidx[i] end
-          for i=offdiag_idx+1:length(quadcolidx) x[i+1] = quadcolidx[i] end
+          for i=1:offdiag_idx-1                  idxs[i+2] = quadcolidx[i] end
+          for i=offdiag_idx+1:length(quadcolidx) idxs[i+1] = quadcolidx[i] end
             
           MSK_CT_RQUAD, idxs
         else
@@ -97,55 +95,81 @@ function addquadconstr!(m::MosekMathProgModel,
       end
 
   if ct in [ MSK_CT_QUAD, MSK_CT_RQUAD ]
-    upgradeProbType(m,MosekMathProgModel_SOCP)
-    # SOCP and SDP can be mixed, SDP includes SOCP
+      # SOCP and SDP can be mixed, SDP includes SOCP
+      upgradeProbType(m,MosekMathProgModel_SOCP)
+      
+      x = m.varmap[idxs]
+      n = length(x)
+      numbarelm = count(xitem -> xitem < 0, x)
+      
+      
+      nvar  = getnumvar(m.task)+1
+      ncon  = getnumcon(m.task)+1
+      appendvars(m.task,n) # create aux variable z - these will be put into a cone
+      appendcons(m.task,n) 
+      
+      z     = nvar
+      cof  = Array(Float64,n*2-numbarelm)
+      subj = Array(Int32,  n*2-numbarelm)
+      ptr  = Array(Int64,  n+1)
 
-    ... Add BarA elements for constraint
+      if numbarelm == 0
+          cof[1:2:2*n]  = 1.0
+          cof[2:2:2*n]  = -1.0
+          subj[1:2:2*n] = z:z+n-1
+          subj[2:2:2*n] = x
+          ptr[:]        = Int64[1:2:2*n+1]
+      else
+          let k = 1
+              for i in 1:n
+                  ptr[i] = k
 
+                  cof[k]  = 1.0
+                  subj[k] = z+i-0
 
-    n = length(x)
+                  if x[i] > 0
+                      cof[k] = -1.0
+                      subj[k] = x[i]
+                      k += 1
+                  end
+              end
+              ptr[length(ptr)] = n*2-numbarelm+1
+          end
+      end
+      if ct == MSK_CT_RQUAD cof[1] = 2.0 end
+          
+      # z in R^n, free
+      let b = zeros(Float64,n)
+          putvarboundslice(m.task, nvar,nvar+n, Int32[ MSK_BK_FR for i=1:n ], b,b)
+          putconboundslice(m.task, ncon,ncon+n, Int32[ MSK_BK_FX for i=1:n ], b,b)
+      end
 
-    nvar  = getnumvar(m.task)+1
-    ncon  = getnumcon(m.task)+1
+      putarowslice(m.task, ncon, ncon+n, ptr[1:n], ptr[2:n+1], subj, cof)
+      appendcone(m.task, ct, 0.0, [z:z+n-1])
+      
+      # add bar non-zeros
+      if numbarelm > 0
+          baridxs = find(x -> x < 0, x)
+          for (i,k) in enumerate(baridxs)
+              j     = -x[k]
+              d     = getdimbarvar(m.task,j)
+              ii,jj = lintriltoij(m.barvarij[k],d)
+              midx  = appendsparsesymmat(m.task,d,Int32[ii],Int32[jj], Float64[1.0])
 
-    appendvars(m.task,n) # create aux variable z
-    appendcons(m.task,n)
+              putbaraij(m.task, ncon+i-1, j, Int64[midx], Float64[1.0])
+          end
+      end
 
-    # z in R^n, free
-    z = nvar
-    putvarboundslice(m.task, nvar,nvar+n, Int32[ MSK_BK_FR for i=1:n ] , zeros(n),zeros(n))
-
-    cof = Array(Float64,2,n)
-    cof[1,:] =  1.0
-    cof[2,:] = -1.0
-    if ct == MSK_CT_RQUAD
-      cof[1,1] =  0.5;
-    end
-
-    subj = Array(Int32,2,n)
-    subj[1,:] = x
-    subj[2,:] = z:(z+n-1)
-
-    ptrb = [1:n]*2 .- 1
-    ptre = [1:n]*2 .+ 1
-
-    # 0.5 x_1 - z_1 = 0
-    #     x_i - z_i = 0, i=2..n
-    putarowslice(m.task, ncon, ncon+n, ptrb, ptre, subj[:], cof[:] )
-    putconboundslice(m.task, ncon, ncon+n, Int32[ MSK_BK_FX for i=1:n ], zeros(n), zeros(n) )
-
-    appendcone(m.task, ct, 0.0, [z:z+n-1])
-
-    # we add a dummy constraint to make sure that there is a place-holder for the constarint. The value is always 0.
-    appendcons(m.task,1)
-    dummycon = getnumcon(m.task)
-    addUserCon(m,dummycon)
-
-    m.conslack[dummycon] = 0
-    putconbound(m.task,dummycon, MSK_BK_FX, 0.0, 0.0)
-
-  else
+      # we add an empty placeholder quadratic constraint. The value is always 0, the dual is undefined.
+      appendcons(m.task,1)
+      dummycon = getnumcon(m.task)
+      addUserQuadCon(m,dummycon)
+      putconbound(m.task,dummycon, MSK_BK_FX, 0.0, 0.0)
+  else      
     upgradeProbType(m,MosekMathProgModel_QOQP)
+    
+    qcksubi = m.varmap[quadrowidx]
+    qcksubj = m.varmap[quadcolidx]
 
     for i=1:length(quadrowidx)
       if qcksubj[i] > qcksubi[i]
@@ -172,7 +196,47 @@ function addquadconstr!(m::MosekMathProgModel,
       putconbound(m.task,k,MSK_BK_FR, -Inf,Inf)
     end
 
-    addUserCon(m,considx)
-    m.conslack[considx] = 0
+    addUserQuadCon(m,considx)
   end
 end
+
+
+
+function getquadconstrduals(m::MosekMathProgModel)
+    soldef = getsoldef(m)
+    if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+    solsta = getsolsta(m.task,soldef)
+    if solsta in [MSK_SOL_STA_OPTIMAL, 
+                  MSK_SOL_STA_DUAL_FEAS, 
+                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS, 
+                  MSK_SOL_STA_NEAR_OPTIMAL, 
+                  MSK_SOL_STA_NEAR_DUAL_FEAS, 
+                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, 
+                  MSK_SOL_STA_PRIM_INFEAS_CER]
+        let y = gety(m.task,soldef)
+            y[m.qconmap]
+        end
+    else
+        throw(MosekMathProgModelError("No solution available"))
+    end    
+end
+
+function getquadconstrsolution(m::MosekMathProgModel)
+    soldef = getsoldef(m)
+    if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+    solsta = getsolsta(m.task,soldef)
+    if solsta in [MSK_SOL_STA_OPTIMAL, 
+                  MSK_SOL_STA_PRIM_FEAS, 
+                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS, 
+                  MSK_SOL_STA_NEAR_OPTIMAL, 
+                  MSK_SOL_STA_NEAR_PRIM_FEAS, 
+                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, 
+                  MSK_SOL_STA_DUAL_INFEAS_CER]
+        let xc = getxc(m.task,soldef)
+            xc[m.qconmap]
+        end
+    else
+        throw(MosekMathProgModelError("No solution available"))
+    end    
+end
+
