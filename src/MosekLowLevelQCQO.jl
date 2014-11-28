@@ -201,6 +201,46 @@ function addquadconstr!(m::MosekMathProgModel,
 end
 
 
+function getquadconstrRHS(m::MosekMathProgModel)
+    map(1:m.numqcon) do k
+        i = m.qconmap[i]
+        bk,bl,bu = getbound(m.task,MSK_ACC_CON,i)
+        if bk == MSK_BK_LO
+            bl
+        else
+            bu
+        end
+    end
+end
+
+
+
+#internal 
+function mkbndvector(m::MosekMathProgModel,b::Number)
+    v = Array(Float64,m.numqcon)
+    v[:] = b
+    v
+end
+
+function mkbndvector(m::MosekMathProgModel,b)
+    v = Array(Float64,m.numqcon)
+    v[:] = b
+    v
+end
+
+function setquadconstrRHS(m::MosekMathProgModel,b)    
+    let b = mkbndvector(m,b)
+        map(1:m.numqcon) do k
+            i = m.qconmap[i]
+            bk,bl,bu = getbound(m.task,MSK_ACC_CON,i)
+            if bk == MSK_BK_LO bl = b[k]
+            else               bu = b[k]
+            end
+            putbound(m.task,MSK_ACC_CON,i,bk,bl,bu)
+        end
+    end
+end
+
 
 function getquadconstrduals(m::MosekMathProgModel)
     soldef = getsoldef(m)
@@ -211,13 +251,26 @@ function getquadconstrduals(m::MosekMathProgModel)
                   MSK_SOL_STA_PRIM_AND_DUAL_FEAS, 
                   MSK_SOL_STA_NEAR_OPTIMAL, 
                   MSK_SOL_STA_NEAR_DUAL_FEAS, 
-                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, 
-                  MSK_SOL_STA_PRIM_INFEAS_CER]
+                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS]
         let y = gety(m.task,soldef)
             y[m.qconmap]
         end
     else
         throw(MosekMathProgModelError("No solution available"))
+    end    
+end
+
+function getquadinfeasibilityray(m::MosekMathProgModel)
+    soldef = getsoldef(m)
+    if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
+    solsta = getsolsta(m.task,soldef)
+    if solsta in [MSK_SOL_STA_PRIM_INFEAS_CER,
+                  MSK_SOL_STA_NEAR_PRIM_INFEAS_CER]
+        let y = gety(m.task,soldef)
+            y[m.qconmap]
+        end
+    else
+        throw(MosekMathProgModelError("No infeasibility ray available"))
     end    
 end
 
