@@ -421,7 +421,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
                     local bx = zeros(Float64,n)
-                    putvarboundslice(m.task,firstslack,lastslack+1,[MSK_BK_FR for i in 1:n],bx,bx)
+                    putvarboundslice(m.task,firstslack,lastslack+1,Int32[MSK_BK_FR for i in 1:n],bx,bx)
                     putaijlist(m.task,Int32[firstcon:lastcon],Int32[firstslack:lastslack],-ones(Float64,n))
                     if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack])
                     elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack])
