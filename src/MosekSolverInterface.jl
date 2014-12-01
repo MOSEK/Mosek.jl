@@ -901,7 +901,7 @@ function getunboundedray(m::MosekMathProgModel)
       const barx = [ getbarxj(m.task,soldef,j) for j in 1:getnumbarvar(m.task) ]
       const xx   = getxx(m.task,soldef)
       
-      map(1:m.numcon) do k
+      map(1:m.numvar) do k
           const j = m.varmap[k]
           if   (j > 0) xx[j] # conic slack
           else         barx[-j][m.barvarij[k]]
