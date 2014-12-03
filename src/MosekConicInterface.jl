@@ -443,7 +443,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                             for vj in 1:d
                                 const matidx = appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[1.0])
                                 putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
-                                barconij[i] = if (vj<=vi) (vj*(n+vj+1)/2+vi+1) else (vi*(n+vi+1)/2+vj+1) end 
+                                barconij[i] = (vj<=vi) ? (vj*(n+vj+1)/2+vi+1) : (vi*(n+vi+1)/2+vj+1)
                                 i += 1
                             end
                         end
