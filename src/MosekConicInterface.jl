@@ -441,10 +441,14 @@ function loadconicproblem!(m::MosekMathProgModel,
                     let i = firstcon
                         for vi in 1:d
                             for vj in 1:d
-                                const matidx = appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[1.0])
-                                putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
-                                barconij[i] = (vj<=vi) ? (vj*(n+vj+1)/2+vi+1) : (vi*(n+vi+1)/2+vj+1)
-                                i += 1
+                                let ii = max(vi,vj),
+                                    jj = min(vi,vj)
+                                    
+                                    const matidx = appendsparsesymmat(m.task,d,Int32[ii],Int32[jj],Float64[1.0])
+                                    putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
+                                    barconij[i] = jj*(n+jj+1)/2+ii+1
+                                    i += 1
+                                end
                             end
                         end
                     end
