@@ -432,6 +432,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                     barslackj  = barvarptr
                     d = int32(sqrt(n)) # dim of var
 
+                    bk[firstcon:lastcon] = MSK_BK_FX
+
                     barvardim[barvarptr] = d
                     appendbarvars(m.task, Int32[d])
 
@@ -446,7 +448,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                                     
                                     const matidx = appendsparsesymmat(m.task,d,Int32[ii],Int32[jj],Float64[1.0])
                                     putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
-                                    barconij[i] = jj*(n+jj+1)/2+ii+1
+                                    barconij[i] = (jj*(n+jj+1) >> 1)+ii+1
                                     i += 1
                                 end
                             end
@@ -458,6 +460,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                     lastcon    = conptr+n-1
                     barslackj  = barvarptr
                     d = int32((sqrt(8*n+1)-1)/2)
+
+                    bk[firstcon:lastcon] = MSK_BK_FX
 
                     barvardim[barvarptr] = d
                     appendbarvars(m.task, Int32[d])
