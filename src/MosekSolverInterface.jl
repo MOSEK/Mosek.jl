@@ -656,11 +656,9 @@ numlinconstr (m::MosekMathProgModel) = m.numcon
 numquadconstr(m::MosekMathProgModel) = m.numqcon
 optimize!(m::MosekMathProgModel) = 
     begin
-        #writedata(m.task,"test.opf")
         optimize(m.task)
     end
 # function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
-
 
 function getsoldef(m::MosekMathProgModel)
   if     solutiondef(m.task,MSK_SOL_ITG) MSK_SOL_ITG
@@ -953,12 +951,9 @@ function getintvarflag(m::MosekMathProgModel)
     end
 end
  
-
-
 include("MosekLowLevelQCQO.jl")
 include("MosekLowLevelSDP.jl")
 include("MosekNLPSolverInterface.jl")
 include("MosekConicInterface.jl")
 
 end
-# 

@@ -145,6 +145,17 @@ ijtolintril(ii::Array{Int32,1}, jj::Array{Int32,1}, n::Int32) =
     map(i,j -> ijtolintril(i,j,n),ii,jj)
 
 #internal
+#  Parameters:
+# 
+#  * d dimension of the matrix
+#  * Ls List of linear indexes into matrix (inplicitly defines subi,subj)
+#  * vs List of coefficient values
+# 
+#  Toghether (Ls,vs) define subscripts and coefficients of the *full*
+#  matrix. We convert this and return the lower triangular only on
+#  (i,j,v)-form. Note that this means that all off-diagonal elements
+#  in vs are multiplied by 0.5.
+# 
 function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
     if length(Ls) == 0
         Array(Int32,0),Array(Int32,0),Array(Float64,0)
@@ -165,7 +176,11 @@ function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
             i,j = lintriltoij(Ls[perm[1]],d)
             ii[1] = i
             jj[1] = j
-            vv[1] = vs[perm[1]]
+            if i == j
+                vv[1] = vs[perm[1]]
+            else
+                vv[1] = 0.5 * vs[perm[1]]
+            end
         end
         k = 1
         for i in 2:length(perm)
@@ -447,7 +462,12 @@ function loadconicproblem!(m::MosekMathProgModel,
                                     jj = min(vi,vj)
                                     
                                     const matidx = appendsparsesymmat(m.task,d,Int32[ii],Int32[jj],Float64[1.0])
-                                    putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
+                                    if ii == jj
+                                        putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
+                                    else
+                                        putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-0.5])
+                                    end
+
                                     barconij[i] = (jj*(n+jj+1) >> 1)+ii+1
                                     i += 1
                                 end
