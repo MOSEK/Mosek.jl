@@ -147,6 +147,7 @@ module Mosek
   include("msk_functions.jl")
   include("msk_callback.jl")
   include("msk_geco.jl")
+  include("msk_scopt.jl")
 
   include("MosekSolverInterface.jl")
   using Mosek.MosekMathProgSolverInterface
