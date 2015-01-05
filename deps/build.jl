@@ -2,18 +2,19 @@ using BinDeps
 
 @BinDeps.setup
 
-libmosek = library_dependency("libmosek", aliases=["libmosek64","mosek7_0","mosek64_7_0"])
+libmosek      = library_dependency("libmosek", aliases=["libmosek64","mosek7_0","mosek64_7_0"])
+libmosekscopt = library_dependency("libmosekscopt", aliases=["libmosekscopt7_0","mosekscopt7_0"])
 
 mskplatform,pfdlls,distroext,libmosekname =
   if WORD_SIZE == 32
-    if     OS_NAME == :Linux "linux32x86",  ["libmosek.so",       "libmosek.so.7.0",     "libiomp5.so",    "libmosekglb.so.7.0"],   ".tar.bz2", "libmosek"
-    elseif OS_NAME == :Windows "win32x86",  ["mosek_7_0.dll",     "mosek_7_0.dll",       "libiomp5md.dll", "mosekglb_7_0"        ], ".zip",     "mosek7_0"
+    if     OS_NAME == :Linux "linux32x86",  ["libmosek.so",       "libmosek.so.7.0",     "libiomp5.so",    "libmosekglb.so.7.0", "libmosekscopt7_0.so"], ".tar.bz2", "libmosek"
+    elseif OS_NAME == :Windows "win32x86",  ["mosek_7_0.dll",     "mosek_7_0.dll",       "libiomp5md.dll", "mosekglb_7_0.dll",   "mosekscopt7_0.dll"],   ".zip",     "mosek7_0"
     else   error("Platform not supported")                         
     end                                   
   else                                    
-    if     OS_NAME == :Linux   "linux64x86",["libmosek64.so",     "libmosek64.so.7.0",   "libiomp5.so",    "libmosekglb64.so.7.0"],    ".tar.bz2", "libmosek64"
-    elseif OS_NAME == :Darwin  "osx64x86",  ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib", "libmosekglb64.7.0.dylib"], ".tar.bz2", "libmosek64"
-    elseif OS_NAME == :Windows "win64x86",  ["libmosek64_7_0.dll","libmosek64_7_0.dll",  "libiomp5md.dll", "mosekglb64_7_0.dll"],      ".zip",     "moske64_7_0"
+    if     OS_NAME == :Linux   "linux64x86",["libmosek64.so",     "libmosek64.so.7.0",   "libiomp5.so",    "libmosekglb64.so.7.0",    "mosekscopt7_0.so"],    ".tar.bz2", "libmosek64"
+    elseif OS_NAME == :Darwin  "osx64x86",  ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib", "libmosekglb64.7.0.dylib", "mosekscopt7_0.dylib"], ".tar.bz2", "libmosek64"
+    elseif OS_NAME == :Windows "win64x86",  ["libmosek64_7_0.dll","libmosek64_7_0.dll",  "libiomp5md.dll", "mosekglb64_7_0.dll",      "mosekscopt7_0.dll"],   ".zip",     "moske64_7_0"
     else   error("Platform not supported")
     end
   end
@@ -79,3 +80,4 @@ else
       os = :Windows)
 end
 @BinDeps.install [ :libmosek => :libmosek ]
+@BinDeps.install [ :libmosekscopt => :libmosekscopt ]
