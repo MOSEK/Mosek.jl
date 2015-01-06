@@ -1,19 +1,35 @@
 using BinDeps
 
+import BinDeps.libdir
+import BinDeps.provides
+
 @BinDeps.setup
 
-libmosek = library_dependency("libmosek", aliases=["libmosek64","mosek7_0","mosek64_7_0"])
+# define current version:
+mskvmajor = "7"
+mskvminor = "1"
 
-mskplatform,pfdlls,distroext,libmosekname =
+libmosek      = library_dependency("libmosek",      aliases=["libmosek.so.7.0",     "libmosek.so.7.1",       # linux32x86
+                                                             "libmosek64.so.7.0",   "libmosek64.so.7.1",     # linux64x86
+                                                             "libmosek64.7.0.dylib","libmosek64.7.1.dylib",  # osx64x86
+                                                             "mosek7_0.dll",        "mosek7_1.dll",          # win32x86
+                                                             "mosek64_7_0.dll",     "mosek64_7_1.dll",       # win64x86
+                                                             ])
+libmosekscopt = library_dependency("libmosekscopt", aliases=["libmosekscopt7_0.so",    "libmosekscopt7_1.so",    # linux
+                                                             "libmosekscopt7_0.dylib", "libmosekscopt7_1.dylib", # osx
+                                                             "mosekscopt7_0.dll",      "mosekscopt7_1.dll",      # windows
+                                                             ])
+
+mskplatform,distroext =
   if WORD_SIZE == 32
-    if     OS_NAME == :Linux "linux32x86",  ["libmosek.so",       "libmosek.so.7.0",     "libiomp5.so",    "libmosekglb.so.7.0"],   ".tar.bz2", "libmosek"
-    elseif OS_NAME == :Windows "win32x86",  ["mosek_7_0.dll",     "mosek_7_0.dll",       "libiomp5md.dll", "mosekglb_7_0"        ], ".zip",     "mosek7_0"
-    else   error("Platform not supported")                         
+    if     OS_NAME == :Linux "linux32x86",  ".tar.bz2"
+    elseif OS_NAME == :Windows "win32x86",  ".zip"
+    else   error("Platform not supported")
     end                                   
   else                                    
-    if     OS_NAME == :Linux   "linux64x86",["libmosek64.so",     "libmosek64.so.7.0",   "libiomp5.so",    "libmosekglb64.so.7.0"],    ".tar.bz2", "libmosek64"
-    elseif OS_NAME == :Darwin  "osx64x86",  ["libmosek64.dylib",  "libmosek64.7.0.dylib","libiomp5.dylib", "libmosekglb64.7.0.dylib"], ".tar.bz2", "libmosek64"
-    elseif OS_NAME == :Windows "win64x86",  ["libmosek64_7_0.dll","libmosek64_7_0.dll",  "libiomp5md.dll", "mosekglb64_7_0.dll"],      ".zip",     "moske64_7_0"
+    if     OS_NAME == :Linux   "linux64x86",".tar.bz2"
+    elseif OS_NAME == :Darwin  "osx64x86",  ".tar.bz2"
+    elseif OS_NAME == :Windows "win64x86",  ".zip"
     else   error("Platform not supported")
     end
   end
@@ -21,61 +37,51 @@ mskplatform,pfdlls,distroext,libmosekname =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO  
 if haskey(ENV,"MOSEKBINDIR")
   provides(Binaries, ENV["MOSEKBINDIR"], libmosek)
-# 2. Otherwise, use the default installation path
+
+# 2a. Otherwise, use the default installation path (Linux)
 elseif haskey(ENV,"HOME") && isdir(joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform))
-  if WORD_SIZE == 32
-    provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform","linux32x86","bin"), libmosek, os = :Linux)
-    provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform","win32x86","bin"),   libmosek, os = :Windows)
-  else
-    provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform","linux64x86","bin"), libmosek, os = :Linux)
-    provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform","osx64x86","bin"),   libmosek, os = :Darwin)
-    provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform","win64x86","bin"),   libmosek, os = :Windows)
-  end
-elseif haskey(ENV,"HOMEDRIVE") && haskey(ENV,"HOMEPATH") && isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform))
+  provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin"), libmosek, os = :Linux)
+
+# 2b. Windows default install path
+elseif ( haskey(ENV,"HOMEDRIVE") && 
+         haskey(ENV,"HOMEPATH") && 
+         isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform)) )
   home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
-  if WORD_SIZE == 32
-    provides(Binaries, joinpath(home,"mosek","7","tools","platform","linux32x86","bin"), libmosek, os = :Linux)
-    provides(Binaries, joinpath(home,"mosek","7","tools","platform","win32x86","bin"),   libmosek, os = :Windows)
-  else
-    provides(Binaries, joinpath(home,"mosek","7","tools","platform","linux64x86","bin"), libmosek, os = :Linux)
-    provides(Binaries, joinpath(home,"mosek","7","tools","platform","osx64x86","bin"),   libmosek, os = :Darwin)
-    provides(Binaries, joinpath(home,"mosek","7","tools","platform","win64x86","bin"),   libmosek, os = :Windows)
-  end
+  provides(Binaries, joinpath(home,"mosek","7","tools","platform",mskplatform,"bin"), libmosek, os = :Linux)
+
 # 3. Otherwise, fetch the MOSEK distro and unpack it
 else
-  copycmd = if OS_NAME == :Windows "copy" else "cp" end
-  srcdir  = joinpath(BinDeps.depsdir(libmosek),"src")
-  tarname = string("mosektools",mskplatform, distroext)
-  prefix  = joinpath(BinDeps.depsdir(libmosek),"usr")
 
-  provides(Sources, URI(string("http://download.mosek.com/stable/7/",tarname)), libmosek, unpacked_dir="mosek")
-  provides(SimpleBuild,
-    ( @build_steps begin
-        GetSources(libmosek)
-        CreateDirectory(joinpath(BinDeps.depsdir(libmosek),"usr","lib"))
-        ( @build_steps begin
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[2])" "$prefix/lib"`
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[3])" "$prefix/lib"`
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[4])" "$prefix/lib"`
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[1])" "$prefix/lib"`
-          end
-        )
-      end),
-      libmosek,
-      os = :Unix)
-  provides(SimpleBuild,
-    ( @build_steps begin
-        GetSources(libmosek)
-        CreateDirectory(joinpath(BinDeps.depsdir(libmosek),"usr","lib"))
-        ( @build_steps begin
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[2])" "$prefix/lib"`
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[3])" "$prefix/lib"`
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[4])" "$prefix/lib"`
-          `$copycmd "$srcdir/mosek/7/tools/platform/$mskplatform/bin/$(pfdlls[1])" "$prefix/lib"`
-          end
-        )
-      end),
-      libmosek,
-      os = :Windows)
+    # Custom BuildProcess: Basically the same as SimpleBuild, except
+    # it accepts a 'path' argument that will be used as library path
+    # (like in Binaries above).
+
+    type LessSimpleBuild <: BuildProcess
+        steps
+        path
+    end
+    
+    libdir(p::LessSimpleBuild,dep::BinDeps.LibraryDependency) = p.path
+    provides(::Type{LessSimpleBuild},steps,path::ASCIIString,dep; opts...) = provides(LessSimpleBuild(steps,path),dep; opts...)
+
+
+    srcdir  = joinpath(BinDeps.depsdir(libmosek),"src")
+    tarname = string("mosektools",mskplatform, distroext)
+    
+    provides(Sources, URI(string("http://download.mosek.com/stable/7/",tarname)), libmosek, unpacked_dir="mosek")
+    provides(LessSimpleBuild,
+             GetSources(libmosek),
+             "$srcdir/mosek/7/tools/platform/$mskplatform/bin", # path to binaries
+             libmosek,
+             os = :Unix)
+
+    provides(LessSimpleBuild,
+             GetSources(libmosek),
+             "$srcdir/mosek/7/tools/platform/$mskplatform/bin", # path to binaries
+             libmosekscopt,
+             os = :Unix)
+    # since it was never tested: disable windows install - should be
+    # easy enough to add if requested.
 end
-@BinDeps.install [ :libmosek => :libmosek ]
+@BinDeps.install [ :libmosek => :libmosek, 
+                   :libmosekscopt => :libmosekscopt ]
