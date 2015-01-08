@@ -6,8 +6,8 @@ Interface to the Mosek solver in Julia.
 Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Most MOSEK C API functions are available
 - Callbacks for information retrival and log output during optimization
-- Interface for the MOSEK general convex solver (still quite buggy)
-- Implementation of the LinprogSolver interface
+- Interface for the MOSEK general convex solver
+- Implementation of the `LinprogSolver` interface and other interfaces for `JuMP` (https://github.com/JuliaOpt/JuMP.jl)
 
 MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite), 
 QP (quadratic objective, quadratic constraints), GECO (general
@@ -39,6 +39,18 @@ If the MOSEK installation is moved it is necessary to rebuild the package using
     Pkg.build("Mosek")
 
 Furthermore, to run an optimization a license is required (these are free for academic use). Mosek will look first for the enironment variable `MOSEKLM_LICENSE_FILE` which must point to the relevant license file, and, if this is not present, it will look for a file called `mosek.lic` in the default install path.
+
+### Updating the Mosek library
+If the MOSEK distro was installed manually, it can be updated simply by installing a newer distro. 
+
+If the Mosek.jl installer fetched and installed the MOSEK distro, it cannot automatically update, even when doing `Pkg.update()` or `Pkg.build("Mosek")`. Currently the simplest way to force the update is to do
+```
+Pkg.rm("Mosek") ; Pkg.add("Mosek") ; Pkg.build("Mosek")
+```
+If this is not desirable (e.g. because other packages depend on Mosek), you can remote the temporary files from the Mosek.jl installation. On Unix this is usually
+```
+rm -f ~/.julia/Mosek/downloads/*
+```
 
 
 Documentation
