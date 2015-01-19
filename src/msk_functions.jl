@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.0.0.107
+# MOSEK 7.1.0.15
 
 export
   analyzenames,
@@ -2071,13 +2071,13 @@ function getsolutioninfo(task_:: MSKtask,whichsol_:: Int32)
   dviolcon_ = Array(Float64,(1,))
   dviolvar_ = Array(Float64,(1,))
   dviolbarvar_ = Array(Float64,(1,))
-  dviolcones_ = Array(Float64,(1,))
-  res = @msk_ccall( "getsolutioninfo",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcones_)
+  dviolcone_ = Array(Float64,(1,))
+  res = @msk_ccall( "getsolutioninfo",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
   end
-  (convert(Float64,pobj_[1]),convert(Float64,pviolcon_[1]),convert(Float64,pviolvar_[1]),convert(Float64,pviolbarvar_[1]),convert(Float64,pviolcone_[1]),convert(Float64,pviolitg_[1]),convert(Float64,dobj_[1]),convert(Float64,dviolcon_[1]),convert(Float64,dviolvar_[1]),convert(Float64,dviolbarvar_[1]),convert(Float64,dviolcones_[1]))
+  (convert(Float64,pobj_[1]),convert(Float64,pviolcon_[1]),convert(Float64,pviolvar_[1]),convert(Float64,pviolbarvar_[1]),convert(Float64,pviolcone_[1]),convert(Float64,pviolitg_[1]),convert(Float64,dobj_[1]),convert(Float64,dviolcon_[1]),convert(Float64,dviolvar_[1]),convert(Float64,dviolbarvar_[1]),convert(Float64,dviolcone_[1]))
 end
 
 getsolutionslice{T3,T4}(task:: MSKtask,whichsol:: Int32,solitem:: Int32,first:: T3,last:: T4) = getsolutionslice(task,whichsol,solitem,int32(first),int32(last))
@@ -2662,7 +2662,7 @@ end
 putaijlist{T1,T2,T3}(task:: MSKtask,subi:: Array{T1},subj:: Array{T2},valij:: Array{T3}) = putaijlist(task,int32(subi),int32(subj),float64(valij))
 function putaijlist(task_:: MSKtask,subi_:: Array{Int32},subj_:: Array{Int32},valij_:: Array{Float64})
   num_ = minimum([ length(subi_),length(subj_),length(valij_) ])
-  res = @msk_ccall( "putaijlist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- 1,subj_ .- 1,valij_)
+  res = @msk_ccall( "putaijlist64",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- 1,subj_ .- 1,valij_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw (MosekError(res,msg))
