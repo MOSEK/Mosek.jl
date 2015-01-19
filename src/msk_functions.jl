@@ -309,7 +309,6 @@ export
   putlicensepath,
   putlicensewait
 
-analyzenames(task:: MSKtask,whichstream:: Int32,nametype:: Int32) = analyzenames(task,whichstream,nametype)
 function analyzenames(task_:: MSKtask,whichstream_:: Int32,nametype_:: Int32)
   res = @msk_ccall( "analyzenames",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_,nametype_)
   if res != MSK_RES_OK
@@ -318,7 +317,6 @@ function analyzenames(task_:: MSKtask,whichstream_:: Int32,nametype_:: Int32)
   end
 end
 
-analyzeproblem(task:: MSKtask,whichstream:: Int32) = analyzeproblem(task,whichstream)
 function analyzeproblem(task_:: MSKtask,whichstream_:: Int32)
   res = @msk_ccall( "analyzeproblem",Int32,(Ptr{Void},Int32,),task_.task,whichstream_)
   if res != MSK_RES_OK
@@ -327,7 +325,6 @@ function analyzeproblem(task_:: MSKtask,whichstream_:: Int32)
   end
 end
 
-analyzesolution(task:: MSKtask,whichstream:: Int32,whichsol:: Int32) = analyzesolution(task,whichstream,whichsol)
 function analyzesolution(task_:: MSKtask,whichstream_:: Int32,whichsol_:: Int32)
   res = @msk_ccall( "analyzesolution",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_,whichsol_)
   if res != MSK_RES_OK
@@ -396,7 +393,6 @@ function appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Array{Int32},su
   (convert(Int64,idx_[1]+1))
 end
 
-appendstat(task:: MSKtask) = appendstat(task)
 function appendstat(task_:: MSKtask)
   res = @msk_ccall( "appendstat",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -414,7 +410,6 @@ function appendvars(task_:: MSKtask,num_:: Int32)
   end
 end
 
-basiscond(task:: MSKtask) = basiscond(task)
 function basiscond(task_:: MSKtask)
   nrmbasis_ = Array(Float64,(1,))
   nrminvbasis_ = Array(Float64,(1,))
@@ -426,7 +421,6 @@ function basiscond(task_:: MSKtask)
   (convert(Float64,nrmbasis_[1]),convert(Float64,nrminvbasis_[1]))
 end
 
-bktostr(task:: MSKtask,bk:: Int32) = bktostr(task,bk)
 function bktostr(task_:: MSKtask,bk_:: Int32)
   str_ = zeros(Uint8,MSK_MAX_STR_LEN)
   res = @msk_ccall( "bktostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,bk_,str_)
@@ -437,7 +431,6 @@ function bktostr(task_:: MSKtask,bk_:: Int32)
   (bytestring(str_))
 end
 
-callbackcodetostr(code:: Int32) = callbackcodetostr(code)
 function callbackcodetostr(code_:: Int32)
   callbackcodestr_ = zeros(Uint8,MSK_MAX_STR_LEN)
   res = @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{Uint8},),code_,callbackcodestr_)
@@ -447,7 +440,6 @@ function callbackcodetostr(code_:: Int32)
   (bytestring(callbackcodestr_))
 end
 
-checkconvexity(task:: MSKtask) = checkconvexity(task)
 function checkconvexity(task_:: MSKtask)
   res = @msk_ccall( "checkconvexity",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -474,7 +466,6 @@ function chgbound(task_:: MSKtask,accmode_:: Int32,i_:: Int32,lower_:: Int32,fin
   end
 end
 
-commitchanges(task:: MSKtask) = commitchanges(task)
 function commitchanges(task_:: MSKtask)
   res = @msk_ccall( "commitchanges",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -483,7 +474,6 @@ function commitchanges(task_:: MSKtask)
   end
 end
 
-conetypetostr(task:: MSKtask,conetype:: Int32) = conetypetostr(task,conetype)
 function conetypetostr(task_:: MSKtask,conetype_:: Int32)
   str_ = zeros(Uint8,1024)
   res = @msk_ccall( "conetypetostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,conetype_,str_)
@@ -494,7 +484,6 @@ function conetypetostr(task_:: MSKtask,conetype_:: Int32)
   (bytestring(str_))
 end
 
-deletesolution(task:: MSKtask,whichsol:: Int32) = deletesolution(task,whichsol)
 function deletesolution(task_:: MSKtask,whichsol_:: Int32)
   res = @msk_ccall( "deletesolution",Int32,(Ptr{Void},Int32,),task_.task,whichsol_)
   if res != MSK_RES_OK
@@ -663,7 +652,6 @@ function getaslicenumnz(task_:: MSKtask,accmode_:: Int32,first_:: Int32,last_:: 
   (convert(Int64,numnz_[1]))
 end
 
-getbarablocktriplet(task:: MSKtask) = getbarablocktriplet(task)
 function getbarablocktriplet(task_:: MSKtask)
   maxnum_ = getnumbarablocktriplets(task_)
   num_ = Array(Int64,(1,))
@@ -726,7 +714,6 @@ function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
   (convert(Int64,num_[1]))
 end
 
-getbarasparsity(task:: MSKtask) = getbarasparsity(task)
 function getbarasparsity(task_:: MSKtask)
   maxnumnz_ = getnumbaranz(task_)
   numnz_ = Array(Int64,(1,))
@@ -740,7 +727,6 @@ function getbarasparsity(task_:: MSKtask)
   (convert(Int64,numnz_[1]),__tmp_var_1)
 end
 
-getbarcblocktriplet(task:: MSKtask) = getbarcblocktriplet(task)
 function getbarcblocktriplet(task_:: MSKtask)
   maxnum_ = getnumbarcblocktriplets(task_)
   num_ = Array(Int64,(1,))
@@ -799,7 +785,6 @@ function getbarcidxj(task_:: MSKtask,idx_:: Int64)
   (convert(Int32,j_[1]+1))
 end
 
-getbarcsparsity(task:: MSKtask) = getbarcsparsity(task)
 function getbarcsparsity(task_:: MSKtask)
   maxnumnz_ = getnumbarcnz(task_)
   numnz_ = Array(Int64,(1,))
@@ -837,7 +822,6 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
   (bytestring(name_))
 end
 
-getbarvarnameindex(task:: MSKtask,somename:: String) = getbarvarnameindex(task,somename)
 function getbarvarnameindex(task_:: MSKtask,somename_:: String)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
@@ -901,7 +885,6 @@ function getboundslice(task_:: MSKtask,accmode_:: Int32,first_:: Int32,last_:: I
   (bk_,__tmp_var_2,__tmp_var_4)
 end
 
-getc(task:: MSKtask) = getc(task)
 function getc(task_:: MSKtask)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -913,7 +896,6 @@ function getc(task_:: MSKtask)
   (__tmp_var_1)
 end
 
-getcfix(task:: MSKtask) = getcfix(task)
 function getcfix(task_:: MSKtask)
   cfix_ = Array(Float64,(1,))
   res = @msk_ccall( "getcfix",Int32,(Ptr{Void},Ptr{Float64},),task_.task,cfix_)
@@ -1004,7 +986,6 @@ function getconename(task_:: MSKtask,i_:: Int32)
   (bytestring(name_))
 end
 
-getconenameindex(task:: MSKtask,somename:: String) = getconenameindex(task,somename)
 function getconenameindex(task_:: MSKtask,somename_:: String)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
@@ -1039,7 +1020,6 @@ function getconname(task_:: MSKtask,i_:: Int32)
   (bytestring(name_))
 end
 
-getconnameindex(task:: MSKtask,somename:: String) = getconnameindex(task,somename)
 function getconnameindex(task_:: MSKtask,somename_:: String)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
@@ -1124,7 +1104,6 @@ function getdimbarvarj(task_:: MSKtask,j_:: Int32)
   (convert(Int32,dimbarvarj_[1]))
 end
 
-getdouinf(task:: MSKtask,whichdinf:: Int32) = getdouinf(task,whichdinf)
 function getdouinf(task_:: MSKtask,whichdinf_:: Int32)
   dvalue_ = Array(Float64,(1,))
   res = @msk_ccall( "getdouinf",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichdinf_,dvalue_)
@@ -1135,7 +1114,6 @@ function getdouinf(task_:: MSKtask,whichdinf_:: Int32)
   (convert(Float64,dvalue_[1]))
 end
 
-getdouparam(task:: MSKtask,param:: Int32) = getdouparam(task,param)
 function getdouparam(task_:: MSKtask,param_:: Int32)
   parvalue_ = Array(Float64,(1,))
   res = @msk_ccall( "getdouparam",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,param_,parvalue_)
@@ -1146,7 +1124,6 @@ function getdouparam(task_:: MSKtask,param_:: Int32)
   (convert(Float64,parvalue_[1]))
 end
 
-getdualobj(task:: MSKtask,whichsol:: Int32) = getdualobj(task,whichsol)
 function getdualobj(task_:: MSKtask,whichsol_:: Int32)
   dualobj_ = Array(Float64,(1,))
   res = @msk_ccall( "getdualobj",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,dualobj_)
@@ -1209,7 +1186,6 @@ function getdviolvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   (__tmp_var_1)
 end
 
-getinfeasiblesubproblem(task:: MSKtask,whichsol:: Int32) = getinfeasiblesubproblem(task,whichsol)
 function getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Int32)
   inftask_ = Array(Ptr{Void},(1,))
   res = @msk_ccall( "getinfeasiblesubproblem",Int32,(Ptr{Void},Int32,Ptr{Ptr{Void}},),task_.task,whichsol_,inftask_)
@@ -1244,7 +1220,6 @@ function getinti(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   (__tmp_var_1)
 end
 
-getintinf(task:: MSKtask,whichiinf:: Int32) = getintinf(task,whichiinf)
 function getintinf(task_:: MSKtask,whichiinf_:: Int32)
   ivalue_ = Array(Int32,(1,))
   res = @msk_ccall( "getintinf",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichiinf_,ivalue_)
@@ -1255,7 +1230,6 @@ function getintinf(task_:: MSKtask,whichiinf_:: Int32)
   (convert(Int32,ivalue_[1]))
 end
 
-getintparam(task:: MSKtask,param:: Int32) = getintparam(task,param)
 function getintparam(task_:: MSKtask,param_:: Int32)
   parvalue_ = Array(Int32,(1,))
   res = @msk_ccall( "getintparam",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,param_,parvalue_)
@@ -1277,7 +1251,6 @@ function getlenbarvarj(task_:: MSKtask,j_:: Int32)
   (convert(Int64,lenbarvarj_[1]))
 end
 
-getlintinf(task:: MSKtask,whichliinf:: Int32) = getlintinf(task,whichliinf)
 function getlintinf(task_:: MSKtask,whichliinf_:: Int32)
   ivalue_ = Array(Int64,(1,))
   res = @msk_ccall( "getlintinf",Int32,(Ptr{Void},Int32,Ptr{Int64},),task_.task,whichliinf_,ivalue_)
@@ -1288,7 +1261,6 @@ function getlintinf(task_:: MSKtask,whichliinf_:: Int32)
   (convert(Int64,ivalue_[1]))
 end
 
-getmaxnumanz(task:: MSKtask) = getmaxnumanz(task)
 function getmaxnumanz(task_:: MSKtask)
   maxnumanz_ = Array(Int64,(1,))
   res = @msk_ccall( "getmaxnumanz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,maxnumanz_)
@@ -1299,7 +1271,6 @@ function getmaxnumanz(task_:: MSKtask)
   (convert(Int64,maxnumanz_[1]))
 end
 
-getmaxnumbarvar(task:: MSKtask) = getmaxnumbarvar(task)
 function getmaxnumbarvar(task_:: MSKtask)
   maxnumbarvar_ = Array(Int32,(1,))
   res = @msk_ccall( "getmaxnumbarvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumbarvar_)
@@ -1310,7 +1281,6 @@ function getmaxnumbarvar(task_:: MSKtask)
   (convert(Int32,maxnumbarvar_[1]))
 end
 
-getmaxnumcon(task:: MSKtask) = getmaxnumcon(task)
 function getmaxnumcon(task_:: MSKtask)
   maxnumcon_ = Array(Int32,(1,))
   res = @msk_ccall( "getmaxnumcon",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumcon_)
@@ -1321,7 +1291,6 @@ function getmaxnumcon(task_:: MSKtask)
   (convert(Int32,maxnumcon_[1]))
 end
 
-getmaxnumcone(task:: MSKtask) = getmaxnumcone(task)
 function getmaxnumcone(task_:: MSKtask)
   maxnumcone_ = Array(Int32,(1,))
   res = @msk_ccall( "getmaxnumcone",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumcone_)
@@ -1332,7 +1301,6 @@ function getmaxnumcone(task_:: MSKtask)
   (convert(Int32,maxnumcone_[1]))
 end
 
-getmaxnumqnz(task:: MSKtask) = getmaxnumqnz(task)
 function getmaxnumqnz(task_:: MSKtask)
   maxnumqnz_ = Array(Int64,(1,))
   res = @msk_ccall( "getmaxnumqnz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,maxnumqnz_)
@@ -1343,7 +1311,6 @@ function getmaxnumqnz(task_:: MSKtask)
   (convert(Int64,maxnumqnz_[1]))
 end
 
-getmaxnumvar(task:: MSKtask) = getmaxnumvar(task)
 function getmaxnumvar(task_:: MSKtask)
   maxnumvar_ = Array(Int32,(1,))
   res = @msk_ccall( "getmaxnumvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumvar_)
@@ -1354,7 +1321,6 @@ function getmaxnumvar(task_:: MSKtask)
   (convert(Int32,maxnumvar_[1]))
 end
 
-getmemusage(task:: MSKtask) = getmemusage(task)
 function getmemusage(task_:: MSKtask)
   meminuse_ = Array(Int64,(1,))
   maxmemuse_ = Array(Int64,(1,))
@@ -1366,7 +1332,6 @@ function getmemusage(task_:: MSKtask)
   (convert(Int64,meminuse_[1]),convert(Int64,maxmemuse_[1]))
 end
 
-getnadouinf(task:: MSKtask,whichdinf:: String) = getnadouinf(task,whichdinf)
 function getnadouinf(task_:: MSKtask,whichdinf_:: String)
   dvalue_ = Array(Float64,(1,))
   res = @msk_ccall( "getnadouinf",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Float64},),task_.task,bytestring(whichdinf_),dvalue_)
@@ -1377,7 +1342,6 @@ function getnadouinf(task_:: MSKtask,whichdinf_:: String)
   (convert(Float64,dvalue_[1]))
 end
 
-getnadouparam(task:: MSKtask,paramname:: String) = getnadouparam(task,paramname)
 function getnadouparam(task_:: MSKtask,paramname_:: String)
   parvalue_ = Array(Float64,(1,))
   res = @msk_ccall( "getnadouparam",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Float64},),task_.task,bytestring(paramname_),parvalue_)
@@ -1388,7 +1352,6 @@ function getnadouparam(task_:: MSKtask,paramname_:: String)
   (convert(Float64,parvalue_[1]))
 end
 
-getnaintinf(task:: MSKtask,infitemname:: String) = getnaintinf(task,infitemname)
 function getnaintinf(task_:: MSKtask,infitemname_:: String)
   ivalue_ = Array(Int32,(1,))
   res = @msk_ccall( "getnaintinf",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(infitemname_),ivalue_)
@@ -1399,7 +1362,6 @@ function getnaintinf(task_:: MSKtask,infitemname_:: String)
   (convert(Int32,ivalue_[1]))
 end
 
-getnaintparam(task:: MSKtask,paramname:: String) = getnaintparam(task,paramname)
 function getnaintparam(task_:: MSKtask,paramname_:: String)
   parvalue_ = Array(Int32,(1,))
   res = @msk_ccall( "getnaintparam",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(paramname_),parvalue_)
@@ -1422,7 +1384,6 @@ function getnastrparam(task_:: MSKtask,paramname_:: String,maxlen_:: Int32)
   (convert(Int32,len_[1]),bytestring(parvalue_))
 end
 
-getnumanz(task:: MSKtask) = getnumanz(task)
 function getnumanz(task_:: MSKtask)
   numanz_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumanz",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numanz_)
@@ -1433,7 +1394,6 @@ function getnumanz(task_:: MSKtask)
   (convert(Int32,numanz_[1]))
 end
 
-getnumanz64(task:: MSKtask) = getnumanz64(task)
 function getnumanz64(task_:: MSKtask)
   numanz_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumanz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,numanz_)
@@ -1444,7 +1404,6 @@ function getnumanz64(task_:: MSKtask)
   (convert(Int64,numanz_[1]))
 end
 
-getnumbarablocktriplets(task:: MSKtask) = getnumbarablocktriplets(task)
 function getnumbarablocktriplets(task_:: MSKtask)
   num_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumbarablocktriplets",Int32,(Ptr{Void},Ptr{Int64},),task_.task,num_)
@@ -1455,7 +1414,6 @@ function getnumbarablocktriplets(task_:: MSKtask)
   (convert(Int64,num_[1]))
 end
 
-getnumbaranz(task:: MSKtask) = getnumbaranz(task)
 function getnumbaranz(task_:: MSKtask)
   nz_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumbaranz",Int32,(Ptr{Void},Ptr{Int64},),task_.task,nz_)
@@ -1466,7 +1424,6 @@ function getnumbaranz(task_:: MSKtask)
   (convert(Int64,nz_[1]))
 end
 
-getnumbarcblocktriplets(task:: MSKtask) = getnumbarcblocktriplets(task)
 function getnumbarcblocktriplets(task_:: MSKtask)
   num_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumbarcblocktriplets",Int32,(Ptr{Void},Ptr{Int64},),task_.task,num_)
@@ -1477,7 +1434,6 @@ function getnumbarcblocktriplets(task_:: MSKtask)
   (convert(Int64,num_[1]))
 end
 
-getnumbarcnz(task:: MSKtask) = getnumbarcnz(task)
 function getnumbarcnz(task_:: MSKtask)
   nz_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumbarcnz",Int32,(Ptr{Void},Ptr{Int64},),task_.task,nz_)
@@ -1488,7 +1444,6 @@ function getnumbarcnz(task_:: MSKtask)
   (convert(Int64,nz_[1]))
 end
 
-getnumbarvar(task:: MSKtask) = getnumbarvar(task)
 function getnumbarvar(task_:: MSKtask)
   numbarvar_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumbarvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numbarvar_)
@@ -1499,7 +1454,6 @@ function getnumbarvar(task_:: MSKtask)
   (convert(Int32,numbarvar_[1]))
 end
 
-getnumcon(task:: MSKtask) = getnumcon(task)
 function getnumcon(task_:: MSKtask)
   numcon_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumcon",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numcon_)
@@ -1510,7 +1464,6 @@ function getnumcon(task_:: MSKtask)
   (convert(Int32,numcon_[1]))
 end
 
-getnumcone(task:: MSKtask) = getnumcone(task)
 function getnumcone(task_:: MSKtask)
   numcone_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumcone",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numcone_)
@@ -1532,7 +1485,6 @@ function getnumconemem(task_:: MSKtask,k_:: Int32)
   (convert(Int32,nummem_[1]))
 end
 
-getnumintvar(task:: MSKtask) = getnumintvar(task)
 function getnumintvar(task_:: MSKtask)
   numintvar_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumintvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numintvar_)
@@ -1543,7 +1495,6 @@ function getnumintvar(task_:: MSKtask)
   (convert(Int32,numintvar_[1]))
 end
 
-getnumparam(task:: MSKtask,partype:: Int32) = getnumparam(task,partype)
 function getnumparam(task_:: MSKtask,partype_:: Int32)
   numparam_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumparam",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,partype_,numparam_)
@@ -1576,7 +1527,6 @@ function getnumqconknz64(task_:: MSKtask,k_:: Int32)
   (convert(Int64,numqcnz_[1]))
 end
 
-getnumqobjnz(task:: MSKtask) = getnumqobjnz(task)
 function getnumqobjnz(task_:: MSKtask)
   numqonz_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumqobjnz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,numqonz_)
@@ -1587,7 +1537,6 @@ function getnumqobjnz(task_:: MSKtask)
   (convert(Int64,numqonz_[1]))
 end
 
-getnumsymmat(task:: MSKtask) = getnumsymmat(task)
 function getnumsymmat(task_:: MSKtask)
   num_ = Array(Int64,(1,))
   res = @msk_ccall( "getnumsymmat",Int32,(Ptr{Void},Ptr{Int64},),task_.task,num_)
@@ -1598,7 +1547,6 @@ function getnumsymmat(task_:: MSKtask)
   (convert(Int64,num_[1]))
 end
 
-getnumvar(task:: MSKtask) = getnumvar(task)
 function getnumvar(task_:: MSKtask)
   numvar_ = Array(Int32,(1,))
   res = @msk_ccall( "getnumvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numvar_)
@@ -1609,7 +1557,6 @@ function getnumvar(task_:: MSKtask)
   (convert(Int32,numvar_[1]))
 end
 
-getobjname(task:: MSKtask) = getobjname(task)
 function getobjname(task_:: MSKtask)
   maxlen_ = (1 + getobjnamelen(task_))
   objname_ = zeros(Uint8,(maxlen_))
@@ -1621,7 +1568,6 @@ function getobjname(task_:: MSKtask)
   (bytestring(objname_))
 end
 
-getobjnamelen(task:: MSKtask) = getobjnamelen(task)
 function getobjnamelen(task_:: MSKtask)
   len_ = Array(Int32,(1,))
   res = @msk_ccall( "getobjnamelen",Int32,(Ptr{Void},Ptr{Int32},),task_.task,len_)
@@ -1632,7 +1578,6 @@ function getobjnamelen(task_:: MSKtask)
   (convert(Int32,len_[1]))
 end
 
-getobjsense(task:: MSKtask) = getobjsense(task)
 function getobjsense(task_:: MSKtask)
   sense_ = Array(Int32,(1,))
   res = @msk_ccall( "getobjsense",Int32,(Ptr{Void},Ptr{Int32},),task_.task,sense_)
@@ -1693,7 +1638,6 @@ function getpeqi(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32},normalize
   (__tmp_var_1)
 end
 
-getprimalobj(task:: MSKtask,whichsol:: Int32) = getprimalobj(task,whichsol)
 function getprimalobj(task_:: MSKtask,whichsol_:: Int32)
   primalobj_ = Array(Float64,(1,))
   res = @msk_ccall( "getprimalobj",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,primalobj_)
@@ -1704,7 +1648,6 @@ function getprimalobj(task_:: MSKtask,whichsol_:: Int32)
   (convert(Float64,primalobj_[1]))
 end
 
-getprobtype(task:: MSKtask) = getprobtype(task)
 function getprobtype(task_:: MSKtask)
   probtype_ = Array(Int32,(1,))
   res = @msk_ccall( "getprobtype",Int32,(Ptr{Void},Ptr{Int32},),task_.task,probtype_)
@@ -1715,7 +1658,6 @@ function getprobtype(task_:: MSKtask)
   (convert(Int32,probtype_[1]))
 end
 
-getprosta(task:: MSKtask,whichsol:: Int32) = getprosta(task,whichsol)
 function getprosta(task_:: MSKtask,whichsol_:: Int32)
   prosta_ = Array(Int32,(1,))
   res = @msk_ccall( "getprosta",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_,prosta_)
@@ -1797,7 +1739,6 @@ function getqconk(task_:: MSKtask,k_:: Int32)
   (convert(Int64,numqcnz_[1]),__tmp_var_1,__tmp_var_3,__tmp_var_5)
 end
 
-getqobj(task:: MSKtask) = getqobj(task)
 function getqobj(task_:: MSKtask)
   maxnumqonz_ = getnumqobjnz(task_)
   qosurp_ = convert(Int32,length(qosubi_))
@@ -1816,7 +1757,6 @@ function getqobj(task_:: MSKtask)
   (convert(Int32,numqonz_[1]),__tmp_var_1,__tmp_var_3,__tmp_var_5)
 end
 
-getqobj64(task:: MSKtask) = getqobj64(task)
 function getqobj64(task_:: MSKtask)
   maxnumqonz_ = getnumqobjnz(task_)
   qosurp_ = convert(Int64,length(qosubi_))
@@ -1858,7 +1798,6 @@ function getreducedcosts(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:
   (__tmp_var_1)
 end
 
-getskc(task:: MSKtask,whichsol:: Int32) = getskc(task,whichsol)
 function getskc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   skc_ = zeros(Int32,__tmp_var_0)
@@ -1882,7 +1821,6 @@ function getskcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   (skc_)
 end
 
-getskx(task:: MSKtask,whichsol:: Int32) = getskx(task,whichsol)
 function getskx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   skx_ = zeros(Int32,__tmp_var_0)
@@ -1906,7 +1844,6 @@ function getskxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   (skx_)
 end
 
-getslc(task:: MSKtask,whichsol:: Int32) = getslc(task,whichsol)
 function getslc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -1930,7 +1867,6 @@ function getslcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   (__tmp_var_1)
 end
 
-getslx(task:: MSKtask,whichsol:: Int32) = getslx(task,whichsol)
 function getslx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -1954,7 +1890,6 @@ function getslxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   (__tmp_var_1)
 end
 
-getsnx(task:: MSKtask,whichsol:: Int32) = getsnx(task,whichsol)
 function getsnx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -1978,7 +1913,6 @@ function getsnxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   (__tmp_var_1)
 end
 
-getsolsta(task:: MSKtask,whichsol:: Int32) = getsolsta(task,whichsol)
 function getsolsta(task_:: MSKtask,whichsol_:: Int32)
   solsta_ = Array(Int32,(1,))
   res = @msk_ccall( "getsolsta",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_,solsta_)
@@ -1989,7 +1923,6 @@ function getsolsta(task_:: MSKtask,whichsol_:: Int32)
   (convert(Int32,solsta_[1]))
 end
 
-getsolution(task:: MSKtask,whichsol:: Int32) = getsolution(task,whichsol)
 function getsolution(task_:: MSKtask,whichsol_:: Int32)
   prosta_ = Array(Int32,(1,))
   solsta_ = Array(Int32,(1,))
@@ -2038,7 +1971,6 @@ function getsolutioni(task_:: MSKtask,accmode_:: Int32,i_:: Int32,whichsol_:: In
   (convert(Int32,sk_[1]),convert(Float64,x_[1]),convert(Float64,sl_[1]),convert(Float64,su_[1]),convert(Float64,sn_[1]))
 end
 
-getsolutioninf(task:: MSKtask,whichsol:: Int32) = getsolutioninf(task,whichsol)
 function getsolutioninf(task_:: MSKtask,whichsol_:: Int32)
   prosta_ = Array(Int32,(1,))
   solsta_ = Array(Int32,(1,))
@@ -2059,7 +1991,6 @@ function getsolutioninf(task_:: MSKtask,whichsol_:: Int32)
   (convert(Int32,prosta_[1]),convert(Int32,solsta_[1]),convert(Float64,primalobj_[1]),convert(Float64,maxpbi_[1]),convert(Float64,maxpcni_[1]),convert(Float64,maxpeqi_[1]),convert(Float64,maxinti_[1]),convert(Float64,dualobj_[1]),convert(Float64,maxdbi_[1]),convert(Float64,maxdcni_[1]),convert(Float64,maxdeqi_[1]))
 end
 
-getsolutioninfo(task:: MSKtask,whichsol:: Int32) = getsolutioninfo(task,whichsol)
 function getsolutioninfo(task_:: MSKtask,whichsol_:: Int32)
   pobj_ = Array(Float64,(1,))
   pviolcon_ = Array(Float64,(1,))
@@ -2109,7 +2040,6 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   (__tmp_var_1,__tmp_var_3,__tmp_var_5)
 end
 
-getstrparam(task:: MSKtask,param:: Int32) = getstrparam(task,param)
 function getstrparam(task_:: MSKtask,param_:: Int32)
   maxlen_ = (1 + getstrparamlen(task_,(param_)))
   len_ = Array(Int32,(1,))
@@ -2122,7 +2052,6 @@ function getstrparam(task_:: MSKtask,param_:: Int32)
   (convert(Int32,len_[1]),bytestring(parvalue_))
 end
 
-getstrparamlen(task:: MSKtask,param:: Int32) = getstrparamlen(task,param)
 function getstrparamlen(task_:: MSKtask,param_:: Int32)
   len_ = Array(Int32,(1,))
   res = @msk_ccall( "getstrparamlen",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,param_,len_)
@@ -2133,7 +2062,6 @@ function getstrparamlen(task_:: MSKtask,param_:: Int32)
   (convert(Int32,len_[1]))
 end
 
-getsuc(task:: MSKtask,whichsol:: Int32) = getsuc(task,whichsol)
 function getsuc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -2157,7 +2085,6 @@ function getsucslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   (__tmp_var_1)
 end
 
-getsux(task:: MSKtask,whichsol:: Int32) = getsux(task,whichsol)
 function getsux(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -2194,7 +2121,6 @@ function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
   (convert(Int32,dim_[1]),convert(Int64,nz_[1]),convert(Int32,type_[1]))
 end
 
-gettaskname(task:: MSKtask) = gettaskname(task)
 function gettaskname(task_:: MSKtask)
   maxlen_ = (1 + gettasknamelen(task_))
   taskname_ = zeros(Uint8,(maxlen_))
@@ -2206,7 +2132,6 @@ function gettaskname(task_:: MSKtask)
   (bytestring(taskname_))
 end
 
-gettasknamelen(task:: MSKtask) = gettasknamelen(task)
 function gettasknamelen(task_:: MSKtask)
   len_ = Array(Int32,(1,))
   res = @msk_ccall( "gettasknamelen",Int32,(Ptr{Void},Ptr{Int32},),task_.task,len_)
@@ -2280,7 +2205,6 @@ function getvarname(task_:: MSKtask,j_:: Int32)
   (bytestring(name_))
 end
 
-getvarnameindex(task:: MSKtask,somename:: String) = getvarnameindex(task,somename)
 function getvarnameindex(task_:: MSKtask,somename_:: String)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
@@ -2327,7 +2251,6 @@ function getvartypelist(task_:: MSKtask,subj_:: Array{Int32})
   (vartype_)
 end
 
-getxc(task:: MSKtask,whichsol:: Int32) = getxc(task,whichsol)
 function getxc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -2351,7 +2274,6 @@ function getxcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int
   (__tmp_var_1)
 end
 
-getxx(task:: MSKtask,whichsol:: Int32) = getxx(task,whichsol)
 function getxx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -2375,7 +2297,6 @@ function getxxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int
   (__tmp_var_1)
 end
 
-gety(task:: MSKtask,whichsol:: Int32) = gety(task,whichsol)
 function gety(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -2399,7 +2320,6 @@ function getyslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int3
   (__tmp_var_1)
 end
 
-initbasissolve(task:: MSKtask) = initbasissolve(task)
 function initbasissolve(task_:: MSKtask)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
@@ -2429,7 +2349,6 @@ function inputdata(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,c_:: Ar
   end
 end
 
-isdouparname(task:: MSKtask,parname:: String) = isdouparname(task,parname)
 function isdouparname(task_:: MSKtask,parname_:: String)
   param_ = Array(Int32,(1,))
   res = @msk_ccall( "isdouparname",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(parname_),param_)
@@ -2440,7 +2359,6 @@ function isdouparname(task_:: MSKtask,parname_:: String)
   (convert(Int32,param_[1]))
 end
 
-isintparname(task:: MSKtask,parname:: String) = isintparname(task,parname)
 function isintparname(task_:: MSKtask,parname_:: String)
   param_ = Array(Int32,(1,))
   res = @msk_ccall( "isintparname",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(parname_),param_)
@@ -2451,7 +2369,6 @@ function isintparname(task_:: MSKtask,parname_:: String)
   (convert(Int32,param_[1]))
 end
 
-isstrparname(task:: MSKtask,parname:: String) = isstrparname(task,parname)
 function isstrparname(task_:: MSKtask,parname_:: String)
   param_ = Array(Int32,(1,))
   res = @msk_ccall( "isstrparname",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(parname_),param_)
@@ -2471,7 +2388,6 @@ function linkfiletostream(task_:: MSKtask,whichstream_:: Int32,filename_:: Strin
   end
 end
 
-onesolutionsummary(task:: MSKtask,whichstream:: Int32,whichsol:: Int32) = onesolutionsummary(task,whichstream,whichsol)
 function onesolutionsummary(task_:: MSKtask,whichstream_:: Int32,whichsol_:: Int32)
   res = @msk_ccall( "onesolutionsummary",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_,whichsol_)
   if res != MSK_RES_OK
@@ -2480,7 +2396,6 @@ function onesolutionsummary(task_:: MSKtask,whichstream_:: Int32,whichsol_:: Int
   end
 end
 
-optimizersummary(task:: MSKtask,whichstream:: Int32) = optimizersummary(task,whichstream)
 function optimizersummary(task_:: MSKtask,whichstream_:: Int32)
   res = @msk_ccall( "optimizersummary",Int32,(Ptr{Void},Int32,),task_.task,whichstream_)
   if res != MSK_RES_OK
@@ -2489,7 +2404,6 @@ function optimizersummary(task_:: MSKtask,whichstream_:: Int32)
   end
 end
 
-optimize(task:: MSKtask) = optimize(task)
 function optimize(task_:: MSKtask)
   trmcode_ = Array(Int32,(1,))
   res = @msk_ccall( "optimizetrm",Int32,(Ptr{Void},Ptr{Int32},),task_.task,trmcode_)
@@ -2566,7 +2480,6 @@ function printdata(task_:: MSKtask,whichstream_:: Int32,firsti_:: Int32,lasti_::
   end
 end
 
-printparam(task:: MSKtask) = printparam(task)
 function printparam(task_:: MSKtask)
   res = @msk_ccall( "printparam",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -2575,7 +2488,6 @@ function printparam(task_:: MSKtask)
   end
 end
 
-probtypetostr(task:: MSKtask,probtype:: Int32) = probtypetostr(task,probtype)
 function probtypetostr(task_:: MSKtask,probtype_:: Int32)
   str_ = zeros(Uint8,MSK_MAX_STR_LEN)
   res = @msk_ccall( "probtypetostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,probtype_,str_)
@@ -2586,7 +2498,6 @@ function probtypetostr(task_:: MSKtask,probtype_:: Int32)
   (bytestring(str_))
 end
 
-prostatostr(task:: MSKtask,prosta:: Int32) = prostatostr(task,prosta)
 function prostatostr(task_:: MSKtask,prosta_:: Int32)
   str_ = zeros(Uint8,MSK_MAX_STR_LEN)
   res = @msk_ccall( "prostatostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,prosta_,str_)
@@ -3088,7 +2999,6 @@ function putnaintparam(task_:: MSKtask,paramname_:: String,parvalue_:: Int32)
   end
 end
 
-putnastrparam(task:: MSKtask,paramname:: String,parvalue:: String) = putnastrparam(task,paramname,parvalue)
 function putnastrparam(task_:: MSKtask,paramname_:: String,parvalue_:: String)
   res = @msk_ccall( "putnastrparam",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Uint8},),task_.task,bytestring(paramname_),bytestring(parvalue_))
   if res != MSK_RES_OK
@@ -3097,7 +3007,6 @@ function putnastrparam(task_:: MSKtask,paramname_:: String,parvalue_:: String)
   end
 end
 
-putobjname(task:: MSKtask,objname:: String) = putobjname(task,objname)
 function putobjname(task_:: MSKtask,objname_:: String)
   res = @msk_ccall( "putobjname",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(objname_))
   if res != MSK_RES_OK
@@ -3106,7 +3015,6 @@ function putobjname(task_:: MSKtask,objname_:: String)
   end
 end
 
-putobjsense(task:: MSKtask,sense:: Int32) = putobjsense(task,sense)
 function putobjsense(task_:: MSKtask,sense_:: Int32)
   res = @msk_ccall( "putobjsense",Int32,(Ptr{Void},Int32,),task_.task,sense_)
   if res != MSK_RES_OK
@@ -3115,7 +3023,6 @@ function putobjsense(task_:: MSKtask,sense_:: Int32)
   end
 end
 
-putparam(task:: MSKtask,parname:: String,parvalue:: String) = putparam(task,parname,parvalue)
 function putparam(task_:: MSKtask,parname_:: String,parvalue_:: String)
   res = @msk_ccall( "putparam",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Uint8},),task_.task,bytestring(parname_),bytestring(parvalue_))
   if res != MSK_RES_OK
@@ -3179,7 +3086,6 @@ function putqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32,qoij_:: Float64)
   end
 end
 
-putskc(task:: MSKtask,whichsol:: Int32,skc:: Array{Int32}) = putskc(task,whichsol,skc)
 function putskc(task_:: MSKtask,whichsol_:: Int32,skc_:: Array{Int32})
   __tmp_var_0 = getnumcon(task_)
   if length(skc_) < __tmp_var_0
@@ -3207,7 +3113,6 @@ function putskcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   end
 end
 
-putskx(task:: MSKtask,whichsol:: Int32,skx:: Array{Int32}) = putskx(task,whichsol,skx)
 function putskx(task_:: MSKtask,whichsol_:: Int32,skx_:: Array{Int32})
   __tmp_var_0 = getnumvar(task_)
   if length(skx_) < __tmp_var_0
@@ -3346,7 +3251,6 @@ function putsolutionyi(task_:: MSKtask,i_:: Int32,whichsol_:: Int32,y_:: Float64
   end
 end
 
-putstrparam(task:: MSKtask,param:: Int32,parvalue:: String) = putstrparam(task,param,parvalue)
 function putstrparam(task_:: MSKtask,param_:: Int32,parvalue_:: String)
   res = @msk_ccall( "putstrparam",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,param_,bytestring(parvalue_))
   if res != MSK_RES_OK
@@ -3411,7 +3315,6 @@ function putsuxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   end
 end
 
-puttaskname(task:: MSKtask,taskname:: String) = puttaskname(task,taskname)
 function puttaskname(task_:: MSKtask,taskname_:: String)
   res = @msk_ccall( "puttaskname",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(taskname_))
   if res != MSK_RES_OK
@@ -3500,7 +3403,6 @@ function putvartypelist(task_:: MSKtask,subj_:: Array{Int32},vartype_:: Array{In
   end
 end
 
-putxc(task:: MSKtask,whichsol:: Int32) = putxc(task,whichsol)
 function putxc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -3582,7 +3484,6 @@ function putyslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int3
   end
 end
 
-readbranchpriorities(task:: MSKtask,filename:: String) = readbranchpriorities(task,filename)
 function readbranchpriorities(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "readbranchpriorities",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3591,7 +3492,6 @@ function readbranchpriorities(task_:: MSKtask,filename_:: String)
   end
 end
 
-readdata(task:: MSKtask,filename:: String) = readdata(task,filename)
 function readdata(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "readdataautoformat",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3600,7 +3500,6 @@ function readdata(task_:: MSKtask,filename_:: String)
   end
 end
 
-readdataformat(task:: MSKtask,filename:: String,format:: Int32,compress:: Int32) = readdataformat(task,filename,format,compress)
 function readdataformat(task_:: MSKtask,filename_:: String,format_:: Int32,compress_:: Int32)
   res = @msk_ccall( "readdataformat",Int32,(Ptr{Void},Ptr{Uint8},Int32,Int32,),task_.task,bytestring(filename_),format_,compress_)
   if res != MSK_RES_OK
@@ -3609,7 +3508,6 @@ function readdataformat(task_:: MSKtask,filename_:: String,format_:: Int32,compr
   end
 end
 
-readparamfile(task:: MSKtask) = readparamfile(task)
 function readparamfile(task_:: MSKtask)
   res = @msk_ccall( "readparamfile",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -3618,7 +3516,6 @@ function readparamfile(task_:: MSKtask)
   end
 end
 
-readsolution(task:: MSKtask,whichsol:: Int32,filename:: String) = readsolution(task,whichsol,filename)
 function readsolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
   res = @msk_ccall( "readsolution",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,whichsol_,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3627,7 +3524,6 @@ function readsolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
   end
 end
 
-readsummary(task:: MSKtask,whichstream:: Int32) = readsummary(task,whichstream)
 function readsummary(task_:: MSKtask,whichstream_:: Int32)
   res = @msk_ccall( "readsummary",Int32,(Ptr{Void},Int32,),task_.task,whichstream_)
   if res != MSK_RES_OK
@@ -3636,7 +3532,6 @@ function readsummary(task_:: MSKtask,whichstream_:: Int32)
   end
 end
 
-readtask(task:: MSKtask,filename:: String) = readtask(task,filename)
 function readtask(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "readtask",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3725,7 +3620,6 @@ function resizetask(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,maxnum
   end
 end
 
-sensitivityreport(task:: MSKtask,whichstream:: Int32) = sensitivityreport(task,whichstream)
 function sensitivityreport(task_:: MSKtask,whichstream_:: Int32)
   res = @msk_ccall( "sensitivityreport",Int32,(Ptr{Void},Int32,),task_.task,whichstream_)
   if res != MSK_RES_OK
@@ -3734,7 +3628,6 @@ function sensitivityreport(task_:: MSKtask,whichstream_:: Int32)
   end
 end
 
-setdefaults(task:: MSKtask) = setdefaults(task)
 function setdefaults(task_:: MSKtask)
   res = @msk_ccall( "setdefaults",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -3743,7 +3636,6 @@ function setdefaults(task_:: MSKtask)
   end
 end
 
-sktostr(task:: MSKtask,sk:: Int32) = sktostr(task,sk)
 function sktostr(task_:: MSKtask,sk_:: Int32)
   str_ = zeros(Uint8,MSK_MAX_STR_LEN)
   res = @msk_ccall( "sktostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,sk_,str_)
@@ -3754,7 +3646,6 @@ function sktostr(task_:: MSKtask,sk_:: Int32)
   (bytestring(str_))
 end
 
-solstatostr(task:: MSKtask,solsta:: Int32) = solstatostr(task,solsta)
 function solstatostr(task_:: MSKtask,solsta_:: Int32)
   str_ = zeros(Uint8,MSK_MAX_STR_LEN)
   res = @msk_ccall( "solstatostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,solsta_,str_)
@@ -3765,7 +3656,6 @@ function solstatostr(task_:: MSKtask,solsta_:: Int32)
   (bytestring(str_))
 end
 
-solutiondef(task:: MSKtask,whichsol:: Int32) = solutiondef(task,whichsol)
 function solutiondef(task_:: MSKtask,whichsol_:: Int32)
   isdef_ = Array(Int32,(1,))
   res = @msk_ccall( "solutiondef",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_,isdef_)
@@ -3776,7 +3666,6 @@ function solutiondef(task_:: MSKtask,whichsol_:: Int32)
   (convert(Bool,isdef_[1]))
 end
 
-solutionsummary(task:: MSKtask,whichstream:: Int32) = solutionsummary(task,whichstream)
 function solutionsummary(task_:: MSKtask,whichstream_:: Int32)
   res = @msk_ccall( "solutionsummary",Int32,(Ptr{Void},Int32,),task_.task,whichstream_)
   if res != MSK_RES_OK
@@ -3806,7 +3695,6 @@ function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Ar
   (__tmp_var_0[1])
 end
 
-startstat(task:: MSKtask) = startstat(task)
 function startstat(task_:: MSKtask)
   res = @msk_ccall( "startstat",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -3815,7 +3703,6 @@ function startstat(task_:: MSKtask)
   end
 end
 
-stopstat(task:: MSKtask) = stopstat(task)
 function stopstat(task_:: MSKtask)
   res = @msk_ccall( "stopstat",Int32,(Ptr{Void},),task_.task)
   if res != MSK_RES_OK
@@ -3824,7 +3711,6 @@ function stopstat(task_:: MSKtask)
   end
 end
 
-strtoconetype(task:: MSKtask,str:: String) = strtoconetype(task,str)
 function strtoconetype(task_:: MSKtask,str_:: String)
   conetype_ = Array(Int32,(1,))
   res = @msk_ccall( "strtoconetype",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(str_),conetype_)
@@ -3835,7 +3721,6 @@ function strtoconetype(task_:: MSKtask,str_:: String)
   (convert(Int32,conetype_[1]))
 end
 
-strtosk(task:: MSKtask,str:: String) = strtosk(task,str)
 function strtosk(task_:: MSKtask,str_:: String)
   sk_ = Array(Int32,(1,))
   res = @msk_ccall( "strtosk",Int32,(Ptr{Void},Ptr{Uint8},Ptr{Int32},),task_.task,bytestring(str_),sk_)
@@ -3846,7 +3731,6 @@ function strtosk(task_:: MSKtask,str_:: String)
   (convert(Int32,sk_[1]))
 end
 
-updatesolutioninfo(task:: MSKtask,whichsol:: Int32) = updatesolutioninfo(task,whichsol)
 function updatesolutioninfo(task_:: MSKtask,whichsol_:: Int32)
   res = @msk_ccall( "updatesolutioninfo",Int32,(Ptr{Void},Int32,),task_.task,whichsol_)
   if res != MSK_RES_OK
@@ -3855,7 +3739,6 @@ function updatesolutioninfo(task_:: MSKtask,whichsol_:: Int32)
   end
 end
 
-writebranchpriorities(task:: MSKtask,filename:: String) = writebranchpriorities(task,filename)
 function writebranchpriorities(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "writebranchpriorities",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3864,7 +3747,6 @@ function writebranchpriorities(task_:: MSKtask,filename_:: String)
   end
 end
 
-writedata(task:: MSKtask,filename:: String) = writedata(task,filename)
 function writedata(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "writedata",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3873,7 +3755,6 @@ function writedata(task_:: MSKtask,filename_:: String)
   end
 end
 
-writeparamfile(task:: MSKtask,filename:: String) = writeparamfile(task,filename)
 function writeparamfile(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "writeparamfile",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3882,7 +3763,6 @@ function writeparamfile(task_:: MSKtask,filename_:: String)
   end
 end
 
-writesolution(task:: MSKtask,whichsol:: Int32,filename:: String) = writesolution(task,whichsol,filename)
 function writesolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
   res = @msk_ccall( "writesolution",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,whichsol_,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3891,7 +3771,6 @@ function writesolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
   end
 end
 
-writetask(task:: MSKtask,filename:: String) = writetask(task,filename)
 function writetask(task_:: MSKtask,filename_:: String)
   res = @msk_ccall( "writetask",Int32,(Ptr{Void},Ptr{Uint8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
@@ -3900,7 +3779,6 @@ function writetask(task_:: MSKtask,filename_:: String)
   end
 end
 
-checkinlicense(env:: MSKenv,feature:: Int32) = checkinlicense(env,feature)
 function checkinlicense(env_:: MSKenv,feature_:: Int32)
   res = @msk_ccall( "checkinlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_)
   if res != 0
@@ -3908,7 +3786,6 @@ function checkinlicense(env_:: MSKenv,feature_:: Int32)
   end
 end
 
-checkoutlicense(env:: MSKenv,feature:: Int32) = checkoutlicense(env,feature)
 function checkoutlicense(env_:: MSKenv,feature_:: Int32)
   res = @msk_ccall( "checkoutlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_)
   if res != 0
@@ -3935,7 +3812,6 @@ function getbuildinfo()
   (bytestring(buildstate_),bytestring(builddate_),bytestring(buildtool_))
 end
 
-getcodedesc(code:: Int32) = getcodedesc(code)
 function getcodedesc(code_:: Int32)
   symname_ = zeros(Uint8,MSK_MAX_STR_LEN)
   str_ = zeros(Uint8,MSK_MAX_STR_LEN)
@@ -3973,7 +3849,6 @@ function linkfiletostream(env_:: MSKenv,whichstream_:: Int32,filename_:: String,
   end
 end
 
-putdllpath(env:: MSKenv,dllpath:: String) = putdllpath(env,dllpath)
 function putdllpath(env_:: MSKenv,dllpath_:: String)
   res = @msk_ccall( "putdllpath",Int32,(Ptr{Void},Ptr{Uint8},),env_.env,bytestring(dllpath_))
   if res != 0
@@ -4010,7 +3885,6 @@ function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
   end
 end
 
-putlicensepath(env:: MSKenv,licensepath:: String) = putlicensepath(env,licensepath)
 function putlicensepath(env_:: MSKenv,licensepath_:: String)
   res = @msk_ccall( "putlicensepath",Int32,(Ptr{Void},Ptr{Uint8},),env_.env,bytestring(licensepath_))
   if res != 0
