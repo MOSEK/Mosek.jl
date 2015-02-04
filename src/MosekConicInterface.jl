@@ -5,7 +5,7 @@ msk_accepted_cones = [:Free,
                       :NonPos,
                       :SOC,
                       :SOCRotated,
-                      :SDP, :TrilSDP]
+                      :SDP ]
 
 
 
@@ -41,21 +41,13 @@ function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
         end
         vecsize += length(idxs)
         
-        if     sym == :TrilSDP
-            n = int32((sqrt(8*length(idxs)+1)-1)/2)
-            if n*(n+1)/2 != size(idxs,1)
+        if     sym == :SDP
+            n = int32((sqrt(.25+2*length(idxs))-0.5)*(sqrt(.25+2*length(idxs))-0.5))
+            if n*(n+1)/2 != size(idxs,1) # does not define the lower triangular part of a square matrix
                 throw(MosekMathProgModelError("Invalid SDP cone definition"))
             end
                 
             numsdpcone += 1     
-            numsdpconeelm += length(idxs)
-        elseif sym == :SDP
-            n = int32(sqrt(length(idxs)))
-            if n*n != length(idxs)
-                throw(MosekMathProgModelError("Invalid SDP cone definition"))
-            end
-                
-            numsdpcone += 1            
             numsdpconeelm += length(idxs)
         elseif sym in [ :SOC, :SOCRotated ]            
             numqcone += 1
@@ -252,8 +244,8 @@ function loadconicproblem!(m::MosekMathProgModel,
     putmaxnumbarvar(m.task,numbarvar+numbarcon)
 
     m.probtype = 
-      if     any(v -> first(v) in [:SDP,:TrilSDP],   var_cones)    MosekMathProgModel_SDP
-      elseif any(v -> first(v) in [:SDP,:TrilSDP],   constr_cones) MosekMathProgModel_SDP
+      if     any(v -> first(v) in [:SDP],            var_cones)    MosekMathProgModel_SDP
+      elseif any(v -> first(v) in [:SDP],            constr_cones) MosekMathProgModel_SDP
       elseif any(v -> first(v) in [:SOC,:SOCrotated],var_cones)    MosekMathProgModel_SOCP
       elseif any(v -> first(v) in [:SOC,:SOCrotated],constr_cones) MosekMathProgModel_SOCP
       else                                                         MosekMathProgModel_LINR
@@ -297,22 +289,13 @@ function loadconicproblem!(m::MosekMathProgModel,
                 if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
-            elseif sym == :SDP
-                d = int32(sqrt(n)) # dim of var
-                trilsz = d*(d+1)/2
+            elseif sym == :SDP        
+                d = int32((sqrt(.25+2*length(idxs))-0.5)*(sqrt(.25+2*length(idxs))-0.5))
+                trilsz = length(idxs)
                 barvardim[barvarptr] = d
                 appendbarvars(m.task, Int32[d])
                 varmap[idxs] = -barvarptr
-
-                barvarij[idxs] = reshape(Int64[ ijtolintril(i,j,d) for i in int32(1:d), j in int32(1:d) ],int(d)*int(d))
-                barvarptr += 1
-            elseif sym == :TrilSDP        
-                d = int32((sqrt(8*n+1)-1)/2)
-                trilsz = d*(d+1)/2
-                barvardim[barvarptr] = d
-                appendbarvars(m.task, Int32[d])
-                varmap[idxs] = -barvarptr
-                barvarij[idxs] = Int64[1:d*(d+1)/2]
+                barvarij[idxs] = Int64[1:trilsz]
                 barvarptr += 1
             end
         end
@@ -441,45 +424,11 @@ function loadconicproblem!(m::MosekMathProgModel,
                     if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack])
                     elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack])
                     end
-                elseif sym == :SDP
+                elseif sym == :SDP        
                     firstcon   = conptr
                     lastcon    = conptr+n-1
                     barslackj  = barvarptr
-                    d = int32(sqrt(n)) # dim of var
-
-                    bk[firstcon:lastcon] = MSK_BK_FX
-
-                    barvardim[barvarptr] = d
-                    appendbarvars(m.task, Int32[d])
-
-                    conptr += n
-                    barvarptr += 1
-                    
-                    let i = firstcon
-                        for vi in 1:d
-                            for vj in 1:d
-                                let ii = max(vi,vj),
-                                    jj = min(vi,vj)
-                                    
-                                    const matidx = appendsparsesymmat(m.task,d,Int32[ii],Int32[jj],Float64[1.0])
-                                    if ii == jj
-                                        putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
-                                    else
-                                        putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-0.5])
-                                    end
-
-                                    barconij[i] = (jj*(n+jj+1) >> 1)+ii+1
-                                    i += 1
-                                end
-                            end
-                        end
-                    end
-                    conslack[firstcon:lastcon] = -barslackj                    
-                elseif sym == :TrilSDP        
-                    firstcon   = conptr
-                    lastcon    = conptr+n-1
-                    barslackj  = barvarptr
-                    d = int32((sqrt(8*n+1)-1)/2)
+                    d = int32((sqrt(.25+2*length(idxs))-0.5)*(sqrt(.25+2*length(idxs))-0.5))
 
                     bk[firstcon:lastcon] = MSK_BK_FX
 
@@ -500,7 +449,6 @@ function loadconicproblem!(m::MosekMathProgModel,
                         end
                     end
                     conmap[firstcon:lastcon] = -barvarptr
-                    barvar += 1
                 end
             end
                         
