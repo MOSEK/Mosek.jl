@@ -42,7 +42,7 @@ function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
         vecsize += length(idxs)
         
         if     sym == :SDP
-            n = int32((sqrt(.25+2*length(idxs))-0.5)*(sqrt(.25+2*length(idxs))-0.5))
+            n = int32(sqrt(.25+2*length(idxs))-0.5)
             if n*(n+1)/2 != size(idxs,1) # does not define the lower triangular part of a square matrix
                 throw(MosekMathProgModelError("Invalid SDP cone definition"))
             end
@@ -289,8 +289,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                 if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
-            elseif sym == :SDP        
-                d = int32((sqrt(.25+2*length(idxs))-0.5)*(sqrt(.25+2*length(idxs))-0.5))
+            elseif sym == :SDP
+                d = int32(sqrt(.25+2*length(idxs))-0.5)
                 trilsz = length(idxs)
                 barvardim[barvarptr] = d
                 appendbarvars(m.task, Int32[d])
@@ -428,7 +428,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     firstcon   = conptr
                     lastcon    = conptr+n-1
                     barslackj  = barvarptr
-                    d = int32((sqrt(.25+2*length(idxs))-0.5)*(sqrt(.25+2*length(idxs))-0.5))
+                    d = int32(sqrt(.25+2*length(idxs))-0.5)
 
                     bk[firstcon:lastcon] = MSK_BK_FX
 
