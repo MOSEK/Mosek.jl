@@ -6,5 +6,5 @@ include("../examples/milo1.jl")
 include("../examples/sdo1.jl")
 include("../examples/nlo1.jl")
 
-push!(ARGS, "$(Pkg.dir())/Mosek/examples/feasrepair.lp")
+push!(ARGS, "$(dirname(dirname(@__FILE__)))/examples/feasrepair.lp")
 include("../examples/feasrepairex1.jl")
