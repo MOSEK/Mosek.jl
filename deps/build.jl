@@ -37,6 +37,7 @@ mskplatform,distroext =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
 if haskey(ENV,"MOSEKBINDIR")
   provides(Binaries, ENV["MOSEKBINDIR"], libmosek)
+  provides(Binaries, ENV["MOSEKBINDIR"], libmosekscopt)
 
 elseif haskey(ENV,"MOSEK_7_1_BINDIR")
   provides(Binaries, ENV["MOSEK_7_1_BINDIR"], libmosek)
