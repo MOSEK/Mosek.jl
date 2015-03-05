@@ -65,7 +65,7 @@ else
     end
     
     libdir(p::LessSimpleBuild,dep::BinDeps.LibraryDependency) = p.path
-    provides(::Type{LessSimpleBuild},steps,path::ASCIIString,dep; opts...) = provides(LessSimpleBuild(steps,path),dep; opts...)
+    provides(::Type{LessSimpleBuild},steps,path::AbstractString,dep; opts...) = provides(LessSimpleBuild(steps,path),dep; opts...)
     generate_steps(dep::BinDeps.LibraryDependency,h::LessSimpleBuild,opts) = h.steps
 
 
