@@ -37,20 +37,23 @@ mskplatform,distroext =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
 if haskey(ENV,"MOSEKBINDIR")
   provides(Binaries, ENV["MOSEKBINDIR"], libmosek)
+  provides(Binaries, ENV["MOSEKBINDIR"], libmosekscopt)
 
 elseif haskey(ENV,"MOSEK_7_1_BINDIR")
   provides(Binaries, ENV["MOSEK_7_1_BINDIR"], libmosek)
 
 # 2a. Otherwise, use the default installation path (Linux)
 elseif haskey(ENV,"HOME") && isdir(joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform))
-  provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin"), libmosek, os = :Linux)
+  provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin"), libmosek)
+  provides(Binaries, joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin"), libmosekscopt)
 
 # 2b. Windows default install path
 elseif ( haskey(ENV,"HOMEDRIVE") && 
          haskey(ENV,"HOMEPATH") && 
          isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform)) )
   home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
-  provides(Binaries, joinpath(home,"mosek","7","tools","platform",mskplatform,"bin"), libmosek, os = :Linux)
+  provides(Binaries, joinpath(home,"mosek","7","tools","platform",mskplatform,"bin"), libmosek)
+  provides(Binaries, joinpath(home,"mosek","7","tools","platform",mskplatform,"bin"), libmosekscopt)
 
 # 3. Otherwise, fetch the MOSEK distro and unpack it
 else
