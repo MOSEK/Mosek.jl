@@ -6,6 +6,8 @@ import BinDeps.generate_steps
 
 @BinDeps.setup
 
+StringType = VERSION < v"0.4.0-dev" ? String : AbstractString
+
 # define current version:
 mskvmajor = "7"
 mskvminor = "1"
@@ -68,7 +70,7 @@ else
     end
     
     libdir(p::LessSimpleBuild,dep::BinDeps.LibraryDependency) = p.path
-    provides(::Type{LessSimpleBuild},steps,path::AbstractString,dep; opts...) = provides(LessSimpleBuild(steps,path),dep; opts...)
+    provides(::Type{LessSimpleBuild},steps,path::StringType,dep; opts...) = provides(LessSimpleBuild(steps,path),dep; opts...)
     generate_steps(dep::BinDeps.LibraryDependency,h::LessSimpleBuild,opts) = h.steps
 
 
