@@ -66,6 +66,7 @@ mskbindir =
 
         joinpath(srcdir,"mosek","7","tools","platform",mskplatform,"bin")
     end
+mskbindir = replace(mskbindir,"\\","/")
 
 idxs = reverse(find(libs -> all(lib -> isfile(joinpath(mskbindir,lib)), libs), libalternatives))
 if length(idxs) == 0 
