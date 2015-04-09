@@ -33,20 +33,23 @@ libalternatives =
   end
 
 bindepsdir = dirname(@__FILE__)
-     
+
+usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
+
 mskbindir = 
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
-    if haskey(ENV,"MOSEKBINDIR")
+    if  ! usepreinstalled && haskey(ENV,"MOSEKBINDIR")
         ENV["MOSEKBINDIR"],idxs
-    elseif haskey(ENV,"MOSEK_7_1_BINDIR")
+    elseif ! usepreinstalled && haskey(ENV,"MOSEK_7_1_BINDIR")
         ENV["MOSEK_7_1_BINDIR"]
 # 2a. Otherwise, use the default installation path (Linux)
-    elseif haskey(ENV,"HOME") && isdir(joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform))
+    elseif ! usepreinstalled && ( haskey(ENV,"HOME") && 
+                                  isdir(joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform)))
         joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin")
 # 2b. Windows default install path
-    elseif ( haskey(ENV,"HOMEDRIVE") && 
-            haskey(ENV,"HOMEPATH") && 
-            isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform)) )
+    elseif ! usepreinstalled && (haskey(ENV,"HOMEDRIVE") && 
+                                 haskey(ENV,"HOMEPATH") && 
+                                 isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform)))
         home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
         joinpath(home,"mosek","7","tools","platform",mskplatform,"bin")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
