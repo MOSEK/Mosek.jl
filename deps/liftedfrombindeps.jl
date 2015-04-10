@@ -86,6 +86,8 @@ end
             else
                 error("I don't know how to unpack $file")
             end
+        else
+            error("I don't know how to unpack $file")
         end
     end
 end
