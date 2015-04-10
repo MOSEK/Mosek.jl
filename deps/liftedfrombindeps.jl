@@ -1,5 +1,6 @@
 # Blatantly lifted from BinDeps.jl because for some reason the build
 # script sometimes cannot find BinDeps.
+# @windows_only unpack_cmd has been modified to use zip in addition to 7z.
 
 function splittarpath(path) 
     path,extension = splitext(path)
@@ -59,13 +60,32 @@ end
 end
 
 @windows_only begin
+    has_7z  = nothing
+    has_zip = nothing
     function unpack_cmd(file,directory,extension,secondary_extension)
-        if((extension == ".gz" || extension == ".xz" || extension == ".bz2") && secondary_extension == ".tar") ||
-            extension == ".tgz" || extension == ".tbz"
-            return (`7z x $file -y -so`|>`7z x -si -y -ttar -o$directory`)
-        elseif extension == ".zip" || extension == ".7z"
-            return (`7z x $file -y -o$directory`)
+        global has_7z
+        global has_zip
+
+        if has_7z === nothing
+            has_7z  = success(`where 7z`)
+            has_zip = success(`where unzip`)
         end
-            error("I don't know how to unpack $file")
-        end 
+        
+        if has_7z
+            if((extension == ".gz" || extension == ".xz" || extension == ".bz2") && secondary_extension == ".tar") ||
+                extension == ".tgz" || extension == ".tbz"
+                return (`7z x $file -y -so`|>`7z x -si -y -ttar -o$directory`)
+            elseif extension == ".zip" || extension == ".7z"
+                return (`7z x $file -y -o$directory`)
+            else
+                error("I don't know how to unpack $file")
+            end
+        elseif has_zip
+            if extension == ".zip"
+                return (`unzip $file -o -d$directory`)
+            else
+                error("I don't know how to unpack $file")
+            end
+        end
     end
+end

@@ -77,17 +77,16 @@ if length(idxs) == 0
 else
     libmosek,libmosekscopt = libalternatives[idxs[1]]
 
-    f = open(joinpath(bindepsdir,"deps.jl"),"w")
-    write(f,"""# This is an auto-generated file; do not edit
-# Macro to load a library
-macro checked_lib(libname, path)
-    (dlopen_e(path) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")
-    quote const \$(esc(libname)) = \$path end
-end
-
-# Load dependencies
-@checked_lib libmosek      "$mskbindir/$libmosek"
-@checked_lib libmosekscopt "$mskbindir/$libmosekscopt"
-""")
-    close(f)
+    open(joinpath(bindepsdir,"deps.jl"),"w") do f
+        write(f,"""# This is an auto-generated file; do not edit\n""")
+        write(f,"""# Macro to load a library\n""")
+        write(f,"""macro checked_lib(libname, path)\n""")
+        write(f,"""    (dlopen_e(path) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")\n""")
+        write(f,"""    quote const \$(esc(libname)) = \$path end\n""")
+        write(f,"""end\n""")
+        write(f,"""\n""")
+        write(f,"""# Load dependencies\n""")
+        write(f,"""@checked_lib libmosek      "$mskbindir/$libmosek"\n""")
+        write(f,"""@checked_lib libmosekscopt "$mskbindir/$libmosekscopt"\n""")
+    end
 end
