@@ -5,13 +5,6 @@ mskvmajor = "7"
 mskvminor = "1"
 
 
-@windows_only begin
-    fixpath(s) = escape_string(replace(s,"/","\\"))
-end
-@unix_only begin
-    fixpath(s) = escape_string(replace(s,"\\","/"))
-end
-
 mskplatform,distroext =
   if WORD_SIZE == 32
     if     OS_NAME == :Linux "linux32x86",  ".tar.bz2"
@@ -85,6 +78,9 @@ if length(idxs) == 0
 else
     libmosek,libmosekscopt = libalternatives[idxs[1]]
 
+    libmosekpath = escape_string(normpath("$mskbindir/$libmosek"))
+    libscoptpath = escape_string(normpath("$mskbindir/$libmosekscopt"))
+
     open(joinpath(bindepsdir,"deps.jl"),"w") do f
         write(f,"""# This is an auto-generated file; do not edit\n""")
         write(f,"""# Macro to load a library\n""")
@@ -94,7 +90,7 @@ else
         write(f,"""end\n""")
         write(f,"""\n""")
         write(f,"""# Load dependencies\n""")
-        write(f,string("""@checked_lib libmosek      normpath(\"$mskbindir/$libmosek\")\n"""))
-        write(f,string("""@checked_lib libmosekscopt normpath(\"$mskbindir/$libmosekscopt\")\n"""))
+        write(f,string("""@checked_lib libmosek      \"$libmosekpath\"\n"""))
+        write(f,string("""@checked_lib libmosekscopt \"$libscoptpath\"\n"""))
     end
 end
