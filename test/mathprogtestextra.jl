@@ -87,13 +87,14 @@ function sdo1test(s=MosekSolver(),duals=true)
     println("Problem sdo1")
     m = MathProgBase.model(s)
     MathProgBase.loadconicproblem!(m,
-                                   # x1   x2   x3    X11  X21  X31  X12  X22  X32  X13  X23  X33
-                                   [ 1.0, 0.0, 0.0,  2.0, 1.0, 0.0, 1.0, 2.0, 1.0, 0.0, 1.0, 2.0 ], # c
-                                   [ 1.0  0.0  0.0   1.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0  1.0 ;  # A1
-                                     0.0  1.0  1.0   1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0 ], # A2
+                                   # x1   x2   x3    X11  X21  X31  X22  X32  X33
+                                   [ 1.0, 0.0, 0.0,  2.0, 2.0, 0.0, 2.0, 2.0, 2.0 ], # c
+                                   [ 1.0  0.0  0.0   1.0  0.0  0.0  1.0  0.0  1.0 ;  # A1
+                                     0.0  1.0  1.0   1.0  2.0  2.0  1.0  2.0  1.0 ], # A2
                                    [ 1.0, 0.5 ], # b
                                    [(:Zero,1:2)],
-                                   [(:SOC,1:3),(:SDP,4:12)] )
+                                   [(:SOC,1:3),(:SDP,4:9)] )
+    writeproblem(m,"sdo1.task")
     MathProgBase.optimize!(m)
     @test MathProgBase.status(m) == :Optimal
 
@@ -103,10 +104,10 @@ function sdo1test(s=MosekSolver(),duals=true)
 
     xx   = MathProgBase.getsolution(m)    
     x123 = xx[1:3]
-    X    = xx[4:12]
+    X    = xx[4:9]
 
     # Check primal objective
-    comp_pobj = X'*[2.0,1.0,0.0, 1.0,2.0,1.0, 0.0,1.0,2.0] + x123[1]
+    comp_pobj = X'*[2.0,2.0,0.0, 2.0,2.0, 2.0] + x123[1]
 
 
     if duals
@@ -114,7 +115,7 @@ function sdo1test(s=MosekSolver(),duals=true)
         s    = MathProgBase.getreducedcosts(m)
 
         s123 = s[1:3]
-        S    = s[4:12]
+        S    = s[4:9]
 
         # Check dual objective
         comp_dobj = y'*[1.0, 0.5]
@@ -123,10 +124,10 @@ function sdo1test(s=MosekSolver(),duals=true)
         
         # Check that dual constraint corresponding to X is satisfied:
         #   < M2 ; X > + < M3 ; X > + M1 + S = 0
-        M1 = [ 2.0  1.0  0.0  1.0  2.0  1.0  0.0  1.0  2.0 ]
-        M2 = [ 1.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0  1.0 ]
-        M3 = [ 1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0 ]
-        
+        M1 = [ 2.0  1.0  0.0  2.0  1.0  2.0 ]
+        M2 = [ 1.0  0.0  0.0  1.0  0.0  1.0 ]
+        M3 = [ 1.0  1.0  1.0  1.0  1.0  1.0 ]
+
         @test_approx_eq_eps sum(abs(M2 .* y[1] + M3 .* y[2] - M1 + S')) 0.0 1e-6
     end
 end
