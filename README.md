@@ -52,6 +52,12 @@ If this is not desirable (e.g. because other packages depend on Mosek), you can 
 rm -f ~/.julia/Mosek/downloads/*
 ```
 
+### When installation does not work
+If you experience problems installing (in particular on Windows or OS X), you can try to clone the latest revision of Mosek.jl instead of adding it:
+```
+Pkg.clone("https://github.com/JuliaOpt/Mosek.jl")
+Pkg.build("Mosek")
+```
 
 Documentation
 -------------
