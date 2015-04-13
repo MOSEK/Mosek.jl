@@ -4,6 +4,14 @@ include("liftedfrombindeps.jl")
 mskvmajor = "7"
 mskvminor = "1"
 
+
+@windows_only begin
+    fixpath(s) = escape_string(replace(s,"/","\\"))
+end
+@unix_only begin
+    fixpath(s) = escape_string(replace(s,"\\","/"))
+end
+
 mskplatform,distroext =
   if WORD_SIZE == 32
     if     OS_NAME == :Linux "linux32x86",  ".tar.bz2"
@@ -86,7 +94,7 @@ else
         write(f,"""end\n""")
         write(f,"""\n""")
         write(f,"""# Load dependencies\n""")
-        write(f,"""@checked_lib libmosek      "$mskbindir/$libmosek"\n""")
-        write(f,"""@checked_lib libmosekscopt "$mskbindir/$libmosekscopt"\n""")
+        write(f,string("""@checked_lib libmosek      normpath(\"$mskbindir/$libmosek\")\n"""))
+        write(f,string("""@checked_lib libmosekscopt normpath(\"$mskbindir/$libmosekscopt\")\n"""))
     end
 end
