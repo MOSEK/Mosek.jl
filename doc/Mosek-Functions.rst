@@ -1,5 +1,5 @@
 .. Contents of this file is generated. Do not edit by hand!
-.. MOSEK 7.1.0.15
+.. MOSEK 7.1.0.27
 
 
 
@@ -387,7 +387,7 @@ getacol
 * ``task:: MSKtask`` An optimization task.
 * ``j:: Int32`` Index of the column.
 * ``nzj:: Int32`` Number of non-zeros in the column obtained.
-* ``subj:: Array{Int32}`` Index of the non-zeros in the row obtained.
+* ``subj:: Array{Int32}`` Index of the non-zeros in the column obtained.
 * ``valj:: Array{Float64}`` Numerical values of the column obtained.
 
 
@@ -9409,6 +9409,10 @@ MSK_RES_ERR_THREAD_MUTEX_LOCK = 1046
 MSK_RES_ERR_THREAD_MUTEX_UNLOCK = 1047
 
     Could not unlock a mutex.
+
+MSK_RES_ERR_TOCONIC_CONVERSION_FAIL = 7200
+
+    A constraint could not be converted in conic form.
 
 MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS = 3090
 
