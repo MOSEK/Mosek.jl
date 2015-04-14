@@ -10,10 +10,6 @@ using Mosek
 
 printstream(msg::String) = print(msg)
 
-# Create a task object and attach log stream printer
-task = maketask()
-putstreamfunc(task,MSK_STREAM_LOG,printstream)
-
 # Bound keys for constraints
 bkc = [MSK_BK_FX,
        MSK_BK_FX]
@@ -41,88 +37,92 @@ numvar = 3
 numcon = length(bkc)
 barvardim = [3]
 
-# Append 'numvar' variables.
-# The variables will initially be fixed at zero (x=0). 
-appendvars(task,numvar)
+# Create a task object and attach log stream printer
+maketask() do task
+    putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
-# Append 'numcon' empty constraints.
-# The constraints will initially have no bounds. 
-appendcons(task,numcon)
+    # Append 'numvar' variables.
+    # The variables will initially be fixed at zero (x=0). 
+    appendvars(task,numvar)
 
-# Append matrix variables of sizes in 'BARVARDIM'.
-# The variables will initially be fixed at zero. 
-appendbarvars(task,barvardim)
+    # Append 'numcon' empty constraints.
+    # The constraints will initially have no bounds. 
+    appendcons(task,numcon)
 
-# Set the linear term c_0 in the objective.
-putcj(task, 1, 1.0)
+    # Append matrix variables of sizes in 'BARVARDIM'.
+    # The variables will initially be fixed at zero. 
+    appendbarvars(task,barvardim)
 
-# Set the bounds on variable j
-# blx[j] <= x_j <= bux[j] 
-putvarboundslice(task,1,numvar+1,
-                 [ MSK_BK_FR::Int32 for i in 1:numvar ],
-                 [ -Inf             for i in 1:numvar ],
-                 [ +Inf             for i in 1:numvar ])
+    # Set the linear term c_0 in the objective.
+    putcj(task, 1, 1.0)
 
-# Set the bounds on constraints.
-# blc[i] <= constraint_i <= buc[i]
-putconboundslice(task,1,numcon+1, bkc,blc,buc)
+    # Set the bounds on variable j
+    # blx[j] <= x_j <= bux[j] 
+    putvarboundslice(task,1,numvar+1,
+                     [ MSK_BK_FR::Int32 for i in 1:numvar ],
+                     [ -Inf             for i in 1:numvar ],
+                     [ +Inf             for i in 1:numvar ])
 
-# Input row i of A 
-putacolslice(task,1,numvar+1,
-             A.colptr[1:numvar], A.colptr[2:numvar+1],
-             A.rowval,A.nzval)
+    # Set the bounds on constraints.
+    # blc[i] <= constraint_i <= buc[i]
+    putconboundslice(task,1,numcon+1, bkc,blc,buc)
 
-appendcone(task,MSK_CT_QUAD, 0.0, conesub)
+    # Input row i of A 
+    putacolslice(task,1,numvar+1,
+                 A.colptr[1:numvar], A.colptr[2:numvar+1],
+                 A.rowval,A.nzval)
 
-symc  = appendsparsesymmat(task,barvardim[1], 
-                           barci, 
-                           barcj, 
-                           barcval)
+    appendcone(task,MSK_CT_QUAD, 0.0, conesub)
 
-syma0 = appendsparsesymmat(task,barvardim[1], 
-                           barai[1], 
-                           baraj[1], 
-                           baraval[1])
-  
-syma1 = appendsparsesymmat(task,barvardim[1], 
-                           barai[2], 
-                           baraj[2], 
-                           baraval[2])
+    symc  = appendsparsesymmat(task,barvardim[1], 
+                               barci, 
+                               barcj, 
+                               barcval)
 
-putbarcj(task,1, [symc], [1.0])
+    syma0 = appendsparsesymmat(task,barvardim[1], 
+                               barai[1], 
+                               baraj[1], 
+                               baraval[1])
+    
+    syma1 = appendsparsesymmat(task,barvardim[1], 
+                               barai[2], 
+                               baraj[2], 
+                               baraval[2])
 
-putbaraij(task,1, 1, [syma0], [1.0])
-putbaraij(task,2, 1, [syma1], [1.0])
+    putbarcj(task,1, [symc], [1.0])
 
-# Input the objective sense (minimize/maximize)
-putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
+    putbaraij(task,1, 1, [syma0], [1.0])
+    putbaraij(task,2, 1, [syma1], [1.0])
 
-# Solve the problem and print summary
-optimize(task)
-solutionsummary(task,MSK_STREAM_MSG)
+    # Input the objective sense (minimize/maximize)
+    putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
 
-# Get status information about the solution
-prosta = getprosta(task,MSK_SOL_ITR)
-solsta = getsolsta(task,MSK_SOL_ITR)
+    # Solve the problem and print summary
+    optimize(task)
+    solutionsummary(task,MSK_STREAM_MSG)
+
+    # Get status information about the solution
+    prosta = getprosta(task,MSK_SOL_ITR)
+    solsta = getsolsta(task,MSK_SOL_ITR)
 
 
-if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
-    # Output a solution
-    xx = getxx(task,MSK_SOL_ITR)
-    barx = getbarxj(task,MSK_SOL_ITR, 1)
+    if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
+        # Output a solution
+        xx = getxx(task,MSK_SOL_ITR)
+        barx = getbarxj(task,MSK_SOL_ITR, 1)
 
-    @printf("Optimal solution: \n  xx = %s\n  barx = %s\n", xx',barx')
-elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif  solsta == MSK_SOL_STA_UNKNOWN
-  print("Unknown solution status")
-else
-  print("Other solution status")
+        @printf("Optimal solution: \n  xx = %s\n  barx = %s\n", xx',barx')
+    elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif  solsta == MSK_SOL_STA_UNKNOWN
+        println("Unknown solution status")
+    else
+        println("Other solution status")
+    end
 end
-

@@ -11,24 +11,25 @@ using Mosek
 
 printstream(msg::String) = print(msg)
 
-task = maketask()
-putstreamfunc(task,MSK_STREAM_LOG,printstream)
+maketask() do task
+    putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
-inputfile = ARGS[1]
+    inputfile = ARGS[1]
 
-# Read data 
-readdata(task,inputfile)
+    # Read data 
+    readdata(task,inputfile)
 
-nvars = getnumvar(task)
-ncons = getnumcon(task)
+    nvars = getnumvar(task)
+    ncons = getnumcon(task)
 
-putintparam(task,MSK_IPAR_LOG_FEAS_REPAIR,3)
+    putintparam(task,MSK_IPAR_LOG_FEAS_REPAIR,3)
 
-primalrepair(task,ones(ncons),ones(ncons),ones(nvars),ones(nvars))
+    primalrepair(task,ones(ncons),ones(ncons),ones(nvars),ones(nvars))
 
-sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
-@printf("Minimized sum of violations = %e\n", sum_viol)
+    sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
+    @printf("Minimized sum of violations = %e\n", sum_viol)
 
-optimize(task)
+    optimize(task)
 
-solutionsummary(task,MSK_STREAM_MSG)
+    solutionsummary(task,MSK_STREAM_MSG)
+end

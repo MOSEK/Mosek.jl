@@ -10,7 +10,8 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-  
+
+   Intro  
    MosekSolverInterface 
    Mosek-Functions
    Mosek-GECO
