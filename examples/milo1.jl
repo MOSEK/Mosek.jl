@@ -11,10 +11,6 @@ using Mosek
 # Define a stream printer to grab output from MOSEK
 printstream(msg::String) = print(msg)
 
-# Create a task
-task = maketask()
-# Attach a printer to the task
-putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
 bkc = [ MSK_BK_UP, MSK_BK_LO  ]
 blc = [      -Inf,      -4.0  ]
@@ -33,58 +29,64 @@ A    = sparse( [ 1, 1, 2, 2],
 numvar = length(bkx)
 numcon = length(bkc)
 
-# Append 'numcon' empty constraints.
-# The constraints will initially have no bounds. 
-appendcons(task,numcon)
-   
-#Append 'numvar' variables.
-# The variables will initially be fixed at zero (x=0). 
-appendvars(task,numvar)
 
-# Set the linear term c_j in the objective.
-putclist(task,[1:numvar],c)
+# Create a task
+maketask() do task
+    # Attach a printer to the task
+    putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
-# Set the bounds on variables
-# blx[j] <= x_j <= bux[j] 
-putvarboundslice(task,1,numvar+1,bkx,blx,bux)
+    # Append 'numcon' empty constraints.
+    # The constraints will initially have no bounds. 
+    appendcons(task,numcon)
+    
+    #Append 'numvar' variables.
+    # The variables will initially be fixed at zero (x=0). 
+    appendvars(task,numvar)
 
-  # Input columns of A 
-putacolslice(task,1,numvar+1, A.colptr[1:numvar],A.colptr[2:numvar+1],A.rowval,A.nzval)     
+    # Set the linear term c_j in the objective.
+    putclist(task,[1:numvar],c)
 
-putconboundslice(task,1,numcon+1,bkc,blc,buc)
-      
-# Input the objective sense (minimize/maximize)
-putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
-     
-# Define variables to be integers
-putvartypelist(task,[ 1, 2 ],
-                    [ MSK_VAR_TYPE_INT, MSK_VAR_TYPE_INT ])
-      
-# Optimize the task
-optimize(task)
+    # Set the bounds on variables
+    # blx[j] <= x_j <= bux[j] 
+    putvarboundslice(task,1,numvar+1,bkx,blx,bux)
 
-# Print a summary containing information
-# about the solution for debugging purposes
-solutionsummary(task,MSK_STREAM_MSG)
+    # Input columns of A 
+    putacolslice(task,1,numvar+1, A.colptr[1:numvar],A.colptr[2:numvar+1],A.rowval,A.nzval)     
 
-prosta = getprosta(task,MSK_SOL_ITG)
-solsta = getsolsta(task,MSK_SOL_ITG)
+    putconboundslice(task,1,numcon+1,bkc,blc,buc)
+    
+    # Input the objective sense (minimize/maximize)
+    putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
+    
+    # Define variables to be integers
+    putvartypelist(task,[ 1, 2 ],
+                   [ MSK_VAR_TYPE_INT, MSK_VAR_TYPE_INT ])
+    
+    # Optimize the task
+    optimize(task)
 
-if solsta == MSK_SOL_STA_INTEGER_OPTIMAL || solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
-    # Output a solution
-    xx = getxx(task,MSK_SOL_ITG)
-    @printf("Optimal solution: %s\n", xx')
-elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
-    print("Primal or dual infeasibility.\n")
-elseif MSK_SOL_STA_UNKNOWN
-    print("Unknown solution status")
-else
-    print("Other solution status")
+    # Print a summary containing information
+    # about the solution for debugging purposes
+    solutionsummary(task,MSK_STREAM_MSG)
+
+    prosta = getprosta(task,MSK_SOL_ITG)
+    solsta = getsolsta(task,MSK_SOL_ITG)
+
+    if solsta == MSK_SOL_STA_INTEGER_OPTIMAL || solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
+        # Output a solution
+        xx = getxx(task,MSK_SOL_ITG)
+        @printf("Optimal solution: %s\n", xx')
+    elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+        println("Primal or dual infeasibility.\n")
+    elseif MSK_SOL_STA_UNKNOWN
+        println("Unknown solution status")
+    else
+        println("Other solution status")
+    end
 end
-

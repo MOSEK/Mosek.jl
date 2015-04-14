@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.1.0.15
+# MOSEK 7.1.0.27
 
 export
   analyzenames,

@@ -96,6 +96,22 @@ module Mosek
     MSKenv(temp[1],nothing)
   end
 
+  function makeenv(func::Function)
+      temp = Array(Ptr{Void}, 1)
+      res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{Uint8}), temp, C_NULL)
+      if res != 0
+          # TODO: Actually use result code
+          error("MOSEK: Error creating environment")
+      end
+      env = MSKenv(temp[1],nothing)
+
+      try
+          func(env)
+      finally
+          deleteenv(env)
+      end
+  end
+
   const msk_global_env = makeenv() :: MSKenv
 
   function maketask(env::MSKenv)
@@ -109,6 +125,35 @@ module Mosek
   function maketask()
     MSKtask(msk_global_env)
   end
+
+
+  function maketask(func::Function, env::MSKenv)
+      t = MSKtask(env)
+      try
+          func(t)
+      finally
+          deletetask(t)
+      end
+  end
+
+  function maketask(task::MSKtask)
+      t = MSKtask(task)
+      try
+          func(t)
+      finally
+          deletetask(t)
+      end      
+  end
+
+  function maketask(func::Function)
+      t = MSKtask(msk_global_env)
+      try
+          func(t)
+      finally
+          deletetask(t)
+      end      
+  end
+
 
   function deletetask(t::MSKtask)
     if t.task != C_NULL
