@@ -119,7 +119,7 @@ function loadoptions!(m::MosekMathProgModel)
           parname = "MSK_SPAR_$o"
           putnastrparam(m.task, parname, val)
       else
-          error("Valueval for parametero has unrecognized type")
+          error("Value $val for parameter $o has unrecognized type")
       end
   end
 end
