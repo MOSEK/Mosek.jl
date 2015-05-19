@@ -479,8 +479,9 @@ function loadconicproblem!(m::MosekMathProgModel,
             putclist(m.task,csub,cval)
             
             perm = sortperm(barcsub)
-            k = 1
+            k = 0
             while k < numbarcnz
+                k += 1
                 let b = k,
                     j = barcsub[perm[k]],
                     d = barvardim[j]                
