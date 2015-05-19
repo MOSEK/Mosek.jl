@@ -58,7 +58,7 @@ function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
     end
     
 
-    elmidxs = vcat([ Int64[idxs] for (sym,idxs) in cones ]...)
+    elmidxs = vcat([ convert(Vector{Int},collect(idxs)) for (_,idxs) in cones ]...)
     sort!(elmidxs)
 
     # check for duplicated and missing elements
@@ -262,8 +262,8 @@ function loadconicproblem!(m::MosekMathProgModel,
     let nvar = numlinvarelm+numqcvarelm
         bk = Array(Int32,nvar)        
         for (sym,idxs_) in var_cones
-            idxs = Int32[idxs_]
-            
+            idxs = convert(Vector{Int32},collect(idxs_))
+
             n = length(idxs)
             if sym in [ :Free, :Zero, :NonPos, :NonNeg ]             
                 first = linvarptr
@@ -272,7 +272,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
                 varmap[idxs] = first:last
 
-                bk[first:last] = 
+                bk[idxs] =
                    if     sym == :Free   MSK_BK_FR
                    elseif sym == :Zero   MSK_BK_FX
                    elseif sym == :NonNeg MSK_BK_LO
@@ -284,8 +284,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                 linvarptr += n
 
                 varmap[idxs] = Int32[first:last]
-                
-                bk[first:last] = MSK_BK_FR
+
+                bk[idxs] = MSK_BK_FR
                 if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
@@ -390,7 +390,7 @@ function loadconicproblem!(m::MosekMathProgModel,
             local conptr = 1
         
             for (sym,idxs_) in constr_cones
-                idxs = Int32[idxs_]
+                idxs = convert(Vector{Int32},idxs_)
                 local n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
                     firstcon = conptr
@@ -398,8 +398,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                     conptr += n
 
                     conslack[idxs] = 0 # no slack
-                    
-                    bk[firstcon:lastcon] =  
+
+                    bk[idxs] =
                       if     sym == :Free   MSK_BK_FR
                       elseif sym == :Zero   MSK_BK_FX
                       elseif sym == :NonNeg MSK_BK_LO
@@ -414,7 +414,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     linvarptr += n
 
                     conslack[idxs] = firstslack:lastslack # no slack
-                    bk[firstcon:lastcon] = MSK_BK_FX
+                    bk[idxs] = MSK_BK_FX
 
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
