@@ -9,6 +9,7 @@ include(joinpath(Pkg.dir("MathProgBase"),"test","nlp.jl"))
 include(joinpath(Pkg.dir("MathProgBase"),"test","conicinterface.jl"))
 
 
+
 linprogtest(MosekSolver())
 quadprogtest(MosekSolver())
 socptest(MosekSolver())
