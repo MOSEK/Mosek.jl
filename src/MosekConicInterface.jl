@@ -390,7 +390,7 @@ function loadconicproblem!(m::MosekMathProgModel,
             local conptr = 1
         
             for (sym,idxs_) in constr_cones
-                idxs = convert(Vector{Int32},idxs_)
+                idxs = convert(Vector{Int32},collect(idxs_))
                 local n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
                     firstcon = conptr
