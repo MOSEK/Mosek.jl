@@ -58,7 +58,7 @@ function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
     end
     
 
-    elmidxs = vcat([ Int64[idxs] for (sym,idxs) in cones ]...)
+    elmidxs = vcat([ convert(Vector{Int},collect(idxs)) for (_,idxs) in cones ]...)
     sort!(elmidxs)
 
     # check for duplicated and missing elements
@@ -262,8 +262,8 @@ function loadconicproblem!(m::MosekMathProgModel,
     let nvar = numlinvarelm+numqcvarelm
         bk = Array(Int32,nvar)        
         for (sym,idxs_) in var_cones
-            idxs = Int32[idxs_]
-            
+            idxs = convert(Vector{Int32},collect(idxs_))
+
             n = length(idxs)
             if sym in [ :Free, :Zero, :NonPos, :NonNeg ]             
                 first = linvarptr
@@ -272,7 +272,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
                 varmap[idxs] = first:last
 
-                bk[first:last] = 
+                bk[idxs] =
                    if     sym == :Free   MSK_BK_FR
                    elseif sym == :Zero   MSK_BK_FX
                    elseif sym == :NonNeg MSK_BK_LO
@@ -284,8 +284,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                 linvarptr += n
 
                 varmap[idxs] = Int32[first:last]
-                
-                bk[first:last] = MSK_BK_FR
+
+                bk[idxs] = MSK_BK_FR
                 if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
@@ -305,6 +305,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
     conslack = zeros(Int32,M) # 0 means no slack, positive means linear var, negative means semidefinite slack
     barconij = zeros(Int64,M)
+    conmap = Int32[1:M]
     begin # add model constraints
         # Split A into linear and semidefinite columns
         nlinnz = 0
@@ -330,7 +331,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                         asubi[ptr:ptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
                         asubj[ptr:ptr+n-1] = varmap[ci]
                         acof[ptr:ptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
-                        
+
                         ptr += n
                     else
                         barasubi[barptr:barptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
@@ -346,14 +347,14 @@ function loadconicproblem!(m::MosekMathProgModel,
 
         # Add linear part
         # NOTE: Since the conic API uses the form (b-Ax < K) we use -acof.
-        
+
         let At = sparse(asubj,asubi,-acof,numlinvarelm+numqcvarelm,M)
             putarowslice(m.task,1,M+1,At)
         end
 
         # Add sdp part
         if nbarnz > 0
-            let perm = sortperm(barasubi), 
+            let perm = sortperm(barasubi),
                 # NOTE on perm: by default sortperm is stable. Since we
                 # barsubi/barsubj to be sorted by barsubj (by construction
                 # from column-packed format), perm will be sorted
@@ -364,7 +365,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
                 while k <= nbarnz
                     let i = barasubi[perm[k]],
-                        j = barasubj[perm[k]]                        
+                        j = barasubj[perm[k]]
 
                         let b = k
                             k += 1
@@ -375,6 +376,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                             matidx =
                                 let d = barvardim[j]
                                     ii,jj,vv = lintriltoijv(barvij[perm[b:k-1]],baracof[perm[b:k-1]],d)
+                                    @show ii, jj, vv
                                     appendsparsesymmat(m.task,barvardim[j], ii,jj,vv)
                                 end
                             # NOTE: Since the conic API uses the form (b-Ax < K) we use the weight -1.0.
@@ -384,13 +386,13 @@ function loadconicproblem!(m::MosekMathProgModel,
                 end
             end
         end
-        
+
         # Add bounds and slacks
         let bk = Array(Int32,M)
             local conptr = 1
-        
+
             for (sym,idxs_) in constr_cones
-                idxs = Int32[idxs_]
+                idxs = convert(Vector{Int32},collect(idxs_))
                 local n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
                     firstcon = conptr
@@ -398,8 +400,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                     conptr += n
 
                     conslack[idxs] = 0 # no slack
-                    
-                    bk[firstcon:lastcon] =  
+
+                    bk[idxs] =
                       if     sym == :Free   MSK_BK_FR
                       elseif sym == :Zero   MSK_BK_FX
                       elseif sym == :NonNeg MSK_BK_LO
@@ -414,7 +416,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     linvarptr += n
 
                     conslack[idxs] = firstslack:lastslack # no slack
-                    bk[firstcon:lastcon] = MSK_BK_FX
+                    bk[idxs] = MSK_BK_FX
 
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
@@ -424,7 +426,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack])
                     elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack])
                     end
-                elseif sym == :SDP        
+                elseif sym == :SDP
                     firstcon   = conptr
                     lastcon    = conptr+n-1
                     barslackj  = barvarptr
@@ -451,7 +453,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     conmap[firstcon:lastcon] = -barvarptr
                 end
             end
-                        
+
             putconboundslice(m.task,1,M+1,bk,-b,-b)
         end
     end
@@ -477,17 +479,18 @@ function loadconicproblem!(m::MosekMathProgModel,
             barcval = c.nzval[baridxs]
 
             putclist(m.task,csub,cval)
-            
+
             perm = sortperm(barcsub)
-            k = 1
+            k = 0
             while k < numbarcnz
+                k += 1
                 let b = k,
                     j = barcsub[perm[k]],
-                    d = barvardim[j]                
+                    d = barvardim[j]
                     k += 1
                     while (k <= numbarcnz && barcsub[perm[k]] == j) k += 1 end
-                    
-                    ii,jj,vv = lintriltoijv(barcij[perm[b:k-1]],barcval[perm[b:k-1]],d)               
+
+                    ii,jj,vv = lintriltoijv(barcij[perm[b:k-1]],barcval[perm[b:k-1]],d)
                     const matidx = appendsparsesymmat(m.task,d,ii,jj,vv)
                     putbarcj(m.task,j,Int64[matidx],Float64[1.0])
                 end
@@ -496,7 +499,7 @@ function loadconicproblem!(m::MosekMathProgModel,
         putobjsense(m.task, MSK_OBJECTIVE_SENSE_MINIMIZE)
     end
 
-    m.probtype = 
+    m.probtype =
       if     numbarvar+numbarcon > 0 MosekMathProgModel_SDP
       elseif numqcvar+numqccon   > 0 MosekMathProgModel_SOCP
       else                           MosekMathProgModel_LINR
@@ -508,29 +511,29 @@ function loadconicproblem!(m::MosekMathProgModel,
     m.numbarvar  = numbarvar
     m.barvarmap  = Int32[] # barvars that appear in the linear variable are not accessable through the low level interface
     m.binvarflag = fill(false,m.numvar)
-    
+
     m.numcon     = totnumcon
-    m.conmap     = Int32[1:M]
+    m.conmap     = conmap
     m.conslack   = conslack
     m.barconij   = barconij
 end
 
 
 # this is the same as getconstrduals, except that it accepts cert. of primal infeasibility too
-function getconicdual(m::MosekMathProgModel)    
+function getconicdual(m::MosekMathProgModel)
     soldef = getsoldef(m)
     if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
 
     solsta = getsolsta(m.task,soldef)
-    
-    if solsta in [MSK_SOL_STA_OPTIMAL, 
-                  MSK_SOL_STA_DUAL_FEAS, 
-                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS, 
-                  MSK_SOL_STA_NEAR_OPTIMAL, 
-                  MSK_SOL_STA_NEAR_DUAL_FEAS, 
+
+    if solsta in [MSK_SOL_STA_OPTIMAL,
+                  MSK_SOL_STA_DUAL_FEAS,
+                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  MSK_SOL_STA_NEAR_OPTIMAL,
+                  MSK_SOL_STA_NEAR_DUAL_FEAS,
                   MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS,
                   # certificate, near certificate
-                  MSK_SOL_STA_PRIM_INFEAS_CER, 
+                  MSK_SOL_STA_PRIM_INFEAS_CER,
                   MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
         getcondual(m,soldef)
     else
