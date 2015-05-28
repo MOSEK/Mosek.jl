@@ -272,7 +272,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
                 varmap[idxs] = first:last
 
-                bk[idxs] =
+                bk[first:last] =
                    if     sym == :Free   MSK_BK_FR
                    elseif sym == :Zero   MSK_BK_FX
                    elseif sym == :NonNeg MSK_BK_LO
@@ -285,7 +285,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
                 varmap[idxs] = Int32[first:last]
 
-                bk[idxs] = MSK_BK_FR
+                bk[first:last] = MSK_BK_FR
                 if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
