@@ -443,7 +443,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                     let i = firstcon
                         for vj in 1:d
                             for vi in vj:d
-                                const matidx = appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[1.0])
+                                cof = (if vj == vi 1.0 else 0.5 end )
+                                const matidx = appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
                                 putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
                                 barconij[i] = i-firstcon+1
                                 i += 1
