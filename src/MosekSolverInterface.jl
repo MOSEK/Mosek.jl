@@ -666,11 +666,12 @@ optimize!(m::MosekMathProgModel) =
 # function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
 
 function getsoldef(m::MosekMathProgModel)
-  if     solutiondef(m.task,MSK_SOL_ITG) MSK_SOL_ITG
-  elseif solutiondef(m.task,MSK_SOL_BAS) MSK_SOL_BAS
-  elseif solutiondef(m.task,MSK_SOL_ITR) MSK_SOL_ITR
-  else   -1
+  for sol in (MSK_SOL_ITG, MSK_SOL_BAS, MSK_SOL_ITR)
+    if solutiondef(m.task,sol) && getsolsta(m.task,sol) != MSK_SOL_STA_UNKNOWN
+      return sol
+    end
   end
+  return -1
 end
 
 

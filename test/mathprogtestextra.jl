@@ -100,7 +100,7 @@ function sdo1test(s=MosekSolver(),duals=true)
 
     pobj = MathProgBase.getobjval(m)
 
-    @test_approx_eq_eps pobj 7.05710509e-01 1e-6      
+    @test_approx_eq_eps pobj 7.05710509e-01 1e-6
 
     xx   = MathProgBase.getsolution(m)    
     x123 = xx[1:3]
@@ -266,8 +266,87 @@ function qcqo1test(s=MosekSolver(),duals=true)
 end
 
 
+function modifymodeltest(s=MosekSolver()) # https://github.com/JuliaOpt/Mosek.jl/issues/46
+    mmin = MathProgBase.model(s)
+    mmax = MathProgBase.model(s)
+    infty = inf(0.0)
+
+    MathProgBase.loadproblem!(mmin,
+                              [    1.0     0.0    0.0      0.0 ;
+                                   0.0     1.0    0.0      0.0 ;
+                                   0.0     0.0    1.0      0.0 ;
+                                   0.0     0.0    0.0      1.0 ],
+                              [ -infty, -infty, -infty, -infty ], # blx
+                              [  infty,  infty,  infty,  infty ], # bux
+                              [    1.0,    1.0,    1.0,    1.0 ], # c
+                              [    0.0,    0.0,    0.0,    0.0 ], # blc
+                              [    0.0,    0.0,    0.0,    0.0 ], # buc
+                              :Min)
+
+    MathProgBase.loadproblem!(mmax,
+                              [    1.0     0.0    0.0      0.0 ;
+                                   0.0     1.0    0.0      0.0 ;
+                                   0.0     0.0    1.0      0.0 ;
+                                   0.0     0.0    0.0      1.0 ],
+                              [ -infty, -infty, -infty, -infty ], # blx
+                              [  infty,  infty,  infty,  infty ], # bux
+                              [    1.0,    1.0,    1.0,    1.0 ], # c
+                              [    0.0,    0.0,    0.0,    0.0 ], # blc
+                              [    0.0,    0.0,    0.0,    0.0 ], # buc
+                              :Max)
+
+    # test: modify buc
+    setconstrUB!(mmax,[ 1.0, 2.0, 3.0, 4.0 ]);
+    MathProgBase.optimize!(mmax)
+    @test MathProgBase.status(mmax) == :Optimal
+    xx = MathProgBase.getsolution(mmax)
+    println(xx);
+
+    @test_approx_eq_eps xx[1] 1.0 1e-8
+    @test_approx_eq_eps xx[2] 2.0 1e-8
+    @test_approx_eq_eps xx[3] 3.0 1e-8
+    @test_approx_eq_eps xx[4] 4.0 1e-8
+
+    # test: modify blc
+    setconstrLB!(mmin,[ -1.0, -2.0, -3.0, -4.0 ]);
+    MathProgBase.optimize!(mmin)
+    @test MathProgBase.status(mmin) == :Optimal
+    xx = MathProgBase.getsolution(mmin)
+    println(xx);
+
+    @test_approx_eq_eps xx[1] -1.0 1e-8
+    @test_approx_eq_eps xx[2] -2.0 1e-8
+    @test_approx_eq_eps xx[3] -3.0 1e-8
+    @test_approx_eq_eps xx[4] -4.0 1e-8
+
+    # test: modify bux
+    setvarUB!(mmax,[ 0.5, 1.5, 2.5, 3.5 ]);
+    MathProgBase.optimize!(mmax)
+    @test MathProgBase.status(mmax) == :Optimal
+    xx = MathProgBase.getsolution(mmax)
+
+    @test_approx_eq_eps xx[1] 0.5 1e-8
+    @test_approx_eq_eps xx[2] 1.5 1e-8
+    @test_approx_eq_eps xx[3] 2.5 1e-8
+    @test_approx_eq_eps xx[4] 3.5 1e-8
+
+    # test: modify blx
+    setvarLB!(mmin,[ -0.5, -1.5, -2.5, -3.5 ]);
+    MathProgBase.optimize!(mmin)
+    @test MathProgBase.status(mmin) == :Optimal
+    xx = MathProgBase.getsolution(mmin)
+
+    @test_approx_eq_eps xx[1] -0.5 1e-8
+    @test_approx_eq_eps xx[2] -1.5 1e-8
+    @test_approx_eq_eps xx[3] -2.5 1e-8
+    @test_approx_eq_eps xx[4] -3.5 1e-8
+end
+
+
+
 #addelmtest()
 dualsigntest()
 sdo1test()
 cqo1test()
 qcqo1test()
+modifymodeltest()

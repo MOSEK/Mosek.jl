@@ -248,16 +248,16 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
     # this is called for duplicate elements
     # assumption: at least one of the indices hasn't been combined before
     function combine(idx1,idx2)
-        if mergedmap[idx1] == 0
+        if mergedmap[idx1] == 0 && mergedmap[idx2] != 0
             mergednnz[1] += 1
             mergedmap[idx1] = idx2
-            mergedindices[mergednnz[0]] = idx1
+            mergedindices[mergednnz[1]] = idx1
             return idx2
         else
             @assert mergedmap[idx2] == 0
             mergednnz[1] += 1
             mergedmap[idx2] = idx1
-            mergedindices[mergednnz[0]] = idx2
+            mergedindices[mergednnz[1]] = idx2
             return idx1
         end
     end
@@ -266,6 +266,7 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
 
     J = sparse(Jjac, Ijac, [i for i in 1:length(Ijac)], numVar, numConstr, combine)
 
+    # map from original index into output index
     idxmap = zeros(Int, jac_nnz_original)
     for row in 1:numConstr
         for pos in J.colptr[row]:(J.colptr[row+1]-1)
@@ -275,8 +276,8 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
         end
     end
     for k in 1:mergednnz[1]
-        origidx = mergedindices[i]
-        mergedwith = mergedindices[origidx]
+        origidx = mergedindices[k]
+        mergedwith = mergedmap[origidx]
         @assert idxmap[origidx] == 0
         @assert idxmap[mergedwith] != 0
         idxmap[origidx] = idxmap[mergedwith]
