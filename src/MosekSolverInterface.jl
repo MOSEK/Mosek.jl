@@ -454,7 +454,7 @@ function setconstrLB!(m::MosekMathProgModel, rowlb)
     bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
     
     newbk = Int32[ complbk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
-    newbl = bl[m.conmap[idxs]] 
+    newbl = rowlb[m.conmap[idxs]] 
     putconboundlist(m.task, m.conmap[idxs], newbk, newbl, bu)
 end
 
@@ -471,8 +471,13 @@ function setconstrUB!(m::MosekMathProgModel, rowub)
     bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
     newbk = Int32[ compubk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
-    newbu = bu[m.conmap[idxs]] 
+    newbu = rowub[m.conmap[idxs]] 
     putconboundlist(m.task, m.conmap[idxs], newbk, bl, newbu)
+    println("putconboundlist: ",idxs,",",m.conmap[idxs])
+    println("\t",newbk)
+    println("\t",bl)
+    println("\t",newbu)
+    println(MSK_BK_LO," ",MSK_BK_UP," ",MSK_BK_FR," ",MSK_BK_RA)
 end
 
 # WARNING: Only gets non-PSD parts. Coefficients for PSD variables are returned as 0
