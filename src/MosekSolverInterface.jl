@@ -1,5 +1,6 @@
 module MosekMathProgSolverInterface
 using ..Mosek
+using Compat
 
 export MosekSolver
 

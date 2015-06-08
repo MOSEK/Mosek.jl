@@ -1,6 +1,6 @@
 using Mosek
 using MathProgBase
-using MathProgBase.MathProgSolverInterface
+using MathProgBase.SolverInterface
 
 include(joinpath(Pkg.dir("MathProgBase"),"test","linprog.jl"))
 include(joinpath(Pkg.dir("MathProgBase"),"test","quadprog.jl"))

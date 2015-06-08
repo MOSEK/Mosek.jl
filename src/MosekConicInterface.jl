@@ -27,7 +27,7 @@ msk_accepted_cones = [:Free,
 # vecsize
 #   Total number of scalar element (= numlin+numqconeelm+numsdpconeelm)
 #
-function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
+function countcones{Tis}(cones :: Array{@compat(Tuple{Symbol,Tis}),1})
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
     numsdpconeelm = 0 # total number of elements in all sdp cones
@@ -209,8 +209,8 @@ function loadconicproblem!(m::MosekMathProgModel,c,A,b,constr_cones,var_cones)
                       convert(SparseMatrixCSC{Float64,Int},reshape(c,(length(c),1))),
                       convert(SparseMatrixCSC{Float64,Int},A),
                       convert(Array{Float64,1},b),
-                      convert(Array{(Symbol,Any),1},constr_cones),
-                      convert(Array{(Symbol,Any),1},var_cones))
+                      convert(Array{@compat(Tuple{Symbol,Any}),1},constr_cones),
+                      convert(Array{@compat(Tuple{Symbol,Any}),1},var_cones))
 end
 
 
@@ -218,8 +218,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                            c::SparseMatrixCSC{Float64,Int},
                            A::SparseMatrixCSC{Float64,Int},
                            b::Array{Float64,1},
-                           constr_cones::Array{(Symbol,Any),1},
-                           var_cones   ::Array{(Symbol,Any),1})
+                           constr_cones::Array{@compat(Tuple{Symbol,Any}),1},
+                           var_cones   ::Array{@compat(Tuple{Symbol,Any}),1})
     # check data
     const N = c.m
     const M = length(b)
