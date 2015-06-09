@@ -118,7 +118,7 @@ function addquadconstr!(m::MosekMathProgModel,
           cof[2:2:2*n]  = -1.0
           subj[1:2:2*n] = z:z+n-1
           subj[2:2:2*n] = x
-          ptr[:]        = Int64[1:2:2*n+1]
+          ptr[:]        = Int64[1:2:2*n+1;]
       else
           let k = 1
               for i in 1:n
@@ -145,7 +145,7 @@ function addquadconstr!(m::MosekMathProgModel,
       end
 
       putarowslice(m.task, ncon, ncon+n, ptr[1:n], ptr[2:n+1], subj, cof)
-      appendcone(m.task, ct, 0.0, [z:z+n-1])
+      appendcone(m.task, ct, 0.0, [z:z+n-1;])
       
       # add bar non-zeros
       if numbarelm > 0

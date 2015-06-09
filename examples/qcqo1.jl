@@ -43,7 +43,7 @@ maketask() do task
     #Optionally add a constant term to the objective. 
     putcfix(task,0.0)
     # Set the linear term c_j in the objective.
-    putclist(task,[1:numvar],c)
+    putclist(task,[1:numvar;],c)
 
     # Set the bounds on variable j
     # blx[j] <= x_j <= bux[j] 

@@ -85,7 +85,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
         end
     end
 
-    return int32(0)::Int32
+    return @compat(Int32(0))::Int32
 end
 
 function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
@@ -224,8 +224,8 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
 
     m.numvar = numVar
     m.numcon = numConstr
-    m.varmap = Int32[1:m.numvar]
-    m.conmap = Int32[1:m.numcon]
+    m.varmap = Int32[1:m.numvar;]
+    m.conmap = Int32[1:m.numcon;]
 
 
     # input bounds

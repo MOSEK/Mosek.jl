@@ -29,8 +29,10 @@ function test_lo1()
       putvarname(task,j,@sprintf("x%02d",j))
     end
     putclist(task,[1,2,3,4], c)
-    putacolslice(task,1,numvar+1,
-                 A.colptr[1:numvar],A.colptr[2:numvar+1],
+
+    putacolslice(task,
+                 1, numvar+1,
+                 A.colptr[1:numvar], A.colptr[2:numvar+1],
                  A.rowval,
                  A.nzval)
     putvarboundslice(task, 1, numvar+1, bkx,blx,bux)
@@ -69,7 +71,7 @@ function test_qo1()
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
     appendcons(task,numcon)
     appendvars(task,numvar)
-    putclist(task,[1:numvar],c)
+    putclist(task,[1:numvar;],c)
     putvarboundslice(task,1,numvar+1,bkx,blx,bux)
     putacolslice(task,1,numvar+1,
                  A.colptr[1:numvar],A.colptr[2:numvar+1],
@@ -109,7 +111,7 @@ function test_qcqo1()
     appendcons(task,numcon)
     appendvars(task,numvar)
     putcfix(task,0.0)
-    putclist(task,[1:numvar],c)
+    putclist(task,[1:numvar;],c)
     putvarboundslice(task,1,numvar+1,bkx,blx,bux)
     putarow(task,1,asub,aval)
     putconbound(task,1,bkc[1],blc[1],buc[1])
@@ -154,7 +156,7 @@ function test_milo1()
     numcon = length(bkc)
     appendcons(task,numcon)
     appendvars(task,numvar)
-    putclist(task,[1:numvar],c)
+    putclist(task,[1:numvar;],c)
     putvarboundslice(task,1,numvar+1,bkx,blx,bux)
     putacolslice(task,1,numvar+1, A.colptr[1:numvar],A.colptr[2:numvar+1],A.rowval,A.nzval)     
     putconboundslice(task,1,numcon+1,bkc,blc,buc)
@@ -198,7 +200,7 @@ function test_cqo1()
     putcallbackfunc(task,callback)
     appendcons(task,numcon)
     appendvars(task,numvar)
-    putclist(task,[1:6],c)
+    putclist(task,[1:6;],c)
     putvarboundslice(task,1,numvar+1,bkx,blx,bux)
     putarow(task,1,asub,aval)
     putconbound(task,1,bkc[1],blc[1],buc[1])
@@ -230,12 +232,12 @@ function test_sdo1()
     barci = [1, 2, 2, 3, 3]
     barcj = [1, 1, 2, 2, 3]
     barcval = [2.0, 1.0, 2.0, 1.0, 2.0]
-    barai   = { [1, 2, 3], 
-                [1, 2, 3, 2, 3, 3] }
-    baraj   = { [1, 2, 3]
-                [1, 1, 1, 2, 2, 3] }
-    baraval = { [1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] }
+    barai   = Any[ [1, 2, 3],
+                   [1, 2, 3, 2, 3, 3] ]
+    baraj   = Any[ [1, 2, 3],
+                   [1, 1, 1, 2, 2, 3] ]
+    baraval = Any[ [1.0, 1.0, 1.0],
+                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] ]
     numvar = 3
     numcon = length(bkc)
     barvardim = [3]
@@ -256,9 +258,11 @@ function test_sdo1()
                                barci, 
                                barcj, 
                                barcval)
-    syma0 = appendsparsesymmat(task,barvardim[1], 
-                               barai[1], 
-                               baraj[1], 
+
+    syma0 = appendsparsesymmat(task,
+                               barvardim[1],
+                               barai[1],
+                               baraj[1],+
                                baraval[1])
     syma1 = appendsparsesymmat(task,barvardim[1], 
                                barai[2], 
@@ -274,7 +278,7 @@ function test_sdo1()
     solsta = getsolsta(task,MSK_SOL_ITR)
     
     if solsta in     [ MSK_SOL_STA_OPTIMAL, 
-                       MSK_SOL_STA_NEAR_OPTIMAL ]
+                      MSK_SOL_STA_NEAR_OPTIMAL ]
       xx = getxx(task,MSK_SOL_ITR)
       # check feasibility and optimality of solution
       return true

@@ -27,7 +27,7 @@ msk_accepted_cones = [:Free,
 # vecsize
 #   Total number of scalar element (= numlin+numqconeelm+numsdpconeelm)
 #
-function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
+function countcones{Tis}(cones :: Array{@compat(Tuple{Symbol,Tis}),1})
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
     numsdpconeelm = 0 # total number of elements in all sdp cones
@@ -42,12 +42,12 @@ function countcones{Tis}(cones :: Array{(Symbol,Tis),1})
         vecsize += length(idxs)
         
         if     sym == :SDP
-            n = int32(sqrt(.25+2*length(idxs))-0.5)
+            n = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
             if n*(n+1)/2 != size(idxs,1) # does not define the lower triangular part of a square matrix
                 throw(MosekMathProgModelError("Invalid SDP cone definition"))
             end
                 
-            numsdpcone += 1     
+            numsdpcone += 1
             numsdpconeelm += length(idxs)
         elseif sym in [ :SOC, :SOCRotated ]            
             numqcone += 1
@@ -209,8 +209,8 @@ function loadconicproblem!(m::MosekMathProgModel,c,A,b,constr_cones,var_cones)
                       convert(SparseMatrixCSC{Float64,Int},reshape(c,(length(c),1))),
                       convert(SparseMatrixCSC{Float64,Int},A),
                       convert(Array{Float64,1},b),
-                      convert(Array{(Symbol,Any),1},constr_cones),
-                      convert(Array{(Symbol,Any),1},var_cones))
+                      convert(Array{@compat(Tuple{Symbol,Any}),1},constr_cones),
+                      convert(Array{@compat(Tuple{Symbol,Any}),1},var_cones))
 end
 
 
@@ -218,8 +218,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                            c::SparseMatrixCSC{Float64,Int},
                            A::SparseMatrixCSC{Float64,Int},
                            b::Array{Float64,1},
-                           constr_cones::Array{(Symbol,Any),1},
-                           var_cones   ::Array{(Symbol,Any),1})
+                           constr_cones::Array{@compat(Tuple{Symbol,Any}),1},
+                           var_cones   ::Array{@compat(Tuple{Symbol,Any}),1})
     # check data
     const N = c.m
     const M = length(b)
@@ -283,19 +283,19 @@ function loadconicproblem!(m::MosekMathProgModel,
                 last  = linvarptr+n-1
                 linvarptr += n
 
-                varmap[idxs] = Int32[first:last]
+                varmap[idxs] = Int32[first:last;]
 
                 bk[first:last] = MSK_BK_FR
                 if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
             elseif sym == :SDP
-                d = int32(sqrt(.25+2*length(idxs))-0.5)
+                d = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
                 trilsz = length(idxs)
                 barvardim[barvarptr] = d
                 appendbarvars(m.task, Int32[d])
                 varmap[idxs] = -barvarptr
-                barvarij[idxs] = Int64[1:trilsz]
+                barvarij[idxs] = Int64[1:trilsz;]
                 barvarptr += 1
             end
         end
@@ -305,7 +305,7 @@ function loadconicproblem!(m::MosekMathProgModel,
 
     conslack = zeros(Int32,M) # 0 means no slack, positive means linear var, negative means semidefinite slack
     barconij = zeros(Int64,M)
-    conmap = Int32[1:M]
+    conmap = Int32[1:M;]
     begin # add model constraints
         # Split A into linear and semidefinite columns
         nlinnz = 0
@@ -422,9 +422,9 @@ function loadconicproblem!(m::MosekMathProgModel,
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
                     local bx = zeros(Float64,n)
                     putvarboundslice(m.task,firstslack,lastslack+1,Int32[MSK_BK_FR for i in 1:n],bx,bx)
-                    putaijlist(m.task,Int32[firstcon:lastcon],Int32[firstslack:lastslack],-ones(Float64,n))
-                    if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack])
-                    elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack])
+                    putaijlist(m.task,Int32[firstcon:lastcon;],Int32[firstslack:lastslack;],-ones(Float64,n))
+                    if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
+                    elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
                     end
                 elseif sym == :SDP
                     firstcon   = conptr
