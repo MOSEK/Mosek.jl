@@ -269,30 +269,29 @@ end
 function modifymodeltest(s=MosekSolver()) # https://github.com/JuliaOpt/Mosek.jl/issues/46
     mmin = MathProgBase.model(s)
     mmax = MathProgBase.model(s)
-    infty = inf(0.0)
 
     MathProgBase.loadproblem!(mmin,
-                              [    1.0     0.0    0.0      0.0 ;
-                                   0.0     1.0    0.0      0.0 ;
-                                   0.0     0.0    1.0      0.0 ;
-                                   0.0     0.0    0.0      1.0 ],
-                              [ -infty, -infty, -infty, -infty ], # blx
-                              [  infty,  infty,  infty,  infty ], # bux
-                              [    1.0,    1.0,    1.0,    1.0 ], # c
-                              [    0.0,    0.0,    0.0,    0.0 ], # blc
-                              [    0.0,    0.0,    0.0,    0.0 ], # buc
+                              [  1.0   0.0   0.0   0.0 ;
+                                 0.0   1.0   0.0   0.0 ;
+                                 0.0   0.0   1.0   0.0 ;
+                                 0.0   0.0   0.0   1.0 ],
+                              [ -Inf, -Inf, -Inf, -Inf ], # blx
+                              [  Inf,  Inf,  Inf,  Inf ], # bux
+                              [  1.0,  1.0,  1.0,  1.0 ], # c
+                              [  0.0,  0.0,  0.0,  0.0 ], # blc
+                              [  0.0,  0.0,  0.0,  0.0 ], # buc
                               :Min)
 
     MathProgBase.loadproblem!(mmax,
-                              [    1.0     0.0    0.0      0.0 ;
-                                   0.0     1.0    0.0      0.0 ;
-                                   0.0     0.0    1.0      0.0 ;
-                                   0.0     0.0    0.0      1.0 ],
-                              [ -infty, -infty, -infty, -infty ], # blx
-                              [  infty,  infty,  infty,  infty ], # bux
-                              [    1.0,    1.0,    1.0,    1.0 ], # c
-                              [    0.0,    0.0,    0.0,    0.0 ], # blc
-                              [    0.0,    0.0,    0.0,    0.0 ], # buc
+                              [  1.0   0.0   0.0   0.0 ;
+                                 0.0   1.0   0.0   0.0 ;
+                                 0.0   0.0   1.0   0.0 ;
+                                 0.0   0.0   0.0   1.0 ],
+                              [ -Inf, -Inf, -Inf, -Inf ], # blx
+                              [  Inf,  Inf,  Inf,  Inf ], # bux
+                              [  1.0,  1.0,  1.0,  1.0 ], # c
+                              [  0.0,  0.0,  0.0,  0.0 ], # blc
+                              [  0.0,  0.0,  0.0,  0.0 ], # buc
                               :Max)
 
     # test: modify buc

@@ -247,11 +247,11 @@ function loadproblem!(m::     MosekMathProgModel,
   appendcons(m.task,nrows)
 
   m.numvar     = ncols
-  m.varmap     = Int32[1:m.numvar]
+  m.varmap     = Int32[1:m.numvar;]
   m.barvarij   = zeros(Int64,m.numvar)
   m.binvarflag = fill(false,m.numvar) 
   m.numcon     = nrows
-  m.conmap     = Int32[1:m.numcon]
+  m.conmap     = Int32[1:m.numcon;]
   m.conslack   = zeros(Int32,m.numcon)
   m.barconij   = zeros(Int64,m.numcon)
   
@@ -259,13 +259,13 @@ function loadproblem!(m::     MosekMathProgModel,
   m.qconmap    = Int32[]
 
   # input coefficients
-  putclist(m.task, Int32[1:ncols], obj)
+  putclist(m.task, Int32[1:ncols;], obj)
   putacolslice(m.task, 1, ncols+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
   setsense!(m, sense)
 
   # input bounds
-  putvarboundslice(m.task, 1, ncols+1, Int32[ MSK_BK_RA for i=1:ncols], collb, colub)
-  putconboundslice(m.task, 1, nrows+1, Int32[ MSK_BK_RA for i=1:nrows], rowlb, rowub)
+  putvarboundslice(m.task, 1, ncols+1, Int32[ MSK_BK_RA for i=1:ncols ], collb, colub)
+  putconboundslice(m.task, 1, nrows+1, Int32[ MSK_BK_RA for i=1:nrows ], rowlb, rowub)
   nothing
 end
 

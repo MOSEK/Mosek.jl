@@ -44,7 +44,7 @@ maketask() do task
     appendvars(task,numvar)
 
     # Set the linear term c_j in the objective.
-    putclist(task,[1:numvar],c)
+    putclist(task,[1:numvar;],c)
 
     # Set the bounds on variables
     # blx[j] <= x_j <= bux[j] 
