@@ -24,9 +24,9 @@ const MosekMathProgModel_QOQP = 1
 const MosekMathProgModel_SOCP = 2
 const MosekMathProgModel_SDP  = 3
 
-const MosekMathProgModel_VTCNT = int8(0)
-const MosekMathProgModel_VTINT = int8(1)
-const MosekMathProgModel_VTBIN = int8(2)
+const MosekMathProgModel_VTCNT = @compat(Int8(0))
+const MosekMathProgModel_VTINT = @compat(Int8(1))
+const MosekMathProgModel_VTBIN = @compat(Int8(2))
 
 type MosekMathProgModel <: AbstractMathProgModel
   task :: Mosek.MSKtask

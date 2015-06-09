@@ -84,10 +84,12 @@ else
     open(joinpath(bindepsdir,"deps.jl"),"w") do f
         write(f,"""# This is an auto-generated file; do not edit\n""")
         write(f,"""# Macro to load a library\n""")
+        write(f,"""using Compat\n""")
         write(f,"""macro checked_lib(libname, path)\n""")
-        write(f,"""    (dlopen_e(path) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")\n""")
+        write(f,"""    (@compat(Libdl.dlopen_e(path)) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")\n""") 
         write(f,"""    quote const \$(esc(libname)) = \$path end\n""")
         write(f,"""end\n""")
+
         write(f,"""\n""")
         write(f,"""# Load dependencies\n""")
         write(f,string("""@checked_lib libmosek      \"$libmosekpath\"\n"""))

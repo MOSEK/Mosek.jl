@@ -29,8 +29,10 @@ function test_lo1()
       putvarname(task,j,@sprintf("x%02d",j))
     end
     putclist(task,[1,2,3,4], c)
-    putacolslice(task,1,numvar+1,
-                 A.colptr[1:numvar],A.colptr[2:numvar+1],
+
+    putacolslice(task,
+                 1, numvar+1,
+                 A.colptr[1:numvar], A.colptr[2:numvar+1],
                  A.rowval,
                  A.nzval)
     putvarboundslice(task, 1, numvar+1, bkx,blx,bux)
@@ -230,12 +232,12 @@ function test_sdo1()
     barci = [1, 2, 2, 3, 3]
     barcj = [1, 1, 2, 2, 3]
     barcval = [2.0, 1.0, 2.0, 1.0, 2.0]
-    barai   = { [1, 2, 3], 
-                [1, 2, 3, 2, 3, 3] }
-    baraj   = { [1, 2, 3]
-                [1, 1, 1, 2, 2, 3] }
-    baraval = { [1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] }
+    barai   = Any[ [1, 2, 3],
+                   [1, 2, 3, 2, 3, 3] ]
+    baraj   = Any[ [1, 2, 3],
+                   [1, 1, 1, 2, 2, 3] ]
+    baraval = Any[ [1.0, 1.0, 1.0],
+                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] ]
     numvar = 3
     numcon = length(bkc)
     barvardim = [3]
@@ -256,9 +258,11 @@ function test_sdo1()
                                barci, 
                                barcj, 
                                barcval)
-    syma0 = appendsparsesymmat(task,barvardim[1], 
-                               barai[1], 
-                               baraj[1], 
+
+    syma0 = appendsparsesymmat(task,
+                               barvardim[1],
+                               barai[1],
+                               baraj[1],+
                                baraval[1])
     syma1 = appendsparsesymmat(task,barvardim[1], 
                                barai[2], 
