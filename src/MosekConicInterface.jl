@@ -376,7 +376,6 @@ function loadconicproblem!(m::MosekMathProgModel,
                             matidx =
                                 let d = barvardim[j]
                                     ii,jj,vv = lintriltoijv(barvij[perm[b:k-1]],baracof[perm[b:k-1]],d)
-                                    @show ii, jj, vv
                                     appendsparsesymmat(m.task,barvardim[j], ii,jj,vv)
                                 end
                             # NOTE: Since the conic API uses the form (b-Ax < K) we use the weight -1.0.
