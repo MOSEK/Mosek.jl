@@ -269,14 +269,14 @@ function loadproblem!(m::     MosekMathProgModel,
   nothing
 end
 
-function loadproblem! (m::     MosekMathProgModel,
-                       A,
-                       collb,
-                       colub,
-                       obj,
-                       rowlb,
-                       rowub,
-                       sense :: Symbol)
+function loadproblem!(m::     MosekMathProgModel,
+                      A,
+                      collb,
+                      colub,
+                      obj,
+                      rowlb,
+                      rowub,
+                      sense :: Symbol)
 
   loadproblem!(m,
                convert(SparseMatrixCSC{Float64,Int},sparse(A)),
@@ -656,9 +656,9 @@ function getsense(m::MosekMathProgModel)
   end
 end
 
-numvar       (m::MosekMathProgModel) = m.numvar
-numconstr    (m::MosekMathProgModel) = m.numcon+m.numqcon
-numlinconstr (m::MosekMathProgModel) = m.numcon
+numvar(       m::MosekMathProgModel) = m.numvar
+numconstr(    m::MosekMathProgModel) = m.numcon+m.numqcon
+numlinconstr( m::MosekMathProgModel) = m.numcon
 numquadconstr(m::MosekMathProgModel) = m.numqcon
 optimize!(m::MosekMathProgModel) = 
     begin
