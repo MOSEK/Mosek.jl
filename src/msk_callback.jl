@@ -4,7 +4,7 @@ export
 
 function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{Uint8})
   f = unsafe_pointer_to_objref(userdata) :: Function
-  f (bytestring(msg))
+  f(bytestring(msg))
   convert(Int32,0)::Int32
 end
 
