@@ -223,7 +223,7 @@ function loadconicproblem!(m::MosekMathProgModel,
     # check data
     const N = c.m
     const M = length(b)
-    
+
     if M != A.m || N != A.n || c.n != 1
         throw(MosekMathProgModelError("Invalid data dimensions"))
     end
@@ -232,9 +232,7 @@ function loadconicproblem!(m::MosekMathProgModel,
     (numqccon,numbarcon,numlinconelm,numqcconelm,numbarconelm,totnumcon) = countcones(constr_cones)
 
     # clear task data
-    putmaxnumvar(m.task,0)
-    putmaxnumcon(m.task,0)
-    putmaxnumbarvar(m.task,0)
+    resizetask(m.task,0,0,0,0,0)
     putcfix(m.task,0.0)
 
     # allocate necessary variables and cons, reserve space for cones and barvars
@@ -243,29 +241,29 @@ function loadconicproblem!(m::MosekMathProgModel,
     putmaxnumcone(m.task,numqcvar+numqccon)
     putmaxnumbarvar(m.task,numbarvar+numbarcon)
 
-    m.probtype = 
+    m.probtype =
       if     any(v -> first(v) in [:SDP],            var_cones)    MosekMathProgModel_SDP
       elseif any(v -> first(v) in [:SDP],            constr_cones) MosekMathProgModel_SDP
       elseif any(v -> first(v) in [:SOC,:SOCrotated],var_cones)    MosekMathProgModel_SOCP
       elseif any(v -> first(v) in [:SOC,:SOCrotated],constr_cones) MosekMathProgModel_SOCP
       else                                                         MosekMathProgModel_LINR
       end
-    
-    varmap     = Array(Int32,totnumvar) # nonnegative refer to linear vars, negative to barvars    
+
+    varmap     = Array(Int32,totnumvar) # nonnegative refer to linear vars, negative to barvars
 
     barvarij   = zeros(Int64,totnumvar)
     barvardim  = zeros(Int32,numbarvar+numbarcon)
 
     linvarptr = 1
     barvarptr = 1
-    
+
     let nvar = numlinvarelm+numqcvarelm
-        bk = Array(Int32,nvar)        
+        bk = Array(Int32,nvar)
         for (sym,idxs_) in var_cones
             idxs = convert(Vector{Int32},collect(idxs_))
 
             n = length(idxs)
-            if sym in [ :Free, :Zero, :NonPos, :NonNeg ]             
+            if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
                 first = linvarptr
                 last  = linvarptr+n-1
                 linvarptr += n
@@ -277,7 +275,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                    elseif sym == :Zero   MSK_BK_FX
                    elseif sym == :NonNeg MSK_BK_LO
                    elseif sym == :NonPos MSK_BK_UP
-                   end            
+                   end
             elseif sym in [ :SOC, :SOCRotated ]
                 first = linvarptr
                 last  = linvarptr+n-1
