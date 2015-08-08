@@ -959,7 +959,6 @@ function getintvarflag(m::MosekMathProgModel)
 end
  
 include("MosekLowLevelQCQO.jl")
-include("MosekLowLevelSDP.jl")
 include("MosekNLPSolverInterface.jl")
 include("MosekConicInterface.jl")
 
