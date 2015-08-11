@@ -16,5 +16,6 @@ socptest(MosekSolver())
 mixintprogtest(MosekSolver())
 convexnlptest(MosekSolver())
 coniclineartest(MosekSolver(),duals=true)
+conicSOCtest(MosekSolver(),duals=true)
 
 
