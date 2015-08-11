@@ -834,9 +834,9 @@ function getcondual(m::MosekMathProgModel,soldef::Int32)
             const i = m.conmap[k]
             if     (j == 0)
                 y[i]
-            elseif (j >  0) 
+            elseif (j >  0)
                 snx[j]
-            else            
+            else
                 bars[-j][m.barconij[k]]
             end
         end
@@ -917,6 +917,24 @@ end
 
 getrawsolver(m::MosekMathProgModel) = m.task
 
+
+function getvartype(m::MosekMathProgModel)
+    vartypes = Array(Int32, getnumvar(m.task));
+    
+    return [(if (vartypes == MSK_VAR_TYPE_CONT)
+               :Cont
+             else
+               bk,bl,bu = getvarbound(m.task,j)
+               if (bk == MSK_BK_RA && bl == 0.0 && bu - 1.0 == 1.0)
+                 :Bin
+               else
+                 :Int
+               end
+             end
+             )
+            for j in m.varmap ]
+end
+
 # NOTE: Var types for semidefinite variables are ignored.
 function setvartype!(m::MosekMathProgModel, intvarflag :: Array{Symbol,1})
   n = min(length(intvarflag),m.numvar)
@@ -925,18 +943,18 @@ function setvartype!(m::MosekMathProgModel, intvarflag :: Array{Symbol,1})
 
   m.binvarflag[1:n] = map(f -> f == :Bin, intvarflag[1:n])
 
-  idxs = find(i -> m.varmap[i] > 0,1:n) 
-  putvartypelist(m.task,m.varmap[idxs],Int32[ (if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end) for c in intvarflag[idxs] ])    
-  
+  idxs = find(i -> m.varmap[i] > 0,1:n)
+  putvartypelist(m.task,m.varmap[idxs],Int32[ (if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end) for c in intvarflag[idxs] ])
+
   for k in find(f -> f == :Bin, intvarflag)
       local j = m.varmap[k]
 
       bk,bl,bu = getvarbound(m.task,j)
-      bl = 
+      bl =
           if (bk in [ MSK_BK_LO, MSK_BK_RA ]) max(bl,0.0)
           else                                0.0
           end
-      bu = 
+      bu =
           if (bk in [ MSK_BK_UP, MSK_BK_RA ]) min(bu,1.0)
           elseif (bk == MSK_BK_FX)            0.0
           else                                1.0
@@ -955,7 +973,7 @@ function getintvarflag(m::MosekMathProgModel)
         end
     end
 end
- 
+
 include("MosekLowLevelQCQO.jl")
 include("MosekLowLevelSDP.jl")
 include("MosekNLPSolverInterface.jl")

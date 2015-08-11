@@ -1,3 +1,6 @@
+#from:  https://groups.google.com/forum/#!topic/julia-users/RLlYPlsT-dU
+VERSION >= v"0.4.0-dev+6521" && __precompile__()
+
 module Mosek
   if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
@@ -25,10 +28,12 @@ module Mosek
   # -----
   # Types
   # -----
-  type MosekError
+  type MosekError <: Exception
     rcode :: Int32
     msg   :: ASCIIString
   end
+
+  
 
   # Environment: typedef void * MSKenv_t;
   type MSKenv

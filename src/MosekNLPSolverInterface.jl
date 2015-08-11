@@ -226,7 +226,7 @@ function loadnonlinearproblem!(m::MosekMathProgModel, numVar::Integer, numConstr
     m.numcon = numConstr
     m.varmap = Int32[1:m.numvar;]
     m.conmap = Int32[1:m.numcon;]
-
+    m.conslack = zeros(Int32,m.numvar)
 
     # input bounds
     putvarboundslice(m.task, 1, numVar+1, Int32[ MSK_BK_RA for i=1:numVar], float(l), float(u))
