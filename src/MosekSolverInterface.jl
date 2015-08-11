@@ -838,8 +838,10 @@ function getcondual(m::MosekMathProgModel,soldef::Int32)
                 else                    
                     -y[i]
                 end
-            elseif (j >  0) -snx[j]
-            else            -bars[-j][m.barconij[k]]
+            elseif (j >  0) 
+                -snx[j]
+            else            
+                -bars[-j][m.barconij[k]]
             end
         end
     end
