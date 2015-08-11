@@ -806,7 +806,7 @@ function getvardual(m::MosekMathProgModel,soldef::Int32)
     snx = if (soldef == MSK_SOL_ITR) getsnx(m.task,soldef) else zeros(Float64,length(slx)) end
 
     s = sux-slx+snx
-    
+
     if m.numbarvar > 0
         const bars = [ getbarsj(m.task,soldef,j) for j in 1:getnumbarvar(m.task) ]
         const barvardim = Int32[ getdimbarvarj(m.task,j) for j in 1:getnumbarvar(m.task) ]
@@ -818,7 +818,7 @@ function getvardual(m::MosekMathProgModel,soldef::Int32)
             end
         end
     else
-        s[m.varmap[1:m.numvar]] 
+        s[m.varmap[1:m.numvar]]
     end
 end
 
@@ -925,7 +925,7 @@ function getvartype(m::MosekMathProgModel)
                :Cont
              else
                bk,bl,bu = getvarbound(m.task,j)
-               if (bk == MSK_BK_RA && bl == 0.0 && bu - 1.0 == 1.0)
+               if (bk == MSK_BK_RA && bl == 0.0 && bu - 1.0 == 0.0) # hmm... not sure '==' here is ok.
                  :Bin
                else
                  :Int
