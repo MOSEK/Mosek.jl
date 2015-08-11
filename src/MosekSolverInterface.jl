@@ -832,16 +832,12 @@ function getcondual(m::MosekMathProgModel,soldef::Int32)
         map(1:m.numcon) do k
             const j = m.conslack[k]
             const i = m.conmap[k]
-            if     (j == 0) 
-                if bkc[i] in [ MSK_BK_LO, MSK_BK_UP ]
-                    y[i]
-                else                    
-                    -y[i]
-                end
+            if     (j == 0)
+                y[i]
             elseif (j >  0) 
-                -snx[j]
+                snx[j]
             else            
-                -bars[-j][m.barconij[k]]
+                bars[-j][m.barconij[k]]
             end
         end
     end

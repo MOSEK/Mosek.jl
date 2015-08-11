@@ -58,7 +58,7 @@ function dualsigntest(s=MosekSolver(),duals=true)
         MathProgBase.optimize!(m)
         @test MathProgBase.status(m) == :Optimal
         d = MathProgBase.getconicdual(m)
-        @test d[1] <=  1e-6    # free, but negative for this problem
+        # d[1] is free
         @test d[2] <=  1e-6
         @test d[3] >= -1e-6
         @test d[4] >= -1e-6
@@ -86,12 +86,12 @@ function sdo1test(s=MosekSolver(),duals=true)
     #
     println("Problem sdo1")
     m = MathProgBase.model(s)
-    MathProgBase.loadconicproblem!(m,
-                                   # x1   x2   x3    X11  X21  X31  X22  X32  X33
-                                   [ 1.0, 0.0, 0.0,  2.0, 2.0, 0.0, 2.0, 2.0, 2.0 ], # c
-                                   [ 1.0  0.0  0.0   1.0  0.0  0.0  1.0  0.0  1.0 ;  # A1
-                                     0.0  1.0  1.0   1.0  2.0  2.0  1.0  2.0  1.0 ], # A2
-                                   [ 1.0, 0.5 ], # b
+         # x1   x2   x3    X11  X21  X31  X22  X32  X33
+    c = [ 1.0, 0.0, 0.0,  2.0, 2.0, 0.0, 2.0, 2.0, 2.0 ]
+    A = [ 1.0  0.0  0.0   1.0  0.0  0.0  1.0  0.0  1.0 ;  # A1
+          0.0  1.0  1.0   1.0  2.0  2.0  1.0  2.0  1.0 ]  # A2
+    b = [ 1.0, 0.5 ]
+    MathProgBase.loadconicproblem!(m, c, A, b,
                                    [(:Zero,1:2)],
                                    [(:SOC,1:3),(:SDP,4:9)] )
     MathProgBase.optimize!(m)
@@ -111,23 +111,20 @@ function sdo1test(s=MosekSolver(),duals=true)
 
     if duals
         y    = MathProgBase.getconicdual(m)
-        s    = MathProgBase.getreducedcosts(m)
-
-        s123 = s[1:3]
-        S    = s[4:9]
 
         # Check dual objective
-        comp_dobj = y'*[1.0, 0.5]
+        comp_dobj = -y'*[1.0, 0.5]
 
         @test_approx_eq_eps (comp_pobj / comp_dobj) 1.0 1e-6
-        
-        # Check that dual constraint corresponding to X is satisfied:
-        #   < M2 ; X > + < M3 ; X > + M1 + S = 0
-        M1 = [ 2.0  1.0  0.0  2.0  1.0  2.0 ]
-        M2 = [ 1.0  0.0  0.0  1.0  0.0  1.0 ]
-        M3 = [ 1.0  1.0  1.0  1.0  1.0  1.0 ]
 
-        @test_approx_eq_eps sum(abs(M2 .* y[1] + M3 .* y[2] - M1 + S')) 0.0 1e-6
+        s = c + A'y
+        @test s[1]^2 ≥ s[2]^2 + s[3]^2 - 1e-6 # (s[1],s[2],s[3]) in SOC
+        M = [ s[4] s[5] s[6]
+              s[5] s[7] s[8]
+              s[6] s[8] s[9] ]
+        @show eigmin(M)
+        @test eigmin(M) ≥ -1e-6
+
     end
 end
 
