@@ -1,5 +1,5 @@
 #from:  https://groups.google.com/forum/#!topic/julia-users/RLlYPlsT-dU
-#VERSION >= v"0.4.0-dev+6521" && __precompile__()
+VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module Mosek
   if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
@@ -120,7 +120,15 @@ module Mosek
       end
   end
 
-  const msk_global_env = makeenv() :: MSKenv
+  # Note on initialization of msk_global_env: 
+  #
+  #  When loading Mosek from source this works fine, but when loading
+  #  precompiled module, makeenv() is not called (and some garbage
+  #  value is put in msk_global_env). It appears that static
+  #  initializers must be called from __init__(). That is called a bad solution here:
+  #    https://github.com/JuliaLang/julia/issues/12010
+  msk_global_env = makeenv() :: MSKenv
+  __init__() = (global msk_global_env = makeenv())
 
   function maketask(env::MSKenv)
     MSKtask(env)
