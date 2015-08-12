@@ -91,7 +91,7 @@ function sdo1test(s=MosekSolver(),duals=true)
     A = [ 1.0  0.0  0.0   1.0  0.0  0.0  1.0  0.0  1.0 ;  # A1
           0.0  1.0  1.0   1.0  2.0  2.0  1.0  2.0  1.0 ]  # A2
     b = [ 1.0, 0.5 ]
-    MathProgBase.loadconicproblem!(m, c, A, b,
+     MathProgBase.loadconicproblem!(m, c, A, b,
                                    [(:Zero,1:2)],
                                    [(:SOC,1:3),(:SDP,4:9)] )
     MathProgBase.optimize!(m)
@@ -117,11 +117,22 @@ function sdo1test(s=MosekSolver(),duals=true)
 
         @test_approx_eq_eps (comp_pobj / comp_dobj) 1.0 1e-6
 
-        s = c + A'y
+        # s = c + A'y # no: since off-diagonal elements are doubled in this A
+        s = getreducedcosts(m)
+
+        #println("s: \n\t$(c+A'y)\n\t$sv")
+        m1 = [ 1 0 0 ; 0 1 0 ; 0 0 1 ]
+        m2 = [ 1 1 1 ; 1 1 1 ; 1 1 1 ]
+        m3 = [ 2 1 0 ; 1 2 1 ; 0 1 2 ]
+
+        #println("M*y:\n$(m1*y[1] + m2 * y[2] + m3)\n$(bars)")
+
         @test s[1]^2 ≥ s[2]^2 + s[3]^2 - 1e-6 # (s[1],s[2],s[3]) in SOC
         M = [ s[4] s[5] s[6]
               s[5] s[7] s[8]
               s[6] s[8] s[9] ]
+
+        @test_approx_eq_eps sum(abs(m1*y[1]+m2*y[2]+m3 - M)) 0.0 9e-6
         @show eigmin(M)
         @test eigmin(M) ≥ -1e-6
 

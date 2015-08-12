@@ -474,11 +474,11 @@ function setconstrUB!(m::MosekMathProgModel, rowub)
     newbk = Int32[ compubk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
     newbu = rowub[m.conmap[idxs]] 
     putconboundlist(m.task, m.conmap[idxs], newbk, bl, newbu)
-    println("putconboundlist: ",idxs,",",m.conmap[idxs])
-    println("\t",newbk)
-    println("\t",bl)
-    println("\t",newbu)
-    println(MSK_BK_LO," ",MSK_BK_UP," ",MSK_BK_FR," ",MSK_BK_RA)
+    #println("putconboundlist: ",idxs,",",m.conmap[idxs])
+    #println("\t",newbk)
+    #println("\t",bl)
+    #println("\t",newbu)
+    #println(MSK_BK_LO," ",MSK_BK_UP," ",MSK_BK_FR," ",MSK_BK_RA)
 end
 
 # WARNING: Only gets non-PSD parts. Coefficients for PSD variables are returned as 0
