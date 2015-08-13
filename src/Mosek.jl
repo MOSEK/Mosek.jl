@@ -96,7 +96,6 @@ module Mosek
   # TODO: Support other argument
   function makeenv()
     temp = Array(Ptr{Void}, 1)
-      println("CREATE ENV")
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{Uint8}), temp, C_NULL)
     if res != 0
       # TODO: Actually use result code

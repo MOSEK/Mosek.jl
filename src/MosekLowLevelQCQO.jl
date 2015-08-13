@@ -41,18 +41,25 @@ addquadconstr!(m::MosekMathProgModel, linearidx, linearval, quadrowidx, quadcoli
 # Note:
 #  If the quadratic terms define a quadratic cone (only the special
 #  forms are detected), the linear terms, sense and rhs are ignored.
-#  
+#
 function addquadconstr!(m::MosekMathProgModel,
-                        linearidx ::Array{Int32,1}, 
-                        linearval ::Array{Float64,1}, 
-                        quadrowidx::Array{Int32,1}, 
-                        quadcolidx::Array{Int32,1}, 
-                        quadval   ::Array{Float64,1}, 
-                        sense, 
+                        linearidx ::Array{Int32,1},
+                        linearval ::Array{Float64,1},
+                        quadrowidx::Array{Int32,1},
+                        quadcolidx::Array{Int32,1},
+                        quadval   ::Array{Float64,1},
+                        sense,
                         rhs       ::Float64)
   subj    = Int32[ m.varmap[i] for i=linearidx ]
   valj    = linearval
-  qckval  = quadval
+
+  quadnzs = find(v -> v < 0.0 || v > 0.0, quadval)
+
+  quadrowidx = quadrowidx[quadnzs]
+  quadcolidx = quadcolidx[quadnzs]
+  qckval     = quadval[quadnzs]
+
+
 
   # detect SOCP form
   ct,idxs =
