@@ -1,5 +1,5 @@
 #from:  https://groups.google.com/forum/#!topic/julia-users/RLlYPlsT-dU
-VERSION >= v"0.4.0-dev+6521" && __precompile__()
+#VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module Mosek
   if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
@@ -96,6 +96,7 @@ module Mosek
   # TODO: Support other argument
   function makeenv()
     temp = Array(Ptr{Void}, 1)
+      println("CREATE ENV")
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{Uint8}), temp, C_NULL)
     if res != 0
       # TODO: Actually use result code
@@ -123,7 +124,8 @@ module Mosek
   const msk_global_env = makeenv() :: MSKenv
 
   function maketask(env::MSKenv)
-    MSKtask(env)
+      
+      MSKtask(env)
   end
 
   function maketask(task::MSKtask)

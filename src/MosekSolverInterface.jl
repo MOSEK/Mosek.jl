@@ -606,13 +606,15 @@ function addUserQuadCon(m::MosekMathProgModel, natidx::Int32)
 end
 
 
-
 function addvar!(m::MosekMathProgModel, rowidx, rowcoef, collb, colub, objcoef)
     appendvars(m.task,1)
     varidx = getnumvar(m.task)
     bk = getBoundsKey(collb, colub)
     putvarbound(m.task,varidx,bk,collb,colub)
     putcj(m.task,varidx,objcoef)
+
+    nzidxs = find(v -> v < 0.0 || v > 0.0, rowcoef);
+    putaijlist(m.task,nzidxs,[ varidx for i in 1:size(nzidxs,1)],rowcoef[nzidxs])
 
     return addUserVar(m,varidx)
 end
