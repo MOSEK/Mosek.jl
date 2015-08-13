@@ -923,7 +923,7 @@ getrawsolver(m::MosekMathProgModel) = m.task
 function getvartype(m::MosekMathProgModel)
     numvar = getnumvar(m.task)
     vartypes = Array(Int32,numvar)
-    getvartypelist(m.task,[1:numvar],vartypes)
+    getvartypelist(m.task,Int32[1:numvar],vartypes)
 
     return [(if (vartypes == MSK_VAR_TYPE_CONT)
                :Cont
