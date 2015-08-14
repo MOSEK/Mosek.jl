@@ -807,7 +807,7 @@ function getvardual(m::MosekMathProgModel,soldef::Int32)
     slx = getslx(m.task,soldef)
     snx = if (soldef == MSK_SOL_ITR) getsnx(m.task,soldef) else zeros(Float64,length(slx)) end
 
-    s = sux-slx+snx
+    s = slx-sux+snx
 
     if m.numbarvar > 0
         const bars = [ getbarsj(m.task,soldef,j) for j in 1:getnumbarvar(m.task) ]
@@ -815,6 +815,7 @@ function getvardual(m::MosekMathProgModel,soldef::Int32)
 
         map(1:m.numvar) do k
             const j = m.varmap[k]
+
             if   (j > 0) s[j]
             else         bars[-j][m.barvarij[k]]
             end
@@ -828,7 +829,7 @@ end
 function getcondual(m::MosekMathProgModel,soldef::Int32)
     let snx  = if (soldef == MSK_SOL_ITR) getsnx(m.task,soldef) else zeros(Float64,getnumvar(m.task)) end,
         y    = gety(m.task,soldef),
-        bars = map(j -> getbarsj(m.task,soldef,j), 1:getnumbarvar(m.task))
+        bars = map(j -> getbarsj(m.task,soldef,j), 1:getnumbarvar(m.task)),
         bkc,blc,buc = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
         map(1:m.numcon) do k
@@ -860,7 +861,7 @@ function getreducedcosts(m::MosekMathProgModel)
       if (getsense(m) == :Min) 
           getvardual(m,soldef)
       else
-          -getvardual(m,soldef)
+          getvardual(m,soldef)
       end
   else
       throw(MosekMathProgModelError("No solution available"))
@@ -892,7 +893,7 @@ function getinfeasibilityray(m::MosekMathProgModel)
     if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
     solsta = getsolsta(m.task,soldef)
     if solsta in [ MSK_SOL_STA_PRIM_INFEAS_CER, MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
-        getvardual(m,soldef)
+        -getvardual(m,soldef)
     else
         throw(MosekMathProgModelError("No solution available"))
     end
@@ -905,7 +906,7 @@ function getunboundedray(m::MosekMathProgModel)
   if solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER, MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
       const barx = [ getbarxj(m.task,soldef,j) for j in 1:getnumbarvar(m.task) ]
       const xx   = getxx(m.task,soldef)
-      
+
       map(1:m.numvar) do k
           const j = m.varmap[k]
           if   (j > 0) xx[j] # conic slack

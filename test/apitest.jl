@@ -312,7 +312,7 @@ facts("[apitest]") do
         putarow(t,1,[1,2,3],[1.0,1.0,1.0])   # x0 + x1 + x2
         putconbound(t,1,MSK_BK_FX,1.0, 1.0)  # = 1.0
         putclist(t,[1], [-1.0])
-        
+
         function indexof(v,a)
             for i in 1:length(a)
                 if a[i] == v return i
@@ -322,16 +322,16 @@ facts("[apitest]") do
         end
         evalobj(x :: Array{Float64,1}) = log(x[2]+x[3])
         evalconi(x:: Array{Float64,1},i:: Int32) = 0.0
-        function grdobj(x :: Array{Float64,1},sub:: Array{Int32,1}, val:: Array{Float64,1})  
-            for j in 1:length(sub)    
+        function grdobj(x :: Array{Float64,1},sub:: Array{Int32,1}, val:: Array{Float64,1})
+            for j in 1:length(sub)
                 if sub[j] == 2 || sub[j] == 3
                     val[j] = -1.0 / (x[2]+x[3])
                 end
             end
         end
         function grdconi(x  :: Array{Float64,1},
-                         i  :: Int32, 
-                         sub:: Array{Int32,1}, 
+                         i  :: Int32,
+                         sub:: Array{Int32,1},
                          val:: Array{Float64,1})
             none
         end
