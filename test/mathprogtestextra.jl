@@ -93,7 +93,6 @@ facts("[mathprogextra]") do
         #      (x1,x2,x3) in C^3_q
         #      X in C_sdp
         #
-        println("Problem sdo1")
         m = MathProgBase.model(s)
         # x1   x2   x3    X11  X21  X31  X22  X32  X33
         c = [ 1.0, 0.0, 0.0,  2.0, 2.0, 0.0, 2.0, 2.0, 2.0 ]
@@ -260,7 +259,6 @@ facts("[mathprogextra]") do
 
         # s.t. x1 + x2 + x3 - x1^2 + 0.2 x1*x3 -    x2^2 - 0.1 x3^2 >= 1.0
         #      x1,x2,x3 >= 0
-        println("Problem qcqo1")
         
         m = MathProgBase.model(s)
         MathProgBase.loadproblem!(m,
@@ -327,7 +325,6 @@ facts("[mathprogextra]") do
         MathProgBase.optimize!(mmax)
         @fact MathProgBase.status(mmax) --> :Optimal
         xx = MathProgBase.getsolution(mmax)
-        println(xx);
 
         @fact xx[1] --> roughly(1.0, 1e-8)
         @fact xx[2] --> roughly(2.0, 1e-8)
@@ -339,7 +336,6 @@ facts("[mathprogextra]") do
         MathProgBase.optimize!(mmin)
         @fact MathProgBase.status(mmin) --> :Optimal
         xx = MathProgBase.getsolution(mmin)
-        println(xx);
 
         @fact xx[1] --> roughly(-1.0, 1e-8)
         @fact xx[2] --> roughly(-2.0, 1e-8)
