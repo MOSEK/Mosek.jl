@@ -1,8 +1,9 @@
+using Compat
 # Blatantly lifted from BinDeps.jl because for some reason the build
 # script sometimes cannot find BinDeps.
 # @windows_only unpack_cmd has been modified to use zip in addition to 7z.
 
-function splittarpath(path) 
+function splittarpath(path)
     path,extension = splitext(path)
     base_filename,secondary_extension = splitext(path)
     if extension == ".tgz" || extension == ".tbz" || extension == ".zip" && !isempty(secondary_extension)
@@ -13,7 +14,7 @@ function splittarpath(path)
 end
 
 downloadcmd = nothing
-function download_cmd(url::String, filename::String)
+function download_cmd(url::AbstractString, filename::AbstractString)
     global downloadcmd
     if downloadcmd === nothing
         for checkcmd in @windows? (:powershell, :curl, :wget, :fetch) : (:curl, :wget, :fetch)
@@ -70,7 +71,7 @@ end
             has_7z  = success(`where 7z`)
             has_zip = success(`where unzip`)
         end
-        
+
         if has_7z
             if((extension == ".gz" || extension == ".xz" || extension == ".bz2") && secondary_extension == ".tar") ||
                 extension == ".tgz" || extension == ".tbz"

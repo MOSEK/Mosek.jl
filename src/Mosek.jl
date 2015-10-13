@@ -33,7 +33,7 @@ module Mosek
     msg   :: ASCIIString
   end
 
-  
+
 
   # Environment: typedef void * MSKenv_t;
   type MSKenv
@@ -96,7 +96,7 @@ module Mosek
   # TODO: Support other argument
   function makeenv()
     temp = Array(Ptr{Void}, 1)
-    res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{Uint8}), temp, C_NULL)
+    res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
     if res != 0
       # TODO: Actually use result code
       error("MOSEK: Error creating environment")
@@ -106,7 +106,7 @@ module Mosek
 
   function makeenv(func::Function)
       temp = Array(Ptr{Void}, 1)
-      res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{Uint8}), temp, C_NULL)
+      res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
       if res != 0
           # TODO: Actually use result code
           error("MOSEK: Error creating environment")
@@ -120,7 +120,7 @@ module Mosek
       end
   end
 
-  # Note on initialization of msk_global_env: 
+  # Note on initialization of msk_global_env:
   #
   #  When loading Mosek from source this works fine, but when loading
   #  precompiled module, makeenv() is not called (and some garbage
@@ -131,7 +131,7 @@ module Mosek
   __init__() = (global msk_global_env = makeenv())
 
   function maketask(env::MSKenv)
-      
+
       MSKtask(env)
   end
 
@@ -159,7 +159,7 @@ module Mosek
           func(t)
       finally
           deletetask(t)
-      end      
+      end
   end
 
   function maketask(func::Function)
@@ -168,7 +168,7 @@ module Mosek
           func(t)
       finally
           deletetask(t)
-      end      
+      end
   end
 
 
@@ -194,10 +194,10 @@ module Mosek
     lasterrcode = Array(Cint,1)
     lastmsglen = Array(Cint,1)
 
-    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}),
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, 0, lastmsglen, C_NULL)
-    lastmsg = Array(Uint8,lastmsglen[1])
-    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{Uint8}),
+    lastmsg = Array(UInt8,lastmsglen[1])
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
     convert(ASCIIString,lastmsg[1:lastmsglen[1]-1])
   end

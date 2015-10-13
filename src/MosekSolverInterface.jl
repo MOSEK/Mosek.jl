@@ -32,38 +32,38 @@ type MosekMathProgModel <: AbstractMathProgModel
   task :: Mosek.MSKtask
   probtype :: Int
 
-  # numvar 
+  # numvar
   #   Number of elements used in varmap,barvarij
   numvar   :: Int
-  # varmap 
+  # varmap
   #   Maps model variables to MOSEK variables.
 
   #   - varmap[i] > 0: it refers to MOSEK linear variable index (varmap[i]),
   #     barvarij[i] is 0.
-  #   - varmap[i] < 0: it refers to MOSEK SDP variable index (-varmap[i]), 
+  #   - varmap[i] < 0: it refers to MOSEK SDP variable index (-varmap[i]),
   #     and barvarij[i] is the linear linear index into the
   #     column-oriented lower triangular part of the SDP variable.
-  varmap   :: Array{Int32,1} 
+  varmap   :: Array{Int32,1}
   barvarij :: Array{Int64,1}
-  
-  # numbarvar 
+
+  # numbarvar
   #   Number of used elements in barvarmap.
   numbarvar :: Int32
-  # barvarmap 
+  # barvarmap
   #   Maps Model PSD variable indexes into MOSEK barvar indexes. When
   #   using the Semidefinite interface, these are the semidefinite
   #   variables thar can be accessed.  Semidefinite variables added
   #   thorugh loadconicproblem!() are not mapped here.
   barvarmap :: Array{Int32,1}
 
-  # binvarflag 
+  # binvarflag
   #   Defines per variable if it is binary
   binvarflag :: Array{Bool,1}
 
-  # numcon 
+  # numcon
   #   Number of elements used in conmap
   numcon   :: Int32
-  # conmap 
+  # conmap
   #   Maps Model constraints to native MOSEK constraints. Auxiliary
   #   constraints are not mapped through. Positive values map to the
   #   corresponding constraint in MOSEK, while 0 indicated a
@@ -72,9 +72,9 @@ type MosekMathProgModel <: AbstractMathProgModel
   #   constraint (used specifically as a place-holder constraint for
   #   conic-quadratic constraints).
   conmap   :: Array{Int32,1}
-  # conslack 
+  # conslack
   #   Maps Model constraint to corresponding slack variable
-  # 
+  #
   #   - conslack[i] == 0: No slack (for linear constraints)
   #   - conslack[i] > 0: Constraint is conic quadratic and corresponds to MOSEK variable conslack[i]
   #   - conslack[i] < 0: Constraint is PSD conic and corresponds to
@@ -82,7 +82,7 @@ type MosekMathProgModel <: AbstractMathProgModel
   #   MOSEK variable -coneslack[i]. barconij[i] is the linear index
   #   into the column-oriented lower triangular part of the SDP
   #   variable.
-  conslack :: Array{Int32,1} 
+  conslack :: Array{Int32,1}
   barconij :: Array{Int64,1}
 
   # quadratic constraints
@@ -101,22 +101,22 @@ end
 MosekSolver(;kwargs...) = MosekSolver(kwargs)
 
 type MosekMathProgModelError <: Exception
-  msg :: String
+  msg :: AbstractString
 end
 
 function loadoptions!(m::MosekMathProgModel)
   # write to console by default
-  printstream(msg::String) = print(msg)
+  printstream(msg::AbstractString) = print(msg)
 
   putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
   for (o,val) in m.options
       if isa(val, Integer)
           parname = "MSK_IPAR_$o"
           putnaintparam(m.task, parname, val)
-      elseif isa(val, FloatingPoint)
+      elseif isa(val, AbstractFloat)
           parname = "MSK_DPAR_$o"
           putnadouparam(m.task, parname, val)
-      elseif isa(val, String)
+      elseif isa(val, AbstractString)
           parname = "MSK_SPAR_$o"
           putnastrparam(m.task, parname, val)
       else
@@ -169,21 +169,21 @@ end
 # file read (e.g. reading an MPS will not reset parameters)
 # - auxilary variables and cones will not be correctly mapped.
 # - SDP variables are not mapped to the linear variable
-# 
-function loadproblem!(m::        MosekMathProgModel, 
-                      filename:: String)    
+#
+function loadproblem!(m::        MosekMathProgModel,
+                      filename:: AbstractString)
     readdata(m.task, filename)
 
     m.numvar     = getnumvar(m.task)
     m.varmap     = Int32[1:m.numvar]
     m.barvarij   = zeros(Int64,m.numvar)
-    m.binvarflag = fill(false,length(varmap)) 
+    m.binvarflag = fill(false,length(varmap))
     m.numbarvar  = getnumbarvar(m.task)
     m.barvarmap  = Int32[1:m.numbarvar]
-    
+
     let numqonz = getnumqobjnz(m.task),
         numqconknz = Int32[ getnumqconknz(m.task,i) for i in 1:getnumcon(m.task) ]
-        
+
         if numqonz + sum(numqconknz) == 0
             m.numcon     = getnumcon(m.task)
             m.conmap     = Int32[1:m.numcon]
@@ -213,7 +213,7 @@ function loadproblem!(m::        MosekMathProgModel,
     end
 end
 
-function writeproblem(m:: MosekMathProgModel, filename:: String)
+function writeproblem(m:: MosekMathProgModel, filename:: AbstractString)
   writedata(m.task, filename)
 end
 
@@ -231,8 +231,8 @@ function loadproblem!(m::     MosekMathProgModel,
   putmaxnumcone(m.task,0)
   putmaxnumbarvar(m.task,0)
   putmaxnumqnz(m.task,0)
-  
-  nrows,ncols = size(A)  
+
+  nrows,ncols = size(A)
   if ncols != length(collb) ||
      ncols != length(colub) ||
      ncols != size(obj,1)   ||
@@ -249,12 +249,12 @@ function loadproblem!(m::     MosekMathProgModel,
   m.numvar     = ncols
   m.varmap     = Int32[1:m.numvar;]
   m.barvarij   = zeros(Int64,m.numvar)
-  m.binvarflag = fill(false,m.numvar) 
+  m.binvarflag = fill(false,m.numvar)
   m.numcon     = nrows
   m.conmap     = Int32[1:m.numcon;]
   m.conslack   = zeros(Int32,m.numcon)
   m.barconij   = zeros(Int64,m.numcon)
-  
+
   m.numqcon    = 0
   m.qconmap    = Int32[]
 
@@ -288,7 +288,7 @@ function loadproblem!(m::     MosekMathProgModel,
                sense)
 end
 
-#internal 
+#internal
 function upgradeProbType(m::MosekMathProgModel, pt :: Int)
     if     pt == MosekMathProgModel_QOQP
         if     m.probtype < pt
@@ -353,13 +353,13 @@ end
 #internal
 function getLB(m::MosekMathProgModel,bk::Array{Int32,1},b::Array{Float64,1})
     map(1:m.numvar) do k
-        if   (m.varmap[k] > 0) 
+        if   (m.varmap[k] > 0)
             eltbk = bk[m.varmap[k]]
             if eltbk in [ MSK_BK_FR, MSK_BK_UP ] -Inf
             else                                 b[m.varmap[k]]
             end
         else # SDP
-            -Inf 
+            -Inf
         end
     end
 end
@@ -367,13 +367,13 @@ end
 #internal
 function getUB(m::MosekMathProgModel,bk::Array{Int32,1},b::Array{Float64,1})
     map(1:m.numvar) do k
-        if   (m.varmap[k] > 0) 
+        if   (m.varmap[k] > 0)
             eltbk = bk[m.varmap[k]]
             if eltbk in [ MSK_BK_FR, MSK_BK_LO ] Inf
             else                                 b[m.varmap[k]]
             end
         else # SDP
-            -Inf 
+            -Inf
         end
     end
 end
@@ -402,19 +402,19 @@ end
 function setvarLB!(m::MosekMathProgModel, collb)
     if m.numvar != length(collb)
         throw(MosekMathProgModelError("Bound vector has wrong size"))
-    end    
-    
+    end
+
     const idxs = find(i -> i > 0, m.varmap[1:m.numvar])
     local bnd  = collb[idxs]
     local subj = m.varmap[idxs]
-    
+
     for i in 1:length(idxs)
         if m.binvarflag[idxs[i]]
             bnd[i] = max(bnd[i], 0.0)
         end
     end
     bk,bl,bu = getvarboundslice(m.task,1,getnumvar(m.task)+1)
-    
+
     newbk = Int32[ complbk(bk[m.varmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
 
     putvarboundlist(m.task, m.varmap[idxs], newbk, bnd, bu)
@@ -428,14 +428,14 @@ function setvarUB!(m::MosekMathProgModel, colub)
     const idxs = find(i -> m.varmap[i] > 0, 1:m.numvar)
     local bnd  = colub[idxs]
     local subj = m.varmap[idxs]
-    
+
     for i in 1:length(idxs)
         if m.binvarflag[idxs[i]]
             bnd[i] = min(bnd[i], 1.0)
         end
     end
     bk,bl,bu = getvarboundslice(m.task,1,getnumvar(m.task)+1)
-    
+
     newbk = Int32[ compubk(bk[m.varmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
 
     putvarboundlist(m.task, m.varmap[1:m.numvar], newbk, bl, bnd)
@@ -447,15 +447,15 @@ function setconstrLB!(m::MosekMathProgModel, rowlb)
     if m.numcon != length(rowlb)
         throw(MosekMathProgModelError("Bound vector has wrong size"))
     end
-    
+
     const idxs = find(i -> m.conmap[i] > 0 && m.conslack[i] == 0, 1:m.numcon)
     local bnd  = rowlb[idxs]
     local subj = m.conmap[idxs]
-    
+
     bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
-    
+
     newbk = Int32[ complbk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
-    newbl = rowlb[m.conmap[idxs]] 
+    newbl = rowlb[m.conmap[idxs]]
     putconboundlist(m.task, m.conmap[idxs], newbk, newbl, bu)
 end
 
@@ -464,7 +464,7 @@ function setconstrUB!(m::MosekMathProgModel, rowub)
     if m.numcon != length(rowub)
         throw(MosekMathProgModelError("Bound vector has wrong size"))
     end
-    
+
     const idxs = find(i -> m.conmap[i] > 0 && m.conslack[i] == 0, 1:m.numcon)
     local bnd  = rowub[idxs]
     local subj = m.conmap[idxs]
@@ -472,7 +472,7 @@ function setconstrUB!(m::MosekMathProgModel, rowub)
     bk,bl,bu = getconboundslice(m.task,1,getnumcon(m.task)+1)
 
     newbk = Int32[ compubk(bk[m.conmap[idxs[i]]],bnd[i]) for i=1:length(idxs) ]
-    newbu = rowub[m.conmap[idxs]] 
+    newbu = rowub[m.conmap[idxs]]
     putconboundlist(m.task, m.conmap[idxs], newbk, bl, newbu)
     #println("putconboundlist: ",idxs,",",m.conmap[idxs])
     #println("\t",newbk)
@@ -487,7 +487,7 @@ function getobj(m::MosekMathProgModel)
     local res = zeros(Float64,m.numvar)
     if all(i -> i > 0, m.varmap[1:m.numvar])
         res[:] = c[m.varmap[1:numvar]]
-    else        
+    else
         const lidxs = find(i -> i > 0,m.varmap[1:m.numvar])
         res[idxs] = c[m.varmap[lidxs]]
         const baridxs = find(i -> i < 0,m.varmap[1:m.numvar])
@@ -500,7 +500,7 @@ function setobj!(m::MosekMathProgModel, obj::Array{Float64,1})
     if size(obj,1) != m.numvar
         throw(MosekMathProgModelError("Objective vector has wrong size"))
     end
-    
+
     const idxs = find(i -> i > 0, m.varmap[1:m.numvar])
     const c = obj[idxs]
     putclist(m.task,m.varmap[idxs],c)
@@ -571,7 +571,7 @@ function addUserVar(m::MosekMathProgModel, natidx::Int32)
     m.varmap[m.numvar]     = natidx
     m.barvarij[m.numvar]   = 0
     m.binvarflag[m.numvar] = false
-    
+
     return m.numvar
 end
 
@@ -584,7 +584,7 @@ function addUserBarvar(m::MosekMathProgModel, natidx::Int32)
 
     barvaridx = m.numbarvar
     m.barvarmap[barvaridx] = natidx
-    
+
     return barvaridx
 end
 
@@ -654,7 +654,7 @@ function getsense(m::MosekMathProgModel)
   elseif sense == MSK_OBJECTIVE_SENSE_MAXIMIZE
     :Max
   else
-    None
+    @compat Union{}
   end
 end
 
@@ -662,7 +662,7 @@ numvar(       m::MosekMathProgModel) = m.numvar
 numconstr(    m::MosekMathProgModel) = m.numcon+m.numqcon
 numlinconstr( m::MosekMathProgModel) = m.numcon
 numquadconstr(m::MosekMathProgModel) = m.numqcon
-optimize!(m::MosekMathProgModel) = 
+optimize!(m::MosekMathProgModel) =
     begin
         optimize(m.task)
     end
@@ -729,7 +729,7 @@ function setwarmstart!(m::MosekMathProgModel, xx::Array{Float64,1})
     idxs = find(i -> i > 0, m.varmap)
     let subj = m.varmap[idxs]
         for whichsol in [ MSK_SOL_BAS,MSK_SOL_ITR,MSK_SOL_ITG ]
-            let newxx = 
+            let newxx =
                 if solutiondef(m.task,whichsol)
                     getxx(m.task,whichsol)
                 else
@@ -744,7 +744,7 @@ end
 
 function getsolution(m::MosekMathProgModel)
   soldef = getsoldef(m)
-  if soldef < 0 
+  if soldef < 0
       throw(MosekMathProgModelError("No solution available"))
   end
   solsta = getsolsta(m.task,soldef)
@@ -753,7 +753,7 @@ function getsolution(m::MosekMathProgModel)
           const xx = getxx(m.task,soldef)
           const barx      = [ getbarxj(m.task,soldef,j) for j in 1:getnumbarvar(m.task) ]
           const barvardim = [ getdimbarvarj(m.task,j)    for j in 1:getnumbarvar(m.task) ]
-          
+
           map(1:m.numvar) do k
               const j = m.varmap[k]
               if   (j > 0) xx[j]
@@ -852,13 +852,13 @@ function getreducedcosts(m::MosekMathProgModel)
   if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
   solsta = getsolsta(m.task,soldef)
 
-  if solsta in [MSK_SOL_STA_OPTIMAL, 
-                MSK_SOL_STA_DUAL_FEAS, 
-                MSK_SOL_STA_PRIM_AND_DUAL_FEAS, 
-                MSK_SOL_STA_NEAR_OPTIMAL, 
+  if solsta in [MSK_SOL_STA_OPTIMAL,
+                MSK_SOL_STA_DUAL_FEAS,
+                MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                MSK_SOL_STA_NEAR_OPTIMAL,
                 MSK_SOL_STA_NEAR_DUAL_FEAS,
                 MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
-      if (getsense(m) == :Min) 
+      if (getsense(m) == :Min)
           getvardual(m,soldef)
       else
           getvardual(m,soldef)
@@ -873,12 +873,12 @@ function getconstrduals(m::MosekMathProgModel)
     soldef = getsoldef(m)
     if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
     solsta = getsolsta(m.task,soldef)
-    if solsta in [MSK_SOL_STA_OPTIMAL, 
-                  MSK_SOL_STA_DUAL_FEAS, 
-                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS, 
-                  MSK_SOL_STA_NEAR_OPTIMAL, 
-                  MSK_SOL_STA_NEAR_DUAL_FEAS, 
-                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS, 
+    if solsta in [MSK_SOL_STA_OPTIMAL,
+                  MSK_SOL_STA_DUAL_FEAS,
+                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  MSK_SOL_STA_NEAR_OPTIMAL,
+                  MSK_SOL_STA_NEAR_DUAL_FEAS,
+                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS,
                   MSK_SOL_STA_PRIM_INFEAS_CER]
         getcondual(m,soldef)
     else
