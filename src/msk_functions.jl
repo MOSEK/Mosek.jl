@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.1.0.34
+# MOSEK 7.1.0.39
 
 export
   analyzenames,
@@ -422,8 +422,8 @@ function basiscond(task_:: MSKtask)
 end
 
 function bktostr(task_:: MSKtask,bk_:: Int32)
-  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "bktostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,bk_,str_)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "bktostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,bk_,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -432,8 +432,8 @@ function bktostr(task_:: MSKtask,bk_:: Int32)
 end
 
 function callbackcodetostr(code_:: Int32)
-  callbackcodestr_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{Uint8},),code_,callbackcodestr_)
+  callbackcodestr_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{UInt8},),code_,callbackcodestr_)
   if res != 0
     throw(MosekError(res,""))
   end
@@ -448,8 +448,8 @@ function checkconvexity(task_:: MSKtask)
   end
 end
 
-checkmem{T2}(task:: MSKtask,file:: String,line:: T2) = checkmem(task,file,@compat(Int32(line)))
-function checkmem(task_:: MSKtask,file_:: String,line_:: Int32)
+checkmem{T2}(task:: MSKtask,file:: AbstractString,line:: T2) = checkmem(task,file,@compat(Int32(line)))
+function checkmem(task_:: MSKtask,file_:: AbstractString,line_:: Int32)
   res = @msk_ccall( "checkmemtask",Int32,(Ptr{Void},Ptr{UInt8},Int32,),task_.task,bytestring(file_),line_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -475,8 +475,8 @@ function commitchanges(task_:: MSKtask)
 end
 
 function conetypetostr(task_:: MSKtask,conetype_:: Int32)
-  str_ = zeros(Uint8,1024)
-  res = @msk_ccall( "conetypetostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,conetype_,str_)
+  str_ = zeros(UInt8,1024)
+  res = @msk_ccall( "conetypetostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,conetype_,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -813,8 +813,8 @@ end
 getbarvarname{T1}(task:: MSKtask,i:: T1) = getbarvarname(task,@compat(Int32(i)))
 function getbarvarname(task_:: MSKtask,i_:: Int32)
   maxlen_ = (1 + getbarvarnamelen(task_,(i_)))
-  name_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,i_-1,maxlen_,name_)
+  name_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -822,7 +822,7 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
   (bytestring(name_))
 end
 
-function getbarvarnameindex(task_:: MSKtask,somename_:: String)
+function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
   res = @msk_ccall( "getbarvarnameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,bytestring(somename_),asgn_,index_)
@@ -977,8 +977,8 @@ end
 getconename{T1}(task:: MSKtask,i:: T1) = getconename(task,@compat(Int32(i)))
 function getconename(task_:: MSKtask,i_:: Int32)
   maxlen_ = (1 + getconenamelen(task_,(i_)))
-  name_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,i_-1,maxlen_,name_)
+  name_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -986,7 +986,7 @@ function getconename(task_:: MSKtask,i_:: Int32)
   (bytestring(name_))
 end
 
-function getconenameindex(task_:: MSKtask,somename_:: String)
+function getconenameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
   res = @msk_ccall( "getconenameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,bytestring(somename_),asgn_,index_)
@@ -1011,8 +1011,8 @@ end
 getconname{T1}(task:: MSKtask,i:: T1) = getconname(task,@compat(Int32(i)))
 function getconname(task_:: MSKtask,i_:: Int32)
   maxlen_ = (1 + getconnamelen(task_,(i_)))
-  name_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,i_-1,maxlen_,name_)
+  name_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1020,7 +1020,7 @@ function getconname(task_:: MSKtask,i_:: Int32)
   (bytestring(name_))
 end
 
-function getconnameindex(task_:: MSKtask,somename_:: String)
+function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
   res = @msk_ccall( "getconnameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,bytestring(somename_),asgn_,index_)
@@ -1198,8 +1198,8 @@ end
 
 getinfname{T2}(task:: MSKtask,inftype:: Int32,whichinf:: T2) = getinfname(task,inftype,@compat(Int32(whichinf)))
 function getinfname(task_:: MSKtask,inftype_:: Int32,whichinf_:: Int32)
-  infname_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "getinfname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,inftype_,whichinf_,infname_)
+  infname_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getinfname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,inftype_,whichinf_,infname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1332,7 +1332,7 @@ function getmemusage(task_:: MSKtask)
   (convert(Int64,meminuse_[1]),convert(Int64,maxmemuse_[1]))
 end
 
-function getnadouinf(task_:: MSKtask,whichdinf_:: String)
+function getnadouinf(task_:: MSKtask,whichdinf_:: AbstractString)
   dvalue_ = Array(Float64,(1,))
   res = @msk_ccall( "getnadouinf",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Float64},),task_.task,bytestring(whichdinf_),dvalue_)
   if res != MSK_RES_OK
@@ -1342,7 +1342,7 @@ function getnadouinf(task_:: MSKtask,whichdinf_:: String)
   (convert(Float64,dvalue_[1]))
 end
 
-function getnadouparam(task_:: MSKtask,paramname_:: String)
+function getnadouparam(task_:: MSKtask,paramname_:: AbstractString)
   parvalue_ = Array(Float64,(1,))
   res = @msk_ccall( "getnadouparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Float64},),task_.task,bytestring(paramname_),parvalue_)
   if res != MSK_RES_OK
@@ -1352,7 +1352,7 @@ function getnadouparam(task_:: MSKtask,paramname_:: String)
   (convert(Float64,parvalue_[1]))
 end
 
-function getnaintinf(task_:: MSKtask,infitemname_:: String)
+function getnaintinf(task_:: MSKtask,infitemname_:: AbstractString)
   ivalue_ = Array(Int32,(1,))
   res = @msk_ccall( "getnaintinf",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(infitemname_),ivalue_)
   if res != MSK_RES_OK
@@ -1362,7 +1362,7 @@ function getnaintinf(task_:: MSKtask,infitemname_:: String)
   (convert(Int32,ivalue_[1]))
 end
 
-function getnaintparam(task_:: MSKtask,paramname_:: String)
+function getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
   parvalue_ = Array(Int32,(1,))
   res = @msk_ccall( "getnaintparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(paramname_),parvalue_)
   if res != MSK_RES_OK
@@ -1372,11 +1372,11 @@ function getnaintparam(task_:: MSKtask,paramname_:: String)
   (convert(Int32,parvalue_[1]))
 end
 
-getnastrparam{T2}(task:: MSKtask,paramname:: String,maxlen:: T2) = getnastrparam(task,paramname,@compat(Int32(maxlen)))
-function getnastrparam(task_:: MSKtask,paramname_:: String,maxlen_:: Int32)
+getnastrparam{T2}(task:: MSKtask,paramname:: AbstractString,maxlen:: T2) = getnastrparam(task,paramname,@compat(Int32(maxlen)))
+function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,maxlen_:: Int32)
   len_ = Array(Int32,(1,))
-  parvalue_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Uint8},),task_.task,bytestring(paramname_),maxlen_,len_,parvalue_)
+  parvalue_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,bytestring(paramname_),maxlen_,len_,parvalue_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1559,8 +1559,8 @@ end
 
 function getobjname(task_:: MSKtask)
   maxlen_ = (1 + getobjnamelen(task_))
-  objname_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getobjname",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,maxlen_,objname_)
+  objname_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getobjname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,maxlen_,objname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1590,8 +1590,8 @@ end
 
 getparamname{T2}(task:: MSKtask,partype:: Int32,param:: T2) = getparamname(task,partype,@compat(Int32(param)))
 function getparamname(task_:: MSKtask,partype_:: Int32,param_:: Int32)
-  parname_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "getparamname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,partype_,param_,parname_)
+  parname_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getparamname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,partype_,param_,parname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1923,8 +1923,7 @@ function getsolsta(task_:: MSKtask,whichsol_:: Int32)
   (convert(Int32,solsta_[1]))
 end
 
-# name modified by hand to fix overloading problem in 0.4+
-function MathProgBase.SolverInterface.getsolution(task_:: MSKtask,whichsol_:: Int32)
+function getsolution(task_:: MSKtask,whichsol_:: Int32)
   prosta_ = Array(Int32,(1,))
   __tmp_var_0 = getnumcon(task_)
   skc_ = zeros(Int32,__tmp_var_0)
@@ -2044,8 +2043,8 @@ end
 function getstrparam(task_:: MSKtask,param_:: Int32)
   len_ = Array(Int32,(1,))
   maxlen_ = (1 + getstrparamlen(task_,(param_)))
-  parvalue_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getstrparam",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Uint8},),task_.task,param_,maxlen_,len_,parvalue_)
+  parvalue_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getstrparam",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_,maxlen_,len_,parvalue_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -2124,8 +2123,8 @@ end
 
 function gettaskname(task_:: MSKtask)
   maxlen_ = (1 + gettasknamelen(task_))
-  taskname_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "gettaskname",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,maxlen_,taskname_)
+  taskname_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "gettaskname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,maxlen_,taskname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -2197,8 +2196,8 @@ end
 getvarname{T1}(task:: MSKtask,j:: T1) = getvarname(task,@compat(Int32(j)))
 function getvarname(task_:: MSKtask,j_:: Int32)
   maxlen_ = (1 + getvarnamelen(task_,(j_)))
-  name_ = zeros(Uint8,(maxlen_))
-  res = @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{Uint8},),task_.task,j_-1,maxlen_,name_)
+  name_ = zeros(UInt8,(maxlen_))
+  res = @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,maxlen_,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -2206,7 +2205,7 @@ function getvarname(task_:: MSKtask,j_:: Int32)
   (bytestring(name_))
 end
 
-function getvarnameindex(task_:: MSKtask,somename_:: String)
+function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Array(Int32,(1,))
   index_ = Array(Int32,(1,))
   res = @msk_ccall( "getvarnameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,bytestring(somename_),asgn_,index_)
@@ -2350,7 +2349,7 @@ function inputdata(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,c_:: Ar
   end
 end
 
-function isdouparname(task_:: MSKtask,parname_:: String)
+function isdouparname(task_:: MSKtask,parname_:: AbstractString)
   param_ = Array(Int32,(1,))
   res = @msk_ccall( "isdouparname",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(parname_),param_)
   if res != MSK_RES_OK
@@ -2360,7 +2359,7 @@ function isdouparname(task_:: MSKtask,parname_:: String)
   (convert(Int32,param_[1]))
 end
 
-function isintparname(task_:: MSKtask,parname_:: String)
+function isintparname(task_:: MSKtask,parname_:: AbstractString)
   param_ = Array(Int32,(1,))
   res = @msk_ccall( "isintparname",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(parname_),param_)
   if res != MSK_RES_OK
@@ -2370,7 +2369,7 @@ function isintparname(task_:: MSKtask,parname_:: String)
   (convert(Int32,param_[1]))
 end
 
-function isstrparname(task_:: MSKtask,parname_:: String)
+function isstrparname(task_:: MSKtask,parname_:: AbstractString)
   param_ = Array(Int32,(1,))
   res = @msk_ccall( "isstrparname",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(parname_),param_)
   if res != MSK_RES_OK
@@ -2380,8 +2379,8 @@ function isstrparname(task_:: MSKtask,parname_:: String)
   (convert(Int32,param_[1]))
 end
 
-linkfiletostream{T3}(task:: MSKtask,whichstream:: Int32,filename:: String,append:: T3) = linkfiletostream(task,whichstream,filename,@compat(Int32(append)))
-function linkfiletostream(task_:: MSKtask,whichstream_:: Int32,filename_:: String,append_:: Int32)
+linkfiletostream{T3}(task:: MSKtask,whichstream:: Int32,filename:: AbstractString,append:: T3) = linkfiletostream(task,whichstream,filename,@compat(Int32(append)))
+function linkfiletostream(task_:: MSKtask,whichstream_:: Int32,filename_:: AbstractString,append_:: Int32)
   res = @msk_ccall( "linkfiletotaskstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),task_.task,whichstream_,bytestring(filename_),append_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -2490,8 +2489,8 @@ function printparam(task_:: MSKtask)
 end
 
 function probtypetostr(task_:: MSKtask,probtype_:: Int32)
-  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "probtypetostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,probtype_,str_)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "probtypetostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,probtype_,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -2500,8 +2499,8 @@ function probtypetostr(task_:: MSKtask,probtype_:: Int32)
 end
 
 function prostatostr(task_:: MSKtask,prosta_:: Int32)
-  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "prostatostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,prosta_,str_)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "prostatostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,prosta_,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -2731,8 +2730,8 @@ function putbarsj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32,barsj_:: Array{Fl
   end
 end
 
-putbarvarname{T1}(task:: MSKtask,j:: T1,name:: String) = putbarvarname(task,@compat(Int32(j)),name)
-function putbarvarname(task_:: MSKtask,j_:: Int32,name_:: String)
+putbarvarname{T1}(task:: MSKtask,j:: T1,name:: AbstractString) = putbarvarname(task,@compat(Int32(j)),name)
+function putbarvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = @msk_ccall( "putbarvarname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,bytestring(name_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -2878,8 +2877,8 @@ function putcone(task_:: MSKtask,k_:: Int32,conetype_:: Int32,conepar_:: Float64
   end
 end
 
-putconename{T1}(task:: MSKtask,j:: T1,name:: String) = putconename(task,@compat(Int32(j)),name)
-function putconename(task_:: MSKtask,j_:: Int32,name_:: String)
+putconename{T1}(task:: MSKtask,j:: T1,name:: AbstractString) = putconename(task,@compat(Int32(j)),name)
+function putconename(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = @msk_ccall( "putconename",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,bytestring(name_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -2887,8 +2886,8 @@ function putconename(task_:: MSKtask,j_:: Int32,name_:: String)
   end
 end
 
-putconname{T1}(task:: MSKtask,i:: T1,name:: String) = putconname(task,@compat(Int32(i)),name)
-function putconname(task_:: MSKtask,i_:: Int32,name_:: String)
+putconname{T1}(task:: MSKtask,i:: T1,name:: AbstractString) = putconname(task,@compat(Int32(i)),name)
+function putconname(task_:: MSKtask,i_:: Int32,name_:: AbstractString)
   res = @msk_ccall( "putconname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,i_-1,bytestring(name_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -2982,8 +2981,8 @@ function putmaxnumvar(task_:: MSKtask,maxnumvar_:: Int32)
   end
 end
 
-putnadouparam{T2}(task:: MSKtask,paramname:: String,parvalue:: T2) = putnadouparam(task,paramname,@compat(Float64(parvalue)))
-function putnadouparam(task_:: MSKtask,paramname_:: String,parvalue_:: Float64)
+putnadouparam{T2}(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) = putnadouparam(task,paramname,@compat(Float64(parvalue)))
+function putnadouparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Float64)
   res = @msk_ccall( "putnadouparam",Int32,(Ptr{Void},Ptr{UInt8},Float64,),task_.task,bytestring(paramname_),parvalue_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -2991,8 +2990,8 @@ function putnadouparam(task_:: MSKtask,paramname_:: String,parvalue_:: Float64)
   end
 end
 
-putnaintparam{T2}(task:: MSKtask,paramname:: String,parvalue:: T2) = putnaintparam(task,paramname,@compat(Int32(parvalue)))
-function putnaintparam(task_:: MSKtask,paramname_:: String,parvalue_:: Int32)
+putnaintparam{T2}(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) = putnaintparam(task,paramname,@compat(Int32(parvalue)))
+function putnaintparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Int32)
   res = @msk_ccall( "putnaintparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,),task_.task,bytestring(paramname_),parvalue_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3000,7 +2999,7 @@ function putnaintparam(task_:: MSKtask,paramname_:: String,parvalue_:: Int32)
   end
 end
 
-function putnastrparam(task_:: MSKtask,paramname_:: String,parvalue_:: String)
+function putnastrparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: AbstractString)
   res = @msk_ccall( "putnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{UInt8},),task_.task,bytestring(paramname_),bytestring(parvalue_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3008,7 +3007,7 @@ function putnastrparam(task_:: MSKtask,paramname_:: String,parvalue_:: String)
   end
 end
 
-function putobjname(task_:: MSKtask,objname_:: String)
+function putobjname(task_:: MSKtask,objname_:: AbstractString)
   res = @msk_ccall( "putobjname",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(objname_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3024,7 +3023,7 @@ function putobjsense(task_:: MSKtask,sense_:: Int32)
   end
 end
 
-function putparam(task_:: MSKtask,parname_:: String,parvalue_:: String)
+function putparam(task_:: MSKtask,parname_:: AbstractString,parvalue_:: AbstractString)
   res = @msk_ccall( "putparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{UInt8},),task_.task,bytestring(parname_),bytestring(parvalue_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3252,7 +3251,7 @@ function putsolutionyi(task_:: MSKtask,i_:: Int32,whichsol_:: Int32,y_:: Float64
   end
 end
 
-function putstrparam(task_:: MSKtask,param_:: Int32,parvalue_:: String)
+function putstrparam(task_:: MSKtask,param_:: Int32,parvalue_:: AbstractString)
   res = @msk_ccall( "putstrparam",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,param_,bytestring(parvalue_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3316,7 +3315,7 @@ function putsuxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: In
   end
 end
 
-function puttaskname(task_:: MSKtask,taskname_:: String)
+function puttaskname(task_:: MSKtask,taskname_:: AbstractString)
   res = @msk_ccall( "puttaskname",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(taskname_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3376,8 +3375,8 @@ function putvarbranchorder(task_:: MSKtask,j_:: Int32,priority_:: Int32,directio
   end
 end
 
-putvarname{T1}(task:: MSKtask,j:: T1,name:: String) = putvarname(task,@compat(Int32(j)),name)
-function putvarname(task_:: MSKtask,j_:: Int32,name_:: String)
+putvarname{T1}(task:: MSKtask,j:: T1,name:: AbstractString) = putvarname(task,@compat(Int32(j)),name)
+function putvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = @msk_ccall( "putvarname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,bytestring(name_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3485,7 +3484,7 @@ function putyslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int3
   end
 end
 
-function readbranchpriorities(task_:: MSKtask,filename_:: String)
+function readbranchpriorities(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "readbranchpriorities",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3493,7 +3492,7 @@ function readbranchpriorities(task_:: MSKtask,filename_:: String)
   end
 end
 
-function readdata(task_:: MSKtask,filename_:: String)
+function readdata(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "readdataautoformat",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3501,7 +3500,7 @@ function readdata(task_:: MSKtask,filename_:: String)
   end
 end
 
-function readdataformat(task_:: MSKtask,filename_:: String,format_:: Int32,compress_:: Int32)
+function readdataformat(task_:: MSKtask,filename_:: AbstractString,format_:: Int32,compress_:: Int32)
   res = @msk_ccall( "readdataformat",Int32,(Ptr{Void},Ptr{UInt8},Int32,Int32,),task_.task,bytestring(filename_),format_,compress_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3517,7 +3516,7 @@ function readparamfile(task_:: MSKtask)
   end
 end
 
-function readsolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
+function readsolution(task_:: MSKtask,whichsol_:: Int32,filename_:: AbstractString)
   res = @msk_ccall( "readsolution",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,whichsol_,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3533,7 +3532,7 @@ function readsummary(task_:: MSKtask,whichstream_:: Int32)
   end
 end
 
-function readtask(task_:: MSKtask,filename_:: String)
+function readtask(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "readtask",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3638,8 +3637,8 @@ function setdefaults(task_:: MSKtask)
 end
 
 function sktostr(task_:: MSKtask,sk_:: Int32)
-  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "sktostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,sk_,str_)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "sktostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,sk_,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3648,8 +3647,8 @@ function sktostr(task_:: MSKtask,sk_:: Int32)
 end
 
 function solstatostr(task_:: MSKtask,solsta_:: Int32)
-  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "solstatostr",Int32,(Ptr{Void},Int32,Ptr{Uint8},),task_.task,solsta_,str_)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "solstatostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,solsta_,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3712,7 +3711,7 @@ function stopstat(task_:: MSKtask)
   end
 end
 
-function strtoconetype(task_:: MSKtask,str_:: String)
+function strtoconetype(task_:: MSKtask,str_:: AbstractString)
   conetype_ = Array(Int32,(1,))
   res = @msk_ccall( "strtoconetype",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(str_),conetype_)
   if res != MSK_RES_OK
@@ -3722,7 +3721,7 @@ function strtoconetype(task_:: MSKtask,str_:: String)
   (convert(Int32,conetype_[1]))
 end
 
-function strtosk(task_:: MSKtask,str_:: String)
+function strtosk(task_:: MSKtask,str_:: AbstractString)
   sk_ = Array(Int32,(1,))
   res = @msk_ccall( "strtosk",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(str_),sk_)
   if res != MSK_RES_OK
@@ -3740,7 +3739,7 @@ function updatesolutioninfo(task_:: MSKtask,whichsol_:: Int32)
   end
 end
 
-function writebranchpriorities(task_:: MSKtask,filename_:: String)
+function writebranchpriorities(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "writebranchpriorities",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3748,7 +3747,7 @@ function writebranchpriorities(task_:: MSKtask,filename_:: String)
   end
 end
 
-function writedata(task_:: MSKtask,filename_:: String)
+function writedata(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "writedata",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3756,7 +3755,7 @@ function writedata(task_:: MSKtask,filename_:: String)
   end
 end
 
-function writeparamfile(task_:: MSKtask,filename_:: String)
+function writeparamfile(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "writeparamfile",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3764,7 +3763,7 @@ function writeparamfile(task_:: MSKtask,filename_:: String)
   end
 end
 
-function writesolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
+function writesolution(task_:: MSKtask,whichsol_:: Int32,filename_:: AbstractString)
   res = @msk_ccall( "writesolution",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,whichsol_,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3772,7 +3771,7 @@ function writesolution(task_:: MSKtask,whichsol_:: Int32,filename_:: String)
   end
 end
 
-function writetask(task_:: MSKtask,filename_:: String)
+function writetask(task_:: MSKtask,filename_:: AbstractString)
   res = @msk_ccall( "writetask",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -3803,10 +3802,10 @@ function echointro(env_:: MSKenv,longver_:: Int32)
 end
 
 function getbuildinfo()
-  builddate_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  buildstate_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  buildtool_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "getbuildinfo",Int32,(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},),buildstate_,builddate_,buildtool_)
+  builddate_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  buildstate_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  buildtool_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getbuildinfo",Int32,(Ptr{UInt8},Ptr{UInt8},Ptr{UInt8},),buildstate_,builddate_,buildtool_)
   if res != 0
     throw(MosekError(res,""))
   end
@@ -3814,9 +3813,9 @@ function getbuildinfo()
 end
 
 function getcodedesc(code_:: Int32)
-  str_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  symname_ = zeros(Uint8,MSK_MAX_STR_LEN)
-  res = @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{Uint8},Ptr{Uint8},),code_,symname_,str_)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  symname_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{UInt8},Ptr{UInt8},),code_,symname_,str_)
   if res != 0
     throw(MosekError(res,""))
   end
@@ -3842,15 +3841,15 @@ function licensecleanup()
   end
 end
 
-linkfiletostream{T3}(env:: MSKenv,whichstream:: Int32,filename:: String,append:: T3) = linkfiletostream(env,whichstream,filename,@compat(Int32(append)))
-function linkfiletostream(env_:: MSKenv,whichstream_:: Int32,filename_:: String,append_:: Int32)
+linkfiletostream{T3}(env:: MSKenv,whichstream:: Int32,filename:: AbstractString,append:: T3) = linkfiletostream(env,whichstream,filename,@compat(Int32(append)))
+function linkfiletostream(env_:: MSKenv,whichstream_:: Int32,filename_:: AbstractString,append_:: Int32)
   res = @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_,bytestring(filename_),append_)
   if res != 0
     throw(MosekError(res,""))
   end
 end
 
-function putdllpath(env_:: MSKenv,dllpath_:: String)
+function putdllpath(env_:: MSKenv,dllpath_:: AbstractString)
   res = @msk_ccall( "putdllpath",Int32,(Ptr{Void},Ptr{UInt8},),env_.env,bytestring(dllpath_))
   if res != 0
     throw(MosekError(res,""))
@@ -3886,7 +3885,7 @@ function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
   end
 end
 
-function putlicensepath(env_:: MSKenv,licensepath_:: String)
+function putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
   res = @msk_ccall( "putlicensepath",Int32,(Ptr{Void},Ptr{UInt8},),env_.env,bytestring(licensepath_))
   if res != 0
     throw(MosekError(res,""))

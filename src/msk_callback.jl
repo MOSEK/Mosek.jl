@@ -2,14 +2,14 @@ export
   putstreamfunc,
   putcallbackfunc
 
-function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{Uint8})
+function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{UInt8})
   f = unsafe_pointer_to_objref(userdata) :: Function
   f(bytestring(msg))
   convert(Int32,0)::Int32
 end
 
 function putstreamfunc(t::MSKtask, whichstream:: Int32, f :: Function)
-  cbfunc = cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Void},Ptr{Uint8}))
+  cbfunc = cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Void},Ptr{UInt8}))
   r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Void},Int32, Any, Ptr{Void}),t.task,whichstream,f,cbfunc)
   if r != MSK_RES_OK
     throw(MosekError(r,getlasterror(t)))
