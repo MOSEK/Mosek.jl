@@ -13,7 +13,7 @@ module Mosek
 
 
   export
-    makeenv, maketask,
+    makeenv, maketask, maketask_ptr,
     MosekError
 
   # A macro to make calling C API a little cleaner
@@ -51,6 +51,7 @@ module Mosek
   type MSKtask
     env::MSKenv
     task::Ptr{Void}
+    borrowed::Bool
     # need to keep a reference to callback funcs for GC
     streamcallbackfunc:: Any
     userstreamcallbackfunc:: Any
@@ -66,7 +67,7 @@ module Mosek
         throw(MosekError(res,""))
       end
 
-      task = new(env,temp[1],nothing,nothing,nothing,nothing,nothing)
+      task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
 
@@ -81,7 +82,15 @@ module Mosek
         throw(MosekError(res,""))
       end
 
-      task = new(env,temp[1],nothing,nothing,nothing,nothing,nothing)
+      task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
+
+      finalizer(task,deletetask)
+
+      task
+    end
+
+    function MSKtask(t::Ptr{Void},borrowed::Bool)
+      task = new(msk_global_env,t,borrowed,nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
 
@@ -143,6 +152,10 @@ module Mosek
     MSKtask(msk_global_env)
   end
 
+  function maketask_ptr(t::Ptr{Void},borrowed::Bool)
+    MSKtask(t,borrowed)
+  end
+
 
   function maketask(func::Function, env::MSKenv)
       t = MSKtask(env)
@@ -174,10 +187,12 @@ module Mosek
 
   function deletetask(t::MSKtask)
     if t.task != C_NULL
-      temp = Array(Ptr{Void},1)
-      temp[1] = t.task
-      @msk_ccall(deletetask,Int32,(Ptr{Ptr{Void}},), temp)
-      t.task = C_NULL
+        if ! t.borrowed
+            temp = Array(Ptr{Void},1)
+            temp[1] = t.task
+            @msk_ccall(deletetask,Int32,(Ptr{Ptr{Void}},), temp)
+        end
+        t.task = C_NULL
     end
   end
 
