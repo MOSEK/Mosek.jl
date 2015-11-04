@@ -109,18 +109,25 @@ function loadoptions!(m::MosekMathProgModel)
   printstream(msg::AbstractString) = print(msg)
 
   putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
-  for (o,val) in m.options
-      if isa(val, Integer)
-          parname = "MSK_IPAR_$o"
+  for (option,val) in m.options
+      parname = string(option)
+      if startswith(parname, "MSK_IPAR_")
+          putnaintparam(m.task, parname, convert(Integer, val))
+      elseif startswith(parname, "MSK_DPAR_")
+          putnadouparam(m.task, parname, convert(AbstractFloat, val))
+      elseif startswith(parname, "MSK_SPAR_")
+          putnastrparam(m.task, parname, convert(AbstractString, val))
+      elseif isa(val, Integer)
+          parname = "MSK_IPAR_$parname"
           putnaintparam(m.task, parname, val)
       elseif isa(val, AbstractFloat)
-          parname = "MSK_DPAR_$o"
+          parname = "MSK_DPAR_$parname"
           putnadouparam(m.task, parname, val)
       elseif isa(val, AbstractString)
-          parname = "MSK_SPAR_$o"
+          parname = "MSK_SPAR_$parname"
           putnastrparam(m.task, parname, val)
       else
-          error("Value $val for parameter $o has unrecognized type")
+          error("Value $val for parameter $option has unrecognized type")
       end
   end
 end
