@@ -427,7 +427,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                     firstcon   = conptr
                     lastcon    = conptr+n-1
                     barslackj  = barvarptr
-                    d = int32(sqrt(.25+2*length(idxs))-0.5)
+                    d = round(Int32,sqrt(.25+2*length(idxs))-0.5)
 
                     bk[firstcon:lastcon] = MSK_BK_FX
 
