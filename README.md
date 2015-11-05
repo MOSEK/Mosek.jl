@@ -76,7 +76,7 @@ MathProgBase interface
 
 Mosek implements the solver-independent [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) interface,
 and so can be used within modeling software like [JuMP](https://github.com/JuliaOpt/JuMP.jl).
-The solver object is called ``MosekSolver``. Parameters are accepted and mirror the names in the Mosek documentation, except for the ``MSK_[I|D|S]PAR`` prefix.
-For example, you can suppress output by saying ``MosekSolver(LOG=0)``, where ``LOG`` corresponds to the [MSK_IPAR_LOG](http://docs.mosek.com/7.0/capi/MSK_IPAR_LOG.html) parameter.
-The type of the parameter is inferred by the provided value.
+The solver object is called ``MosekSolver``. Parameters are accepted and mirror the names in the Mosek documentation but the ``MSK_[I|D|S]PAR`` prefix is optional.
+For example, you can suppress output by either saying ``MosekSolver(MSK_IPAR_LOG=0)`` or ``MosekSolver(LOG=0)``, where ``LOG`` corresponds to the [MSK_IPAR_LOG](http://docs.mosek.com/7.0/capi/MSK_IPAR_LOG.html) parameter.
+When the prefix is excluded the type of the parameter is inferred by the provided value.
 
