@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.1.0.39
+# MOSEK 7.1.0.40
 
 export
   analyzenames,
@@ -494,6 +494,7 @@ end
 
 dualsensitivity{T1}(task:: MSKtask,subj:: Array{T1}) = dualsensitivity(task,convert(Array{Int32},subj))
 function dualsensitivity(task_:: MSKtask,subj_:: Array{Int32})
+  numj_ = minimum([ length(subj_) ])
   __tmp_var_0 = (numj_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   __tmp_var_4 = (numj_)
@@ -502,7 +503,6 @@ function dualsensitivity(task_:: MSKtask,subj_:: Array{Int32})
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   __tmp_var_6 = (numj_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
-  numj_ = minimum([ length(subj_) ])
   res = @msk_ccall( "dualsensitivity",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numj_,subj_ .- 1,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -677,8 +677,8 @@ getbaraidx{T1}(task:: MSKtask,idx:: T1) = getbaraidx(task,@compat(Int64(idx)))
 function getbaraidx(task_:: MSKtask,idx_:: Int64)
   i_ = Array(Int32,(1,))
   j_ = Array(Int32,(1,))
-  maxnum_ = getbaraidxinfo(task_,(idx_))
   num_ = Array(Int64,(1,))
+  maxnum_ = getbaraidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = (maxnum_)
@@ -715,10 +715,10 @@ function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
 end
 
 function getbarasparsity(task_:: MSKtask)
-  __tmp_var_0 = (maxnumnz_)
-  __tmp_var_1 = zeros(Int64,__tmp_var_0)
   maxnumnz_ = getnumbaranz(task_)
   numnz_ = Array(Int64,(1,))
+  __tmp_var_0 = (maxnumnz_)
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
   res = @msk_ccall( "getbarasparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -749,8 +749,8 @@ end
 getbarcidx{T1}(task:: MSKtask,idx:: T1) = getbarcidx(task,@compat(Int64(idx)))
 function getbarcidx(task_:: MSKtask,idx_:: Int64)
   j_ = Array(Int32,(1,))
-  maxnum_ = getbarcidxinfo(task_,(idx_))
   num_ = Array(Int64,(1,))
+  maxnum_ = getbarcidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = (maxnum_)
@@ -786,10 +786,10 @@ function getbarcidxj(task_:: MSKtask,idx_:: Int64)
 end
 
 function getbarcsparsity(task_:: MSKtask)
-  __tmp_var_0 = (maxnumnz_)
-  __tmp_var_1 = zeros(Int64,__tmp_var_0)
   maxnumnz_ = getnumbarcnz(task_)
   numnz_ = Array(Int64,(1,))
+  __tmp_var_0 = (maxnumnz_)
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
   res = @msk_ccall( "getbarcsparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1056,9 +1056,9 @@ end
 
 getdbi{T3}(task:: MSKtask,whichsol:: Int32,accmode:: Int32,sub:: Array{T3}) = getdbi(task,whichsol,accmode,convert(Array{Int32},sub))
 function getdbi(task_:: MSKtask,whichsol_:: Int32,accmode_:: Int32,sub_:: Array{Int32})
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdbi",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Int32,Ptr{Float64},),task_.task,whichsol_,accmode_,sub_ .- 1,len_,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1069,9 +1069,9 @@ end
 
 getdcni{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getdcni(task,whichsol,convert(Array{Int32},sub))
 function getdcni(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdcni",Int32,(Ptr{Void},Int32,Ptr{Int32},Int32,Ptr{Float64},),task_.task,whichsol_,sub_ .- 1,len_,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1082,9 +1082,9 @@ end
 
 getdeqi{T3,T4}(task:: MSKtask,whichsol:: Int32,accmode:: Int32,sub:: Array{T3},normalize:: T4) = getdeqi(task,whichsol,accmode,convert(Array{Int32},sub),@compat(Int32(normalize)))
 function getdeqi(task_:: MSKtask,whichsol_:: Int32,accmode_:: Int32,sub_:: Array{Int32},normalize_:: Int32)
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdeqi",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Int32,Ptr{Float64},Int32,),task_.task,whichsol_,accmode_,sub_ .- 1,len_,__tmp_var_1,normalize_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1136,9 +1136,9 @@ end
 
 getdviolbarvar{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getdviolbarvar(task,whichsol,convert(Array{Int32},sub))
 function getdviolbarvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdviolbarvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1149,9 +1149,9 @@ end
 
 getdviolcon{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getdviolcon(task,whichsol,convert(Array{Int32},sub))
 function getdviolcon(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdviolcon",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1162,9 +1162,9 @@ end
 
 getdviolcones{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getdviolcones(task,whichsol,convert(Array{Int32},sub))
 function getdviolcones(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdviolcones",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1175,9 +1175,9 @@ end
 
 getdviolvar{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getdviolvar(task,whichsol,convert(Array{Int32},sub))
 function getdviolvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getdviolvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1209,9 +1209,9 @@ end
 
 getinti{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getinti(task,whichsol,convert(Array{Int32},sub))
 function getinti(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getinti",Int32,(Ptr{Void},Int32,Ptr{Int32},Int32,Ptr{Float64},),task_.task,whichsol_,sub_ .- 1,len_,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1601,9 +1601,9 @@ end
 
 getpbi{T3,T4}(task:: MSKtask,whichsol:: Int32,accmode:: Int32,sub:: Array{T3},normalize:: T4) = getpbi(task,whichsol,accmode,convert(Array{Int32},sub),@compat(Int32(normalize)))
 function getpbi(task_:: MSKtask,whichsol_:: Int32,accmode_:: Int32,sub_:: Array{Int32},normalize_:: Int32)
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpbi",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Int32,Ptr{Float64},Int32,),task_.task,whichsol_,accmode_,sub_ .- 1,len_,__tmp_var_1,normalize_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1614,9 +1614,9 @@ end
 
 getpcni{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getpcni(task,whichsol,convert(Array{Int32},sub))
 function getpcni(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpcni",Int32,(Ptr{Void},Int32,Ptr{Int32},Int32,Ptr{Float64},),task_.task,whichsol_,sub_ .- 1,len_,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1627,9 +1627,9 @@ end
 
 getpeqi{T2,T3}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2},normalize:: T3) = getpeqi(task,whichsol,convert(Array{Int32},sub),@compat(Int32(normalize)))
 function getpeqi(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32},normalize_:: Int32)
+  len_ = minimum([ length(sub_) ])
   __tmp_var_0 = (len_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  len_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpeqi",Int32,(Ptr{Void},Int32,Ptr{Int32},Int32,Ptr{Float64},Int32,),task_.task,whichsol_,sub_ .- 1,len_,__tmp_var_1,normalize_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1670,9 +1670,9 @@ end
 
 getpviolbarvar{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getpviolbarvar(task,whichsol,convert(Array{Int32},sub))
 function getpviolbarvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpviolbarvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1683,9 +1683,9 @@ end
 
 getpviolcon{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getpviolcon(task,whichsol,convert(Array{Int32},sub))
 function getpviolcon(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpviolcon",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1696,9 +1696,9 @@ end
 
 getpviolcones{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getpviolcones(task,whichsol,convert(Array{Int32},sub))
 function getpviolcones(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpviolcones",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1709,9 +1709,9 @@ end
 
 getpviolvar{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getpviolvar(task,whichsol,convert(Array{Int32},sub))
 function getpviolvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
+  num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  num_ = minimum([ length(sub_) ])
   res = @msk_ccall( "getpviolvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1722,8 +1722,8 @@ end
 
 getqconk{T1}(task:: MSKtask,k:: T1) = getqconk(task,@compat(Int32(k)))
 function getqconk(task_:: MSKtask,k_:: Int32)
-  maxnumqcnz_ = getnumqconknz(task_,(k_))
   numqcnz_ = Array(Int64,(1,))
+  maxnumqcnz_ = getnumqconknz(task_,(k_))
   __tmp_var_0 = (maxnumqcnz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   __tmp_var_2 = (maxnumqcnz_)
@@ -2240,9 +2240,9 @@ end
 
 getvartypelist{T1}(task:: MSKtask,subj:: Array{T1}) = getvartypelist(task,convert(Array{Int32},subj))
 function getvartypelist(task_:: MSKtask,subj_:: Array{Int32})
+  num_ = minimum([ length(subj_) ])
   __tmp_var_0 = (num_)
   vartype_ = zeros(Int32,__tmp_var_0)
-  num_ = minimum([ length(subj_) ])
   res = @msk_ccall( "getvartypelist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- 1,vartype_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -2445,6 +2445,8 @@ end
 
 primalsensitivity{T1,T3}(task:: MSKtask,subi:: Array{T1},marki:: Array{Int32},subj:: Array{T3},markj:: Array{Int32}) = primalsensitivity(task,convert(Array{Int32},subi),marki,convert(Array{Int32},subj),markj)
 function primalsensitivity(task_:: MSKtask,subi_:: Array{Int32},marki_:: Array{Int32},subj_:: Array{Int32},markj_:: Array{Int32})
+  numi_ = minimum([ length(subi_),length(marki_) ])
+  numj_ = minimum([ length(subj_),length(markj_) ])
   __tmp_var_0 = (numi_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   __tmp_var_8 = (numj_)
@@ -2461,8 +2463,6 @@ function primalsensitivity(task_:: MSKtask,subi_:: Array{Int32},marki_:: Array{I
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   __tmp_var_14 = (numj_)
   __tmp_var_15 = zeros(Float64,__tmp_var_14)
-  numi_ = minimum([ length(subi_),length(marki_) ])
-  numj_ = minimum([ length(subj_),length(markj_) ])
   res = @msk_ccall( "primalsensitivity",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numi_,subi_ .- 1,marki_,numj_,subj_ .- 1,markj_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9,__tmp_var_11,__tmp_var_13,__tmp_var_15)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
