@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.1.0.40
+# MOSEK 7.1.0.41
 
 export
   analyzenames,
@@ -519,6 +519,7 @@ function getacol(task_:: MSKtask,j_:: Int32)
   __tmp_var_2 = getacolnumnz(task_,(j_))
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   res = @msk_ccall( "getacol",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
+  __tmp_var_1 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -548,6 +549,8 @@ function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   maxnumnz_ = minimum([ length(subi_),length(subj_),length(val_) ])
   surp_ = convert(Int64,length(subi_))
   res = @msk_ccall( "getacolslicetrip",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -585,6 +588,7 @@ function getarow(task_:: MSKtask,i_:: Int32)
   __tmp_var_2 = getarownumnz(task_,(i_))
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   res = @msk_ccall( "getarow",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
+  __tmp_var_1 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -614,6 +618,8 @@ function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   maxnumnz_ = minimum([ length(subi_),length(subj_),length(val_) ])
   surp_ = convert(Int64,length(subi_))
   res = @msk_ccall( "getarowslicetrip",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -634,6 +640,9 @@ function getaslice(task_:: MSKtask,accmode_:: Int32,first_:: Int32,last_:: Int32
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   surp_ = convert(Int64,length(sub_))
   res = @msk_ccall( "getaslice64",Int32,(Ptr{Void},Int32,Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,accmode_,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
+  __tmp_var_5 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -666,6 +675,10 @@ function getbarablocktriplet(task_:: MSKtask)
   __tmp_var_8 = (maxnum_)
   __tmp_var_9 = zeros(Float64,__tmp_var_8)
   res = @msk_ccall( "getbarablocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
+  __tmp_var_5 += 1
+  __tmp_var_7 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -684,6 +697,7 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   res = @msk_ccall( "getbaraidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
+  __tmp_var_1 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -739,6 +753,9 @@ function getbarcblocktriplet(task_:: MSKtask)
   __tmp_var_6 = (maxnum_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   res = @msk_ccall( "getbarcblocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
+  __tmp_var_5 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -756,6 +773,7 @@ function getbarcidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   res = @msk_ccall( "getbarcidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
+  __tmp_var_1 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -954,6 +972,7 @@ function getcone(task_:: MSKtask,k_:: Int32)
   __tmp_var_0 = getconeinfo(task_,(k_))[3]
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   res = @msk_ccall( "getcone",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Int32},),task_.task,k_-1,conetype_,conepar_,nummem_,__tmp_var_1)
+  __tmp_var_1 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1732,6 +1751,8 @@ function getqconk(task_:: MSKtask,k_:: Int32)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   qcsurp_ = convert(Int64,length(qcsubi_))
   res = @msk_ccall( "getqconk64",Int32,(Ptr{Void},Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,maxnumqcnz_,&qcsurp_,numqcnz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1750,6 +1771,8 @@ function getqobj(task_:: MSKtask)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   qosurp_ = convert(Int32,length(qosubi_))
   res = @msk_ccall( "getqobj",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnumqonz_,&qosurp_,numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -1768,6 +1791,8 @@ function getqobj64(task_:: MSKtask)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   qosurp_ = convert(Int64,length(qosubi_))
   res = @msk_ccall( "getqobj64",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnumqonz_,&qosurp_,numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -2033,6 +2058,8 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   __tmp_var_4 = (maxlen_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   res = @msk_ccall( "getsparsesymmat",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  __tmp_var_1 += 1
+  __tmp_var_3 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
