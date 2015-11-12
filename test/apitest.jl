@@ -3,7 +3,7 @@ using Mosek,FactCheck
 facts("[apitest]") do
 
     context("lo1") do
-        printstream(msg::String) = nothing #print(msg)
+        printstream(msg::AbstractString) = nothing #print(msg)
 
         bkc = [MSK_BK_FX MSK_BK_LO MSK_BK_UP]
         blc = [30.0, 15.0, -Inf]
@@ -58,7 +58,7 @@ facts("[apitest]") do
     end
 
     context("qo1") do
-        printstream(msg::String) = nothing # print(msg)
+        printstream(msg::AbstractString) = nothing # print(msg)
         bkc   = [ MSK_BK_LO ]
         blc   = [ 1.0 ]
         buc   = [ Inf ]
@@ -103,7 +103,7 @@ facts("[apitest]") do
     end
 
     context("qcqo1") do
-        printstream(msg::String) = nothing # print(msg)
+        printstream(msg::AbstractString) = nothing # print(msg)
         task = maketask()
         putstreamfunc(task,MSK_STREAM_LOG,m -> nothing)
         bkc   = [ MSK_BK_LO ]
@@ -151,7 +151,7 @@ facts("[apitest]") do
     end
 
     context("milo1") do
-        printstream(msg::String) = nothing #print(msg)
+        printstream(msg::AbstractString) = nothing #print(msg)
         task = maketask()
         putstreamfunc(task,MSK_STREAM_LOG,printstream)
         bkc = [ MSK_BK_UP, MSK_BK_LO  ]
@@ -190,7 +190,7 @@ facts("[apitest]") do
     end
 
     context("cqo") do
-        printstream(msg::String) = nothing # print(msg)
+        printstream(msg::AbstractString) = nothing # print(msg)
         callback(where,dinf,iinf,liinf) = 0 
         bkc = [ MSK_BK_FX ]
         blc = [ 1.0 ]
