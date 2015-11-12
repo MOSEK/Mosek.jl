@@ -3602,7 +3602,7 @@ end
 removebarvars{T1}(task:: MSKtask,subset:: Array{T1}) = removebarvars(task,convert(Array{Int32},subset))
 function removebarvars(task_:: MSKtask,subset_:: Array{Int32})
   num_ = minimum([ length(subset_) ])
-  res = @msk_ccall( "removebarvars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+  res = @msk_ccall( "removebarvars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_ .- 1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3612,7 +3612,7 @@ end
 removecones{T1}(task:: MSKtask,subset:: Array{T1}) = removecones(task,convert(Array{Int32},subset))
 function removecones(task_:: MSKtask,subset_:: Array{Int32})
   num_ = minimum([ length(subset_) ])
-  res = @msk_ccall( "removecones",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+  res = @msk_ccall( "removecones",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_ .- 1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3622,7 +3622,7 @@ end
 removecons{T1}(task:: MSKtask,subset:: Array{T1}) = removecons(task,convert(Array{Int32},subset))
 function removecons(task_:: MSKtask,subset_:: Array{Int32})
   num_ = minimum([ length(subset_) ])
-  res = @msk_ccall( "removecons",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+  res = @msk_ccall( "removecons",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_ .- 1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3632,7 +3632,7 @@ end
 removevars{T1}(task:: MSKtask,subset:: Array{T1}) = removevars(task,convert(Array{Int32},subset))
 function removevars(task_:: MSKtask,subset_:: Array{Int32})
   num_ = minimum([ length(subset_) ])
-  res = @msk_ccall( "removevars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+  res = @msk_ccall( "removevars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_ .- 1)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))

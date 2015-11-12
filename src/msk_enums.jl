@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 7.1.0.39
+# MOSEK 7.1.0.41
 
 export
   MSK_SOLVE_DUAL,
