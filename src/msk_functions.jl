@@ -514,9 +514,9 @@ end
 getacol{T1}(task:: MSKtask,j:: T1) = getacol(task,@compat(Int32(j)))
 function getacol(task_:: MSKtask,j_:: Int32)
   nzj_ = Array(Int32,(1,))
-  __tmp_var_0 = getacolnumnz(task_,(j_)-1)
+  __tmp_var_0 = getacolnumnz(task_,(j_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
-  __tmp_var_2 = getacolnumnz(task_,(j_)-1)
+  __tmp_var_2 = getacolnumnz(task_,(j_))
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   res = @msk_ccall( "getacol",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
   __tmp_var_1 += 1
@@ -540,11 +540,11 @@ end
 
 getacolslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2) = getacolslicetrip(task,@compat(Int32(first)),@compat(Int32(last)))
 function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
-  __tmp_var_0 = getaslicenumnz(task_,MSK_ACC_CON,(first_)-1,(last_)-1)
+  __tmp_var_0 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
-  __tmp_var_2 = getaslicenumnz(task_,MSK_ACC_CON,(first_)-1,(last_)-1)
+  __tmp_var_2 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
-  __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_)-1,(last_)-1)
+  __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   maxnumnz_ = minimum([ length(subi_),length(subj_),length(val_) ])
   surp_ = convert(Int64,length(subi_))
@@ -583,9 +583,9 @@ end
 getarow{T1}(task:: MSKtask,i:: T1) = getarow(task,@compat(Int32(i)))
 function getarow(task_:: MSKtask,i_:: Int32)
   nzi_ = Array(Int32,(1,))
-  __tmp_var_0 = getarownumnz(task_,(i_)-1)
+  __tmp_var_0 = getarownumnz(task_,(i_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
-  __tmp_var_2 = getarownumnz(task_,(i_)-1)
+  __tmp_var_2 = getarownumnz(task_,(i_))
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   res = @msk_ccall( "getarow",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
   __tmp_var_1 += 1
@@ -609,11 +609,11 @@ end
 
 getarowslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2) = getarowslicetrip(task,@compat(Int32(first)),@compat(Int32(last)))
 function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
-  __tmp_var_0 = getaslicenumnz(task_,MSK_ACC_CON,(first_)-1,(last_)-1)
+  __tmp_var_0 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
-  __tmp_var_2 = getaslicenumnz(task_,MSK_ACC_CON,(first_)-1,(last_)-1)
+  __tmp_var_2 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
-  __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_)-1,(last_)-1)
+  __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   maxnumnz_ = minimum([ length(subi_),length(subj_),length(val_) ])
   surp_ = convert(Int64,length(subi_))
@@ -629,7 +629,7 @@ end
 
 getaslice{T2,T3}(task:: MSKtask,accmode:: Int32,first:: T2,last:: T3) = getaslice(task,accmode,@compat(Int32(first)),@compat(Int32(last)))
 function getaslice(task_:: MSKtask,accmode_:: Int32,first_:: Int32,last_:: Int32)
-  maxnumnz_ = getaslicenumnz(task_,(accmode_),(first_)-1,(last_)-1)
+  maxnumnz_ = getaslicenumnz(task_,(accmode_),(first_),(last_))
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = ((last_) - (first_))
@@ -691,7 +691,7 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
   i_ = Array(Int32,(1,))
   j_ = Array(Int32,(1,))
   num_ = Array(Int64,(1,))
-  maxnum_ = getbaraidxinfo(task_,(idx_)-1)
+  maxnum_ = getbaraidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = (maxnum_)
@@ -768,7 +768,7 @@ getbarcidx{T1}(task:: MSKtask,idx:: T1) = getbarcidx(task,@compat(Int64(idx)))
 function getbarcidx(task_:: MSKtask,idx_:: Int64)
   j_ = Array(Int32,(1,))
   num_ = Array(Int64,(1,))
-  maxnum_ = getbarcidxinfo(task_,(idx_)-1)
+  maxnum_ = getbarcidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   __tmp_var_2 = (maxnum_)
@@ -819,7 +819,7 @@ end
 
 getbarsj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarsj(task,whichsol,@compat(Int32(j)))
 function getbarsj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32)
-  __tmp_var_0 = getlenbarvarj(task_,(j_)-1)
+  __tmp_var_0 = getlenbarvarj(task_,(j_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   res = @msk_ccall( "getbarsj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_,j_-1,__tmp_var_1)
   if res != MSK_RES_OK
@@ -831,7 +831,7 @@ end
 
 getbarvarname{T1}(task:: MSKtask,i:: T1) = getbarvarname(task,@compat(Int32(i)))
 function getbarvarname(task_:: MSKtask,i_:: Int32)
-  maxlen_ = (1 + getbarvarnamelen(task_,(i_)-1))
+  maxlen_ = (1 + getbarvarnamelen(task_,(i_)))
   name_ = zeros(UInt8,(maxlen_))
   res = @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   if res != MSK_RES_OK
@@ -865,7 +865,7 @@ end
 
 getbarxj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarxj(task,whichsol,@compat(Int32(j)))
 function getbarxj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32)
-  __tmp_var_0 = getlenbarvarj(task_,(j_)-1)
+  __tmp_var_0 = getlenbarvarj(task_,(j_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   res = @msk_ccall( "getbarxj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_,j_-1,__tmp_var_1)
   if res != MSK_RES_OK
@@ -970,7 +970,7 @@ function getcone(task_:: MSKtask,k_:: Int32)
   conepar_ = Array(Float64,(1,))
   conetype_ = Array(Int32,(1,))
   nummem_ = Array(Int32,(1,))
-  __tmp_var_0 = getconeinfo(task_,(k_)-1)[3]
+  __tmp_var_0 = getconeinfo(task_,(k_))[3]
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   res = @msk_ccall( "getcone",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Int32},),task_.task,k_-1,conetype_,conepar_,nummem_,__tmp_var_1)
   __tmp_var_1 += 1
@@ -996,7 +996,7 @@ end
 
 getconename{T1}(task:: MSKtask,i:: T1) = getconename(task,@compat(Int32(i)))
 function getconename(task_:: MSKtask,i_:: Int32)
-  maxlen_ = (1 + getconenamelen(task_,(i_)-1))
+  maxlen_ = (1 + getconenamelen(task_,(i_)))
   name_ = zeros(UInt8,(maxlen_))
   res = @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   if res != MSK_RES_OK
@@ -1030,7 +1030,7 @@ end
 
 getconname{T1}(task:: MSKtask,i:: T1) = getconname(task,@compat(Int32(i)))
 function getconname(task_:: MSKtask,i_:: Int32)
-  maxlen_ = (1 + getconnamelen(task_,(i_)-1))
+  maxlen_ = (1 + getconnamelen(task_,(i_)))
   name_ = zeros(UInt8,(maxlen_))
   res = @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   if res != MSK_RES_OK
@@ -1743,7 +1743,7 @@ end
 getqconk{T1}(task:: MSKtask,k:: T1) = getqconk(task,@compat(Int32(k)))
 function getqconk(task_:: MSKtask,k_:: Int32)
   numqcnz_ = Array(Int64,(1,))
-  maxnumqcnz_ = getnumqconknz(task_,(k_)-1)
+  maxnumqcnz_ = getnumqconknz(task_,(k_))
   __tmp_var_0 = (maxnumqcnz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   __tmp_var_2 = (maxnumqcnz_)
@@ -1949,7 +1949,7 @@ function getsolsta(task_:: MSKtask,whichsol_:: Int32)
   (convert(Int32,solsta_[1]))
 end
 
-function MathProgBase.getsolution(task_:: MSKtask,whichsol_:: Int32)
+function getsolution(task_:: MSKtask,whichsol_:: Int32)
   prosta_ = Array(Int32,(1,))
   __tmp_var_0 = getnumcon(task_)
   skc_ = zeros(Int32,__tmp_var_0)
@@ -2051,7 +2051,7 @@ end
 
 getsparsesymmat{T1}(task:: MSKtask,idx:: T1) = getsparsesymmat(task,@compat(Int64(idx)))
 function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
-  maxlen_ = getsymmatinfo(task_,(idx_)-1)[2]
+  maxlen_ = getsymmatinfo(task_,(idx_))[2]
   __tmp_var_0 = (maxlen_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   __tmp_var_2 = (maxlen_)
@@ -2070,7 +2070,7 @@ end
 
 function getstrparam(task_:: MSKtask,param_:: Int32)
   len_ = Array(Int32,(1,))
-  maxlen_ = (1 + getstrparamlen(task_,(param_)-1))
+  maxlen_ = (1 + getstrparamlen(task_,(param_)))
   parvalue_ = zeros(UInt8,(maxlen_))
   res = @msk_ccall( "getstrparam",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_,maxlen_,len_,parvalue_)
   if res != MSK_RES_OK
@@ -2223,7 +2223,7 @@ end
 
 getvarname{T1}(task:: MSKtask,j:: T1) = getvarname(task,@compat(Int32(j)))
 function getvarname(task_:: MSKtask,j_:: Int32)
-  maxlen_ = (1 + getvarnamelen(task_,(j_)-1))
+  maxlen_ = (1 + getvarnamelen(task_,(j_)))
   name_ = zeros(UInt8,(maxlen_))
   res = @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,maxlen_,name_)
   if res != MSK_RES_OK
@@ -2746,7 +2746,7 @@ end
 
 putbarsj{T2,T3}(task:: MSKtask,whichsol:: Int32,j:: T2,barsj:: Array{T3}) = putbarsj(task,whichsol,@compat(Int32(j)),convert(Array{Float64},barsj))
 function putbarsj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32,barsj_:: Array{Float64})
-  __tmp_var_0 = getlenbarvarj(task_,(j_)-1)
+  __tmp_var_0 = getlenbarvarj(task_,(j_))
   if length(barsj_) < __tmp_var_0
     println("Array argument barsj is not long enough")
     throw(BoundsError())
@@ -2769,7 +2769,7 @@ end
 
 putbarxj{T2,T3}(task:: MSKtask,whichsol:: Int32,j:: T2,barxj:: Array{T3}) = putbarxj(task,whichsol,@compat(Int32(j)),convert(Array{Float64},barxj))
 function putbarxj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32,barxj_:: Array{Float64})
-  __tmp_var_0 = getlenbarvarj(task_,(j_)-1)
+  __tmp_var_0 = getlenbarvarj(task_,(j_))
   if length(barxj_) < __tmp_var_0
     println("Array argument barxj is not long enough")
     throw(BoundsError())
