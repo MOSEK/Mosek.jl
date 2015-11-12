@@ -220,8 +220,8 @@ module Mosek
 
   #include("msk_callback.jl")
   # Generated content
-  include("msk_enums.jl")
-  include("msk_functions.jl")
+  include("msk7_enums.jl")
+  include("msk7_functions.jl")
   include("msk_callback.jl")
   include("msk_geco.jl")
 
