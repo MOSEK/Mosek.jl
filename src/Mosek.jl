@@ -218,10 +218,23 @@ module Mosek
   end
 
 
+  function _getmosekmajorversion()
+      build_ = Array(Int32,(1,))
+      major_ = Array(Int32,(1,))
+      minor_ = Array(Int32,(1,))
+      revision_ = Array(Int32,(1,))
+      @msk_ccall( "getversion",Int32,(Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},),major_,minor_,build_,revision_)
+      convert(Int32,major_[1])
+  end
+
   #include("msk_callback.jl")
   # Generated content
-  include("msk7_enums.jl")
-  include("msk7_functions.jl")
+  if _getmosekmajorversion() == 7
+      include("msk7_enums.jl")
+      include("msk7_functions.jl")
+  else
+      error("Unsupported MOSEK version loaded")
+  end
   include("msk_callback.jl")
   include("msk_geco.jl")
 
