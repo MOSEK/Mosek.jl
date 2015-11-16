@@ -2,7 +2,6 @@ using Mosek
 
 try
     Pkg.installed("Convex")
-    Pkg.installed("FactCheck")
     using Convex
     using FactCheck
 
@@ -10,5 +9,5 @@ try
     include(joinpath(Pkg.dir("Convex"),"test","test_sdp.jl"))
     FactCheck.exitstatus()
 catch
-    # If convex+factcheck not installed, skip this test
+    # If convex not installed, skip this test
 end

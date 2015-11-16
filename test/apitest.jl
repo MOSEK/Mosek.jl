@@ -1,4 +1,4 @@
-using Mosek,FactCheck
+using Mosek,FactCheck,Compat
 
 facts("[apitest]") do
 
