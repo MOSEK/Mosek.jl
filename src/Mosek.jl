@@ -232,6 +232,9 @@ module Mosek
   if _getmosekmajorversion() == 7
       include("msk7_enums.jl")
       include("msk7_functions.jl")
+  elseif _getmosekmajorversion() == 8
+      include("msk8_enums.jl")
+      include("msk8_functions.jl")
   else
       error("Unsupported MOSEK version loaded")
   end
