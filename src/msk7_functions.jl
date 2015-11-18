@@ -810,6 +810,7 @@ function getbarcsparsity(task_:: MSKtask)
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   res = @msk_ccall( "getbarcsparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
+  __tmp_var_1 += 1
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
