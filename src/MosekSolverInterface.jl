@@ -1,9 +1,7 @@
 module MosekMathProgSolverInterface
 using ..Mosek
-using Compat
 
 export MosekSolver
-
 
 # Known issues:
 #  - SOCP and QP cannot be mixed, but this is not checked (an error from mosek will be produced, though)
@@ -104,32 +102,37 @@ type MosekMathProgModelError <: Exception
   msg :: AbstractString
 end
 
-function loadoptions!(m::MosekMathProgModel)
+function loadoptions_internal!(t::MSKtask, options)
   # write to console by default
   printstream(msg::AbstractString) = print(msg)
 
-  putstreamfunc(m.task,MSK_STREAM_LOG,printstream)
-  for (option,val) in m.options
+  putstreamfunc(t,MSK_STREAM_LOG,printstream)
+  for (option,val) in options
       parname = string(option)
       if startswith(parname, "MSK_IPAR_")
-          putnaintparam(m.task, parname, convert(Integer, val))
+          putnaintparam(t, parname, convert(Integer, val))
       elseif startswith(parname, "MSK_DPAR_")
-          putnadouparam(m.task, parname, convert(AbstractFloat, val))
+          putnadouparam(t, parname, convert(AbstractFloat, val))
       elseif startswith(parname, "MSK_SPAR_")
-          putnastrparam(m.task, parname, convert(AbstractString, val))
+          putnastrparam(t, parname, convert(AbstractString, val))
       elseif isa(val, Integer)
           parname = "MSK_IPAR_$parname"
-          putnaintparam(m.task, parname, val)
+          putnaintparam(t, parname, val)
       elseif isa(val, AbstractFloat)
           parname = "MSK_DPAR_$parname"
-          putnadouparam(m.task, parname, val)
+          putnadouparam(t, parname, val)
       elseif isa(val, AbstractString)
           parname = "MSK_SPAR_$parname"
-          putnastrparam(m.task, parname, val)
+          putnastrparam(t, parname, val)
       else
           error("Value $val for parameter $option has unrecognized type")
       end
   end
+end
+
+
+function loadoptions!(m::MosekMathProgModel)
+  loadoptions_internal!(m.task, m.options)
 end
 
 
@@ -675,13 +678,17 @@ optimize!(m::MosekMathProgModel) =
     end
 # function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
 
-function getsoldef(m::MosekMathProgModel)
-  for sol in (MSK_SOL_ITG, MSK_SOL_BAS, MSK_SOL_ITR)
-    if solutiondef(m.task,sol) && getsolsta(m.task,sol) != MSK_SOL_STA_UNKNOWN
-      return sol
+function getsoldef(t::MSKtask)
+    for sol in (MSK_SOL_ITG, MSK_SOL_BAS, MSK_SOL_ITR)
+        if solutiondef(t,sol) && getsolsta(t,sol) != MSK_SOL_STA_UNKNOWN
+            return sol
+        end
     end
-  end
-  return -1
+    return -1
+end
+
+function getsoldef(m::MosekMathProgModel)
+    getsoldef(m.task)
 end
 
 
