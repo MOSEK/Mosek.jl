@@ -305,123 +305,123 @@ end
 # - auxilary variables and cones will not be correctly mapped.
 # - SDP variables are not mapped to the linear variable
 #
-function loadproblem!(m::        MosekMathProgModel,
-                      filename:: AbstractString)
-    readdata(m.task, filename)
+# function loadproblem!(m::        MosekMathProgModel,
+#                       filename:: AbstractString)
+#     readdata(m.task, filename)
 
-    m.numvar     = getnumvar(m.task)
-    m.varmap     = Int32[1:m.numvar]
-    m.barvarij   = zeros(Int64,m.numvar)
-    m.binvarflag = fill(false,length(varmap))
-    m.numbarvar  = getnumbarvar(m.task)
-    m.barvarmap  = Int32[1:m.numbarvar]
+#     m.numvar     = getnumvar(m.task)
+#     m.varmap     = Int32[1:m.numvar]
+#     m.barvarij   = zeros(Int64,m.numvar)
+#     m.binvarflag = fill(false,length(varmap))
+#     m.numbarvar  = getnumbarvar(m.task)
+#     m.barvarmap  = Int32[1:m.numbarvar]
 
-    let numqonz = getnumqobjnz(m.task),
-        numqconknz = Int32[ getnumqconknz(m.task,i) for i in 1:getnumcon(m.task) ]
+#     let numqonz = getnumqobjnz(m.task),
+#         numqconknz = Int32[ getnumqconknz(m.task,i) for i in 1:getnumcon(m.task) ]
 
-        if numqonz + sum(numqconknz) == 0
-            m.numcon     = getnumcon(m.task)
-            m.conmap     = Int32[1:m.numcon]
-            m.conslack   = zeros(Int32,m.numcon)
-            m.barconij   = zeros(Int64,m.numcon)
-            m.numqcon    = 0
-            m.qconmap    = Int32[]
+#         if numqonz + sum(numqconknz) == 0
+#             m.numcon     = getnumcon(m.task)
+#             m.conmap     = Int32[1:m.numcon]
+#             m.conslack   = zeros(Int32,m.numcon)
+#             m.barconij   = zeros(Int64,m.numcon)
+#             m.numqcon    = 0
+#             m.qconmap    = Int32[]
 
-            m.probtype =
-                if m.numbarvar > 0
-                    MosekMathProgModel_SDP
-                elseif getnumcone(m.task) > 0
-                    MosekMathProgModel_SOCP
-                else
-                    MosekMathProgModel_LINR
-                end
-        else # quadratic problem
-            m.numcon  = count(nqnz -> nqnz > 0, numqconknz)
-            m.conmap   = find(nqnz -> nqnz == 0, numqconknz)
-            m.conslack = zeros(Int32,m.numcon)
-            m.barconij = zeros(Int64,m.numcon)
-            m.numqcon = getnumcon(m.task) - m.numcon
-            m.qconmap  = find(nqnz -> nqnz >  0, numqconknz)
+#             m.probtype =
+#                 if m.numbarvar > 0
+#                     MosekMathProgModel_SDP
+#                 elseif getnumcone(m.task) > 0
+#                     MosekMathProgModel_SOCP
+#                 else
+#                     MosekMathProgModel_LINR
+#                 end
+#         else # quadratic problem
+#             m.numcon  = count(nqnz -> nqnz > 0, numqconknz)
+#             m.conmap   = find(nqnz -> nqnz == 0, numqconknz)
+#             m.conslack = zeros(Int32,m.numcon)
+#             m.barconij = zeros(Int64,m.numcon)
+#             m.numqcon = getnumcon(m.task) - m.numcon
+#             m.qconmap  = find(nqnz -> nqnz >  0, numqconknz)
 
-            m.probtype   = MosekMathProgModel_QOQP
-        end
-    end
-end
+#             m.probtype   = MosekMathProgModel_QOQP
+#         end
+#     end
+# end
 
-function writeproblem(m:: MosekMathProgModel, filename:: AbstractString)
-  writedata(m.task, filename)
-end
+# function writeproblem(m:: MosekMathProgModel, filename:: AbstractString)
+#   writedata(m.task, filename)
+# end
 
 
-function loadproblem!(m::     MosekMathProgModel,
-                      A::     SparseMatrixCSC{Float64,Int},
-                      collb:: Array{Float64,1},
-                      colub:: Array{Float64,1},
-                      obj::   Array{Float64,1},
-                      rowlb:: Array{Float64,1},
-                      rowub:: Array{Float64,1},
-                      sense:: Symbol)
-  putmaxnumvar(m.task,0)
-  putmaxnumcon(m.task,0)
-  putmaxnumcone(m.task,0)
-  putmaxnumbarvar(m.task,0)
-  putmaxnumqnz(m.task,0)
+# function loadproblem!(m::     MosekMathProgModel,
+#                       A::     SparseMatrixCSC{Float64,Int},
+#                       collb:: Array{Float64,1},
+#                       colub:: Array{Float64,1},
+#                       obj::   Array{Float64,1},
+#                       rowlb:: Array{Float64,1},
+#                       rowub:: Array{Float64,1},
+#                       sense:: Symbol)
+#   putmaxnumvar(m.task,0)
+#   putmaxnumcon(m.task,0)
+#   putmaxnumcone(m.task,0)
+#   putmaxnumbarvar(m.task,0)
+#   putmaxnumqnz(m.task,0)
 
-  nrows,ncols = size(A)
-  if ncols != length(collb) ||
-     ncols != length(colub) ||
-     ncols != size(obj,1)   ||
-     nrows != length(rowlb) ||
-     nrows != length(rowub) ||
-     ncols != length(obj)
+#   nrows,ncols = size(A)
+#   if ncols != length(collb) ||
+#      ncols != length(colub) ||
+#      ncols != size(obj,1)   ||
+#      nrows != length(rowlb) ||
+#      nrows != length(rowub) ||
+#      ncols != length(obj)
 
-    throw(MosekMathProgModelError("Inconsistent data dimensions"))
-  end
+#     throw(MosekMathProgModelError("Inconsistent data dimensions"))
+#   end
 
-  appendvars(m.task,ncols)
-  appendcons(m.task,nrows)
+#   appendvars(m.task,ncols)
+#   appendcons(m.task,nrows)
 
-  m.numvar     = ncols
-  m.varmap     = Int32[1:m.numvar;]
-  m.barvarij   = zeros(Int64,m.numvar)
-  m.binvarflag = fill(false,m.numvar)
-  m.numcon     = nrows
-  m.conmap     = Int32[1:m.numcon;]
-  m.conslack   = zeros(Int32,m.numcon)
-  m.barconij   = zeros(Int64,m.numcon)
+#   m.numvar     = ncols
+#   m.varmap     = Int32[1:m.numvar;]
+#   m.barvarij   = zeros(Int64,m.numvar)
+#   m.binvarflag = fill(false,m.numvar)
+#   m.numcon     = nrows
+#   m.conmap     = Int32[1:m.numcon;]
+#   m.conslack   = zeros(Int32,m.numcon)
+#   m.barconij   = zeros(Int64,m.numcon)
 
-  m.numqcon    = 0
-  m.qconmap    = Int32[]
+#   m.numqcon    = 0
+#   m.qconmap    = Int32[]
 
-  # input coefficients
-  putclist(m.task, Int32[1:ncols;], obj)
-  putacolslice(m.task, 1, ncols+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
-  setsense!(m, sense)
+#   # input coefficients
+#   putclist(m.task, Int32[1:ncols;], obj)
+#   putacolslice(m.task, 1, ncols+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
+#   setsense!(m, sense)
 
-  # input bounds
-  putvarboundslice(m.task, 1, ncols+1, Int32[ MSK_BK_RA for i=1:ncols ], collb, colub)
-  putconboundslice(m.task, 1, nrows+1, Int32[ MSK_BK_RA for i=1:nrows ], rowlb, rowub)
-  nothing
-end
+#   # input bounds
+#   putvarboundslice(m.task, 1, ncols+1, Int32[ MSK_BK_RA for i=1:ncols ], collb, colub)
+#   putconboundslice(m.task, 1, nrows+1, Int32[ MSK_BK_RA for i=1:nrows ], rowlb, rowub)
+#   nothing
+# end
 
-function loadproblem!(m::     MosekMathProgModel,
-                      A,
-                      collb,
-                      colub,
-                      obj,
-                      rowlb,
-                      rowub,
-                      sense :: Symbol)
+# function loadproblem!(m::     MosekMathProgModel,
+#                       A,
+#                       collb,
+#                       colub,
+#                       obj,
+#                       rowlb,
+#                       rowub,
+#                       sense :: Symbol)
 
-  loadproblem!(m,
-               convert(SparseMatrixCSC{Float64,Int},sparse(A)),
-               convert(Array{Float64,1},collb),
-               convert(Array{Float64,1},colub),
-               convert(Array{Float64,1},obj),
-               convert(Array{Float64,1},rowlb),
-               convert(Array{Float64,1},rowub),
-               sense)
-end
+#   loadproblem!(m,
+#                convert(SparseMatrixCSC{Float64,Int},sparse(A)),
+#                convert(Array{Float64,1},collb),
+#                convert(Array{Float64,1},colub),
+#                convert(Array{Float64,1},obj),
+#                convert(Array{Float64,1},rowlb),
+#                convert(Array{Float64,1},rowub),
+#                sense)
+# end
 
 #internal
 function upgradeProbType(m::MosekMathProgModel, pt :: Int)

@@ -1046,7 +1046,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
 
     if grdlag != C_NULL
         # could use eval_jac_prod_t here, but just do a sparse matvec instead
-        grdlag_a = pointer_to_array(grdlag,(cb.numVar,)) 
+        grdlag_a = pointer_to_array(grdlag,(cb.numVar,))
         MathProgBase.eval_grad_f(cb.d, grdlag_a, xx)
         scale!(grdlag_a, yo)
         Jmat = SparseMatrixCSC(cb.numVar,cb.numConstr,cb.jac_rowstarts,cb.jac_colval,cb.jac_nzval)
