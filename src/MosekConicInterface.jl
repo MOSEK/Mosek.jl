@@ -45,7 +45,7 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     options
 end
 
-function MathProgBase.SolverInterface.ConicModel(::MosekSolver)
+function MathProgBase.ConicModel(s::MosekSolver)
   task = Mosek.maketask(Mosek.msk_global_env)
 
   m = MosekMathProgConicModel(task,

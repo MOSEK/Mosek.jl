@@ -1,4 +1,6 @@
-using Mosek
+module MosekMathProgTest
+
+import Mosek
 using MathProgBase
 using MathProgBase.SolverInterface
 
@@ -10,12 +12,12 @@ include(joinpath(Pkg.dir("MathProgBase"),"test","nlp.jl"))
 
 
 
-linprogtest(MosekSolver())
-quadprogtest(MosekSolver())
+linprogtest(Mosek.MosekSolver())
+quadprogtest(Mosek.MosekSolver())
 #socptest(MosekSolver())
-mixintprogtest(MosekSolver())
-convexnlptest(MosekSolver())
-coniclineartest(MosekSolver(),duals=true)
-conicSOCtest(MosekSolver(),duals=true)
+mixintprogtest(Mosek.MosekSolver())
+convexnlptest(Mosek.MosekSolver())
+coniclineartest(Mosek.MosekSolver(),duals=true)
+conicSOCtest(Mosek.MosekSolver(),duals=true)
 
-
+end

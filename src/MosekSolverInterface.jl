@@ -18,14 +18,14 @@ export MosekSolver
 import MathProgBase
 #importall MathProgBase.SolverInterface
 
-const MosekMathProgModel_LINR = 0
-const MosekMathProgModel_QOQP = 1
-const MosekMathProgModel_SOCP = 2
-const MosekMathProgModel_SDP  = 3
+#const MosekMathProgModel_LINR = 0
+#const MosekMathProgModel_QOQP = 1
+#const MosekMathProgModel_SOCP = 2
+#const MosekMathProgModel_SDP  = 3
 
-const MosekMathProgModel_VTCNT = Int8(0)
-const MosekMathProgModel_VTINT = Int8(1)
-const MosekMathProgModel_VTBIN = Int8(2)
+#const MosekMathProgModel_VTCNT = Int8(0)
+#const MosekMathProgModel_VTINT = Int8(1)
+#const MosekMathProgModel_VTBIN = Int8(2)
 
 
 
@@ -99,6 +99,44 @@ function getobjval(t::Mosek.MSKtask)
     end
 end
 
+function makebounds(bl_ :: Array{Float64,1},
+                    bu_ :: Array{Float64,1})
+    bk = Array(Int32,length(bl_))
+    bl = Array(Float64,length(bl_))
+    bu = Array(Float64,length(bl_))
+
+    for i in 1:length(bl_)
+        if bl_[i] > -Inf
+            if bu_[i] < Inf
+                if abs(bu_[i]-bl_[i]) < 1e-8
+                    bk[i] = Mosek.MSK_BK_FX
+                    bl[i] = bl_[i]
+                    bu[i] = bl_[i]
+                else
+                    bk[i] = Mosek.MSK_BK_RA
+                    bl[i] = bl_[i]
+                    bu[i] = bu_[i]
+                end
+            else # bu_[i] == Inf
+                bk[i] = Mosek.MSK_BK_LO
+                bl[i] = bl_[i]
+                bu[i] = Inf
+            end
+        else # bl_[i] == -Inf
+            if bu_[i] < Inf
+                bk[i] = Mosek.MSK_BK_UP
+                bl[i] = -Inf
+                bu[i] = bu_[i]
+            else
+                bk[i] = Mosek.MSK_BK_FR
+                bl[i] = -Inf
+                bu[i] = Inf
+            end
+        end
+    end
+
+    bk,bl,bu
+end
 
 
 
@@ -193,24 +231,24 @@ function loadoptions_internal!(t::Mosek.MSKtask, options)
   # write to console by default
   printstream(msg::AbstractString) = print(msg)
 
-  putstreamfunc(t,MSK_STREAM_LOG,printstream)
+  Mosek.putstreamfunc(t,Mosek.MSK_STREAM_LOG,printstream)
   for (option,val) in options
       parname = string(option)
       if startswith(parname, "MSK_IPAR_")
-          putnaintparam(t, parname, convert(Integer, val))
+          Mosek.putnaintparam(t, parname, convert(Integer, val))
       elseif startswith(parname, "MSK_DPAR_")
-          putnadouparam(t, parname, convert(AbstractFloat, val))
+          Mosek.putnadouparam(t, parname, convert(AbstractFloat, val))
       elseif startswith(parname, "MSK_SPAR_")
-          putnastrparam(t, parname, convert(AbstractString, val))
+          Mosek.putnastrparam(t, parname, convert(AbstractString, val))
       elseif isa(val, Integer)
           parname = "MSK_IPAR_$parname"
-          putnaintparam(t, parname, val)
+          Mosek.putnaintparam(t, parname, val)
       elseif isa(val, AbstractFloat)
           parname = "MSK_DPAR_$parname"
-          putnadouparam(t, parname, val)
+          Mosek.putnadouparam(t, parname, val)
       elseif isa(val, AbstractString)
           parname = "MSK_SPAR_$parname"
-          putnastrparam(t, parname, val)
+          Mosek.putnastrparam(t, parname, val)
       else
           error("Value $val for parameter $option has unrecognized type")
       end
