@@ -9,7 +9,7 @@ msk_accepted_cones = [:Free,
 
 
 
-type MosekMathProgConicModel <: AbstractConicModel
+type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     task      :: Mosek.MSKtask
 
     # Length of the variable and constraint vector in the user model
@@ -45,7 +45,7 @@ type MosekMathProgConicModel <: AbstractConicModel
     options
 end
 
-function MathProgBase.ConicModel(::MosekSolver)
+function MathProgBase.SolverInterface.ConicModel(::MosekSolver)
   task = Mosek.maketask(Mosek.msk_global_env)
 
   m = MosekMathProgConicModel(task,
@@ -75,8 +75,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,c,A,b,constr_cones
                  convert(SparseMatrixCSC{Float64,Int},reshape(c,(length(c),1))),
                  convert(SparseMatrixCSC{Float64,Int},A),
                  convert(Array{Float64,1},b),
-                 convert(Array{@compat(Tuple{Symbol,Any}),1},constr_cones),
-                 convert(Array{@compat(Tuple{Symbol,Any}),1},var_cones))
+                 convert(Array{Tuple{Symbol,Any},1},constr_cones),
+                 convert(Array{Tuple{Symbol,Any},1},var_cones))
 end
 
 
@@ -84,8 +84,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                                    c::SparseMatrixCSC{Float64,Int},
                                    A::SparseMatrixCSC{Float64,Int},
                                    b::Array{Float64,1},
-                                   constr_cones::Array{@compat(Tuple{Symbol,Any}),1},
-                                   var_cones   ::Array{@compat(Tuple{Symbol,Any}),1})
+                                   constr_cones::Array{Tuple{Symbol,Any},1},
+                                   var_cones   ::Array{Tuple{Symbol,Any},1})
     # check data
     const N = c.m
     const M = length(b)
@@ -155,7 +155,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 varbk[varbkidx:varbkidx+n-1] = Mosek.MSK_BK_FR
                 varbkidx += n
             elseif sym == :SDP
-                d = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
+                d = round(Int32,sqrt(.25+2*length(idxs))-0.5)
                 trilsz = length(idxs)
                 barvardim[barvarptr] = d
                 appendbarvars(m.task, Int32[d])
@@ -401,10 +401,11 @@ function getconstrsolution_internal(m::MosekMathProgConicModel)
     xx = Mosek.getxx(sol)
     barx = [ Mosek.getbarxj(j) for j in 1:Mosek.getnumbarvar(m.task) ]
 
-    Float64[ if     m.conslack[i] == 0 xc[m.conmap[i]]
-             elseif m.conslack[i] >  0 xx[ m.conslack[i]]
-             else                      barx[-m.conslack[i]][m.barconij[i]]
-             for i in 1:m.numcon ]
+    Float64[if     m.conslack[i] == 0 xc[m.conmap[i]]
+            elseif m.conslack[i] >  0 xx[ m.conslack[i]]
+            else                      barx[-m.conslack[i]][m.barconij[i]]
+            end
+            for i in 1:m.numcon]
 end
 
 function getvarduals_internal(m::MosekMathProgConicModel)
@@ -440,89 +441,30 @@ function getdual(m::MosekMathProgConicModel)
 
     bars = [ Mosek.getbarsj(j) for j in 1:Mosek.getnumbarvar(m.task) ]
 
-    Float64[ if     m.conslack[i] == 0 y[m.conmap[i]]
-             elseif m.conslack[i] >  0 snx[m.conslack[i]]
-             else                      bars[-m.conslack[i]][m.barconij[i]]
-             for i in 1:m.numcon ]
+    Float64[if     m.conslack[i] == 0 y[m.conmap[i]]
+            elseif m.conslack[i] >  0 snx[m.conslack[i]]
+            else                      bars[-m.conslack[i]][m.barconij[i]]
+            end
+            for i in 1:m.numcon ]
 end
 
-function MathProgBase.getobjval(m::MosekMathProgConicModel)
-    let sol = getsoldef(m.task)
-        if sol < 0
-            throw(Mosek.MosekMathProgModelError("No solution available"))
-        else
-            Mosek.getprimalobj(m.task,sol)
-        end
-    end
-end
+MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
 
 MathProgBase.optimize!(m::MosekMathProgConicModel) = Mosek.optimizetrm(m.task)
 
-function MathProgBase.status(m::MosekMathProgConicModel)
-    sol = getsoldef(m.task)
-    solsta = if sol >= 0 Mosek.getsolsta(m.task,sol) else MSK_SOL_STA_UNKNOWN end
+MathProgBase.status(m::MosekMathProgConicModel) = status(m.task)
 
-    if     solsta == MSK_SOL_STA_UNKNOWN
-        :Unknown
-    elseif solsta == MSK_SOL_STA_DUAL_FEAS ||
-        solsta == MSK_SOL_STA_PRIM_FEAS ||
-        solsta == MSK_SOL_STA_NEAR_PRIM_FEAS ||
-        solsta == MSK_SOL_STA_NEAR_DUAL_FEAS ||
-        solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
-        solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
-        :Unknown
-    elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER ||
-        solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
-        :Unbounded
-    elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER ||
-        solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
-        :Infeasible
-    elseif solsta == MSK_SOL_STA_OPTIMAL ||
-        solsta == MSK_SOL_STA_NEAR_OPTIMAL ||
-        solsta == MSK_SOL_STA_INTEGER_OPTIMAL ||
-        solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
-        :Optimal
-    else
-        :Unknown
-    end
-end
-
-function MathProgBase.setsense!(m::MosekMathProgConicModel, sense)
-    if sense == :Min
-        Mosek.putobjsense(m.task,Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE)
-    elseif sense == :Max
-        Mosek.putobjsense(m.task,Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)
-    else
-        error("Invalid objective sense $sense")
-    end
-end
+MathProgBase.setsense!(m::MosekMathProgConicModel, sense) = setsense!(m.task,sense)
 
 MathProgBase.getobjbound(m::MosekMathProgConicModel) = Mosek.getdouinf(m.task,MSK_DINF_MIO_OBJ_BOUND)
 
-function getobjgap(m::AbstractLinearQuadraticModel)
-    sol = getsoldef(m.task)
-    if sol == MSK_SOL_ITG
-        Mosek.getdouinf(m.task,MSK_DINF_MIO_OBJ_REL_GAP)
-    else
-        0.0
-    end
-end
+MathProgBase.getobjgap(m::MosekMathProgConicModel) = getobjgap(m::MosekMathProgConicModel)
 
 MathProgBase.getsolvetime(m::MosekMathProgConicModel) = Mosek.getdouinf(m.task,MSK_DINF_OPTIMIZER_TIME)
 
 MathProgBase.getrawsolver(m::MosekMathProgConicModel) = m.task
 
-function MathProgBase.getsense(m::MosekMathProgConicModel)
-    sense = Mosek.getobjsense(m.task)
-    if sense == Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE
-        :Max
-    elseif sense == Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE
-        :Min
-    else
-        :None
-    end
-end
-
+MathProgBase.getsense(m::MosekMathProgConicModel) = getsense(m.task)
 MathProgBase.numvar(m::MosekMathProgConicModel)    = m.numvar
 MathProgBase.numconstr(m::MosekMathProgConicModel) = m.numcon
 
@@ -541,10 +483,10 @@ function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector
     idxs        = find(i -> m.varmap[i] > 0,1:n)
     intvarflags = intvarflags[idxs]
 
-    newbk = Int32[ (if (intvarflags[i] == :Bin) MSK_BK_RA else m.varbk[idxs[i]]) for i in idxs ]
-    newbl = Float64[ 0.0 for i in idxs ]
-    newbu = Float64[ (if (intvarflags[i] == :Bin) 1.0 else 0.0) for i in idxs ]
-    newvt = Int32[ (if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end) for c in intvarflag[idxs] ]
+    newbk = Int32[ if (intvarflags[i] == :Bin) MSK_BK_RA else m.varbk[idxs[i]] end for i in idxs ]
+    newbl = Float64[0.0 for i in idxs ]
+    newbu = Float64[if (intvarflags[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
+    newvt = Int32[if (c == :Cont) MSK_VAR_TYPE_CONT else MSK_VAR_TYPE_INT end for c in intvarflag[idxs] ]
 
     Mosek.putvartypelist(m.task,m.varmap[idxs],newvt)
     Mosek.putvarboundlist(m.task,m.varmap[idxs],newbk,newbl,newbu)
@@ -553,7 +495,7 @@ function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector
 end
 
 function MathProgBase.getvartype(m::MosekMathProgConicModel)
-    vartypes = [ (if isbin :Bin else :Cont) for isbin in m.binvarflag[m.numvar]]
+    vartypes = [ if isbin :Bin else :Cont end for isbin in m.binvarflag[m.numvar]]
     idxs = find(i -> m.varmap[i] > 0 && vartype[i] == :Cont, 1:m.numvar)
     mskvartypes = Mosek.getvartypelist(m.task,m.varmap[idxs])
     intvaridxs = find(i -> mskvartypes[i] == MSK_VAR_TYPE_INT, 1:length(mskvartypes))
@@ -597,7 +539,7 @@ end
 # vecsize
 #   Total number of scalar element (= numlin+numqconeelm+numsdpconeelm)
 #
-function countcones{Tis}(cones :: Array{@compat(Tuple{Symbol,Tis}),1})
+function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
     numsdpconeelm = 0 # total number of elements in all sdp cones
@@ -612,7 +554,7 @@ function countcones{Tis}(cones :: Array{@compat(Tuple{Symbol,Tis}),1})
         vecsize += length(idxs)
         
         if     sym == :SDP
-            n = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
+            n = round(Int32,sqrt(.25+2*length(idxs))-0.5)
             if n*(n+1)/2 != size(idxs,1) # does not define the lower triangular part of a square matrix
                 throw(MosekMathProgModelError("Invalid SDP cone definition"))
             end
@@ -781,8 +723,8 @@ function loadconicproblem!(m::MosekMathProgModel,c,A,b,constr_cones,var_cones)
                       convert(SparseMatrixCSC{Float64,Int},reshape(c,(length(c),1))),
                       convert(SparseMatrixCSC{Float64,Int},A),
                       convert(Array{Float64,1},b),
-                      convert(Array{@compat(Tuple{Symbol,Any}),1},constr_cones),
-                      convert(Array{@compat(Tuple{Symbol,Any}),1},var_cones))
+                      convert(Array{Tuple{Symbol,Any},1},constr_cones),
+                      convert(Array{Tuple{Symbol,Any},1},var_cones))
 end
 
 
@@ -791,8 +733,8 @@ function loadconicproblem!(m::MosekMathProgModel,
                            c::SparseMatrixCSC{Float64,Int},
                            A::SparseMatrixCSC{Float64,Int},
                            b::Array{Float64,1},
-                           constr_cones::Array{@compat(Tuple{Symbol,Any}),1},
-                           var_cones   ::Array{@compat(Tuple{Symbol,Any}),1})
+                           constr_cones::Array{Tuple{Symbol,Any},1},
+                           var_cones   ::Array{Tuple{Symbol,Any},1})
     # check data
     const N = c.m
     const M = length(b)
@@ -861,7 +803,7 @@ function loadconicproblem!(m::MosekMathProgModel,
                 elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
                 end                
             elseif sym == :SDP
-                d = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
+                d = round(Int32,sqrt(.25+2*length(idxs))-0.5)
                 trilsz = length(idxs)
                 barvardim[barvarptr] = d
                 appendbarvars(m.task, Int32[d])

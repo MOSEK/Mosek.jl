@@ -22,6 +22,24 @@ type MosekLinearQuadraticModel <: MathProgBase.AbstractLinearQuadraticModel
     options
 end
 
+MathProgBase.LinearQuadraticModel(::MosekSolver) =
+  MosekLinearQuadraticModel(Mosek.maketask(),
+                            Array(Bool,0),
+                            0,
+                            0,
+                            Array(Int32,0),
+                            Array(Float64,0),
+                            Array(Float64,0),
+
+                            Array(Int32,0),
+                            Array(Float64,0),
+                            Array(Float64,0),
+
+                            Array(Int32,0),
+                            Array(Int32,0),
+
+                            Union{})
+
 function makebounds(bl_ :: Array{Float64,1},
                     bu_ :: Array{Float64,1})
     bk = Array(Int32,length(bl_))
@@ -65,19 +83,33 @@ end
 ## Linear
 #############################################################
 
-function loadproblem!(m::     MosekMathProgModel,
-                      A::     SparseMatrixCSC{Float64,Int},
-                      collb:: Array{Float64,1},
-                      colub:: Array{Float64,1},
-                      obj::   Array{Float64,1},
-                      rowlb:: Array{Float64,1},
-                      rowub:: Array{Float64,1},
-                      sense:: Symbol)
-    putmaxnumvar(m.task,0)
-    putmaxnumcon(m.task,0)
-    putmaxnumcone(m.task,0)
-    putmaxnumbarvar(m.task,0)
-    putmaxnumqnz(m.task,0)
+function MathProgBase.loadproblem!{T1,T2,T3,T4,T5}(m::MosekLinearQuadraticModel,
+                                                   A,
+                                                   collb :: Array{T1,1},
+                                                   colub :: Array{T2,1},
+                                                   obj   :: Array{T3,1},
+                                                   rowlb :: Array{T4,1},
+                                                   rowub :: Array{T5,1},
+                                                   sense:: Symbol)
+    MathProgBase.loadproblem!(m,
+                              convert(SparseMatrixCSC{Float64,Int},A),
+                              convert(Array{Float64,1},collb),
+                              convert(Array{Float64,1},colub),
+                              convert(Array{Float64,1},obj),
+                              convert(Array{Float64,1},rowlb),
+                              convert(Array{Float64,1},rowub),
+                              sense)
+end
+
+function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
+                                   A::     SparseMatrixCSC{Float64,Int},
+                                   collb:: Array{Float64,1},
+                                   colub:: Array{Float64,1},
+                                   obj::   Array{Float64,1},
+                                   rowlb:: Array{Float64,1},
+                                   rowub:: Array{Float64,1},
+                                   sense:: Symbol)
+    Mosek.resizetask(m.task,0,0,0,0,0);
 
     nrows,ncols = size(A)
     if ncols != length(collb) ||
@@ -90,10 +122,9 @@ function loadproblem!(m::     MosekMathProgModel,
         throw(MosekMathProgModelError("Inconsistent data dimensions"))
     end
 
-    appendvars(m.task,ncols)
-    appendcons(m.task,nrows)
+    Mosek.appendvars(m.task,ncols)
+    Mosek.appendcons(m.task,nrows)
 
-    m.binvarflag = fill(false,m.numvar)
 
     (m.bkx,m.blx,m.bux) = makebounds(collb,colub)
 
@@ -103,21 +134,21 @@ function loadproblem!(m::     MosekMathProgModel,
     m.numcon = length(m.bkc)
     m.lincon = Int32[1:nrows;]
     m.quadcon = Array(Int32,0)
+    m.binvarflag = fill(false,m.numvar)
 
     # input coefficients
     Mosek.putclist(m.task, Int32[1:ncols;], obj)
     Mosek.putacolslice(m.task, 1, ncols+1, A.colptr[1:ncols], A.colptr[2:ncols+1], A.rowval, A.nzval)
-    setsense!(m, sense)
+    MathProgBase.setsense!(m, sense)
 
     # input bounds
     Mosek.putvarboundslice(m.task, 1, ncols+1, m.bkx, m.blx, m.bux)
     Mosek.putconboundslice(m.task, 1, nrows+1, m.bkc, m.blc, m.buc)
-
-    nothing
+    m
 end
 
-function loadproblem!(m::        MosekLinearQuadraticModel,
-                      filename:: AbstractString)
+function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
+                                   filename:: AbstractString)
     tmptask = Mosek.maketask()
     try
         readdata(tmptask, filename)
@@ -135,8 +166,8 @@ function loadproblem!(m::        MosekLinearQuadraticModel,
         bkc,blc,buc = Mosek.getconboundslice(tmptask,1,numcon+1)
 
         vts = Mosek.getvartypelist(tmptask,Int32[1:numvar])
-        binflags = Bool[ (vts[i] == MSK_VARIABLE_TYPE_INT &&
-                          bkx[i] == MSK_BK_RA &&
+        binflags = Bool[ (vts[i] == Mosek.MSK_VARIABLE_TYPE_INT &&
+                          bkx[i] == Mosek.MSK_BK_RA &&
                           abs(blx[i]) < 1e-8 &&
                           abs(bux[i]-1.0) < 1e-8)
                         for i in 1:numvar ]
@@ -162,57 +193,59 @@ function loadproblem!(m::        MosekLinearQuadraticModel,
         Mosek.deletetask(tmptask)
         rethrow()
     end
+
+    m
 end
 
 function loadoptions!(m::MosekLinearQuadraticModel)
   loadoptions_internal!(m.task, m.options)
 end
 
-function writeproblem(m::MosekLinearQuadraticModel, filename::AbstractString)
+function MathProgBase.writeproblem(m::MosekLinearQuadraticModel, filename::AbstractString)
     Mosek.writedata(m.task,filename)
 end
 
-function getvarLB(m::MosekLinearQuadraticModel)
+function MathProgBase.getvarLB(m::MosekLinearQuadraticModel)
     bk,bu,bl = Mosek.getvarboundslice(m.task,1,m.numvar+1)
     for i in 1:length(bk)
-        if bk == MSK_BK_FR || bk == MSK_BK_UP
+        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_UP
             bl[i] = -Inf
         end
     end
     bl
 end
 
-function getvarUB(m::MosekLinearQuadraticModel)
+function MathProgBase.getvarUB(m::MosekLinearQuadraticModel)
     bk,bu,bl = Mosek.getvarboundslice(m.task,1,m.numvar+1)
     for i in 1:length(bk)
-        if bk == MSK_BK_FR || bk == MSK_BK_LO
+        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_LO
             bu[i] = Inf
         end
     end
     bu
 end
 
-function getconstrLB(m::MosekLinearQuadraticModel)
+function MathProgBase.getconstrLB(m::MosekLinearQuadraticModel)
     bk,bu,bl = Mosek.getconboundslice(m.task,1,m.numcon+1)
     for i in 1:length(bk)
-        if bk == MSK_BK_FR || bk == MSK_BK_UP
+        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_UP
             bl[i] = -Inf
         end
     end
     bl
 end
 
-function getconstrUB(m::MosekLinearQuadraticModel)
+function MathProgBase.getconstrUB(m::MosekLinearQuadraticModel)
     bk,bu,bl = Mosek.getconboundslice(m.task,1,m.numcon+1)
     for i in 1:length(bk)
-        if bk == MSK_BK_FR || bk == MSK_BK_LO
+        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_LO
             bu[i] = Inf
         end
     end
     bu
 end
 
-function setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     n = min(length(bnd),m.numvar)
 
     for i in 1:n
@@ -253,7 +286,7 @@ function setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     nothing
 end
 
-function setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     n = min(length(bnd),m.numvar)
 
     for i in 1:n
@@ -295,7 +328,7 @@ function setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
 end
 
 
-function setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     n = min(length(bnd),length(m.lincon))
 
     for i in 1:n
@@ -336,7 +369,7 @@ function setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     nothing
 end
 
-function setconstUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     n = min(length(bnd),m.numcon)
 
     for i in 1:n
@@ -378,17 +411,17 @@ function setconstUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
 end
 
 
-function getobj(m::MosekLinearQuadraticModel)
+function MathProgBase.getobj(m::MosekLinearQuadraticModel)
     Mosek.getcslice(m.task,1,m.numvar+1)
 end
 
-function setobj(m::MosekLinearQuadraticModel, c :: Array{Float64,1})
+function MathProgBase.setobj!(m::MosekLinearQuadraticModel, c :: Array{Float64,1})
     n = min(length(c),m.numvar)
     Mosek.putclist(m.task,Int32[1:n;],c[1:n])
 end
 
 
-function getconstrmatrix(m::MosekLinearQuadraticModel)
+function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
     numnz = sum(Int[ Mosek.getarownumnz(m.task,i) for i in 1:m.numcon ])
     asubi = Array(Int32,numnz)
     asubj = Array(Int32,numnz)
@@ -408,7 +441,7 @@ function getconstrmatrix(m::MosekLinearQuadraticModel)
     sparse(asubi,asubj,aval,length(m.lincon),m.numvar)
 end
 
-function addvar!(m::MosekLinearQuadraticModel,
+function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
                  bl  ::Float64,
                  bu  ::Float64,
                  c   ::Float64)
@@ -446,22 +479,22 @@ function addvar!(m::MosekLinearQuadraticModel,
     push!(m.binvarflag,false)
 end
 
-function addvar!(m::MosekLinearQuadraticModel,
-                 subi::Array{Int32,1},
-                 val ::Array{Float64,1},
-                 bl  ::Float64,
-                 bu  ::Float64,
-                 c   ::Float64)
+function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
+                              subi::Array{Int32,1},
+                              val ::Array{Float64,1},
+                              bl  ::Float64,
+                              bu  ::Float64,
+                              c   ::Float64)
     addvar!(m,bl,bu,c)
     Mosek.putacol(m.task,m.numvar,subi,val)
 end
 
 
-function addconstr!(m::MosekLinearQuadraticModel,
-                    subj::Array{Int32,1},
-                    val ::Array{Float64,1},
-                    bl  ::Float64,
-                    bu  ::Float64)
+function MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
+                                 subj::Array{Int32,1},
+                                 val ::Array{Float64,1},
+                                 bl  ::Float64,
+                                 bu  ::Float64)
     m.numcon += 1
     push!(m.lincon,m.numcon)
     if bl > -Inf
@@ -496,58 +529,82 @@ function addconstr!(m::MosekLinearQuadraticModel,
     Mosek.putarow(m.task,m.numcon,subj,val)
 end
 
-updatemodel!(m::MosekLinearQuadraticModel) = nothing
+MathProgBase.updatemodel!(m::MosekLinearQuadraticModel) = nothing
 
-numlinconstr(m::MosekLinearQuadraticModel) = length(m.lincon)
+MathProgBase.numlinconstr(m::MosekLinearQuadraticModel) = length(m.lincon)
 
-function getconstrsolution(m::MosekLinearQuadraticModel)
+MathProgBase.getobjval(m::MosekLinearQuadraticModel) = getobjval(m.task)
+
+function MathProgBase.getsolution(m::MosekLinearQuadraticModel)
+    sol = getsoldef(m.task)
+    if sol < 0
+        throw(MosekMathProgModelError("No solution available"))
+    end
+
+    solsta = Mosek.getsolsta(m.task,sol)
+
+    if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
+                  Mosek.MSK_SOL_STA_PRIM_FEAS,
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
+                  Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_INTEGER_OPTIMAL,
+                  Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
+        Mosek.getxx(m.task,sol)
+  else
+    throw(MosekMathProgModelError("No solution available"))
+  end
+end
+
+function MathProgBase.getconstrsolution(m::MosekLinearQuadraticModel)
     sol = getsoldef(m.task)
     if sol < 0
         throw(Mosek.MosekMathProgModelError("No solution available"))
     end
 
-    Mosek.getxc(sol)[m.lincon]
+    Mosek.getxc(m.task,sol)[m.lincon]
 end
 
-function getreducedcosts(m::MosekLinearQuadraticModel)
+function MathProgBase.getreducedcosts(m::MosekLinearQuadraticModel)
     sol = getsoldef(m.task)
     if sol < 0 || sol == Mosek.MSK_SOL_ITG
         throw(Mosek.MosekMathProgModelError("Solution not available"))
     end
     solsta = Mosek.getsolsta(m.task,sol)
 
-    if solsta in [MSK_SOL_STA_OPTIMAL,
-                  MSK_SOL_STA_DUAL_FEAS,
-                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_OPTIMAL,
-                  MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
-        Mosek.getslx(m.task) - Mosek.getsux(m.task)
+    if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
+                  Mosek.MSK_SOL_STA_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
+                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+        Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol)
     else
         throw(MosekMathProgModelError("No solution available"))
     end
 end
 
-function getconstrduals(m::MosekLinearQuadraticModel)
+function MathProgBase.getconstrduals(m::MosekLinearQuadraticModel)
     sol = getsoldef(m.task)
     if sol < 0 || sol == Mosek.MSK_SOL_ITG
         throw(Mosek.MosekMathProgModelError("Solution not available"))
     end
     solsta = Mosek.getsolsta(m.task,sol)
 
-    if solsta in [MSK_SOL_STA_OPTIMAL,
-                  MSK_SOL_STA_DUAL_FEAS,
-                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_OPTIMAL,
-                  MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
-        Mosek.gety(m.task)[m.lincon]
+    if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
+                  Mosek.MSK_SOL_STA_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
+                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+        Mosek.gety(m.task,sol)[m.lincon]
     else
         throw(MosekMathProgModelError("Solution not available"))
     end
 end
 
-function getbasis(m::MosekLinearQuadraticModel)
+function MathProgBase.getbasis(m::MosekLinearQuadraticModel)
     if ! Mosek.solutiondef(m.task,Mosek.MSK_SOL_BAS)
         throw(Mosek.MosekMathProgModelError("Basis not available"))
     end
@@ -556,40 +613,56 @@ function getbasis(m::MosekLinearQuadraticModel)
     skx = Mosek.getskx(m.task,sol)
     skc = Mosek.getskc(m.task,sol)
 
-    cbasis = [if     skx[i] == MSK_SK_BAS :Basic
-              elseif skx[i] == MSK_SK_LO  :NonBasicAtLower
-              elseif skx[i] == MSK_SK_UP  :NonBasicAtUpper
-              elseif skx[i] == MSK_SK_FX  :NonBasicAtLower # or upper. Doesn't matter.
+    cbasis = [if     skx[i] == Mosek.MSK_SK_BAS :Basic
+              elseif skx[i] == Mosek.MSK_SK_LO  :NonBasicAtLower
+              elseif skx[i] == Mosek.MSK_SK_UP  :NonBasicAtUpper
+              elseif skx[i] == Mosek.MSK_SK_FX  :NonBasicAtLower # or upper. Doesn't matter.
               else                        :SuperBasic
-              for i in 1:m.numvar]
-    rbasis = [if     skc[i] == MSK_SK_BAS :Basic
-              elseif skc[i] == MSK_SK_LO  :NonBasicAtLower
-              elseif skc[i] == MSK_SK_UP  :NonBasicAtUpper
-              elseif skc[i] == MSK_SK_FX  :NonBasicAtLower # or upper. Doesn't matter.
+              end
+              for i in 1:m.numvar ]
+    rbasis = [if     skc[i] == Mosek.MSK_SK_BAS :Basic
+              elseif skc[i] == Mosek.MSK_SK_LO  :NonBasicAtLower
+              elseif skc[i] == Mosek.MSK_SK_UP  :NonBasicAtUpper
+              elseif skc[i] == Mosek.MSK_SK_FX  :NonBasicAtLower # or upper. Doesn't matter.
               else                        :SuperBasic
+              end
               for i in m.lincon]
 
     cbasis,rbasis
 end
 
-function getunboundedray(m::MosekLinearQuadraticModel)
+function MathProgBase.getunboundedray(m::MosekLinearQuadraticModel)
     soldef = getsoldef(m.task)
     if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-    solsta = getsolsta(m.task,soldef)
-    if ! solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER, MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
-        throw(MosekMathProgModelError("No ray available"))
+
+    solsta = Mosek.getsolsta(m.task,soldef)
+    if solsta in [ Mosek.MSK_SOL_STA_DUAL_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
+        Mosek.getxx(m.task,soldef)
     else
-        getxx(m.task,soldef)
+        throw(MosekMathProgModelError("No ray available"))
     end
 end
 
-getrawsolver(m::MosekLinearQuadraticModel) = m.task
+function MathProgBase.getinfeasibilityray(m::MosekLinearQuadraticModel)
+    sol = getsoldef(m.task)
+    if sol < 0 throw(MosekMathProgModelError("No solution available")) end
 
-getsimplexiter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_PRIMAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_DUAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_PRIMAL_DUAL_ITER)
+    solsta = Mosek.getsolsta(m.task,sol)
+    if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+        Mosek.getsux(m.task,sol) - Mosek.getslx(m.task,sol)
+    else
+        throw(MosekMathProgModelError("No ray available"))
+    end
+end
 
-getbarrieriter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_INTPNT_ITER)
 
-function setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float64,1})
+MathProgBase.getrawsolver(m::MosekLinearQuadraticModel) = m.task
+
+MathProgBase.getsimplexiter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_PRIMAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_DUAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_PRIMAL_DUAL_ITER)
+
+MathProgBase.getbarrieriter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_INTPNT_ITER)
+
+function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float64,1})
     n = min(m.numvar,length(v))
     vals = Array(Float64, n)
     vals[:] = v[1:n]
@@ -603,72 +676,132 @@ function setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float64,1})
     Mosek.putskxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,skx);
 end
 
+MathProgBase.optimize!(m::MosekLinearQuadraticModel) = begin Mosek.writedata(m.task,"test.opf"); Mosek.optimize(m.task) end 
+
+MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task)
+
+MathProgBase.getobjbound(m::MosekLinearQuadraticModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_MIO_OBJ_BOUND)
+
+MathProgBase.getobjgap(m::MosekLinearQuadraticModel) = getobjgap(m.task)
+
+MathProgBase.getsolvetime(m::MosekLinearQuadraticModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_OPTIMIZER_TIME)
+
+MathProgBase.getrawsolver(m::MosekLinearQuadraticModel) = m.task
+
+MathProgBase.getsense(m::MosekLinearQuadraticModel) = getsense(m.task)
+
+MathProgBase.setsense!(m::MosekLinearQuadraticModel,sense) = setsense!(m.task,sense)
+
+function MathProgBase.freemodel!(m::MosekLinearQuadraticModel)
+    Mosek.deletetask(m.task)
+    m.task = C_NULL
+end
+
+MathProgBase.numvar(m::MosekLinearQuadraticModel) = m.numvar
+MathProgBase.numconstr(m::MosekLinearQuadraticModel) = length(m.lincon)
+
+function MathProgBase.setvartype!(m::MosekLinearQuadraticModel,vtvec::Vector{Symbol})
+    n = min(m.numvar,length(vtvec))
+    vts = Int32[if     vt == :Cont Mosek.MSK_VAR_TYPE_CONT
+                elseif vt == :Int  Mosek.MSK_VAR_TYPE_INT
+                elseif vt == :Bin  Mosek.MSK_VAR_TYPE_INT
+                else               Mosek.MSK_VAR_TYPE_CONT
+                end
+                for vt in vtvec[1:n]]
+    Mosek.putvartypelist(m.task,Int32[1:n;],vts)
+    for i in find(vt -> vt == :Bin, vtvec[1:n])
+        bl = max(m.blx[i],0.0)
+        bu = min(m.bux[i],1.0)
+        Mosek.putvarbound(m.task,i,Mosek.MSK_BK_RA,bl,bu)
+    end
+
+    # for all :Bin vars being changed to :Int or :Cont, restore original bounds
+    for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflag[i], 1:n)
+        Mosek.putvarbound(m.task,i,m.bkx[i],m.blx[i],m.bux[i])
+    end
+end
+
+function MathProgBase.getvartype(m::MosekLinearQuadraticModel)
+    mskvt = Mosek.getvartypelist(m.task,Int32[1:m.numvar;])
+    [if mskvt[i] == MSK_VAR_TYPE_INT
+         if m.binvarflags[i]
+             :Bin
+         else
+             :Int
+         end
+     else
+         :Cont
+     end
+     for i in 1:m.numvar]
+end
+
+
 ##############################################################
 ## Integer Programming
 ##############################################################
 
-getnodecount(m::MosekLinearQuadraticModel) = 0
+MathProgBase.getnodecount(m::MosekLinearQuadraticModel) = 0
 
 ##############################################################
 ## Quadratic
 ##############################################################
 
-numquadconstr(m::MosekLinearQuadraticModel) = length(m.quadcon)
+MathProgBase.numquadconstr(m::MosekLinearQuadraticModel) = length(m.quadcon)
 
-function setquadobj!{T}(m::MosekLinearQuadraticModel,Q::SparseMatrixCSC{Float64,T})
-    n = Q.ptr[length(Q.ptr)]
-    qosubi = convert(Array{Int32,1},Q.rowval)
-    qosubj = Array(Int32,n)
-    for i in 1:m.n
-        qosubj[Q.ptr[i]:Q.ptr[i+1]] = i
-    end
-    qoval = Q.nzval
 
-    setquadobj!(m,qosubi,qosubj,qoval)
-end
+MathProgBase.setquadobj!(m::MosekLinearQuadraticModel,subi,subj,valij) = MathProgBase.setquadobj!(m,convert(Array{Int32,1},subi),convert(Array{Int32,1},subj),convert(Array{Float64,1},valij))
 
-function setquadobj!(m::MosekLinearQuadraticModel,Q::Array{Float64,2})
-    m,n = size(Q)
-    qosubi = reshape([i for i in 1:m, j in 1:n], m*n)
-    qosubj = reshape([j for i in 1:m, j in 1:n], m*n)
-    qoval  = reshape(Q, m*n)
-
-    setquadobj!(m,qosubi,qosubj,qoval)
-end
-
-function setquadobj!(m::MosekLinearQuadraticModel,
-                     subi  :: Array{Int32,1},
-                     subj  :: Array{Int32,1},
-                     valij :: Array{Float64,1})
+# NOTE on data format: The matrix is specified by inputting only lower
+# or upper triangular part. This means that whenever element (i,j) is
+# added, (j,i) is implicitly added. Duplicates are added together
+function MathProgBase.setquadobj!(m::MosekLinearQuadraticModel,
+                                  subi  :: Array{Int32,1},
+                                  subj  :: Array{Int32,1},
+                                  valij :: Array{Float64,1})
     n = length(subi)
     let qsubi = subi[:],
-        qsubj = subj[:],
-        qval  = valij[:]
-    for i in 1:n
-        if qsubi[i] < qsubj[i]
-            tmp = qsubi[i]
-            qsubi[i] = qsubj[i]
-            qsubj[i] = tmp
-            qval[i] *= 0.5
-        elseif qsubi[i] > qsubj[i]
-            qval[i] *= 0.5
+        qsubj = subj[:]
+        for i in 1:n
+            if qsubi[i] < qsubj[i]
+                tmp = qsubi[i]
+                qsubi[i] = qsubj[i]
+                qsubj[i] = tmp
+            end
         end
+        Mosek.putqobj(m.task,qsubi,qsubj,valij)
     end
-    Mosek.putqobj(m.task,subi,subj,valij)
 end
 
-function addquadconstr!(m      :: MosekLinearQuadraticModel,
-                        subj   :: Array{Int32,1},
-                        valj   :: Array{Float64,1},
-                        qsubi  :: Array{Int32,1},
-                        qsubj  :: Array{Int32,1},
-                        qvalij :: Array{Float64,1},
-                        sense  :: Char,
-                        bnd    :: Float64)
+function MathProgBase.addquadconstr!(m      :: MosekLinearQuadraticModel,
+                                     subj,
+                                     valj,
+                                     qsubi,
+                                     qsubj,
+                                     qvalij,
+                                     sense  :: Char,
+                                     bnd)
+    MathProgBase.addquadconstr!(m,
+                                convert(Array{Int32,1},subj),
+                                convert(Array{Float64,1},valj),
+                                convert(Array{Int32,1},qsubi),
+                                convert(Array{Int32,1},qsubj),
+                                convert(Array{Float64,1},qvalij),
+                                sense,
+                                convert(Float64,bnd))
+end
 
-    if sense == '<'
+function MathProgBase.addquadconstr!(m      :: MosekLinearQuadraticModel,
+                                     subj   :: Array{Int32,1},
+                                     valj   :: Array{Float64,1},
+                                     qsubi  :: Array{Int32,1},
+                                     qsubj  :: Array{Int32,1},
+                                     qvalij :: Array{Float64,1},
+                                     sense  :: Char,
+                                     bnd    :: Float64)
+
+    if     sense == '<'
         push!(m.bkc,Mosek.MSK_BK_UP)
-    elseif sense = '>'
+    elseif sense == '>'
         push!(m.bkc,Mosek.MSK_BK_LO)
     else
         throw(MosekMathProgSolverInterface.MosekMathProgModelError("Invalid sense"))
@@ -690,9 +823,8 @@ function addquadconstr!(m      :: MosekLinearQuadraticModel,
                 t = qsubi[i]
                 qsubi[i] = qsubj[i]
                 qsubj[i] = t
-                qval[i] *= 0.5
-            elseif qsubi[i] > qsubj[i]
-                qval[i] *= 0.5
+            elseif  qsubi[i] == qsubj[i]
+                qval[i] *= 2
             end
         end
         Mosek.putqconk(m.task,m.numcon,qsubi,qsubj,qval)
@@ -701,7 +833,7 @@ function addquadconstr!(m      :: MosekLinearQuadraticModel,
     Mosek.putarow(m.task,m.numcon,subj,valj)
 end
 
-function getquadconstrsolution(m::MosekLinearQuadraticModel)
+function MathProgBase.getquadconstrsolution(m::MosekLinearQuadraticModel)
     sol = getsoldef(m.task)
     if sol < 0
         throw(Mosek.MosekMathProgModelError("No solution available"))
@@ -710,45 +842,50 @@ function getquadconstrsolution(m::MosekLinearQuadraticModel)
     Mosek.getxc(sol)[m.quadcon]
 end
 
-function getquadconstrduals(m::MosekLinearQuadraticModel)
+function MathProgBase.getquadconstrduals(m::MosekLinearQuadraticModel)
     sol = getsoldef(m.task)
     if sol < 0 || sol == Mosek.MSK_SOL_ITG
         throw(Mosek.MosekMathProgModelError("Solution not available"))
     end
     solsta = Mosek.getsolsta(m.task,sol)
 
-    if solsta in [MSK_SOL_STA_OPTIMAL,
-                  MSK_SOL_STA_DUAL_FEAS,
-                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_OPTIMAL,
-                  MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+    if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
+                  Mosek.MSK_SOL_STA_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
+                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
         Mosek.gety(m.task)[m.quadcon]
     else
         throw(MosekMathProgModelError("Solution not available"))
     end
 end
 
-function getquadinfeasibilityray(m::MosekLinearQuadraticModel)
+function MathProgBase.getquadinfeasibilityray(m::MosekLinearQuadraticModel)
     sol = getsoldef(m)
     if sol < 0 throw(MosekMathProgModelError("No solution available")) end
     solsta = getsolsta(m.task,sol)
 
     s = Mosek.getsux(m.task,sol) - Mosek.getslx(m.task,sol)
-    if solsta in [ MSK_SOL_STA_PRIM_INFEAS_CER, MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+    if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
         -s[m.quadcon]
     else
         throw(MosekMathProgModelError("No solution available"))
     end
 end
 
-function getquadconstrRHS(m::MosekLinearQuadraticModel)
+function MathProgBase.getquadconstrRHS(m::MosekLinearQuadraticModel)
     m.blc[m.quadcon]
 end
 
-function setquadconstrRHS!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+function MathProgBase.setquadconstrRHS!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
     n = min(length(bnd),length(m.quadcon))
     m.blc[m.quadcon[1:n]] = bnd[1:n]
 
     Mosek.putconboundlist(m.task,m.quadcon[1:n],m.bkc,m.blc,m.buc)
 end
+
+
+
+
+

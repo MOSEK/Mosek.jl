@@ -1,5 +1,5 @@
 module MosekMathProgSolverInterface
-using ..Mosek
+import ..Mosek
 
 export MosekSolver
 
@@ -15,18 +15,104 @@ export MosekSolver
 #  - The concept of dual values is a bit shaky. Specifically; for a variable x there is a dual for the upper bound,
 #    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
 
-importall MathProgBase.SolverInterface
+import MathProgBase
+#importall MathProgBase.SolverInterface
 
 const MosekMathProgModel_LINR = 0
 const MosekMathProgModel_QOQP = 1
 const MosekMathProgModel_SOCP = 2
 const MosekMathProgModel_SDP  = 3
 
-const MosekMathProgModel_VTCNT = @compat(Int8(0))
-const MosekMathProgModel_VTINT = @compat(Int8(1))
-const MosekMathProgModel_VTBIN = @compat(Int8(2))
+const MosekMathProgModel_VTCNT = Int8(0)
+const MosekMathProgModel_VTINT = Int8(1)
+const MosekMathProgModel_VTBIN = Int8(2)
 
-type MosekMathProgModel <: AbstractMathProgModel
+
+
+function status(t::Mosek.MSKtask)
+  sol = getsoldef(t)
+  if sol < 0 return :Unknown end
+  prosta = Mosek.getprosta(t,sol)
+  solsta = Mosek.getsolsta(t,sol)
+
+  if     solsta == Mosek.MSK_SOL_STA_UNKNOWN
+    :Unknown
+  elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
+    :Unknown
+  elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+    :Unbounded
+  elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+    :Infeasible
+  elseif solsta == Mosek.MSK_SOL_STA_OPTIMAL ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_OPTIMAL ||
+         solsta == Mosek.MSK_SOL_STA_INTEGER_OPTIMAL ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
+    :Optimal
+  else
+    error("Internal value error")
+  end
+end
+
+function getsense(t::Mosek.MSKtask)
+    sense = Mosek.getobjsense(t)
+    if sense == Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE
+        :Max
+    elseif sense == Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE
+        :Min
+    else
+        :None
+    end
+end
+
+function setsense!(t::Mosek.MSKtask,sense)
+    if     sense == :Max
+        Mosek.putobjsense(t,Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)
+    elseif sense == :Min
+        Mosek.putobjsense(t,Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE)
+    end
+end
+
+
+function getobjgap(t::Mosek.MSKtask)
+    sol = getsoldef(t)
+    if sol == MSK_SOL_ITG
+        Mosek.getdouinf(m.task,MSK_DINF_MIO_OBJ_REL_GAP)
+    else
+        0.0
+    end
+end
+
+function getobjval(t::Mosek.MSKtask)
+    let sol = getsoldef(t)
+        if sol < 0
+            throw(Mosek.MosekMathProgModelError("No solution available"))
+        else
+            Mosek.getprimalobj(t,sol)
+        end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
   task :: Mosek.MSKtask
   probtype :: Int
 
@@ -93,16 +179,17 @@ end
 
 
 
-immutable MosekSolver <: AbstractMathProgSolver
+immutable MosekSolver <: MathProgBase.AbstractMathProgSolver
   options
 end
+
 MosekSolver(;kwargs...) = MosekSolver(kwargs)
 
 type MosekMathProgModelError <: Exception
   msg :: AbstractString
 end
 
-function loadoptions_internal!(t::MSKtask, options)
+function loadoptions_internal!(t::Mosek.MSKtask, options)
   # write to console by default
   printstream(msg::AbstractString) = print(msg)
 
@@ -664,7 +751,7 @@ function getsense(m::MosekMathProgModel)
   elseif sense == MSK_OBJECTIVE_SENSE_MAXIMIZE
     :Max
   else
-    @compat Union{}
+    Union{}
   end
 end
 
@@ -678,9 +765,9 @@ optimize!(m::MosekMathProgModel) =
     end
 # function optimize!(m::MosekMathProgModel)  optimize(m.task); writedata(m.task,"mskprob.opf") end
 
-function getsoldef(t::MSKtask)
-    for sol in (MSK_SOL_ITG, MSK_SOL_BAS, MSK_SOL_ITR)
-        if solutiondef(t,sol) && getsolsta(t,sol) != MSK_SOL_STA_UNKNOWN
+function getsoldef(t::Mosek.MSKtask)
+    for sol in (Mosek.MSK_SOL_ITG, Mosek.MSK_SOL_BAS, Mosek.MSK_SOL_ITR)
+        if Mosek.solutiondef(t,sol) && Mosek.getsolsta(t,sol) != Mosek.MSK_SOL_STA_UNKNOWN
             return sol
         end
     end
@@ -699,28 +786,28 @@ end
 function status(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 return :Unknown end
-  prosta = getprosta(m.task,soldef)
-  solsta = getsolsta(m.task,soldef)
+  prosta = Mosek.getprosta(m.task,soldef)
+  solsta = Mosek.getsolsta(m.task,soldef)
 
-  if     solsta == MSK_SOL_STA_UNKNOWN
+  if     solsta == Mosek.MSK_SOL_STA_UNKNOWN
     :Unknown
-  elseif solsta == MSK_SOL_STA_DUAL_FEAS ||
-         solsta == MSK_SOL_STA_PRIM_FEAS ||
-         solsta == MSK_SOL_STA_NEAR_PRIM_FEAS ||
-         solsta == MSK_SOL_STA_NEAR_DUAL_FEAS ||
-         solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
-         solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
+  elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
     :Unknown
-  elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER ||
-         solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+  elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
     :Unbounded
-  elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER ||
-         solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+  elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
     :Infeasible
-  elseif solsta == MSK_SOL_STA_OPTIMAL ||
-         solsta == MSK_SOL_STA_NEAR_OPTIMAL ||
-         solsta == MSK_SOL_STA_INTEGER_OPTIMAL ||
-         solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
+  elseif solsta == Mosek.MSK_SOL_STA_OPTIMAL ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_OPTIMAL ||
+         solsta == Mosek.MSK_SOL_STA_INTEGER_OPTIMAL ||
+         solsta == Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
     :Optimal
   else
     error("Internal value error")
@@ -730,7 +817,7 @@ end
 function getobjval(m::MosekMathProgModel)
   soldef = getsoldef(m)
   if soldef < 0 return NaN end
-  getprimalobj(m.task,soldef)
+  Mosek.getprimalobj(m.task,soldef)
 end
 
 # NOTE: I am not entirely sure how to implement this... If the solution status
@@ -993,8 +1080,9 @@ function getintvarflag(m::MosekMathProgModel)
     end
 end
 
-include("MosekLowLevelQCQO.jl")
-include("MosekNLPSolverInterface.jl")
+#include("MosekLowLevelQCQO.jl")
+#include("MosekNLPSolverInterface.jl")
+include("MosekLPQCQPInterface.jl")
 include("MosekConicInterface.jl")
 
 end

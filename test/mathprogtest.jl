@@ -12,7 +12,7 @@ include(joinpath(Pkg.dir("MathProgBase"),"test","conicinterface.jl"))
 
 linprogtest(MosekSolver())
 quadprogtest(MosekSolver())
-socptest(MosekSolver())
+#socptest(MosekSolver())
 mixintprogtest(MosekSolver())
 convexnlptest(MosekSolver())
 coniclineartest(MosekSolver(),duals=true)
