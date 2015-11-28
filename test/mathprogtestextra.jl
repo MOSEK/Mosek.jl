@@ -84,12 +84,12 @@ facts("[mathprogextra]") do
         # min | 1 2 1 | . X + x1
         #     | 0 1 2 |
         #
-        # 
+        #
         # s.t. | 1 0 0 |
         #      | 0 1 0 | . X + x1 = 1
         #      | 0 0 1 |
         #
-        #      | 1 1 1 | 
+        #      | 1 1 1 |
         #      | 1 1 1 | . X + x2 + x3 = 1/2
         #      | 1 1 1 |
         #
@@ -105,7 +105,6 @@ facts("[mathprogextra]") do
         MathProgBase.loadproblem!(m, c, A, b,
                                   [(:Zero,1:2)],
                                   [(:SOC,1:3),(:SDP,4:9)] )
-        writeproblem(m,"test.task")
         MathProgBase.optimize!(m)
 
         @fact MathProgBase.status(m) --> :Optimal
@@ -114,7 +113,7 @@ facts("[mathprogextra]") do
 
         @fact pobj --> roughly(7.05710509e-01,1e-6)
 
-        xx   = MathProgBase.getsolution(m)    
+        xx   = MathProgBase.getsolution(m)
         x123 = xx[1:3]
         X    = xx[4:9]
 
@@ -299,9 +298,9 @@ facts("[mathprogextra]") do
 
         MathProgBase.loadproblem!(mmin,
                      [  1.0   0.0   0.0   0.0 ;
-                      0.0   1.0   0.0   0.0 ;
-                      0.0   0.0   1.0   0.0 ;
-                      0.0   0.0   0.0   1.0 ],
+                        0.0   1.0   0.0   0.0 ;
+                        0.0   0.0   1.0   0.0 ;
+                        0.0   0.0   0.0   1.0 ],
                      [ -Inf, -Inf, -Inf, -Inf ], # blx
                      [  Inf,  Inf,  Inf,  Inf ], # bux
                      [  1.0,  1.0,  1.0,  1.0 ], # c
@@ -311,9 +310,9 @@ facts("[mathprogextra]") do
 
         MathProgBase.loadproblem!(mmax,
                      [  1.0   0.0   0.0   0.0 ;
-                      0.0   1.0   0.0   0.0 ;
-                      0.0   0.0   1.0   0.0 ;
-                      0.0   0.0   0.0   1.0 ],
+                        0.0   1.0   0.0   0.0 ;
+                        0.0   0.0   1.0   0.0 ;
+                        0.0   0.0   0.0   1.0 ],
                      [ -Inf, -Inf, -Inf, -Inf ], # blx
                      [  Inf,  Inf,  Inf,  Inf ], # bux
                      [  1.0,  1.0,  1.0,  1.0 ], # c
@@ -321,6 +320,7 @@ facts("[mathprogextra]") do
                      [  0.0,  0.0,  0.0,  0.0 ], # buc
                      :Max)
 
+        writeproblem(mmax,"testmax_orig.opf")
         # test: modify buc
         setconstrUB!(mmax,[ 1.0, 2.0, 3.0, 4.0 ]);
         MathProgBase.optimize!(mmax)
@@ -331,6 +331,9 @@ facts("[mathprogextra]") do
         @fact xx[2] --> roughly(2.0, 1e-8)
         @fact xx[3] --> roughly(3.0, 1e-8)
         @fact xx[4] --> roughly(4.0, 1e-8)
+
+        writeproblem(mmax,"testmax.opf")
+        #writeproblem(mmax,"testmin.task")
 
         # test: modify blc
         setconstrLB!(mmin,[ -1.0, -2.0, -3.0, -4.0 ]);

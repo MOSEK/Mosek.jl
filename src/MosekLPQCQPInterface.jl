@@ -317,15 +317,7 @@ function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
         end
     end
 
-    Mosek.putvarboundslice(m.task,1,n+1,m.bkc,m.blc,m.buc)
-    if any(m.binvarflags)
-        idxs = convert(Array{Int32,1},find(v->v, m.binvarflags))
-        bkc = Int32[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
-        blc = Float64[ max(m.blc[i],0.0) for i in idxs ]
-        buc = Float64[ min(m.buc[i],1.0) for i in idxs ]
-
-        Mosek.putvarboundlist(m.task,idxs, bkc,blc,buc)
-    end
+    Mosek.putconboundslice(m.task,1,n+1,m.bkc,m.blc,m.buc)
 
     nothing
 end
@@ -358,15 +350,7 @@ function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
         end
     end
 
-    Mosek.putvarboundlist(m.task,m.lincon[1:n],m.bkc,m.blc,m.buc)
-    if any(m.binvarflags[m.lincon[1:n]])
-        idxs = convert(Array{Int32,1},find(i->m.binvarflags[m.lincon[i]], 1:n))
-        bkc = Int32[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
-        blc = Float64[ max(m.blc[m.lincon[i]],0.0) for i in idxs ]
-        buc = Float64[ min(m.buc[m.lincon[i]],1.0) for i in idxs ]
-
-        Mosek.putvarboundlist(m.task,idxs, bkc,blc,buc)
-    end
+    Mosek.putconboundlist(m.task,m.lincon[1:n],m.bkc,m.blc,m.buc)
 
     nothing
 end

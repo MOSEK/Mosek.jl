@@ -378,18 +378,30 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 ii,jj = lintriltoij(barvarij[i],L)
                 barcsubi[barptr[j]+1] = ii
                 barcsubj[barptr[j]+1] = jj
-                barcval[barptr[j]+1]  = c[i]
+                if ii != jj 
+                    barcval[barptr[j]+1]  = c[i]*0.5
+                else
+                    barcval[barptr[j]+1]  = c[i]
+                end
                 barptr[j] += 1
             end
 
             for i in length(barptr)-1:-1:1
                 barptr[i+1] = barptr[i]
             end
+            barptr[1] = 0
 
             for j in 1:length(barptr)-1
                 if barptr[j] < barptr[j+1]
+                    pb = barptr[j]+1
+                    pe = barptr[j+1]
                     d = barvardim[j]
-                    const matidx = Mosek.appendsparsesymmat(m.task,d,barcsubi[barptr[j]:barptr[j+1]],barcsubj[barptr[j]:barptr[j+1]],barcval[barptr[j]:barptr[j+1]])
+
+                    const matidx = Mosek.appendsparsesymmat(m.task,
+                                                            d,
+                                                            barcsubi[pb:pe],
+                                                            barcsubj[pb:pe],
+                                                            barcval[pb:pe])
                     Mosek.putbarcj(m.task,j,Int64[matidx],Float64[1.0])
                 end
             end
@@ -570,33 +582,6 @@ function MathProgBase.getvartype(m::MosekMathProgConicModel)
 
     vartypes
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# DEPRECATED:
-
 
 
 
