@@ -407,6 +407,11 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
     m.barconij   = barconij
 end
 
+function MathProgBase.writeproblem(m::MosekMathProgConicModel, filename::AbstractString)
+    Mosek.writedata(m.task,filename)
+end
+
+
 function MathProgBase.getsolution(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
     if sol < 0

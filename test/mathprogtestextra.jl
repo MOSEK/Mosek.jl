@@ -105,6 +105,7 @@ facts("[mathprogextra]") do
         MathProgBase.loadproblem!(m, c, A, b,
                                   [(:Zero,1:2)],
                                   [(:SOC,1:3),(:SDP,4:9)] )
+        writeproblem(m,"test.task")
         MathProgBase.optimize!(m)
 
         @fact MathProgBase.status(m) --> :Optimal
