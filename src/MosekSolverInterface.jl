@@ -228,31 +228,36 @@ type MosekMathProgModelError <: Exception
 end
 
 function loadoptions_internal!(t::Mosek.MSKtask, options)
-  # write to console by default
-  printstream(msg::AbstractString) = print(msg)
+    # write to console by default
+    printstream(msg::AbstractString) = print(msg)
 
-  Mosek.putstreamfunc(t,Mosek.MSK_STREAM_LOG,printstream)
-  for (option,val) in options
-      parname = string(option)
-      if startswith(parname, "MSK_IPAR_")
-          Mosek.putnaintparam(t, parname, convert(Integer, val))
-      elseif startswith(parname, "MSK_DPAR_")
-          Mosek.putnadouparam(t, parname, convert(AbstractFloat, val))
-      elseif startswith(parname, "MSK_SPAR_")
-          Mosek.putnastrparam(t, parname, convert(AbstractString, val))
-      elseif isa(val, Integer)
-          parname = "MSK_IPAR_$parname"
-          Mosek.putnaintparam(t, parname, val)
-      elseif isa(val, AbstractFloat)
-          parname = "MSK_DPAR_$parname"
-          Mosek.putnadouparam(t, parname, val)
-      elseif isa(val, AbstractString)
-          parname = "MSK_SPAR_$parname"
-          Mosek.putnastrparam(t, parname, val)
-      else
-          error("Value $val for parameter $option has unrecognized type")
-      end
-  end
+    be_quiet = false
+    for (option,val) in options
+        parname = string(option)
+        if parname == "QUIET"
+            if convert(Bool,val) be_quiet = true end
+        elseif startswith(parname, "MSK_IPAR_")
+            Mosek.putnaintparam(t, parname, convert(Integer, val))
+        elseif startswith(parname, "MSK_DPAR_")
+            Mosek.putnadouparam(t, parname, convert(AbstractFloat, val))
+        elseif startswith(parname, "MSK_SPAR_")
+            Mosek.putnastrparam(t, parname, convert(AbstractString, val))
+        elseif isa(val, Integer)
+            parname = "MSK_IPAR_$parname"
+            Mosek.putnaintparam(t, parname, val)
+        elseif isa(val, AbstractFloat)
+            parname = "MSK_DPAR_$parname"
+            Mosek.putnadouparam(t, parname, val)
+        elseif isa(val, AbstractString)
+            parname = "MSK_SPAR_$parname"
+            Mosek.putnastrparam(t, parname, val)
+        else
+            error("Value $val for parameter $option has unrecognized type")
+        end
+    end
+    if ! be_quiet
+        Mosek.putstreamfunc(t,Mosek.MSK_STREAM_LOG,printstream)
+    end
 end
 
 

@@ -2,7 +2,7 @@
 type MosekLinearQuadraticModel <: MathProgBase.AbstractLinearQuadraticModel
     task :: Mosek.MSKtask
 
-    binvarflag :: Array{Bool,1}
+    binvarflags:: Array{Bool,1}
     # NOTE: bkx/blx/bux are the bound on the variable in the
     # continuous problem. Setting a variable to :Bin, will not change
     # these. Setting :Cont or :Int on a :Bin variable will effectively
@@ -95,7 +95,7 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
     m.numcon = length(m.bkc)
     m.lincon = Int32[1:nrows;]
     m.quadcon = Array(Int32,0)
-    m.binvarflag = fill(false,m.numvar)
+    m.binvarflags = fill(false,m.numvar)
 
     # input coefficients
     Mosek.putclist(m.task, Int32[1:ncols;], obj)
@@ -437,7 +437,7 @@ function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
 
     Mosek.appendvars(m.task,1);
     Mosek.putvarbound(m.task,m.numvar,m.bkx[m.numvar],m.blx[m.numvar],m.bux[m.numvar])
-    push!(m.binvarflag,false)
+    push!(m.binvarflags,false)
 end
 
 function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
@@ -677,7 +677,7 @@ function MathProgBase.setvartype!(m::MosekLinearQuadraticModel,vtvec::Vector{Sym
     end
 
     # for all :Bin vars being changed to :Int or :Cont, restore original bounds
-    for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflag[i], 1:n)
+    for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflags[i], 1:n)
         Mosek.putvarbound(m.task,i,m.bkx[i],m.blx[i],m.bux[i])
     end
 end
