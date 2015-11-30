@@ -22,6 +22,10 @@ type MosekLinearQuadraticModel <: MathProgBase.AbstractLinearQuadraticModel
     options
 end
 
+type MosekNonlinearModel <: MathProgBase.AbstractLinearQuadraticModel
+    m :: MosekLinearQuadraticModel
+end
+
 MathProgBase.LinearQuadraticModel(s::MosekSolver) =
   MosekLinearQuadraticModel(Mosek.maketask(),
                             Array(Bool,0),
@@ -837,22 +841,7 @@ end
 #############################################################
 
 MathProgBase.NonlinearModel(s::MosekSolver) =
-  MosekLinearQuadraticModel(Mosek.maketask(),
-                            Array(Bool,0),
-                            0,
-                            0,
-                            Array(Int32,0),
-                            Array(Float64,0),
-                            Array(Float64,0),
-
-                            Array(Int32,0),
-                            Array(Float64,0),
-                            Array(Float64,0),
-
-                            Array(Int32,0),
-                            Array(Int32,0),
-
-                            s.options)
+    MosekNonlinearModel(MathProgBase.LinearQuadraticModel(s))
 
 type CallbackData
     d::MathProgBase.AbstractNLPEvaluator
@@ -1059,7 +1048,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
     return convert(Int32,0)::Int32
 end
 
-function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
+function MathProgBase.loadproblem!(m::MosekNonlinearModel,
                                    numVar,
                                    numConstr,
                                    collb,
@@ -1078,7 +1067,7 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
                               sense,d)
 end
 
-function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
+function MathProgBase.loadproblem!(m::MosekNonlinearModel,
                                    numVar::Int32,
                                    numConstr::Int32,
                                    collb::Array{Float64,1},
@@ -1087,6 +1076,8 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
                                    rowub::Array{Float64,1},
                                    sense::Symbol,
                                    d::MathProgBase.AbstractNLPEvaluator)
+    m = m.m
+
     if !(numVar == length(collb) == length(colub)) ||
        !(numConstr == length(rowlb) == length(rowub))
         throw(MosekMathProgModelError("Inconsistent data dimensions"))
@@ -1183,3 +1174,54 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
              Int32, (Ptr{Void},Any,Ptr{Void},Ptr{Void}),
              m.task.task, cb, nlgetsp, nlgetva)
 end
+
+
+
+
+
+
+
+
+
+
+MathProgBase.getvarLB(m::MosekNonlinearModel)                            = MathProgBase.getvarLB(m.m)
+MathProgBase.getvarUB(m::MosekNonlinearModel)                            = MathProgBase.getvarUB(m.m)
+MathProgBase.getconstrLB(m::MosekNonlinearModel)                         = MathProgBase.getconstrLB(m.m)
+MathProgBase.getconstrUB(m::MosekNonlinearModel)                         = MathProgBase.getconstrUB(m.m)
+MathProgBase.setvarLB!(m::MosekNonlinearModel, bnd::Array{Float64,1})    = MathProgBase.setvarLB!(m.m,bnd)
+MathProgBase.setvarUB!(m::MosekNonlinearModel, bnd::Array{Float64,1})    = MathProgBase.setvarUB!(m.m,bnd)
+MathProgBase.setconstrLB!(m::MosekNonlinearModel, bnd::Array{Float64,1}) = MathProgBase.setconstrLB!(m.m,bnd)
+MathProgBase.setconstrUB!(m::MosekNonlinearModel, bnd::Array{Float64,1}) = MathProgBase.setconstrUB!(m.m,bnd)
+#MathProgBase.getobj(m::MosekNonlinearModel)                              = MathProgBase.getobj(m.m)
+#MathProgBase.setobj!(m::MosekNonlinearModel, c :: Array{Float64,1})      = MathProgBase.setobj!(m,c)
+#MathProgBase.getconstrmatrix(m::MosekNonlinearModel)                     = MathProgBase.getconstrmatrix(m.m)
+#MathProgBase.addvar!(m::MosekNonlinearModel,bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
+#MathProgBase.addvar!(m::MosekNonlinearModel,subi::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
+#MathProgBase.addconstr!(m::MosekNonlinearModel,subj::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64) = MathProgBase.addconstr!(m.m)
+MathProgBase.updatemodel!(m::MosekNonlinearModel)                        = MathProgBase.updatemodel!(m.m)
+#MathProgBase.numlinconstr(m::MosekNonlinearModel) = MathProgBase.numlinconstr(m.m)
+MathProgBase.getobjval(m::MosekNonlinearModel)                           = MathProgBase.getobjval(m.m)
+MathProgBase.getsolution(m::MosekNonlinearModel)                         = MathProgBase.getsolution(m.m)
+MathProgBase.getconstrsolution(m::MosekNonlinearModel)                   = MathProgBase.getconstrsolution(m.m)
+MathProgBase.getreducedcosts(m::MosekNonlinearModel)                     = MathProgBase.getreducedcosts(m.m)
+MathProgBase.getconstrduals(m::MosekNonlinearModel)                      = MathProgBase.getconstrduals(m.m)
+#MathProgBase.getbasis(m::MosekNonlinearModel)                            = MathProgBase.getbasis(m.m)
+MathProgBase.getunboundedray(m::MosekNonlinearModel)                     = MathProgBase.getunboundedray(m.m)
+MathProgBase.getinfeasibilityray(m::MosekNonlinearModel)                 = MathProgBase.getinfeasibilityray(m.m)
+MathProgBase.getrawsolver(m::MosekNonlinearModel)                        = MathProgBase.getrawsolver(m.m)
+#MathProgBase.getsimplexiter(m::MosekNonlinearModel)                      = MathProgBase.getsimplexiter(m.m)
+MathProgBase.getbarrieriter(m::MosekNonlinearModel)                      = MathProgBase.getbarrieriter(m.m)
+MathProgBase.setwarmstart!(m::MosekNonlinearModel, v::Array{Float64,1})  = MathProgBase.setwarmstart!(m.m)
+MathProgBase.optimize!(m::MosekNonlinearModel)                           = MathProgBase.optimize!(m.m)
+MathProgBase.status(m::MosekNonlinearModel)                              = MathProgBase.status(m.m)
+#MathProgBase.getobjbound(m::MosekNonlinearModel) = MathProgBase.getobjbound(m.m)
+#MathProgBase.getobjgap(m::MosekNonlinearModel) = MathProgBase.getobjgap(m.m)
+MathProgBase.getsolvetime(m::MosekNonlinearModel)                        = MathProgBase.getsolvetime(m.m)
+MathProgBase.getrawsolver(m::MosekNonlinearModel)                        = MathProgBase.getrawsolver(m.m)
+MathProgBase.getsense(m::MosekNonlinearModel)                            = MathProgBase.getsense(m.m)
+MathProgBase.setsense!(m::MosekNonlinearModel,sense)                     = MathProgBase.setsense!(m.m)
+MathProgBase.freemodel!(m::MosekNonlinearModel)                          = MathProgBase.freemodel!(m.m)
+MathProgBase.numvar(m::MosekNonlinearModel)                              = MathProgBase.numvar(m.m)
+MathProgBase.numconstr(m::MosekNonlinearModel)                           = MathProgBase.numconstr(m.m)
+#MathProgBase.setvartype!(m::MosekNonlinearModel,vtvec::Vector{Symbol}) = MathProgBase.setvartype!(m,vtec)
+#MathProgBase.getvartype(m::MosekNonlinearModel) = MathProgBase.getvartype(m.m)
