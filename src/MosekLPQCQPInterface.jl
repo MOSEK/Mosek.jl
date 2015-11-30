@@ -616,7 +616,7 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     vals = Array(Float64, n)
     vals[:] = v[1:n]
 
-    nanidxs = find(i -> isnan(vals[i]),vals)
+    nanidxs = find(isnan,vals)
     vals[nanidxs] = 0.0
 
     skx = Int32[ if isnan(vals[i]) Mosek.MSK_SK_UNK else Mosek.MSK_SK_BAS end for i in 1:n ]
@@ -1211,7 +1211,7 @@ MathProgBase.getinfeasibilityray(m::MosekNonlinearModel)                 = MathP
 MathProgBase.getrawsolver(m::MosekNonlinearModel)                        = MathProgBase.getrawsolver(m.m)
 #MathProgBase.getsimplexiter(m::MosekNonlinearModel)                      = MathProgBase.getsimplexiter(m.m)
 MathProgBase.getbarrieriter(m::MosekNonlinearModel)                      = MathProgBase.getbarrieriter(m.m)
-MathProgBase.setwarmstart!(m::MosekNonlinearModel, v::Array{Float64,1})  = MathProgBase.setwarmstart!(m.m)
+MathProgBase.setwarmstart!(m::MosekNonlinearModel, v::Array{Float64,1})  = MathProgBase.setwarmstart!(m.m, v)
 MathProgBase.optimize!(m::MosekNonlinearModel)                           = MathProgBase.optimize!(m.m)
 MathProgBase.status(m::MosekNonlinearModel)                              = MathProgBase.status(m.m)
 #MathProgBase.getobjbound(m::MosekNonlinearModel) = MathProgBase.getobjbound(m.m)

@@ -92,7 +92,7 @@ end
 function getobjval(t::Mosek.MSKtask)
     let sol = getsoldef(t)
         if sol < 0
-            throw(Mosek.MosekMathProgModelError("No solution available"))
+            throw(MosekMathProgModelError("No solution available"))
         else
             Mosek.getprimalobj(t,sol)
         end
