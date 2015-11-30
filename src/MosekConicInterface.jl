@@ -1,13 +1,13 @@
-msk_accepted_cones = [:Free,
-                      :Zero,
-                      :NonNeg,
-                      :NonPos,
-                      :SOC,
-                      :SOCRotated,
-                      :SDP ]
+const msk_accepted_cones = [:Free,
+                            :Zero,
+                            :NonNeg,
+                            :NonPos,
+                            :SOC,
+                            :SOCRotated,
+                            :SDP ]
 
 
-
+MathProgBase.supportedcones(::MosekSolver) = msk_accepted_cones
 
 
 
@@ -321,7 +321,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     bk[firstcon:lastcon] = Mosek.MSK_BK_FX
 
                     barvardim[barvarptr] = d
-                    appendbarvars(m.task, Int32[d])
+                    Mosek.appendbarvars(m.task, Int32[d])
 
                     conptr += n
                     barvarptr += 1
@@ -330,8 +330,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                         for vj in 1:d
                             for vi in vj:d
                                 cof = (if vj == vi 1.0 else 0.5 end )
-                                const matidx = appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
-                                putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
+                                const matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
+                                Mosek.putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
                                 barconij[i] = i-firstcon+1
                                 i += 1
                             end
@@ -427,7 +427,7 @@ end
 function MathProgBase.getsolution(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
     if sol < 0
-        throw(Mosek.MosekMathProgModelError("No solution available"))
+        throw(MosekMathProgModelError("No solution available"))
     end
 
     xx = Mosek.getxx(m.task,sol)
@@ -560,12 +560,12 @@ function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector
     all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
 
     idxs        = find(i -> m.varmap[i] > 0,1:n)
-    intvarflags = intvarflags[idxs]
+    intvarflags = intvarflag[idxs]
 
-    newbk = Int32[ if (intvarflags[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[idxs[i]] end for i in idxs ]
+    newbk = Int32[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
     newbl = Float64[0.0 for i in idxs ]
-    newbu = Float64[if (intvarflags[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
-    newvt = Int32[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflag[idxs] ]
+    newbu = Float64[if (intvarflag[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
+    newvt = Int32[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflags ]
 
     Mosek.putvartypelist(m.task,m.varmap[idxs],newvt)
     Mosek.putvarboundlist(m.task,m.varmap[idxs],newbk,newbl,newbu)
