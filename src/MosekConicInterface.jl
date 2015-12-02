@@ -316,7 +316,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     firstcon   = conptr
                     lastcon    = conptr+n-1
                     barslackj  = barvarptr
-                    d = int32(sqrt(.25+2*length(idxs))-0.5)
+                    d = floor(Int32,sqrt(.25+2*length(idxs))-0.5)
 
                     bk[firstcon:lastcon] = Mosek.MSK_BK_FX
 
