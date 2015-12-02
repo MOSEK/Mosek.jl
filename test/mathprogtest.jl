@@ -11,13 +11,14 @@ include(joinpath(Pkg.dir("MathProgBase"),"test","conicinterface.jl"))
 include(joinpath(Pkg.dir("MathProgBase"),"test","nlp.jl"))
 
 
+solver = Mosek.MosekSolver(QUIET=true)
 
-linprogtest(Mosek.MosekSolver())
-quadprogtest(Mosek.MosekSolver())
+linprogtest(solver)
+quadprogtest(solver)
 #socptest(MosekSolver())
-mixintprogtest(Mosek.MosekSolver())
-convexnlptest(Mosek.MosekSolver())
-coniclineartest(Mosek.MosekSolver(),duals=true)
-conicSOCtest(Mosek.MosekSolver(),duals=true)
+mixintprogtest(solver)
+convexnlptest(solver)
+coniclineartest(solver,duals=true)
+conicSOCtest(solver,duals=true)
 
 end

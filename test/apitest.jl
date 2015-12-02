@@ -131,7 +131,7 @@ facts("[apitest]") do
         qsubi = [  1,    2,    3,   3   ]
         qsubj = [  1,    2,    3,   1   ]
         qval  = [ -2.0, -2.0, -0.2, 0.2 ]
-        putqconk (task,1, qsubi,qsubj, qval) 
+        putqconk(task,1, qsubi,qsubj, qval) 
         putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
         optimize(task)
         solutionsummary(task,MSK_STREAM_MSG)

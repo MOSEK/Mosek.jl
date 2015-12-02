@@ -8,7 +8,7 @@
 using Mosek
     
 
-printstream(msg::String) = print(msg)
+printstream(msg::AbstractString) = print(msg)
 
 # Bound keys for constraints
 bkc = [MSK_BK_FX,

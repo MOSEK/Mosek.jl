@@ -10,7 +10,7 @@
 using Mosek
 
 
-printstream(msg::String) = print(msg)
+printstream(msg::AbstractString) = print(msg)
 
 ############################
 ## Define problem data
