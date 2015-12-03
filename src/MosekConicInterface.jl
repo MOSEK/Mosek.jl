@@ -409,6 +409,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         setsense!(m.task, sense)
     end
 
+
+    m.varbk      = varbk
     m.numvar     = totnumvar # elements used in varmap
     m.varmap     = varmap
     m.barvarij   = barvarij
@@ -557,20 +559,22 @@ end
 # NOTE: When setting :Bin, we *change* the domain of the variable to [0;1], irregardless what it was before.
 function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector{Symbol})
     n = min(length(intvarflag),m.numvar)
-    all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
+    if n > 0
 
-    idxs        = find(i -> m.varmap[i] > 0,1:n)
-    intvarflags = intvarflag[idxs]
+        all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
 
-    newbk = Int32[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
-    newbl = Float64[0.0 for i in idxs ]
-    newbu = Float64[if (intvarflag[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
-    newvt = Int32[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflags ]
+        idxs        = find(i -> m.varmap[i] > 0,1:n)
 
-    Mosek.putvartypelist(m.task,m.varmap[idxs],newvt)
-    Mosek.putvarboundlist(m.task,m.varmap[idxs],newbk,newbl,newbu)
+        newbk = Int32[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
+        newbl = Float64[0.0 for i in idxs ]
+        newbu = Float64[if (intvarflag[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
+        newvt = Int32[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflag ]
 
-    m.binvarflag[idxs] = map(f -> f == :Bin, intvarflag[1:n])
+        Mosek.putvartypelist(m.task,m.varmap[idxs],newvt)
+        Mosek.putvarboundlist(m.task,m.varmap[idxs],newbk,newbl,newbu)
+
+        m.binvarflag[idxs] = map(i -> intvarflag[i] == :Bin, idxs)
+    end
 end
 
 function MathProgBase.getvartype(m::MosekMathProgConicModel)

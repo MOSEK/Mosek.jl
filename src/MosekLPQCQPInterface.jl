@@ -109,6 +109,7 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
     # input bounds
     Mosek.putvarboundslice(m.task, 1, ncols+1, m.bkx, m.blx, m.bux)
     Mosek.putconboundslice(m.task, 1, nrows+1, m.bkc, m.blc, m.buc)
+    Mosek.writedata(m.task,"loadproblem.opf")
     m
 end
 
@@ -275,7 +276,7 @@ function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
             else
                 m.bkx[i] = Mosek.MSK_BK_FR
             end
-            m.blx[i] = -Inf
+            m.bux[i] = Inf
         end
     end
 
@@ -625,7 +626,7 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     Mosek.putskxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,skx);
 end
 
-MathProgBase.optimize!(m::MosekLinearQuadraticModel) = Mosek.optimize(m.task) 
+MathProgBase.optimize!(m::MosekLinearQuadraticModel) = begin Mosek.optimize(m.task); Mosek.writedata(m.task,"problem.opf"); end
 
 MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task)
 
@@ -651,22 +652,24 @@ MathProgBase.numconstr(m::MosekLinearQuadraticModel) = length(m.lincon)
 
 function MathProgBase.setvartype!(m::MosekLinearQuadraticModel,vtvec::Vector{Symbol})
     n = min(m.numvar,length(vtvec))
-    vts = Int32[if     vt == :Cont Mosek.MSK_VAR_TYPE_CONT
-                elseif vt == :Int  Mosek.MSK_VAR_TYPE_INT
-                elseif vt == :Bin  Mosek.MSK_VAR_TYPE_INT
-                else               Mosek.MSK_VAR_TYPE_CONT
-                end
-                for vt in vtvec[1:n]]
-    Mosek.putvartypelist(m.task,Int32[1:n;],vts)
-    for i in find(vt -> vt == :Bin, vtvec[1:n])
-        bl = max(m.blx[i],0.0)
-        bu = min(m.bux[i],1.0)
-        Mosek.putvarbound(m.task,i,Mosek.MSK_BK_RA,bl,bu)
-    end
+    if n > 0
+        vts = Int32[if     vt == :Cont Mosek.MSK_VAR_TYPE_CONT
+                    elseif vt == :Int  Mosek.MSK_VAR_TYPE_INT
+                    elseif vt == :Bin  Mosek.MSK_VAR_TYPE_INT
+                    else               Mosek.MSK_VAR_TYPE_CONT
+                    end
+                    for vt in vtvec[1:n]]
+        Mosek.putvartypelist(m.task,Int32[1:n;],vts)
+        for i in find(vt -> vt == :Bin, vtvec[1:n])
+            bl = max(m.blx[i],0.0)
+            bu = min(m.bux[i],1.0)
+            Mosek.putvarbound(m.task,i,Mosek.MSK_BK_RA,bl,bu)
+        end
 
-    # for all :Bin vars being changed to :Int or :Cont, restore original bounds
-    for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflags[i], 1:n)
-        Mosek.putvarbound(m.task,i,m.bkx[i],m.blx[i],m.bux[i])
+        # for all :Bin vars being changed to :Int or :Cont, restore original bounds
+        for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflags[i], 1:n)
+            Mosek.putvarbound(m.task,i,m.bkx[i],m.blx[i],m.bux[i])
+        end
     end
 end
 
