@@ -31,56 +31,53 @@ using JuMP,FactCheck
 
 TOL = 1e-8
 
-facts("[misc tests]") do
-    if  false
-        context("Test fixed variables don't leak through MPB") do
-            mod = Model(solver=Mosek.MosekSolver())
-            @defVar(mod, x >= 3, SemiInt)
-            @defVar(mod, y >= 2, SemiInt)
-            @addConstraint(mod, x + y >= 2.5)
-            @setObjective(mod, Min, x+1.1y)
-            solve(mod)
+facts("[model] Relaxation keyword argument to solve") do
+    m = Model()
+    @defVar(m, 1.5 <= y <= 2, Int)
+    @defVar(m, z, Bin)
+    @defVar(m, 0.5 <= w <= 1.5, Int)
+    @defVar(m, 1 <= v <= 2)
 
-            @fact getValue(x) --> roughly(3.0, TOL)
-            @fact getValue(y) --> 0.0
-        end
+    @setObjective(m, Min, y + z + w + v)
+    
+    # Force LP solver since not all MIP solvers
+    # return duals (i.e. Cbc)
+    setSolver(m, Mosek.MosekSolver())
+    @fact solve(m, relaxation=true) --> :Optimal
+    @fact getValue(y) --> 1.5
+    @fact getValue(z) --> 0
+    @fact getValue(w) --> 0.5
+    @fact getValue(v) --> 1
+    @fact getDual(y) --> 1
+    @fact getDual(z) --> 1
+    @fact getDual(w) --> 1
+    @fact getDual(v) --> 1
+    @fact getObjectiveValue(m) --> 1.5 + 0 + 0.5 + 1
 
-    end
+    # Let JuMP choose solver again
+    setSolver(m, JuMP.UnsetSolver())
+    @fact solve(m) --> :Optimal
+    @fact getValue(y) --> 2
+    @fact getValue(z) --> 0
+    @fact getValue(w) --> 1
+    @fact getValue(v) --> 1
+    @fact getObjectiveValue(m) --> 2 + 0 + 1 + 1
 
-    facts("[probmod] Test buildInternalModel") do
-        solver = Mosek.MosekSolver()
-        context("With solver $(typeof(solver))") do
-            m = Model(solver=solver)
-            @defVar(m, x >= 0)
-            @defVar(m, y >= 0)
-            @addConstraint(m, x + y == 1)
-            @setObjective(m, Max, y)
-            buildInternalModel(m)
-            @fact getInternalModel(m) --> not(nothing)
-            @fact m.internalModelLoaded --> true
-            stat = solve(m)
-            Mosek.writedata(getInternalModel(m).task,"problem.opf")
-            @fact stat --> :Optimal
-            @fact getValue(x) --> roughly( 0.0, TOL)
-            @fact getValue(y) --> roughly( 1.0, TOL)
-            @fact getObjectiveValue(m) --> roughly(1.0, TOL)
-            @fact getDual(x)  --> roughly(-1.0, TOL)
-            @fact getDual(y)  --> roughly( 0.0, TOL)
-        end
+    @defVar(m, 1 <= x <= 2, SemiCont)
+    @defVar(m, -2 <= t <= -1, SemiInt)
 
-        facts("[qcqpmodel] Test simple normed problem") do
-            context("With solver $(typeof(solver))") do
-                m = Model(solver=solver);
-                @defVar(m, x[1:3]);
-                @addConstraint(m, 2norm2{x[i]-1, i=1:3} <= 2)
-                @setObjective(m, Max, x[1]+x[2])
+    addSOS1(m, [x, 2y, 3z, 4w, 5v, 6t])
+    @setObjective(m, Min, x + y + z + w + v - t)
 
-                @fact solve(m) --> :Optimal
-                @fact getObjectiveValue(m) --> roughly(2+sqrt(2), 1e-5)
-                @fact norm(getValue(x)-[1+sqrt(1/2),1+sqrt(1/2),1]) --> roughly(0, 1e-6)
-            end
-        end
-    end
+    @fact solve(m, relaxation=true) --> :Optimal
+
+    @fact getValue(x) --> 0
+    @fact getValue(y) --> 1.5
+    @fact getValue(z) --> 0
+    @fact getValue(w) --> 0.5
+    @fact getValue(v) --> 1
+    @fact getValue(t) --> 0
+    @fact getObjectiveValue(m) --> 0 + 1.5 + 0 + 0.5 + 1 + 0
 end
 
 end # module

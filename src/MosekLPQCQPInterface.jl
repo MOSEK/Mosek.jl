@@ -642,7 +642,7 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     Mosek.putskxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,skx);
 end
 
-MathProgBase.optimize!(m::MosekLinearQuadraticModel) = Mosek.optimize(m.task)
+MathProgBase.optimize!(m::MosekLinearQuadraticModel) = begin Mosek.optimize(m.task); Mosek.writedata(m.task,"model.opf") end
 
 MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task)
 
@@ -685,6 +685,10 @@ function MathProgBase.setvartype!(m::MosekLinearQuadraticModel,vtvec::Vector{Sym
         # for all :Bin vars being changed to :Int or :Cont, restore original bounds
         for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflags[i], 1:n)
             Mosek.putvarbound(m.task,i,m.bkx[i],m.blx[i],m.bux[i])
+        end
+
+        for i in 1:n
+            m.binvarflags[i] = vtvec[i] == :Bin
         end
     end
 end
