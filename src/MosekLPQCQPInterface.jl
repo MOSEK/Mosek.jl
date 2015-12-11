@@ -396,6 +396,8 @@ function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
     sparse(asubi,asubj,aval,length(m.lincon),m.numvar)
 end
 
+MathProgBase.addvar!(m::MosekLinearQuadraticModel, bl, bu, c) = MathProgBase.addvar!(m,convert(Float64,bl),convert(Float64,bu),convert(Float64,c))
+
 function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
                  bl  ::Float64,
                  bu  ::Float64,
