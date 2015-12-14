@@ -109,7 +109,6 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
     # input bounds
     Mosek.putvarboundslice(m.task, 1, ncols+1, m.bkx, m.blx, m.bux)
     Mosek.putconboundslice(m.task, 1, nrows+1, m.bkc, m.blc, m.buc)
-    Mosek.writedata(m.task,"loadproblem.opf")
     m
 end
 
@@ -448,7 +447,7 @@ function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
                               bl  ::Float64,
                               bu  ::Float64,
                               c   ::Float64)
-    addvar!(m,bl,bu,c)
+    MathProgBase.addvar!(m,bl,bu,c)
     Mosek.putacol(m.task,m.numvar,subi,val)
 end
 
@@ -457,6 +456,7 @@ MathProgBase.addconstr!{T1,T2,T3,T4}(m::MosekLinearQuadraticModel,
                                      val ::Array{T2,1},
                                      bl  ::T3,
                                      bu  ::T4) = MathProgBase.addconstr!(m,convert(Array{Int32,1},subj),convert(Array{Float64,1},val),convert(Float64,bl),convert(Float64,bu))
+
 function MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
                                  subj::Array{Int32,1},
                                  val ::Array{Float64,1},
@@ -467,32 +467,32 @@ function MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
     if bl > -Inf
         if bu < Inf
             if abs(bl-bu) < 1e-8
-                push!(m.bkx,Mosek.MSK_BK_FX)
-                push!(m.blx,bl)
-                push!(m.bux,bl)
+                push!(m.bkc,Mosek.MSK_BK_FX)
+                push!(m.blc,bl)
+                push!(m.buc,bl)
             else
-                push!(m.bkx,Mosek.MSK_BK_RA)
-                push!(m.blx,bl)
-                push!(m.bux,bu)
+                push!(m.bkc,Mosek.MSK_BK_RA)
+                push!(m.blc,bl)
+                push!(m.buc,bu)
             end
         else
-            push!(m.bkx,Mosek.MSK_BK_LO)
-            push!(m.blx,bl)
-            push!(m.bux,Inf)
+            push!(m.bkc,Mosek.MSK_BK_LO)
+            push!(m.blc,bl)
+            push!(m.buc,Inf)
         end
     else
         if bu < Inf
-            push!(m.bkx,Mosek.MSK_BK_UP)
-            push!(m.blx,-Inf)
-            push!(m.bux,bu)
+            push!(m.bkc,Mosek.MSK_BK_UP)
+            push!(m.blc,-Inf)
+            push!(m.buc,bu)
         else
-            push!(m.bkx,Mosek.MSK_BK_FR)
-            push!(m.blx,-Inf)
-            push!(m.bux,Inf)
+            push!(m.bkc,Mosek.MSK_BK_FR)
+            push!(m.blc,-Inf)
+            push!(m.buc,Inf)
         end
     end
     Mosek.appendcons(m.task,1);
-    Mosek.putconbound(m.task,m.numcon,m.bkx[m.numcon],m.blx[m.numcon],m.bux[m.numcon])
+    Mosek.putconbound(m.task,m.numcon,m.bkc[m.numcon],m.blc[m.numcon],m.buc[m.numcon])
     Mosek.putarow(m.task,m.numcon,subj,val)
 end
 
