@@ -644,7 +644,7 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     Mosek.putskxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,skx);
 end
 
-MathProgBase.optimize!(m::MosekLinearQuadraticModel) = begin Mosek.optimize(m.task); Mosek.writedata(m.task,"model.opf") end
+MathProgBase.optimize!(m::MosekLinearQuadraticModel) = Mosek.optimize(m.task)
 
 MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task)
 
