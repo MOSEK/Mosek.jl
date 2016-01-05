@@ -121,7 +121,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
     Mosek.putcfix(m.task,0.0)
 
     # allocate necessary variables and cons, reserve space for cones and barvars
-    Mosek.appendvars(m.task,numlinvarelm+numqcvarelm + numqcconelm)
+    Mosek.appendvars(m.task,numlinvarelm+numqcvarelm+numqcconelm)
     Mosek.appendcons(m.task,totnumcon)
     Mosek.putmaxnumcone(m.task,numqcvar+numqccon)
     Mosek.putmaxnumbarvar(m.task,numbarvar+numbarcon)
@@ -157,7 +157,10 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                    elseif sym == :NonPos Mosek.MSK_BK_UP
                    end
 
-                varbk[varbkidx:varbkidx+n-1] = bk[first:last]
+                varbk[idxs] = bk[first:last]
+                for i in 1:length(idxs)
+                    Mosek.putvarname(m.task,first+i-1,"x$(idxs[i])")
+                end
                 varbkidx += n
             elseif sym in [ :SOC, :SOCRotated ]
                 first = linvarptr
@@ -167,11 +170,11 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 varmap[idxs] = Int32[first:last;]
 
                 bk[first:last] = Mosek.MSK_BK_FR
-                if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, idxs)
-                elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, idxs)
+                if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, [first:last;])
+                elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, [first:last;])
                 end
 
-                varbk[varbkidx:varbkidx+n-1] = Mosek.MSK_BK_FR
+                varbk[idxs] = Mosek.MSK_BK_FR
                 varbkidx += n
             elseif sym == :SDP
                 d = round(Int32,sqrt(.25+2*length(idxs))-0.5)
@@ -182,7 +185,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 barvarij[idxs] = Int64[1:trilsz;]
                 barvarptr += 1
 
-                varbk[varbkidx:varbkidx+trilsz-1] = Mosek.MSK_BK_FR
+                varbk[idxs] = Mosek.MSK_BK_FR
                 varbkidx += trilsz
             end
         end
@@ -560,10 +563,9 @@ end
 function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector{Symbol})
     n = min(length(intvarflag),m.numvar)
     if n > 0
-
         all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
 
-        idxs        = find(i -> m.varmap[i] > 0,1:n)
+        idxs        = find(i -> m.varmap[i] > 0,1:n) # indexes into intvarflag for non-PSD vars
 
         newbk = Int32[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
         newbl = Float64[0.0 for i in idxs ]
