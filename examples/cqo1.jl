@@ -7,7 +7,7 @@
 
 using Mosek
 
-printstream(msg::String) = print(msg)
+printstream(msg::AbstractString) = print(msg)
 callback(where,dinf,iinf,liinf) = 0 
 
 # Since the actual value of Infinity is ignores, we define it solely

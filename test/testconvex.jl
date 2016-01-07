@@ -5,7 +5,7 @@ try
     using Convex
     using FactCheck
 
-    set_default_solver(MosekSolver());
+    set_default_solver(MosekSolver(QUIET=true));
     include(joinpath(Pkg.dir("Convex"),"test","test_sdp.jl"))
     FactCheck.exitstatus()
 catch
