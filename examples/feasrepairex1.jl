@@ -9,7 +9,7 @@
 
 using Mosek
 
-printstream(msg::String) = print(msg)
+printstream(msg::AbstractString) = print(msg)
 
 maketask() do task
     putstreamfunc(task,MSK_STREAM_LOG,printstream)

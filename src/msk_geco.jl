@@ -102,7 +102,7 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
     hessubj_a[1:numhesnz] = nlinfo.hessubj
   end
 
-  return @compat(Int32(0)) :: Int32
+  return Int32(0) :: Int32
 end
 
 function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
@@ -243,11 +243,11 @@ function putnlcallbacks(task::MSKtask,
 
   nlinfo = MSKnlinfo(nvar,ncon,
                      nlgetsp,nlgetva,
-                     @compat(round(Int32,grdobjsub .- 1)),
-                     @compat(round(Int32,grdconsub .- 1)),
-                     @compat(round(Int32,grdconptr .- 1)),
-                     @compat(round(Int32,hessubi .- 1)),
-                     @compat(round(Int32,hessubj .- 1)),
+                     round(Int32,grdobjsub .- 1),
+                     round(Int32,grdconsub .- 1),
+                     round(Int32,grdconptr .- 1),
+                     round(Int32,hessubi .- 1),
+                     round(Int32,hessubj .- 1),
                      evalobj,evalconi, grdlag,heslag,grdobj,grdconi)
 
   @msk_ccall("putnlfunc",

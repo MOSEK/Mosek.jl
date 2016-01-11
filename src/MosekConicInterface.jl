@@ -1,11 +1,593 @@
+const msk_accepted_cones = [:Free,
+                            :Zero,
+                            :NonNeg,
+                            :NonPos,
+                            :SOC,
+                            :SOCRotated,
+                            :SDP ]
 
-msk_accepted_cones = [:Free, 
-                      :Zero,
-                      :NonNeg,
-                      :NonPos,
-                      :SOC,
-                      :SOCRotated,
-                      :SDP ]
+
+MathProgBase.supportedcones(::MosekSolver) = msk_accepted_cones
+
+
+
+type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
+    task      :: Mosek.MSKtask
+
+    # Length of the variable and constraint vector in the user model
+    numvar    :: Int
+    numcon    :: Int
+
+    # varmap: Maps UserVarIndex -> MosekVarIndex. UserVarIndex is a
+    # positive integer. MosekVarIndex is either positive or negative,
+    # where positive integers map to linear variables, and negative
+    # map to barvars. When varmap[UserVarIndex] < 0, it refers to a
+    # Mosek barvar index, and barvarij refers to the linear element
+    # index of the barvar.
+    varmap   :: Array{Int32,1}
+    barvarij :: Array{Int64,1}
+
+    # varbk: The boundkeys of variables, index by UserVarIndex. These
+    # are necessary when first setting a variable to Binary (thus
+    # changing the bounds to MSK_BK_RA), then to Continuous.
+    varbk      :: Array{Int32,1}
+    # Flags indicating that these variables are binary (integer plus [0,1] bounded)
+    binvarflag :: Array{Bool,1}
+
+    # Index of slack variables for conic constraints.
+    #   conslack[UserConIndex] = 0 => No slack, constraint is linear
+    #   conslack[UserConIndex] > 0 => Slack is linear variable (maps to MosekVarIndex)
+    #   conslack[UserConIndex] > 0 => Slack is PSD variable (maps to MosekBarvarIndex).
+    #                                 In this case barconij[UserConIndex] maps to the
+    #                                 linear index of the element in barvar.
+    conslack :: Array{Int32,1}
+    barconij :: Array{Int64,1}
+
+    # Solver options
+    options
+end
+
+function MathProgBase.ConicModel(s::MosekSolver)
+    m = MosekMathProgConicModel(Mosek.maketask(),
+                                0,   # numvar
+                                0,   # numcon
+
+                                Array(Int32,0),  # varmap
+                                Array(Int64,0),  # barvarij
+
+                                Array(Int32,0),  # varbk
+
+                                Array(Bool,0),   # binvarflag
+
+                                Array(Int32,0),  # conslack
+                                Array(Int64,0),  # barconij
+                                s.options)
+    loadoptions!(m)
+
+    m
+end
+
+
+function loadoptions!(m::MosekMathProgConicModel)
+  loadoptions_internal!(m.task, m.options)
+end
+
+
+function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
+                                   c,
+                                   A,
+                                   b,
+                                   constr_cones,
+                                   var_cones)
+    MathProgBase.loadproblem!(m,c,A,b,constr_cones,var_cones,:Min)
+end
+
+function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
+                                   c,
+                                   A,
+                                   b,
+                                   constr_cones,
+                                   var_cones,
+                                   sense::Symbol)
+
+    MathProgBase.loadproblem!(m,
+                              convert(Array{Float64},c),
+                              convert(SparseMatrixCSC{Float64,Int},A),
+                              convert(Array{Float64,1},b),
+                              convert(Array{Tuple{Symbol,Any},1},constr_cones),
+                              convert(Array{Tuple{Symbol,Any},1},var_cones))
+end
+
+function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
+                                   c::Array{Float64},
+                                   A::SparseMatrixCSC{Float64,Int},
+                                   b::Array{Float64,1},
+                                   constr_cones::Array{Tuple{Symbol,Any},1},
+                                   var_cones   ::Array{Tuple{Symbol,Any},1},
+                                   sense :: Symbol)
+    # check data
+    const N = length(c)
+    const M = length(b)
+
+    if M != A.m || N != A.n
+        throw(MosekMathProgSolverInterface.MosekMathProgModelError("Invalid data dimensions"))
+    end
+
+    (numqcvar,numbarvar,numlinvarelm,numqcvarelm,numbarvarelm,totnumvar) = countcones(var_cones)
+    (numqccon,numbarcon,numlinconelm,numqcconelm,numbarconelm,totnumcon) = countcones(constr_cones)
+
+    # clear task data
+    Mosek.resizetask(m.task,0,0,0,0,0)
+    Mosek.putcfix(m.task,0.0)
+
+    # allocate necessary variables and cons, reserve space for cones and barvars
+    Mosek.appendvars(m.task,numlinvarelm+numqcvarelm+numqcconelm)
+    Mosek.appendcons(m.task,totnumcon)
+    Mosek.putmaxnumcone(m.task,numqcvar+numqccon)
+    Mosek.putmaxnumbarvar(m.task,numbarvar+numbarcon)
+
+    varmap     = Array(Int32,totnumvar) # nonnegative refer to linear vars, negative to barvars
+
+    barvarij   = zeros(Int64,totnumvar)
+    barvardim  = zeros(Int32,numbarvar+numbarcon)
+
+    varbk      = Array(Int32,totnumvar)
+
+    linvarptr = 1
+    barvarptr = 1
+
+    let nvar = numlinvarelm+numqcvarelm
+        varbkidx = 1
+        bk = Array(Int32,nvar)
+        for (sym,idxs_) in var_cones
+            idxs = convert(Vector{Int32},collect(idxs_))
+
+            n = length(idxs)
+            if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
+                first = linvarptr
+                last  = linvarptr+n-1
+                linvarptr += n
+
+                varmap[idxs] = first:last
+
+                bk[first:last] =
+                   if     sym == :Free   Mosek.MSK_BK_FR
+                   elseif sym == :Zero   Mosek.MSK_BK_FX
+                   elseif sym == :NonNeg Mosek.MSK_BK_LO
+                   elseif sym == :NonPos Mosek.MSK_BK_UP
+                   end
+
+                varbk[idxs] = bk[first:last]
+                for i in 1:length(idxs)
+                    Mosek.putvarname(m.task,first+i-1,"x$(idxs[i])")
+                end
+                varbkidx += n
+            elseif sym in [ :SOC, :SOCRotated ]
+                first = linvarptr
+                last  = linvarptr+n-1
+                linvarptr += n
+
+                varmap[idxs] = Int32[first:last;]
+
+                bk[first:last] = Mosek.MSK_BK_FR
+                if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, [first:last;])
+                elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, [first:last;])
+                end
+
+                varbk[idxs] = Mosek.MSK_BK_FR
+                varbkidx += n
+            elseif sym == :SDP
+                d = round(Int32,sqrt(.25+2*length(idxs))-0.5)
+                trilsz = length(idxs)
+                barvardim[barvarptr] = d
+                Mosek.appendbarvars(m.task, Int32[d])
+                varmap[idxs] = -barvarptr
+                barvarij[idxs] = Int64[1:trilsz;]
+                barvarptr += 1
+
+                varbk[idxs] = Mosek.MSK_BK_FR
+                varbkidx += trilsz
+            end
+        end
+        bx = zeros(Float64,nvar)
+        Mosek.putvarboundslice(m.task,1,nvar+1,bk,bx,bx)
+    end
+
+    conslack = zeros(Int32,M) # 0 means no slack, positive means linear var, negative means semidefinite slack
+    barconij = zeros(Int64,M)
+    conmap = Int32[1:M;]
+    begin # add model constraints
+        # Split A into linear and semidefinite columns
+        nlinnz = 0
+        for ci in 1:length(A.colptr)-1 # count linear nonzeros
+            if (varmap[ci] >= 0) nlinnz += A.colptr[ci+1]-A.colptr[ci]  end
+        end
+        nbarnz = nnz(A)-nlinnz
+
+        asubi = zeros(Int32,nlinnz)
+        asubj = zeros(Int32,nlinnz)
+        acof  = zeros(Float64,nlinnz)
+
+        barasubi = zeros(Int32,nbarnz)
+        barasubj = zeros(Int32,nbarnz)
+        barvij   = zeros(Int64,nbarnz)
+        baracof  = zeros(Float64,nbarnz)
+
+        let ptr      = 1,
+            barptr   = 1
+            for ci in 1:A.n
+                let n = A.colptr[ci+1]-A.colptr[ci]
+                    if varmap[ci] > 0
+                        asubi[ptr:ptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
+                        asubj[ptr:ptr+n-1] = varmap[ci]
+                        acof[ptr:ptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
+
+                        ptr += n
+                    else
+                        barasubi[barptr:barptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
+                        barasubj[barptr:barptr+n-1] = -varmap[ci]
+                        barvij[barptr:barptr+n-1]   = barvarij[ci]
+                        baracof[barptr:barptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
+
+                        barptr += n
+                    end
+                end
+            end
+        end
+
+        # Add linear part
+        # NOTE: Since the conic API uses the form (b-Ax < K) we use -acof.
+
+        let At = sparse(asubj,asubi,-acof,numlinvarelm+numqcvarelm,M)
+            Mosek.putarowslice(m.task,1,M+1,At)
+        end
+
+        # Add sdp part
+        if nbarnz > 0
+            let perm = sortperm(barasubi),
+                # NOTE on perm: by default sortperm is stable. Since we
+                # barsubi/barsubj to be sorted by barsubj (by construction
+                # from column-packed format), perm will be sorted
+                # primarily by barasubi and secondarily by barasubj.
+                nbarnz = length(barasubi)
+
+                local k    = 1
+
+                while k <= nbarnz
+                    let i = barasubi[perm[k]],
+                        j = barasubj[perm[k]]
+
+                        let b = k
+                            k += 1
+                            while k <= nbarnz && barasubi[perm[k]] == i && barasubj[perm[k]] == j
+                                k += 1
+                            end
+
+                            matidx =
+                                let d = barvardim[j]
+                                    ii,jj,vv = lintriltoijv(barvij[perm[b:k-1]],baracof[perm[b:k-1]],d)
+                                    Mosek.appendsparsesymmat(m.task,barvardim[j], ii,jj,vv)
+                                end
+                            # NOTE: Since the conic API uses the form (b-Ax < K) we use the weight -1.0.
+                            Mosek.putbaraij(m.task, i,j,Int64[matidx],Float64[-1.0])
+                        end
+                    end
+                end
+            end
+        end
+
+        # Add bounds and slacks
+        let bk = Array(Int32,M)
+            local conptr = 1
+
+            for (sym,idxs_) in constr_cones
+                idxs = convert(Vector{Int32},collect(idxs_))
+                local n = length(idxs)
+                if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
+                    firstcon = conptr
+                    lastcon  = conptr+n-1
+                    conptr += n
+
+                    conslack[idxs] = 0 # no slack
+
+                    bk[idxs] =
+                      if     sym == :Free   Mosek.MSK_BK_FR
+                      elseif sym == :Zero   Mosek.MSK_BK_FX
+                      elseif sym == :NonNeg Mosek.MSK_BK_LO
+                      elseif sym == :NonPos Mosek.MSK_BK_UP
+                      end
+                elseif sym in [ :SOC, :SOCRotated ]
+                    firstcon   = conptr
+                    lastcon    = conptr+n-1
+                    firstslack = linvarptr
+                    lastslack  = linvarptr+n-1
+                    conptr += n
+                    linvarptr += n
+
+                    conslack[idxs] = firstslack:lastslack # no slack
+                    bk[idxs] = Mosek.MSK_BK_FX
+
+                    # Append a variable vector s and make it conic
+                    # Then add slacks to the rows: b-Ax - s = 0, s in C
+                    local bx = zeros(Float64,n)
+                    Mosek.putvarboundslice(m.task,firstslack,lastslack+1,Int32[Mosek.MSK_BK_FR for i in 1:n],bx,bx)
+                    Mosek.putaijlist(m.task,Int32[firstcon:lastcon;],Int32[firstslack:lastslack;],-ones(Float64,n))
+                    if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
+                    elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
+                    end
+                elseif sym == :SDP
+                    firstcon   = conptr
+                    lastcon    = conptr+n-1
+                    barslackj  = barvarptr
+                    d = floor(Int32,sqrt(.25+2*length(idxs))-0.5)
+
+                    bk[firstcon:lastcon] = Mosek.MSK_BK_FX
+
+                    barvardim[barvarptr] = d
+                    Mosek.appendbarvars(m.task, Int32[d])
+
+                    conptr += n
+                    barvarptr += 1
+
+                    let i = firstcon
+                        for vj in 1:d
+                            for vi in vj:d
+                                cof = (if vj == vi 1.0 else 0.5 end )
+                                const matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
+                                Mosek.putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
+                                barconij[i] = i-firstcon+1
+                                i += 1
+                            end
+                        end
+                    end
+                    conslack[firstcon:lastcon] = -barvarptr
+                end
+            end
+
+            Mosek.putconboundslice(m.task,1,M+1,bk,-b,-b)
+        end
+    end
+
+
+    # Input objective
+    let lincidxs = find(j -> varmap[j] > 0 && abs(c[j]) > 1e-8,1:length(c)),
+        numcnz   = length(lincidxs),
+        barcidxs = find(j -> varmap[j] < 0 && abs(c[j]) > 1e-8,1:length(c)),
+        numbarcnz = length(barcidxs)
+
+        if numcnz > 0
+            Mosek.putclist(m.task,varmap[lincidxs],c[lincidxs])
+        end
+
+        if numbarcnz > 0
+            barvardim = Array(Int32,numbarvar+numbarcon)
+            n = numbarvar+numbarcon
+            barptr = zeros(Int,n+1)
+            for i in barcidxs
+                barptr[1-varmap[i]] += 1
+            end
+            for i in 1:n
+                barptr[i+1] += barptr[i]
+           end
+
+            barcsubi = Array(Int32,numbarcnz)
+            barcsubj = Array(Int32,numbarcnz)
+            barcval  = Array(Float64,numbarcnz)
+
+            for i in barcidxs
+                j = -varmap[i]
+                L = Mosek.getdimbarvarj(m.task,j)
+                barvardim[j] = L
+                ii,jj = lintriltoij(barvarij[i],L)
+                barcsubi[barptr[j]+1] = ii
+                barcsubj[barptr[j]+1] = jj
+                if ii != jj 
+                    barcval[barptr[j]+1]  = c[i]*0.5
+                else
+                    barcval[barptr[j]+1]  = c[i]
+                end
+                barptr[j] += 1
+            end
+
+            for i in length(barptr)-1:-1:1
+                barptr[i+1] = barptr[i]
+            end
+            barptr[1] = 0
+
+            for j in 1:length(barptr)-1
+                if barptr[j] < barptr[j+1]
+                    pb = barptr[j]+1
+                    pe = barptr[j+1]
+                    d = barvardim[j]
+
+                    const matidx = Mosek.appendsparsesymmat(m.task,
+                                                            d,
+                                                            barcsubi[pb:pe],
+                                                            barcsubj[pb:pe],
+                                                            barcval[pb:pe])
+                    Mosek.putbarcj(m.task,j,Int64[matidx],Float64[1.0])
+                end
+            end
+        end
+        setsense!(m.task, sense)
+    end
+
+
+    m.varbk      = varbk
+    m.numvar     = totnumvar # elements used in varmap
+    m.varmap     = varmap
+    m.barvarij   = barvarij
+    m.binvarflag = fill(false,m.numvar)
+
+    m.numcon     = totnumcon
+    m.conslack   = conslack
+    m.barconij   = barconij
+end
+
+function MathProgBase.writeproblem(m::MosekMathProgConicModel, filename::AbstractString)
+    Mosek.writedata(m.task,filename)
+end
+
+
+function MathProgBase.getsolution(m::MosekMathProgConicModel)
+    sol = getsoldef(m.task)
+    if sol < 0
+        throw(MosekMathProgModelError("No solution available"))
+    end
+
+    xx = Mosek.getxx(m.task,sol)
+    barx = [ Mosek.getbarxj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+
+    Float64[ if (m.varmap[i] > 0) xx[m.varmap[i]] else barx[-m.varmap[i]][m.barvarij[i]] end
+            for i in 1:m.numvar]
+end
+
+function MathProgBase.getreducedcosts(m::MosekMathProgConicModel)
+    sol = getsoldef(m.task)
+    if sol < 0 || sol == Mosek.MSK_SOL_ITG
+        throw(Mosek.MosekMathProgModelError("Solution not available"))
+    end
+    solsta = Mosek.getsolsta(m.task,sol)
+
+    if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
+                  Mosek.MSK_SOL_STA_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
+                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
+                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+        s = if sol == Mosek.MSK_SOL_ITR
+                Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol) - Mosek.getsnx(m.task,sol)
+            else
+                Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol)
+            end
+
+        bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+
+        Float64[if (m.varmap[i] > 0) s[m.varmap[i]] else bars[-m.varmap[i]][m.barvarij[i]] end
+                for i in 1:m.numvar]
+    else
+        throw(MosekMathProgModelError("No solution available"))
+    end
+end
+
+
+function getconstrsolution_internal(m::MosekMathProgConicModel)
+    sol = getsoldef(m.task)
+    if sol < 0
+        throw(Mosek.MosekMathProgModelError("No solution available"))
+    end
+
+    xc = Mosek.getxc(m.task,sol)
+    xx = Mosek.getxx(m.task,sol)
+    barx = [ Mosek.getbarxj(j) for j in 1:Mosek.getnumbarvar(m.task) ]
+
+    Float64[if     m.conslack[i] == 0 xc[i]
+            elseif m.conslack[i] >  0 xx[m.conslack[i]]
+            else                      barx[-m.conslack[i]][m.barconij[i]]
+            end
+            for i in 1:m.numcon]
+end
+
+function getvarduals_internal(m::MosekMathProgConicModel)
+    sol = getsoldef(m.task)
+    if sol < 0
+        throw(Mosek.MosekMathProgModelError("No solution available"))
+    elseif sol == Mosek.MSK_SOL_ITG
+        throw(Mosek.MosekMathProgModelError("No dual solution information available"))
+    end
+
+    s = Mosek.getslx(sol) - Mosek.getsux(sol) + Mosek.getsnx(sol)
+    bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+
+    Float64[ if (m.varmap[i] > 0) s[m.varmap[i]] else bars[-m.varmap[i]][m.barvarij[i]] end
+             for i in 1:m.numvar ]
+end
+
+
+function MathProgBase.getdual(m::MosekMathProgConicModel)
+    sol = getsoldef(m.task)
+    if sol < 0
+        throw(Mosek.MosekMathProgModelError("No solution available"))
+    elseif sol == Mosek.MSK_SOL_ITG
+        throw(Mosek.MosekMathProgModelError("No dual solution information available"))
+    end
+
+    y    = Mosek.gety(m.task,sol)
+    snx  = (if sol == Mosek.MSK_SOL_ITR
+              Mosek.getsnx(m.task,sol)
+            else
+              zeros(Float64,m.numvar)
+            end)
+
+    bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+
+    Float64[if     m.conslack[i] == 0 y[i]
+            elseif m.conslack[i] >  0 snx[m.conslack[i]]
+            else                      bars[-m.conslack[i]][m.barconij[i]]
+            end
+            for i in 1:m.numcon ]
+end
+
+
+
+
+
+MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
+
+MathProgBase.optimize!(m::MosekMathProgConicModel) = Mosek.optimize(m.task)
+
+MathProgBase.status(m::MosekMathProgConicModel) = status(m.task)
+
+MathProgBase.setsense!(m::MosekMathProgConicModel, sense) = setsense!(m.task,sense)
+
+MathProgBase.getobjbound(m::MosekMathProgConicModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_MIO_OBJ_BOUND)
+
+MathProgBase.getobjgap(m::MosekMathProgConicModel) = getobjgap(m::MosekMathProgConicModel)
+
+MathProgBase.getsolvetime(m::MosekMathProgConicModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_OPTIMIZER_TIME)
+
+MathProgBase.getrawsolver(m::MosekMathProgConicModel) = m.task
+
+MathProgBase.getsense(m::MosekMathProgConicModel) = getsense(m.task)
+MathProgBase.numvar(m::MosekMathProgConicModel)    = m.numvar
+MathProgBase.numconstr(m::MosekMathProgConicModel) = m.numcon
+
+function MathProgBase.freemodel!(m::MosekMathProgConicModel)
+    Mosek.deletetask(m.task)
+    m.task = C_NULL
+end
+
+
+# NOTE: We simply disregard any integer SDP vars.
+# NOTE: When setting :Bin, we *change* the domain of the variable to [0;1], irregardless what it was before.
+function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector{Symbol})
+    n = min(length(intvarflag),m.numvar)
+    if n > 0
+        all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
+
+        idxs        = find(i -> m.varmap[i] > 0,1:n) # indexes into intvarflag for non-PSD vars
+
+        newbk = Int32[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
+        newbl = Float64[0.0 for i in idxs ]
+        newbu = Float64[if (intvarflag[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
+        newvt = Int32[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflag ]
+
+        Mosek.putvartypelist(m.task,m.varmap[idxs],newvt)
+        Mosek.putvarboundlist(m.task,m.varmap[idxs],newbk,newbl,newbu)
+
+        m.binvarflag[idxs] = map(i -> intvarflag[i] == :Bin, idxs)
+    end
+end
+
+function MathProgBase.getvartype(m::MosekMathProgConicModel)
+    vartypes = [ if isbin :Bin else :Cont end for isbin in m.binvarflag[m.numvar]]
+    idxs = find(i -> m.varmap[i] > 0 && vartype[i] == :Cont, 1:m.numvar)
+    mskvartypes = Mosek.getvartypelist(m.task,m.varmap[idxs])
+    intvaridxs = find(i -> mskvartypes[i] == Mosek.MSK_VAR_TYPE_INT, 1:length(mskvartypes))
+    vartypes[intvaridxs] = :Int
+
+    vartypes
+end
 
 
 
@@ -27,7 +609,7 @@ msk_accepted_cones = [:Free,
 # vecsize
 #   Total number of scalar element (= numlin+numqconeelm+numsdpconeelm)
 #
-function countcones{Tis}(cones :: Array{@compat(Tuple{Symbol,Tis}),1})
+function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
     numsdpconeelm = 0 # total number of elements in all sdp cones
@@ -42,7 +624,7 @@ function countcones{Tis}(cones :: Array{@compat(Tuple{Symbol,Tis}),1})
         vecsize += length(idxs)
         
         if     sym == :SDP
-            n = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
+            n = round(Int32,sqrt(.25+2*length(idxs))-0.5)
             if n*(n+1)/2 != size(idxs,1) # does not define the lower triangular part of a square matrix
                 throw(MosekMathProgModelError("Invalid SDP cone definition"))
             end
@@ -138,16 +720,16 @@ ijtolintril(ii::Array{Int32,1}, jj::Array{Int32,1}, n::Int32) =
 
 #internal
 #  Parameters:
-# 
+#
 #  * d dimension of the matrix
 #  * Ls List of linear indexes into matrix (inplicitly defines subi,subj)
 #  * vs List of coefficient values
-# 
+#
 #  Toghether (Ls,vs) define subscripts and coefficients of the *full*
 #  matrix. We convert this and return the lower triangular only on
 #  (i,j,v)-form. Note that this means that all off-diagonal elements
 #  in vs are multiplied by 0.5.
-# 
+#
 function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
     if length(Ls) == 0
         Array(Int32,0),Array(Int32,0),Array(Float64,0)
@@ -157,13 +739,13 @@ function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
         nunique = 1
         for i in 2:length(perm)
             if Ls[perm[i-1]] < Ls[perm[i]]
-                nunique += 1                   
+                nunique += 1
             end
         end
         ii = zeros(Int32,  nunique)
         jj = zeros(Int32,  nunique)
         vv = zeros(Float64,nunique)
-        
+
         let # NOTE: See https://github.com/JuliaLang/julia/issues/9134
             i,j = lintriltoij(Ls[perm[1]],d)
             ii[1] = i
@@ -203,338 +785,3 @@ end
 
 
 
-
-function loadconicproblem!(m::MosekMathProgModel,c,A,b,constr_cones,var_cones) 
-    loadconicproblem!(m,
-                      convert(SparseMatrixCSC{Float64,Int},reshape(c,(length(c),1))),
-                      convert(SparseMatrixCSC{Float64,Int},A),
-                      convert(Array{Float64,1},b),
-                      convert(Array{@compat(Tuple{Symbol,Any}),1},constr_cones),
-                      convert(Array{@compat(Tuple{Symbol,Any}),1},var_cones))
-end
-
-
-function loadconicproblem!(m::MosekMathProgModel,
-                           c::SparseMatrixCSC{Float64,Int},
-                           A::SparseMatrixCSC{Float64,Int},
-                           b::Array{Float64,1},
-                           constr_cones::Array{@compat(Tuple{Symbol,Any}),1},
-                           var_cones   ::Array{@compat(Tuple{Symbol,Any}),1})
-    # check data
-    const N = c.m
-    const M = length(b)
-
-    if M != A.m || N != A.n || c.n != 1
-        throw(MosekMathProgModelError("Invalid data dimensions"))
-    end
-
-    (numqcvar,numbarvar,numlinvarelm,numqcvarelm,numbarvarelm,totnumvar) = countcones(var_cones)
-    (numqccon,numbarcon,numlinconelm,numqcconelm,numbarconelm,totnumcon) = countcones(constr_cones)
-
-    # clear task data
-    resizetask(m.task,0,0,0,0,0)
-    putcfix(m.task,0.0)
-
-    # allocate necessary variables and cons, reserve space for cones and barvars
-    appendvars(m.task,numlinvarelm+numqcvarelm + numqcconelm)
-    appendcons(m.task,totnumcon)
-    putmaxnumcone(m.task,numqcvar+numqccon)
-    putmaxnumbarvar(m.task,numbarvar+numbarcon)
-
-    m.probtype =
-      if     any(v -> first(v) in [:SDP],            var_cones)    MosekMathProgModel_SDP
-      elseif any(v -> first(v) in [:SDP],            constr_cones) MosekMathProgModel_SDP
-      elseif any(v -> first(v) in [:SOC,:SOCrotated],var_cones)    MosekMathProgModel_SOCP
-      elseif any(v -> first(v) in [:SOC,:SOCrotated],constr_cones) MosekMathProgModel_SOCP
-      else                                                         MosekMathProgModel_LINR
-      end
-
-    varmap     = Array(Int32,totnumvar) # nonnegative refer to linear vars, negative to barvars
-
-    barvarij   = zeros(Int64,totnumvar)
-    barvardim  = zeros(Int32,numbarvar+numbarcon)
-
-    linvarptr = 1
-    barvarptr = 1
-
-    let nvar = numlinvarelm+numqcvarelm
-        bk = Array(Int32,nvar)
-        for (sym,idxs_) in var_cones
-            idxs = convert(Vector{Int32},collect(idxs_))
-
-            n = length(idxs)
-            if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
-                first = linvarptr
-                last  = linvarptr+n-1
-                linvarptr += n
-
-                varmap[idxs] = first:last
-
-                bk[first:last] =
-                   if     sym == :Free   MSK_BK_FR
-                   elseif sym == :Zero   MSK_BK_FX
-                   elseif sym == :NonNeg MSK_BK_LO
-                   elseif sym == :NonPos MSK_BK_UP
-                   end
-            elseif sym in [ :SOC, :SOCRotated ]
-                first = linvarptr
-                last  = linvarptr+n-1
-                linvarptr += n
-
-                varmap[idxs] = Int32[first:last;]
-
-                bk[first:last] = MSK_BK_FR
-                if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, idxs)
-                elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, idxs)
-                end                
-            elseif sym == :SDP
-                d = @compat(round(Int32,sqrt(.25+2*length(idxs))-0.5))
-                trilsz = length(idxs)
-                barvardim[barvarptr] = d
-                appendbarvars(m.task, Int32[d])
-                varmap[idxs] = -barvarptr
-                barvarij[idxs] = Int64[1:trilsz;]
-                barvarptr += 1
-            end
-        end
-        bx = zeros(Float64,nvar)
-        putvarboundslice(m.task,1,nvar+1,bk,bx,bx)
-    end
-
-    conslack = zeros(Int32,M) # 0 means no slack, positive means linear var, negative means semidefinite slack
-    barconij = zeros(Int64,M)
-    conmap = Int32[1:M;]
-    begin # add model constraints
-        # Split A into linear and semidefinite columns
-        nlinnz = 0
-        for ci in 1:length(A.colptr)-1 # count linear nonzeros
-            if (varmap[ci] >= 0) nlinnz += A.colptr[ci+1]-A.colptr[ci]  end
-        end
-        nbarnz = nnz(A)-nlinnz
-
-        asubi = zeros(Int32,nlinnz)
-        asubj = zeros(Int32,nlinnz)
-        acof  = zeros(Float64,nlinnz)
-
-        barasubi = zeros(Int32,nbarnz)
-        barasubj = zeros(Int32,nbarnz)
-        barvij   = zeros(Int64,nbarnz)
-        baracof  = zeros(Float64,nbarnz)
-
-        let ptr      = 1,
-            barptr   = 1
-            for ci in 1:A.n
-                let n = A.colptr[ci+1]-A.colptr[ci]
-                    if varmap[ci] > 0
-                        asubi[ptr:ptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
-                        asubj[ptr:ptr+n-1] = varmap[ci]
-                        acof[ptr:ptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
-
-                        ptr += n
-                    else
-                        barasubi[barptr:barptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
-                        barasubj[barptr:barptr+n-1] = -varmap[ci]
-                        barvij[barptr:barptr+n-1]   = barvarij[ci]
-                        baracof[barptr:barptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
-
-                        barptr += n
-                    end
-                end
-            end
-        end
-
-        # Add linear part
-        # NOTE: Since the conic API uses the form (b-Ax < K) we use -acof.
-
-        let At = sparse(asubj,asubi,-acof,numlinvarelm+numqcvarelm,M)
-            putarowslice(m.task,1,M+1,At)
-        end
-
-        # Add sdp part
-        if nbarnz > 0
-            let perm = sortperm(barasubi),
-                # NOTE on perm: by default sortperm is stable. Since we
-                # barsubi/barsubj to be sorted by barsubj (by construction
-                # from column-packed format), perm will be sorted
-                # primarily by barasubi and secondarily by barasubj.
-                nbarnz = length(barasubi)
-
-                local k    = 1
-
-                while k <= nbarnz
-                    let i = barasubi[perm[k]],
-                        j = barasubj[perm[k]]
-
-                        let b = k
-                            k += 1
-                            while k <= nbarnz && barasubi[perm[k]] == i && barasubj[perm[k]] == j
-                                k += 1
-                            end
-
-                            matidx =
-                                let d = barvardim[j]
-                                    ii,jj,vv = lintriltoijv(barvij[perm[b:k-1]],baracof[perm[b:k-1]],d)
-                                    appendsparsesymmat(m.task,barvardim[j], ii,jj,vv)
-                                end
-                            # NOTE: Since the conic API uses the form (b-Ax < K) we use the weight -1.0.
-                            putbaraij(m.task, i,j,Int64[matidx],Float64[-1.0])
-                        end
-                    end
-                end
-            end
-        end
-
-        # Add bounds and slacks
-        let bk = Array(Int32,M)
-            local conptr = 1
-
-            for (sym,idxs_) in constr_cones
-                idxs = convert(Vector{Int32},collect(idxs_))
-                local n = length(idxs)
-                if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
-                    firstcon = conptr
-                    lastcon  = conptr+n-1
-                    conptr += n
-
-                    conslack[idxs] = 0 # no slack
-
-                    bk[idxs] =
-                      if     sym == :Free   MSK_BK_FR
-                      elseif sym == :Zero   MSK_BK_FX
-                      elseif sym == :NonNeg MSK_BK_LO
-                      elseif sym == :NonPos MSK_BK_UP
-                      end
-                elseif sym in [ :SOC, :SOCRotated ]
-                    firstcon   = conptr
-                    lastcon    = conptr+n-1
-                    firstslack = linvarptr
-                    lastslack  = linvarptr+n-1
-                    conptr += n
-                    linvarptr += n
-
-                    conslack[idxs] = firstslack:lastslack # no slack
-                    bk[idxs] = MSK_BK_FX
-
-                    # Append a variable vector s and make it conic
-                    # Then add slacks to the rows: b-Ax - s = 0, s in C
-                    local bx = zeros(Float64,n)
-                    putvarboundslice(m.task,firstslack,lastslack+1,Int32[MSK_BK_FR for i in 1:n],bx,bx)
-                    putaijlist(m.task,Int32[firstcon:lastcon;],Int32[firstslack:lastslack;],-ones(Float64,n))
-                    if     sym == :SOC        appendcone(m.task, MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
-                    elseif sym == :SOCRotated appendcone(m.task, MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
-                    end
-                elseif sym == :SDP
-                    firstcon   = conptr
-                    lastcon    = conptr+n-1
-                    barslackj  = barvarptr
-                    d = int32(sqrt(.25+2*length(idxs))-0.5)
-
-                    bk[firstcon:lastcon] = MSK_BK_FX
-
-                    barvardim[barvarptr] = d
-                    appendbarvars(m.task, Int32[d])
-
-                    conptr += n
-                    barvarptr += 1
-
-                    let i = firstcon
-                        for vj in 1:d
-                            for vi in vj:d
-                                cof = (if vj == vi 1.0 else 0.5 end )
-                                const matidx = appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
-                                putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
-                                barconij[i] = i-firstcon+1
-                                i += 1
-                            end
-                        end
-                    end
-                    conmap[firstcon:lastcon] = -barvarptr
-                end
-            end
-
-            putconboundslice(m.task,1,M+1,bk,-b,-b)
-        end
-    end
-
-
-    # Input objective
-    let numcnz    = count(j -> varmap[j] > 0,c.rowval),
-        numbarcnz = length(c.rowval) - numcnz
-
-        if numbarcnz == 0
-            putclist(m.task,varmap[c.rowval],c.nzval)
-        else
-            lptr   = 1
-            barptr = 1
-
-            linidxs = find(j -> varmap[j] > 0, c.rowval)
-            baridxs = find(j -> varmap[j] < 0, c.rowval)
-
-            csub    = varmap[c.rowval[linidxs]]
-            cval    = c.nzval[linidxs]
-            barcsub = -varmap[c.rowval[baridxs]]
-            barcij  = barvarij[c.rowval[baridxs]]
-            barcval = c.nzval[baridxs]
-
-            putclist(m.task,csub,cval)
-
-            perm = sortperm(barcsub)
-            k = 0
-            while k < numbarcnz
-                k += 1
-                let b = k,
-                    j = barcsub[perm[k]],
-                    d = barvardim[j]
-                    k += 1
-                    while (k <= numbarcnz && barcsub[perm[k]] == j) k += 1 end
-
-                    ii,jj,vv = lintriltoijv(barcij[perm[b:k-1]],barcval[perm[b:k-1]],d)
-                    const matidx = appendsparsesymmat(m.task,d,ii,jj,vv)
-                    putbarcj(m.task,j,Int64[matidx],Float64[1.0])
-                end
-            end
-        end
-        putobjsense(m.task, MSK_OBJECTIVE_SENSE_MINIMIZE)
-    end
-
-    m.probtype =
-      if     numbarvar+numbarcon > 0 MosekMathProgModel_SDP
-      elseif numqcvar+numqccon   > 0 MosekMathProgModel_SOCP
-      else                           MosekMathProgModel_LINR
-      end
-
-    m.numvar     = totnumvar # elements used in varmap
-    m.varmap     = varmap
-    m.barvarij   = barvarij
-    m.numbarvar  = numbarvar
-    m.barvarmap  = Int32[] # barvars that appear in the linear variable are not accessable through the low level interface
-    m.binvarflag = fill(false,m.numvar)
-
-    m.numcon     = totnumcon
-    m.conmap     = conmap
-    m.conslack   = conslack
-    m.barconij   = barconij
-end
-
-
-# this is the same as getconstrduals, except that it accepts cert. of primal infeasibility too
-function getconicdual(m::MosekMathProgModel)
-    soldef = getsoldef(m)
-    if soldef < 0 throw(MosekMathProgModelError("No solution available")) end
-
-    solsta = getsolsta(m.task,soldef)
-
-    if solsta in [MSK_SOL_STA_OPTIMAL,
-                  MSK_SOL_STA_DUAL_FEAS,
-                  MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_OPTIMAL,
-                  MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS,
-                  # certificate, near certificate
-                  MSK_SOL_STA_PRIM_INFEAS_CER,
-                  MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
-        getcondual(m,soldef)
-    else
-        throw(MosekMathProgModelError("No solution available"))
-    end
-end

@@ -85,7 +85,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
         end
     end
 
-    return @compat(Int32(0))::Int32
+    return Int32(0)::Int32
 end
 
 function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
