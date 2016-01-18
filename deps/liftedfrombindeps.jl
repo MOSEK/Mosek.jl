@@ -1,4 +1,3 @@
-using Compat
 # Blatantly lifted from BinDeps.jl because for some reason the build
 # script sometimes cannot find BinDeps.
 # @windows_only unpack_cmd has been modified to use zip in addition to 7z.
