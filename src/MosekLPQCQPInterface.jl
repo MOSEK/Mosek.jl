@@ -662,7 +662,7 @@ MathProgBase.setsense!(m::MosekLinearQuadraticModel,sense) = setsense!(m.task,se
 
 function MathProgBase.freemodel!(m::MosekLinearQuadraticModel)
     Mosek.deletetask(m.task)
-    m.task = C_NULL
+    nothing
 end
 
 MathProgBase.numvar(m::MosekLinearQuadraticModel) = m.numvar
