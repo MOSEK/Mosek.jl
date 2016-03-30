@@ -554,7 +554,7 @@ MathProgBase.numconstr(m::MosekMathProgConicModel) = m.numcon
 
 function MathProgBase.freemodel!(m::MosekMathProgConicModel)
     Mosek.deletetask(m.task)
-    m.task = C_NULL
+    nothing
 end
 
 
