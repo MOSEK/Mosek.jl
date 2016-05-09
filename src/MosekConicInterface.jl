@@ -37,7 +37,7 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     # Index of slack variables for conic constraints.
     #   conslack[UserConIndex] = 0 => No slack, constraint is linear
     #   conslack[UserConIndex] > 0 => Slack is linear variable (maps to MosekVarIndex)
-    #   conslack[UserConIndex] > 0 => Slack is PSD variable (maps to MosekBarvarIndex).
+    #   conslack[UserConIndex] < 0 => Slack is PSD variable (maps to MosekBarvarIndex).
     #                                 In this case barconij[UserConIndex] maps to the
     #                                 linear index of the element in barvar.
     conslack :: Array{Int32,1}
@@ -326,9 +326,6 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     barvardim[barvarptr] = d
                     Mosek.appendbarvars(m.task, Int32[d])
 
-                    conptr += n
-                    barvarptr += 1
-
                     let i = firstcon
                         for vj in 1:d
                             for vi in vj:d
@@ -341,6 +338,9 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                         end
                     end
                     conslack[firstcon:lastcon] = -barvarptr
+                    
+                    conptr += n
+                    barvarptr += 1
                 end
             end
 
