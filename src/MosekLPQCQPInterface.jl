@@ -496,8 +496,6 @@ function MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
     Mosek.putarow(m.task,m.numcon,subj,val)
 end
 
-MathProgBase.updatemodel!(m::MosekLinearQuadraticModel) = nothing
-
 MathProgBase.numlinconstr(m::MosekLinearQuadraticModel) = length(m.lincon)
 
 MathProgBase.getobjval(m::MosekLinearQuadraticModel) = getobjval(m.task)
@@ -1224,7 +1222,6 @@ MathProgBase.setconstrUB!(m::MosekNonlinearModel, bnd::Array{Float64,1}) = MathP
 #MathProgBase.addvar!(m::MosekNonlinearModel,bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
 #MathProgBase.addvar!(m::MosekNonlinearModel,subi::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
 #MathProgBase.addconstr!(m::MosekNonlinearModel,subj::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64) = MathProgBase.addconstr!(m.m)
-MathProgBase.updatemodel!(m::MosekNonlinearModel)                        = MathProgBase.updatemodel!(m.m)
 #MathProgBase.numlinconstr(m::MosekNonlinearModel) = MathProgBase.numlinconstr(m.m)
 MathProgBase.getobjval(m::MosekNonlinearModel)                           = MathProgBase.getobjval(m.m)
 MathProgBase.getsolution(m::MosekNonlinearModel)                         = MathProgBase.getsolution(m.m)
