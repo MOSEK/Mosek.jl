@@ -329,7 +329,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     let i = firstcon
                         for vj in 1:d
                             for vi in vj:d
-                                cof = (if vj == vi 1.0 else 0.5 end )
+                                cof = (vj == vi) ? 1.0 : 1/sqrt(2)
                                 const matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
                                 Mosek.putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
                                 barconij[i] = i-firstcon+1
@@ -368,12 +368,11 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
             end
             for i in 1:n
                 barptr[i+1] += barptr[i]
-           end
+            end
 
             barcsubi = Array(Int32,numbarcnz)
             barcsubj = Array(Int32,numbarcnz)
             barcval  = Array(Float64,numbarcnz)
-
             for i in barcidxs
                 j = -varmap[i]
                 L = Mosek.getdimbarvarj(m.task,j)
@@ -381,8 +380,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 ii,jj = lintriltoij(barvarij[i],L)
                 barcsubi[barptr[j]+1] = ii
                 barcsubj[barptr[j]+1] = jj
-                if ii != jj 
-                    barcval[barptr[j]+1]  = c[i]*0.5
+                if ii != jj
+                    barcval[barptr[j]+1]  = c[i]/sqrt(2)
                 else
                     barcval[barptr[j]+1]  = c[i]
                 end
@@ -437,11 +436,27 @@ function MathProgBase.getsolution(m::MosekMathProgConicModel)
 
     xx = Mosek.getxx(m.task,sol)
     barx = [ Mosek.getbarxj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+    # rescale primal solution to svec form
+    for j in 1:Mosek.getnumbarvar(m.task)
+        L = Mosek.getdimbarvarj(m.task,j)
+        r = 0
+        for k in 1:L
+            for i in k:L
+                r += 1
+                if i != k
+                    barx[j][r] *= sqrt(2)
+                end
+            end
+        end
+    end
 
     Float64[ if (m.varmap[i] > 0) xx[m.varmap[i]] else barx[-m.varmap[i]][m.barvarij[i]] end
             for i in 1:m.numvar]
 end
 
+# This method is not part of the MathProgBase conic interface
+# and likely gives incorrect answers.
+# See https://github.com/JuliaOpt/MathProgBase.jl/issues/84
 function MathProgBase.getreducedcosts(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
     if sol < 0 || sol == Mosek.MSK_SOL_ITG
@@ -520,6 +535,19 @@ function MathProgBase.getdual(m::MosekMathProgConicModel)
             end)
 
     bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+    # rescale dual solution to svec form
+    for j in 1:Mosek.getnumbarvar(m.task)
+        L = Mosek.getdimbarvarj(m.task,j)
+        r = 0
+        for k in 1:L
+            for i in k:L
+                r += 1
+                if i != k
+                    bars[j][r] *= sqrt(2)
+                end
+            end
+        end
+    end
 
     Float64[if     m.conslack[i] == 0 y[i]
             elseif m.conslack[i] >  0 snx[m.conslack[i]]
@@ -728,7 +756,7 @@ ijtolintril(ii::Array{Int32,1}, jj::Array{Int32,1}, n::Int32) =
 #  Toghether (Ls,vs) define subscripts and coefficients of the *full*
 #  matrix. We convert this and return the lower triangular only on
 #  (i,j,v)-form. Note that this means that all off-diagonal elements
-#  in vs are multiplied by 0.5.
+#  in vs are multiplied by sqrt(2).
 #
 function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
     if length(Ls) == 0
@@ -753,7 +781,7 @@ function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
             if i == j
                 vv[1] = vs[perm[1]]
             else
-                vv[1] = 0.5 * vs[perm[1]]
+                vv[1] = vs[perm[1]]/sqrt(2)
             end
         end
         k = 1
@@ -762,7 +790,7 @@ function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
                 if ii[k] == jj[k]
                     vv[k] += vs[perm[i]]
                 else
-                    vv[k] += 0.5*vs[perm[i]]
+                    vv[k] += vs[perm[i]]/sqrt(2)
                 end
             else
                 k += 1
@@ -773,7 +801,7 @@ function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
                     if vi == vj
                         vv[k] = vs[perm[i]]
                     else
-                        vv[k] = 0.5*vs[perm[i]]
+                        vv[k] = vs[perm[i]]/sqrt(2)
                     end
                 end
             end
