@@ -301,30 +301,30 @@ function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
 
     for i in 1:n
         if bnd[i] > -Inf
-            if m.buc[i] < Inf
-                if abs(bnd[i]-m.buc[i]) < 1e-8
-                    m.bkc[i] = Mosek.MSK_BK_FX
-                    m.blc[i] = m.buc[i]
-                    m.buc[i] = m.buc[i]
+            if m.buc[m.lincon[i]] < Inf
+                if abs(bnd[i]-m.buc[m.lincon[i]]) < 1e-8
+                    m.bkc[m.lincon[i]] = Mosek.MSK_BK_FX
+                    m.blc[m.lincon[i]] = m.buc[m.lincon[i]]
+                    m.buc[m.lincon[i]] = m.buc[m.lincon[i]]
                 else
-                    m.bkc[i] = Mosek.MSK_BK_RA
-                    m.blc[i] = bnd[i]
+                    m.bkc[m.lincon[i]] = Mosek.MSK_BK_RA
+                    m.blc[m.lincon[i]] = bnd[i]
                 end
-            else # buc[i] == Inf
-                m.bkc[i] = Mosek.MSK_BK_LO
-                m.blc[i] = bnd[i]
+            else # buc[m.lincon[i]] == Inf
+                m.bkc[m.lincon[i]] = Mosek.MSK_BK_LO
+                m.blc[m.lincon[i]] = bnd[i]
             end
-        else # bnd[i] == -Inf
-            if m.buc[i] < Inf
-                m.bkc[i] = Mosek.MSK_BK_UP
+        else # bnd[m.lincon[i]] == -Inf
+            if m.buc[m.lincon[i]] < Inf
+                m.bkc[m.lincon[i]] = Mosek.MSK_BK_UP
             else
-                m.bkc[i] = Mosek.MSK_BK_FR
+                m.bkc[m.lincon[i]] = Mosek.MSK_BK_FR
             end
-            m.blc[i] = -Inf
+            m.blc[m.lincon[i]] = -Inf
         end
     end
 
-    Mosek.putconboundslice(m.task,1,n+1,m.bkc,m.blc,m.buc)
+    Mosek.putconboundslice(m.task,Int32(1),Int32(m.numcon+1),m.bkc,m.blc,m.buc)
 
     nothing
 end
@@ -358,7 +358,7 @@ function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
         end
     end
 
-    Mosek.putconboundlist(m.task,m.lincon[1:n],m.bkc,m.blc,m.buc)
+    Mosek.putconboundslice(m.task,Int32(1),Int32(m.numcon+1),m.bkc,m.blc,m.buc)
 
     nothing
 end
