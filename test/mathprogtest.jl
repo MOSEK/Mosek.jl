@@ -23,4 +23,7 @@ coniclineartest(solver,duals=true)
 conicSOCtest(solver,duals=true)
 conicSDPtest(solver,duals=true)
 
+linprogsolvertest(solver)
+linprogsolvertestextra(solver)
+
 end
