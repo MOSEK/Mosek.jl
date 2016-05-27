@@ -8,7 +8,6 @@ module Mosek
     error("Mosek not properly installed. Please run Pkg.build(\"Mosek\")")
   end
 
-  using Compat
   import MathProgBase
 
 

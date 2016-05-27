@@ -24,6 +24,7 @@ conicSOCtest(solver,duals=true)
 conicSDPtest(solver,duals=true)
 
 linprogsolvertest(solver)
-linprogsolvertestextra(solver)
+
+# linprogsolvertestextra(solver)
 
 end

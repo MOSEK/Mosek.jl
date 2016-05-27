@@ -32,7 +32,7 @@ function msk_info_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: I
   iinfa  = pointer_to_array(intinf,(MSK_IINF_END,),false)
   liinfa = pointer_to_array(lintinf,(MSK_LIINF_END,),false)
 
-  r = f(@compat(Int32(where)), dinfa, iinfa, liinfa)
+  r = f(Int32(where), dinfa, iinfa, liinfa)
   convert(Int32,r)::Int32
 end
 
