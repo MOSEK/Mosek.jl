@@ -40,7 +40,7 @@ usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
 mskbindir =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
     if  usepreinstalled && haskey(ENV,"MOSEKBINDIR")
-        ENV["MOSEKBINDIR"],idxs
+        ENV["MOSEKBINDIR"]
     elseif ! usepreinstalled && haskey(ENV,"MOSEK_7_1_BINDIR")
         ENV["MOSEK_7_1_BINDIR"]
 # 2a. Otherwise, use the default installation path (Linux)
