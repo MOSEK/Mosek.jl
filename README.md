@@ -47,7 +47,7 @@ If the Mosek.jl installer fetched and installed the MOSEK distro, it cannot auto
 ```
 Pkg.rm("Mosek") ; Pkg.add("Mosek") ; Pkg.build("Mosek")
 ```
-If this is not desirable (e.g. because other packages depend on Mosek), you can remote the temporary files from the Mosek.jl installation. On Unix this is usually
+If this is not desirable (e.g. because other packages depend on Mosek), you can remove the temporary files from the Mosek.jl installation. On Unix this is usually
 ```
 rm -f ~/.julia/Mosek/downloads/*
 ```
