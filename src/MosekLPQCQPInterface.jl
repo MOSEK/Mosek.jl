@@ -171,9 +171,9 @@ function MathProgBase.writeproblem(m::MosekLinearQuadraticModel, filename::Abstr
 end
 
 function MathProgBase.getvarLB(m::MosekLinearQuadraticModel)
-    bk,bu,bl = Mosek.getvarboundslice(m.task,1,m.numvar+1)
+    bk,bl,bu = Mosek.getvarboundslice(m.task,1,m.numvar+1)
     for i in 1:length(bk)
-        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_UP
+        if bk[i] == Mosek.MSK_BK_FR || bk[i] == Mosek.MSK_BK_UP
             bl[i] = -Inf
         end
     end
@@ -181,9 +181,9 @@ function MathProgBase.getvarLB(m::MosekLinearQuadraticModel)
 end
 
 function MathProgBase.getvarUB(m::MosekLinearQuadraticModel)
-    bk,bu,bl = Mosek.getvarboundslice(m.task,1,m.numvar+1)
+    bk,bl,bu = Mosek.getvarboundslice(m.task,1,m.numvar+1)
     for i in 1:length(bk)
-        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_LO
+        if bk[i] == Mosek.MSK_BK_FR || bk[i] == Mosek.MSK_BK_LO
             bu[i] = Inf
         end
     end
@@ -191,9 +191,9 @@ function MathProgBase.getvarUB(m::MosekLinearQuadraticModel)
 end
 
 function MathProgBase.getconstrLB(m::MosekLinearQuadraticModel)
-    bk,bu,bl = Mosek.getconboundslice(m.task,1,m.numcon+1)
+    bk,bl,bu = Mosek.getconboundslice(m.task,1,m.numcon+1)
     for i in 1:length(bk)
-        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_UP
+        if bk[i] == Mosek.MSK_BK_FR || bk[i] == Mosek.MSK_BK_UP
             bl[i] = -Inf
         end
     end
@@ -201,9 +201,9 @@ function MathProgBase.getconstrLB(m::MosekLinearQuadraticModel)
 end
 
 function MathProgBase.getconstrUB(m::MosekLinearQuadraticModel)
-    bk,bu,bl = Mosek.getconboundslice(m.task,1,m.numcon+1)
+    bk,bl,bu = Mosek.getconboundslice(m.task,1,m.numcon+1)
     for i in 1:length(bk)
-        if bk == Mosek.MSK_BK_FR || bk == Mosek.MSK_BK_LO
+        if bk[i] == Mosek.MSK_BK_FR || bk[i] == Mosek.MSK_BK_LO
             bu[i] = Inf
         end
     end
@@ -300,31 +300,32 @@ function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
     n = min(length(bnd),length(m.lincon))
 
     for i in 1:n
+        bk = m.bkc[m.lincon[i]]
         if bnd[i] > -Inf
-            if m.buc[i] < Inf
-                if abs(bnd[i]-m.buc[i]) < 1e-8
-                    m.bkc[i] = Mosek.MSK_BK_FX
-                    m.blc[i] = m.buc[i]
-                    m.buc[i] = m.buc[i]
+            if bk == Mosek.MSK_BK_UP || bk == Mosek.MSK_BK_RA || bk == Mosek.MSK_BK_FX
+                if abs(bnd[i]-m.buc[m.lincon[i]]) < 1e-8
+                    m.bkc[m.lincon[i]] = Mosek.MSK_BK_FX
+                    m.blc[m.lincon[i]] = m.buc[m.lincon[i]]
+                    m.buc[m.lincon[i]] = m.buc[m.lincon[i]]
                 else
-                    m.bkc[i] = Mosek.MSK_BK_RA
-                    m.blc[i] = bnd[i]
+                    m.bkc[m.lincon[i]] = Mosek.MSK_BK_RA
+                    m.blc[m.lincon[i]] = bnd[i]
                 end
-            else # buc[i] == Inf
-                m.bkc[i] = Mosek.MSK_BK_LO
-                m.blc[i] = bnd[i]
+            else # buc[m.lincon[i]] == Inf
+                m.bkc[m.lincon[i]] = Mosek.MSK_BK_LO
+                m.blc[m.lincon[i]] = bnd[i]
             end
-        else # bnd[i] == -Inf
-            if m.buc[i] < Inf
-                m.bkc[i] = Mosek.MSK_BK_UP
+        else # bnd[m.lincon[i]] == -Inf
+            if bk == Mosek.MSK_BK_UP || bk == Mosek.MSK_BK_RA || bk == Mosek.MSK_BK_FX
+                m.bkc[m.lincon[i]] = Mosek.MSK_BK_UP
             else
-                m.bkc[i] = Mosek.MSK_BK_FR
+                m.bkc[m.lincon[i]] = Mosek.MSK_BK_FR
             end
-            m.blc[i] = -Inf
+            m.blc[m.lincon[i]] = -Inf
         end
     end
 
-    Mosek.putconboundslice(m.task,1,n+1,m.bkc,m.blc,m.buc)
+    Mosek.putconboundslice(m.task,Int32(1),Int32(m.numcon+1),m.bkc,m.blc,m.buc)
 
     nothing
 end
@@ -334,12 +335,12 @@ function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
     n = min(length(bnd),m.numcon)
 
     for i in 1:n
+        bk = m.bkc[m.lincon[i]]
         if bnd[i] < Inf
-            if m.blc[m.lincon[i]] > -Inf
+            if bk == Mosek.MSK_BK_LO || bk == Mosek.MSK_BK_RA || bk == Mosek.MSK_BK_FX
                 if abs(bnd[i]-m.blc[m.lincon[i]]) < 1e-8
                     m.bkc[m.lincon[i]] = Mosek.MSK_BK_FX
-                    m.blc[m.lincon[i]] = m.blc[i]
-                    m.buc[m.lincon[i]] = m.blc[i]
+                    m.buc[m.lincon[i]] = m.blc[m.lincon[i]]
                 else
                     m.bkc[m.lincon[i]] = Mosek.MSK_BK_RA
                     m.buc[m.lincon[i]] = bnd[i]
@@ -349,16 +350,15 @@ function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
                 m.buc[m.lincon[i]] = bnd[i]
             end
         else # bnd[i] == Inf
-            if m.blc[m.lincon[i]] > -Inf
+            if bk == Mosek.MSK_BK_LO || bk == Mosek.MSK_BK_RA || bk == Mosek.MSK_BK_FX
                 m.bkc[m.lincon[i]] = Mosek.MSK_BK_LO
             else
                 m.bkc[m.lincon[i]] = Mosek.MSK_BK_FR
             end
-            m.blc[m.lincon[i]] = -Inf
+            m.buc[m.lincon[i]] = Inf
         end
     end
-
-    Mosek.putconboundlist(m.task,m.lincon[1:n],m.bkc,m.blc,m.buc)
+    Mosek.putconboundslice(m.task,Int32(1),Int32(m.numcon+1),m.bkc,m.blc,m.buc)
 
     nothing
 end
@@ -432,6 +432,7 @@ function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
 
     Mosek.appendvars(m.task,1);
     Mosek.putvarbound(m.task,m.numvar,m.bkx[m.numvar],m.blx[m.numvar],m.bux[m.numvar])
+    Mosek.putcj(m.task,m.numvar,c)
     push!(m.binvarflags,false)
 end
 
@@ -495,8 +496,6 @@ function MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
     Mosek.putconbound(m.task,m.numcon,m.bkc[m.numcon],m.blc[m.numcon],m.buc[m.numcon])
     Mosek.putarow(m.task,m.numcon,subj,val)
 end
-
-MathProgBase.updatemodel!(m::MosekLinearQuadraticModel) = nothing
 
 MathProgBase.numlinconstr(m::MosekLinearQuadraticModel) = length(m.lincon)
 
@@ -662,7 +661,7 @@ MathProgBase.setsense!(m::MosekLinearQuadraticModel,sense) = setsense!(m.task,se
 
 function MathProgBase.freemodel!(m::MosekLinearQuadraticModel)
     Mosek.deletetask(m.task)
-    m.task = C_NULL
+    nothing
 end
 
 MathProgBase.numvar(m::MosekLinearQuadraticModel) = m.numvar
@@ -1224,7 +1223,6 @@ MathProgBase.setconstrUB!(m::MosekNonlinearModel, bnd::Array{Float64,1}) = MathP
 #MathProgBase.addvar!(m::MosekNonlinearModel,bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
 #MathProgBase.addvar!(m::MosekNonlinearModel,subi::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
 #MathProgBase.addconstr!(m::MosekNonlinearModel,subj::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64) = MathProgBase.addconstr!(m.m)
-MathProgBase.updatemodel!(m::MosekNonlinearModel)                        = MathProgBase.updatemodel!(m.m)
 #MathProgBase.numlinconstr(m::MosekNonlinearModel) = MathProgBase.numlinconstr(m.m)
 MathProgBase.getobjval(m::MosekNonlinearModel)                           = MathProgBase.getobjval(m.m)
 MathProgBase.getsolution(m::MosekNonlinearModel)                         = MathProgBase.getsolution(m.m)

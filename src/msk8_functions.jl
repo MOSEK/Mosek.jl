@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.0.0.12
+# MOSEK 8.0.0.28
 
 export
   analyzenames,
@@ -11,7 +11,6 @@ export
   appendconesseq,
   appendcons,
   appendsparsesymmat,
-  appendstat,
   appendvars,
   basiscond,
   bktostr,
@@ -70,6 +69,7 @@ export
   getdouinf,
   getdouparam,
   getdualobj,
+  getdualsolutionnorms,
   getdviolbarvar,
   getdviolcon,
   getdviolcones,
@@ -113,6 +113,7 @@ export
   getobjsense,
   getparamname,
   getprimalobj,
+  getprimalsolutionnorms,
   getprobtype,
   getprosta,
   getpviolbarvar,
@@ -150,8 +151,6 @@ export
   gettasknamelen,
   getvarbound,
   getvarboundslice,
-  getvarbranchdir,
-  getvarbranchpri,
   getvarname,
   getvarnameindex,
   getvarnamelen,
@@ -170,7 +169,6 @@ export
   isstrparname,
   linkfiletostream,
   onesolutionsummary,
-  optimizeconcurrent,
   optimizersummary,
   optimize,
   primalrepair,
@@ -245,7 +243,6 @@ export
   putvarbound,
   putvarboundlist,
   putvarboundslice,
-  putvarbranchorder,
   putvarname,
   putvartype,
   putvartypelist,
@@ -255,7 +252,6 @@ export
   putxxslice,
   puty,
   putyslice,
-  readbranchpriorities,
   readdata,
   readdataformat,
   readparamfile,
@@ -272,17 +268,15 @@ export
   solutiondef,
   solutionsummary,
   solvewithbasis,
-  startstat,
-  stopstat,
   strtoconetype,
   strtosk,
   updatesolutioninfo,
-  writebranchpriorities,
   writedata,
   writejsonsol,
   writeparamfile,
   writesolution,
   writetask,
+  checkinall,
   checkinlicense,
   checkoutlicense,
   echointro,
@@ -290,7 +284,6 @@ export
   getversion,
   licensecleanup,
   linkfiletostream,
-  putkeepdlls,
   putlicensecode,
   putlicensedebug,
   putlicensepath,
@@ -378,14 +371,6 @@ function appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Array{Int32},su
     throw(MosekError(res,msg))
   end
   (convert(Int64,idx_[1]+1))
-end
-
-function appendstat(task_:: MSKtask)
-  res = @msk_ccall( "appendstat",Int32,(Ptr{Void},),task_.task)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
 end
 
 appendvars{T1}(task:: MSKtask,num:: T1) = appendvars(task,Int32(num))
@@ -1121,6 +1106,22 @@ function getdualobj(task_:: MSKtask,whichsol_:: Int32)
   (convert(Float64,dualobj_[1]))
 end
 
+function getdualsolutionnorms(task_:: MSKtask,whichsol_:: Int32)
+  nrmbars_ = Array(Float64,(1,))
+  nrmslc_ = Array(Float64,(1,))
+  nrmslx_ = Array(Float64,(1,))
+  nrmsnx_ = Array(Float64,(1,))
+  nrmsuc_ = Array(Float64,(1,))
+  nrmsux_ = Array(Float64,(1,))
+  nrmy_ = Array(Float64,(1,))
+  res = @msk_ccall( "getdualsolutionnorms",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Float64,nrmy_[1]),convert(Float64,nrmslc_[1]),convert(Float64,nrmsuc_[1]),convert(Float64,nrmslx_[1]),convert(Float64,nrmsux_[1]),convert(Float64,nrmsnx_[1]),convert(Float64,nrmbars_[1]))
+end
+
 getdviolbarvar{T2}(task:: MSKtask,whichsol:: Int32,sub:: Array{T2}) = getdviolbarvar(task,whichsol,convert(Array{Int32},sub))
 function getdviolbarvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
@@ -1572,6 +1573,18 @@ function getprimalobj(task_:: MSKtask,whichsol_:: Int32)
   (convert(Float64,primalobj_[1]))
 end
 
+function getprimalsolutionnorms(task_:: MSKtask,whichsol_:: Int32)
+  nrmbarx_ = Array(Float64,(1,))
+  nrmxc_ = Array(Float64,(1,))
+  nrmxx_ = Array(Float64,(1,))
+  res = @msk_ccall( "getprimalsolutionnorms",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_,nrmxc_,nrmxx_,nrmbarx_)
+  if res != MSK_RES_OK
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Float64,nrmxc_[1]),convert(Float64,nrmxx_[1]),convert(Float64,nrmbarx_[1]))
+end
+
 function getprobtype(task_:: MSKtask)
   probtype_ = Array(Int32,(1,))
   res = @msk_ccall( "getprobtype",Int32,(Ptr{Void},Ptr{Int32},),task_.task,probtype_)
@@ -1845,7 +1858,7 @@ function getsolution(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_10 = zeros(Float64,__tmp_var_9)
   __tmp_var_13 = getnumvar(task_)
   __tmp_var_14 = zeros(Float64,__tmp_var_13)
-  __tmp_var_17 = getnumcone(task_)
+  __tmp_var_17 = getnumvar(task_)
   __tmp_var_18 = zeros(Float64,__tmp_var_17)
   solsta_ = Array(Int32,(1,))
   __tmp_var_11 = getnumcon(task_)
@@ -2063,28 +2076,6 @@ function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   (bk_,__tmp_var_2,__tmp_var_4)
 end
 
-getvarbranchdir{T1}(task:: MSKtask,j:: T1) = getvarbranchdir(task,Int32(j))
-function getvarbranchdir(task_:: MSKtask,j_:: Int32)
-  direction_ = Array(Int32,(1,))
-  res = @msk_ccall( "getvarbranchdir",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,j_-1,direction_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-  (convert(Int32,direction_[1]))
-end
-
-getvarbranchpri{T1}(task:: MSKtask,j:: T1) = getvarbranchpri(task,Int32(j))
-function getvarbranchpri(task_:: MSKtask,j_:: Int32)
-  priority_ = Array(Int32,(1,))
-  res = @msk_ccall( "getvarbranchpri",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,j_-1,priority_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-  (convert(Int32,priority_[1]))
-end
-
 getvarname{T1}(task:: MSKtask,j:: T1) = getvarname(task,Int32(j))
 function getvarname(task_:: MSKtask,j_:: Int32)
   maxlen_ = (1 + getvarnamelen(task_,(j_)))
@@ -2282,16 +2273,6 @@ end
 
 function onesolutionsummary(task_:: MSKtask,whichstream_:: Int32,whichsol_:: Int32)
   res = @msk_ccall( "onesolutionsummary",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_,whichsol_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
-function optimizeconcurrent(task_:: MSKtask,taskarray_:: Array{MSKtask})
-  _taskarray_tmp_:: Ptr{Void} = [ __tmp_var_0.task for __tmp_var_0 = taskarray_ ]
-  num_ = minimum([ length(taskarray_) ])
-  res = @msk_ccall( "optimizeconcurrent2",Int32,(Ptr{Void},Int32,Ptr{Ptr{Void}},),task_.task,num_,_taskarray_tmp)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3248,15 +3229,6 @@ function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Arr
   end
 end
 
-putvarbranchorder{T1,T2}(task:: MSKtask,j:: T1,priority:: T2,direction:: Int32) = putvarbranchorder(task,Int32(j),Int32(priority),direction)
-function putvarbranchorder(task_:: MSKtask,j_:: Int32,priority_:: Int32,direction_:: Int32)
-  res = @msk_ccall( "putvarbranchorder",Int32,(Ptr{Void},Int32,Int32,Int32,),task_.task,j_-1,priority_,direction_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
 putvarname{T1}(task:: MSKtask,j:: T1,name:: AbstractString) = putvarname(task,Int32(j),name)
 function putvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = @msk_ccall( "putvarname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,bytestring(name_))
@@ -3360,14 +3332,6 @@ function putyslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int3
     throw(BoundsError())
   end
   res = @msk_ccall( "putyslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,y_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
-function readbranchpriorities(task_:: MSKtask,filename_:: AbstractString)
-  res = @msk_ccall( "readbranchpriorities",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3526,22 +3490,6 @@ function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Ar
   (__tmp_var_0[1])
 end
 
-function startstat(task_:: MSKtask)
-  res = @msk_ccall( "startstat",Int32,(Ptr{Void},),task_.task)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
-function stopstat(task_:: MSKtask)
-  res = @msk_ccall( "stopstat",Int32,(Ptr{Void},),task_.task)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
 function strtoconetype(task_:: MSKtask,str_:: AbstractString)
   conetype_ = Array(Int32,(1,))
   res = @msk_ccall( "strtoconetype",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,bytestring(str_),conetype_)
@@ -3564,14 +3512,6 @@ end
 
 function updatesolutioninfo(task_:: MSKtask,whichsol_:: Int32)
   res = @msk_ccall( "updatesolutioninfo",Int32,(Ptr{Void},Int32,),task_.task,whichsol_)
-  if res != MSK_RES_OK
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
-function writebranchpriorities(task_:: MSKtask,filename_:: AbstractString)
-  res = @msk_ccall( "writebranchpriorities",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,bytestring(filename_))
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -3615,6 +3555,13 @@ function writetask(task_:: MSKtask,filename_:: AbstractString)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
+  end
+end
+
+function checkinall(env_:: MSKenv)
+  res = @msk_ccall( "checkinall",Int32,(Ptr{Void},),env_.env)
+  if res != 0
+    throw(MosekError(res,""))
   end
 end
 
@@ -3672,14 +3619,6 @@ end
 linkfiletostream{T3}(env:: MSKenv,whichstream:: Int32,filename:: AbstractString,append:: T3) = linkfiletostream(env,whichstream,filename,Int32(append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Int32,filename_:: AbstractString,append_:: Int32)
   res = @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_,bytestring(filename_),append_)
-  if res != 0
-    throw(MosekError(res,""))
-  end
-end
-
-putkeepdlls{T1}(env:: MSKenv,keepdlls:: T1) = putkeepdlls(env,Int32(keepdlls))
-function putkeepdlls(env_:: MSKenv,keepdlls_:: Int32)
-  res = @msk_ccall( "putkeepdlls",Int32,(Ptr{Void},Int32,),env_.env,keepdlls_)
   if res != 0
     throw(MosekError(res,""))
   end
