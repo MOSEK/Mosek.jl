@@ -1,8 +1,8 @@
 include("liftedfrombindeps.jl")
 
 # define current version:
-mskvmajor = "7"
-mskvminor = "1"
+mskvmajor = "8"
+mskvminor = "0"
 
 
 mskplatform,distroext =
@@ -21,15 +21,15 @@ mskplatform,distroext =
 
 libalternatives =
   if     mskplatform == "linux32x86"
-                                       [ ("libmosek.so.7.0",     "libmosekscopt7_0.so"),    ("libmosek.so.7.1",     "libmosekscopt7_1.so") ]
+                                       [ ("libmosek.so.7.0",     "libmosekscopt7_0.so"),    ("libmosek.so.7.1",     "libmosekscopt7_1.so"),    ("libmosek.so.8.0",     "libmosekscopt8_0.so"),    ]
   elseif mskplatform == "linux64x86"
-                                       [ ("libmosek64.so.7.0",   "libmosekscopt7_0.so"),    ("libmosek64.so.7.1",   "libmosekscopt7_1.so") ]
+                                       [ ("libmosek64.so.7.0",   "libmosekscopt7_0.so"),    ("libmosek64.so.7.1",   "libmosekscopt7_1.so"),    ("libmosek64.so.8.0",   "libmosekscopt8_0.so"),    ]
   elseif mskplatform == "osx64x86"
-                                       [ ("libmosek64.7.0.dylib","libmosekscopt7_0.dylib"), ("libmosek64.7.1.dylib","libmosekscopt7_1.dylib") ]
+                                       [ ("libmosek64.7.0.dylib","libmosekscopt7_0.dylib"), ("libmosek64.7.1.dylib","libmosekscopt7_1.dylib"), ("libmosek64.8.0.dylib","libmosekscopt8_0.dylib"), ]
   elseif mskplatform == "win32x86"
-                                       [ ("mosek7_0.dll",        "mosekscopt7_0.dll"),      ("mosek7_1.dll",        "mosekscopt7_1.dll") ]
+                                       [ ("mosek7_0.dll",        "mosekscopt7_0.dll"),      ("mosek7_1.dll",        "mosekscopt7_1.dll"),      ("mosek8_0.dll",        "mosekscopt8_0.dll"),      ]
   elseif mskplatform == "win64x86"
-                                       [ ("mosek64_7_0.dll",     "mosekscopt7_0.dll"),      ("mosek64_7_1.dll",     "mosekscopt7_1.dll") ]
+                                       [ ("mosek64_7_0.dll",     "mosekscopt7_0.dll"),      ("mosek64_7_1.dll",     "mosekscopt7_1.dll"),      ("mosek64_8_0.dll",     "mosekscopt8_0.dll"),      ]
   else   error("Platform not supported")
   end
 
@@ -41,13 +41,23 @@ mskbindir =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
     if  usepreinstalled && haskey(ENV,"MOSEKBINDIR")
         ENV["MOSEKBINDIR"]
+    elseif ! usepreinstalled && haskey(ENV,"MOSEK_8_0_BINDIR")
+        ENV["MOSEK_8_0_BINDIR"]
     elseif ! usepreinstalled && haskey(ENV,"MOSEK_7_1_BINDIR")
         ENV["MOSEK_7_1_BINDIR"]
 # 2a. Otherwise, use the default installation path (Linux)
     elseif usepreinstalled && ( haskey(ENV,"HOME") &&
+                                  isdir(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform)))
+        joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin")
+    elseif usepreinstalled && ( haskey(ENV,"HOME") &&
                                   isdir(joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform)))
         joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin")
 # 2b. Windows default install path
+    elseif usepreinstalled && (haskey(ENV,"HOMEDRIVE") &&
+                                 haskey(ENV,"HOMEPATH") &&
+                                 isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","8","tools","platform",mskplatform)))
+        home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
+        joinpath(home,"mosek","8","tools","platform",mskplatform,"bin")
     elseif usepreinstalled && (haskey(ENV,"HOMEDRIVE") &&
                                  haskey(ENV,"HOMEPATH") &&
                                  isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform)))
@@ -85,7 +95,7 @@ else
         write(f,"""# This is an auto-generated file; do not edit\n""")
         write(f,"""# Macro to load a library\n""")
         write(f,"""macro checked_lib(libname, path)\n""")
-        write(f,"""    (Libdl.dlopen_e(path) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")\n""") 
+        write(f,"""    (Libdl.dlopen_e(path) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")\n""")
         write(f,"""    quote const \$(esc(libname)) = \$path end\n""")
         write(f,"""end\n""")
 
