@@ -25,6 +25,20 @@ module Mosek
     end
   end
 
+  macro msk_sigatomic_ccall(func, args...)
+    f = Base.Meta.quot(symbol("MSK_$(func)"))
+    args = [esc(a) for a in args]
+    quote
+      ccall(:jl_sigatomic_begin,Void,())
+      ccall(($f,libmosek), $(args...))
+      ccall(:jl_sigatomic_end,Void,())
+    end
+  end
+
+
+
+
+
   # -----
   # Types
   # -----
@@ -70,6 +84,7 @@ module Mosek
       task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
+      clearcallbackfunc(task)
 
       task
     end
@@ -85,6 +100,7 @@ module Mosek
       task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
+      clearcallbackfunc(task)
 
       task
     end
@@ -93,6 +109,7 @@ module Mosek
       task = new(msk_global_env,t,borrowed,nothing,nothing,nothing,nothing,nothing)
 
       finalizer(task,deletetask)
+      clearcallbackfunc(task)
 
       task
     end
@@ -137,7 +154,36 @@ module Mosek
   #  initializers must be called from __init__(). That is called a bad solution here:
   #    https://github.com/JuliaLang/julia/issues/12010
   msk_global_env = makeenv() :: MSKenv
-  __init__() = (global msk_global_env = makeenv())
+  msk_global_break = false
+  function msk_global_sigint_handler(sig::Int32)
+      println("msk_global_sigint_handler")
+      global msk_global_break = true
+      nothing
+  end
+
+  msk_global_siginthandler = cfunction(msk_global_sigint_handler, Void, (Int32,))
+
+  function __init__()
+      global msk_global_env = makeenv()
+      global msk_global_break = false
+      global msk_global_siginthandler = cfunction(msk_global_sigint_handler, Void, (Int32,))
+      global msk_global_oldsiginthandler = C_NULL
+  end
+
+
+  function msk_set_sigint_handler()
+      global msk_global_oldsiginthandler = ccall(:signal,Void,(Ptr{Void},),msk_global_siginthandler)
+      println("SET signal handler: $msk_global_siginthandler")
+  end
+
+  function msk_reset_sigint_handler()
+      println("RESET signal handler: $msk_global_siginthandler")
+      ccall(:signal,Void,(Ptr{Void},),msk_global_oldsiginthandler)
+      global msk_global_oldsiginthandler = C_NULL
+  end
+
+
+
 
   function maketask(env::MSKenv)
 

@@ -2287,9 +2287,19 @@ function optimizersummary(task_:: MSKtask,whichstream_:: Int32)
   end
 end
 
+
 function optimize(task_:: MSKtask)
   trmcode_ = Array(Int32,(1,))
-  res = @msk_ccall( "optimizetrm",Int32,(Ptr{Void},Ptr{Int32},),task_.task,trmcode_)
+  SIGINT=2
+  old_sighandler = ccall((:signal,"libc"),Ptr{Void},(Cint,Ptr{Void}),SIGINT,cfunction(msk_global_sigint_handler, Void, (Cint,)))
+  res = @msk_ccall( "optimizetrm",Int32,(Ptr{Void},Ptr{Int32}),task_.task,trmcode_)
+  ccall((:signal,"libc"),Void,(Cint,Ptr{Void}),SIGINT,old_sighandler)
+  global msk_global_break
+  if msk_global_break
+      global msk_global_break = false
+      throw(InterruptException())
+  end
+
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))

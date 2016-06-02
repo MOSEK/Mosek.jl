@@ -27,26 +27,44 @@ end
 #  - a 'iinf' array carrying int32 information on the current state of the solution/solver
 #  - a 'linf' array carrying int64 information on the current state of the solution/solver
 function msk_info_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: Int32, douinf :: Ptr{Float64}, intinf :: Ptr{Int32}, lintinf :: Ptr{Int64})
-  f      = unsafe_pointer_to_objref(userdata) :: Function
-  dinfa  = pointer_to_array(douinf,(MSK_DINF_END,),false)
-  iinfa  = pointer_to_array(intinf,(MSK_IINF_END,),false)
-  liinfa = pointer_to_array(lintinf,(MSK_LIINF_END,),false)
+    global msk_global_break
+    if msk_global_break
+        return Int32(1)
+    else
+        userdata_obj = unsafe_pointer_to_objref(userdata)
+        if userdata_obj != C_NULL
+            f      = userdata_obj :: Function
+            dinfa  = pointer_to_array(douinf,(MSK_DINF_END,),false)
+            iinfa  = pointer_to_array(intinf,(MSK_IINF_END,),false)
+            liinfa = pointer_to_array(lintinf,(MSK_LIINF_END,),false)
 
-  r = f(@compat(Int32(where)), dinfa, iinfa, liinfa)
-  convert(Int32,r)::Int32
+            r = f(@compat(Int32(where)), dinfa, iinfa, liinfa)
+            convert(Int32,r)::Int32
+        else
+            Int32(0)
+        end
+    end
 end
 
 function msk_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: Int32)
-  f      = unsafe_pointer_to_objref(userdata) :: Function
-  r = f(convert(Int32,where))
-  convert(Int32,r)::Int32
+    if msk_global_break
+        msk_global_break = false
+        return Int32(1)
+    else
+        if userdata != C_NULL
+            f = unsafe_pointer_to_objref(userdata) :: Function
+            r = f(convert(Int32,where))
+            convert(Int32,r)::Int32
+        else
+            Int32(0)
+        end
+    end
 end
 
 # f :: where :: Cint, dinf :: Array{Float64,1}, iinf :: Array{Int32,1}, linf :: Array{Int64,1} -> Int32
 # NOTE: On Win32 the callback function should be stdcall
 function putcallbackfunc(t::MSKtask, f::Function)
   cbfunc = cfunction(msk_info_callback_wrapper, Int32, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
-  #cbfunc = cfunction(msk_callback_wrapper, Int32, (Ptr{Void}, Ptr{Void}, Int32))
 
   r = @msk_ccall(putcallbackfunc, Int32, (Ptr{Void}, Ptr{Void}, Any), t.task, cbfunc, f)
   if r != MSK_RES_OK
@@ -55,6 +73,19 @@ function putcallbackfunc(t::MSKtask, f::Function)
 
   t.callbackfunc = cbfunc
   t.usercallbackfunc = f
+  nothing
+end
+
+function clearcallbackfunc(t::MSKtask)
+  cbfunc = cfunction(msk_info_callback_wrapper, Int32, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+
+  r = @msk_ccall(putcallbackfunc, Int32, (Ptr{Void}, Ptr{Void}, Any), t.task, cbfunc, C_NULL)
+  if r != MSK_RES_OK
+    throw(MosekError(r,getlasterror(t)))
+  end
+
+  t.callbackfunc = cbfunc
+  t.usercallbackfunc = C_NULL
   nothing
 end
 
