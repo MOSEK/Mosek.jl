@@ -468,24 +468,32 @@ function MathProgBase.getvardual(m::MosekMathProgConicModel)
                   Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
                   Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
 
-        s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol) + Mosek.getsnx(m.task,sol)
-        bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
-        # rescale dual solution to svec form
-        for j in 1:Mosek.getnumbarvar(m.task)
-            L = Mosek.getdimbarvarj(m.task,j)
-            r = 0
-            for k in 1:L
-                for i in k:L
-                    r += 1
-                    if i != k
-                        bars[j][r] *= sqrt(2)
+        if sol == Mosek.MSK_SOL_BAS
+            s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol)
+
+            Float64[s[m.varmap[i]] for i in 1:m.numvar]
+        else
+            s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol) + Mosek.getsnx(m.task,sol)
+            bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
+
+            # rescale dual solution to svec form
+            for j in 1:Mosek.getnumbarvar(m.task)
+                L = Mosek.getdimbarvarj(m.task,j)
+                r = 0
+                for k in 1:L
+                    for i in k:L
+                        r += 1
+                        if i != k
+                            bars[j][r] *= sqrt(2)
+                        end
                     end
                 end
             end
+
+            Float64[if (m.varmap[i] > 0) s[m.varmap[i]] else bars[-m.varmap[i]][m.barvarij[i]] end
+                    for i in 1:m.numvar]
         end
 
-        Float64[if (m.varmap[i] > 0) s[m.varmap[i]] else bars[-m.varmap[i]][m.barvarij[i]] end
-                for i in 1:m.numvar]
     else
         throw(MosekMathProgModelError("No solution available"))
     end
