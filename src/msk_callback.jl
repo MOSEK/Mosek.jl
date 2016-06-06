@@ -45,12 +45,6 @@ function msk_info_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: I
     convert(Cint,r)::Cint
 end
 
-function msk_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: Int32)
-  f      = unsafe_pointer_to_objref(userdata) :: Function
-  r = f(convert(Int32,where))
-  convert(Int32,r)::Int32
-end
-
 # f :: where :: Cint, dinf :: Array{Float64,1}, iinf :: Array{Int32,1}, linf :: Array{Int64,1} -> Int32
 # NOTE: On Win32 the callback function should be stdcall
 function putcallbackfunc(t::MSKtask, f::Function)
