@@ -2289,7 +2289,12 @@ end
 
 function optimize(task_:: MSKtask)
   trmcode_ = Array(Int32,(1,))
-  res = @msk_ccall( "optimizetrm",Int32,(Ptr{Void},Ptr{Int32},),task_.task,trmcode_)
+
+  res =
+    disable_sigint() do
+        @msk_ccall( "optimizetrm",Int32,(Ptr{Void},Ptr{Int32},),task_.task,trmcode_)
+    end
+
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))

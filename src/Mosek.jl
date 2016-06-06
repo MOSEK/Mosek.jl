@@ -67,8 +67,14 @@ module Mosek
       end
 
       task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
-
+      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+      task.usercallbackfunc = nothing
       finalizer(task,deletetask)
+
+      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
+      if r != MSK_RES_OK
+          throw(MosekError(r,getlasterror(t)))
+      end
 
       task
     end
@@ -82,16 +88,30 @@ module Mosek
       end
 
       task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
+      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+      task.usercallbackfunc = nothing
 
       finalizer(task,deletetask)
+
+      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
+      if r != MSK_RES_OK
+          throw(MosekError(r,getlasterror(t)))
+      end
 
       task
     end
 
     function MSKtask(t::Ptr{Void},borrowed::Bool)
       task = new(msk_global_env,t,borrowed,nothing,nothing,nothing,nothing,nothing)
+      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+      task.usercallbackfunc = nothing
 
       finalizer(task,deletetask)
+
+      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
+      if r != MSK_RES_OK
+          throw(MosekError(r,getlasterror(t)))
+      end
 
       task
     end
