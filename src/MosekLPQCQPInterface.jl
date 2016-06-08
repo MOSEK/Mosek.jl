@@ -19,6 +19,8 @@ type MosekLinearQuadraticModel <: MathProgBase.AbstractLinearQuadraticModel
     lincon     :: Array{Int32,1}
     quadcon    :: Array{Int32,1}
 
+    lasttrm    :: Int32
+
     options
 end
 
@@ -41,6 +43,8 @@ MathProgBase.LinearQuadraticModel(s::MosekSolver) =
 
                             Array(Int32,0),
                             Array(Int32,0),
+
+                            Mosek.MSK_RES_OK,
 
                             s.options)
 
@@ -643,9 +647,20 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     Mosek.putskxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,skx);
 end
 
-MathProgBase.optimize!(m::MosekLinearQuadraticModel) = Mosek.optimize(m.task)
+function MathProgBase.optimize!(m::MosekLinearQuadraticModel)
+    m.lasttrm = Mosek.optimize(m.task)
+end
 
-MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task)
+function MathProgBase.status(m::MosekLinearQuadraticModel)
+    if  m.lasttrm == Mosek.MSK_RES_TRM_USER_CALLBACK ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_ITERATIONS ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_TIME ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS
+        :UserLimit
+    else
+        status(m.task)
+    end
+end
 
 MathProgBase.getobjbound(m::MosekLinearQuadraticModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_MIO_OBJ_BOUND)
 

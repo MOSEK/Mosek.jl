@@ -43,6 +43,9 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     conslack :: Array{Int32,1}
     barconij :: Array{Int64,1}
 
+    # last termination code, used for status(task)
+    lasttrm :: Int32
+
     # Solver options
     options
 end
@@ -61,6 +64,7 @@ function MathProgBase.ConicModel(s::MosekSolver)
 
                                 Array(Int32,0),  # conslack
                                 Array(Int64,0),  # barconij
+                                convert(Int32,Mosek.MSK_RES_OK),
                                 s.options)
     loadoptions!(m)
 
@@ -576,9 +580,20 @@ end
 
 MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
 
-MathProgBase.optimize!(m::MosekMathProgConicModel) = Mosek.optimize(m.task)
+function MathProgBase.optimize!(m::MosekMathProgConicModel)
+    m.lasttrm = Mosek.optimize(m.task)
+end
 
-MathProgBase.status(m::MosekMathProgConicModel) = status(m.task)
+function MathProgBase.status(m::MosekMathProgConicModel)
+    if  m.lasttrm == Mosek.MSK_RES_TRM_USER_CALLBACK ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_ITERATIONS ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_TIME ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS
+        :UserLimit
+    else
+        status(m.task)
+    end
+end
 
 MathProgBase.setsense!(m::MosekMathProgConicModel, sense) = setsense!(m.task,sense)
 
