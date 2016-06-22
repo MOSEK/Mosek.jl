@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.0.0.28
+# MOSEK 8.0.0.31
 
 export
   analyzenames,
@@ -529,12 +529,16 @@ function dualsensitivity(task_:: MSKtask,subj_:: Array{Int32})
   numj_ = minimum([ length(subj_) ])
   __tmp_var_0 = (numj_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  leftpricej_ = __tmp_var_1
   __tmp_var_4 = (numj_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  leftrangej_ = __tmp_var_5
   __tmp_var_2 = (numj_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  rightpricej_ = __tmp_var_3
   __tmp_var_6 = (numj_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
+  rightrangej_ = __tmp_var_7
   res = disable_sigint() do
     @msk_ccall( "dualsensitivity",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numj_,subj_ .- 1,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
@@ -550,8 +554,10 @@ function getacol(task_:: MSKtask,j_:: Int32)
   nzj_ = Array(Int32,(1,))
   __tmp_var_0 = getacolnumnz(task_,(j_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subj_ = __tmp_var_1
   __tmp_var_2 = getacolnumnz(task_,(j_))
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  valj_ = __tmp_var_3
   res = disable_sigint() do
     @msk_ccall( "getacol",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
   end
@@ -581,10 +587,13 @@ function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   maxnumnz_ = getaslicenumnz(task_,MSK_ACC_VAR,(first_),(last_))
   __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  val_ = __tmp_var_5
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subi_ = __tmp_var_1
   __tmp_var_2 = (maxnumnz_)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  subj_ = __tmp_var_3
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
     @msk_ccall( "getacolslicetrip",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
@@ -629,8 +638,10 @@ function getarow(task_:: MSKtask,i_:: Int32)
   nzi_ = Array(Int32,(1,))
   __tmp_var_0 = getarownumnz(task_,(i_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subi_ = __tmp_var_1
   __tmp_var_2 = getarownumnz(task_,(i_))
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  vali_ = __tmp_var_3
   res = disable_sigint() do
     @msk_ccall( "getarow",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
   end
@@ -659,10 +670,13 @@ getarowslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2) = getarowslicetrip(
 function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subi_ = __tmp_var_1
   __tmp_var_2 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  subj_ = __tmp_var_3
   __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  val_ = __tmp_var_5
   maxnumnz_ = minimum([ length(subi_),length(subj_),length(val_) ])
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
@@ -682,12 +696,16 @@ function getaslice(task_:: MSKtask,accmode_:: Int32,first_:: Int32,last_:: Int32
   maxnumnz_ = getaslicenumnz(task_,(accmode_),(first_),(last_))
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  ptrb_ = __tmp_var_1
   __tmp_var_2 = ((last_) - (first_))
   __tmp_var_3 = zeros(Int64,__tmp_var_2)
+  ptre_ = __tmp_var_3
   __tmp_var_4 = (maxnumnz_)
   __tmp_var_5 = zeros(Int32,__tmp_var_4)
+  sub_ = __tmp_var_5
   __tmp_var_6 = (maxnumnz_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
+  val_ = __tmp_var_7
   surp_ = convert(Int64,length(sub_))
   res = disable_sigint() do
     @msk_ccall( "getaslice64",Int32,(Ptr{Void},Int32,Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,accmode_,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
@@ -720,14 +738,19 @@ function getbarablocktriplet(task_:: MSKtask)
   num_ = Array(Int64,(1,))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subi_ = __tmp_var_1
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  subj_ = __tmp_var_3
   __tmp_var_4 = (maxnum_)
   __tmp_var_5 = zeros(Int32,__tmp_var_4)
+  subk_ = __tmp_var_5
   __tmp_var_6 = (maxnum_)
   __tmp_var_7 = zeros(Int32,__tmp_var_6)
+  subl_ = __tmp_var_7
   __tmp_var_8 = (maxnum_)
   __tmp_var_9 = zeros(Float64,__tmp_var_8)
+  valijkl_ = __tmp_var_9
   res = disable_sigint() do
     @msk_ccall( "getbarablocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
   end
@@ -750,8 +773,10 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
   maxnum_ = getbaraidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  sub_ = __tmp_var_1
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  weights_ = __tmp_var_3
   res = disable_sigint() do
     @msk_ccall( "getbaraidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
   end
@@ -795,6 +820,7 @@ function getbarasparsity(task_:: MSKtask)
   numnz_ = Array(Int64,(1,))
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  idxij_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getbarasparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
   end
@@ -811,12 +837,16 @@ function getbarcblocktriplet(task_:: MSKtask)
   num_ = Array(Int64,(1,))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subj_ = __tmp_var_1
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  subk_ = __tmp_var_3
   __tmp_var_4 = (maxnum_)
   __tmp_var_5 = zeros(Int32,__tmp_var_4)
+  subl_ = __tmp_var_5
   __tmp_var_6 = (maxnum_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
+  valijkl_ = __tmp_var_7
   res = disable_sigint() do
     @msk_ccall( "getbarcblocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
@@ -837,8 +867,10 @@ function getbarcidx(task_:: MSKtask,idx_:: Int64)
   maxnum_ = getbarcidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  sub_ = __tmp_var_1
   __tmp_var_2 = (maxnum_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  weights_ = __tmp_var_3
   res = disable_sigint() do
     @msk_ccall( "getbarcidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
   end
@@ -881,6 +913,7 @@ function getbarcsparsity(task_:: MSKtask)
   numnz_ = Array(Int64,(1,))
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  idxj_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getbarcsparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
   end
@@ -896,6 +929,7 @@ getbarsj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarsj(task,whichsol,In
 function getbarsj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32)
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  barsj_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getbarsj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_,j_-1,__tmp_var_1)
   end
@@ -950,6 +984,7 @@ getbarxj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarxj(task,whichsol,In
 function getbarxj(task_:: MSKtask,whichsol_:: Int32,j_:: Int32)
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  barxj_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getbarxj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_,j_-1,__tmp_var_1)
   end
@@ -981,8 +1016,10 @@ function getboundslice(task_:: MSKtask,accmode_:: Int32,first_:: Int32,last_:: I
   bk_ = zeros(Int32,__tmp_var_0)
   __tmp_var_1 = ((last_) - (first_))
   __tmp_var_2 = zeros(Float64,__tmp_var_1)
+  bl_ = __tmp_var_2
   __tmp_var_3 = ((last_) - (first_))
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
+  bu_ = __tmp_var_4
   res = disable_sigint() do
     @msk_ccall( "getboundslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
@@ -996,6 +1033,7 @@ end
 function getc(task_:: MSKtask)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  c_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getc",Int32,(Ptr{Void},Ptr{Float64},),task_.task,__tmp_var_1)
   end
@@ -1052,8 +1090,10 @@ function getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   bk_ = zeros(Int32,__tmp_var_0)
   __tmp_var_1 = ((last_) - (first_))
   __tmp_var_2 = zeros(Float64,__tmp_var_1)
+  bl_ = __tmp_var_2
   __tmp_var_3 = ((last_) - (first_))
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
+  bu_ = __tmp_var_4
   res = disable_sigint() do
     @msk_ccall( "getconboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
@@ -1071,6 +1111,7 @@ function getcone(task_:: MSKtask,k_:: Int32)
   nummem_ = Array(Int32,(1,))
   __tmp_var_0 = getconeinfo(task_,(k_))[3]
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  submem_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getcone",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_,__tmp_var_1)
   end
@@ -1181,6 +1222,7 @@ getcslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2) = getcslice(task,Int32(fir
 function getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  c_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getcslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,__tmp_var_1)
   end
@@ -1263,6 +1305,7 @@ function getdviolbarvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getdviolbarvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1278,6 +1321,7 @@ function getdviolcon(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getdviolcon",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1293,6 +1337,7 @@ function getdviolcones(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getdviolcones",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1308,6 +1353,7 @@ function getdviolvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getdviolvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1838,6 +1884,7 @@ function getpviolbarvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getpviolbarvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1853,6 +1900,7 @@ function getpviolcon(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getpviolcon",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1868,6 +1916,7 @@ function getpviolcones(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getpviolcones",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1883,6 +1932,7 @@ function getpviolvar(task_:: MSKtask,whichsol_:: Int32,sub_:: Array{Int32})
   num_ = minimum([ length(sub_) ])
   __tmp_var_0 = (num_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getpviolvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_,num_,sub_ .- 1,__tmp_var_1)
   end
@@ -1899,10 +1949,13 @@ function getqconk(task_:: MSKtask,k_:: Int32)
   maxnumqcnz_ = getnumqconknz(task_,(k_))
   __tmp_var_0 = getnumqconknz(task_,(k_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  qcsubi_ = __tmp_var_1
   __tmp_var_2 = getnumqconknz(task_,(k_))
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  qcsubj_ = __tmp_var_3
   __tmp_var_4 = getnumqconknz(task_,(k_))
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  qcval_ = __tmp_var_5
   qcsurp_ = convert(Int64,length(qcsubi_))
   res = disable_sigint() do
     @msk_ccall( "getqconk64",Int32,(Ptr{Void},Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,maxnumqcnz_,&qcsurp_,numqcnz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
@@ -1921,10 +1974,13 @@ function getqobj(task_:: MSKtask)
   numqonz_ = Array(Int64,(1,))
   __tmp_var_0 = (maxnumqonz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  qosubi_ = __tmp_var_1
   __tmp_var_2 = (maxnumqonz_)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  qosubj_ = __tmp_var_3
   __tmp_var_4 = (maxnumqonz_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  qoval_ = __tmp_var_5
   qosurp_ = convert(Int64,length(qosubi_))
   res = disable_sigint() do
     @msk_ccall( "getqobj64",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnumqonz_,&qosurp_,numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
@@ -1955,6 +2011,7 @@ getreducedcosts{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = g
 function getreducedcosts(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  redcosts_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getreducedcosts",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2022,6 +2079,7 @@ end
 function getslc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  slc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getslc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2036,6 +2094,7 @@ getslcslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getsl
 function getslcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  slc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getslcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2049,6 +2108,7 @@ end
 function getslx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  slx_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getslx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2063,6 +2123,7 @@ getslxslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getsl
 function getslxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  slx_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getslxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2076,6 +2137,7 @@ end
 function getsnx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  snx_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsnx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2090,6 +2152,7 @@ getsnxslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getsn
 function getsnxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  snx_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsnxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2122,21 +2185,29 @@ function getsolution(task_:: MSKtask,whichsol_:: Int32)
   skx_ = zeros(Int32,__tmp_var_1)
   __tmp_var_9 = getnumcon(task_)
   __tmp_var_10 = zeros(Float64,__tmp_var_9)
+  slc_ = __tmp_var_10
   __tmp_var_13 = getnumvar(task_)
   __tmp_var_14 = zeros(Float64,__tmp_var_13)
+  slx_ = __tmp_var_14
   __tmp_var_17 = getnumvar(task_)
   __tmp_var_18 = zeros(Float64,__tmp_var_17)
+  snx_ = __tmp_var_18
   solsta_ = Array(Int32,(1,))
   __tmp_var_11 = getnumcon(task_)
   __tmp_var_12 = zeros(Float64,__tmp_var_11)
+  suc_ = __tmp_var_12
   __tmp_var_15 = getnumvar(task_)
   __tmp_var_16 = zeros(Float64,__tmp_var_15)
+  sux_ = __tmp_var_16
   __tmp_var_3 = getnumcon(task_)
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
+  xc_ = __tmp_var_4
   __tmp_var_5 = getnumvar(task_)
   __tmp_var_6 = zeros(Float64,__tmp_var_5)
+  xx_ = __tmp_var_6
   __tmp_var_7 = getnumcon(task_)
   __tmp_var_8 = zeros(Float64,__tmp_var_7)
+  y_ = __tmp_var_8
   res = disable_sigint() do
     @msk_ccall( "getsolution",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_,prosta_,solsta_,skc_,skx_,skn_,__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
   end
@@ -2190,6 +2261,7 @@ getsolutionslice{T3,T4}(task:: MSKtask,whichsol:: Int32,solitem:: Int32,first:: 
 function getsolutionslice(task_:: MSKtask,whichsol_:: Int32,solitem_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  values_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsolutionslice",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,solitem_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2205,10 +2277,13 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   maxlen_ = getsymmatinfo(task_,(idx_))[2]
   __tmp_var_0 = (maxlen_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subi_ = __tmp_var_1
   __tmp_var_2 = (maxlen_)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  subj_ = __tmp_var_3
   __tmp_var_4 = (maxlen_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  valij_ = __tmp_var_5
   res = disable_sigint() do
     @msk_ccall( "getsparsesymmat",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
@@ -2250,6 +2325,7 @@ end
 function getsuc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  suc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsuc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2264,6 +2340,7 @@ getsucslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getsu
 function getsucslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  suc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsucslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2277,6 +2354,7 @@ end
 function getsux(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  sux_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsux",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2291,6 +2369,7 @@ getsuxslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getsu
 function getsuxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  sux_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getsuxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2362,8 +2441,10 @@ function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   bk_ = zeros(Int32,__tmp_var_0)
   __tmp_var_1 = ((last_) - (first_))
   __tmp_var_2 = zeros(Float64,__tmp_var_1)
+  bl_ = __tmp_var_2
   __tmp_var_3 = ((last_) - (first_))
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
+  bu_ = __tmp_var_4
   res = disable_sigint() do
     @msk_ccall( "getvarboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
@@ -2445,6 +2526,7 @@ end
 function getxc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  xc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getxc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2459,6 +2541,7 @@ getxcslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getxcs
 function getxcslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  xc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getxcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2472,6 +2555,7 @@ end
 function getxx(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumvar(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  xx_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getxx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2486,6 +2570,7 @@ getxxslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getxxs
 function getxxslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  xx_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getxxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2499,6 +2584,7 @@ end
 function gety(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  y_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "gety",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
@@ -2513,6 +2599,7 @@ getyslice{T2,T3}(task:: MSKtask,whichsol:: Int32,first:: T2,last:: T3) = getysli
 function getyslice(task_:: MSKtask,whichsol_:: Int32,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  y_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getyslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_,first_-1,last_-1,__tmp_var_1)
   end
@@ -2526,6 +2613,7 @@ end
 function initbasissolve(task_:: MSKtask)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  basis_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "initbasissolve",Int32,(Ptr{Void},Ptr{Int32},),task_.task,__tmp_var_1)
   end
@@ -2672,20 +2760,28 @@ function primalsensitivity(task_:: MSKtask,subi_:: Array{Int32},marki_:: Array{I
   numj_ = minimum([ length(subj_),length(markj_) ])
   __tmp_var_0 = (numi_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  leftpricei_ = __tmp_var_1
   __tmp_var_8 = (numj_)
   __tmp_var_9 = zeros(Float64,__tmp_var_8)
+  leftpricej_ = __tmp_var_9
   __tmp_var_4 = (numi_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  leftrangei_ = __tmp_var_5
   __tmp_var_12 = (numj_)
   __tmp_var_13 = zeros(Float64,__tmp_var_12)
+  leftrangej_ = __tmp_var_13
   __tmp_var_2 = (numi_)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  rightpricei_ = __tmp_var_3
   __tmp_var_10 = (numj_)
   __tmp_var_11 = zeros(Float64,__tmp_var_10)
+  rightpricej_ = __tmp_var_11
   __tmp_var_6 = (numi_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
+  rightrangei_ = __tmp_var_7
   __tmp_var_14 = (numj_)
   __tmp_var_15 = zeros(Float64,__tmp_var_14)
+  rightrangej_ = __tmp_var_15
   res = disable_sigint() do
     @msk_ccall( "primalsensitivity",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numi_,subi_ .- 1,marki_,numj_,subj_ .- 1,markj_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9,__tmp_var_11,__tmp_var_13,__tmp_var_15)
   end
@@ -3748,6 +3844,7 @@ end
 function putxc(task_:: MSKtask,whichsol_:: Int32)
   __tmp_var_0 = getnumcon(task_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  xc_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "putxc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_,__tmp_var_1)
   end
