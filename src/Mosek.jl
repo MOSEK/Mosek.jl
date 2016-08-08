@@ -1,6 +1,4 @@
-#from:  https://groups.google.com/forum/#!topic/julia-users/RLlYPlsT-dU
-#VERSION >= v"0.4.0-dev+6521" && __precompile__()
-
+__precompile__()
 module Mosek
   if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
