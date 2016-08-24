@@ -43,8 +43,7 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     conslack :: Array{Int32,1}
     barconij :: Array{Int64,1}
 
-    # Save the return code from last optimiation - used to
-    # deduce the correct status
+    # last termination code, used for status(task)
     lasttrm :: Int32
 
     # Solver options
@@ -65,7 +64,7 @@ function MathProgBase.ConicModel(s::MosekSolver)
 
                                 Array(Int32,0),  # conslack
                                 Array(Int64,0),  # barconij
-                                Int32(Mosek.MSK_RES_OK),
+                                Int32,Mosek.MSK_RES_OK,
                                 s.options)
     loadoptions!(m)
 
@@ -466,42 +465,32 @@ function MathProgBase.getvardual(m::MosekMathProgConicModel)
     end
     solsta = Mosek.getsolsta(m.task,sol)
 
-    if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
-                  Mosek.MSK_SOL_STA_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
-                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+    if sol == Mosek.MSK_SOL_BAS
+        s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol)
 
-        if sol == Mosek.MSK_SOL_BAS
-            s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol)
+        Float64[s[m.varmap[i]] for i in 1:m.numvar]
+    else
+        s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol) + Mosek.getsnx(m.task,sol)
+        bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
 
-            Float64[s[m.varmap[i]] for i in 1:m.numvar]
-        else
-            s = Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol) + Mosek.getsnx(m.task,sol)
-            bars = [ Mosek.getbarsj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
-
-            # rescale dual solution to svec form
-            for j in 1:Mosek.getnumbarvar(m.task)
-                L = Mosek.getdimbarvarj(m.task,j)
-                r = 0
-                for k in 1:L
-                    for i in k:L
-                        r += 1
-                        if i != k
-                            bars[j][r] *= sqrt(2)
-                        end
+        # rescale dual solution to svec form
+        for j in 1:Mosek.getnumbarvar(m.task)
+            L = Mosek.getdimbarvarj(m.task,j)
+            r = 0
+            for k in 1:L
+                for i in k:L
+                    r += 1
+                    if i != k
+                        bars[j][r] *= sqrt(2)
                     end
                 end
             end
-
-            Float64[if (m.varmap[i] > 0) s[m.varmap[i]] else bars[-m.varmap[i]][m.barvarij[i]] end
-                    for i in 1:m.numvar]
         end
 
-    else
-        throw(MosekMathProgModelError("No solution available"))
+        Float64[if (m.varmap[i] > 0) s[m.varmap[i]] else bars[-m.varmap[i]][m.barvarij[i]] end
+                for i in 1:m.numvar]
     end
+
 end
 
 
@@ -585,7 +574,20 @@ function MathProgBase.optimize!(m::MosekMathProgConicModel)
     m.lasttrm = Mosek.optimize(m.task)
 end
 
+<<<<<<< HEAD
 MathProgBase.status(m::MosekMathProgConicModel) = status(m.task,m.lasttrm)
+=======
+function MathProgBase.status(m::MosekMathProgConicModel)
+    if  m.lasttrm == Mosek.MSK_RES_TRM_USER_CALLBACK ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_ITERATIONS ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_TIME ||
+        m.lasttrm == Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS
+        :UserLimit
+    else
+        status(m.task)
+    end
+end
+>>>>>>> c31bec63d60a80c7849aa22f44b144d0649815cd
 
 MathProgBase.setsense!(m::MosekMathProgConicModel, sense) = setsense!(m.task,sense)
 
