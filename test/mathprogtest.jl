@@ -21,6 +21,7 @@ mixintprogtest(solver)
 convexnlptest(solver)
 coniclineartest(solver,duals=true)
 conicSOCtest(solver,duals=true)
+conicSOCRotatedtest(solver,duals=true)
 conicSDPtest(solver,duals=true)
 
 linprogsolvertest(solver)
