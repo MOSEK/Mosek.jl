@@ -19,15 +19,15 @@ import MathProgBase
 
 
 
-status(t::Mosek.MSKtask) = status(t,0)
+status(t::Mosek.MSKtask) = status(t,Mosek.MSK_RES_OK)
 
 function status(t::Mosek.MSKtask, r::Int32)
-  sol = getsoldef(t)
-  if sol < 0 return :Unknown end
-  prosta = Mosek.getprosta(t,sol)
-  solsta = Mosek.getsolsta(t,sol)
+  sol = (if     (Mosek.solutiondef(t,Mosek.MSK_SOL_ITG) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITG) != Mosek.MSK_SOL_STA_UNKNOWN) Mosek.MSK_SOL_ITG
+         elseif (Mosek.solutiondef(t,Mosek.MSK_SOL_BAS) && Mosek.getsolsta(t,Mosek.MSK_SOL_BAS) != Mosek.MSK_SOL_STA_UNKNOWN) Mosek.MSK_SOL_BAS
+         elseif (Mosek.solutiondef(t,Mosek.MSK_SOL_ITR) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITR) != Mosek.MSK_SOL_STA_UNKNOWN) Mosek.MSK_SOL_ITR
+         else -1 end)
 
-  if     solsta == Mosek.MSK_SOL_STA_UNKNOWN
+  if sol < 0
      if  r == Mosek.MSK_RES_TRM_MAX_ITERATIONS ||
          r == Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS ||
          r == Mosek.MSK_RES_TRM_MAX_TIME ||
@@ -36,7 +36,7 @@ function status(t::Mosek.MSKtask, r::Int32)
          r == Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES ||
          r == Mosek.MSK_RES_TRM_MIO_NUM_RELAXS ||
          r == Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS ||
-         r == Mosek.MSK_RES_TRM_OBJECTIVE_RANGE ||
+         r == Mosek.MSK_RES_TRM_OBJECTIVE_RANGE
          :UserLimit
      elseif r == Mosek.MSK_RES_TRM_STALL
          :Stall
@@ -45,26 +45,32 @@ function status(t::Mosek.MSKtask, r::Int32)
      else
          :Unknown
      end
-  elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
-         solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
-         solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
-    :Unknown
-  elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
-    :Unbounded
-  elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
-    :Infeasible
-  elseif solsta == Mosek.MSK_SOL_STA_OPTIMAL ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_OPTIMAL ||
-         solsta == Mosek.MSK_SOL_STA_INTEGER_OPTIMAL ||
-         solsta == Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
-    :Optimal
   else
-    error("Internal value error")
+      prosta = Mosek.getprosta(t,sol)
+      solsta = Mosek.getsolsta(t,sol)
+
+      println("r = ",r)
+      if     solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
+          solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
+          solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
+          :Unknown
+      elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+          :Unbounded
+      elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+          :Infeasible
+      elseif solsta == Mosek.MSK_SOL_STA_OPTIMAL ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_OPTIMAL ||
+          solsta == Mosek.MSK_SOL_STA_INTEGER_OPTIMAL ||
+          solsta == Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
+          :Optimal
+      else
+          error("Internal value error")
+      end
   end
 end
 

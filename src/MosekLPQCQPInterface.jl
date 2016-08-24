@@ -651,16 +651,7 @@ function MathProgBase.optimize!(m::MosekLinearQuadraticModel)
     m.lasttrm = Mosek.optimize(m.task)
 end
 
-function MathProgBase.status(m::MosekLinearQuadraticModel)
-    if  m.lasttrm == Mosek.MSK_RES_TRM_USER_CALLBACK ||
-        m.lasttrm == Mosek.MSK_RES_TRM_MAX_ITERATIONS ||
-        m.lasttrm == Mosek.MSK_RES_TRM_MAX_TIME ||
-        m.lasttrm == Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS
-        :UserLimit
-    else
-        status(m.task)
-    end
-end
+MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task,m.lasttrm)
 
 MathProgBase.getobjbound(m::MosekLinearQuadraticModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_MIO_OBJ_BOUND)
 
