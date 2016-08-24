@@ -19,14 +19,32 @@ import MathProgBase
 
 
 
-function status(t::Mosek.MSKtask)
+status(t::Mosek.MSKtask) = status(t,0)
+
+function status(t::Mosek.MSKtask, r::Int32)
   sol = getsoldef(t)
   if sol < 0 return :Unknown end
   prosta = Mosek.getprosta(t,sol)
   solsta = Mosek.getsolsta(t,sol)
 
   if     solsta == Mosek.MSK_SOL_STA_UNKNOWN
-    :Unknown
+     if  r == Mosek.MSK_RES_TRM_MAX_ITERATIONS ||
+         r == Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS ||
+         r == Mosek.MSK_RES_TRM_MAX_TIME ||
+         r == Mosek.MSK_RES_TRM_MIO_NEAR_ABS_GAP ||
+         r == Mosek.MSK_RES_TRM_MIO_NEAR_REL_GAP ||
+         r == Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES ||
+         r == Mosek.MSK_RES_TRM_MIO_NUM_RELAXS ||
+         r == Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS ||
+         r == Mosek.MSK_RES_TRM_OBJECTIVE_RANGE ||
+         :UserLimit
+     elseif r == Mosek.MSK_RES_TRM_STALL
+         :Stall
+     elseif r == Mosek.MSK_RES_TRM_USER_CALLBACK
+         :UserBreak
+     else
+         :Unknown
+     end
   elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
          solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
          solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||

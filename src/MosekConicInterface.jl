@@ -43,6 +43,10 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     conslack :: Array{Int32,1}
     barconij :: Array{Int64,1}
 
+    # Save the return code from last optimiation - used to
+    # deduce the correct status
+    lasttrm :: Int32
+
     # Solver options
     options
 end
@@ -61,6 +65,7 @@ function MathProgBase.ConicModel(s::MosekSolver)
 
                                 Array(Int32,0),  # conslack
                                 Array(Int64,0),  # barconij
+                                Int32(Mosek.MSK_RES_OK),
                                 s.options)
     loadoptions!(m)
 
@@ -576,9 +581,11 @@ end
 
 MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
 
-MathProgBase.optimize!(m::MosekMathProgConicModel) = Mosek.optimize(m.task)
+function MathProgBase.optimize!(m::MosekMathProgConicModel)
+    m.lasttrm = Mosek.optimize(m.task)
+end
 
-MathProgBase.status(m::MosekMathProgConicModel) = status(m.task)
+MathProgBase.status(m::MosekMathProgConicModel) = status(m.task,m.lasttrm)
 
 MathProgBase.setsense!(m::MosekMathProgConicModel, sense) = setsense!(m.task,sense)
 
