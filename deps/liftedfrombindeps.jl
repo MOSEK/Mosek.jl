@@ -15,7 +15,7 @@ end
 downloadcmd = nothing
 function download_cmd(url::AbstractString, filename::AbstractString)
     global downloadcmd
-    whichcmd = @windows ? "where" : "which:
+    whichcmd = @windows ? "where" : "which"
     if downloadcmd === nothing
         for checkcmd in @windows? (:powershell, :curl, :wget, :fetch) : (:curl, :wget, :fetch)
             try

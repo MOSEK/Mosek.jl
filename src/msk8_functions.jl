@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.0.0.31
+# MOSEK 8.0.0.34
 
 export
   analyzenames,
@@ -668,16 +668,16 @@ end
 
 getarowslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2) = getarowslicetrip(task,Int32(first),Int32(last))
 function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
-  __tmp_var_0 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
+  maxnumnz_ = getaslicenumnz(task_,MSK_ACC_VAR,(first_),(last_))
+  __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   subi_ = __tmp_var_1
-  __tmp_var_2 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
+  __tmp_var_2 = (maxnumnz_)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
   subj_ = __tmp_var_3
-  __tmp_var_4 = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
+  __tmp_var_4 = (maxnumnz_)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   val_ = __tmp_var_5
-  maxnumnz_ = minimum([ length(subi_),length(subj_),length(val_) ])
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
     @msk_ccall( "getarowslicetrip",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
