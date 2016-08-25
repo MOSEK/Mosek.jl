@@ -49,7 +49,6 @@ function status(t::Mosek.MSKtask, r::Int32)
       prosta = Mosek.getprosta(t,sol)
       solsta = Mosek.getsolsta(t,sol)
 
-      println("r = ",r)
       if     solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
           solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
