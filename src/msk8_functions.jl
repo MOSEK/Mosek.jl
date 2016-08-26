@@ -287,7 +287,8 @@ export
   putlicensecode,
   putlicensedebug,
   putlicensepath,
-  putlicensewait
+  putlicensewait,
+  symnamtovalue
 
 function analyzenames(task_:: MSKtask,whichstream_:: Int32,nametype_:: Int32)
   res = disable_sigint() do
@@ -424,7 +425,7 @@ function bktostr(task_:: MSKtask,bk_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(str_))
+  (utf8(pointer(str_)))
 end
 
 function callbackcodetostr(code_:: Int32)
@@ -435,7 +436,7 @@ function callbackcodetostr(code_:: Int32)
   if res != 0
     throw(MosekError(res,""))
   end
-  (bytestring(callbackcodestr_))
+  (utf8(pointer(callbackcodestr_)))
 end
 
 function checkconvexity(task_:: MSKtask)
@@ -511,7 +512,7 @@ function conetypetostr(task_:: MSKtask,ct_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(str_))
+  (utf8(pointer(str_)))
 end
 
 function deletesolution(task_:: MSKtask,whichsol_:: Int32)
@@ -951,7 +952,7 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(name_))
+  (utf8(pointer(name_)))
 end
 
 function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -1149,7 +1150,7 @@ function getconename(task_:: MSKtask,i_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(name_))
+  (utf8(pointer(name_)))
 end
 
 function getconenameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -1189,7 +1190,7 @@ function getconname(task_:: MSKtask,i_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(name_))
+  (utf8(pointer(name_)))
 end
 
 function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -1386,7 +1387,7 @@ function getinfname(task_:: MSKtask,inftype_:: Int32,whichinf_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(infname_))
+  (utf8(pointer(infname_)))
 end
 
 function getintinf(task_:: MSKtask,whichiinf_:: Int32)
@@ -1582,7 +1583,7 @@ function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,maxlen_:: Int
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),bytestring(parvalue_))
+  (convert(Int32,len_[1]),utf8(pointer(parvalue_)))
 end
 
 function getnumanz(task_:: MSKtask)
@@ -1789,7 +1790,7 @@ function getobjname(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(objname_))
+  (utf8(pointer(objname_)))
 end
 
 function getobjnamelen(task_:: MSKtask)
@@ -1826,7 +1827,7 @@ function getparamname(task_:: MSKtask,partype_:: Int32,param_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(parname_))
+  (utf8(pointer(parname_)))
 end
 
 function getprimalobj(task_:: MSKtask,whichsol_:: Int32)
@@ -2307,7 +2308,7 @@ function getstrparam(task_:: MSKtask,param_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),bytestring(parvalue_))
+  (convert(Int32,len_[1]),utf8(pointer(parvalue_)))
 end
 
 function getstrparamlen(task_:: MSKtask,param_:: Int32)
@@ -2405,7 +2406,7 @@ function gettaskname(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(taskname_))
+  (utf8(pointer(taskname_)))
 end
 
 function gettasknamelen(task_:: MSKtask)
@@ -2466,7 +2467,7 @@ function getvarname(task_:: MSKtask,j_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (bytestring(name_))
+  (utf8(pointer(name_)))
 end
 
 function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -4249,7 +4250,7 @@ function getcodedesc(code_:: Int32)
   if res != 0
     throw(MosekError(res,""))
   end
-  (bytestring(symname_),bytestring(str_))
+  (utf8(pointer(symname_)),utf8(pointer(str_)))
 end
 
 function getversion()
@@ -4327,5 +4328,13 @@ function putlicensewait(env_:: MSKenv,licwait_:: Int32)
   if res != 0
     throw(MosekError(res,""))
   end
+end
+
+function symnamtovalue(name_:: AbstractString)
+  value_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  res = disable_sigint() do
+    @msk_ccall( "symnamtovalue",Int32,(Ptr{UInt8},Ptr{UInt8},),bytestring(name_),value_)
+  end
+  (res != 0,utf8(pointer(value_)))
 end
 
