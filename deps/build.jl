@@ -6,17 +6,19 @@ mskvminor = "0"
 
 
 mskplatform,distroext =
-  if WORD_SIZE == 32
-    if     OS_NAME == :Linux "linux32x86",  ".tar.bz2"
-    elseif OS_NAME == :Windows "win32x86",  ".zip"
+  if Sys.ARCH == :x86
+    if     is_linux()   "linux32x86",  ".tar.bz2"
+    elseif is_windows() "win32x86",  ".zip"
+    else   error("Platform not supported")
+    end
+  elseif Sys.ARCH == :x86_64
+    if     is_linux()   "linux64x86",".tar.bz2"
+    elseif is_apple()   "osx64x86",  ".tar.bz2"
+    elseif is_windows() "win64x86",  ".zip"
     else   error("Platform not supported")
     end
   else
-    if     OS_NAME == :Linux   "linux64x86",".tar.bz2"
-    elseif OS_NAME == :Darwin  "osx64x86",  ".tar.bz2"
-    elseif OS_NAME == :Windows "win64x86",  ".zip"
-    else   error("Platform not supported")
-    end
+    error("Platform not supported")
   end
 
 libalternatives =

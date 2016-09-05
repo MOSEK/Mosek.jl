@@ -12,12 +12,19 @@ function splittarpath(path)
     (base_filename,extension,secondary_extension)
 end
 
+
+downloadcmd_candidates = @static if is_windows() 
+  (:powershell, :curl, :wget, :fetch) 
+else 
+  (:curl, :wget, :fetch) 
+end
+
 downloadcmd = nothing
 function download_cmd(url::AbstractString, filename::AbstractString)
     global downloadcmd
     whichcmd = @windows ? "where" : "which"
     if downloadcmd === nothing
-        for checkcmd in @windows? (:powershell, :curl, :wget, :fetch) : (:curl, :wget, :fetch)
+        for checkcmd in downloadcmd_candidates
             try
                 if success(`$whichcmd $checkcmd`)
                     downloadcmd = checkcmd
@@ -41,7 +48,7 @@ function download_cmd(url::AbstractString, filename::AbstractString)
     end
 end
 
-@unix_only begin
+@static if is_unix()
     function unpack_cmd(file,directory,extension,secondary_extension)
         if (extension == ".gz" && secondary_extension == ".tar") || extension == ".tgz"
             return (`tar xzf $file --directory=$directory`)
@@ -60,7 +67,7 @@ end
     end
 end
 
-@windows_only begin
+@static if is_windows()
     has_7z  = nothing
     has_zip = nothing
     function unpack_cmd(file,directory,extension,secondary_extension)
