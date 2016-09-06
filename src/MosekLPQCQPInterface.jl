@@ -659,8 +659,6 @@ MathProgBase.getobjgap(m::MosekLinearQuadraticModel) = getobjgap(m.task)
 
 MathProgBase.getsolvetime(m::MosekLinearQuadraticModel) = Mosek.getdouinf(m.task,Mosek.MSK_DINF_OPTIMIZER_TIME)
 
-MathProgBase.getrawsolver(m::MosekLinearQuadraticModel) = m.task
-
 MathProgBase.getsense(m::MosekLinearQuadraticModel) = getsense(m.task)
 
 MathProgBase.setsense!(m::MosekLinearQuadraticModel,sense) = setsense!(m.task,sense)
@@ -912,7 +910,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
     end
 
     if grdobjsub != C_NULL
-        grdobjsub_a = pointer_to_array(grdobjsub,(cb.numVar,))
+        grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(cb.numVar,))
         for i in 1:cb.numVar
             grdobjsub_a[i] = i-1
         end
@@ -935,7 +933,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
 
         if grdconisub != C_NULL
             if con_nnz > 0
-                grdconisub_a = pointer_to_array(grdconisub,(con_nnz,))        
+                grdconisub_a = unsafe_wrap(Array{Int64,1},grdconisub,(con_nnz,))        
                 grdconisub_a[1:con_nnz] = cb.jac_colval[cb.jac_rowstarts[i]:(cb.jac_rowstarts[i+1]-1)] - 1
             end
         end
@@ -948,8 +946,8 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
     end
 
     if hessubi != C_NULL && hessubj != C_NULL && maxnumhesnz >= hess_nnz
-        hessubi_a = pointer_to_array(hessubi,(hess_nnz,))
-        hessubj_a = pointer_to_array(hessubj,(hess_nnz,))
+        hessubi_a = unsafe_wrap(Array{Int32,1},hessubi,(hess_nnz,))
+        hessubj_a = unsafe_wrap(Array{Int32,1},hessubj,(hess_nnz,))
 
         for i in 1:hess_nnz
             hessubi_a[i] = cb.Ihess[i] - 1
@@ -984,9 +982,9 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
     cb = unsafe_pointer_to_objref(nlhandle)::CallbackData
 
     numi = convert(Int,numi_)
-    xx = pointer_to_array(xx_,(cb.numVar,))
-    yc = pointer_to_array(yc_,(cb.numConstr,))
-    subi = pointer_to_array(subi_,(numi,))
+    xx = unsafe_wrap(Array{Float64,1},xx_,(cb.numVar,))
+    yc = unsafe_wrap(Array{Float64,1},yc_,(cb.numConstr,))
+    subi = unsafe_wrap(Array{Int32,1},subi_,(numi,))
 
     if objval != C_NULL
         unsafe_store!(objval, MathProgBase.eval_f(cb.d, xx))
@@ -997,8 +995,8 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
     end
 
     if grdobjsub != C_NULL && grdobjval != C_NULL
-        grdobjval_a = pointer_to_array(grdobjval,(cb.numVar,))
-        grdobjsub_a = pointer_to_array(grdobjsub,(cb.numVar,))
+        grdobjval_a = unsafe_wrap(Array{Float64,1},grdobjval,(cb.numVar,))
+        grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(cb.numVar,))
 
         MathProgBase.eval_grad_f(cb.d, grdobjval_a, xx)
         
@@ -1008,7 +1006,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
     end
 
     if numi > 0 && conval != C_NULL
-        conv   = pointer_to_array(conval,(numi,))
+        conv   = unsafe_wrap(Array{Float64,1},conval,(numi,))
         MathProgBase.eval_g(cb.d, cb.g_tmp, xx)
         for i=1:numi
             conv[i] = cb.g_tmp[subi[i]+1]
@@ -1025,10 +1023,10 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
     end
 
     if grdconval_ != C_NULL
-        grdconptrb = pointer_to_array(grdconptrb_,(numi,))
-        grdconptre = pointer_to_array(grdconptre_,(numi,))
-        grdconsub = pointer_to_array(grdconsub_,(grdconptre[numi],))
-        grdconval = pointer_to_array(grdconval_,(grdconptre[numi],))
+        grdconptrb = unsafe_wrap(Array{Int32,1},grdconptrb_,(numi,))
+        grdconptre = unsafe_wrap(Array{Int32,1},grdconptre_,(numi,))
+        grdconsub = unsafe_wrap(Array{Int32,1},grdconsub_,(grdconptre[numi],))
+        grdconval = unsafe_wrap(Array{Float64,1},grdconval_,(grdconptre[numi],))
         nz = 1
         for i=1:numi
             ptrb = grdconptrb[i]
@@ -1050,7 +1048,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
 
     if grdlag != C_NULL
         # could use eval_jac_prod_t here, but just do a sparse matvec instead
-        grdlag_a = pointer_to_array(grdlag,(cb.numVar,))
+        grdlag_a = unsafe_wrap(Array{Float64,1},grdlag,(cb.numVar,))
         MathProgBase.eval_grad_f(cb.d, grdlag_a, xx)
         scale!(grdlag_a, yo)
         Jmat = SparseMatrixCSC(cb.numVar,cb.numConstr,cb.jac_rowstarts,cb.jac_colval,cb.jac_nzval)
@@ -1064,11 +1062,11 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
     end
 
     if maxnumhesnz > 0 && hessubi != C_NULL && hessubj != C_NULL && hesval != C_NULL
-        hessubi_a = pointer_to_array(hessubi,(nhesnz,))
-        hessubj_a = pointer_to_array(hessubj,(nhesnz,))
+        hessubi_a = unsafe_wrap(Array{Int32,1},hessubi,(nhesnz,))
+        hessubj_a = unsafe_wrap(Array{Int32,1},hessubj,(nhesnz,))
 
         scale!(yc,-1)
-        MathProgBase.eval_hesslag(cb.d,pointer_to_array(hesval,(nhesnz,)),xx,yo,yc)
+        MathProgBase.eval_hesslag(cb.d,unsafe_wrap(Array{Float64,1},hesval,(nhesnz,)),xx,yo,yc)
         scale!(yc,-1)
 
         for i=1:length(hessubi_a)
@@ -1247,7 +1245,6 @@ MathProgBase.status(m::MosekNonlinearModel)                              = MathP
 #MathProgBase.getobjbound(m::MosekNonlinearModel) = MathProgBase.getobjbound(m.m)
 #MathProgBase.getobjgap(m::MosekNonlinearModel) = MathProgBase.getobjgap(m.m)
 MathProgBase.getsolvetime(m::MosekNonlinearModel)                        = MathProgBase.getsolvetime(m.m)
-MathProgBase.getrawsolver(m::MosekNonlinearModel)                        = MathProgBase.getrawsolver(m.m)
 MathProgBase.getsense(m::MosekNonlinearModel)                            = MathProgBase.getsense(m.m)
 MathProgBase.setsense!(m::MosekNonlinearModel,sense)                     = MathProgBase.setsense!(m.m)
 MathProgBase.freemodel!(m::MosekNonlinearModel)                          = MathProgBase.freemodel!(m.m)

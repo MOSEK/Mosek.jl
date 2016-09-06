@@ -15,7 +15,7 @@ module Mosek
 
   # A macro to make calling C API a little cleaner
   macro msk_ccall(func, args...)
-    f = Base.Meta.quot(symbol("MSK_$(func)"))
+    f = Base.Meta.quot(Symbol("MSK_$(func)"))
     args = [esc(a) for a in args]
     quote
       ccall(($f,libmosek), $(args...))
@@ -27,7 +27,7 @@ module Mosek
   # -----
   type MosekError <: Exception
     rcode :: Int32
-    msg   :: ASCIIString
+    msg   :: String
   end
 
 
@@ -183,15 +183,6 @@ module Mosek
       end
   end
 
-  function maketask(task::MSKtask)
-      t = MSKtask(task)
-      try
-          func(t)
-      finally
-          deletetask(t)
-      end
-  end
-
   function maketask(func::Function)
       t = MSKtask(msk_global_env)
       try
@@ -231,7 +222,7 @@ module Mosek
     lastmsg = Array(UInt8,lastmsglen[1])
     @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
-    convert(ASCIIString,lastmsg[1:lastmsglen[1]-1])
+    convert(String,lastmsg[1:lastmsglen[1]-1])
   end
 
 

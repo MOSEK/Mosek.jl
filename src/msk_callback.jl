@@ -4,7 +4,7 @@ export
 
 function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{UInt8})
   f = unsafe_pointer_to_objref(userdata) :: Function
-  f(bytestring(msg))
+  f(string(msg))
   convert(Int32,0)::Int32
 end
 
@@ -34,9 +34,9 @@ function msk_info_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: I
             if task.usercallbackfunc == nothing
                 0
             else
-                dinfa  = pointer_to_array(douinf,(MSK_DINF_END,),false)
-                iinfa  = pointer_to_array(intinf,(MSK_IINF_END,),false)
-                liinfa = pointer_to_array(lintinf,(MSK_LIINF_END,),false)
+                dinfa  = unsafe_wrap(Array{Float64,1},douinf,(MSK_DINF_END,),false)
+                iinfa  = unsafe_wrap(Array{Int32,1},intinf,(MSK_IINF_END,),false)
+                liinfa = unsafe_wrap(Array{Int64,1},lintinf,(MSK_LIINF_END,),false)
 
                 task.usercallbackfunc(Int32(where), dinfa, iinfa, liinfa)
             end

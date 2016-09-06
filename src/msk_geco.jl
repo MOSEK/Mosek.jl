@@ -61,7 +61,7 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
 
   if grdobjsub != C_NULL
     if grdobjlen > 0
-      grdobjsub_a = pointer_to_array(grdobjsub,(grdobjlen,))
+      grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(grdobjlen,))
       grdobjsub_a[1:grdobjlen] = nlinfo.grdobjsub
     end
   end
@@ -82,7 +82,7 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
     if grdconisub != C_NULL
       num = nlinfo.grdconptr[i+1] - nlinfo.grdconptr[i]
       if num > 0
-        grdconisub_a = pointer_to_array(grdconisub,num)        
+        grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,num)        
         grdconisub_a[1:num] = nlinfo.grdconsub[nlinfo.grdconptr[i]+1:nlinfo.grdconptr[i+1]]
       end
     end
@@ -95,8 +95,8 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
   end
 
   if hessubi != C_NULL && hessubj != C_NULL && maxnumhesnz >= numhesnz
-    hessubi_a = pointer_to_array(hessubi,(numhesnz,))
-    hessubj_a = pointer_to_array(hessubj,(numhesnz,))
+    hessubi_a = unsafe_wrap(Array{Int32,1},hessubi,(numhesnz,))
+    hessubj_a = unsafe_wrap(Array{Int32,1},hessubj,(numhesnz,))
 
     hessubi_a[1:numhesnz] = nlinfo.hessubi
     hessubj_a[1:numhesnz] = nlinfo.hessubj
@@ -129,9 +129,9 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   nlinfo = unsafe_pointer_to_objref(nlhandle) :: MSKnlinfo
 
   numi = convert(Int,numi_)
-  xx = pointer_to_array(xx_,(nlinfo.numvar,))
-  yc = pointer_to_array(yc_,(nlinfo.numcon,))
-  subi = pointer_to_array(subi_,(numi,)) .+ 1
+  xx = unsafe_wrap(Array{Float64,1},xx_,(nlinfo.numvar,))
+  yc = unsafe_wrap(Array{Float64,1},yc_,(nlinfo.numcon,))
+  subi = unsafe_wrap(Array{Int32,1},subi_,(numi,)) .+ 1
 
   if objval != C_NULL
     unsafe_store!(objval, nlinfo.evalobj(xx))
@@ -144,8 +144,8 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   end
 
   if grdobjsub != C_NULL && grdobjval != C_NULL
-    grdobjval_a = pointer_to_array(grdobjval,(ngrdobjnz,))
-    grdobjsub_a = pointer_to_array(grdobjsub,(ngrdobjnz,))
+    grdobjval_a = unsafe_wrap(Array{Float64,1},grdobjval,(ngrdobjnz,))
+    grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(ngrdobjnz,))
 
     grdobjsub = nlinfo.grdobjsub .+ 1
     nlinfo.grdobj(xx,
@@ -157,26 +157,26 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   end
 
   if numi > 0 && conval != C_NULL
-    conv   = pointer_to_array(conval,(numi,))
+    conv   = unsafe_wrap(Array{Float64,1},conval,(numi,))
     for i=1:numi
       conv[i] = nlinfo.evalconi(xx,subi[i])
     end
   end
 
   if grdconval != C_NULL
-    grdconptrb = pointer_to_array(grdconptrb_,(numi,))
-    grdconptre = pointer_to_array(grdconptre_,(numi,))
+    grdconptrb = unsafe_wrap(Array{Int32,1},grdconptrb_,(numi,))
+    grdconptre = unsafe_wrap(Array{Int32,1},grdconptre_,(numi,))
     for i=1:numi
       ptrb = grdconptrb[i]
       n    = grdconptre[i] - grdconptrb[i]
       nlinfo.grdconi(xx,subi[i],
-                     pointer_to_array(grdconsub_+ptrb*4,(n,)) .+ 1,
-                     pointer_to_array(grdconval +ptrb*4,(n,)))
+                     unsafe_wrap(Array{Int32,1},grdconsub_+ptrb*4,(n,)) .+ 1,
+                     unsafe_wrap(Array{Float64,1},grdconval +ptrb*4,(n,)))
     end
   end
 
   if grdlag != C_NULL
-    nlinfo.grdlag(xx,yo,yc,subi,pointer_to_array(grdlag,(nlinfo.numvar,)))
+    nlinfo.grdlag(xx,yo,yc,subi,unsafe_wrap(Array{Float64,1},grdlag,(nlinfo.numvar,)))
   end
 
   nhesnz = length(nlinfo.hessubi)
@@ -186,12 +186,12 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   end
 
   if maxnumhesnz > 0 && hessubi != C_NULL && hessubj != C_NULL && hesval != C_NULL
-    hessubi_a = pointer_to_array(hessubi,(nhesnz,))
-    hessubj_a = pointer_to_array(hessubj,(nhesnz,))
+    hessubi_a = unsafe_wrap(Array{Int32,1},hessubi,(nhesnz,))
+    hessubj_a = unsafe_wrap(Array{Int32,1},hessubj,(nhesnz,))
     nlinfo.heslag(xx,yo,yc,subi,
                   hessubi_a,
                   hessubj_a,
-                  pointer_to_array(hesval, (nhesnz,)))
+                  unsafe_wrap(Array{Float64,1},hesval, (nhesnz,)))
 
     # Hum... Very strange! If I use "hessubi_a -= 1" it appears that the
     # underlying data of the array is not the native pointer anymore, but
@@ -201,7 +201,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
       hessubj_a[i] = hessubj_a[i]-convert(Int32,1)
     end
 
-    hesval_a  = pointer_to_array(hesval,(nhesnz,))
+    hesval_a  = unsafe_wrap(Array{Float64,1},hesval,(nhesnz,))
   end
   return convert(Int32,0) :: Int32
 end
