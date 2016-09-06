@@ -9,7 +9,7 @@
 using Mosek
 
 # Define a stream printer to grab output from MOSEK
-printstream(msg::AbstractString) = print(msg)
+printstream(msg::String) = print(msg)
 
 
 bkc = [ MSK_BK_UP, MSK_BK_LO  ]

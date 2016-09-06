@@ -417,26 +417,28 @@ function basiscond(task_:: MSKtask)
 end
 
 function bktostr(task_:: MSKtask,bk_:: Int32)
-  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
     @msk_ccall( "bktostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,bk_,str_)
   end
+  str_str = convert(String,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(str_)))
+  (str_str[1:searchindex(str_str,'\0')])
 end
 
 function callbackcodetostr(code_:: Int32)
-  callbackcodestr_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  callbackcodestr_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
     @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{UInt8},),code_,callbackcodestr_)
   end
+  callbackcodestr_str = convert(String,callbackcodestr_)
   if res != 0
     throw(MosekError(res,""))
   end
-  (utf8(pointer(callbackcodestr_)))
+  (callbackcodestr_str[1:searchindex(callbackcodestr_str,'\0')])
 end
 
 function checkconvexity(task_:: MSKtask)
@@ -504,15 +506,16 @@ function commitchanges(task_:: MSKtask)
 end
 
 function conetypetostr(task_:: MSKtask,ct_:: Int32)
-  str_ = zeros(UInt8,1024)
+  str_ = zeros(UInt8,1024+1)
   res = disable_sigint() do
     @msk_ccall( "conetypetostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,ct_,str_)
   end
+  str_str = convert(String,str_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(str_)))
+  (str_str[1:searchindex(str_str,'\0')])
 end
 
 function deletesolution(task_:: MSKtask,whichsol_:: Int32)
@@ -944,15 +947,16 @@ end
 getbarvarname{T1}(task:: MSKtask,i:: T1) = getbarvarname(task,Int32(i))
 function getbarvarname(task_:: MSKtask,i_:: Int32)
   maxlen_ = (1 + getbarvarnamelen(task_,(i_)))
-  name_ = zeros(UInt8,(maxlen_))
+  name_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   end
+  name_str = convert(String,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(name_)))
+  (name_str[1:searchindex(name_str,'\0')])
 end
 
 function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -1142,15 +1146,16 @@ end
 getconename{T1}(task:: MSKtask,i:: T1) = getconename(task,Int32(i))
 function getconename(task_:: MSKtask,i_:: Int32)
   maxlen_ = (1 + getconenamelen(task_,(i_)))
-  name_ = zeros(UInt8,(maxlen_))
+  name_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   end
+  name_str = convert(String,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(name_)))
+  (name_str[1:searchindex(name_str,'\0')])
 end
 
 function getconenameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -1182,15 +1187,16 @@ end
 getconname{T1}(task:: MSKtask,i:: T1) = getconname(task,Int32(i))
 function getconname(task_:: MSKtask,i_:: Int32)
   maxlen_ = (1 + getconnamelen(task_,(i_)))
-  name_ = zeros(UInt8,(maxlen_))
+  name_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
   end
+  name_str = convert(String,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(name_)))
+  (name_str[1:searchindex(name_str,'\0')])
 end
 
 function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -1379,15 +1385,16 @@ end
 
 getinfname{T2}(task:: MSKtask,inftype:: Int32,whichinf:: T2) = getinfname(task,inftype,Int32(whichinf))
 function getinfname(task_:: MSKtask,inftype_:: Int32,whichinf_:: Int32)
-  infname_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  infname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
     @msk_ccall( "getinfname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,inftype_,whichinf_,infname_)
   end
+  infname_str = convert(String,infname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(infname_)))
+  (infname_str[1:searchindex(infname_str,'\0')])
 end
 
 function getintinf(task_:: MSKtask,whichiinf_:: Int32)
@@ -1575,15 +1582,16 @@ end
 getnastrparam{T2}(task:: MSKtask,paramname:: AbstractString,maxlen:: T2) = getnastrparam(task,paramname,Int32(maxlen))
 function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,maxlen_:: Int32)
   len_ = Array(Int32,(1,))
-  parvalue_ = zeros(UInt8,(maxlen_))
+  parvalue_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),maxlen_,len_,parvalue_)
   end
+  parvalue_str = convert(String,parvalue_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),utf8(pointer(parvalue_)))
+  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')])
 end
 
 function getnumanz(task_:: MSKtask)
@@ -1782,15 +1790,16 @@ end
 
 function getobjname(task_:: MSKtask)
   maxlen_ = (1 + getobjnamelen(task_))
-  objname_ = zeros(UInt8,(maxlen_))
+  objname_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getobjname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,maxlen_,objname_)
   end
+  objname_str = convert(String,objname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(objname_)))
+  (objname_str[1:searchindex(objname_str,'\0')])
 end
 
 function getobjnamelen(task_:: MSKtask)
@@ -1819,15 +1828,16 @@ end
 
 getparamname{T2}(task:: MSKtask,partype:: Int32,param:: T2) = getparamname(task,partype,Int32(param))
 function getparamname(task_:: MSKtask,partype_:: Int32,param_:: Int32)
-  parname_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  parname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
     @msk_ccall( "getparamname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,partype_,param_,parname_)
   end
+  parname_str = convert(String,parname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(parname_)))
+  (parname_str[1:searchindex(parname_str,'\0')])
 end
 
 function getprimalobj(task_:: MSKtask,whichsol_:: Int32)
@@ -2300,15 +2310,16 @@ end
 function getstrparam(task_:: MSKtask,param_:: Int32)
   len_ = Array(Int32,(1,))
   maxlen_ = (1 + getstrparamlen(task_,(param_)))
-  parvalue_ = zeros(UInt8,(maxlen_))
+  parvalue_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getstrparam",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_,maxlen_,len_,parvalue_)
   end
+  parvalue_str = convert(String,parvalue_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),utf8(pointer(parvalue_)))
+  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')])
 end
 
 function getstrparamlen(task_:: MSKtask,param_:: Int32)
@@ -2398,15 +2409,16 @@ end
 
 function gettaskname(task_:: MSKtask)
   maxlen_ = (1 + gettasknamelen(task_))
-  taskname_ = zeros(UInt8,(maxlen_))
+  taskname_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "gettaskname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,maxlen_,taskname_)
   end
+  taskname_str = convert(String,taskname_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(taskname_)))
+  (taskname_str[1:searchindex(taskname_str,'\0')])
 end
 
 function gettasknamelen(task_:: MSKtask)
@@ -2459,15 +2471,16 @@ end
 getvarname{T1}(task:: MSKtask,j:: T1) = getvarname(task,Int32(j))
 function getvarname(task_:: MSKtask,j_:: Int32)
   maxlen_ = (1 + getvarnamelen(task_,(j_)))
-  name_ = zeros(UInt8,(maxlen_))
+  name_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
     @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,maxlen_,name_)
   end
+  name_str = convert(String,name_)
   if res != MSK_RES_OK
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (utf8(pointer(name_)))
+  (name_str[1:searchindex(name_str,'\0')])
 end
 
 function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
@@ -4242,15 +4255,17 @@ function echointro(env_:: MSKenv,longver_:: Int32)
 end
 
 function getcodedesc(code_:: Int32)
-  str_ = zeros(UInt8,MSK_MAX_STR_LEN)
-  symname_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
+  symname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
     @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{UInt8},Ptr{UInt8},),code_,symname_,str_)
   end
+  symname_str = convert(String,symname_)
+  str_str = convert(String,str_)
   if res != 0
     throw(MosekError(res,""))
   end
-  (utf8(pointer(symname_)),utf8(pointer(str_)))
+  (symname_str[1:searchindex(symname_str,'\0')],str_str[1:searchindex(str_str,'\0')])
 end
 
 function getversion()
@@ -4331,10 +4346,11 @@ function putlicensewait(env_:: MSKenv,licwait_:: Int32)
 end
 
 function symnamtovalue(name_:: AbstractString)
-  value_ = zeros(UInt8,MSK_MAX_STR_LEN)
+  value_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
     @msk_ccall( "symnamtovalue",Int32,(Ptr{UInt8},Ptr{UInt8},),string(name_),value_)
   end
-  (res != 0,utf8(pointer(value_)))
+  value_str = convert(String,value_)
+  (res != 0,value_str[1:searchindex(value_str,'\0')-1])
 end
 

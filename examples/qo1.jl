@@ -7,7 +7,7 @@
 
 using Mosek
 
-printstream(msg::AbstractString) = print(msg)
+printstream(msg::String) = print(msg)
 
 # Define a stream printer to grab output from MOSEK
 

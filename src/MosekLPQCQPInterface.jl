@@ -1042,7 +1042,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
         # extract subset of Jacobian that mosek asked for
         for i in 1:numi
             con = subi[i]+1
-            grdconval[(grdconptrb[i]+1):grdconptre[i]] = sub(cb.jac_nzval, cb.jac_rowstarts[con]:(cb.jac_rowstarts[con+1]-1))
+            grdconval[(grdconptrb[i]+1):grdconptre[i]] = view(cb.jac_nzval, cb.jac_rowstarts[con]:(cb.jac_rowstarts[con+1]-1))
         end
     end
 
