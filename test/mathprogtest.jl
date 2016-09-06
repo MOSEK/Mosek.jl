@@ -15,17 +15,18 @@ include(joinpath(Pkg.dir("MathProgBase"),"test","nlp.jl"))
 solver = Mosek.MosekSolver(QUIET=true)
 
 linprogtest(solver)
-quadprogtest(solver)
-#socptest(MosekSolver())
 mixintprogtest(solver)
+quadprogtest(solver)
 convexnlptest(solver)
+
+#socptest(MosekSolver())
 coniclineartest(solver,duals=true)
 conicSOCtest(solver,duals=true)
 conicSOCRotatedtest(solver,duals=true)
 conicSDPtest(solver,duals=true)
 
+    
 linprogsolvertest(solver)
 
 # linprogsolvertestextra(solver)
-
 end

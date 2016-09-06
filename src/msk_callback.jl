@@ -4,11 +4,11 @@ export
 
 function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{UInt8})
   f = unsafe_pointer_to_objref(userdata) :: Function
-  f(string(msg))
+  f(unsafe_wrap(String,msg))
   convert(Int32,0)::Int32
 end
 
-function putstreamfunc(t::MSKtask, whichstream:: Int32, f :: Function)
+function putstreamfunc(t::MSKtask, whichstream:: Int32, f :: Function)  
   cbfunc = cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Void},Ptr{UInt8}))
   r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Void},Int32, Any, Ptr{Void}),t.task,whichstream,f,cbfunc)
   if r != MSK_RES_OK

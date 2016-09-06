@@ -3,7 +3,7 @@ using Mosek,FactCheck
 facts("[apitest]") do
 
     context("lo1") do
-        printstream(msg::String) = nothing #print(msg)
+        printstream(msg::String) = nothing # print(msg)
 
         bkc = [MSK_BK_FX MSK_BK_LO MSK_BK_UP]
         blc = [30.0, 15.0, -Inf]

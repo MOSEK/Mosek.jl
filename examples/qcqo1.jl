@@ -72,7 +72,7 @@ maketask() do task
 
     # put Q^0 in constraint with index 0. 
 
-    putqconk (task,1, qsubi,qsubj, qval) 
+    putqconk(task,1, qsubi,qsubj, qval) 
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)

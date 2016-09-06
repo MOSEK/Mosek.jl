@@ -933,7 +933,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
 
         if grdconisub != C_NULL
             if con_nnz > 0
-                grdconisub_a = unsafe_wrap(Array{Int64,1},grdconisub,(con_nnz,))        
+                grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,(con_nnz,))        
                 grdconisub_a[1:con_nnz] = cb.jac_colval[cb.jac_rowstarts[i]:(cb.jac_rowstarts[i+1]-1)] - 1
             end
         end

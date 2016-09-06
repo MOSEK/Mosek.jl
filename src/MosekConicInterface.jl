@@ -144,7 +144,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         varbkidx = 1
         bk = Array(Int32,nvar)
         for (sym,idxs_) in var_cones
-            idxs = convert(Vector{Int32},collect(idxs_))
+            idxs = coneidxstoarray(idxs_)
 
             n = length(idxs)
             if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
@@ -285,7 +285,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
             local conptr = 1
 
             for (sym,idxs_) in constr_cones
-                idxs = convert(Vector{Int32},collect(idxs_))
+                idxs = coneidxstoarray(idxs_)
                 local n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
                     firstcon = conptr
@@ -650,6 +650,11 @@ end
 # vecsize
 #   Total number of scalar element (= numlin+numqconeelm+numsdpconeelm)
 #
+coneidxstoarray(idxs :: Int32) = Int[ convert(Int,idxs) ]
+coneidxstoarray(idxs :: Int64) = Int[ convert(Int,idxs) ]
+coneidxstoarray(idxs :: Array{Int,1}) = idxs
+coneidxstoarray(idxs) = collect(Int,idxs)
+
 function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
@@ -680,8 +685,7 @@ function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
         end
     end
     
-
-    elmidxs = vcat([ convert(Vector{Int},collect(idxs)) for (_,idxs) in cones ]...)
+    elmidxs = vcat([ coneidxstoarray(idxs) for (_,idxs) in cones ]...)
     sort!(elmidxs)
 
     # check for duplicated and missing elements
