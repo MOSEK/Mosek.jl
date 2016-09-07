@@ -6,7 +6,7 @@ mskvminor = "0"
 
 
 mskplatform,distroext =
-  if Sys.ARCH == :x86
+  if Sys.ARCH == :i386 || Sys.ARCH == :i686
     if     is_linux()   "linux32x86",  ".tar.bz2"
     elseif is_windows() "win32x86",  ".zip"
     else   error("Platform not supported")
