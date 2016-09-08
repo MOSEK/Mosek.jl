@@ -49,7 +49,7 @@ Pkg.rm("Mosek") ; Pkg.add("Mosek") ; Pkg.build("Mosek")
 ```
 If this is not desirable (e.g. because other packages depend on Mosek), you can remove the temporary files from the Mosek.jl installation. On Unix this is usually
 ```
-rm -f ~/.julia/Mosek/downloads/*
+rm -f ~/.julia/v0.4/Mosek/downloads/*
 ```
 
 ### When installation does not work
