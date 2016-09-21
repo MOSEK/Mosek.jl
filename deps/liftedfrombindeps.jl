@@ -22,7 +22,7 @@ end
 downloadcmd = nothing
 function download_cmd(url::AbstractString, filename::AbstractString)
     global downloadcmd
-    whichcmd = @windows ? "where" : "which"
+    whichcmd = @static if is_windows() "where" else "which" end
     if downloadcmd === nothing
         for checkcmd in downloadcmd_candidates
             try
