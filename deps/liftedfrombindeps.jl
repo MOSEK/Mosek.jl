@@ -94,6 +94,9 @@ end
             else
                 error("I don't know how to unpack $file")
             end
+        elseif extension == ".zip"
+            rm(directory,recursive=true)
+            return (`powershell -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory(\"$file\",\"$directory\")"`)
         else
             error("I don't know how to unpack $file")
         end
