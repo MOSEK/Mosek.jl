@@ -42,7 +42,8 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     #                                 linear index of the element in barvar.
     conslack :: Array{Int32,1}
     barconij :: Array{Int64,1}
-
+    conbk    :: Array{Float64,1}
+    
     # last termination code, used for status(task)
     lasttrm :: Int32
 
@@ -64,6 +65,7 @@ function MathProgBase.ConicModel(s::MosekSolver)
 
                                 Array(Int32,0),  # conslack
                                 Array(Int64,0),  # barconij
+                                Array(Int64,0),  # conbk
                                 Mosek.MSK_RES_OK,
                                 s.options)
     loadoptions!(m)
@@ -281,7 +283,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         end
 
         # Add bounds and slacks
-        let bk = Array(Int32,M)
+        conbk = Array(Int32,M)
+        let bk = conbk
             local conptr = 1
 
             for (sym,idxs_) in constr_cones
@@ -347,8 +350,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     barvarptr += 1
                 end
             end
-
-            Mosek.putconboundslice(m.task,1,M+1,bk,-b,-b)
+            
+            Mosek.putconboundslice(m.task,1,M+1,bk,-b,-b)            
         end
     end
 
@@ -425,7 +428,22 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
     m.numcon     = totnumcon
     m.conslack   = conslack
     m.barconij   = barconij
+    m.conbk      = conbk
 end
+
+
+function MathProgBase.setbvec!(m::MosekMathProgConicModel, b :: Array{Float64,1})
+    if length(b) > m.numcon
+        b = b[1:m.numcon]
+    end
+
+    Mosek.putconboundslice(m.task,1,length(b)+1,m.bk,-b,-b)
+end
+
+function MathProgBase.setbvec!(m::MosekMathProgConicModel, b)
+    MathProgBase.setbvec!(m,collect(Float64,b))
+end
+
 
 function MathProgBase.writeproblem(m::MosekMathProgConicModel, filename::AbstractString)
     Mosek.writedata(m.task,filename)
