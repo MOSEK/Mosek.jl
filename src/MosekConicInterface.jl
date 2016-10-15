@@ -42,8 +42,8 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     #                                 linear index of the element in barvar.
     conslack :: Array{Int32,1}
     barconij :: Array{Int64,1}
-    conbk    :: Array{Float64,1}
-    
+    conbk    :: Array{Int32,1}
+
     # last termination code, used for status(task)
     lasttrm :: Int32
 
@@ -65,7 +65,7 @@ function MathProgBase.ConicModel(s::MosekSolver)
 
                                 Array(Int32,0),  # conslack
                                 Array(Int64,0),  # barconij
-                                Array(Int64,0),  # conbk
+                                Array(Int32,0),  # conbk
                                 Mosek.MSK_RES_OK,
                                 s.options)
     loadoptions!(m)
@@ -345,13 +345,13 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                         end
                     end
                     conslack[firstcon:lastcon] = -barvarptr
-                    
+
                     conptr += n
                     barvarptr += 1
                 end
             end
-            
-            Mosek.putconboundslice(m.task,1,M+1,bk,-b,-b)            
+
+            Mosek.putconboundslice(m.task,1,M+1,bk,-b,-b)
         end
     end
 
@@ -432,12 +432,12 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
 end
 
 
-function MathProgBase.setbvec!(m::MosekMathProgConicModel, b :: Array{Float64,1})
-    if length(b) > m.numcon
-        b = b[1:m.numcon]
+function MathProgBase.setbvec!(m::MosekMathProgConicModel, b::Array{Float64,1})
+    if length(b) != m.numcon
+        throw(MosekMathProgSolverInterface.MosekMathProgModelError("Invalid b vector dimension"))
     end
 
-    Mosek.putconboundslice(m.task,1,length(b)+1,m.bk,-b,-b)
+    Mosek.putconboundslice(m.task,1,length(b)+1,m.conbk,-b,-b)
 end
 
 function MathProgBase.setbvec!(m::MosekMathProgConicModel, b)
@@ -653,7 +653,7 @@ end
 # countcones :: Array{(Symbol,Tis),1} -> (Int,Int,Int,Int,Int,Int)
 #
 # Count number of elements in the cone product.
-# 
+#
 # Returns (numqcone,numsdpcone,numlin,numqconeelm,numsdpconeelm,vecsize)
 # numqcone
 #   Number of quadratic cones
@@ -663,7 +663,7 @@ end
 #   Number of linear scalar elements
 # numqconeelm
 #   Total number of quadratic cone scalar elements
-# numsdpconeelm 
+# numsdpconeelm
 #   Total number of PSD cone scalar elements
 # vecsize
 #   Total number of scalar element (= numlin+numqconeelm+numsdpconeelm)
@@ -686,23 +686,23 @@ function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
             throw(MosekMathProgModelError("Unsupported cone type"))
         end
         vecsize += length(idxs)
-        
+
         if     sym == :SDP
             n = round(Int32,sqrt(.25+2*length(idxs))-0.5)
             if n*(n+1)/2 != size(idxs,1) # does not define the lower triangular part of a square matrix
                 throw(MosekMathProgModelError("Invalid SDP cone definition"))
             end
-                
+
             numsdpcone += 1
             numsdpconeelm += length(idxs)
-        elseif sym in [ :SOC, :SOCRotated ]            
+        elseif sym in [ :SOC, :SOCRotated ]
             numqcone += 1
             numqconeelm += length(idxs)
         else
             numlin   += length(idxs)
         end
     end
-    
+
     elmidxs = vcat([ coneidxstoarray(idxs) for (_,idxs) in cones ]...)
     sort!(elmidxs)
 
@@ -712,7 +712,7 @@ function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
             throw(MosekMathProgModelError("Invalid data: Intersecting cones"))
         elseif elmidxs[i-1] < elmidxs[i]-1
             throw(MosekMathProgModelError("Invalid data: Missing element in cone specification"))
-        end            
+        end
     end
 
     return (numqcone,numsdpcone,numlin,numqconeelm,numsdpconeelm,vecsize)
@@ -742,20 +742,20 @@ end
 # Map linear index into column oriented lower triangular part of a
 # square matrix to an (i,j) row,column index. It feels like there
 # should be a closed term for computing i,j from L, but... :'(
-function lintriltoij(L::Int64, n::Int32)    
+function lintriltoij(L::Int64, n::Int32)
     let L = L-1
         local j = 0
         while L >= n-j
             L -= (n-j)
             j += 1
-        end        
+        end
         i = L+j
         (i+1,j+1)
     end
 end
 
 #internal
-function lintriltoij(Ls::Array{Int64,1}, d::Int32)    
+function lintriltoij(Ls::Array{Int64,1}, d::Int32)
     n = length(Ls)
     ii = Array(Int32,length(Ls))
     jj = Array(Int32,length(Ls))
@@ -771,7 +771,7 @@ end
 ijtolintril(i::Int32, j::Int32, d::Int32) =
     let i = int64(i-1),
         j = int64(j-1)
-        if (i < j) 
+        if (i < j)
             (i*(2*d-i-1) >> 1)+j+1
         else
             (j*(2*d-j-1) >> 1)+i+1
@@ -844,7 +844,3 @@ function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
         ii,jj,vv
     end
 end
-
-
-
-
