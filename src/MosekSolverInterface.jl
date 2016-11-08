@@ -57,10 +57,12 @@ function status(t::Mosek.MSKtask, r::Int32)
           solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
           :Unknown
       elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
-          solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+          solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ||
+          solsta == Mosek.MSK_SOL_STA_DUAL_ILLPOSED_CER
           :Unbounded
       elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ||
-          solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+          solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ||
+          solsta == Mosek.MSK_SOL_STA_PRIM_ILLPOSED_CER
           :Infeasible
       elseif solsta == Mosek.MSK_SOL_STA_OPTIMAL ||
           solsta == Mosek.MSK_SOL_STA_NEAR_OPTIMAL ||
