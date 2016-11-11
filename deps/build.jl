@@ -74,13 +74,13 @@ mskbindir =
         basename,ext,sndext = splittarpath(tarname)
 
         mkpath(dldir)
-        info("Download MOSEK distro (http://download.mosek.com/stable/7/$tarname)")
-        success(download_cmd(string("http://download.mosek.com/stable/7/",tarname), joinpath(dldir,tarname))) || error("Failed to download MOSEK distro")
+        info("Download MOSEK distro (http://download.mosek.com/stable/$mskvmajor/$tarname)")
+        success(download_cmd(string("http://download.mosek.com/stable/$mskvmajor/",tarname), joinpath(dldir,tarname))) || error("Failed to download MOSEK distro")
         mkpath(srcdir)
         info("Unpack MOSEK distro ($dldir/$tarname -> $srcdir)")
         success(unpack_cmd(joinpath(dldir,tarname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
 
-        joinpath(srcdir,"mosek","7","tools","platform",mskplatform,"bin")
+        joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
     end
 mskbindir = replace(mskbindir,"\\","/")
 
