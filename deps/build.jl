@@ -65,6 +65,9 @@ end
 #   "internal" -> the MOSEK distro was downloaded and installed by the installer
 #   "external" -> the MOSEK distro was detected in some other location and not downloaded by the installer
 # If the previous installation was internal, we will not attempt to locate a MOSEK installation
+#
+# This ensures that you can rebuild an internal installation without
+# the installer checking for other installations.
 instmethod =
     try
         open(joinpath(bindepsdir,"inst_method"),"r") do f
@@ -75,11 +78,14 @@ instmethod =
     end
 
 usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD") && instmethod != "internal"
-    
+inst_is_internal = false
 
 mskbindir =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
     if  usepreinstalled && haskey(ENV,"MOSEKBINDIR")  && bindirIsCurrentVersion(ENV["MOSEKBINDIR"])
+        version = versionFromBindir(ENV["MOSEKBINDIR"])
+        info("""Found MOSEK $version at $(ENV["MOSEKBINDIR"])""")
+    
         ENV["MOSEKBINDIR"]
     elseif ! usepreinstalled && haskey(ENV,"MOSEK_8_0_BINDIR") && bindirIsCurrentVersion(ENV["MOSEKBINDIR"])
         ENV["MOSEK_8_0_BINDIR"]
@@ -87,6 +93,9 @@ mskbindir =
     elseif usepreinstalled &&
         haskey(ENV,"HOME") &&
         bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
+
+        version = versionFromBindir(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
+        info("""Found MOSEK $version at $(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))""")
         
         joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin")
 # 2b. Windows default install path
@@ -96,6 +105,10 @@ mskbindir =
         bindirIsCurrentVersion(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","8","tools","platform",mskplatform,"bin"))
         
         home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
+
+        version = versionFromBindir(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
+        info("""Found MOSEK $version at $(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))""")
+        
         joinpath(home,"mosek","8","tools","platform",mskplatform,"bin")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
@@ -122,7 +135,11 @@ mskbindir =
             open(joinpath(dldir,"new_version"),"r") do f
                 strip(readstring(f))
             end
-        info("Latest MOSEK version = $new_version")
+        info("Latest MOSEK version = $new_version, currently installed = $cur_version")
+
+        open(joinpath(bindepsdir,"inst_method"),"w") do f
+            write(f,"internal")
+        end
         
         if cur_version == nothing || cur_version != new_version
             archurl = "http://download.mosek.com/stable/$(new_version)/$archname"
@@ -149,8 +166,9 @@ mskbindir =
             
             bindir
         else
+            info("Update not necessary")
             joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
-        end
+        end        
     end
 
 mskbindir = replace(mskbindir,"\\","/")
