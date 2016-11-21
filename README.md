@@ -28,11 +28,11 @@ Use the Julia package manager to install Mosek.jl:
     
 When installing, the installer will look for the MOSEK library in following places:
 - First, if the environment variable `MOSEKBINDIR` is defined, it will look for the MOSEK library in the directory it points to. I.e. it must point the the `bin/` directory in the MOSEK distro.
-- Secondly, it will look for the MOSEK distribution in the user's home directory. This usually resolves to:
+- If `MOSEKBINDIR` is undefined or it points to an invalid directory, the installer will look for the MOSEK distribution in the user's home directory. This usually resolves to:
   - OS X: `/Users/username`
   - Linux: `/home/username`
   - Windows: `C:\Users\username`
-- Thirdly, on Linux and OS X it will attempt to download MOSEK and install it in the Julia configuration directory.
+- If no usable MOSEK installation is found here, the installer will attempt to download and unpack the latest distro.
 
 If the MOSEK installation is moved it is necessary to rebuild the package using 
 

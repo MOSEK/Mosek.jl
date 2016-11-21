@@ -36,7 +36,6 @@ libalternatives =
 
 bindepsdir = dirname(@__FILE__)
 
-usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
 
 
 
@@ -62,6 +61,21 @@ function bindirIsCurrentVersion(bindir)
 end
 
 
+# Detect previous installation method:
+#   "internal" -> the MOSEK distro was downloaded and installed by the installer
+#   "external" -> the MOSEK distro was detected in some other location and not downloaded by the installer
+# If the previous installation was internal, we will not attempt to locate a MOSEK installation
+instmethod =
+    try
+        open(joinpath(bindepsdir,"inst_method"),"r") do f
+            strip(readstring(f))
+        end
+    catch
+        nothing
+    end
+
+usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD") && instmethod != "internal"
+    
 
 mskbindir =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
