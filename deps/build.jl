@@ -4,7 +4,6 @@ include("liftedfrombindeps.jl")
 mskvmajor = "8"
 mskvminor = "0"
 
-
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
     if     is_linux()   "linux32x86",  ".tar.bz2"
@@ -23,15 +22,15 @@ mskplatform,distroext =
 
 libalternatives =
   if     mskplatform == "linux32x86"
-                                       [ ("libmosek.so.7.0",     "libmosekscopt7_0.so"),    ("libmosek.so.7.1",     "libmosekscopt7_1.so"),    ("libmosek.so.8.0",     "libmosekscopt8_0.so"),    ]
+                                       [ ("libmosek.so.8.0",     "libmosekscopt8_0.so"),    ]
   elseif mskplatform == "linux64x86"
-                                       [ ("libmosek64.so.7.0",   "libmosekscopt7_0.so"),    ("libmosek64.so.7.1",   "libmosekscopt7_1.so"),    ("libmosek64.so.8.0",   "libmosekscopt8_0.so"),    ]
+                                       [ ("libmosek64.so.8.0",   "libmosekscopt8_0.so"),    ]
   elseif mskplatform == "osx64x86"
-                                       [ ("libmosek64.7.0.dylib","libmosekscopt7_0.dylib"), ("libmosek64.7.1.dylib","libmosekscopt7_1.dylib"), ("libmosek64.8.0.dylib","libmosekscopt8_0.dylib"), ]
+                                       [ ("libmosek64.8.0.dylib","libmosekscopt8_0.dylib"), ]
   elseif mskplatform == "win32x86"
-                                       [ ("mosek7_0.dll",        "mosekscopt7_0.dll"),      ("mosek7_1.dll",        "mosekscopt7_1.dll"),      ("mosek8_0.dll",        "mosekscopt8_0.dll"),      ]
+                                       [ ("mosek8_0.dll",        "mosekscopt8_0.dll"),      ]
   elseif mskplatform == "win64x86"
-                                       [ ("mosek64_7_0.dll",     "mosekscopt7_0.dll"),      ("mosek64_7_1.dll",     "mosekscopt7_1.dll"),      ("mosek64_8_0.dll",     "mosekscopt8_0.dll"),      ]
+                                       [ ("mosek64_8_0.dll",     "mosekscopt8_0.dll"),      ]
   else   error("Platform not supported")
   end
 
@@ -39,49 +38,107 @@ bindepsdir = dirname(@__FILE__)
 
 usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
 
+
+
+
+function versionFromBindir(bindir ::String)
+    try
+        mosekbin = if is_windows() "mosek.exe" else "mosek" end
+        txt = readstring(`$bindir/$mosekbin`)
+        m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)",txt)
+        if m == nothing
+            return nothing
+        else
+            return m.captures[1]
+        end
+    catch
+        return nothing
+    end
+end
+
+function bindirIsCurrentVersion(bindir)
+    ver = versionFromBindir(bindir)
+    return ver != nothing && ver[1] == mskvmajor && ver[2] == mskvminor
+end
+
+
+
 mskbindir =
 # 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
-    if  usepreinstalled && haskey(ENV,"MOSEKBINDIR")
+    if  usepreinstalled && haskey(ENV,"MOSEKBINDIR")  && bindirIsCurrentVersion(ENV["MOSEKBINDIR"])
         ENV["MOSEKBINDIR"]
-    elseif ! usepreinstalled && haskey(ENV,"MOSEK_8_0_BINDIR")
+    elseif ! usepreinstalled && haskey(ENV,"MOSEK_8_0_BINDIR") && bindirIsCurrentVersion(ENV["MOSEKBINDIR"])
         ENV["MOSEK_8_0_BINDIR"]
-    elseif ! usepreinstalled && haskey(ENV,"MOSEK_7_1_BINDIR")
-        ENV["MOSEK_7_1_BINDIR"]
 # 2a. Otherwise, use the default installation path (Linux)
-    elseif usepreinstalled && ( haskey(ENV,"HOME") &&
-                                  isdir(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform)))
+    elseif usepreinstalled &&
+        haskey(ENV,"HOME") &&
+        bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
+        
         joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin")
-    elseif usepreinstalled && ( haskey(ENV,"HOME") &&
-                                  isdir(joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform)))
-        joinpath(ENV["HOME"],"mosek","7","tools","platform",mskplatform,"bin")
 # 2b. Windows default install path
-    elseif usepreinstalled && (haskey(ENV,"HOMEDRIVE") &&
-                                 haskey(ENV,"HOMEPATH") &&
-                                 isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","8","tools","platform",mskplatform)))
+    elseif usepreinstalled &&
+        haskey(ENV,"HOMEDRIVE") &&
+        haskey(ENV,"HOMEPATH") &&
+        bindirIsCurrentVersion(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","8","tools","platform",mskplatform,"bin"))
+        
         home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
         joinpath(home,"mosek","8","tools","platform",mskplatform,"bin")
-    elseif usepreinstalled && (haskey(ENV,"HOMEDRIVE") &&
-                                 haskey(ENV,"HOMEPATH") &&
-                                 isdir(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","7","tools","platform",mskplatform)))
-        home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
-        joinpath(home,"mosek","7","tools","platform",mskplatform,"bin")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
-        srcdir  = joinpath(bindepsdir,"src")
-        dldir   = joinpath(bindepsdir,"downloads")
-        tarname = string("mosektools",mskplatform, distroext)
-
-        basename,ext,sndext = splittarpath(tarname)
+        srcdir   = joinpath(bindepsdir,"src")
+        dldir    = joinpath(bindepsdir,"downloads")
+        archname = "mosektools$(mskplatform)$(distroext)"
+        verurl   = "http://download.mosek.com/stable/$mskvmajor/version"
 
         mkpath(dldir)
-        info("Download MOSEK distro (http://download.mosek.com/stable/$mskvmajor/$tarname)")
-        success(download_cmd(string("http://download.mosek.com/stable/$mskvmajor/",tarname), joinpath(dldir,tarname))) || error("Failed to download MOSEK distro")
-        mkpath(srcdir)
-        info("Unpack MOSEK distro ($dldir/$tarname -> $srcdir)")
-        success(unpack_cmd(joinpath(dldir,tarname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
 
-        joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
+        cur_version =
+            if isfile(joinpath(dldir,"version"))
+                open(joinpath(dldir,"version"),"r") do f
+                    cur_version = strip(readstring(f))
+                end
+            else
+                nothing
+            end
+
+        info("Get latest MOSEK version (http://download.mosek.com/stable/version)")
+        success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
+
+        new_version =         
+            open(joinpath(dldir,"new_version"),"r") do f
+                strip(readstring(f))
+            end
+        info("Latest MOSEK version = $new_version")
+        
+        if cur_version == nothing || cur_version != new_version
+            archurl = "http://download.mosek.com/stable/$(new_version)/$archname"
+            info("Download MOSEK distro ($archurl)")
+            
+            basename,ext,sndext = splittarpath(archname)
+
+            success(download_cmd(archurl, joinpath(dldir,archname))) || error("Failed to download MOSEK distro")
+
+            mkpath(srcdir)
+            info("Unpack MOSEK distro ($dldir/$archname -> $srcdir)")
+            success(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
+
+            
+            bindir = joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
+            dl_version = versionFromBindir(bindir)
+            if new_version == nothing
+                error("MOSEK package is broken")
+            else
+                open(joinpath(dldir,"version"),"w") do f
+                    write(f,dl_version)
+                end
+            end
+            
+            bindir
+        else
+            joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
+        end
     end
+
 mskbindir = replace(mskbindir,"\\","/")
 
 idxs = reverse(find(libs -> all(lib -> isfile(joinpath(mskbindir,lib)), libs), libalternatives))
@@ -92,6 +149,7 @@ else
 
     libmosekpath = escape_string(normpath("$mskbindir/$libmosek"))
     libscoptpath = escape_string(normpath("$mskbindir/$libmosekscopt"))
+
 
     open(joinpath(bindepsdir,"deps.jl"),"w") do f
         write(f,"""# This is an auto-generated file; do not edit\n""")

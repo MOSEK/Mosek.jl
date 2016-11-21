@@ -39,11 +39,6 @@ module Mosek
   end
 
 
-
-
-
-
-
   # Task: typedef void * MSKtask_t;
   type MSKtask
     env::MSKenv
@@ -225,27 +220,8 @@ module Mosek
     convert(String,lastmsg[1:lastmsglen[1]-1])
   end
 
-
-  function _getmosekmajorversion()
-      build_ = Array(Int32,(1,))
-      major_ = Array(Int32,(1,))
-      minor_ = Array(Int32,(1,))
-      revision_ = Array(Int32,(1,))
-      @msk_ccall( "getversion",Int32,(Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},),major_,minor_,build_,revision_)
-      convert(Int32,major_[1])
-  end
-
-  #include("msk_callback.jl")
-  # Generated content
-  if _getmosekmajorversion() == 7
-      include("msk7_enums.jl")
-      include("msk7_functions.jl")
-  elseif _getmosekmajorversion() == 8
-      include("msk8_enums.jl")
-      include("msk8_functions.jl")
-  else
-      error("Unsupported MOSEK version loaded")
-  end
+  include("msk_enums.jl")
+  include("msk_functions.jl")
   include("msk_callback.jl")
   include("msk_geco.jl")
 
