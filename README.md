@@ -24,40 +24,61 @@ Installation
 
 Use the Julia package manager to install Mosek.jl:
 
-    Pkg.add("Mosek")
+```
+Pkg.add("Mosek")
+```
     
 When installing, the installer will look for the MOSEK library in following places:
 - First, if the environment variable `MOSEKBINDIR` is defined, it will look for the MOSEK library in the directory it points to. I.e. it must point the the `bin/` directory in the MOSEK distro.
-- If `MOSEKBINDIR` is undefined or it points to an invalid directory, the installer will look for the MOSEK distribution in the user's home directory. This usually resolves to:
+- If `MOSEKBINDIR` is undefined or it points to an invalid directory,
+  the installer will look for the MOSEK distribution in the user's
+  home directory. This usually resolves to:
   - OS X: `/Users/username`
   - Linux: `/home/username`
   - Windows: `C:\Users\username`
-- If no usable MOSEK installation is found here, the installer will attempt to download and unpack the latest distro.
+- If no usable MOSEK installation is found here, the installer will
+  attempt to download and unpack the latest distro. In this case doing
+  `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
 
-If the MOSEK installation is moved it is necessary to rebuild the package using 
+If the MOSEK distro installation directory is moved it is necessary to rebuild the package using
 
-    Pkg.build("Mosek")
 
-Furthermore, to run an optimization a license is required (these are free for academic use). Mosek will look first for the enironment variable `MOSEKLM_LICENSE_FILE` which must point to the relevant license file, and, if this is not present, it will look for a file called `mosek.lic` in the default install path.
+```
+Pkg.build("Mosek")
+```
+
+Furthermore, to run an optimization a license is required (these are
+free for academic use). MOSEK will look first for the enironment
+variable `MOSEKLM_LICENSE_FILE` which, if defined, must point to the relevant
+license file. If this is not defined, MOSEK will look for a file
+called `mosek.lic` in the default install path, e.g.
+
+
+```
+$HOME/mosek/mosek.lic
+```
 
 ### Updating the Mosek library
-If the MOSEK distro was installed manually, it can be updated simply by installing a newer distro. 
+If the MOSEK distro was installed manually, it can be updated simply
+by installing a newer distro in the same place. Otherwise, doing
+`Pkg.build("Mosek")` will check the latest MOSEK distro and update if
+possible.
 
-If the Mosek.jl installer fetched and installed the MOSEK distro, it cannot automatically update, even when doing `Pkg.update()` or `Pkg.build("Mosek")`. Currently the simplest way to force the update is to do
+You can see if the MOSEK distro was installed internally this way:
+
 ```
-Pkg.rm("Mosek") ; Pkg.add("Mosek") ; Pkg.build("Mosek")
-```
-If this is not desirable (e.g. because other packages depend on Mosek), you can remove the temporary files from the Mosek.jl installation. On Unix this is usually
-```
-rm -f ~/.julia/v0.4/Mosek/downloads/*
+is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f readstring(f) == "internal" end
 ```
 
 ### When installation does not work
-If you experience problems installing (in particular on Windows or OS X), you can try to clone the latest revision of Mosek.jl instead of adding it:
+If you experience problems installing (in particular on Windows or OS X), you can try to pull the latest revision and see if that works
 ```
-Pkg.clone("https://github.com/JuliaOpt/Mosek.jl")
+Pkg.checkout("Mosek","master")
 Pkg.build("Mosek")
 ```
+
+If this also fails, please post an issue in Github.
+
 
 Documentation
 -------------
@@ -68,15 +89,21 @@ For a more complete description of functions, please refer to
 [the MOSEK C API documentation](http://docs.mosek.com/7.0/capi/index.html).
 
 The General Convex interface is not documented at all, but the example 
-<tt>nlo1.jl</tt> show the general idea.
-
+`nlo1.jl` show the general idea.
 
 MathProgBase interface
 ----------------------
 
-Mosek implements the solver-independent [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) interface,
-and so can be used within modeling software like [JuMP](https://github.com/JuliaOpt/JuMP.jl).
-The solver object is called ``MosekSolver``. Parameters are accepted and mirror the names in the Mosek documentation but the ``MSK_[I|D|S]PAR`` prefix is optional.
-For example, you can suppress output by either saying ``MosekSolver(MSK_IPAR_LOG=0)`` or ``MosekSolver(LOG=0)``, where ``LOG`` corresponds to the [MSK_IPAR_LOG](http://docs.mosek.com/7.0/capi/MSK_IPAR_LOG.html) parameter.
-When the prefix is excluded the type of the parameter is inferred by the provided value.
+Mosek implements the solver-independent
+[MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) interface,
+that allows it to works solver in e.g. [JuMP](https://github.com/JuliaOpt/JuMP.jl).
 
+The solver object is called ``MosekSolver``. Parameters are accepted
+and mirror the names in the Mosek documentation but the
+``MSK_[IDS]PAR`` prefix is optional.
+
+For example, you can suppress output by either saying
+``MosekSolver(MSK_IPAR_LOG=0)`` or ``MosekSolver(LOG=0)``, where
+``LOG`` corresponds to the `MSK_IPAR_LOG` parameter in the API. When
+the prefix is excluded the type of the parameter is inferred by the
+provided value.
