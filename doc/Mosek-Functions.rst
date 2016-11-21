@@ -1,5 +1,5 @@
 .. Contents of this file is generated. Do not edit by hand!
-.. MOSEK 7.1.0.27
+.. MOSEK 8.0.0.44
 
 
 
@@ -36,7 +36,9 @@ analyzenames
 * ``nametype:: Int32`` (`Enum nametype`_) The type of names e.g. valid in MPS or LP files.
 
 
+
 Analyze the names and issue an error for the first invalid name.
+
 
 analyzeproblem
 --------------
@@ -51,7 +53,9 @@ analyzeproblem
 * ``whichstream:: Int32`` (`Enum streamtype`_) Index of the stream.
 
 
+
 Analyze the data of a task.
+
 
 analyzesolution
 ---------------
@@ -68,7 +72,9 @@ analyzesolution
 * ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
 
 
+
 Print information related to the quality of the solution.
+
 
 appendbarvars
 -------------
@@ -90,15 +96,15 @@ appendcone
 ::
 
     function appendcone
-    ( task::     MSKtask,
-      conetype:: Int32,
-      conepar::  Float64,
-      submem::   Array{Int32} )
+    ( task::    MSKtask,
+      ct::      Int32,
+      conepar:: Float64,
+      submem::  Array{Int32} )
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``conetype:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
-* ``conepar:: Float64`` This argument is currently not used. Can be set to 0.0.
+* ``ct:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
+* ``conepar:: Float64`` This argument is currently not used. It can be set to 0
 * ``submem:: Array{Int32}`` Variable subscripts of the members in the cone.
 
 
@@ -109,16 +115,16 @@ appendconeseq
 ::
 
     function appendconeseq
-    ( task::     MSKtask,
-      conetype:: Int32,
-      conepar::  Float64,
-      nummem::   Int32,
-      j::        Int32 )
+    ( task::    MSKtask,
+      ct::      Int32,
+      conepar:: Float64,
+      nummem::  Int32,
+      j::       Int32 )
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``conetype:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
-* ``conepar:: Float64`` This argument is currently not used. Can be set to 0.0.
+* ``ct:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
+* ``conepar:: Float64`` This argument is currently not used. It can be set to 0
 * ``nummem:: Int32`` Dimension of the conic constraint.
 * ``j:: Int32`` Index of the first variable in the conic constraint.
 
@@ -130,21 +136,21 @@ appendconesseq
 ::
 
     function appendconesseq
-    ( task::     MSKtask,
-      conetype:: Array{Int32},
-      conepar::  Array{Float64},
-      nummem::   Array{Int32},
-      j::        Int32 )
+    ( task::    MSKtask,
+      ct::      Array{Int32},
+      conepar:: Array{Float64},
+      nummem::  Array{Int32},
+      j::       Int32 )
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``conetype:: Array{Int32}`` (`Enum conetype`_) Specifies the type of the cone.
-* ``conepar:: Array{Float64}`` This argument is currently not used. Can be set to 0.0.
+* ``ct:: Array{Int32}`` (`Enum conetype`_) Specifies the type of the cone.
+* ``conepar:: Array{Float64}`` This argument is currently not used. It can be set to 0
 * ``nummem:: Array{Int32}`` Number of member variables in the cone.
 * ``j:: Int32`` Index of the first variable in the first cone to be appended.
 
 
-Appends multiple conic constraints to the problem.
+Appends a multiple conic constraints to the problem.
 
 appendcons
 ----------
@@ -159,7 +165,9 @@ appendcons
 * ``num:: Int32`` Number of constraints which should be appended.
 
 
+
 Appends a number of constraints to the optimization task.
+
 
 appendsparsesymmat
 ------------------
@@ -184,18 +192,6 @@ appendsparsesymmat
 
 Appends a general sparse symmetric matrix to the vector E of symmetric matrixes.
 
-appendstat
-----------
-::
-
-    function appendstat(task:: MSKtask)
-
-
-* ``task:: MSKtask`` An optimization task.
-
-
-Appends a record the statistics file.
-
 appendvars
 ----------
 ::
@@ -209,7 +205,9 @@ appendvars
 * ``num:: Int32`` Number of variables which should be appended.
 
 
+
 Appends a number of variables to the optimization task.
+
 
 basiscond
 ---------
@@ -224,7 +222,9 @@ basiscond
 * ``nrminvbasis:: Float64`` An estimate for the 1 norm of the inverse of the basis.
 
 
+
 Computes conditioning information for the basis matrix.
+
 
 bktostr
 -------
@@ -238,7 +238,7 @@ bktostr
 
 * ``task:: MSKtask`` An optimization task.
 * ``bk:: Int32`` (`Enum boundkey`_) Bound key.
-* ``str:: String`` String corresponding to the bound key.
+* ``str:: AbstractString`` String corresponding to the bound key.
 
 
 Obtains a bound key string identifier.
@@ -252,7 +252,7 @@ callbackcodetostr
 
 
 * ``code:: Int32`` (`Enum callbackcode`_) A call-back code.
-* ``callbackcodestr:: String`` String corresponding to the call-back code.
+* ``callbackcodestr:: AbstractString`` String corresponding to the call-back code.
 
 
 Obtains a call-back code string identifier.
@@ -267,7 +267,9 @@ checkconvexity
 * ``task:: MSKtask`` An optimization task.
 
 
+
 Checks if a quadratic optimization problem is convex.
+
 
 checkmem
 --------
@@ -275,7 +277,7 @@ checkmem
 
     function checkmem
     ( task:: MSKtask,
-      file:: String,
+      file:: AbstractString,
       line:: Int32 )
 
 
@@ -303,12 +305,61 @@ chgbound
 * ``accmode:: Int32`` (`Enum accmode`_) Defines if operations are performed row-wise (constraint-oriented) or column-wise (variable-oriented).
 * ``i:: Int32`` Index of the constraint or variable for which the bounds should be changed.
 * ``lower:: Int32`` If non-zero, then the lower bound is changed, otherwise
-                            the upper bound is changed.
+the upper bound is changed.
 * ``finite:: Int32`` If non-zero, then the given value is assumed to be finite.
 * ``value:: Float64`` New value for the bound.
 
 
+
 Changes the bounds for one constraint or variable.
+
+
+chgconbound
+-----------
+::
+
+    function chgconbound
+    ( task::   MSKtask,
+      i::      Int32,
+      lower::  Int32,
+      finite:: Int32,
+      value::  Float64 )
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``i:: Int32`` Index of the constraint for which the bounds should be changed.
+* ``lower:: Int32`` If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
+* ``finite:: Int32`` If non-zero, then the given value is assumed to be finite.
+* ``value:: Float64`` New value for the bound.
+
+
+
+Changes the bounds for one constraint.
+
+
+chgvarbound
+-----------
+::
+
+    function chgvarbound
+    ( task::   MSKtask,
+      j::      Int32,
+      lower::  Int32,
+      finite:: Int32,
+      value::  Float64 )
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``j:: Int32`` Index of the variable for which the bounds should be changed.
+* ``lower:: Int32`` If non-zero, then the lower bound is changed, otherwise
+the upper bound is changed.
+* ``finite:: Int32`` If non-zero, then the given value is assumed to be finite.
+* ``value:: Float64`` New value for the bound.
+
+
+
+Changes the bounds for one variable.
+
 
 commitchanges
 -------------
@@ -327,14 +378,14 @@ conetypetostr
 ::
 
     function conetypetostr
-    ( task::     MSKtask,
-      conetype:: Int32 )
+    ( task:: MSKtask,
+      ct::   Int32 )
     -> str
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``conetype:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
-* ``str:: String`` String corresponding to the cone type.
+* ``ct:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
+* ``str:: AbstractString`` String corresponding to the cone type.
 
 
 Obtains a cone type string identifier.
@@ -352,7 +403,7 @@ deletesolution
 * ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
 
 
-Undefines a solution and frees the memory it uses.
+Undefine a solution and frees the memory it uses.
 
 dualsensitivity
 ---------------
@@ -372,7 +423,9 @@ dualsensitivity
 * ``rightrangej:: Array{Float64}`` Right range for requested coefficients.
 
 
+
 Performs sensitivity analysis on objective coefficients.
+
 
 getacol
 -------
@@ -387,7 +440,7 @@ getacol
 * ``task:: MSKtask`` An optimization task.
 * ``j:: Int32`` Index of the column.
 * ``nzj:: Int32`` Number of non-zeros in the column obtained.
-* ``subj:: Array{Int32}`` Index of the non-zeros in the column obtained.
+* ``subj:: Array{Int32}`` Index of the non-zeros in the row obtained.
 * ``valj:: Array{Float64}`` Numerical values of the column obtained.
 
 
@@ -408,7 +461,9 @@ getacolnumnz
 * ``nzj:: Int32`` Number of non-zeros in the j'th row or column of (A).
 
 
+
 Obtains the number of non-zero elements in one column of the linear constraint matrix
+
 
 getacolslicetrip
 ----------------
@@ -429,7 +484,9 @@ getacolslicetrip
 * ``val:: Array{Float64}`` Values.
 
 
+
 Obtains a sequence of columns from the coefficient matrix in triplet format.
+
 
 getaij
 ------
@@ -471,7 +528,9 @@ getapiecenumnz
 * ``numnz:: Int32`` Number of non-zero elements in the rectangular piece of the linear constraint matrix.
 
 
+
 Obtains the number non-zeros in a rectangular piece of the linear constraint matrix.
+
 
 getarow
 -------
@@ -504,10 +563,12 @@ getarownumnz
 
 * ``task:: MSKtask`` An optimization task.
 * ``i:: Int32`` Index of the row or column.
-* ``nzi:: Int32`` Number of non-zeros in the i'th row of (A).
+* ``nzi:: Int32`` Number of non-zeros in the i'th row of `A`.
+
 
 
 Obtains the number of non-zero elements in one row of the linear constraint matrix
+
 
 getarowslicetrip
 ----------------
@@ -528,7 +589,9 @@ getarowslicetrip
 * ``val:: Array{Float64}`` Values.
 
 
+
 Obtains a sequence of rows from the coefficient matrix in triplet format.
+
 
 getaslice
 ---------
@@ -573,7 +636,9 @@ getaslicenumnz
 * ``numnz:: Int64`` Number of non-zeros in the slice.
 
 
+
 Obtains the number of non-zeros in a slice of rows or columns of the coefficient matrix.
+
 
 getbarablocktriplet
 -------------------
@@ -589,7 +654,7 @@ getbarablocktriplet
 * ``subj:: Array{Int32}`` Symmetric matrix variable index.
 * ``subk:: Array{Int32}`` Block row index.
 * ``subl:: Array{Int32}`` Block column index.
-* ``valijkl:: Array{Float64}`` A list indexes of the elements from symmetric matrix storage that appers in the weighted sum.
+* ``valijkl:: Array{Float64}`` A list indexes of the elements from symmetric matrix storage that appears in the weighted sum.
 
 
 Obtains barA in block triplet form.
@@ -609,7 +674,7 @@ getbaraidx
 * ``i:: Int32`` Row index of the element at position idx.
 * ``j:: Int32`` Column index of the element at position idx.
 * ``num:: Int64`` Number of terms in weighted sum that forms the element.
-* ``sub:: Array{Int64}`` A list indexes of the elements from symmetric matrix storage that appers in the weighted sum.
+* ``sub:: Array{Int64}`` A list indexes   of the elements from symmetric matrix storage that appears in the weighted sum.
 * ``weights:: Array{Float64}`` The weights associated with each term in the weighted sum.
 
 
@@ -678,7 +743,7 @@ getbarcblocktriplet
 * ``subj:: Array{Int32}`` Symmetric matrix variable index.
 * ``subk:: Array{Int32}`` Block row index.
 * ``subl:: Array{Int32}`` Block column index.
-* ``valijkl:: Array{Float64}`` A list indexes of the elements from symmetric matrix storage that appers in the weighted sum.
+* ``valijkl:: Array{Float64}`` A list indexes of the elements from symmetric matrix storage that appears in the weighted sum.
 
 
 Obtains barc in block triplet form.
@@ -769,7 +834,9 @@ getbarsj
 * ``barsj:: Array{Float64}`` Value of the j'th variable of barx.
 
 
+
 Obtains the dual solution for a semidefinite variable.
+
 
 getbarvarname
 -------------
@@ -783,10 +850,12 @@ getbarvarname
 
 * ``task:: MSKtask`` An optimization task.
 * ``i:: Int32`` Index.
-* ``name:: String`` The requested name is copied to this buffer.
+* ``name:: AbstractString`` The requested name is copied to this buffer.
+
 
 
 Obtains a name of a semidefinite variable.
+
 
 getbarvarnameindex
 ------------------
@@ -794,7 +863,7 @@ getbarvarnameindex
 
     function getbarvarnameindex
     ( task::     MSKtask,
-      somename:: String )
+      somename:: AbstractString )
     -> asgn,index
 
 
@@ -804,7 +873,9 @@ getbarvarnameindex
 * ``index:: Int32`` If the name somename is assigned to a semidefinite variable, then index is the name of the constraint.
 
 
+
 Obtains the index of name of semidefinite variable.
+
 
 getbarvarnamelen
 ----------------
@@ -821,7 +892,9 @@ getbarvarnamelen
 * ``len:: Int32`` Returns the length of the indicated name.
 
 
+
 Obtains the length of a name of a semidefinite variable.
+
 
 getbarxj
 --------
@@ -840,7 +913,9 @@ getbarxj
 * ``barxj:: Array{Float64}`` Value of the j'th variable of barx.
 
 
+
 Obtains the primal solution for a semidefinite variable.
+
 
 getbound
 --------
@@ -861,7 +936,9 @@ getbound
 * ``bu:: Float64`` Values for upper bounds.
 
 
+
 Obtains bound information for one constraint or variable.
+
 
 getboundslice
 -------------
@@ -884,7 +961,9 @@ getboundslice
 * ``bu:: Array{Float64}`` Values for upper bounds.
 
 
+
 Obtains bounds information for a sequence of variables or constraints.
+
 
 getc
 ----
@@ -948,7 +1027,9 @@ getconbound
 * ``bu:: Float64`` Values for upper bounds.
 
 
+
 Obtains bound information for one constraint.
+
 
 getconboundslice
 ----------------
@@ -969,7 +1050,9 @@ getconboundslice
 * ``bu:: Array{Float64}`` Values for upper bounds.
 
 
+
 Obtains bounds information for a slice of the constraints.
+
 
 getcone
 -------
@@ -978,13 +1061,13 @@ getcone
     function getcone
     ( task:: MSKtask,
       k::    Int32 )
-    -> conetype,conepar,nummem,submem
+    -> ct,conepar,nummem,submem
 
 
 * ``task:: MSKtask`` An optimization task.
 * ``k:: Int32`` Index of the cone constraint.
-* ``conetype:: Int32`` Specifies the type of the cone.
-* ``conepar:: Float64`` This argument is currently not used. Can be set to 0.0.
+* ``ct:: Int32`` Specifies the type of the cone.
+* ``conepar:: Float64`` This argument is currently not used. It can be set to 0
 * ``nummem:: Int32`` Number of member variables in the cone.
 * ``submem:: Array{Int32}`` Variable subscripts of the members in the cone.
 
@@ -998,13 +1081,13 @@ getconeinfo
     function getconeinfo
     ( task:: MSKtask,
       k::    Int32 )
-    -> conetype,conepar,nummem
+    -> ct,conepar,nummem
 
 
 * ``task:: MSKtask`` An optimization task.
 * ``k:: Int32`` Index of the conic constraint.
-* ``conetype:: Int32`` Specifies the type of the cone.
-* ``conepar:: Float64`` This argument is currently not used. Can be set to 0.0.
+* ``ct:: Int32`` Specifies the type of the cone.
+* ``conepar:: Float64`` This argument is currently not used. It can be set to 0
 * ``nummem:: Int32`` Number of member variables in the cone.
 
 
@@ -1022,10 +1105,12 @@ getconename
 
 * ``task:: MSKtask`` An optimization task.
 * ``i:: Int32`` Index.
-* ``name:: String`` Is assigned the required name.
+* ``name:: AbstractString`` Is assigned the required name.
+
 
 
 Obtains a name of a cone.
+
 
 getconenameindex
 ----------------
@@ -1033,7 +1118,7 @@ getconenameindex
 
     function getconenameindex
     ( task::     MSKtask,
-      somename:: String )
+      somename:: AbstractString )
     -> asgn,index
 
 
@@ -1043,7 +1128,9 @@ getconenameindex
 * ``index:: Int32`` If the name somename is assigned to a cone, then index is the name of the cone.
 
 
-Checks whether the name somename has been assigned to any cone.
+
+Checks whether the name somename has been assigned  to any cone.
+
 
 getconenamelen
 --------------
@@ -1060,7 +1147,9 @@ getconenamelen
 * ``len:: Int32`` Returns the length of the indicated name.
 
 
+
 Obtains the length of a name of a cone.
+
 
 getconname
 ----------
@@ -1074,10 +1163,12 @@ getconname
 
 * ``task:: MSKtask`` An optimization task.
 * ``i:: Int32`` Index.
-* ``name:: String`` Is assigned the required name.
+* ``name:: AbstractString`` Is assigned the required name.
+
 
 
 Obtains a name of a constraint.
+
 
 getconnameindex
 ---------------
@@ -1085,7 +1176,7 @@ getconnameindex
 
     function getconnameindex
     ( task::     MSKtask,
-      somename:: String )
+      somename:: AbstractString )
     -> asgn,index
 
 
@@ -1095,7 +1186,9 @@ getconnameindex
 * ``index:: Int32`` If the name somename is assigned to a constraint, then index is the name of the constraint.
 
 
-Checks whether the name somename has been assigned to any constraint.
+
+Checks whether the name somename has been assigned  to any constraint.
+
 
 getconnamelen
 -------------
@@ -1112,7 +1205,9 @@ getconnamelen
 * ``len:: Int32`` Returns the length of the indicated name.
 
 
+
 Obtains the length of a name of a constraint variable.
+
 
 getcslice
 ---------
@@ -1132,69 +1227,6 @@ getcslice
 
 
 Obtains a sequence of coefficients from the objective.
-
-getdbi
-------
-::
-
-    function getdbi
-    ( task::     MSKtask,
-      whichsol:: Int32,
-      accmode::  Int32,
-      sub::      Array{Int32} )
-    -> dbi
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``accmode:: Int32`` (`Enum accmode`_) Defines whether sub contains constraint or variable indexes.
-* ``sub:: Array{Int32}`` Indexes of constraints or variables.
-* ``dbi:: Array{Float64}`` Dual bound infeasibility.
-
-
-Deprecated.
-
-getdcni
--------
-::
-
-    function getdcni
-    ( task::     MSKtask,
-      whichsol:: Int32,
-      sub::      Array{Int32} )
-    -> dcni
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``sub:: Array{Int32}`` Constraint indexes to calculate equation infeasibility for.
-* ``dcni:: Array{Float64}`` Dual cone infeasibility.
-
-
-Deprecated.
-
-getdeqi
--------
-::
-
-    function getdeqi
-    ( task::      MSKtask,
-      whichsol::  Int32,
-      accmode::   Int32,
-      sub::       Array{Int32},
-      normalize:: Int32 )
-    -> deqi
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``accmode:: Int32`` (`Enum accmode`_) Defines whether equation infeasibilities for constraints or for variables are retrieved.
-* ``sub:: Array{Int32}`` Indexes of constraints or variables.
-* ``deqi:: Array{Float64}`` Dual equation infeasibilities corresponding to constraints or variables.
-* ``normalize:: Int32`` If non-zero, normalize with largest absolute value of input data.
-
-
-Deprecated.
 
 getdimbarvarj
 -------------
@@ -1263,6 +1295,29 @@ getdualobj
 
 
 Computes the dual objective value associated with the solution.
+
+getdualsolutionnorms
+--------------------
+::
+
+    function getdualsolutionnorms
+    ( task::     MSKtask,
+      whichsol:: Int32 )
+    -> nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
+* ``nrmy:: Float64`` The norm of the y vector.
+* ``nrmslc:: Float64`` The norm of the slc vector.
+* ``nrmsuc:: Float64`` The norm of the suc vector.
+* ``nrmslx:: Float64`` The norm of the slx vector.
+* ``nrmsux:: Float64`` The norm of the sux vector.
+* ``nrmsnx:: Float64`` The norm of the snx vector.
+* ``nrmbars:: Float64`` The norm of the bars vector.
+
+
+Compute norms of the primal solution.
 
 getdviolbarvar
 --------------
@@ -1371,29 +1426,10 @@ getinfname
 * ``task:: MSKtask`` An optimization task.
 * ``inftype:: Int32`` (`Enum inftype`_) Type of the information item.
 * ``whichinf:: Int32`` An information item.
-* ``infname:: String`` Name of the information item.
+* ``infname:: AbstractString`` Name of the information item.
 
 
 Obtains the name of an information item.
-
-getinti
--------
-::
-
-    function getinti
-    ( task::     MSKtask,
-      whichsol:: Int32,
-      sub::      Array{Int32} )
-    -> inti
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``sub:: Array{Int32}`` Variable indexes for which to calculate the integer infeasibility.
-* ``inti:: Array{Float64}`` Integer infeasibility.
-
-
-Deprecated.
 
 getintinf
 ---------
@@ -1475,7 +1511,9 @@ getmaxnumanz
 * ``maxnumanz:: Int64`` Number of preallocated non-zero linear matrix elements.
 
 
+
 Obtains number of preallocated non-zeros in the linear constraint matrix.
+
 
 getmaxnumbarvar
 ---------------
@@ -1528,10 +1566,12 @@ getmaxnumqnz
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrixes.
+* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrices.
+
 
 
 Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
+
 
 getmaxnumvar
 ------------
@@ -1568,7 +1608,7 @@ getnadouinf
 
     function getnadouinf
     ( task::      MSKtask,
-      whichdinf:: String )
+      whichdinf:: AbstractString )
     -> dvalue
 
 
@@ -1585,7 +1625,7 @@ getnadouparam
 
     function getnadouparam
     ( task::      MSKtask,
-      paramname:: String )
+      paramname:: AbstractString )
     -> parvalue
 
 
@@ -1602,12 +1642,12 @@ getnaintinf
 
     function getnaintinf
     ( task::        MSKtask,
-      infitemname:: String )
+      infitemname:: AbstractString )
     -> ivalue
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``infitemname:: String`` <no description>
+* ``infitemname:: String`` The name of the integer information.
 * ``ivalue:: Int32`` The value of the required integer information item.
 
 
@@ -1619,7 +1659,7 @@ getnaintparam
 
     function getnaintparam
     ( task::      MSKtask,
-      paramname:: String )
+      paramname:: AbstractString )
     -> parvalue
 
 
@@ -1636,7 +1676,7 @@ getnastrparam
 
     function getnastrparam
     ( task::      MSKtask,
-      paramname:: String,
+      paramname:: AbstractString,
       maxlen::    Int32 )
     -> len,parvalue
 
@@ -1645,7 +1685,7 @@ getnastrparam
 * ``paramname:: String`` Name of a parameter.
 * ``maxlen:: Int32`` Length of the name parvalue buffer.
 * ``len:: Int32`` Returns the length of the parameter value.
-* ``parvalue:: String`` Parameter value.
+* ``parvalue:: AbstractString`` Parameter value.
 
 
 Obtains a string parameter.
@@ -1805,7 +1845,9 @@ getnumintvar
 * ``numintvar:: Int32`` Number of integer variables.
 
 
+
 Obtains the number of integer-constrained variables.
+
 
 getnumparam
 -----------
@@ -1835,28 +1877,13 @@ getnumqconknz
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``k:: Int32`` Index of the constraint for which the number of non-zero quadratic terms should be obtained.
-* ``numqcnz:: Int32`` Number of quadratic terms.
-
-
-Obtains the number of non-zero quadratic terms in a constraint.
-
-getnumqconknz64
----------------
-::
-
-    function getnumqconknz64
-    ( task:: MSKtask,
-      k::    Int32 )
-    -> numqcnz
-
-
-* ``task:: MSKtask`` An optimization task.
 * ``k:: Int32`` Index of the constraint for which the number quadratic terms should be obtained.
 * ``numqcnz:: Int64`` Number of quadratic terms.
 
 
+
 Obtains the number of non-zero quadratic terms in a constraint.
+
 
 getnumqobjnz
 ------------
@@ -1870,7 +1897,9 @@ getnumqobjnz
 * ``numqonz:: Int64`` Number of non-zero elements in the quadratic objective terms.
 
 
+
 Obtains the number of non-zero quadratic terms in the objective.
+
 
 getnumsymmat
 ------------
@@ -1909,10 +1938,12 @@ getobjname
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``objname:: String`` Assigned the objective name.
+* ``objname:: AbstractString`` Assigned the objective name.
+
 
 
 Obtains the name assigned to the objective function.
+
 
 getobjnamelen
 -------------
@@ -1926,7 +1957,9 @@ getobjnamelen
 * ``len:: Int32`` Assigned the length of the objective name.
 
 
+
 Obtains the length of the name assigned to the objective function.
+
 
 getobjsense
 -----------
@@ -1956,73 +1989,10 @@ getparamname
 * ``task:: MSKtask`` An optimization task.
 * ``partype:: Int32`` (`Enum parametertype`_) Parameter type.
 * ``param:: Int32`` Which parameter.
-* ``parname:: String`` Parameter name.
+* ``parname:: AbstractString`` Parameter name.
 
 
 Obtains the name of a parameter.
-
-getpbi
-------
-::
-
-    function getpbi
-    ( task::      MSKtask,
-      whichsol::  Int32,
-      accmode::   Int32,
-      sub::       Array{Int32},
-      normalize:: Int32 )
-    -> pbi
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``accmode:: Int32`` (`Enum accmode`_) Defines whether bound infeasibilities related to constraints or variable are retrieved.
-* ``sub:: Array{Int32}`` An array of constraint or variable indexes.
-* ``pbi:: Array{Float64}`` Bound infeasibility.
-* ``normalize:: Int32`` If non-zero, normalize with largest absolute value of input data.
-
-
-Deprecated.
-
-getpcni
--------
-::
-
-    function getpcni
-    ( task::     MSKtask,
-      whichsol:: Int32,
-      sub::      Array{Int32} )
-    -> pcni
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``sub:: Array{Int32}`` Constraint indexes for which to calculate the equation infeasibility.
-* ``pcni:: Array{Float64}`` Primal cone infeasibility.
-
-
-Deprecated.
-
-getpeqi
--------
-::
-
-    function getpeqi
-    ( task::      MSKtask,
-      whichsol::  Int32,
-      sub::       Array{Int32},
-      normalize:: Int32 )
-    -> peqi
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``sub:: Array{Int32}`` Constraint indexes for which to calculate the equation infeasibility.
-* ``peqi:: Array{Float64}`` Equation infeasibility.
-* ``normalize:: Int32`` If non-zero, normalize with largest absolute value of input data.
-
-
-Deprecated.
 
 getprimalobj
 ------------
@@ -2039,7 +2009,28 @@ getprimalobj
 * ``primalobj:: Float64`` Objective value corresponding to the primal solution.
 
 
+
 Computes the primal objective value for the desired solution.
+
+
+getprimalsolutionnorms
+----------------------
+::
+
+    function getprimalsolutionnorms
+    ( task::     MSKtask,
+      whichsol:: Int32 )
+    -> nrmxc,nrmxx,nrmbarx
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
+* ``nrmxc:: Float64`` The norm of xc vector.
+* ``nrmxx:: Float64`` The norm of xx vector.
+* ``nrmbarx:: Float64`` The norm of barx vector.
+
+
+Compute norms of the primal solution.
 
 getprobtype
 -----------
@@ -2053,7 +2044,9 @@ getprobtype
 * ``probtype:: Int32`` The problem type.
 
 
+
 Obtains the problem type.
+
 
 getprosta
 ---------
@@ -2070,7 +2063,9 @@ getprosta
 * ``prosta:: Int32`` Problem status.
 
 
+
 Obtains the problem status.
+
 
 getpviolbarvar
 --------------
@@ -2177,23 +2172,6 @@ getqobj
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``numqonz:: Int32`` Number of non-zero elements in the quadratic objective terms.
-* ``qosubi:: Array{Int32}`` Row subscripts for quadratic objective coefficients.
-* ``qosubj:: Array{Int32}`` Column subscripts for quadratic objective coefficients.
-* ``qoval:: Array{Float64}`` Quadratic objective coefficient values.
-
-
-Obtains all the quadratic terms in the objective.
-
-getqobj64
----------
-::
-
-    function getqobj64(task:: MSKtask)
-    -> numqonz,qosubi,qosubj,qoval
-
-
-* ``task:: MSKtask`` An optimization task.
 * ``numqonz:: Int64`` Number of non-zero elements in the quadratic objective terms.
 * ``qosubi:: Array{Int32}`` Row subscripts for quadratic objective coefficients.
 * ``qosubj:: Array{Int32}`` Column subscripts for quadratic objective coefficients.
@@ -2219,7 +2197,9 @@ getqobjij
 * ``qoij:: Float64`` The required coefficient.
 
 
+
 Obtains one coefficient from the quadratic term of the objective
+
 
 getreducedcosts
 ---------------
@@ -2257,7 +2237,9 @@ getskc
 * ``skc:: Array{Int32}`` (`Enum stakey`_) Status keys for the constraints.
 
 
+
 Obtains the status keys for the constraints.
+
 
 getskcslice
 -----------
@@ -2278,7 +2260,9 @@ getskcslice
 * ``skc:: Array{Int32}`` (`Enum stakey`_) Status keys for the constraints.
 
 
+
 Obtains the status keys for the constraints.
+
 
 getskx
 ------
@@ -2295,7 +2279,9 @@ getskx
 * ``skx:: Array{Int32}`` (`Enum stakey`_) Status keys for the variables.
 
 
+
 Obtains the status keys for the scalar variables.
+
 
 getskxslice
 -----------
@@ -2316,7 +2302,9 @@ getskxslice
 * ``skx:: Array{Int32}`` (`Enum stakey`_) Status keys for the variables.
 
 
+
 Obtains the status keys for the variables.
+
 
 getslc
 ------
@@ -2333,7 +2321,9 @@ getslc
 * ``slc:: Array{Float64}`` The slc vector.
 
 
+
 Obtains the slc vector for a solution.
+
 
 getslcslice
 -----------
@@ -2354,7 +2344,9 @@ getslcslice
 * ``slc:: Array{Float64}`` Dual variables corresponding to the lower bounds on the constraints.
 
 
+
 Obtains a slice of the slc vector for a solution.
+
 
 getslx
 ------
@@ -2371,7 +2363,9 @@ getslx
 * ``slx:: Array{Float64}`` The slx vector.
 
 
+
 Obtains the slx vector for a solution.
+
 
 getslxslice
 -----------
@@ -2392,7 +2386,9 @@ getslxslice
 * ``slx:: Array{Float64}`` Dual variables corresponding to the lower bounds on the variables.
 
 
+
 Obtains a slice of the slx vector for a solution.
+
 
 getsnx
 ------
@@ -2409,7 +2405,9 @@ getsnx
 * ``snx:: Array{Float64}`` The snx vector.
 
 
+
 Obtains the snx vector for a solution.
+
 
 getsnxslice
 -----------
@@ -2430,7 +2428,9 @@ getsnxslice
 * ``snx:: Array{Float64}`` Dual variables corresponding to the conic constraints on the variables.
 
 
+
 Obtains a slice of the snx vector for a solution.
+
 
 getsolsta
 ---------
@@ -2447,7 +2447,9 @@ getsolsta
 * ``solsta:: Int32`` Solution status.
 
 
+
 Obtains the solution status.
+
 
 getsolution
 -----------
@@ -2501,34 +2503,9 @@ getsolutioni
 * ``sn:: Float64`` Solution value of the dual variable associated with the cone constraint.
 
 
+
 Obtains the solution for a single constraint or variable.
 
-getsolutioninf
---------------
-::
-
-    function getsolutioninf
-    ( task::     MSKtask,
-      whichsol:: Int32 )
-    -> prosta,solsta,primalobj,maxpbi,maxpcni,maxpeqi,maxinti,dualobj,maxdbi,maxdcni,maxdeqi
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``whichsol:: Int32`` (`Enum soltype`_) Selects a solution.
-* ``prosta:: Int32`` Problem status.
-* ``solsta:: Int32`` Solution status.
-* ``primalobj:: Float64`` Value of the primal objective.
-* ``maxpbi:: Float64`` Maximum infeasibility in primal bounds on variables.
-* ``maxpcni:: Float64`` Maximum infeasibility in the primal conic constraints.
-* ``maxpeqi:: Float64`` Maximum infeasibility in primal equality constraints.
-* ``maxinti:: Float64`` Maximum infeasibility in primal equality constraints.
-* ``dualobj:: Float64`` Value of the dual objective.
-* ``maxdbi:: Float64`` Maximum infeasibility in bounds on dual variables.
-* ``maxdcni:: Float64`` Maximum infeasibility in the dual conic constraints.
-* ``maxdeqi:: Float64`` Maximum infeasibility in the dual equality constraints.
-
-
-Deprecated
 
 getsolutioninfo
 ---------------
@@ -2612,7 +2589,7 @@ getstrparam
 * ``task:: MSKtask`` An optimization task.
 * ``param:: Int32`` (`Enum sparam`_) Which parameter.
 * ``len:: Int32`` The length of the parameter value.
-* ``parvalue:: String`` If this is not NULL, the parameter value is stored here.
+* ``parvalue:: AbstractString`` If this is not |null|, the parameter value is stored here.
 
 
 Obtains the value of a string parameter.
@@ -2649,7 +2626,9 @@ getsuc
 * ``suc:: Array{Float64}`` The suc vector.
 
 
+
 Obtains the suc vector for a solution.
+
 
 getsucslice
 -----------
@@ -2670,7 +2649,9 @@ getsucslice
 * ``suc:: Array{Float64}`` Dual variables corresponding to the upper bounds on the constraints.
 
 
+
 Obtains a slice of the suc vector for a solution.
+
 
 getsux
 ------
@@ -2687,7 +2668,9 @@ getsux
 * ``sux:: Array{Float64}`` The sux vector.
 
 
+
 Obtains the sux vector for a solution.
+
 
 getsuxslice
 -----------
@@ -2708,7 +2691,9 @@ getsuxslice
 * ``sux:: Array{Float64}`` Dual variables corresponding to the upper bounds on the variables.
 
 
+
 Obtains a slice of the sux vector for a solution.
+
 
 getsymmatinfo
 -------------
@@ -2738,7 +2723,7 @@ gettaskname
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``taskname:: String`` Is assigned the task name.
+* ``taskname:: AbstractString`` Is assigned the task name.
 
 
 Obtains the task name.
@@ -2755,7 +2740,9 @@ gettasknamelen
 * ``len:: Int32`` Returns the length of the task name.
 
 
+
 Obtains the length the task name.
+
 
 getvarbound
 -----------
@@ -2774,7 +2761,9 @@ getvarbound
 * ``bu:: Float64`` Values for upper bounds.
 
 
+
 Obtains bound information for one variable.
+
 
 getvarboundslice
 ----------------
@@ -2795,41 +2784,9 @@ getvarboundslice
 * ``bu:: Array{Float64}`` Values for upper bounds.
 
 
+
 Obtains bounds information for a slice of the variables.
 
-getvarbranchdir
----------------
-::
-
-    function getvarbranchdir
-    ( task:: MSKtask,
-      j::    Int32 )
-    -> direction
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``j:: Int32`` Index of the variable.
-* ``direction:: Int32`` The branching direction assigned to the j'th variable.
-
-
-Obtains the branching direction for a variable.
-
-getvarbranchpri
----------------
-::
-
-    function getvarbranchpri
-    ( task:: MSKtask,
-      j::    Int32 )
-    -> priority
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``j:: Int32`` Index of the variable.
-* ``priority:: Int32`` The branching priority assigned to the j'th variable.
-
-
-Obtains the branching priority for a variable.
 
 getvarname
 ----------
@@ -2843,10 +2800,12 @@ getvarname
 
 * ``task:: MSKtask`` An optimization task.
 * ``j:: Int32`` Index.
-* ``name:: String`` Is assigned the required name.
+* ``name:: AbstractString`` Returns the required name.
+
 
 
 Obtains a name of a variable.
+
 
 getvarnameindex
 ---------------
@@ -2854,7 +2813,7 @@ getvarnameindex
 
     function getvarnameindex
     ( task::     MSKtask,
-      somename:: String )
+      somename:: AbstractString )
     -> asgn,index
 
 
@@ -2864,7 +2823,7 @@ getvarnameindex
 * ``index:: Int32`` If the name somename is assigned to a variable, then index is the name of the variable.
 
 
-Checks whether the name somename has been assigned to any variable.
+Checks whether the name somename has been assigned  to any variable.
 
 getvarnamelen
 -------------
@@ -2881,7 +2840,9 @@ getvarnamelen
 * ``len:: Int32`` Returns the length of the indicated name.
 
 
+
 Obtains the length of a name of a variable variable.
+
 
 getvartype
 ----------
@@ -2915,7 +2876,9 @@ getvartypelist
 * ``vartype:: Array{Int32}`` (`Enum variabletype`_) Returns the variables types corresponding the variable indexes requested.
 
 
+
 Obtains the variable type for one or more variables.
+
 
 getxc
 -----
@@ -2932,7 +2895,9 @@ getxc
 * ``xc:: Array{Float64}`` The xc vector.
 
 
+
 Obtains the xc vector for a solution.
+
 
 getxcslice
 ----------
@@ -2953,7 +2918,9 @@ getxcslice
 * ``xc:: Array{Float64}`` Primal constraint solution.
 
 
+
 Obtains a slice of the xc vector for a solution.
+
 
 getxx
 -----
@@ -2970,7 +2937,9 @@ getxx
 * ``xx:: Array{Float64}`` The xx vector.
 
 
+
 Obtains the xx vector for a solution.
+
 
 getxxslice
 ----------
@@ -2991,7 +2960,9 @@ getxxslice
 * ``xx:: Array{Float64}`` Primal variable solution.
 
 
+
 Obtains a slice of the xx vector for a solution.
+
 
 gety
 ----
@@ -3008,7 +2979,9 @@ gety
 * ``y:: Array{Float64}`` The y vector.
 
 
+
 Obtains the y vector for a solution.
+
 
 getyslice
 ---------
@@ -3029,7 +3002,9 @@ getyslice
 * ``y:: Array{Float64}`` Vector of dual variables corresponding to the constraints.
 
 
+
 Obtains a slice of the y vector for a solution.
+
 
 initbasissolve
 --------------
@@ -3043,7 +3018,9 @@ initbasissolve
 * ``basis:: Array{Int32}`` The array of basis indexes to use.
 
 
+
 Prepare a task for basis solver.
+
 
 inputdata
 ---------
@@ -3089,7 +3066,7 @@ inputdata
 * ``aptrb:: Array{Int64}`` Row or column end pointers.
 * ``aptre:: Array{Int64}`` Row or column start pointers.
 * ``asub:: Array{Int32}`` Coefficient subscripts.
-* ``aval:: Array{Float64}`` Coefficient coefficient values.
+* ``aval:: Array{Float64}`` Coefficient values.
 * ``bkc:: Array{Int32}`` (`Enum boundkey`_) Bound keys for the constraints.
 * ``blc:: Array{Float64}`` Lower bounds for the constraints.
 * ``buc:: Array{Float64}`` Upper bounds for the constraints.
@@ -3107,7 +3084,7 @@ isdouparname
 
     function isdouparname
     ( task::    MSKtask,
-      parname:: String )
+      parname:: AbstractString )
     -> param
 
 
@@ -3124,7 +3101,7 @@ isintparname
 
     function isintparname
     ( task::    MSKtask,
-      parname:: String )
+      parname:: AbstractString )
     -> param
 
 
@@ -3141,7 +3118,7 @@ isstrparname
 
     function isstrparname
     ( task::    MSKtask,
-      parname:: String )
+      parname:: AbstractString )
     -> param
 
 
@@ -3159,7 +3136,7 @@ linkfiletostream
     function linkfiletostream
     ( task::        MSKtask,
       whichstream:: Int32,
-      filename::    String,
+      filename::    AbstractString,
       append::      Int32 )
 
 
@@ -3236,7 +3213,9 @@ primalrepair
 * ``wux:: Array{Float64}`` Weights associated with relaxing the upper bounds of variables.
 
 
+
 The function repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables.
+
 
 primalsensitivity
 -----------------
@@ -3302,7 +3281,7 @@ printdata
 * ``c:: Int32`` If non-zero the linear objective terms are printed.
 * ``qo:: Int32`` If non-zero the quadratic objective terms are printed.
 * ``a:: Int32`` If non-zero the linear constraint matrix is printed.
-* ``qc:: Int32`` If non-zero q'th quadratic constraint terms are printed for the relevant constraints.
+* ``qc:: Int32`` If non-zero q'th     quadratic constraint terms are printed for the relevant constraints.
 * ``bc:: Int32`` If non-zero the constraints bounds are printed.
 * ``bx:: Int32`` If non-zero the variable bounds are printed.
 * ``vartype:: Int32`` If non-zero the variable types are printed.
@@ -3323,40 +3302,6 @@ printparam
 
 Prints the current parameter settings.
 
-probtypetostr
--------------
-::
-
-    function probtypetostr
-    ( task::     MSKtask,
-      probtype:: Int32 )
-    -> str
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``probtype:: Int32`` (`Enum problemtype`_) Problem type.
-* ``str:: String`` String corresponding to the problem type key.
-
-
-Obtains a string containing the name of a problem type given.
-
-prostatostr
------------
-::
-
-    function prostatostr
-    ( task::   MSKtask,
-      prosta:: Int32 )
-    -> str
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``prosta:: Int32`` (`Enum prosta`_) Problem status.
-* ``str:: String`` String corresponding to the status key.
-
-
-Obtains a string containing the name of a problem status given.
-
 putacol
 -------
 ::
@@ -3374,7 +3319,9 @@ putacol
 * ``valj:: Array{Float64}`` New non-zero values of column.
 
 
+
 Replaces all elements in one column of A.
+
 
 putacollist
 -----------
@@ -3399,11 +3346,13 @@ putacollist
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the columns.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the columns.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient coefficient values.
+* ``aval:: Array{Float64}`` Coefficient values.
 * ``A:: SparseMatrixCSC{Float64}`` Sparse matrix defining the column values
 
 
+
 Replaces all elements in several columns the linear constraint matrix by new values.
+
 
 putacolslice
 ------------
@@ -3431,11 +3380,13 @@ putacolslice
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the columns.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the columns.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient coefficient values.
+* ``aval:: Array{Float64}`` Coefficient values.
 * ``A:: SparseMatrixCSC{Float64}`` Sparse matrix defining the column values
 
 
+
 Replaces all elements in several columns the linear constraint matrix by new values.
+
 
 putaij
 ------
@@ -3492,7 +3443,9 @@ putarow
 * ``vali:: Array{Float64}`` New non-zero values of row.
 
 
+
 Replaces all elements in one row of A.
+
 
 putarowlist
 -----------
@@ -3517,11 +3470,13 @@ putarowlist
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the rows or columns.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the rows or columns.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient coefficient values.
+* ``aval:: Array{Float64}`` Coefficient values.
 * ``At:: SparseMatrixCSC{Float64}`` Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
 
+
 Replaces all elements in several rows the linear constraint matrix by new values.
+
 
 putarowslice
 ------------
@@ -3549,11 +3504,13 @@ putarowslice
 * ``ptrb:: Array{Int64}`` Array of pointers to the first element in the rows.
 * ``ptre:: Array{Int64}`` Array of pointers to the last element plus one in the rows.
 * ``asub:: Array{Int32}`` Variable indexes.
-* ``aval:: Array{Float64}`` Coefficient coefficient values.
+* ``aval:: Array{Float64}`` Coefficient values.
 * ``At:: SparseMatrixCSC{Float64}`` Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
 
+
 Replaces all elements in several rows the linear constraint matrix by new values.
+
 
 putbarablocktriplet
 -------------------
@@ -3595,7 +3552,7 @@ putbaraij
 * ``task:: MSKtask`` An optimization task.
 * ``i:: Int32`` Row index of barA.
 * ``j:: Int32`` Column index of barA.
-* ``sub:: Array{Int64}`` See argument weights for an explenation.
+* ``sub:: Array{Int64}`` See argument weights for an explanation.
 * ``weights:: Array{Float64}`` Weights in the weighted sum.
 
 
@@ -3636,8 +3593,8 @@ putbarcj
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``j:: Int32`` Index of the element in barc$ that should be changed.
-* ``sub:: Array{Int64}`` sub is list of indexes of those symmetric matrixes appearing in sum.
+* ``j:: Int32`` Index of the element in barc` that should be changed.
+* ``sub:: Array{Int64}`` sub is list of indexes of those symmetric matrices appearing in sum.
 * ``weights:: Array{Float64}`` The weights of the terms in the weighted sum.
 
 
@@ -3660,7 +3617,9 @@ putbarsj
 * ``barsj:: Array{Float64}`` Value of the j'th variable of barx.
 
 
+
 Sets the dual solution for a semidefinite variable.
+
 
 putbarvarname
 -------------
@@ -3669,7 +3628,7 @@ putbarvarname
     function putbarvarname
     ( task:: MSKtask,
       j::    Int32,
-      name:: String )
+      name:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -3677,7 +3636,9 @@ putbarvarname
 * ``name:: String`` The variable name.
 
 
+
 Puts the name of a semidefinite variable.
+
 
 putbarxj
 --------
@@ -3696,7 +3657,9 @@ putbarxj
 * ``barxj:: Array{Float64}`` Value of the j'th variable of barx.
 
 
+
 Sets the primal solution for a semidefinite variable.
+
 
 putbound
 --------
@@ -3719,7 +3682,9 @@ putbound
 * ``bu:: Float64`` New upper bound.
 
 
+
 Changes the bound for either one constraint or one variable.
+
 
 putboundlist
 ------------
@@ -3837,7 +3802,9 @@ putconbound
 * ``bu:: Float64`` New upper bound.
 
 
+
 Changes the bound for one constraint.
+
 
 putconboundlist
 ---------------
@@ -3881,28 +3848,32 @@ putconboundslice
 * ``bu:: Array{Float64}`` New upper bounds.
 
 
+
 Changes the bounds for a slice of the constraints.
+
 
 putcone
 -------
 ::
 
     function putcone
-    ( task::     MSKtask,
-      k::        Int32,
-      conetype:: Int32,
-      conepar::  Float64,
-      submem::   Array{Int32} )
+    ( task::    MSKtask,
+      k::       Int32,
+      ct::      Int32,
+      conepar:: Float64,
+      submem::  Array{Int32} )
 
 
 * ``task:: MSKtask`` An optimization task.
 * ``k:: Int32`` Index of the cone.
-* ``conetype:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
-* ``conepar:: Float64`` This argument is currently not used. Can be set to 0.0.
+* ``ct:: Int32`` (`Enum conetype`_) Specifies the type of the cone.
+* ``conepar:: Float64`` This argument is currently not used. It can be set to 0
 * ``submem:: Array{Int32}`` Variable subscripts of the members in the cone.
 
 
+
 Replaces a conic constraint.
+
 
 putconename
 -----------
@@ -3911,15 +3882,17 @@ putconename
     function putconename
     ( task:: MSKtask,
       j::    Int32,
-      name:: String )
+      name:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``j:: Int32`` Index of the variable.
+* ``j:: Int32`` Index of the cone.
 * ``name:: String`` The variable name.
 
 
+
 Puts the name of a cone.
+
 
 putconname
 ----------
@@ -3928,15 +3901,17 @@ putconname
     function putconname
     ( task:: MSKtask,
       i::    Int32,
-      name:: String )
+      name:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``i:: Int32`` Index of the variable.
+* ``i:: Int32`` Index of the constraint.
 * ``name:: String`` The variable name.
 
 
+
 Puts the name of a constraint.
+
 
 putcslice
 ---------
@@ -4004,7 +3979,9 @@ putmaxnumanz
 * ``maxnumanz:: Int64`` New size of the storage reserved for storing the linear coefficient matrix.
 
 
+
 The function changes the size of the preallocated storage for linear coefficients.
+
 
 putmaxnumbarvar
 ---------------
@@ -4049,7 +4026,9 @@ putmaxnumcone
 * ``maxnumcone:: Int32`` Number of preallocated conic constraints in the optimization task.
 
 
+
 Sets the number of preallocated conic constraints in the optimization task.
+
 
 putmaxnumqnz
 ------------
@@ -4061,7 +4040,7 @@ putmaxnumqnz
 
 
 * ``task:: MSKtask`` An optimization task.
-* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrixes.
+* ``maxnumqnz:: Int64`` Number of non-zero elements preallocated in quadratic coefficient matrices.
 
 
 Changes the size of the preallocated storage for quadratic terms.
@@ -4087,7 +4066,7 @@ putnadouparam
 
     function putnadouparam
     ( task::      MSKtask,
-      paramname:: String,
+      paramname:: AbstractString,
       parvalue::  Float64 )
 
 
@@ -4104,7 +4083,7 @@ putnaintparam
 
     function putnaintparam
     ( task::      MSKtask,
-      paramname:: String,
+      paramname:: AbstractString,
       parvalue::  Int32 )
 
 
@@ -4121,8 +4100,8 @@ putnastrparam
 
     function putnastrparam
     ( task::      MSKtask,
-      paramname:: String,
-      parvalue::  String )
+      paramname:: AbstractString,
+      parvalue::  AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4138,7 +4117,7 @@ putobjname
 
     function putobjname
     ( task::    MSKtask,
-      objname:: String )
+      objname:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4168,8 +4147,8 @@ putparam
 
     function putparam
     ( task::     MSKtask,
-      parname::  String,
-      parvalue:: String )
+      parname::  AbstractString,
+      parvalue:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4268,8 +4247,9 @@ putqobjij
 * ``qoij:: Float64`` The new coefficient value.
 
 
-Replaces one coefficient in the quadratic term in
-the objective.
+
+Replaces one coefficient in the quadratic term in the objective.
+
 
 putskc
 ------
@@ -4286,7 +4266,9 @@ putskc
 * ``skc:: Array{Int32}`` (`Enum stakey`_) Status keys for the constraints.
 
 
+
 Sets the status keys for the constraints.
+
 
 putskcslice
 -----------
@@ -4307,7 +4289,9 @@ putskcslice
 * ``skc:: Array{Int32}`` (`Enum stakey`_) Status keys for the constraints.
 
 
+
 Sets the status keys for the constraints.
+
 
 putskx
 ------
@@ -4324,7 +4308,9 @@ putskx
 * ``skx:: Array{Int32}`` (`Enum stakey`_) Status keys for the variables.
 
 
+
 Sets the status keys for the scalar variables.
+
 
 putskxslice
 -----------
@@ -4345,7 +4331,9 @@ putskxslice
 * ``skx:: Array{Int32}`` (`Enum stakey`_) Status keys for the variables.
 
 
+
 Sets the status keys for the variables.
+
 
 putslc
 ------
@@ -4362,7 +4350,9 @@ putslc
 * ``slc:: Array{Float64}`` The slc vector.
 
 
+
 Sets the slc vector for a solution.
+
 
 putslcslice
 -----------
@@ -4383,7 +4373,9 @@ putslcslice
 * ``slc:: Array{Float64}`` Dual variables corresponding to the lower bounds on the constraints.
 
 
+
 Sets a slice of the slc vector for a solution.
+
 
 putslx
 ------
@@ -4400,7 +4392,9 @@ putslx
 * ``slx:: Array{Float64}`` The slx vector.
 
 
+
 Sets the slx vector for a solution.
+
 
 putslxslice
 -----------
@@ -4421,7 +4415,9 @@ putslxslice
 * ``slx:: Array{Float64}`` Dual variables corresponding to the lower bounds on the variables.
 
 
+
 Sets a slice of the slx vector for a solution.
+
 
 putsnx
 ------
@@ -4438,7 +4434,9 @@ putsnx
 * ``sux:: Array{Float64}`` The snx vector.
 
 
+
 Sets the snx vector for a solution.
+
 
 putsnxslice
 -----------
@@ -4459,7 +4457,9 @@ putsnxslice
 * ``snx:: Array{Float64}`` Dual variables corresponding to the conic constraints on the variables.
 
 
+
 Sets a slice of the snx vector for a solution.
+
 
 putsolution
 -----------
@@ -4525,7 +4525,9 @@ putsolutioni
 * ``sn:: Float64`` Solution value of the dual variable associated with the cone constraint.
 
 
+
 Sets the primal and dual solution information for a single constraint or variable.
+
 
 putsolutionyi
 -------------
@@ -4544,7 +4546,9 @@ putsolutionyi
 * ``y:: Float64`` Solution value of the dual variable.
 
 
+
 Inputs the dual variable of a solution.
+
 
 putstrparam
 -----------
@@ -4553,7 +4557,7 @@ putstrparam
     function putstrparam
     ( task::     MSKtask,
       param::    Int32,
-      parvalue:: String )
+      parvalue:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4578,7 +4582,9 @@ putsuc
 * ``suc:: Array{Float64}`` The suc vector.
 
 
+
 Sets the suc vector for a solution.
+
 
 putsucslice
 -----------
@@ -4599,7 +4605,9 @@ putsucslice
 * ``suc:: Array{Float64}`` Dual variables corresponding to the upper bounds on the constraints.
 
 
+
 Sets a slice of the suc vector for a solution.
+
 
 putsux
 ------
@@ -4616,7 +4624,9 @@ putsux
 * ``sux:: Array{Float64}`` The sux vector.
 
 
+
 Sets the sux vector for a solution.
+
 
 putsuxslice
 -----------
@@ -4637,7 +4647,9 @@ putsuxslice
 * ``sux:: Array{Float64}`` Dual variables corresponding to the upper bounds on the variables.
 
 
+
 Sets a slice of the sux vector for a solution.
+
 
 puttaskname
 -----------
@@ -4645,7 +4657,7 @@ puttaskname
 
     function puttaskname
     ( task::     MSKtask,
-      taskname:: String )
+      taskname:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4673,7 +4685,9 @@ putvarbound
 * ``bu:: Float64`` New upper bound.
 
 
+
 Changes the bound for one variable.
+
 
 putvarboundlist
 ---------------
@@ -4717,26 +4731,9 @@ putvarboundslice
 * ``bu:: Array{Float64}`` New upper bounds.
 
 
+
 Changes the bounds for a slice of the variables.
 
-putvarbranchorder
------------------
-::
-
-    function putvarbranchorder
-    ( task::      MSKtask,
-      j::         Int32,
-      priority::  Int32,
-      direction:: Int32 )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``j:: Int32`` Index of the variable.
-* ``priority:: Int32`` The branching priority that should be assigned to the j'th variable.
-* ``direction:: Int32`` (`Enum branchdir`_) Specifies the preferred branching direction for the j'th variable.
-
-
-Assigns a branching priority and direction to a variable.
 
 putvarname
 ----------
@@ -4745,7 +4742,7 @@ putvarname
     function putvarname
     ( task:: MSKtask,
       j::    Int32,
-      name:: String )
+      name:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4753,7 +4750,9 @@ putvarname
 * ``name:: String`` The variable name.
 
 
+
 Puts the name of a variable.
+
 
 putvartype
 ----------
@@ -4784,7 +4783,7 @@ putvartypelist
 
 * ``task:: MSKtask`` An optimization task.
 * ``subj:: Array{Int32}`` A list of variable indexes for which the variable
-                           type should be changed.
+type should be changed.
 * ``vartype:: Array{Int32}`` (`Enum variabletype`_) A list of variable types.
 
 
@@ -4805,7 +4804,9 @@ putxc
 * ``xc:: Array{Float64}`` The xc vector.
 
 
+
 Sets the xc vector for a solution.
+
 
 putxcslice
 ----------
@@ -4826,7 +4827,9 @@ putxcslice
 * ``xc:: Array{Float64}`` Primal constraint solution.
 
 
+
 Sets a slice of the xc vector for a solution.
+
 
 putxx
 -----
@@ -4843,7 +4846,9 @@ putxx
 * ``xx:: Array{Float64}`` The xx vector.
 
 
+
 Sets the xx vector for a solution.
+
 
 putxxslice
 ----------
@@ -4864,7 +4869,9 @@ putxxslice
 * ``xx:: Array{Float64}`` Primal variable solution.
 
 
+
 Obtains a slice of the xx vector for a solution.
+
 
 puty
 ----
@@ -4881,7 +4888,9 @@ puty
 * ``y:: Array{Float64}`` The y vector.
 
 
+
 Sets the y vector for a solution.
+
 
 putyslice
 ---------
@@ -4902,22 +4911,9 @@ putyslice
 * ``y:: Array{Float64}`` Vector of dual variables corresponding to the constraints.
 
 
+
 Sets a slice of the y vector for a solution.
 
-readbranchpriorities
---------------------
-::
-
-    function readbranchpriorities
-    ( task::     MSKtask,
-      filename:: String )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``filename:: String`` Input file name.
-
-
-Reads branching priority data from a file.
 
 readdata
 --------
@@ -4925,7 +4921,7 @@ readdata
 
     function readdata
     ( task::     MSKtask,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -4940,7 +4936,7 @@ readdataformat
 
     function readdataformat
     ( task::     MSKtask,
-      filename:: String,
+      filename:: AbstractString,
       format::   Int32,
       compress:: Int32 )
 
@@ -4957,10 +4953,13 @@ readparamfile
 -------------
 ::
 
-    function readparamfile(task:: MSKtask)
+    function readparamfile
+    ( task::     MSKtask,
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
+* ``filename:: String`` Input data file name.
 
 
 Reads a parameter file.
@@ -4972,7 +4971,7 @@ readsolution
     function readsolution
     ( task::     MSKtask,
       whichsol:: Int32,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -5003,40 +5002,16 @@ readtask
 
     function readtask
     ( task::     MSKtask,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
 * ``filename:: String`` Input file name.
 
 
+
 Load task data from a file.
 
-relaxprimal
------------
-::
-
-    function relaxprimal
-    ( task:: MSKtask,
-      wlc::  Array{Float64},
-      wuc::  Array{Float64},
-      wlx::  Array{Float64},
-      wux::  Array{Float64} )
-    -> relaxedtask
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``relaxedtask:: MSKtask`` The returned task.
-* ``wlc:: Array{Float64}`` Weights associated with lower bounds on the activity of constraints.
-* ``wuc:: Array{Float64}`` Weights associated with upper bounds on
-                            the activity of constraints.
-* ``wlx:: Array{Float64}`` Weights associated with lower bounds on
-                            the activity of variables.
-* ``wux:: Array{Float64}`` Weights associated with upper bounds on
-                            the activity of variables.
-
-
-Deprecated.
 
 removebarvars
 -------------
@@ -5051,7 +5026,9 @@ removebarvars
 * ``subset:: Array{Int32}`` Indexes of symmetric matrix which should be removed.
 
 
+
 The function removes a number of symmetric matrix.
+
 
 removecones
 -----------
@@ -5081,7 +5058,9 @@ removecons
 * ``subset:: Array{Int32}`` Indexes of constraints which should be removed.
 
 
+
 The function removes a number of constraints.
+
 
 removevars
 ----------
@@ -5096,7 +5075,9 @@ removevars
 * ``subset:: Array{Int32}`` Indexes of variables which should be removed.
 
 
+
 The function removes a number of variables.
+
 
 resizetask
 ----------
@@ -5147,40 +5128,6 @@ setdefaults
 
 
 Resets all parameters values.
-
-sktostr
--------
-::
-
-    function sktostr
-    ( task:: MSKtask,
-      sk::   Int32 )
-    -> str
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``sk:: Int32`` (`Enum stakey`_) A valid status key.
-* ``str:: String`` String corresponding to the status key.
-
-
-Obtains a status key string.
-
-solstatostr
------------
-::
-
-    function solstatostr
-    ( task::   MSKtask,
-      solsta:: Int32 )
-    -> str
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``solsta:: Int32`` (`Enum solsta`_) Solution status.
-* ``str:: String`` String corresponding to the solution status.
-
-
-Obtains a solution status string.
 
 solutiondef
 -----------
@@ -5234,31 +5181,9 @@ solvewithbasis
 * ``val:: Array{Float64}`` Input (right-hand side values) and output (solution vector values).
 
 
+
 Solve a linear equation system involving a basis matrix.
 
-startstat
----------
-::
-
-    function startstat(task:: MSKtask)
-
-
-* ``task:: MSKtask`` An optimization task.
-
-
-Starts the statistics file.
-
-stopstat
---------
-::
-
-    function stopstat(task:: MSKtask)
-
-
-* ``task:: MSKtask`` An optimization task.
-
-
-Stops the statistics file.
 
 strtoconetype
 -------------
@@ -5266,7 +5191,7 @@ strtoconetype
 
     function strtoconetype
     ( task:: MSKtask,
-      str::  String )
+      str::  AbstractString )
     -> conetype
 
 
@@ -5283,7 +5208,7 @@ strtosk
 
     function strtosk
     ( task:: MSKtask,
-      str::  String )
+      str::  AbstractString )
     -> sk
 
 
@@ -5309,28 +5234,13 @@ updatesolutioninfo
 
 Update the information items related to the solution.
 
-writebranchpriorities
----------------------
-::
-
-    function writebranchpriorities
-    ( task::     MSKtask,
-      filename:: String )
-
-
-* ``task:: MSKtask`` An optimization task.
-* ``filename:: String`` Output file name.
-
-
-Writes branching priority data to a file.
-
 writedata
 ---------
 ::
 
     function writedata
     ( task::     MSKtask,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -5339,13 +5249,28 @@ writedata
 
 Writes problem data to a file.
 
+writejsonsol
+------------
+::
+
+    function writejsonsol
+    ( task::     MSKtask,
+      filename:: AbstractString )
+
+
+* ``task:: MSKtask`` An optimization task.
+* ``filename:: String`` A valid file name.
+
+
+Write a solution to a file.
+
 writeparamfile
 --------------
 ::
 
     function writeparamfile
     ( task::     MSKtask,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -5361,7 +5286,7 @@ writesolution
     function writesolution
     ( task::     MSKtask,
       whichsol:: Int32,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -5377,7 +5302,7 @@ writetask
 
     function writetask
     ( task::     MSKtask,
-      filename:: String )
+      filename:: AbstractString )
 
 
 * ``task:: MSKtask`` An optimization task.
@@ -5385,6 +5310,18 @@ writetask
 
 
 Write a complete binary dump of the task data.
+
+checkinall
+----------
+::
+
+    function checkinall(env:: MSKenv)
+
+
+* ``env:: MSKenv`` The MOSEK environment.
+
+
+Check in all unsued license features to the license token server.
 
 checkinlicense
 --------------
@@ -5431,22 +5368,6 @@ echointro
 
 Prints an intro to message stream.
 
-getbuildinfo
-------------
-::
-
-    function getbuildinfo
-    (  )
-    -> buildstate,builddate,buildtool
-
-
-* ``buildstate:: String`` State of binaries, i.e. a debug, release candidate or final release.
-* ``builddate:: String`` Date when the binaries were build.
-* ``buildtool:: String`` Tool(s) used to build the binaries.
-
-
-Obtains build information.
-
 getcodedesc
 -----------
 ::
@@ -5456,8 +5377,8 @@ getcodedesc
 
 
 * ``code:: Int32`` (`Enum rescode`_) A valid response code.
-* ``symname:: String`` Symbolic name corresponding to the code.
-* ``str:: String`` Obtains a short description of a response code.
+* ``symname:: AbstractString`` Symbolic name corresponding to the code.
+* ``str:: AbstractString`` Obtains a short description of a response code.
 
 
 Obtains a short description of a response code.
@@ -5499,7 +5420,7 @@ linkfiletostream
     function linkfiletostream
     ( env::         MSKenv,
       whichstream:: Int32,
-      filename::    String,
+      filename::    AbstractString,
       append::      Int32 )
 
 
@@ -5510,36 +5431,6 @@ linkfiletostream
 
 
 Directs all output from a stream to a file.
-
-putdllpath
-----------
-::
-
-    function putdllpath
-    ( env::     MSKenv,
-      dllpath:: String )
-
-
-* ``env:: MSKenv`` The MOSEK environment.
-* ``dllpath:: String`` A path to the dynamic MOSEK libraries.
-
-
-Sets the path to the DLL/shared libraries that MOSEK is loading.
-
-putkeepdlls
------------
-::
-
-    function putkeepdlls
-    ( env::      MSKenv,
-      keepdlls:: Int32 )
-
-
-* ``env:: MSKenv`` The MOSEK environment.
-* ``keepdlls:: Int32`` Controls whether explicitly loaded DLLs should be kept.
-
-
-Controls whether explicitly loaded DLLs should be kept.
 
 putlicensecode
 --------------
@@ -5577,7 +5468,7 @@ putlicensepath
 
     function putlicensepath
     ( env::         MSKenv,
-      licensepath:: String )
+      licensepath:: AbstractString )
 
 
 * ``env:: MSKenv`` The MOSEK environment.
@@ -5614,8 +5505,10 @@ MSK_SOLVE_DUAL = 2
 
 MSK_SOLVE_FREE = 0
 
+    
     The optimizer is free to solve either the primal or
     the dual problem.
+    
 
 MSK_SOLVE_PRIMAL = 1
 
@@ -5652,41 +5545,57 @@ Enum sensitivitytype
 
 MSK_SENSITIVITY_TYPE_BASIS = 0
 
+    
     Basis sensitivity analysis is performed.
+    
 
 MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION = 1
 
+    
     Optimal partition sensitivity analysis is performed.
+    
 
 Enum uplo
 ---------
 
 MSK_UPLO_LO = 0
 
+    
     Lower part.
+    
 
 MSK_UPLO_UP = 1
 
+    
     Upper part
+    
 
 Enum intpnthotstart
 -------------------
 
 MSK_INTPNT_HOTSTART_DUAL = 2
 
+    
     The interior-point optimizer exploits the dual solution only.
+    
 
 MSK_INTPNT_HOTSTART_NONE = 0
 
+    
     The interior-point optimizer performs a coldstart.
+    
 
 MSK_INTPNT_HOTSTART_PRIMAL = 1
 
+    
     The interior-point optimizer exploits the primal solution only.
+    
 
 MSK_INTPNT_HOTSTART_PRIMAL_DUAL = 3
 
+    
     The interior-point optimizer exploits both the primal and dual solution.
+    
 
 Enum sparam
 -----------
@@ -5701,969 +5610,1183 @@ MSK_SPAR_DATA_FILE_NAME = 1
 
 MSK_SPAR_DEBUG_FILE_NAME = 2
 
-    MOSEK debug file.
+    |mosek| debug file.
 
-MSK_SPAR_FEASREPAIR_NAME_PREFIX = 3
-
-    Feasibility repair name prefix.
-
-MSK_SPAR_FEASREPAIR_NAME_SEPARATOR = 4
-
-    Feasibility repair name separator.
-
-MSK_SPAR_FEASREPAIR_NAME_WSUMVIOL = 5
-
-    Feasibility repair name violation name.
-
-MSK_SPAR_INT_SOL_FILE_NAME = 6
+MSK_SPAR_INT_SOL_FILE_NAME = 3
 
     Name of the int solution file.
 
-MSK_SPAR_ITR_SOL_FILE_NAME = 7
+MSK_SPAR_ITR_SOL_FILE_NAME = 4
 
     Name of the itr solution file.
 
-MSK_SPAR_MIO_DEBUG_STRING = 8
+MSK_SPAR_MIO_DEBUG_STRING = 5
 
+    
     For internal use only.
+    
 
-MSK_SPAR_PARAM_COMMENT_SIGN = 9
+MSK_SPAR_PARAM_COMMENT_SIGN = 6
 
+    
     Solution file comment character.
+    
 
-MSK_SPAR_PARAM_READ_FILE_NAME = 10
+MSK_SPAR_PARAM_READ_FILE_NAME = 7
 
+    
     Modifications to the parameter
     database is read from this file.
+    
 
-MSK_SPAR_PARAM_WRITE_FILE_NAME = 11
+MSK_SPAR_PARAM_WRITE_FILE_NAME = 8
 
     The parameter database is written to this file.
 
-MSK_SPAR_READ_MPS_BOU_NAME = 12
+MSK_SPAR_READ_MPS_BOU_NAME = 9
 
+    
     Name of the BOUNDS vector used.
     An empty name means that the first BOUNDS vector is used.
+    
 
-MSK_SPAR_READ_MPS_OBJ_NAME = 13
+MSK_SPAR_READ_MPS_OBJ_NAME = 10
 
+    
     Objective name in the MPS file.
+    
 
-MSK_SPAR_READ_MPS_RAN_NAME = 14
+MSK_SPAR_READ_MPS_RAN_NAME = 11
 
+    
     Name of the RANGE vector  used.
     An empty name means that the first RANGE vector is used.
+    
 
-MSK_SPAR_READ_MPS_RHS_NAME = 15
+MSK_SPAR_READ_MPS_RHS_NAME = 12
 
+    
     Name of the RHS used.
     An empty name means that the first RHS vector is used.
+    
 
-MSK_SPAR_SENSITIVITY_FILE_NAME = 16
+MSK_SPAR_REMOTE_ACCESS_TOKEN = 13
 
+    An access token used to submit tasks to a remote MOSEK server
+
+MSK_SPAR_SENSITIVITY_FILE_NAME = 14
+
+    
     Sensitivity report file name.
+    
 
-MSK_SPAR_SENSITIVITY_RES_FILE_NAME = 17
+MSK_SPAR_SENSITIVITY_RES_FILE_NAME = 15
 
+    
     Name of the sensitivity report output file.
+    
 
-MSK_SPAR_SOL_FILTER_XC_LOW = 18
+MSK_SPAR_SOL_FILTER_XC_LOW = 16
 
+    
     Solution file filter.
+    
 
-MSK_SPAR_SOL_FILTER_XC_UPR = 19
+MSK_SPAR_SOL_FILTER_XC_UPR = 17
 
+    
     Solution file filter.
+    
 
-MSK_SPAR_SOL_FILTER_XX_LOW = 20
+MSK_SPAR_SOL_FILTER_XX_LOW = 18
 
+    
     Solution file filter.
+    
 
-MSK_SPAR_SOL_FILTER_XX_UPR = 21
+MSK_SPAR_SOL_FILTER_XX_UPR = 19
 
+    
     Solution file filter.
+    
 
-MSK_SPAR_STAT_FILE_NAME = 22
+MSK_SPAR_STAT_FILE_NAME = 20
 
     Statistics file name.
 
-MSK_SPAR_STAT_KEY = 23
+MSK_SPAR_STAT_KEY = 21
 
     Key used when writing the summary file.
 
-MSK_SPAR_STAT_NAME = 24
+MSK_SPAR_STAT_NAME = 22
 
     Name used when writing the statistics file.
 
-MSK_SPAR_WRITE_LP_GEN_VAR_NAME = 25
+MSK_SPAR_WRITE_LP_GEN_VAR_NAME = 23
 
+    
     Added variable names in the LP files.
+    
 
 Enum iparam
 -----------
 
-MSK_IPAR_ALLOC_ADD_QNZ = 0
+MSK_IPAR_ANA_SOL_BASIS = 0
 
-    Controls how the quadratic matrixes are extended.
+    
+    Controls whether the basis matrix is analyzed in solution analyzer.
+    
 
-MSK_IPAR_ANA_SOL_BASIS = 1
+MSK_IPAR_ANA_SOL_PRINT_VIOLATED = 1
 
-    Controls whether the basis matrix is analyzed in solaution analyzer.
-
-MSK_IPAR_ANA_SOL_PRINT_VIOLATED = 2
-
+    
     Controls whether a list of violated constraints is printed.
+    
 
-MSK_IPAR_AUTO_SORT_A_BEFORE_OPT = 3
+MSK_IPAR_AUTO_SORT_A_BEFORE_OPT = 2
 
     Controls whether the elements in each column of A are sorted before an optimization is performed.
 
-MSK_IPAR_AUTO_UPDATE_SOL_INFO = 4
+MSK_IPAR_AUTO_UPDATE_SOL_INFO = 3
 
+    
     Controls whether the solution information items are automatically updated after an optimization is performed.
+    
 
-MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE = 5
+MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE = 4
 
+    
     Controls the sign of the columns in the basis matrix corresponding to slack variables.
+    
 
-MSK_IPAR_BI_CLEAN_OPTIMIZER = 6
+MSK_IPAR_BI_CLEAN_OPTIMIZER = 5
 
+    
     Controls which simplex optimizer is used in the clean-up phase.
+    
 
-MSK_IPAR_BI_IGNORE_MAX_ITER = 7
+MSK_IPAR_BI_IGNORE_MAX_ITER = 6
 
+    
     Turns on basis identification in case the interior-point optimizer is terminated due to maximum number of iterations.
+    
 
-MSK_IPAR_BI_IGNORE_NUM_ERROR = 8
+MSK_IPAR_BI_IGNORE_NUM_ERROR = 7
 
+    
     Turns on basis identification in case the interior-point optimizer is terminated due to a numerical problem.
+    
 
-MSK_IPAR_BI_MAX_ITERATIONS = 9
+MSK_IPAR_BI_MAX_ITERATIONS = 8
 
+    
     Maximum number of iterations after basis identification.
+    
 
-MSK_IPAR_CACHE_LICENSE = 10
+MSK_IPAR_CACHE_LICENSE = 9
 
+    
     Control license caching.
+    
 
-MSK_IPAR_CHECK_CONVEXITY = 11
+MSK_IPAR_CHECK_CONVEXITY = 10
 
+    
     Specify the level of convexity check on quadratic problems
+    
 
-MSK_IPAR_COMPRESS_STATFILE = 12
+MSK_IPAR_COMPRESS_STATFILE = 11
 
+    
     Control compression of stat files.
+    
 
-MSK_IPAR_CONCURRENT_NUM_OPTIMIZERS = 13
+MSK_IPAR_INFEAS_GENERIC_NAMES = 12
 
-    The maximum number of simultaneous optimizations that will be started
-    by the concurrent optimizer.
-
-MSK_IPAR_CONCURRENT_PRIORITY_DUAL_SIMPLEX = 14
-
-    Priority of the dual simplex algorithm when selecting solvers for
-    concurrent optimization.
-
-MSK_IPAR_CONCURRENT_PRIORITY_FREE_SIMPLEX = 15
-
-    Priority of the free simplex optimizer when selecting solvers for
-    concurrent optimization.
-
-MSK_IPAR_CONCURRENT_PRIORITY_INTPNT = 16
-
-    Priority of the interior-point algorithm when selecting solvers for
-    concurrent optimization.
-
-MSK_IPAR_CONCURRENT_PRIORITY_PRIMAL_SIMPLEX = 17
-
-    Priority of the primal simplex algorithm when selecting solvers for
-    concurrent optimization.
-
-MSK_IPAR_FEASREPAIR_OPTIMIZE = 18
-
-    Controls which type of feasibility analysis is to be performed.
-
-MSK_IPAR_INFEAS_GENERIC_NAMES = 19
-
+    
     Controls the contents of the infeasibility report.
+    
 
-MSK_IPAR_INFEAS_PREFER_PRIMAL = 20
+MSK_IPAR_INFEAS_PREFER_PRIMAL = 13
 
+    
     Controls which certificate is used if both primal- and dual- certificate of infeasibility is available.
+    
 
-MSK_IPAR_INFEAS_REPORT_AUTO = 21
+MSK_IPAR_INFEAS_REPORT_AUTO = 14
 
+    
     Turns the feasibility report on or off.
+    
 
-MSK_IPAR_INFEAS_REPORT_LEVEL = 22
+MSK_IPAR_INFEAS_REPORT_LEVEL = 15
 
+    
     Controls the contents of the infeasibility report.
+    
 
-MSK_IPAR_INTPNT_BASIS = 23
+MSK_IPAR_INTPNT_BASIS = 16
 
+    
     Controls whether basis identification is performed.
+    
 
-MSK_IPAR_INTPNT_DIFF_STEP = 24
+MSK_IPAR_INTPNT_DIFF_STEP = 17
 
+    
     Controls whether different step sizes
     are allowed in the primal and dual space.
+    
 
-MSK_IPAR_INTPNT_FACTOR_DEBUG_LVL = 25
+MSK_IPAR_INTPNT_HOTSTART = 18
 
-    Controls factorization debug level.
-
-MSK_IPAR_INTPNT_FACTOR_METHOD = 26
-
-    Controls the method used to factor the Newton equation system.
-
-MSK_IPAR_INTPNT_HOTSTART = 27
-
+    
     Currently not in use.
+    
 
-MSK_IPAR_INTPNT_MAX_ITERATIONS = 28
+MSK_IPAR_INTPNT_MAX_ITERATIONS = 19
 
+    
     Controls the maximum number of iterations
     allowed in the interior-point optimizer.
+    
 
-MSK_IPAR_INTPNT_MAX_NUM_COR = 29
+MSK_IPAR_INTPNT_MAX_NUM_COR = 20
 
+    
     Maximum number of correction steps.
+    
 
-MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS = 30
+MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS = 21
 
+    
     Maximum number of steps to be used by the iterative
     search direction refinement.
+    
 
-MSK_IPAR_INTPNT_OFF_COL_TRH = 31
+MSK_IPAR_INTPNT_MULTI_THREAD = 22
 
+    
+    Controls whether the interior-point optimizers are allowed to employ multiple threads if more threads is available.
+    
+
+MSK_IPAR_INTPNT_OFF_COL_TRH = 23
+
+    
     Controls the aggressiveness of the offending column detection.
+    
 
-MSK_IPAR_INTPNT_ORDER_METHOD = 32
+MSK_IPAR_INTPNT_ORDER_METHOD = 24
 
+    
     Controls the ordering strategy.
+    
 
-MSK_IPAR_INTPNT_REGULARIZATION_USE = 33
+MSK_IPAR_INTPNT_REGULARIZATION_USE = 25
 
     Controls whether regularization is allowed.
 
-MSK_IPAR_INTPNT_SCALING = 34
+MSK_IPAR_INTPNT_SCALING = 26
 
+    
     Controls how the problem is scaled
     before the interior-point optimizer
     is used.
+    
 
-MSK_IPAR_INTPNT_SOLVE_FORM = 35
+MSK_IPAR_INTPNT_SOLVE_FORM = 27
 
+    
     Controls whether the primal
     or the dual problem is solved.
+    
 
-MSK_IPAR_INTPNT_STARTING_POINT = 36
+MSK_IPAR_INTPNT_STARTING_POINT = 28
 
     Starting point used by the interior-point optimizer.
 
-MSK_IPAR_LIC_TRH_EXPIRY_WRN = 37
+MSK_IPAR_LICENSE_DEBUG = 29
 
-    Controls when expiry warnings are issued.
-
-MSK_IPAR_LICENSE_DEBUG = 38
-
+    
     Controls the license manager client debugging behavior.
+    
 
-MSK_IPAR_LICENSE_PAUSE_TIME = 39
+MSK_IPAR_LICENSE_PAUSE_TIME = 30
 
+    
     Controls license manager client behavior.
+    
 
-MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS = 40
+MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS = 31
 
+    
     Controls license manager client behavior.
+    
 
-MSK_IPAR_LICENSE_WAIT = 41
+MSK_IPAR_LICENSE_TRH_EXPIRY_WRN = 32
 
+    
+    Controls when expiry warnings are issued.
+    
+
+MSK_IPAR_LICENSE_WAIT = 33
+
+    
     Controls if MOSEK should queue for a license if none is available.
+    
 
-MSK_IPAR_LOG = 42
+MSK_IPAR_LOG = 34
 
+    
     Controls the amount of log information.
+    
 
-MSK_IPAR_LOG_BI = 43
+MSK_IPAR_LOG_ANA_PRO = 35
 
+    
+    Controls amount of output from the problem analyzer.
+    
+
+MSK_IPAR_LOG_BI = 36
+
+    
     Controls the amount of output printed
     by the basis identification procedure. A higher level implies that more information is logged.
+    
 
-MSK_IPAR_LOG_BI_FREQ = 44
+MSK_IPAR_LOG_BI_FREQ = 37
 
+    
     Controls the logging frequency.
+    
 
-MSK_IPAR_LOG_CHECK_CONVEXITY = 45
+MSK_IPAR_LOG_CHECK_CONVEXITY = 38
 
+    
     Controls logging in convexity check on quadratic problems.
     Set to a positive value to turn logging on.
     
     If a quadratic coefficient matrix is found to violate the requirement of PSD (NSD)
     then a list of negative (positive) pivot elements is printed. The absolute value of the pivot elements
     is also shown.
+    
 
-MSK_IPAR_LOG_CONCURRENT = 46
+MSK_IPAR_LOG_CUT_SECOND_OPT = 39
 
-    Controls amount of output printed
-    by the concurrent optimizer.
-
-MSK_IPAR_LOG_CUT_SECOND_OPT = 47
-
+    
     Controls the reduction in the log levels for the second and any subsequent optimizations.
+    
 
-MSK_IPAR_LOG_EXPAND = 48
+MSK_IPAR_LOG_EXPAND = 40
 
+    
     Controls the amount of logging when a data item such as the maximum number constrains is expanded.
+    
 
-MSK_IPAR_LOG_FACTOR = 49
+MSK_IPAR_LOG_FACTOR = 41
 
+    
     If turned on, then the factor log lines are added to the log.
+    
 
-MSK_IPAR_LOG_FEAS_REPAIR = 50
+MSK_IPAR_LOG_FEAS_REPAIR = 42
 
+    
     Controls the amount of output printed when performing feasibility repair. A value higher than one means extensive logging.
+    
 
-MSK_IPAR_LOG_FILE = 51
+MSK_IPAR_LOG_FILE = 43
 
+    
     If turned on, then some log info is printed when a file is written or read.
+    
 
-MSK_IPAR_LOG_HEAD = 52
+MSK_IPAR_LOG_HEAD = 44
 
+    
     If turned on, then a header line is added to the log.
+    
 
-MSK_IPAR_LOG_INFEAS_ANA = 53
+MSK_IPAR_LOG_INFEAS_ANA = 45
 
+    
     Controls log level for the infeasibility analyzer.
+    
 
-MSK_IPAR_LOG_INTPNT = 54
+MSK_IPAR_LOG_INTPNT = 46
 
+    
     Controls the amount of log information from the interior-point optimizers.
+    
 
-MSK_IPAR_LOG_MIO = 55
+MSK_IPAR_LOG_MIO = 47
 
+    
     Controls the amount of log information from the mixed-integer optimizers.
+    
 
-MSK_IPAR_LOG_MIO_FREQ = 56
+MSK_IPAR_LOG_MIO_FREQ = 48
 
-    The mixed-integer solver logging frequency.
+    
+    The mixed-integer optimizer logging frequency.
+    
 
-MSK_IPAR_LOG_NONCONVEX = 57
+MSK_IPAR_LOG_OPTIMIZER = 49
 
-    Controls amount of output printed by the nonconvex optimizer.
-
-MSK_IPAR_LOG_OPTIMIZER = 58
-
+    
     Controls the amount of general optimizer information that is logged.
+    
 
-MSK_IPAR_LOG_ORDER = 59
+MSK_IPAR_LOG_ORDER = 50
 
+    
     If turned on, then factor lines are added to the log.
+    
 
-MSK_IPAR_LOG_PARAM = 60
+MSK_IPAR_LOG_PRESOLVE = 51
 
-    Controls the amount of information printed out about parameter changes.
+    
+    Controls amount of output printed by the presolve procedure.
+    A higher level implies that more information is logged.
+    
 
-MSK_IPAR_LOG_PRESOLVE = 61
+MSK_IPAR_LOG_RESPONSE = 52
 
-    Controls amount of output printed
-    by the presolve procedure. A higher level implies that more information is logged.
-
-MSK_IPAR_LOG_RESPONSE = 62
-
+    
     Controls amount of output printed when response codes are reported. A higher level implies that more information is logged.
+    
 
-MSK_IPAR_LOG_SENSITIVITY = 63
+MSK_IPAR_LOG_SENSITIVITY = 53
 
+    
     Control logging in sensitivity analyzer.
+    
 
-MSK_IPAR_LOG_SENSITIVITY_OPT = 64
+MSK_IPAR_LOG_SENSITIVITY_OPT = 54
 
+    
     Control logging in sensitivity analyzer.
+    
 
-MSK_IPAR_LOG_SIM = 65
+MSK_IPAR_LOG_SIM = 55
 
+    
     Controls the amount of log information from the simplex optimizers.
+    
 
-MSK_IPAR_LOG_SIM_FREQ = 66
+MSK_IPAR_LOG_SIM_FREQ = 56
 
+    
     Controls simplex logging frequency.
+    
 
-MSK_IPAR_LOG_SIM_MINOR = 67
+MSK_IPAR_LOG_SIM_MINOR = 57
 
+    
     Currently not in use.
+    
 
-MSK_IPAR_LOG_SIM_NETWORK_FREQ = 68
+MSK_IPAR_LOG_STORAGE = 58
 
-    Controls the network simplex logging frequency.
-
-MSK_IPAR_LOG_STORAGE = 69
-
+    
     Controls the memory related log information.
+    
 
-MSK_IPAR_MAX_NUM_WARNINGS = 70
+MSK_IPAR_MAX_NUM_WARNINGS = 59
 
-    A negtive number means all warnings are logged. Otherwise the parameter specifies the maximum number
-    times each warning is logged.
+    
+    Each warning is shown a limit number times controlled by this parameter.
+    A negative value is identical to infinite number of times.
+    
 
-MSK_IPAR_MIO_BRANCH_DIR = 71
+MSK_IPAR_MIO_BRANCH_DIR = 60
 
+    
     Controls whether the mixed-integer optimizer is branching up or down by default.
+    
 
-MSK_IPAR_MIO_BRANCH_PRIORITIES_USE = 72
+MSK_IPAR_MIO_CONSTRUCT_SOL = 61
 
-    Controls whether branching priorities are used by the mixed-integer optimizer.
-
-MSK_IPAR_MIO_CONSTRUCT_SOL = 73
-
+    
     Controls if an initial mixed integer solution should be constructed from the values of the integer variables.
+    
 
-MSK_IPAR_MIO_CONT_SOL = 74
+MSK_IPAR_MIO_CUT_CLIQUE = 62
 
-    Controls the meaning of interior-point and basic solutions in mixed integer problems.
+    
+    Controls whether clique cuts should be generated.
+    
 
-MSK_IPAR_MIO_CUT_CG = 75
+MSK_IPAR_MIO_CUT_CMIR = 63
 
-    Controls whether CG cuts should be generated.
-
-MSK_IPAR_MIO_CUT_CMIR = 76
-
+    
     Controls whether mixed integer rounding cuts should be generated.
+    
 
-MSK_IPAR_MIO_CUT_LEVEL_ROOT = 77
+MSK_IPAR_MIO_CUT_GMI = 64
 
-    Controls the cut level employed by the mixed-integer optimizer at the root node.
+    
+    Controls whether GMI cuts should be generated.
+    
 
-MSK_IPAR_MIO_CUT_LEVEL_TREE = 78
+MSK_IPAR_MIO_CUT_IMPLIED_BOUND = 65
 
-    Controls the cut level employed by the mixed-integer optimizer in the tree.
+    
+    Controls whether implied bound cuts should be generated.
+    
 
-MSK_IPAR_MIO_FEASPUMP_LEVEL = 79
+MSK_IPAR_MIO_CUT_KNAPSACK_COVER = 66
 
-    Controls the feasibility pump heuristic which is used to construct a good initial feasible solution.
+    
+    Controls whether knapsack cover cuts should be generated.
+    
 
-MSK_IPAR_MIO_HEURISTIC_LEVEL = 80
+MSK_IPAR_MIO_CUT_SELECTION_LEVEL = 67
 
+    
+    Controlls how aggresively generated cuts are selected to be inluded in the relaxation.
+    
+
+MSK_IPAR_MIO_HEURISTIC_LEVEL = 68
+
+    
     Controls the heuristic employed by the mixed-integer
     optimizer to locate an initial integer feasible
     solution.
+    
 
-MSK_IPAR_MIO_HOTSTART = 81
+MSK_IPAR_MIO_MAX_NUM_BRANCHES = 69
 
-    Controls whether the integer optimizer is hot-started.
-
-MSK_IPAR_MIO_KEEP_BASIS = 82
-
-    Controls whether the integer presolve keeps bases in memory.
-
-MSK_IPAR_MIO_LOCAL_BRANCH_NUMBER = 83
-
-    Controls the size of the local search space when doing local branching.
-
-MSK_IPAR_MIO_MAX_NUM_BRANCHES = 84
-
+    
     Maximum number of branches allowed during the branch and bound search.
+    
 
-MSK_IPAR_MIO_MAX_NUM_RELAXS = 85
+MSK_IPAR_MIO_MAX_NUM_RELAXS = 70
 
+    
     Maximum number of relaxations in branch and bound search.
+    
 
-MSK_IPAR_MIO_MAX_NUM_SOLUTIONS = 86
+MSK_IPAR_MIO_MAX_NUM_SOLUTIONS = 71
 
+    
     Controls how many feasible solutions the mixed-integer optimizer investigates.
+    
 
-MSK_IPAR_MIO_MODE = 87
+MSK_IPAR_MIO_MODE = 72
 
+    
     Turns on/off the mixed-integer mode.
+    
 
-MSK_IPAR_MIO_MT_USER_CB = 88
+MSK_IPAR_MIO_MT_USER_CB = 73
 
+    
     It true user callbacks are called from each thread used by this optimizer. If false the user callback is only called from a single thread.
+    
 
-MSK_IPAR_MIO_NODE_OPTIMIZER = 89
+MSK_IPAR_MIO_NODE_OPTIMIZER = 74
 
+    
     Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer.
+    
 
-MSK_IPAR_MIO_NODE_SELECTION = 90
+MSK_IPAR_MIO_NODE_SELECTION = 75
 
+    
     Controls the node selection strategy employed by the
     mixed-integer optimizer.
+    
 
-MSK_IPAR_MIO_OPTIMIZER_MODE = 91
+MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE = 76
 
-    An exprimental feature.
+    
+    Enables or disables perspective reformulation in presolve.
+    
 
-MSK_IPAR_MIO_PRESOLVE_AGGREGATE = 92
+MSK_IPAR_MIO_PROBING_LEVEL = 77
 
-    Controls whether problem aggregation is performed in the mixed-integer presolve.
-
-MSK_IPAR_MIO_PRESOLVE_PROBING = 93
-
-    Controls whether probing is employed by the mixed-integer presolve.
-
-MSK_IPAR_MIO_PRESOLVE_USE = 94
-
-    Controls whether presolve is performed by the mixed-integer optimizer.
-
-MSK_IPAR_MIO_PROBING_LEVEL = 95
-
+    
     Controls the amount of probing employed by the mixed-integer
     optimizer in presolve.
+    
 
-MSK_IPAR_MIO_RINS_MAX_NODES = 96
+MSK_IPAR_MIO_RINS_MAX_NODES = 78
 
-    Maximum number of nodes in each call to the RINS heuristic.
+    
+    Maximum number of nodes in each call to RINS.
+    
 
-MSK_IPAR_MIO_ROOT_OPTIMIZER = 97
+MSK_IPAR_MIO_ROOT_OPTIMIZER = 79
 
+    
     Controls which optimizer is employed at the root node in the mixed-integer optimizer.
+    
 
-MSK_IPAR_MIO_STRONG_BRANCH = 98
+MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL = 80
 
-    The depth from the root in which strong branching is employed.
+    Controls whether presolve can be repeated at root node.
 
-MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER = 99
+MSK_IPAR_MIO_VB_DETECTION_LEVEL = 81
 
-    Controls wheter the new multithreaded optimizer should be used for Mixed integer problems.
+    
+    Controls how much effort is put into detecting variable bounds.
+    
 
-MSK_IPAR_MT_SPINCOUNT = 100
+MSK_IPAR_MT_SPINCOUNT = 82
 
+    
     Set the number of iterations to spin before sleeping.
+    
 
-MSK_IPAR_NONCONVEX_MAX_ITERATIONS = 101
+MSK_IPAR_NUM_THREADS = 83
 
-    Maximum number of iterations that can be used by the nonconvex optimizer.
-
-MSK_IPAR_NUM_THREADS = 102
-
+    
     Controls the number of threads employed by the optimizer. If set to 0 the number of threads used will
     be equal to the number of cores detected on the machine.
+    
 
-MSK_IPAR_OPF_MAX_TERMS_PER_LINE = 103
+MSK_IPAR_OPF_MAX_TERMS_PER_LINE = 84
 
+    
     The maximum number of terms (linear and quadratic) per line when an OPF file is written.
+    
 
-MSK_IPAR_OPF_WRITE_HEADER = 104
+MSK_IPAR_OPF_WRITE_HEADER = 85
 
-    Write a text header with date and MOSEK version in an OPF file.
+    
+    Write a text header with date and |mosek| version in an OPF file.
+    
 
-MSK_IPAR_OPF_WRITE_HINTS = 105
+MSK_IPAR_OPF_WRITE_HINTS = 86
 
+    
     Write a hint section with problem dimensions in the beginning of an OPF file.
+    
 
-MSK_IPAR_OPF_WRITE_PARAMETERS = 106
+MSK_IPAR_OPF_WRITE_PARAMETERS = 87
 
     Write a parameter section in an OPF file.
 
-MSK_IPAR_OPF_WRITE_PROBLEM = 107
+MSK_IPAR_OPF_WRITE_PROBLEM = 88
 
+    
     Write objective, constraints, bounds etc. to an OPF file.
+    
 
-MSK_IPAR_OPF_WRITE_SOL_BAS = 108
+MSK_IPAR_OPF_WRITE_SOL_BAS = 89
 
+    
     Controls what is written to the OPF files.
+    
 
-MSK_IPAR_OPF_WRITE_SOL_ITG = 109
+MSK_IPAR_OPF_WRITE_SOL_ITG = 90
 
+    
     Controls what is written to the OPF files.
+    
 
-MSK_IPAR_OPF_WRITE_SOL_ITR = 110
+MSK_IPAR_OPF_WRITE_SOL_ITR = 91
 
+    
     Controls what is written to the OPF files.
+    
 
-MSK_IPAR_OPF_WRITE_SOLUTIONS = 111
+MSK_IPAR_OPF_WRITE_SOLUTIONS = 92
 
     Enable inclusion of solutions in the OPF files.
 
-MSK_IPAR_OPTIMIZER = 112
+MSK_IPAR_OPTIMIZER = 93
 
+    
     Controls which optimizer is used to optimize the task.
+    
 
-MSK_IPAR_PARAM_READ_CASE_NAME = 113
+MSK_IPAR_PARAM_READ_CASE_NAME = 94
 
+    
     If turned on, then names in the parameter file are case sensitive.
+    
 
-MSK_IPAR_PARAM_READ_IGN_ERROR = 114
+MSK_IPAR_PARAM_READ_IGN_ERROR = 95
 
-    If turned on, then errors in paramter settings is ignored.
+    
+    If turned on, then errors in parameter settings is ignored.
+    
 
-MSK_IPAR_PRESOLVE_ELIM_FILL = 115
+MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL = 96
 
-    Maximum amount of fill-in in the elimination phase.
+    
+    Maximum amount of fill-in created in one pivot during the elimination phase.
+    
 
-MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES = 116
+MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES = 97
 
     Control the maximum number of times the eliminator is tried.
 
-MSK_IPAR_PRESOLVE_ELIMINATOR_USE = 117
-
-    Controls whether free or implied free
-    variables are eliminated from the problem.
-
-MSK_IPAR_PRESOLVE_LEVEL = 118
+MSK_IPAR_PRESOLVE_LEVEL = 98
 
     Currently not used.
 
-MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH = 119
+MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH = 99
 
+    
     Controls linear dependency check in presolve.
+    
 
-MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH = 120
+MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH = 100
 
+    
     Controls linear dependency check in presolve.
+    
 
-MSK_IPAR_PRESOLVE_LINDEP_USE = 121
+MSK_IPAR_PRESOLVE_LINDEP_USE = 101
 
+    
     Controls whether the linear constraints are checked for linear dependencies.
+    
 
-MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS = 122
+MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS = 102
 
-    Controls the maximum number reductions performed by the presolve.
+    Controls the maximum number of reductions performed by the presolve.
 
-MSK_IPAR_PRESOLVE_USE = 123
+MSK_IPAR_PRESOLVE_USE = 103
 
     Controls whether the presolve is applied to a problem before it is optimized.
 
-MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER = 124
+MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER = 104
 
+    
     Controls which optimizer that is used to find the optimal repair.
+    
 
-MSK_IPAR_QO_SEPARABLE_REFORMULATION = 125
+MSK_IPAR_READ_DATA_COMPRESSED = 105
 
-    Determine if Quadratic programing problems should be reformulated to separable form.
-
-MSK_IPAR_READ_ANZ = 126
-
-    Controls the expected number of constraint non-zeros.
-
-MSK_IPAR_READ_CON = 127
-
-    Controls the expected number of constraints.
-
-MSK_IPAR_READ_CONE = 128
-
-    Controls the expected number of conic constraints.
-
-MSK_IPAR_READ_DATA_COMPRESSED = 129
-
+    
     Controls the input file decompression.
+    
 
-MSK_IPAR_READ_DATA_FORMAT = 130
+MSK_IPAR_READ_DATA_FORMAT = 106
 
     Format of the data file to be read.
 
-MSK_IPAR_READ_DEBUG = 131
+MSK_IPAR_READ_DEBUG = 107
 
+    
     Turns on additional debugging information when reading files.
+    
 
-MSK_IPAR_READ_KEEP_FREE_CON = 132
+MSK_IPAR_READ_KEEP_FREE_CON = 108
 
-    Controls whether the free constraints are included in
-    the problem.
+    
+    Controls whether the free constraints are included in the problem.
+    
 
-MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU = 133
+MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU = 109
 
+    
     Controls how the LP files are interpreted.
+    
 
-MSK_IPAR_READ_LP_QUOTED_NAMES = 134
+MSK_IPAR_READ_LP_QUOTED_NAMES = 110
 
+    
     If a name is in quotes when reading an LP file, the quotes will be removed.
+    
 
-MSK_IPAR_READ_MPS_FORMAT = 135
+MSK_IPAR_READ_MPS_FORMAT = 111
 
+    
     Controls how strictly the MPS file reader interprets the MPS format.
+    
 
-MSK_IPAR_READ_MPS_KEEP_INT = 136
+MSK_IPAR_READ_MPS_WIDTH = 112
 
-    Controls if integer constraints are read.
-
-MSK_IPAR_READ_MPS_OBJ_SENSE = 137
-
-    Controls the MPS format extensions.
-
-MSK_IPAR_READ_MPS_RELAX = 138
-
-    Controls the meaning of integer constraints.
-
-MSK_IPAR_READ_MPS_WIDTH = 139
-
+    
     Controls the maximal number of characters allowed in one line of the MPS file.
+    
 
-MSK_IPAR_READ_QNZ = 140
+MSK_IPAR_READ_TASK_IGNORE_PARAM = 113
 
-    Controls the expected number of quadratic non-zeros.
-
-MSK_IPAR_READ_TASK_IGNORE_PARAM = 141
-
+    
     Controls what information is used from the task files.
+    
 
-MSK_IPAR_READ_VAR = 142
+MSK_IPAR_SENSITIVITY_ALL = 114
 
-    Controls the expected number of variables.
-
-MSK_IPAR_SENSITIVITY_ALL = 143
-
+    
     Controls sensitivity report behavior.
+    
 
-MSK_IPAR_SENSITIVITY_OPTIMIZER = 144
+MSK_IPAR_SENSITIVITY_OPTIMIZER = 115
 
+    
     Controls which optimizer is used for optimal partition sensitivity analysis.
+    
 
-MSK_IPAR_SENSITIVITY_TYPE = 145
+MSK_IPAR_SENSITIVITY_TYPE = 116
 
+    
     Controls which type of sensitivity analysis is to be performed.
+    
 
-MSK_IPAR_SIM_BASIS_FACTOR_USE = 146
+MSK_IPAR_SIM_BASIS_FACTOR_USE = 117
 
+    
     Controls whether a (LU) factorization of the basis is used in a hot-start.
     Forcing a refactorization sometimes improves the stability of the simplex optimizers, but in most cases
-    there is a performance penanlty.
+    there is a performance penalty.
+    
 
-MSK_IPAR_SIM_DEGEN = 147
+MSK_IPAR_SIM_DEGEN = 118
 
+    
     Controls how aggressively degeneration is handled.
+    
 
-MSK_IPAR_SIM_DUAL_CRASH = 148
+MSK_IPAR_SIM_DUAL_CRASH = 119
 
+    
     Controls whether crashing is performed in the dual simplex optimizer.
+    
 
-MSK_IPAR_SIM_DUAL_PHASEONE_METHOD = 149
+MSK_IPAR_SIM_DUAL_PHASEONE_METHOD = 120
 
-    An exprimental feature.
+    
+    An experimental feature.
+    
 
-MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION = 150
+MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION = 121
 
+    
     Controls how aggressively restricted selection is used.
+    
 
-MSK_IPAR_SIM_DUAL_SELECTION = 151
+MSK_IPAR_SIM_DUAL_SELECTION = 122
 
+    
     Controls the dual simplex strategy.
+    
 
-MSK_IPAR_SIM_EXPLOIT_DUPVEC = 152
+MSK_IPAR_SIM_EXPLOIT_DUPVEC = 123
 
+    
     Controls if the simplex optimizers are allowed to exploit duplicated columns.
+    
 
-MSK_IPAR_SIM_HOTSTART = 153
+MSK_IPAR_SIM_HOTSTART = 124
 
+    
     Controls the type of hot-start that the simplex optimizer perform.
+    
 
-MSK_IPAR_SIM_HOTSTART_LU = 154
+MSK_IPAR_SIM_HOTSTART_LU = 125
 
+    
     Determines if the simplex optimizer should exploit the initial factorization.
+    
 
-MSK_IPAR_SIM_INTEGER = 155
+MSK_IPAR_SIM_INTEGER = 126
 
-    An exprimental feature.
+    
+    An experimental feature.
+    
 
-MSK_IPAR_SIM_MAX_ITERATIONS = 156
+MSK_IPAR_SIM_MAX_ITERATIONS = 127
 
+    
     Maximum number of iterations that can be used by a
     simplex optimizer.
+    
 
-MSK_IPAR_SIM_MAX_NUM_SETBACKS = 157
+MSK_IPAR_SIM_MAX_NUM_SETBACKS = 128
 
+    
     Controls how many set-backs that are allowed within a
     simplex optimizer.
+    
 
-MSK_IPAR_SIM_NON_SINGULAR = 158
+MSK_IPAR_SIM_NON_SINGULAR = 129
 
+    
     Controls if the simplex optimizer ensures a non-singular basis, if possible.
+    
 
-MSK_IPAR_SIM_PRIMAL_CRASH = 159
+MSK_IPAR_SIM_PRIMAL_CRASH = 130
 
+    
     Controls the simplex crash.
+    
 
-MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD = 160
+MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD = 131
 
-    An exprimental feature.
+    
+    An experimental feature.
+    
 
-MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION = 161
+MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION = 132
 
+    
     Controls how aggressively restricted selection is used.
+    
 
-MSK_IPAR_SIM_PRIMAL_SELECTION = 162
+MSK_IPAR_SIM_PRIMAL_SELECTION = 133
 
+    
     Controls the primal simplex strategy.
+    
 
-MSK_IPAR_SIM_REFACTOR_FREQ = 163
+MSK_IPAR_SIM_REFACTOR_FREQ = 134
 
+    
     Controls the basis refactoring frequency.
+    
 
-MSK_IPAR_SIM_REFORMULATION = 164
+MSK_IPAR_SIM_REFORMULATION = 135
 
+    
     Controls if the simplex optimizers are allowed to reformulate the problem.
+    
 
-MSK_IPAR_SIM_SAVE_LU = 165
+MSK_IPAR_SIM_SAVE_LU = 136
 
+    
     Controls if the LU factorization stored should be replaced with the LU factorization
     corresponding to the initial basis.
+    
 
-MSK_IPAR_SIM_SCALING = 166
+MSK_IPAR_SIM_SCALING = 137
 
+    
     Controls how much effort is used in scaling the problem
     before a simplex optimizer is used.
+    
 
-MSK_IPAR_SIM_SCALING_METHOD = 167
+MSK_IPAR_SIM_SCALING_METHOD = 138
 
+    
     Controls how the problem is scaled
     before a simplex optimizer is used.
+    
 
-MSK_IPAR_SIM_SOLVE_FORM = 168
+MSK_IPAR_SIM_SOLVE_FORM = 139
 
-    Controls whether the primal or the dual problem is solved by the primal-/dual- simplex optimizer.
+    
+    Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
+    
 
-MSK_IPAR_SIM_STABILITY_PRIORITY = 169
+MSK_IPAR_SIM_STABILITY_PRIORITY = 140
 
+    
     Controls how high priority the numerical stability should be given.
+    
 
-MSK_IPAR_SIM_SWITCH_OPTIMIZER = 170
+MSK_IPAR_SIM_SWITCH_OPTIMIZER = 141
 
+    
     Controls the simplex behavior.
+    
 
-MSK_IPAR_SOL_FILTER_KEEP_BASIC = 171
+MSK_IPAR_SOL_FILTER_KEEP_BASIC = 142
 
+    
     Controls the license manager client behavior.
+    
 
-MSK_IPAR_SOL_FILTER_KEEP_RANGED = 172
+MSK_IPAR_SOL_FILTER_KEEP_RANGED = 143
 
+    
     Control the contents of the solution files.
+    
 
-MSK_IPAR_SOL_READ_NAME_WIDTH = 173
+MSK_IPAR_SOL_READ_NAME_WIDTH = 144
 
+    
     Controls the input solution file format.
+    
 
-MSK_IPAR_SOL_READ_WIDTH = 174
+MSK_IPAR_SOL_READ_WIDTH = 145
 
+    
     Controls the input solution file format.
+    
 
-MSK_IPAR_SOLUTION_CALLBACK = 175
+MSK_IPAR_SOLUTION_CALLBACK = 146
 
+    
     Indicates whether solution call-backs will be
     performed during the optimization.
+    
 
-MSK_IPAR_TIMING_LEVEL = 176
+MSK_IPAR_TIMING_LEVEL = 147
 
+    
     Controls the a amount of timing performed inside MOSEK.
+    
 
-MSK_IPAR_WARNING_LEVEL = 177
+MSK_IPAR_WRITE_BAS_CONSTRAINTS = 148
 
-    Deprecated and not in use
-
-MSK_IPAR_WRITE_BAS_CONSTRAINTS = 178
-
+    
     Controls the basic solution file format.
+    
 
-MSK_IPAR_WRITE_BAS_HEAD = 179
+MSK_IPAR_WRITE_BAS_HEAD = 149
 
+    
     Controls the basic solution file format.
+    
 
-MSK_IPAR_WRITE_BAS_VARIABLES = 180
+MSK_IPAR_WRITE_BAS_VARIABLES = 150
 
+    
     Controls the basic solution file format.
+    
 
-MSK_IPAR_WRITE_DATA_COMPRESSED = 181
+MSK_IPAR_WRITE_DATA_COMPRESSED = 151
 
+    
     Controls output file compression.
+    
 
-MSK_IPAR_WRITE_DATA_FORMAT = 182
+MSK_IPAR_WRITE_DATA_FORMAT = 152
 
+    
     Controls the output file format.
+    
 
-MSK_IPAR_WRITE_DATA_PARAM = 183
+MSK_IPAR_WRITE_DATA_PARAM = 153
 
+    
     Controls output file data.
+    
 
-MSK_IPAR_WRITE_FREE_CON = 184
+MSK_IPAR_WRITE_FREE_CON = 154
 
+    
     Controls the output file data.
+    
 
-MSK_IPAR_WRITE_GENERIC_NAMES = 185
+MSK_IPAR_WRITE_GENERIC_NAMES = 155
 
+    
     Controls the output file data.
+    
 
-MSK_IPAR_WRITE_GENERIC_NAMES_IO = 186
+MSK_IPAR_WRITE_GENERIC_NAMES_IO = 156
 
     Index origin used in  generic names.
 
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS = 187
+MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS = 157
 
-    If the output format is not compatible with conic quadratic problems this parameter controls if the writer ignores the conic parts or produces an error.
-
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS = 188
-
+    
     Controls if the writer ignores incompatible problem items when writing files.
+    
 
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS = 189
+MSK_IPAR_WRITE_INT_CONSTRAINTS = 158
 
-    Controls if the writer ignores general non-linear terms or produces an error.
-
-MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS = 190
-
-    If the output format is not compatible with semidefinite problems this parameter controls if the writer ignores the conic parts or produces an error.
-
-MSK_IPAR_WRITE_INT_CONSTRAINTS = 191
-
+    
     Controls the integer solution file format.
+    
 
-MSK_IPAR_WRITE_INT_HEAD = 192
+MSK_IPAR_WRITE_INT_HEAD = 159
 
+    
     Controls the integer solution file format.
+    
 
-MSK_IPAR_WRITE_INT_VARIABLES = 193
+MSK_IPAR_WRITE_INT_VARIABLES = 160
 
+    
     Controls the integer solution file format.
+    
 
-MSK_IPAR_WRITE_LP_LINE_WIDTH = 194
+MSK_IPAR_WRITE_LP_FULL_OBJ = 161
 
+    Write full linear objective
+
+MSK_IPAR_WRITE_LP_LINE_WIDTH = 162
+
+    
     Controls the LP output file format.
+    
 
-MSK_IPAR_WRITE_LP_QUOTED_NAMES = 195
+MSK_IPAR_WRITE_LP_QUOTED_NAMES = 163
 
+    
     Controls LP output file format.
+    
 
-MSK_IPAR_WRITE_LP_STRICT_FORMAT = 196
+MSK_IPAR_WRITE_LP_STRICT_FORMAT = 164
 
+    
     Controls whether LP  output files satisfy the LP format strictly.
+    
 
-MSK_IPAR_WRITE_LP_TERMS_PER_LINE = 197
+MSK_IPAR_WRITE_LP_TERMS_PER_LINE = 165
 
+    
     Controls the LP output file format.
+    
 
-MSK_IPAR_WRITE_MPS_INT = 198
+MSK_IPAR_WRITE_MPS_FORMAT = 166
 
+    
+    Controls in which format the MPS is written.
+    
+
+MSK_IPAR_WRITE_MPS_INT = 167
+
+    
     Controls the output file data.
+    
 
-MSK_IPAR_WRITE_PRECISION = 199
+MSK_IPAR_WRITE_PRECISION = 168
 
+    
     Controls data precision employed in when writing an MPS file.
+    
 
-MSK_IPAR_WRITE_SOL_BARVARIABLES = 200
+MSK_IPAR_WRITE_SOL_BARVARIABLES = 169
 
+    
     Controls the solution file format.
+    
 
-MSK_IPAR_WRITE_SOL_CONSTRAINTS = 201
+MSK_IPAR_WRITE_SOL_CONSTRAINTS = 170
 
+    
     Controls the solution file format.
+    
 
-MSK_IPAR_WRITE_SOL_HEAD = 202
+MSK_IPAR_WRITE_SOL_HEAD = 171
 
+    
     Controls solution file format.
+    
 
-MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = 203
+MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = 172
 
-    Controls whther the user specified names are employed even if they are invalid names.
+    
+    Controls whether the user specified names are employed even if they are invalid names.
+    
 
-MSK_IPAR_WRITE_SOL_VARIABLES = 204
+MSK_IPAR_WRITE_SOL_VARIABLES = 173
 
+    
     Controls the solution file format.
+    
 
-MSK_IPAR_WRITE_TASK_INC_SOL = 205
+MSK_IPAR_WRITE_TASK_INC_SOL = 174
 
+    
     Controls whether the solutions are  stored in the task file too.
+    
 
-MSK_IPAR_WRITE_XML_MODE = 206
+MSK_IPAR_WRITE_XML_MODE = 175
 
+    
     Controls if linear coefficients should be written by row or column when writing in the XML file format.
+    
 
 Enum solsta
 -----------
@@ -6672,11 +6795,19 @@ MSK_SOL_STA_DUAL_FEAS = 3
 
     The solution is dual feasible.
 
+MSK_SOL_STA_DUAL_ILLPOSED_CER = 15
+
+    
+    The solution is a certificate that the dual problem is illposed.
+    
+
 MSK_SOL_STA_DUAL_INFEAS_CER = 6
 
+    
     The solution is a certificate of dual infeasibility.
+    
 
-MSK_SOL_STA_INTEGER_OPTIMAL = 14
+MSK_SOL_STA_INTEGER_OPTIMAL = 16
 
     The primal solution is integer optimal.
 
@@ -6686,9 +6817,11 @@ MSK_SOL_STA_NEAR_DUAL_FEAS = 10
 
 MSK_SOL_STA_NEAR_DUAL_INFEAS_CER = 13
 
+    
     The solution is almost a certificate of dual infeasibility.
+    
 
-MSK_SOL_STA_NEAR_INTEGER_OPTIMAL = 15
+MSK_SOL_STA_NEAR_INTEGER_OPTIMAL = 17
 
     The primal solution is near integer optimal.
 
@@ -6698,8 +6831,10 @@ MSK_SOL_STA_NEAR_OPTIMAL = 8
 
 MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS = 11
 
+    
     The solution is nearly both
     primal and dual feasible.
+    
 
 MSK_SOL_STA_NEAR_PRIM_FEAS = 9
 
@@ -6707,8 +6842,10 @@ MSK_SOL_STA_NEAR_PRIM_FEAS = 9
 
 MSK_SOL_STA_NEAR_PRIM_INFEAS_CER = 12
 
+    
     The solution is almost a certificate
     of primal infeasibility.
+    
 
 MSK_SOL_STA_OPTIMAL = 1
 
@@ -6722,10 +6859,17 @@ MSK_SOL_STA_PRIM_FEAS = 2
 
     The solution is primal feasible.
 
+MSK_SOL_STA_PRIM_ILLPOSED_CER = 14
+
+    
+    The solution is a certificate that the primal problem is illposed.
+    
+
 MSK_SOL_STA_PRIM_INFEAS_CER = 5
 
-    The solution is a certificate
-    of primal infeasibility.
+    
+    The solution is a certificate of primal infeasibility.
+    
 
 MSK_SOL_STA_UNKNOWN = 0
 
@@ -6747,27 +6891,37 @@ Enum solitem
 
 MSK_SOL_ITEM_SLC = 3
 
+    
     Lagrange multipliers for lower
     bounds on the constraints.
+    
 
 MSK_SOL_ITEM_SLX = 5
 
+    
     Lagrange multipliers for lower
     bounds on the variables.
+    
 
 MSK_SOL_ITEM_SNX = 7
 
+    
     Lagrange multipliers corresponding to the conic constraints on the variables.
+    
 
 MSK_SOL_ITEM_SUC = 4
 
+    
     Lagrange multipliers for upper
     bounds on the constraints.
+    
 
 MSK_SOL_ITEM_SUX = 6
 
+    
     Lagrange multipliers for upper
     bounds on the variables.
+    
 
 MSK_SOL_ITEM_XC = 0
 
@@ -6794,8 +6948,10 @@ MSK_BK_FX = 2
 
 MSK_BK_LO = 0
 
+    
     The constraint or variable has a finite
     lower bound and an infinite upper bound.
+    
 
 MSK_BK_RA = 4
 
@@ -6803,21 +6959,27 @@ MSK_BK_RA = 4
 
 MSK_BK_UP = 1
 
+    
     The constraint or variable has an infinite
     lower bound and an finite upper bound.
+    
 
 Enum basindtype
 ---------------
 
 MSK_BI_ALWAYS = 1
 
+    
     Basis identification is always performed even if the interior-point optimizer terminates
     abnormally.
+    
 
 MSK_BI_IF_FEASIBLE = 3
 
+    
     Basis identification is not performed if the interior-point optimizer terminates
     with a problem status saying that the problem is primal or dual infeasible.
+    
 
 MSK_BI_NEVER = 0
 
@@ -6825,7 +6987,9 @@ MSK_BI_NEVER = 0
 
 MSK_BI_NO_ERROR = 2
 
+    
     Basis identification is performed if the interior-point optimizer terminates without an error.
+    
 
 MSK_BI_RESERVERED = 4
 
@@ -6836,54 +7000,108 @@ Enum branchdir
 
 MSK_BRANCH_DIR_DOWN = 2
 
+    
     The mixed-integer optimizer always chooses the down branch first.
+    
+
+MSK_BRANCH_DIR_FAR = 4
+
+    
+    Branch in direction farthest from selected fractional variable.
+    
 
 MSK_BRANCH_DIR_FREE = 0
 
+    
     The mixed-integer optimizer decides which branch to choose.
+    
+
+MSK_BRANCH_DIR_GUIDED = 6
+
+    
+    Branch in direction of current incumbent.
+    
+
+MSK_BRANCH_DIR_NEAR = 3
+
+    
+    Branch in direction nearest to selected fractional variable.
+    
+
+MSK_BRANCH_DIR_PSEUDOCOST = 7
+
+    
+    Branch based on the pseudocost of the variable.
+    
+
+MSK_BRANCH_DIR_ROOT_LP = 5
+
+    
+    Chose direction based on root lp value of selected variable.
+    
 
 MSK_BRANCH_DIR_UP = 1
 
+    
     The mixed-integer optimizer always chooses the up branch first.
+    
 
 Enum liinfitem
 --------------
 
 MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER = 0
 
+    
     Number of dual degenerate clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_CLEAN_DUAL_ITER = 1
 
+    
     Number of dual clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER = 2
 
+    
     Number of primal degenerate clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER = 3
 
+    
     Number of primal-dual degenerate clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER = 4
 
+    
     Number of primal-dual clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER = 5
 
+    
     Number of primal-dual subproblem clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_CLEAN_PRIMAL_ITER = 6
 
+    
     Number of primal clean iterations performed in the basis identification.
+    
 
 MSK_LIINF_BI_DUAL_ITER = 7
 
+    
     Number of dual pivots performed in the basis identification.
+    
 
 MSK_LIINF_BI_PRIMAL_ITER = 8
 
+    
     Number of primal pivots performed in the basis identification.
+    
 
 MSK_LIINF_INTPNT_FACTOR_NUM_NZ = 9
 
@@ -6891,19 +7109,761 @@ MSK_LIINF_INTPNT_FACTOR_NUM_NZ = 9
 
 MSK_LIINF_MIO_INTPNT_ITER = 10
 
+    
     Number of interior-point iterations performed by the mixed-integer optimizer.
+    
 
-MSK_LIINF_MIO_SIMPLEX_ITER = 11
+MSK_LIINF_MIO_PRESOLVED_ANZ = 11
 
+    
+    Number of  non-zero entries in the constraint matrix of presolved problem.
+    
+
+MSK_LIINF_MIO_SIM_MAXITER_SETBACKS = 12
+
+    
+    Number of times the the simplex optimizer has hit the maximum iteration limit when re-optimizing.
+    
+
+MSK_LIINF_MIO_SIMPLEX_ITER = 13
+
+    
     Number of simplex iterations performed by the mixed-integer optimizer.
+    
 
-MSK_LIINF_RD_NUMANZ = 12
+MSK_LIINF_RD_NUMANZ = 14
 
     Number of non-zeros in A that is read.
 
-MSK_LIINF_RD_NUMQNZ = 13
+MSK_LIINF_RD_NUMQNZ = 15
 
     Number of Q non-zeros.
+
+Enum simhotstart
+----------------
+
+MSK_SIM_HOTSTART_FREE = 1
+
+    
+    The simplex optimize chooses the hot-start type.
+    
+
+MSK_SIM_HOTSTART_NONE = 0
+
+    
+    The simplex optimizer performs a coldstart.
+    
+
+MSK_SIM_HOTSTART_STATUS_KEYS = 2
+
+    
+    Only the status keys of the constraints and variables are used
+    to choose the type of hot-start.
+    
+
+Enum callbackcode
+-----------------
+
+MSK_CALLBACK_BEGIN_BI = 0
+
+    
+    The basis identification procedure
+    has been started.
+    
+
+MSK_CALLBACK_BEGIN_CONIC = 1
+
+    
+    The call-back function is called
+    when the conic optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_DUAL_BI = 2
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the dual phase is started.
+    
+
+MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY = 3
+
+    
+    Dual sensitivity analysis is started.
+    
+
+MSK_CALLBACK_BEGIN_DUAL_SETUP_BI = 4
+
+    
+    The call-back function is called when the dual BI phase is started.
+    
+
+MSK_CALLBACK_BEGIN_DUAL_SIMPLEX = 5
+
+    
+    The call-back function is called when the dual simplex optimizer started.
+    
+
+MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI = 6
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the dual simplex clean-up phase is started.
+    
+
+MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK = 7
+
+    
+    Begin full convexity check.
+    
+
+MSK_CALLBACK_BEGIN_INFEAS_ANA = 8
+
+    
+    The call-back function is called when the infeasibility analyzer is started.
+    
+
+MSK_CALLBACK_BEGIN_INTPNT = 9
+
+    
+    The call-back function is called
+    when the interior-point optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_LICENSE_WAIT = 10
+
+    
+    Begin waiting for license.
+    
+
+MSK_CALLBACK_BEGIN_MIO = 11
+
+    
+    The call-back function is called when the mixed-integer optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_OPTIMIZER = 12
+
+    
+    The call-back function is called when the optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_PRESOLVE = 13
+
+    
+    The call-back function is called
+    when the presolve is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_BI = 14
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the primal phase is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX = 15
+
+    
+    The call-back function is called when the primal-dual simplex optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI = 16
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the primal-dual simplex clean-up phase is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_REPAIR = 17
+
+    
+    Begin primal feasibility repair.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY = 18
+
+    
+    Primal sensitivity analysis is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI = 19
+
+    
+    The call-back function is called when the primal BI setup is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX = 20
+
+    
+    The call-back function is called when the primal simplex optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI = 21
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the primal simplex clean-up phase is started.
+    
+
+MSK_CALLBACK_BEGIN_QCQO_REFORMULATE = 22
+
+    
+    Begin QCQO reformulation.
+    
+
+MSK_CALLBACK_BEGIN_READ = 23
+
+    |mosek| has started reading a problem file.
+
+MSK_CALLBACK_BEGIN_ROOT_CUTGEN = 24
+
+    
+    The call-back function is called when root cut generation is started.
+    
+
+MSK_CALLBACK_BEGIN_SIMPLEX = 25
+
+    
+    The call-back function is called when the simplex optimizer is started.
+    
+
+MSK_CALLBACK_BEGIN_SIMPLEX_BI = 26
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the simplex clean-up phase is started.
+    
+
+MSK_CALLBACK_BEGIN_TO_CONIC = 27
+
+    
+    Begin conic reformulation.
+    
+
+MSK_CALLBACK_BEGIN_WRITE = 28
+
+    |mosek| has started writing a problem file.
+
+MSK_CALLBACK_CONIC = 29
+
+    
+    The call-back function is called from within the
+    conic optimizer after the information database has been updated.
+    
+
+MSK_CALLBACK_DUAL_SIMPLEX = 30
+
+    
+    The call-back function is called
+    from within the dual simplex optimizer.
+    
+
+MSK_CALLBACK_END_BI = 31
+
+    
+    The call-back function is called
+    when the basis identification procedure
+    is terminated.
+    
+
+MSK_CALLBACK_END_CONIC = 32
+
+    
+    The call-back function is called
+    when the conic optimizer is terminated.
+    
+
+MSK_CALLBACK_END_DUAL_BI = 33
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the dual phase is terminated.
+    
+
+MSK_CALLBACK_END_DUAL_SENSITIVITY = 34
+
+    
+    Dual sensitivity analysis is terminated.
+    
+
+MSK_CALLBACK_END_DUAL_SETUP_BI = 35
+
+    
+    The call-back function is called when the dual BI phase is terminated.
+    
+
+MSK_CALLBACK_END_DUAL_SIMPLEX = 36
+
+    
+    The call-back function is called when the dual simplex optimizer is terminated.
+    
+
+MSK_CALLBACK_END_DUAL_SIMPLEX_BI = 37
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the dual clean-up phase is terminated.
+    
+
+MSK_CALLBACK_END_FULL_CONVEXITY_CHECK = 38
+
+    
+    End full convexity check.
+    
+
+MSK_CALLBACK_END_INFEAS_ANA = 39
+
+    
+    The call-back function is called when the infeasibility analyzer is terminated.
+    
+
+MSK_CALLBACK_END_INTPNT = 40
+
+    
+    The call-back function is called
+    when the interior-point optimizer is terminated.
+    
+
+MSK_CALLBACK_END_LICENSE_WAIT = 41
+
+    
+    End waiting for license.
+    
+
+MSK_CALLBACK_END_MIO = 42
+
+    
+    The call-back function is called when the mixed-integer optimizer is terminated.
+    
+
+MSK_CALLBACK_END_OPTIMIZER = 43
+
+    
+    The call-back function is called when the optimizer is terminated.
+    
+
+MSK_CALLBACK_END_PRESOLVE = 44
+
+    
+    The call-back function is called
+    when the presolve is completed.
+    
+
+MSK_CALLBACK_END_PRIMAL_BI = 45
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the primal phase is terminated.
+    
+
+MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX = 46
+
+    
+    The call-back function is called when the primal-dual simplex optimizer is terminated.
+    
+
+MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI = 47
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the primal-dual clean-up phase is terminated.
+    
+
+MSK_CALLBACK_END_PRIMAL_REPAIR = 48
+
+    
+    End primal feasibility repair.
+    
+
+MSK_CALLBACK_END_PRIMAL_SENSITIVITY = 49
+
+    
+    Primal sensitivity analysis is terminated.
+    
+
+MSK_CALLBACK_END_PRIMAL_SETUP_BI = 50
+
+    
+    The call-back function is called when the primal BI setup is terminated.
+    
+
+MSK_CALLBACK_END_PRIMAL_SIMPLEX = 51
+
+    
+    The call-back function is called when the primal simplex optimizer is terminated.
+    
+
+MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI = 52
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the primal clean-up phase is terminated.
+    
+
+MSK_CALLBACK_END_QCQO_REFORMULATE = 53
+
+    
+    End QCQO reformulation.
+    
+
+MSK_CALLBACK_END_READ = 54
+
+    |mosek| has finished reading a problem file.
+
+MSK_CALLBACK_END_ROOT_CUTGEN = 55
+
+    
+    The call-back function is called when root cut generation is is terminated.
+    
+
+MSK_CALLBACK_END_SIMPLEX = 56
+
+    
+    The call-back function is called when the simplex optimizer is terminated.
+    
+
+MSK_CALLBACK_END_SIMPLEX_BI = 57
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    when the simplex clean-up phase is terminated.
+    
+
+MSK_CALLBACK_END_TO_CONIC = 58
+
+    
+    End conic reformulation.
+    
+
+MSK_CALLBACK_END_WRITE = 59
+
+    |mosek| has finished writing a problem file.
+
+MSK_CALLBACK_IM_BI = 60
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point.
+    
+
+MSK_CALLBACK_IM_CONIC = 61
+
+    
+    The call-back function is called
+    at an intermediate stage within the conic optimizer where
+    the information database has not been updated.
+    
+
+MSK_CALLBACK_IM_DUAL_BI = 62
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the dual phase.
+    
+
+MSK_CALLBACK_IM_DUAL_SENSIVITY = 63
+
+    
+    The call-back function is called at an intermediate stage of the dual sensitivity analysis.
+    
+
+MSK_CALLBACK_IM_DUAL_SIMPLEX = 64
+
+    
+    The call-back function is called at an intermediate point in the dual simplex optimizer.
+    
+
+MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK = 65
+
+    
+    The call-back function is called at an intermediate stage of the full convexity check.
+    
+
+MSK_CALLBACK_IM_INTPNT = 66
+
+    
+    The call-back function is called
+    at an intermediate stage within the interior-point optimizer where
+    the information database has not been updated.
+    
+
+MSK_CALLBACK_IM_LICENSE_WAIT = 67
+
+    
+    |mosek| is waiting for a license.
+    
+
+MSK_CALLBACK_IM_LU = 68
+
+    
+    The call-back function is called
+    from within the LU factorization procedure at an intermediate point.
+    
+
+MSK_CALLBACK_IM_MIO = 69
+
+    
+    The call-back function is called at an intermediate point in the mixed-integer optimizer.
+    
+
+MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX = 70
+
+    
+    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
+    dual simplex optimizer.
+    
+
+MSK_CALLBACK_IM_MIO_INTPNT = 71
+
+    
+    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
+    interior-point optimizer.
+    
+
+MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX = 72
+
+    
+    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
+    primal simplex optimizer.
+    
+
+MSK_CALLBACK_IM_ORDER = 73
+
+    
+    The call-back function is called
+    from within the matrix ordering procedure at an intermediate point.
+    
+
+MSK_CALLBACK_IM_PRESOLVE = 74
+
+    
+    The call-back function is called
+    from within the presolve procedure
+    at an intermediate stage.
+    
+
+MSK_CALLBACK_IM_PRIMAL_BI = 75
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the primal phase.
+    
+
+MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX = 76
+
+    
+    The call-back function is called at an intermediate point in the primal-dual simplex optimizer.
+    
+
+MSK_CALLBACK_IM_PRIMAL_SENSIVITY = 77
+
+    
+    The call-back function is called at an intermediate stage of the primal sensitivity analysis.
+    
+
+MSK_CALLBACK_IM_PRIMAL_SIMPLEX = 78
+
+    
+    The call-back function is called at an intermediate point in the primal simplex optimizer.
+    
+
+MSK_CALLBACK_IM_QO_REFORMULATE = 79
+
+    
+    The call-back function is called at an intermediate stage of the conic quadratic reformulation.
+    
+
+MSK_CALLBACK_IM_READ = 80
+
+    Intermediate stage in reading.
+
+MSK_CALLBACK_IM_ROOT_CUTGEN = 81
+
+    
+    The call-back is called from within root cut generation at an intermediate stage.
+    
+
+MSK_CALLBACK_IM_SIMPLEX = 82
+
+    
+    The call-back function is called from within the
+    simplex optimizer at an intermediate point.
+    
+
+MSK_CALLBACK_IM_SIMPLEX_BI = 83
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the simplex clean-up phase.
+    
+
+MSK_CALLBACK_INTPNT = 84
+
+    
+    The call-back function is called from within the
+    interior-point optimizer after the information database has been updated.
+    
+
+MSK_CALLBACK_NEW_INT_MIO = 85
+
+    
+    The call-back function is called after a new integer solution
+    has been located by the mixed-integer optimizer.
+    
+
+MSK_CALLBACK_PRIMAL_SIMPLEX = 86
+
+    
+    The call-back function is called
+    from within the primal simplex optimizer.
+    
+
+MSK_CALLBACK_READ_OPF = 87
+
+    
+    The call-back function is called from the OPF
+    reader.
+    
+
+MSK_CALLBACK_READ_OPF_SECTION = 88
+
+    A chunk of Q non-zeros has been read from a problem file.
+
+MSK_CALLBACK_SOLVING_REMOTE = 89
+
+    
+    The call-back function is called while the task is being solved on a remote server.
+    
+
+MSK_CALLBACK_UPDATE_DUAL_BI = 90
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the dual phase.
+    
+
+MSK_CALLBACK_UPDATE_DUAL_SIMPLEX = 91
+
+    
+    The call-back function is called in the dual simplex optimizer.
+    
+
+MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI = 92
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the dual simplex clean-up phase.
+    
+
+MSK_CALLBACK_UPDATE_PRESOLVE = 93
+
+    
+    The call-back function is called
+    from within the presolve procedure.
+    
+
+MSK_CALLBACK_UPDATE_PRIMAL_BI = 94
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the primal phase.
+    
+
+MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX = 95
+
+    
+    The call-back function is called  in the primal-dual simplex optimizer.
+    
+
+MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI = 96
+
+    
+    The call-back function is called
+    from within the basis identification procedure
+    at an intermediate point in the primal simplex clean-up phase.
+    
+
+MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX = 97
+
+    
+    The call-back function is called  in the primal simplex optimizer.
+    
+
+MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI = 98
+
+    
+    The call-back function is called from within the basis identification procedure at an intermediate point in the primal simplex clean-up phase.
+    
+
+MSK_CALLBACK_WRITE_OPF = 99
+
+    
+    The call-back function is called from the OPF
+    writer.
+    
+
+Enum symmattype
+---------------
+
+MSK_SYMMAT_TYPE_SPARSE = 0
+
+    Sparse symmetric matrix.
+
+Enum feature
+------------
+
+MSK_FEATURE_PTON = 1
+
+    Nonlinear extension.
+
+MSK_FEATURE_PTS = 0
+
+    Base system.
+
+Enum mark
+---------
+
+MSK_MARK_LO = 0
+
+    
+    The lower bound is selected for sensitivity analysis.
+    
+
+MSK_MARK_UP = 1
+
+    
+    The upper bound is selected for sensitivity analysis.
+    
+
+Enum conetype
+-------------
+
+MSK_CT_QUAD = 0
+
+    The cone is a quadratic cone.
+
+MSK_CT_RQUAD = 1
+
+    The cone is a rotated quadratic cone.
 
 Enum streamtype
 ---------------
@@ -6924,623 +7884,6 @@ MSK_STREAM_WRN = 3
 
     Warning stream. Warning messages are written to this stream.
 
-Enum simhotstart
-----------------
-
-MSK_SIM_HOTSTART_FREE = 1
-
-    The simplex optimize chooses the hot-start type.
-
-MSK_SIM_HOTSTART_NONE = 0
-
-    The simplex optimizer performs a coldstart.
-
-MSK_SIM_HOTSTART_STATUS_KEYS = 2
-
-    Only the status keys of the constraints and variables are used
-    to choose the type of hot-start.
-
-Enum callbackcode
------------------
-
-MSK_CALLBACK_BEGIN_BI = 0
-
-    The basis identification procedure
-    has been started.
-
-MSK_CALLBACK_BEGIN_CONCURRENT = 1
-
-    Concurrent optimizer is started.
-
-MSK_CALLBACK_BEGIN_CONIC = 2
-
-    The call-back function is called
-    when the conic optimizer is started.
-
-MSK_CALLBACK_BEGIN_DUAL_BI = 3
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the dual phase is started.
-
-MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY = 4
-
-    Dual sensitivity analysis is started.
-
-MSK_CALLBACK_BEGIN_DUAL_SETUP_BI = 5
-
-    The call-back function is called when the dual BI phase is started.
-
-MSK_CALLBACK_BEGIN_DUAL_SIMPLEX = 6
-
-    The call-back function is called when the dual simplex optimizer started.
-
-MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI = 7
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the dual simplex clean-up phase is started.
-
-MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK = 8
-
-    Begin full convexity check.
-
-MSK_CALLBACK_BEGIN_INFEAS_ANA = 9
-
-    The call-back function is called when the infeasibility analyzer is started.
-
-MSK_CALLBACK_BEGIN_INTPNT = 10
-
-    The call-back function is called
-    when the interior-point optimizer is started.
-
-MSK_CALLBACK_BEGIN_LICENSE_WAIT = 11
-
-    Begin waiting for license.
-
-MSK_CALLBACK_BEGIN_MIO = 12
-
-    The call-back function is called when the mixed-integer optimizer is started.
-
-MSK_CALLBACK_BEGIN_NETWORK_DUAL_SIMPLEX = 13
-
-    The call-back function is called when the dual network simplex optimizer is started.
-
-MSK_CALLBACK_BEGIN_NETWORK_PRIMAL_SIMPLEX = 14
-
-    The call-back function is called when the primal network simplex optimizer is started.
-
-MSK_CALLBACK_BEGIN_NETWORK_SIMPLEX = 15
-
-    The call-back function is called when the simplex network optimizer is started.
-
-MSK_CALLBACK_BEGIN_NONCONVEX = 16
-
-    The call-back function is called
-    when the nonconvex optimizer is started.
-
-MSK_CALLBACK_BEGIN_OPTIMIZER = 17
-
-    The call-back function is called when the optimizer is started.
-
-MSK_CALLBACK_BEGIN_PRESOLVE = 18
-
-    The call-back function is called
-    when the presolve is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_BI = 19
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the primal phase is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX = 20
-
-    The call-back function is called when the primal-dual simplex optimizer is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI = 21
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the primal-dual simplex clean-up phase is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_REPAIR = 22
-
-    Begin primal feasibility repair.
-
-MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY = 23
-
-    Primal sensitivity analysis is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI = 24
-
-    The call-back function is called when the primal BI setup is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX = 25
-
-    The call-back function is called when the primal simplex optimizer is started.
-
-MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI = 26
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the primal simplex clean-up phase is started.
-
-MSK_CALLBACK_BEGIN_QCQO_REFORMULATE = 27
-
-    Begin QCQO reformulation.
-
-MSK_CALLBACK_BEGIN_READ = 28
-
-    MOSEK has started reading a problem file.
-
-MSK_CALLBACK_BEGIN_SIMPLEX = 29
-
-    The call-back function is called when the simplex optimizer is started.
-
-MSK_CALLBACK_BEGIN_SIMPLEX_BI = 30
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the simplex clean-up phase is started.
-
-MSK_CALLBACK_BEGIN_SIMPLEX_NETWORK_DETECT = 31
-
-    The call-back function is called when the network detection procedure is started.
-
-MSK_CALLBACK_BEGIN_WRITE = 32
-
-    MOSEK has started writing a problem file.
-
-MSK_CALLBACK_CONIC = 33
-
-    The call-back function is called from within the
-    conic optimizer after the information database has been updated.
-
-MSK_CALLBACK_DUAL_SIMPLEX = 34
-
-    The call-back function is called
-    from within the dual simplex optimizer.
-
-MSK_CALLBACK_END_BI = 35
-
-    The call-back function is called
-    when the basis identification procedure
-    is terminated.
-
-MSK_CALLBACK_END_CONCURRENT = 36
-
-    Concurrent optimizer is terminated.
-
-MSK_CALLBACK_END_CONIC = 37
-
-    The call-back function is called
-    when the conic optimizer is terminated.
-
-MSK_CALLBACK_END_DUAL_BI = 38
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the dual phase is terminated.
-
-MSK_CALLBACK_END_DUAL_SENSITIVITY = 39
-
-    Dual sensitivity analysis is terminated.
-
-MSK_CALLBACK_END_DUAL_SETUP_BI = 40
-
-    The call-back function is called when the dual BI phase is terminated.
-
-MSK_CALLBACK_END_DUAL_SIMPLEX = 41
-
-    The call-back function is called when the dual simplex optimizer is terminated.
-
-MSK_CALLBACK_END_DUAL_SIMPLEX_BI = 42
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the dual clean-up phase is terminated.
-
-MSK_CALLBACK_END_FULL_CONVEXITY_CHECK = 43
-
-    End full convexity check.
-
-MSK_CALLBACK_END_INFEAS_ANA = 44
-
-    The call-back function is called when the infeasibility analyzer is terminated.
-
-MSK_CALLBACK_END_INTPNT = 45
-
-    The call-back function is called
-    when the interior-point optimizer is terminated.
-
-MSK_CALLBACK_END_LICENSE_WAIT = 46
-
-    End waiting for license.
-
-MSK_CALLBACK_END_MIO = 47
-
-    The call-back function is called when the mixed-integer optimizer is terminated.
-
-MSK_CALLBACK_END_NETWORK_DUAL_SIMPLEX = 48
-
-    The call-back function is called when the dual network simplex optimizer is terminated.
-
-MSK_CALLBACK_END_NETWORK_PRIMAL_SIMPLEX = 49
-
-    The call-back function is called when the primal network simplex optimizer is terminated.
-
-MSK_CALLBACK_END_NETWORK_SIMPLEX = 50
-
-    The call-back function is called when the simplex network optimizer is terminated.
-
-MSK_CALLBACK_END_NONCONVEX = 51
-
-    The call-back function is called
-    when the nonconvex optimizer is terminated.
-
-MSK_CALLBACK_END_OPTIMIZER = 52
-
-    The call-back function is called when the optimizer is terminated.
-
-MSK_CALLBACK_END_PRESOLVE = 53
-
-    The call-back function is called
-    when the presolve is completed.
-
-MSK_CALLBACK_END_PRIMAL_BI = 54
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the primal phase is terminated.
-
-MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX = 55
-
-    The call-back function is called when the primal-dual simplex optimizer is terminated.
-
-MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI = 56
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the primal-dual clean-up phase is terminated.
-
-MSK_CALLBACK_END_PRIMAL_REPAIR = 57
-
-    End primal feasibility repair.
-
-MSK_CALLBACK_END_PRIMAL_SENSITIVITY = 58
-
-    Primal sensitivity analysis is terminated.
-
-MSK_CALLBACK_END_PRIMAL_SETUP_BI = 59
-
-    The call-back function is called when the primal BI setup is terminated.
-
-MSK_CALLBACK_END_PRIMAL_SIMPLEX = 60
-
-    The call-back function is called when the primal simplex optimizer is terminated.
-
-MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI = 61
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the primal clean-up phase is terminated.
-
-MSK_CALLBACK_END_QCQO_REFORMULATE = 62
-
-    End QCQO reformulation.
-
-MSK_CALLBACK_END_READ = 63
-
-    MOSEK has finished reading a problem file.
-
-MSK_CALLBACK_END_SIMPLEX = 64
-
-    The call-back function is called when the simplex optimizer is terminated.
-
-MSK_CALLBACK_END_SIMPLEX_BI = 65
-
-    The call-back function is called
-    from within the basis identification procedure
-    when the simplex clean-up phase is terminated.
-
-MSK_CALLBACK_END_SIMPLEX_NETWORK_DETECT = 66
-
-    The call-back function is called when the network detection procedure is terminated.
-
-MSK_CALLBACK_END_WRITE = 67
-
-    MOSEK has finished writing a problem file.
-
-MSK_CALLBACK_IM_BI = 68
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point.
-
-MSK_CALLBACK_IM_CONIC = 69
-
-    The call-back function is called
-    at an intermediate stage within the conic optimizer where
-    the information database has not been updated.
-
-MSK_CALLBACK_IM_DUAL_BI = 70
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the dual phase.
-
-MSK_CALLBACK_IM_DUAL_SENSIVITY = 71
-
-    The call-back function is called at an intermediate stage of the dual sensitivity analysis.
-
-MSK_CALLBACK_IM_DUAL_SIMPLEX = 72
-
-    The call-back function is called at an intermediate point in the dual simplex optimizer.
-
-MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK = 73
-
-    The call-back function is called at an intermediate stage of the full convexity check.
-
-MSK_CALLBACK_IM_INTPNT = 74
-
-    The call-back function is called
-    at an intermediate stage within the interior-point optimizer where
-    the information database has not been updated.
-
-MSK_CALLBACK_IM_LICENSE_WAIT = 75
-
-    MOSEK is waiting for a license.
-
-MSK_CALLBACK_IM_LU = 76
-
-    The call-back function is called
-    from within the LU factorization procedure at an intermediate point.
-
-MSK_CALLBACK_IM_MIO = 77
-
-    The call-back function is called at an intermediate point in the mixed-integer optimizer.
-
-MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX = 78
-
-    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
-    dual simplex optimizer.
-
-MSK_CALLBACK_IM_MIO_INTPNT = 79
-
-    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
-    interior-point optimizer.
-
-MSK_CALLBACK_IM_MIO_PRESOLVE = 80
-
-    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
-    presolve.
-
-MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX = 81
-
-    The call-back function is called at an intermediate point in the mixed-integer optimizer while running the
-    primal simplex optimizer.
-
-MSK_CALLBACK_IM_NETWORK_DUAL_SIMPLEX = 82
-
-    The call-back function is called at an intermediate point in the dual network simplex optimizer.
-
-MSK_CALLBACK_IM_NETWORK_PRIMAL_SIMPLEX = 83
-
-    The call-back function is called at an intermediate point in the primal network simplex optimizer.
-
-MSK_CALLBACK_IM_NONCONVEX = 84
-
-    The call-back function is called
-    at an intermediate stage within the nonconvex optimizer where
-    the information database has not been updated.
-
-MSK_CALLBACK_IM_ORDER = 85
-
-    The call-back function is called
-    from within the matrix ordering procedure at an intermediate point.
-
-MSK_CALLBACK_IM_PRESOLVE = 86
-
-    The call-back function is called
-    from within the presolve procedure
-    at an intermediate stage.
-
-MSK_CALLBACK_IM_PRIMAL_BI = 87
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the primal phase.
-
-MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX = 88
-
-    The call-back function is called at an intermediate point in the primal-dual simplex optimizer.
-
-MSK_CALLBACK_IM_PRIMAL_SENSIVITY = 89
-
-    The call-back function is called at an intermediate stage of the primal sensitivity analysis.
-
-MSK_CALLBACK_IM_PRIMAL_SIMPLEX = 90
-
-    The call-back function is called at an intermediate point in the primal simplex optimizer.
-
-MSK_CALLBACK_IM_QO_REFORMULATE = 91
-
-    The call-back function is called at an intermediate stage of the conic quadratic reformulation.
-
-MSK_CALLBACK_IM_READ = 92
-
-    Intermediate stage in reading.
-
-MSK_CALLBACK_IM_SIMPLEX = 93
-
-    The call-back function is called
-    from within the simplex optimizer at an intermediate point.
-
-MSK_CALLBACK_IM_SIMPLEX_BI = 94
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the simplex clean-up phase.
-
-MSK_CALLBACK_INTPNT = 95
-
-    The call-back function is called from within the
-    interior-point optimizer after the information database has been updated.
-
-MSK_CALLBACK_NEW_INT_MIO = 96
-
-    The call-back function is called after a new integer solution
-    has been located by the mixed-integer optimizer.
-
-MSK_CALLBACK_NONCOVEX = 97
-
-    The call-back function is called from within the
-    nonconvex optimizer after the information database has been updated.
-
-MSK_CALLBACK_PRIMAL_SIMPLEX = 98
-
-    The call-back function is called
-    from within the primal simplex optimizer.
-
-MSK_CALLBACK_READ_OPF = 99
-
-    The call-back function is called
-    from the OPF reader.
-
-MSK_CALLBACK_READ_OPF_SECTION = 100
-
-    A chunk of Q non-zeos has been read from a problem file.
-
-MSK_CALLBACK_UPDATE_DUAL_BI = 101
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the dual phase.
-
-MSK_CALLBACK_UPDATE_DUAL_SIMPLEX = 102
-
-    The call-back function is called in the dual simplex optimizer.
-
-MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI = 103
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the dual simplex clean-up phase.
-
-MSK_CALLBACK_UPDATE_NETWORK_DUAL_SIMPLEX = 104
-
-    The call-back function is called in the dual network simplex optimizer.
-
-MSK_CALLBACK_UPDATE_NETWORK_PRIMAL_SIMPLEX = 105
-
-    The call-back function is called in the primal network simplex optimizer.
-
-MSK_CALLBACK_UPDATE_NONCONVEX = 106
-
-    The call-back function is called
-    at an intermediate stage within the nonconvex optimizer where
-    the information database has been updated.
-
-MSK_CALLBACK_UPDATE_PRESOLVE = 107
-
-    The call-back function is called
-    from within the presolve procedure.
-
-MSK_CALLBACK_UPDATE_PRIMAL_BI = 108
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the primal phase.
-
-MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX = 109
-
-    The call-back function is called  in the primal-dual simplex optimizer.
-
-MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI = 110
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the primal simplex clean-up phase.
-
-MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX = 111
-
-    The call-back function is called  in the primal simplex optimizer.
-
-MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI = 112
-
-    The call-back function is called
-    from within the basis identification procedure
-    at an intermediate point in the primal simplex clean-up phase.
-
-MSK_CALLBACK_WRITE_OPF = 113
-
-    The call-back function is called
-    from the OPF writer.
-
-Enum symmattype
----------------
-
-MSK_SYMMAT_TYPE_SPARSE = 0
-
-    Sparse symmetric matrix.
-
-Enum feature
-------------
-
-MSK_FEATURE_PTOM = 2
-
-    Mixed-integer extension.
-
-MSK_FEATURE_PTON = 1
-
-    Nonlinear extension.
-
-MSK_FEATURE_PTOX = 3
-
-    Non-convex extension.
-
-MSK_FEATURE_PTS = 0
-
-    Base system.
-
-Enum mark
----------
-
-MSK_MARK_LO = 0
-
-    The lower bound is selected for sensitivity analysis.
-
-MSK_MARK_UP = 1
-
-    The upper bound is selected for sensitivity analysis.
-
-Enum conetype
--------------
-
-MSK_CT_QUAD = 0
-
-    The cone is a quadratic cone.
-
-MSK_CT_RQUAD = 1
-
-    The cone is a rotated quadratic cone.
-
-Enum feasrepairtype
--------------------
-
-MSK_FEASREPAIR_OPTIMIZE_COMBINED = 2
-
-    Minimize with original objective subject to minimal weighted violation of bounds.
-
-MSK_FEASREPAIR_OPTIMIZE_NONE = 0
-
-    Do not optimize the feasibility repair problem.
-
-MSK_FEASREPAIR_OPTIMIZE_PENALTY = 1
-
-    Minimize weighted sum of violations.
-
 Enum iomode
 -----------
 
@@ -7554,21 +7897,27 @@ MSK_IOMODE_READWRITE = 2
 
 MSK_IOMODE_WRITE = 1
 
+    
     The file is write-only. If the file exists then it is
     truncated when it is opened. Otherwise it is created when it is opened.
+    
 
 Enum simseltype
 ---------------
 
 MSK_SIM_SELECTION_ASE = 2
 
+    
     The optimizer uses approximate steepest-edge
     pricing.
+    
 
 MSK_SIM_SELECTION_DEVEX = 3
 
+    
     The optimizer uses devex steepest-edge pricing (or if it is not available an
     approximate steep-edge selection).
+    
 
 MSK_SIM_SELECTION_FREE = 0
 
@@ -7580,13 +7929,17 @@ MSK_SIM_SELECTION_FULL = 1
 
 MSK_SIM_SELECTION_PARTIAL = 5
 
+    
     The optimizer uses a partial selection approach. The approach is usually
     beneficial if the number of variables is much larger than  the number of constraints.
+    
 
 MSK_SIM_SELECTION_SE = 4
 
+    
     The optimizer uses steepest-edge selection (or if it is not available an
     approximate steep-edge selection).
+    
 
 Enum msgkey
 -----------
@@ -7608,12 +7961,9 @@ Enum miomode
 
 MSK_MIO_MODE_IGNORED = 0
 
+    
     The integer constraints are ignored and the problem is solved as a continuous problem.
-
-MSK_MIO_MODE_LAZY = 2
-
-    Integer restrictions should be satisfied if
-    an optimizer is available for the problem.
+    
 
 MSK_MIO_MODE_SATISFIED = 1
 
@@ -7624,317 +7974,585 @@ Enum dinfitem
 
 MSK_DINF_BI_CLEAN_DUAL_TIME = 0
 
+    
     Time  spent within the dual clean-up optimizer of the basis identification
     procedure since its invocation.
+    
 
 MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME = 1
 
+    
     Time spent within the primal-dual clean-up optimizer of the basis identification
     procedure since its invocation.
+    
 
 MSK_DINF_BI_CLEAN_PRIMAL_TIME = 2
 
+    
     Time spent within the primal clean-up optimizer of the basis identification
     procedure since its invocation.
+    
 
 MSK_DINF_BI_CLEAN_TIME = 3
 
+    
     Time spent within the clean-up phase of the basis identification
     procedure since its invocation.
+    
 
 MSK_DINF_BI_DUAL_TIME = 4
 
+    
     Time spent within the dual phase basis identification
     procedure since its invocation.
+    
 
 MSK_DINF_BI_PRIMAL_TIME = 5
 
+    
     Time  spent within the primal phase of the basis identification
     procedure since its invocation.
+    
 
 MSK_DINF_BI_TIME = 6
 
+    
     Time spent within the basis identification
     procedure since its invocation.
+    
 
-MSK_DINF_CONCURRENT_TIME = 7
+MSK_DINF_INTPNT_DUAL_FEAS = 7
 
-    Time spent within the concurrent optimizer since its invocation.
-
-MSK_DINF_INTPNT_DUAL_FEAS = 8
-
+    
     Dual feasibility measure reported by the
     interior-point optimizer. (For the
     interior-point optimizer this measure does not
     directly related to the original problem because
     a homogeneous model is employed.)
+    
 
-MSK_DINF_INTPNT_DUAL_OBJ = 9
+MSK_DINF_INTPNT_DUAL_OBJ = 8
 
+    
     Dual objective value reported by the
     interior-point optimizer.
+    
 
-MSK_DINF_INTPNT_FACTOR_NUM_FLOPS = 10
+MSK_DINF_INTPNT_FACTOR_NUM_FLOPS = 9
 
+    
     An estimate of the number of flops used in the factorization.
+    
 
-MSK_DINF_INTPNT_OPT_STATUS = 11
+MSK_DINF_INTPNT_OPT_STATUS = 10
 
-    This measure should converge to +1 if the problem
-    has a primal-dual optimal solution, and converge to -1
+    
+    This measure should converge to :math:`+1` if the problem
+    has a primal-dual optimal solution, and converge to :math:`-1`
     if problem is (strictly) primal or dual infeasible. Furthermore, if the measure converges to 0
     the problem is usually ill-posed.
+    
 
-MSK_DINF_INTPNT_ORDER_TIME = 12
+MSK_DINF_INTPNT_ORDER_TIME = 11
 
     Order time (in seconds).
 
-MSK_DINF_INTPNT_PRIMAL_FEAS = 13
+MSK_DINF_INTPNT_PRIMAL_FEAS = 12
 
+    
     Primal feasibility measure reported by the
-    interior-point optimizers. (For the
-    interior-point optimizer this measure does not
-    directly related to the original problem because
-    a homogeneous model is employed).
+    interior-point optimizers. (For the interior-point
+    optimizer this measure does not directly related
+    to the original problem because a homogeneous
+    model is employed).
+    
 
-MSK_DINF_INTPNT_PRIMAL_OBJ = 14
+MSK_DINF_INTPNT_PRIMAL_OBJ = 13
 
+    
     Primal objective value reported by the interior-point optimizer.
+    
 
-MSK_DINF_INTPNT_TIME = 15
+MSK_DINF_INTPNT_TIME = 14
 
+    
     Time spent within the interior-point optimizer
     since its invocation.
+    
 
-MSK_DINF_MIO_CG_SEPERATION_TIME = 16
+MSK_DINF_MIO_CLIQUE_SEPARATION_TIME = 15
 
-    Seperation time for CG cuts.
+    
+    Seperation time for clique cuts.
+    
 
-MSK_DINF_MIO_CMIR_SEPERATION_TIME = 17
+MSK_DINF_MIO_CMIR_SEPARATION_TIME = 16
 
+    
     Seperation time for CMIR cuts.
+    
 
-MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ = 18
+MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ = 17
 
+    
     If MOSEK has successfully constructed an integer feasible solution, then this item
     contains the optimal objective value corresponding to the feasible solution.
+    
 
-MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE = 19
+MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE = 18
 
+    
     Value of the dual bound after presolve but before cut generation.
+    
+
+MSK_DINF_MIO_GMI_SEPARATION_TIME = 19
+
+    
+    Seperation time for GMI cuts.
+    
 
 MSK_DINF_MIO_HEURISTIC_TIME = 20
 
-    Time spent in the optimizer while solving the relaxtions.
+    Total time spent in the optimizer.
 
-MSK_DINF_MIO_OBJ_ABS_GAP = 21
+MSK_DINF_MIO_IMPLIED_BOUND_TIME = 21
 
+    
+    Seperation time for implied bound cuts.
+    
+
+MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME = 22
+
+    
+    Seperation time for knapsack cover.
+    
+
+MSK_DINF_MIO_OBJ_ABS_GAP = 23
+
+    
     If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap.
+    
 
-MSK_DINF_MIO_OBJ_BOUND = 22
+MSK_DINF_MIO_OBJ_BOUND = 24
 
+    
     The best bound on the objective value known.
+    
 
-MSK_DINF_MIO_OBJ_INT = 23
+MSK_DINF_MIO_OBJ_INT = 25
 
-    The primal objective value corresponding to the best integer feasible
-    solution.
+    
+    The primal objective value corresponding to the best integer feasible solution.
+    
 
-MSK_DINF_MIO_OBJ_REL_GAP = 24
+MSK_DINF_MIO_OBJ_REL_GAP = 26
 
+    
     If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the relative gap.
+    
 
-MSK_DINF_MIO_OPTIMIZER_TIME = 25
+MSK_DINF_MIO_OPTIMIZER_TIME = 27
 
-    Time spent in the optimizer while solving the relaxtions.
+    Total time spent in the optimizer.
 
-MSK_DINF_MIO_PROBING_TIME = 26
+MSK_DINF_MIO_PROBING_TIME = 28
 
+    
     Total time for probing.
+    
 
-MSK_DINF_MIO_ROOT_CUTGEN_TIME = 27
+MSK_DINF_MIO_ROOT_CUTGEN_TIME = 29
 
+    
     Total time for cut generation.
+    
 
-MSK_DINF_MIO_ROOT_OPTIMIZER_TIME = 28
+MSK_DINF_MIO_ROOT_OPTIMIZER_TIME = 30
 
     Time spent in the optimizer while solving the root relaxation.
 
-MSK_DINF_MIO_ROOT_PRESOLVE_TIME = 29
+MSK_DINF_MIO_ROOT_PRESOLVE_TIME = 31
 
-    Time spent in while presolveing the root relaxation.
+    Time spent in while presolving the root relaxation.
 
-MSK_DINF_MIO_TIME = 30
+MSK_DINF_MIO_TIME = 32
 
     Time spent in the mixed-integer optimizer.
 
-MSK_DINF_MIO_USER_OBJ_CUT = 31
+MSK_DINF_MIO_USER_OBJ_CUT = 33
 
+    
     If the objective cut is used, then this information item has the value of the cut.
+    
 
-MSK_DINF_OPTIMIZER_TIME = 32
+MSK_DINF_OPTIMIZER_TIME = 34
 
+    
     Total time spent in the optimizer since it was invoked.
+    
 
-MSK_DINF_PRESOLVE_ELI_TIME = 33
+MSK_DINF_PRESOLVE_ELI_TIME = 35
 
+    
     Total time spent in the eliminator
     since the presolve was invoked.
+    
 
-MSK_DINF_PRESOLVE_LINDEP_TIME = 34
+MSK_DINF_PRESOLVE_LINDEP_TIME = 36
 
+    
     Total time spent  in the linear dependency checker
     since the presolve was invoked.
+    
 
-MSK_DINF_PRESOLVE_TIME = 35
+MSK_DINF_PRESOLVE_TIME = 37
 
+    
     Total time (in seconds) spent in the presolve
     since it was invoked.
+    
 
-MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ = 36
+MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ = 38
 
+    
     The optimal objective value of the penalty function.
+    
 
-MSK_DINF_QCQO_REFORMULATE_TIME = 37
+MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION = 39
 
+    
+    Maximum absolute diagonal perturbation occuring during the QCQO reformulation.
+    
+
+MSK_DINF_QCQO_REFORMULATE_TIME = 40
+
+    
     Time spent with conic quadratic reformulation.
+    
 
-MSK_DINF_RD_TIME = 38
+MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING = 41
 
+    
+    Worst Cholesky column scaling.
+    
+
+MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING = 42
+
+    
+    Worst Cholesky diagonal scaling.
+    
+
+MSK_DINF_RD_TIME = 43
+
+    
     Time spent reading the data file.
+    
 
-MSK_DINF_SIM_DUAL_TIME = 39
+MSK_DINF_SIM_DUAL_TIME = 44
 
+    
     Time spent in the dual simplex
     optimizer since invoking it.
+    
 
-MSK_DINF_SIM_FEAS = 40
+MSK_DINF_SIM_FEAS = 45
 
+    
     Feasibility measure reported by the
     simplex optimizer.
+    
 
-MSK_DINF_SIM_NETWORK_DUAL_TIME = 41
+MSK_DINF_SIM_OBJ = 46
 
-    Time spent in the dual network simplex
-    optimizer since invoking it.
-
-MSK_DINF_SIM_NETWORK_PRIMAL_TIME = 42
-
-    Time spent in the primal network simplex
-    optimizer since invoking it.
-
-MSK_DINF_SIM_NETWORK_TIME = 43
-
-    Time spent in the network simplex
-    optimizer since invoking it.
-
-MSK_DINF_SIM_OBJ = 44
-
+    
     Objective value reported by the
     simplex optimizer.
+    
 
-MSK_DINF_SIM_PRIMAL_DUAL_TIME = 45
+MSK_DINF_SIM_PRIMAL_DUAL_TIME = 47
 
+    
     Time spent in the primal-dual simplex optimizer
-    optimizer since invoking it.
+    since invoking it.
+    
 
-MSK_DINF_SIM_PRIMAL_TIME = 46
+MSK_DINF_SIM_PRIMAL_TIME = 48
 
+    
     Time spent in the primal simplex
     optimizer since invoking it.
+    
 
-MSK_DINF_SIM_TIME = 47
+MSK_DINF_SIM_TIME = 49
 
+    
     Time spent in the simplex
     optimizer since invoking it.
+    
 
-MSK_DINF_SOL_BAS_DUAL_OBJ = 48
+MSK_DINF_SOL_BAS_DUAL_OBJ = 50
 
+    
     Dual objective value of the basic solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_BAS_DVIOLCON = 49
+MSK_DINF_SOL_BAS_DVIOLCON = 51
 
+    
     Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_BAS_DVIOLVAR = 50
+MSK_DINF_SOL_BAS_DVIOLVAR = 52
 
+    
     Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_BAS_PRIMAL_OBJ = 51
+MSK_DINF_SOL_BAS_NRM_BARX = 53
 
+    
+    Infinity norm of barx in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_SLC = 54
+
+    
+    Infinity norm of slc in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_SLX = 55
+
+    
+    Infinity norm of slx in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_SUC = 56
+
+    
+    Infinity norm of suc in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_SUX = 57
+
+    
+    Infinity norm of sux in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_XC = 58
+
+    
+    Infinity norm of xc in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_XX = 59
+
+    
+    Infinity norm of xx in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_NRM_Y = 60
+
+    
+    Infinity norm of Y in the basic solution.
+    
+
+MSK_DINF_SOL_BAS_PRIMAL_OBJ = 61
+
+    
     Primal objective value of the basic solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_BAS_PVIOLCON = 52
+MSK_DINF_SOL_BAS_PVIOLCON = 62
 
+    
     Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_BAS_PVIOLVAR = 53
+MSK_DINF_SOL_BAS_PVIOLVAR = 63
 
+    
     Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITG_PRIMAL_OBJ = 54
+MSK_DINF_SOL_ITG_NRM_BARX = 64
 
+    
+    Infinity norm of barx in the integer solution.
+    
+
+MSK_DINF_SOL_ITG_NRM_XC = 65
+
+    
+    Infinity norm of xc in the integer solution.
+    
+
+MSK_DINF_SOL_ITG_NRM_XX = 66
+
+    
+    Infinity norm of xx in the integer solution.
+    
+
+MSK_DINF_SOL_ITG_PRIMAL_OBJ = 67
+
+    
     Primal objective value of the integer solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITG_PVIOLBARVAR = 55
+MSK_DINF_SOL_ITG_PVIOLBARVAR = 68
 
+    
     Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITG_PVIOLCON = 56
+MSK_DINF_SOL_ITG_PVIOLCON = 69
 
+    
     Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITG_PVIOLCONES = 57
+MSK_DINF_SOL_ITG_PVIOLCONES = 70
 
+    
     Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITG_PVIOLITG = 58
+MSK_DINF_SOL_ITG_PVIOLITG = 71
 
-    Maximal violation for the inetger constraints in the integer solution. Updated by the function updatesolutioninfo.
+    
+    Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITG_PVIOLVAR = 59
+MSK_DINF_SOL_ITG_PVIOLVAR = 72
 
+    
     Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_DUAL_OBJ = 60
+MSK_DINF_SOL_ITR_DUAL_OBJ = 73
 
+    
     Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_DVIOLBARVAR = 61
+MSK_DINF_SOL_ITR_DVIOLBARVAR = 74
 
+    
     Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_DVIOLCON = 62
+MSK_DINF_SOL_ITR_DVIOLCON = 75
 
+    
     Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_DVIOLCONES = 63
+MSK_DINF_SOL_ITR_DVIOLCONES = 76
 
+    
     Maximal dual violation for dual conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_DVIOLVAR = 64
+MSK_DINF_SOL_ITR_DVIOLVAR = 77
 
+    
     Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_PRIMAL_OBJ = 65
+MSK_DINF_SOL_ITR_NRM_BARS = 78
 
+    
+    Infinity norm of bars in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_BARX = 79
+
+    
+    Infinity norm of barx in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_SLC = 80
+
+    
+    Infinity norm of slc in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_SLX = 81
+
+    
+    Infinity norm of slx in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_SNX = 82
+
+    
+    Infinity norm of snx in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_SUC = 83
+
+    
+    Infinity norm of suc in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_SUX = 84
+
+    
+    Infinity norm of sux in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_XC = 85
+
+    
+    Infinity norm of xc in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_XX = 86
+
+    
+    Infinity norm of xx in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_NRM_Y = 87
+
+    
+    Infinity norm of Y in the interior-point solution.
+    
+
+MSK_DINF_SOL_ITR_PRIMAL_OBJ = 88
+
+    
     Primal objective value of the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_PVIOLBARVAR = 66
+MSK_DINF_SOL_ITR_PVIOLBARVAR = 89
 
+    
     Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_PVIOLCON = 67
+MSK_DINF_SOL_ITR_PVIOLCON = 90
 
+    
     Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_PVIOLCONES = 68
+MSK_DINF_SOL_ITR_PVIOLCONES = 91
 
+    
     Maximal primal violation for primal conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
+    
 
-MSK_DINF_SOL_ITR_PVIOLVAR = 69
+MSK_DINF_SOL_ITR_PVIOLVAR = 92
 
+    
     Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
+    
+
+MSK_DINF_TO_CONIC_TIME = 93
+
+    
+    Time spent in the last to conic reformulation.
+    
 
 Enum parametertype
 ------------------
@@ -7968,7 +8586,9 @@ MSK_RESPONSE_OK = 0
 
 MSK_RESPONSE_TRM = 2
 
+    
     The response code is an optimizer termination status.
+    
 
 MSK_RESPONSE_UNK = 4
 
@@ -7991,9 +8611,11 @@ MSK_PRO_STA_DUAL_INFEAS = 5
 
 MSK_PRO_STA_ILL_POSED = 7
 
+    
     The problem is ill-posed. For example,
     it may be primal and dual feasible but
     have a positive duality gap.
+    
 
 MSK_PRO_STA_NEAR_DUAL_FEAS = 10
 
@@ -8001,7 +8623,9 @@ MSK_PRO_STA_NEAR_DUAL_FEAS = 10
 
 MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS = 8
 
+    
     The problem is at least nearly primal and dual feasible.
+    
 
 MSK_PRO_STA_NEAR_PRIM_FEAS = 9
 
@@ -8025,8 +8649,10 @@ MSK_PRO_STA_PRIM_INFEAS = 4
 
 MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED = 11
 
+    
     The problem is either primal infeasible or unbounded. This may occur for
     mixed-integer problems.
+    
 
 MSK_PRO_STA_UNKNOWN = 0
 
@@ -8056,1675 +8682,2545 @@ Enum rescode
 
 MSK_RES_ERR_AD_INVALID_CODELIST = 3102
 
+    
     The code list data was invalid.
-
-MSK_RES_ERR_AD_INVALID_OPERAND = 3104
-
-    The code list data was invalid.
-
-MSK_RES_ERR_AD_INVALID_OPERATOR = 3103
-
-    The code list data was invalid.
-
-MSK_RES_ERR_AD_MISSING_OPERAND = 3105
-
-    The code list data was invalid.
-
-MSK_RES_ERR_AD_MISSING_RETURN = 3106
-
-    The code list data was invalid.
+    
 
 MSK_RES_ERR_API_ARRAY_TOO_SMALL = 3001
 
+    
     An input array was too short.
+    
 
 MSK_RES_ERR_API_CB_CONNECT = 3002
 
+    
     Failed to connect a callback object.
+    
 
 MSK_RES_ERR_API_FATAL_ERROR = 3005
 
+    
     An internal error occurred in the API. Please report this problem.
+    
 
 MSK_RES_ERR_API_INTERNAL = 3999
 
+    
     An internal fatal error occurred in an interface function.:w
+    
 
 MSK_RES_ERR_ARG_IS_TOO_LARGE = 1227
 
+    
     The value of a argument is too small.
+    
 
 MSK_RES_ERR_ARG_IS_TOO_SMALL = 1226
 
+    
     The value of a argument is too small.
+    
 
 MSK_RES_ERR_ARGUMENT_DIMENSION = 1201
 
+    
     A function argument is of incorrect dimension.
+    
 
 MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE = 5005
 
+    
     The value of a function argument is too large.
+    
 
 MSK_RES_ERR_ARGUMENT_LENNEQ = 1197
 
+    
     Incorrect length of arguments.
+    
 
 MSK_RES_ERR_ARGUMENT_PERM_ARRAY = 1299
 
+    
     An invalid permutation array is specified.
+    
 
 MSK_RES_ERR_ARGUMENT_TYPE = 1198
 
+    
     Incorrect argument type.
+    
 
 MSK_RES_ERR_BAR_VAR_DIM = 3920
 
+    
     The dimension of a symmetric matrix variable has to greater than 0.
+    
 
 MSK_RES_ERR_BASIS = 1266
 
+    
     Invalid basis is specified.
+    
 
 MSK_RES_ERR_BASIS_FACTOR = 1610
 
+    
     The factorization of the basis is invalid.
+    
 
 MSK_RES_ERR_BASIS_SINGULAR = 1615
 
+    
     The basis is singular.
+    
 
 MSK_RES_ERR_BLANK_NAME = 1070
 
+    
     An all blank name has been specified.
+    
 
 MSK_RES_ERR_CANNOT_CLONE_NL = 2505
 
+    
     A task with a nonlinear function call-back cannot be cloned.
+    
 
 MSK_RES_ERR_CANNOT_HANDLE_NL = 2506
 
+    
     A function cannot handle a task with nonlinear function call-backs.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_ACOORD = 7116
 
+    
     Duplicate index in ACOORD.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_BCOORD = 7115
 
+    
     Duplicate index in BCOORD.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_CON = 7108
 
+    
     Duplicate CON keyword.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_INT = 7110
 
+    
     Duplicate INT keyword.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_OBJ = 7107
 
+    
     Duplicate OBJ keyword.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD = 7114
 
+    
     Duplicate index in OBJCOORD.
+    
 
 MSK_RES_ERR_CBF_DUPLICATE_VAR = 7109
 
+    
     Duplicate VAR keyword.
+    
 
 MSK_RES_ERR_CBF_INVALID_CON_TYPE = 7112
 
+    
     Invalid constraint type.
+    
 
 MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION = 7113
 
+    
     Invalid domain dimension.
+    
 
 MSK_RES_ERR_CBF_INVALID_INT_INDEX = 7121
 
+    
     Invalid INT index.
+    
 
 MSK_RES_ERR_CBF_INVALID_VAR_TYPE = 7111
 
+    
     Invalid variable type.
+    
 
 MSK_RES_ERR_CBF_NO_VARIABLES = 7102
 
+    
     An invalid objective sense is specified.
+    
 
 MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED = 7105
 
+    
     No version specified.
+    
 
 MSK_RES_ERR_CBF_OBJ_SENSE = 7101
 
+    
     An invalid objective sense is specified.
+    
 
 MSK_RES_ERR_CBF_PARSE = 7100
 
+    
     An error occurred while parsing an CBF file.
+    
 
 MSK_RES_ERR_CBF_SYNTAX = 7106
 
+    
     Invalid syntax.
+    
 
 MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS = 7118
 
+    
     Too few constraints defined.
+    
 
 MSK_RES_ERR_CBF_TOO_FEW_INTS = 7119
 
+    
     Too ints specified.
+    
 
 MSK_RES_ERR_CBF_TOO_FEW_VARIABLES = 7117
 
+    
     Too few variables defined.
+    
 
 MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS = 7103
 
+    
     Too many constraints specified.
+    
 
 MSK_RES_ERR_CBF_TOO_MANY_INTS = 7120
 
+    
     Too ints specified.
+    
 
 MSK_RES_ERR_CBF_TOO_MANY_VARIABLES = 7104
 
+    
     Too many variables specified.
+    
 
 MSK_RES_ERR_CBF_UNSUPPORTED = 7122
 
+    
     Unsupported feature is present.
+    
 
 MSK_RES_ERR_CON_Q_NOT_NSD = 1294
 
+    
     The quadratic constraint matrix is not NSD.
+    
 
 MSK_RES_ERR_CON_Q_NOT_PSD = 1293
 
+    
     The quadratic constraint matrix is not PSD.
-
-MSK_RES_ERR_CONCURRENT_OPTIMIZER = 3059
-
-    An unsupported optimizer was chosen for use with the concurrent optimizer.
+    
 
 MSK_RES_ERR_CONE_INDEX = 1300
 
+    
     An index of a non-existing cone has been specified.
+    
 
 MSK_RES_ERR_CONE_OVERLAP = 1302
 
-    A new cone which variables overlap with an existing cone has been specified.
+    
+    One or more of variables in the cone to be added is already member of another cone.
+    
 
 MSK_RES_ERR_CONE_OVERLAP_APPEND = 1307
 
-    The cone to be appended has one variable which is already memeber of another cone.
+    
+    The cone to be appended has one variable which is already member of another cone.
+    
 
 MSK_RES_ERR_CONE_REP_VAR = 1303
 
+    
     A variable is included multiple times in the cone.
+    
 
 MSK_RES_ERR_CONE_SIZE = 1301
 
+    
     A cone with too few members is specified.
+    
 
 MSK_RES_ERR_CONE_TYPE = 1305
 
+    
     Invalid cone type specified.
+    
 
 MSK_RES_ERR_CONE_TYPE_STR = 1306
 
+    
     Invalid cone type specified.
+    
 
 MSK_RES_ERR_DATA_FILE_EXT = 1055
 
+    
     The data file format cannot be determined from the file name.
+    
 
 MSK_RES_ERR_DUP_NAME = 1071
 
+    
     Duplicate names specified.
+    
+
+MSK_RES_ERR_DUPLICATE_AIJ = 1385
+
+    
+    An element in the A matrix is specified twice.
+    
 
 MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES = 4502
 
+    
     Two barvariable names are identical.
+    
 
 MSK_RES_ERR_DUPLICATE_CONE_NAMES = 4503
 
+    
     Two cone names are identical.
+    
 
 MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES = 4500
 
+    
     Two constraint names are identical.
+    
 
 MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES = 4501
 
+    
     Two variable names are identical.
+    
 
 MSK_RES_ERR_END_OF_FILE = 1059
 
+    
     End of file reached.
+    
 
 MSK_RES_ERR_FACTOR = 1650
 
+    
     An error occurred while factorizing a matrix.
+    
 
 MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX = 1700
 
+    
     An optimization problem cannot be relaxed.
+    
 
 MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND = 1702
 
+    
     The upper bound is less than the lower bound for a variable or a constraint.
+    
 
 MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED = 1701
 
+    
     The relaxed problem could not be solved to optimality.
+    
 
 MSK_RES_ERR_FILE_LICENSE = 1007
 
+    
     Invalid license file.
+    
 
 MSK_RES_ERR_FILE_OPEN = 1052
 
+    
     An error occurred while opening a file.
+    
 
 MSK_RES_ERR_FILE_READ = 1053
 
+    
     An error occurred while reading file.
+    
 
 MSK_RES_ERR_FILE_WRITE = 1054
 
+    
     An error occurred while writing to a file.
+    
 
 MSK_RES_ERR_FIRST = 1261
 
+    
     Invalid first.
+    
 
 MSK_RES_ERR_FIRSTI = 1285
 
+    
     Invalid firsti.
+    
 
 MSK_RES_ERR_FIRSTJ = 1287
 
+    
     Invalid firstj.
+    
 
 MSK_RES_ERR_FIXED_BOUND_VALUES = 1425
 
+    
     A fixed constraint/variable has been specified using the bound keys but the numerical bounds are different.
+    
 
 MSK_RES_ERR_FLEXLM = 1014
 
-    The FLEXlm license manager reported an error.
+    
+    The |flexlm| license manager reported an error.
+    
 
 MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM = 1503
 
+    
     The global optimizer can only be applied to problems without semidefinite variables.
+    
 
 MSK_RES_ERR_HUGE_AIJ = 1380
 
+    
     A numerically huge value is specified for an element in A.
+    
 
 MSK_RES_ERR_HUGE_C = 1375
 
+    
     A huge value in absolute size is specified for one an objective coefficient.
+    
 
 MSK_RES_ERR_IDENTICAL_TASKS = 3101
 
+    
     Some tasks related to this function call were identical. Unique tasks were expected.
+    
 
 MSK_RES_ERR_IN_ARGUMENT = 1200
 
+    
     A function argument is incorrect.
+    
 
 MSK_RES_ERR_INDEX = 1235
 
+    
     An index is out of range.
+    
 
 MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE = 1222
 
+    
     An index in an array argument is too large.
+    
 
 MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL = 1221
 
+    
     An index in an array argument is too small.
+    
 
 MSK_RES_ERR_INDEX_IS_TOO_LARGE = 1204
 
+    
     An index in an argument is too large.
+    
 
 MSK_RES_ERR_INDEX_IS_TOO_SMALL = 1203
 
+    
     An index in an argument is too small.
+    
 
 MSK_RES_ERR_INF_DOU_INDEX = 1219
 
+    
     A double information index is out of range for the specified type.
+    
 
 MSK_RES_ERR_INF_DOU_NAME = 1230
 
+    
     A double information name is invalid.
+    
 
 MSK_RES_ERR_INF_INT_INDEX = 1220
 
+    
     An integer information index is out of range for the specified type.
+    
 
 MSK_RES_ERR_INF_INT_NAME = 1231
 
+    
     An integer information name is invalid.
+    
 
 MSK_RES_ERR_INF_LINT_INDEX = 1225
 
+    
     A long integer information index is out of range for the specified type.
+    
 
 MSK_RES_ERR_INF_LINT_NAME = 1234
 
+    
     A long integer information name is invalid.
+    
 
 MSK_RES_ERR_INF_TYPE = 1232
 
+    
     The information type is invalid.
+    
 
 MSK_RES_ERR_INFEAS_UNDEFINED = 3910
 
+    
     The requested value is not defined for this solution type.
+    
 
 MSK_RES_ERR_INFINITE_BOUND = 1400
 
+    
     A numerically huge bound value is specified.
+    
 
 MSK_RES_ERR_INT64_TO_INT32_CAST = 3800
 
+    
     An 32 bit integer could not cast to a 64 bit integer.
+    
 
 MSK_RES_ERR_INTERNAL = 3000
 
+    
     An internal error occurred.
+    
 
 MSK_RES_ERR_INTERNAL_TEST_FAILED = 3500
 
+    
     An internal unit test function failed.
+    
 
 MSK_RES_ERR_INV_APTRE = 1253
 
+    
     aptre[j] is strictly smaller than aptrb[j] for some j.
+    
 
 MSK_RES_ERR_INV_BK = 1255
 
+    
     Invalid bound key.
+    
 
 MSK_RES_ERR_INV_BKC = 1256
 
+    
     Invalid bound key is specified for a constraint.
+    
 
 MSK_RES_ERR_INV_BKX = 1257
 
-    An invalid bound key is specified for a variabl[6~e.
+    
+    An invalid bound key is specified for a variable.
+    
 
 MSK_RES_ERR_INV_CONE_TYPE = 1272
 
+    
     Invalid cone type code encountered.
+    
 
 MSK_RES_ERR_INV_CONE_TYPE_STR = 1271
 
+    
     Invalid cone type string encountered.
-
-MSK_RES_ERR_INV_CONIC_PROBLEM = 1502
-
-    The conic optimizer can only be applied to problems with linear objective and constraints.
+    
 
 MSK_RES_ERR_INV_MARKI = 2501
 
+    
     Invalid value in marki.
+    
 
 MSK_RES_ERR_INV_MARKJ = 2502
 
+    
     Invalid value in markj.
+    
 
 MSK_RES_ERR_INV_NAME_ITEM = 1280
 
+    
     An invalid name item code is used.
+    
 
 MSK_RES_ERR_INV_NUMI = 2503
 
+    
     Invalid numi.
+    
 
 MSK_RES_ERR_INV_NUMJ = 2504
 
+    
     Invalid numj.
+    
 
 MSK_RES_ERR_INV_OPTIMIZER = 1550
 
+    
     An invalid optimizer has been chosen for the problem.
+    
 
 MSK_RES_ERR_INV_PROBLEM = 1500
 
+    
     Invalid problem type.
+    
 
 MSK_RES_ERR_INV_QCON_SUBI = 1405
 
+    
     Invalid value in qcsubi.
+    
 
 MSK_RES_ERR_INV_QCON_SUBJ = 1406
 
+    
     Invalid value in qcsubj.
+    
 
 MSK_RES_ERR_INV_QCON_SUBK = 1404
 
+    
     Invalid value in qcsubk.
+    
 
 MSK_RES_ERR_INV_QCON_VAL = 1407
 
+    
     Invalid value in qcval.
+    
 
 MSK_RES_ERR_INV_QOBJ_SUBI = 1401
 
+    
     Invalid value %d at qosubi.
+    
 
 MSK_RES_ERR_INV_QOBJ_SUBJ = 1402
 
+    
     Invalid value in qosubj.
+    
 
 MSK_RES_ERR_INV_QOBJ_VAL = 1403
 
+    
     Invalid value in qoval.
+    
 
 MSK_RES_ERR_INV_SK = 1270
 
+    
     Invalid status key code encountered.
+    
 
 MSK_RES_ERR_INV_SK_STR = 1269
 
+    
     Invalid status key string encountered.
+    
 
 MSK_RES_ERR_INV_SKC = 1267
 
+    
     Invalid value in skc encountered.
+    
 
 MSK_RES_ERR_INV_SKN = 1274
 
+    
     Invalid value in skn encountered.
+    
 
 MSK_RES_ERR_INV_SKX = 1268
 
+    
     Invalid value in skx encountered.
+    
 
 MSK_RES_ERR_INV_VAR_TYPE = 1258
 
+    
     An invalid variable type is specified for a variable.
+    
 
 MSK_RES_ERR_INVALID_ACCMODE = 2520
 
+    
     An invalid access mode is specified.
+    
 
 MSK_RES_ERR_INVALID_AIJ = 1473
 
+    
     a[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
+    
 
 MSK_RES_ERR_INVALID_AMPL_STUB = 3700
 
+    
     Invalid AMPL stub.
+    
 
 MSK_RES_ERR_INVALID_BARVAR_NAME = 1079
 
+    
     An invalid symmetric matrix variable name is used.
-
-MSK_RES_ERR_INVALID_BRANCH_DIRECTION = 3200
-
-    An invalid branching direction is specified.
-
-MSK_RES_ERR_INVALID_BRANCH_PRIORITY = 3201
-
-    An invalid branching priority is specified.
+    
 
 MSK_RES_ERR_INVALID_COMPRESSION = 1800
 
+    
     Invalid compression type.
+    
 
 MSK_RES_ERR_INVALID_CON_NAME = 1076
 
+    
     An invalid constraint name is used.
+    
 
 MSK_RES_ERR_INVALID_CONE_NAME = 1078
 
+    
     An invalid cone name is used.
+    
 
 MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES = 4005
 
+    
     The file format does not support a problem with conic constraints.
+    
 
 MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL = 4010
 
+    
     The file format does not support a problem with general nonlinear terms.
+    
 
 MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT = 4000
 
+    
     The file format does not support a problem with symmetric matrix variables.
+    
 
 MSK_RES_ERR_INVALID_FILE_NAME = 1056
 
+    
     An invalid file name has been specified.
+    
 
 MSK_RES_ERR_INVALID_FORMAT_TYPE = 1283
 
+    
     Invalid format type.
+    
 
 MSK_RES_ERR_INVALID_IDX = 1246
 
+    
     A specified index is invalid.
+    
 
 MSK_RES_ERR_INVALID_IOMODE = 1801
 
+    
     Invalid io mode.
+    
 
 MSK_RES_ERR_INVALID_MAX_NUM = 1247
 
+    
     A specified index is invalid.
+    
 
 MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE = 1170
 
+    
     An invalid name occurred in a solution file.
-
-MSK_RES_ERR_INVALID_NETWORK_PROBLEM = 1504
-
-    The problem is not a network problem as expected.
+    
 
 MSK_RES_ERR_INVALID_OBJ_NAME = 1075
 
+    
     An invalid objective name is specified.
+    
 
 MSK_RES_ERR_INVALID_OBJECTIVE_SENSE = 1445
 
+    
     An invalid objective sense is specified.
+    
 
 MSK_RES_ERR_INVALID_PROBLEM_TYPE = 6000
 
+    
     An invalid problem type.
+    
 
 MSK_RES_ERR_INVALID_SOL_FILE_NAME = 1057
 
+    
     An invalid file name has been specified.
+    
 
 MSK_RES_ERR_INVALID_STREAM = 1062
 
+    
     An invalid stream is referenced.
+    
 
 MSK_RES_ERR_INVALID_SURPLUS = 1275
 
+    
     Invalid surplus.
+    
 
 MSK_RES_ERR_INVALID_SYM_MAT_DIM = 3950
 
+    
     A sparse symmetric matrix of invalid dimension is specified.
+    
 
 MSK_RES_ERR_INVALID_TASK = 1064
 
+    
     The task is invalid.
+    
 
 MSK_RES_ERR_INVALID_UTF8 = 2900
 
+    
     An invalid UTF8 string is encountered.
+    
 
 MSK_RES_ERR_INVALID_VAR_NAME = 1077
 
+    
     An invalid variable name is used.
+    
 
 MSK_RES_ERR_INVALID_WCHAR = 2901
 
+    
     An invalid wchar string is encountered.
+    
 
 MSK_RES_ERR_INVALID_WHICHSOL = 1228
 
+    
     whichsol is invalid.
+    
+
+MSK_RES_ERR_JSON_DATA = 1179
+
+    
+    Inconsistent data in JSON Task file
+    
+
+MSK_RES_ERR_JSON_FORMAT = 1178
+
+    
+    Error in an JSON Task file
+    
+
+MSK_RES_ERR_JSON_MISSING_DATA = 1180
+
+    
+    Missing data section in JSON task file.
+    
+
+MSK_RES_ERR_JSON_NUMBER_OVERFLOW = 1177
+
+    
+    Invalid number entry - wrong type or value overflow.
+    
+
+MSK_RES_ERR_JSON_STRING = 1176
+
+    
+    Error in JSON string.
+    
+
+MSK_RES_ERR_JSON_SYNTAX = 1175
+
+    
+    Syntax error in an JSON data
+    
 
 MSK_RES_ERR_LAST = 1262
 
+    
     Invalid last.
+    
 
 MSK_RES_ERR_LASTI = 1286
 
+    
     Invalid lasti.
+    
 
 MSK_RES_ERR_LASTJ = 1288
 
+    
     Invalid lastj.
+    
 
-MSK_RES_ERR_LAU_ARG_K = 7004
+MSK_RES_ERR_LAU_ARG_K = 7012
 
+    
     Invalid argument k.
+    
 
-MSK_RES_ERR_LAU_ARG_M = 7002
+MSK_RES_ERR_LAU_ARG_M = 7010
 
+    
     Invalid argument m.
+    
 
-MSK_RES_ERR_LAU_ARG_N = 7003
+MSK_RES_ERR_LAU_ARG_N = 7011
 
+    
     Invalid argument n.
+    
 
-MSK_RES_ERR_LAU_ARG_TRANS = 7008
+MSK_RES_ERR_LAU_ARG_TRANS = 7018
 
+    
     Invalid argument trans.
+    
 
-MSK_RES_ERR_LAU_ARG_TRANSA = 7005
+MSK_RES_ERR_LAU_ARG_TRANSA = 7015
 
+    
     Invalid argument transa.
+    
 
-MSK_RES_ERR_LAU_ARG_TRANSB = 7006
+MSK_RES_ERR_LAU_ARG_TRANSB = 7016
 
+    
     Invalid argument transb.
+    
 
-MSK_RES_ERR_LAU_ARG_UPLO = 7007
+MSK_RES_ERR_LAU_ARG_UPLO = 7017
 
+    
     Invalid argument uplo.
+    
+
+MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX = 7002
+
+    
+    An invalid lower triangular matrix.
+    
+
+MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX = 7019
+
+    
+    An invalid sparse symmetric matrix is specfified.
+    
+
+MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE = 7001
+
+    
+    A matrix is not positive definite.
+    
 
 MSK_RES_ERR_LAU_SINGULAR_MATRIX = 7000
 
+    
     A matrix is singular.
+    
 
-MSK_RES_ERR_LAU_UNKNOWN = 7001
+MSK_RES_ERR_LAU_UNKNOWN = 7005
 
+    
     An unknown error.
+    
 
 MSK_RES_ERR_LICENSE = 1000
 
+    
     Invalid license.
+    
 
 MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE = 1020
 
+    
     The license system cannot allocate the memory required.
+    
 
 MSK_RES_ERR_LICENSE_CANNOT_CONNECT = 1021
 
+    
     MOSEK cannot connect to the license server.
+    
 
 MSK_RES_ERR_LICENSE_EXPIRED = 1001
 
+    
     The license has expired.
+    
 
 MSK_RES_ERR_LICENSE_FEATURE = 1018
 
+    
     A requested feature is not available in the license file(s).
+    
 
 MSK_RES_ERR_LICENSE_INVALID_HOSTID = 1025
 
+    
     The host ID specified in the license file does not match the host ID of the computer.
+    
 
 MSK_RES_ERR_LICENSE_MAX = 1016
 
+    
     Maximum number of licenses is reached.
+    
 
 MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON = 1017
 
+    
     The MOSEKLM license manager daemon is not up and running.
+    
 
 MSK_RES_ERR_LICENSE_NO_SERVER_LINE = 1028
 
+    
     No SERVER lines in license file.
+    
 
 MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT = 1027
 
+    
     The license server does not support the requested feature.
+    
 
 MSK_RES_ERR_LICENSE_SERVER = 1015
 
+    
     The license server is not responding.
+    
 
 MSK_RES_ERR_LICENSE_SERVER_VERSION = 1026
 
+    
     The version specified in the checkout request is greater than the highest version number the daemon supports.
+    
 
 MSK_RES_ERR_LICENSE_VERSION = 1002
 
+    
     Invalid license version.
+    
 
 MSK_RES_ERR_LINK_FILE_DLL = 1040
 
+    
     A file cannot be linked to a stream in the DLL version.
+    
 
 MSK_RES_ERR_LIVING_TASKS = 1066
 
+    
     Not all tasks associated with the environment have been deleted.
+    
 
 MSK_RES_ERR_LOWER_BOUND_IS_A_NAN = 1390
 
-    The lower bound specificied is not a number (nan).
+    
+    The lower bound specified is not a number (nan).
+    
 
 MSK_RES_ERR_LP_DUP_SLACK_NAME = 1152
 
+    
     The name of the slack variable added to a ranged constraint already exists.
+    
 
 MSK_RES_ERR_LP_EMPTY = 1151
 
+    
     The problem cannot be written to an LP formatted file.
+    
 
 MSK_RES_ERR_LP_FILE_FORMAT = 1157
 
+    
     Syntax error in an LP file.
+    
 
 MSK_RES_ERR_LP_FORMAT = 1160
 
+    
     Syntax error in an LP file.
+    
 
 MSK_RES_ERR_LP_FREE_CONSTRAINT = 1155
 
+    
     Free constraints cannot be written in LP file format.
+    
 
 MSK_RES_ERR_LP_INCOMPATIBLE = 1150
 
+    
     The problem cannot be written to an LP formatted file.
+    
 
 MSK_RES_ERR_LP_INVALID_CON_NAME = 1171
 
+    
     A constraint name is invalid when used in an LP formatted file.
+    
 
 MSK_RES_ERR_LP_INVALID_VAR_NAME = 1154
 
+    
     A variable name is invalid when used in an LP formatted file.
+    
 
 MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM = 1163
 
+    
     The problem contains cones that cannot be written to an LP formatted file.
+    
 
 MSK_RES_ERR_LP_WRITE_GECO_PROBLEM = 1164
 
+    
     The problem contains general convex terms that cannot be written to an LP formatted file.
+    
 
 MSK_RES_ERR_LU_MAX_NUM_TRIES = 2800
 
+    
     Could not compute the LU factors of the matrix within the maximum number of allowed tries.
+    
 
 MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL = 1289
 
-    An maximum length that is too small has been specfified.
+    
+    An maximum length that is too small has been specified.
+    
 
 MSK_RES_ERR_MAXNUMBARVAR = 1242
 
+    
     The maximum number of semidefinite variables limit is too small.
+    
 
 MSK_RES_ERR_MAXNUMCON = 1240
 
+    
     Invalid maximum number of constraints specified.
+    
 
 MSK_RES_ERR_MAXNUMCONE = 1304
 
+    
     The value specified for maxnumcone is too small.
+    
 
 MSK_RES_ERR_MAXNUMQNZ = 1243
 
-    Too small maximum number of non-zeros for the Q matrixes is specified.
+    
+    Too small maximum number of non-zeros for the Q matrices is specified.
+    
 
 MSK_RES_ERR_MAXNUMVAR = 1241
 
+    
     The maximum number of variables limit is too small.
-
-MSK_RES_ERR_MBT_INCOMPATIBLE = 2550
-
-    The MBT file is incompatible withe this platform.
-
-MSK_RES_ERR_MBT_INVALID = 2551
-
-    The MBT file is invalid.
+    
 
 MSK_RES_ERR_MIO_INTERNAL = 5010
 
+    
     A fatal error occurred in the mixed integer optimizer.  Please contact MOSEK support.
+    
 
 MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER = 7131
 
+    
     An invalid node optimizer was selected for the problem type.
+    
 
 MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER = 7130
 
+    
     An invalid root optimizer was selected for the problem type.
+    
 
 MSK_RES_ERR_MIO_NO_OPTIMIZER = 1551
 
+    
     No optimizer is available for the current class of integer optimization problems.
+    
 
 MSK_RES_ERR_MIO_NOT_LOADED = 1553
 
+    
     The mixed-integer optimizer is not loaded.
+    
 
 MSK_RES_ERR_MISSING_LICENSE_FILE = 1008
 
-    MOSEK cannot locate a license.
+    
+    A license cannot be located.
+    
 
-MSK_RES_ERR_MIXED_PROBLEM = 1501
+MSK_RES_ERR_MIXED_CONIC_AND_NL = 1501
 
+    
     The problem contains both conic and nonlinear constraints.
+    
 
 MSK_RES_ERR_MPS_CONE_OVERLAP = 1118
 
+    
     A variable is specified to be a member of several cones.
+    
 
 MSK_RES_ERR_MPS_CONE_REPEAT = 1119
 
+    
     A variable is repeated within the CSECTION.
+    
 
 MSK_RES_ERR_MPS_CONE_TYPE = 1117
 
+    
     Invalid cone type specified in a  CSECTION.
+    
 
 MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT = 1121
 
+    
     Duplicate elements is specified in a Q matrix.
+    
 
 MSK_RES_ERR_MPS_FILE = 1100
 
+    
     An error occurred while reading an MPS file.
+    
 
 MSK_RES_ERR_MPS_INV_BOUND_KEY = 1108
 
+    
     An invalid bound key occurred in an MPS file.
+    
 
 MSK_RES_ERR_MPS_INV_CON_KEY = 1107
 
+    
     An invalid constraint key occurred in an MPS file.
+    
 
 MSK_RES_ERR_MPS_INV_FIELD = 1101
 
+    
     Invalid field occurred while reading an MPS file.
+    
 
 MSK_RES_ERR_MPS_INV_MARKER = 1102
 
+    
     An invalid marker has been specified in the MPS file.
+    
 
 MSK_RES_ERR_MPS_INV_SEC_NAME = 1109
 
+    
     An invalid section name occurred in an MPS file.
+    
 
 MSK_RES_ERR_MPS_INV_SEC_ORDER = 1115
 
+    
     The sections in an MPS file is not in the correct order.
+    
 
 MSK_RES_ERR_MPS_INVALID_OBJ_NAME = 1128
 
+    
     An invalid objective name is specified.
+    
 
 MSK_RES_ERR_MPS_INVALID_OBJSENSE = 1122
 
+    
     An invalid objective sense is specified.
+    
 
 MSK_RES_ERR_MPS_MUL_CON_NAME = 1112
 
+    
     A constraint name is specified multiple times in the ROWS section in an MPS file.
+    
 
 MSK_RES_ERR_MPS_MUL_CSEC = 1116
 
+    
     Multiple CSECTIONs are given the same name.
+    
 
 MSK_RES_ERR_MPS_MUL_QOBJ = 1114
 
+    
     The Q term in the objective is specified multiple times.
+    
 
 MSK_RES_ERR_MPS_MUL_QSEC = 1113
 
+    
     Multiple QSECTIONs are specified for a constraint.
+    
 
 MSK_RES_ERR_MPS_NO_OBJECTIVE = 1110
 
+    
     No objective is defined in an MPS file.
+    
 
 MSK_RES_ERR_MPS_NON_SYMMETRIC_Q = 1120
 
+    
     A non symmetric matrice has been speciefied.
+    
 
 MSK_RES_ERR_MPS_NULL_CON_NAME = 1103
 
+    
     An empty constraint name is used in an MPS file.
+    
 
 MSK_RES_ERR_MPS_NULL_VAR_NAME = 1104
 
+    
     An empty variable name is used in an MPS file.
+    
 
 MSK_RES_ERR_MPS_SPLITTED_VAR = 1111
 
+    
     The non-zero elements in A corresponding to a variable in an MPS file must be specified consecutively.
+    
 
 MSK_RES_ERR_MPS_TAB_IN_FIELD2 = 1125
 
+    
     A tab char occurred in field 2.
+    
 
 MSK_RES_ERR_MPS_TAB_IN_FIELD3 = 1126
 
+    
     A tab char occurred in field 3.
+    
 
 MSK_RES_ERR_MPS_TAB_IN_FIELD5 = 1127
 
+    
     A tab char occurred in field 5.
+    
 
 MSK_RES_ERR_MPS_UNDEF_CON_NAME = 1105
 
+    
     An undefined constraint name occurred in an MPS file.
+    
 
 MSK_RES_ERR_MPS_UNDEF_VAR_NAME = 1106
 
+    
     An undefined variable name occurred in an MPS file.
+    
 
 MSK_RES_ERR_MUL_A_ELEMENT = 1254
 
+    
     An element in A is defined multiple times.
+    
 
 MSK_RES_ERR_NAME_IS_NULL = 1760
 
-    The name buffer is a NULL pointer.
+    
+    The name buffer is a |null| pointer.
+    
 
 MSK_RES_ERR_NAME_MAX_LEN = 1750
 
+    
     A name is longer than the buffer that is supposed to hold it.
+    
 
 MSK_RES_ERR_NAN_IN_BLC = 1461
 
+    
     blc contains an invalid floating point value, i.e. a NaN.
+    
 
 MSK_RES_ERR_NAN_IN_BLX = 1471
 
+    
     blx contains an invalid floating point value, i.e. a NaN.
+    
 
 MSK_RES_ERR_NAN_IN_BUC = 1462
 
+    
     buc contains an invalid floating point value, i.e. a NaN.
+    
 
 MSK_RES_ERR_NAN_IN_BUX = 1472
 
+    
     bux contains an invalid floating point value, i.e. a NaN.
+    
 
 MSK_RES_ERR_NAN_IN_C = 1470
 
+    
     c contains an invalid floating point value, i.e. a NaN.
+    
 
 MSK_RES_ERR_NAN_IN_DOUBLE_DATA = 1450
 
+    
     An invalid floating value was used in some double data.
+    
 
 MSK_RES_ERR_NEGATIVE_APPEND = 1264
 
+    
     Cannot append a negative number.
+    
 
 MSK_RES_ERR_NEGATIVE_SURPLUS = 1263
 
+    
     Negative surplus.
+    
 
 MSK_RES_ERR_NEWER_DLL = 1036
 
+    
     The dynamic link library is newer than the specified version.
+    
 
 MSK_RES_ERR_NO_BARS_FOR_SOLUTION = 3916
 
+    
     There is no bars available for the solution specified.
+    
 
 MSK_RES_ERR_NO_BARX_FOR_SOLUTION = 3915
 
+    
     There is no barx available for the solution specified.
+    
 
 MSK_RES_ERR_NO_BASIS_SOL = 1600
 
+    
     No basic solution is defined.
+    
 
 MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL = 2950
 
+    
     No dual information is available for the integer solution.
+    
 
 MSK_RES_ERR_NO_DUAL_INFEAS_CER = 2001
 
+    
     A certificate of dual infeasibility is not available.
-
-MSK_RES_ERR_NO_DUAL_INFO_FOR_ITG_SOL = 3300
-
-    Dual information is not available for the integer solution.
+    
 
 MSK_RES_ERR_NO_INIT_ENV = 1063
 
+    
     Environment is not initialized.
+    
 
 MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE = 1552
 
+    
     No optimizer is available for this class of optimization problems.
+    
 
 MSK_RES_ERR_NO_PRIMAL_INFEAS_CER = 2000
 
+    
     A certificate of primal infeasibility is not available.
+    
 
 MSK_RES_ERR_NO_SNX_FOR_BAS_SOL = 2953
 
+    
     snx is not available for the basis solution.
+    
 
 MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK = 2500
 
+    
     The required solution is not available.
+    
 
 MSK_RES_ERR_NON_UNIQUE_ARRAY = 5000
 
+    
     An array does not contain unique elements.
+    
 
 MSK_RES_ERR_NONCONVEX = 1291
 
+    
     The optimization problem is nonconvex.
+    
 
 MSK_RES_ERR_NONLINEAR_EQUALITY = 1290
 
+    
     The model contains a nonlinear equality.
+    
 
 MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED = 1428
 
+    
     An operation that is invalid for problems with nonlinear functions defined has been attempted.
+    
 
 MSK_RES_ERR_NONLINEAR_RANGED = 1292
 
-    The model contains a nonlinear ranged constraint.
+    
+    The problem contains a nonlinear constraint with inite lower and upper bound.
+    
 
 MSK_RES_ERR_NR_ARGUMENTS = 1199
 
+    
     Incorrect number of function arguments.
+    
 
 MSK_RES_ERR_NULL_ENV = 1060
 
-    env is a NULL pointer.
+    
+    env is a |null| pointer.
+    
 
 MSK_RES_ERR_NULL_POINTER = 1065
 
-    An argument to a function is unexpectedly a NULL pointer.
+    
+    An argument to a function is unexpectedly a |null| pointer.
+    
 
 MSK_RES_ERR_NULL_TASK = 1061
 
-    task is a NULL pointer.
+    
+    task is a |null| pointer.
+    
 
 MSK_RES_ERR_NUMCONLIM = 1250
 
+    
     Maximum number of constraints limit is exceeded.
+    
 
 MSK_RES_ERR_NUMVARLIM = 1251
 
+    
     Maximum number of variables limit is exceeded.
+    
 
 MSK_RES_ERR_OBJ_Q_NOT_NSD = 1296
 
+    
     The quadratic coefficient matrix in the objective is not NSD.
+    
 
 MSK_RES_ERR_OBJ_Q_NOT_PSD = 1295
 
+    
     The quadratic coefficient matrix in the objective is not PSD.
+    
 
 MSK_RES_ERR_OBJECTIVE_RANGE = 1260
 
+    
     Empty objective range.
+    
 
 MSK_RES_ERR_OLDER_DLL = 1035
 
+    
     The dynamic link library is older than the specified version.
+    
 
 MSK_RES_ERR_OPEN_DL = 1030
 
+    
     A dynamic link library could not be opened.
+    
 
 MSK_RES_ERR_OPF_FORMAT = 1168
 
+    
     Syntax error in an OPF file
+    
 
 MSK_RES_ERR_OPF_NEW_VARIABLE = 1169
 
+    
     Variable not previously defined.
+    
 
 MSK_RES_ERR_OPF_PREMATURE_EOF = 1172
 
+    
     Premature end of file in an OPF file.
+    
 
 MSK_RES_ERR_OPTIMIZER_LICENSE = 1013
 
+    
     The optimizer required is not licensed.
-
-MSK_RES_ERR_ORD_INVALID = 1131
-
-    Invalid content in branch ordering file.
-
-MSK_RES_ERR_ORD_INVALID_BRANCH_DIR = 1130
-
-    An invalid branch direction key is specified.
+    
 
 MSK_RES_ERR_OVERFLOW = 1590
 
+    
     A computation produced an overflow.
+    
 
 MSK_RES_ERR_PARAM_INDEX = 1210
 
+    
     Parameter index is out of range.
+    
 
 MSK_RES_ERR_PARAM_IS_TOO_LARGE = 1215
 
+    
     A parameter value is too large.
+    
 
 MSK_RES_ERR_PARAM_IS_TOO_SMALL = 1216
 
+    
     A parameter value is too small.
+    
 
 MSK_RES_ERR_PARAM_NAME = 1205
 
+    
     A parameter name is not correct.
+    
 
 MSK_RES_ERR_PARAM_NAME_DOU = 1206
 
+    
     A parameter name is not correct.
+    
 
 MSK_RES_ERR_PARAM_NAME_INT = 1207
 
+    
     A parameter name is not correct.
+    
 
 MSK_RES_ERR_PARAM_NAME_STR = 1208
 
+    
     A parameter name is not correct.
+    
 
 MSK_RES_ERR_PARAM_TYPE = 1218
 
+    
     A parameter type is invalid.
+    
 
 MSK_RES_ERR_PARAM_VALUE_STR = 1217
 
+    
     A parameter value string is incorrect.
+    
 
 MSK_RES_ERR_PLATFORM_NOT_LICENSED = 1019
 
+    
     A requested license feature is not available for the required platform.
+    
 
 MSK_RES_ERR_POSTSOLVE = 1580
 
+    
     An error occurred during the postsolve.
+    
 
 MSK_RES_ERR_PRO_ITEM = 1281
 
+    
     An invalid problem item is used.
+    
 
 MSK_RES_ERR_PROB_LICENSE = 1006
 
+    
     The software is not licensed to solve the problem.
+    
 
 MSK_RES_ERR_QCON_SUBI_TOO_LARGE = 1409
 
+    
     Invalid value in qcsubi.
+    
 
 MSK_RES_ERR_QCON_SUBI_TOO_SMALL = 1408
 
+    
     Invalid value in qcsubi.
+    
 
 MSK_RES_ERR_QCON_UPPER_TRIANGLE = 1417
 
+    
     An element in the upper triangle of the quadratic term in a constraint.
+    
 
 MSK_RES_ERR_QOBJ_UPPER_TRIANGLE = 1415
 
+    
     An element in the upper triangle of the quadratic term in the objective is specified.
+    
 
 MSK_RES_ERR_READ_FORMAT = 1090
 
+    
     The specified format cannot be read.
+    
 
 MSK_RES_ERR_READ_LP_MISSING_END_TAG = 1159
 
+    
     Syntax error in LP fil. Possibly missing End tag.
+    
 
 MSK_RES_ERR_READ_LP_NONEXISTING_NAME = 1162
 
+    
     A variable never occurred in objective or constraints.
+    
 
 MSK_RES_ERR_REMOVE_CONE_VARIABLE = 1310
 
+    
     A variable cannot be removed because it will make a cone invalid.
+    
 
 MSK_RES_ERR_REPAIR_INVALID_PROBLEM = 1710
 
+    
     The feasibility repair does not support the specified problem type.
+    
 
 MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED = 1711
 
+    
     Computation the optimal relaxation failed.
+    
 
 MSK_RES_ERR_SEN_BOUND_INVALID_LO = 3054
 
+    
     Analysis of lower bound requested for an index, where no lower bound exists.
+    
 
 MSK_RES_ERR_SEN_BOUND_INVALID_UP = 3053
 
+    
     Analysis of upper bound requested for an index, where no upper bound exists.
+    
 
 MSK_RES_ERR_SEN_FORMAT = 3050
 
+    
     Syntax error in sensitivity analysis file.
+    
 
 MSK_RES_ERR_SEN_INDEX_INVALID = 3055
 
+    
     Invalid range given in the sensitivity file.
+    
 
 MSK_RES_ERR_SEN_INDEX_RANGE = 3052
 
+    
     Index out of range in the sensitivity analysis file.
+    
 
 MSK_RES_ERR_SEN_INVALID_REGEXP = 3056
 
+    
     Syntax error in regexp or regexp longer than 1024.
+    
 
 MSK_RES_ERR_SEN_NUMERICAL = 3058
 
+    
     Numerical difficulties encountered performing the sensitivity analysis.
+    
 
 MSK_RES_ERR_SEN_SOLUTION_STATUS = 3057
 
+    
     No optimal solution found to the original problem given for sensitivity analysis.
+    
 
 MSK_RES_ERR_SEN_UNDEF_NAME = 3051
 
+    
     An undefined name was encountered in the sensitivity analysis file.
+    
 
 MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE = 3080
 
+    
     Sensitivity analysis cannot be performed for the specified problem.
+    
+
+MSK_RES_ERR_SERVER_CONNECT = 8000
+
+    
+    Failed to connect to remote solver server.
+    
+
+MSK_RES_ERR_SERVER_PROTOCOL = 8001
+
+    
+    Unexpected message or data from solver server.
+    
+
+MSK_RES_ERR_SERVER_STATUS = 8002
+
+    
+    Server returned non-ok status code
+    
+
+MSK_RES_ERR_SERVER_TOKEN = 8003
+
+    
+    Invalid job ID
+    
 
 MSK_RES_ERR_SIZE_LICENSE = 1005
 
+    
     The problem is bigger than the license.
+    
 
 MSK_RES_ERR_SIZE_LICENSE_CON = 1010
 
+    
     The problem has too many constraints.
+    
 
 MSK_RES_ERR_SIZE_LICENSE_INTVAR = 1012
 
+    
     The problem contains too many integer variables.
+    
 
 MSK_RES_ERR_SIZE_LICENSE_NUMCORES = 3900
 
+    
     The computer contains more cpu cores than the license allows for.
+    
 
 MSK_RES_ERR_SIZE_LICENSE_VAR = 1011
 
+    
     The problem has too many variables.
+    
 
 MSK_RES_ERR_SOL_FILE_INVALID_NUMBER = 1350
 
+    
     An invalid number is specified in a solution file.
+    
 
 MSK_RES_ERR_SOLITEM = 1237
 
+    
     The solution number  solemn does not exists.
+    
 
 MSK_RES_ERR_SOLVER_PROBTYPE = 1259
 
+    
     Problem type does not match the chosen optimizer.
+    
 
 MSK_RES_ERR_SPACE = 1051
 
+    
     Out of space.
+    
 
 MSK_RES_ERR_SPACE_LEAKING = 1080
 
+    
     MOSEK is leaking memory.
+    
 
 MSK_RES_ERR_SPACE_NO_INFO = 1081
 
+    
     No available information about the space usage.
+    
 
 MSK_RES_ERR_SYM_MAT_DUPLICATE = 3944
 
+    
     A value in a symmetric matric as been specified more than once.
+    
+
+MSK_RES_ERR_SYM_MAT_HUGE = 1482
+
+    
+    A numerically huge value is specified for an element in A.
+    
+
+MSK_RES_ERR_SYM_MAT_INVALID = 1480
+
+    A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value.
 
 MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX = 3941
 
-    A column index specified for sparse symmetric maxtrix is invalid.
+    
+    A column index specified for sparse symmetric matrix is invalid.
+    
 
 MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX = 3940
 
-    A row index specified for sparse symmetric maxtrix is invalid.
+    
+    A row index specified for sparse symmetric matrix is invalid.
+    
 
 MSK_RES_ERR_SYM_MAT_INVALID_VALUE = 3943
 
+    
     The numerical value specified in a sparse symmetric matrix is not a value floating value.
+    
 
 MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR = 3942
 
+    
     Only the lower triangular part of sparse symmetric matrix should be specified.
+    
 
 MSK_RES_ERR_TASK_INCOMPATIBLE = 2560
 
-    The Task file is incompatible withe this platform.
+    
+    The Task file is incompatible with this platform.
+    
 
 MSK_RES_ERR_TASK_INVALID = 2561
 
+    
     The Task file is invalid.
+    
+
+MSK_RES_ERR_TASK_WRITE = 2562
+
+    
+    Failed to write the task file.
+    
 
 MSK_RES_ERR_THREAD_COND_INIT = 1049
 
+    
     Could not initialize a condition.
+    
 
 MSK_RES_ERR_THREAD_CREATE = 1048
 
+    
     Could not create a thread.
+    
 
 MSK_RES_ERR_THREAD_MUTEX_INIT = 1045
 
+    
     Could not initialize a mutex.
+    
 
 MSK_RES_ERR_THREAD_MUTEX_LOCK = 1046
 
+    
     Could not lock a mutex.
+    
 
 MSK_RES_ERR_THREAD_MUTEX_UNLOCK = 1047
 
+    
     Could not unlock a mutex.
+    
 
-MSK_RES_ERR_TOCONIC_CONVERSION_FAIL = 7200
+MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC = 7153
 
-    A constraint could not be converted in conic form.
+    
+    The constraint is not conic representable.
+    
 
-MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS = 3090
+MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD = 7150
 
-    Too many concurrent tasks specified.
+    
+    The matrix defining the quadratric part of constraint is not positive semidefinite.
+    
+
+MSK_RES_ERR_TOCONIC_CONSTRAINT_FX = 7151
+
+    
+    The quadratic constraint is an equality, thus not convex.
+    
+
+MSK_RES_ERR_TOCONIC_CONSTRAINT_RA = 7152
+
+    
+    The quadratic constraint has finite lower and upper bound, and therefore it is not convex.
+    
+
+MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD = 7155
+
+    
+    The matrix defining the quadratric part of the objective function is not positive semidefinite.
+    
 
 MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ = 1245
 
+    
     The maximum number of non-zeros specified is too small.
+    
 
 MSK_RES_ERR_TOO_SMALL_MAXNUMANZ = 1252
 
+    
     Too small maximum number of non-zeros in A specified.
+    
 
 MSK_RES_ERR_UNB_STEP_SIZE = 3100
 
+    
     A step-size in an optimizer was unexpectedly unbounded.
+    
 
 MSK_RES_ERR_UNDEF_SOLUTION = 1265
 
+    
     The required solution is not defined.
+    
 
 MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE = 1446
 
+    
     The objective sense has not been specified before the optimization.
+    
 
 MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS = 6010
 
+    
     Unhandled solution status.
+    
 
 MSK_RES_ERR_UNKNOWN = 1050
 
+    
     Unknown error.
+    
 
 MSK_RES_ERR_UPPER_BOUND_IS_A_NAN = 1391
 
-    The upper bound specificied is not a number (nan).
+    
+    The upper bound specified is not a number (nan).
+    
 
 MSK_RES_ERR_UPPER_TRIANGLE = 6020
 
+    
     An element in the upper triangle of a lower triangular matrix is specified.
+    
 
 MSK_RES_ERR_USER_FUNC_RET = 1430
 
+    
     An user function reported an error.
+    
 
 MSK_RES_ERR_USER_FUNC_RET_DATA = 1431
 
+    
     An user function returned invalid data.
+    
 
 MSK_RES_ERR_USER_NLO_EVAL = 1433
 
+    
     The user-defined nonlinear function reported an error.
+    
 
 MSK_RES_ERR_USER_NLO_EVAL_HESSUBI = 1440
 
-    The user-defined nonlinear function reported reported an Hessian an invalid subscript.
+    
+    The user-defined nonlinear function reported an Hessian an invalid subscript.
+    
 
 MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ = 1441
 
+    
     The user-defined nonlinear function reported an invalid subscript in the Hessian.
+    
 
 MSK_RES_ERR_USER_NLO_FUNC = 1432
 
+    
     The user-defined nonlinear function reported an error.
+    
 
 MSK_RES_ERR_WHICHITEM_NOT_ALLOWED = 1238
 
+    
     whichitem is unacceptable.
+    
 
 MSK_RES_ERR_WHICHSOL = 1236
 
+    
     The solution defined by whichsol does not exists.
+    
 
 MSK_RES_ERR_WRITE_LP_FORMAT = 1158
 
+    
     Problem cannot be written as an LP file.
+    
 
 MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME = 1161
 
+    
     An auto-generated name is not unique.
+    
 
 MSK_RES_ERR_WRITE_MPS_INVALID_NAME = 1153
 
+    
     An invalid name is created while writing an MPS file.
+    
 
 MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME = 1156
 
+    
     Empty variable names cannot be written to OPF files.
+    
 
 MSK_RES_ERR_WRITING_FILE = 1166
 
+    
     An error occurred while writing file
+    
 
 MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE = 3600
 
+    
     The problem type is not supported by the XML format.
+    
 
 MSK_RES_ERR_Y_IS_UNDEFINED = 1449
 
+    
     The solution item y is undefined.
+    
 
 MSK_RES_OK = 0
 
+    
     No error occurred.
+    
 
 MSK_RES_TRM_INTERNAL = 10030
 
+    
     The optimizer terminated due to some internal reason.
+    
 
 MSK_RES_TRM_INTERNAL_STOP = 10031
 
+    
     The optimizer terminated for internal reasons.
+    
 
 MSK_RES_TRM_MAX_ITERATIONS = 10000
 
+    
     The optimizer terminated at the maximum number of iterations.
+    
 
 MSK_RES_TRM_MAX_NUM_SETBACKS = 10020
 
+    
     The optimizer terminated as the maximum number of set-backs was reached.
+    
 
 MSK_RES_TRM_MAX_TIME = 10001
 
+    
     The optimizer terminated at the maximum amount of time.
+    
 
 MSK_RES_TRM_MIO_NEAR_ABS_GAP = 10004
 
+    
     The mixed-integer optimizer terminated because the near optimal absolute gap tolerance was satisfied.
+    
 
 MSK_RES_TRM_MIO_NEAR_REL_GAP = 10003
 
+    
     The mixed-integer optimizer terminated because the near optimal relative gap tolerance was satisfied.
+    
 
 MSK_RES_TRM_MIO_NUM_BRANCHES = 10009
 
+    
     The mixed-integer optimizer terminated as to the maximum number of branches was reached.
+    
 
 MSK_RES_TRM_MIO_NUM_RELAXS = 10008
 
+    
     The mixed-integer optimizer terminated as the maximum number of relaxations was reached.
+    
 
 MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS = 10015
 
+    
     The mixed-integer optimizer terminated as the maximum number of feasible solutions was reached.
+    
 
 MSK_RES_TRM_NUMERICAL_PROBLEM = 10025
 
+    
     The optimizer terminated due to a numerical problem.
+    
 
 MSK_RES_TRM_OBJECTIVE_RANGE = 10002
 
+    
     The optimizer terminated on the bound of the objective range.
+    
 
 MSK_RES_TRM_STALL = 10006
 
+    
     The optimizer is terminated due to slow progress.
+    
 
 MSK_RES_TRM_USER_CALLBACK = 10007
 
+    
     The user-defined progress call-back function terminated the optimization.
+    
 
 MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS = 904
 
-    Warn against almost integeral bounds.
+    
+    Warn against almost integral bounds.
+    
 
 MSK_RES_WRN_ANA_C_ZERO = 901
 
+    
     Warn against all objective coefficients being zero.
+    
 
 MSK_RES_WRN_ANA_CLOSE_BOUNDS = 903
 
+    
     Warn against close bounds.
+    
 
 MSK_RES_WRN_ANA_EMPTY_COLS = 902
 
+    
     Warn against empty columns.
+    
 
 MSK_RES_WRN_ANA_LARGE_BOUNDS = 900
 
+    
     Warn against very large bounds.
+    
 
 MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG = 807
 
-    The intial value for one or more  of the integer variables is not feasible.
+    
+    The initial value for one or more  of the integer variables is not feasible.
+    
 
 MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG = 810
 
+    
     The construct solution requires an integer solution.
+    
 
 MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS = 805
 
+    
     After fixing the integer variables at the suggested values then the problem is infeasible.
+    
 
 MSK_RES_WRN_DROPPED_NZ_QOBJ = 201
 
+    
     One or more non-zero elements were dropped in the Q matrix in the objective.
+    
 
 MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES = 852
 
+    
     Two barvariable names are identical.
+    
 
 MSK_RES_WRN_DUPLICATE_CONE_NAMES = 853
 
+    
     Two cone names are identical.
+    
 
 MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES = 850
 
+    
     Two constraint names are identical.
+    
 
 MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES = 851
 
+    
     Two variable names are identical.
+    
 
 MSK_RES_WRN_ELIMINATOR_SPACE = 801
 
+    
     The eliminator is skipped at least once due to lack of space.
+    
 
 MSK_RES_WRN_EMPTY_NAME = 502
 
+    
     A variable or constraint name is empty. The output file may be invalid.
+    
 
 MSK_RES_WRN_IGNORE_INTEGER = 250
 
+    
     Ignored integer constraints.
+    
 
 MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK = 800
 
+    
     The linear dependency check(s) is incomplete.
+    
 
 MSK_RES_WRN_LARGE_AIJ = 62
 
+    
     A numerically large value is specified for an element in A.
+    
 
 MSK_RES_WRN_LARGE_BOUND = 51
 
+    
     A numerically large bound value is specified.
+    
 
 MSK_RES_WRN_LARGE_CJ = 57
 
+    
     A numerically large value is specified for one element in A.
+    
 
 MSK_RES_WRN_LARGE_CON_FX = 54
 
+    
     A equality constraint is fixed to numerically large value.
+    
 
 MSK_RES_WRN_LARGE_LO_BOUND = 52
 
+    
     A numerically large lower bound value is specified.
+    
 
 MSK_RES_WRN_LARGE_UP_BOUND = 53
 
+    
     A numerically large upper bound value is specified.
+    
 
 MSK_RES_WRN_LICENSE_EXPIRE = 500
 
+    
     The license expires.
+    
 
 MSK_RES_WRN_LICENSE_FEATURE_EXPIRE = 505
 
+    
     The license expires.
+    
 
 MSK_RES_WRN_LICENSE_SERVER = 501
 
+    
     The license server is not responding.
+    
 
 MSK_RES_WRN_LP_DROP_VARIABLE = 85
 
+    
     Ignore a variable because the variable was not previously defined.
+    
 
 MSK_RES_WRN_LP_OLD_QUAD_FORMAT = 80
 
+    
     Missing '/2' after quadratic expressions in bound or objective.
+    
 
 MSK_RES_WRN_MIO_INFEASIBLE_FINAL = 270
 
+    
     The final mixed-integer problem with all the integer variables fixed at their optimal values is infeasible.
+    
 
 MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR = 72
 
+    
     A BOUNDS vector is split into several nonadjacent parts in an MPS file.
+    
 
 MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR = 71
 
+    
     A RANGE vector is split into several nonadjacent parts in an MPS file.
+    
 
 MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR = 70
 
+    
     An RHS vector is split into several nonadjacent parts.
+    
 
 MSK_RES_WRN_NAME_MAX_LEN = 65
 
+    
     A name is longer than the buffer that is supposed to hold it.
+    
 
 MSK_RES_WRN_NO_DUALIZER = 950
 
+    
     No automatic dualizer is available for the specified problem.
+    
 
 MSK_RES_WRN_NO_GLOBAL_OPTIMIZER = 251
 
+    
     No global optimizer is available.
+    
 
 MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE = 450
 
+    
     The problem contains a general nonlinear function that cannot be written to a disk file.
+    
 
 MSK_RES_WRN_NZ_IN_UPR_TRI = 200
 
+    
     Non-zero elements specified in the upper triangle of a matrix were ignored.
+    
 
 MSK_RES_WRN_OPEN_PARAM_FILE = 50
 
+    
     The parameter file could not be opened.
+    
 
 MSK_RES_WRN_PARAM_IGNORED_CMIO = 516
 
@@ -9744,90 +11240,130 @@ MSK_RES_WRN_PARAM_NAME_STR = 512
 
 MSK_RES_WRN_PARAM_STR_VALUE = 515
 
-    A parameter vaue is not correct.
+    A parameter value is not correct.
 
 MSK_RES_WRN_PRESOLVE_OUTOFSPACE = 802
 
+    
     The presolve is incomplete due to lack of space.
+    
 
 MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO = 930
 
+    
     For at least one quadratic cone the root is fixed at (nearly) zero.
+    
 
 MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO = 931
 
+    
     For at least one rotated quadratic cone the root is fixed at (nearly) zero.
+    
 
 MSK_RES_WRN_SOL_FILE_IGNORED_CON = 351
 
+    
     One or more lines in the constraint section were ignored when reading a solution file.
+    
 
 MSK_RES_WRN_SOL_FILE_IGNORED_VAR = 352
 
+    
     One or more lines in the variable section were ignored when reading a solution file.
+    
 
 MSK_RES_WRN_SOL_FILTER = 300
 
+    
     Invalid solution filter is specified.
+    
 
 MSK_RES_WRN_SPAR_MAX_LEN = 66
 
+    
     A value for a string parameter is longer than the buffer that is supposed to hold it.
+    
+
+MSK_RES_WRN_SYM_MAT_LARGE = 960
+
+    
+    A numerically large value is specified for an element in E.
+    
 
 MSK_RES_WRN_TOO_FEW_BASIS_VARS = 400
 
+    
     An incomplete basis is specified.
+    
 
 MSK_RES_WRN_TOO_MANY_BASIS_VARS = 405
 
+    
     A basis with too many variables is specified.
-
-MSK_RES_WRN_TOO_MANY_THREADS_CONCURRENT = 750
-
-    The concurrent optimizer employs more threads than available.
+    
 
 MSK_RES_WRN_UNDEF_SOL_FILE_NAME = 350
 
+    
     Undefined name occurred in a solution.
+    
 
 MSK_RES_WRN_USING_GENERIC_NAMES = 503
 
+    
     Generic names are used because a name is not valid.
+    
 
 MSK_RES_WRN_WRITE_CHANGED_NAMES = 803
 
+    
     Some names were changed because they were invalid for the output file format.
+    
 
 MSK_RES_WRN_WRITE_DISCARDED_CFIX = 804
 
+    
     The fixed objective term was discarded in the output file.
+    
 
 MSK_RES_WRN_ZERO_AIJ = 63
 
+    
     One or more zero elements are specified in A.
+    
 
 MSK_RES_WRN_ZEROS_IN_SPARSE_COL = 710
 
+    
     One or more (near) zero elements are specified in a sparse column of a matrix.
+    
 
 MSK_RES_WRN_ZEROS_IN_SPARSE_ROW = 705
 
+    
     One or more (near) zero elements are specified in a sparse row of a matrix.
+    
 
 Enum mionodeseltype
 -------------------
 
 MSK_MIO_NODE_SELECTION_BEST = 2
 
+    
     The optimizer employs a best bound node selection strategy.
+    
 
 MSK_MIO_NODE_SELECTION_FIRST = 1
 
+    
     The optimizer employs a depth first node selection strategy.
+    
 
 MSK_MIO_NODE_SELECTION_FREE = 0
 
+    
     The optimizer decides the node selection strategy.
+    
 
 MSK_MIO_NODE_SELECTION_HYBRID = 4
 
@@ -9835,22 +11371,30 @@ MSK_MIO_NODE_SELECTION_HYBRID = 4
 
 MSK_MIO_NODE_SELECTION_PSEUDO = 5
 
+    
     The optimizer employs selects the node based on a pseudo cost estimate.
+    
 
 MSK_MIO_NODE_SELECTION_WORST = 3
 
+    
     The optimizer employs a worst bound node selection strategy.
+    
 
 Enum transpose
 --------------
 
 MSK_TRANSPOSE_NO = 0
 
+    
     No transpose is applied.
+    
 
 MSK_TRANSPOSE_YES = 1
 
+    
     A transpose is applied.
+    
 
 Enum onoffkey
 -------------
@@ -9868,38 +11412,60 @@ Enum simdegen
 
 MSK_SIM_DEGEN_AGGRESSIVE = 2
 
+    
     The simplex optimizer should use an aggressive degeneration strategy.
+    
 
 MSK_SIM_DEGEN_FREE = 1
 
+    
     The simplex optimizer chooses the degeneration strategy.
+    
 
 MSK_SIM_DEGEN_MINIMUM = 4
 
+    
     The simplex optimizer should use a minimum degeneration strategy.
+    
 
 MSK_SIM_DEGEN_MODERATE = 3
 
+    
     The simplex optimizer should use a moderate degeneration strategy.
+    
 
 MSK_SIM_DEGEN_NONE = 0
 
+    
     The simplex optimizer should use no degeneration strategy.
+    
 
 Enum dataformat
 ---------------
 
 MSK_DATA_FORMAT_CB = 7
 
-    Conic benchmark format.
+    
+    Conic benchmark format,
+    
 
 MSK_DATA_FORMAT_EXTENSION = 0
 
+    
     The file extension is used to determine the data file format.
+    
 
 MSK_DATA_FORMAT_FREE_MPS = 5
 
-    The data data a free MPS formatted file.
+    
+    The data a free MPS formatted file.
+    
+
+MSK_DATA_FORMAT_JSON_TASK = 8
+
+    
+    JSON based task format.
+    
 
 MSK_DATA_FORMAT_LP = 2
 
@@ -9911,30 +11477,40 @@ MSK_DATA_FORMAT_MPS = 1
 
 MSK_DATA_FORMAT_OP = 3
 
+    
     The data file is an optimization problem formatted file.
+    
 
 MSK_DATA_FORMAT_TASK = 6
 
+    
     Generic task dump file.
+    
 
 MSK_DATA_FORMAT_XML = 4
 
+    
     The data file is an XML formatted file.
+    
 
 Enum orderingtype
 -----------------
 
 MSK_ORDER_METHOD_APPMINLOC = 1
 
+    
     Approximate minimum local fill-in ordering is employed.
+    
 
 MSK_ORDER_METHOD_EXPERIMENTAL = 2
 
+    
     This option should not be used.
+    
 
 MSK_ORDER_METHOD_FORCE_GRAPHPAR = 4
 
-    Always use the graph partitioning based ordering even if it is worse that the approximate minimum local fill ordering.
+    Always use the graph partitioning based ordering even if it is worse than the approximate minimum local fill ordering.
 
 MSK_ORDER_METHOD_FREE = 0
 
@@ -9946,7 +11522,7 @@ MSK_ORDER_METHOD_NONE = 5
 
 MSK_ORDER_METHOD_TRY_GRAPHPAR = 3
 
-    Always try the the graph partitioning based ordering.
+    Always try the graph partitioning based ordering.
 
 Enum problemtype
 ----------------
@@ -9961,16 +11537,19 @@ MSK_PROBTYPE_GECO = 3
 
 MSK_PROBTYPE_LO = 0
 
-    The problem is
-    a linear optimization problem.
+    The problem is a linear optimization problem.
 
 MSK_PROBTYPE_MIXED = 5
 
+    
     General nonlinear constraints and conic constraints. This combination can not be solved by MOSEK.
+    
 
 MSK_PROBTYPE_QCQO = 2
 
+    
     The problem is a quadratically constrained optimization problem.
+    
 
 MSK_PROBTYPE_QO = 1
 
@@ -9996,322 +11575,465 @@ Enum dparam
 
 MSK_DPAR_ANA_SOL_INFEAS_TOL = 0
 
+    
     If a constraint violates its bound with an amount larger than this value,
     the constraint name, index and violation will be printed by the solution analyzer.
+    
 
 MSK_DPAR_BASIS_REL_TOL_S = 1
 
+    
     Maximum relative dual bound violation allowed in an optimal
     basic solution.
+    
 
 MSK_DPAR_BASIS_TOL_S = 2
 
+    
     Maximum absolute dual bound violation in
     an optimal basic solution.
+    
 
 MSK_DPAR_BASIS_TOL_X = 3
 
+    
     Maximum absolute primal bound violation allowed
     in an optimal basic solution.
+    
 
 MSK_DPAR_CHECK_CONVEXITY_REL_TOL = 4
 
     Convexity check tolerance.
 
-MSK_DPAR_DATA_TOL_AIJ = 5
+MSK_DPAR_DATA_SYM_MAT_TOL = 5
 
+    
+    Zero tolerance threshold for symmetric matrixes.
+    
+
+MSK_DPAR_DATA_SYM_MAT_TOL_HUGE = 6
+
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_AIJ_HUGE = 6
+MSK_DPAR_DATA_SYM_MAT_TOL_LARGE = 7
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_AIJ_LARGE = 7
+MSK_DPAR_DATA_TOL_AIJ = 8
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_BOUND_INF = 8
+MSK_DPAR_DATA_TOL_AIJ_HUGE = 9
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_BOUND_WRN = 9
+MSK_DPAR_DATA_TOL_AIJ_LARGE = 10
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_C_HUGE = 10
+MSK_DPAR_DATA_TOL_BOUND_INF = 11
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_CJ_LARGE = 11
+MSK_DPAR_DATA_TOL_BOUND_WRN = 12
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_QIJ = 12
+MSK_DPAR_DATA_TOL_C_HUGE = 13
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_DATA_TOL_X = 13
+MSK_DPAR_DATA_TOL_CJ_LARGE = 14
 
+    
     Data tolerance threshold.
+    
 
-MSK_DPAR_FEASREPAIR_TOL = 14
+MSK_DPAR_DATA_TOL_QIJ = 15
 
-    Tolerance for constraint enforcing upper bound on
-    sum of weighted violations in feasibility repair.
+    
+    Data tolerance threshold.
+    
 
-MSK_DPAR_INTPNT_CO_TOL_DFEAS = 15
+MSK_DPAR_DATA_TOL_X = 16
 
+    
+    Data tolerance threshold.
+    
+
+MSK_DPAR_INTPNT_CO_TOL_DFEAS = 17
+
+    
     Dual feasibility tolerance used by the conic interior-point optimizer.
+    
 
-MSK_DPAR_INTPNT_CO_TOL_INFEAS = 16
+MSK_DPAR_INTPNT_CO_TOL_INFEAS = 18
 
+    
     Infeasibility tolerance for the conic solver.
+    
 
-MSK_DPAR_INTPNT_CO_TOL_MU_RED = 17
+MSK_DPAR_INTPNT_CO_TOL_MU_RED = 19
 
+    
     Optimality tolerance for the conic solver.
+    
 
-MSK_DPAR_INTPNT_CO_TOL_NEAR_REL = 18
+MSK_DPAR_INTPNT_CO_TOL_NEAR_REL = 20
 
+    
     Optimality tolerance for the conic solver.
+    
 
-MSK_DPAR_INTPNT_CO_TOL_PFEAS = 19
+MSK_DPAR_INTPNT_CO_TOL_PFEAS = 21
 
+    
     Primal feasibility tolerance used by the conic interior-point optimizer.
+    
 
-MSK_DPAR_INTPNT_CO_TOL_REL_GAP = 20
+MSK_DPAR_INTPNT_CO_TOL_REL_GAP = 22
 
+    
     Relative gap termination tolerance used by the
     conic interior-point optimizer.
+    
 
-MSK_DPAR_INTPNT_NL_MERIT_BAL = 21
+MSK_DPAR_INTPNT_NL_MERIT_BAL = 23
 
+    
     Controls if the complementarity and infeasibility is converging to zero
     at about equal rates.
+    
 
-MSK_DPAR_INTPNT_NL_TOL_DFEAS = 22
+MSK_DPAR_INTPNT_NL_TOL_DFEAS = 24
 
+    
     Dual feasibility tolerance used when a nonlinear
     model is solved.
+    
 
-MSK_DPAR_INTPNT_NL_TOL_MU_RED = 23
+MSK_DPAR_INTPNT_NL_TOL_MU_RED = 25
 
     Relative complementarity gap tolerance.
 
-MSK_DPAR_INTPNT_NL_TOL_NEAR_REL = 24
+MSK_DPAR_INTPNT_NL_TOL_NEAR_REL = 26
 
+    
     Nonlinear solver optimality tolerance parameter.
+    
 
-MSK_DPAR_INTPNT_NL_TOL_PFEAS = 25
+MSK_DPAR_INTPNT_NL_TOL_PFEAS = 27
 
+    
     Primal feasibility tolerance used when a nonlinear
     model is solved.
+    
 
-MSK_DPAR_INTPNT_NL_TOL_REL_GAP = 26
+MSK_DPAR_INTPNT_NL_TOL_REL_GAP = 28
 
+    
     Relative gap termination tolerance for nonlinear problems.
+    
 
-MSK_DPAR_INTPNT_NL_TOL_REL_STEP = 27
+MSK_DPAR_INTPNT_NL_TOL_REL_STEP = 29
 
+    
     Relative step size to the boundary
     for general nonlinear optimization problems.
+    
 
-MSK_DPAR_INTPNT_TOL_DFEAS = 28
+MSK_DPAR_INTPNT_QO_TOL_DFEAS = 30
 
+    
+    Dual feasibility tolerance used when the interior-point optimizer is applied to a quadratic optimization problem..
+    
+
+MSK_DPAR_INTPNT_QO_TOL_INFEAS = 31
+
+    
+    Infeasibility tolerance employed when a quadratic optimization problem is solved.
+    
+
+MSK_DPAR_INTPNT_QO_TOL_MU_RED = 32
+
+    
+    Optimality tolerance employed when a quadratic optimization problem is solved.
+    
+
+MSK_DPAR_INTPNT_QO_TOL_NEAR_REL = 33
+
+    
+    Optimality tolerance employed when a quadratic optimization problem is solved.
+    
+
+MSK_DPAR_INTPNT_QO_TOL_PFEAS = 34
+
+    
+    Primal feasibility tolerance used when the interior-point optimizer is applied to a quadratic optimization problem.
+    
+
+MSK_DPAR_INTPNT_QO_TOL_REL_GAP = 35
+
+    
+    Relative gap termination tolerance used when the
+    interior-point optimizer is applied to a quadratic
+    optimization problem.
+    
+
+MSK_DPAR_INTPNT_TOL_DFEAS = 36
+
+    
     Dual feasibility tolerance used for
     linear and quadratic optimization problems.
+    
 
-MSK_DPAR_INTPNT_TOL_DSAFE = 29
+MSK_DPAR_INTPNT_TOL_DSAFE = 37
 
+    
     Controls the interior-point dual starting point.
+    
 
-MSK_DPAR_INTPNT_TOL_INFEAS = 30
+MSK_DPAR_INTPNT_TOL_INFEAS = 38
 
+    
     Nonlinear solver infeasibility tolerance parameter.
+    
 
-MSK_DPAR_INTPNT_TOL_MU_RED = 31
+MSK_DPAR_INTPNT_TOL_MU_RED = 39
 
     Relative complementarity gap tolerance.
 
-MSK_DPAR_INTPNT_TOL_PATH = 32
+MSK_DPAR_INTPNT_TOL_PATH = 40
 
+    
     interior-point centering aggressiveness.
+    
 
-MSK_DPAR_INTPNT_TOL_PFEAS = 33
+MSK_DPAR_INTPNT_TOL_PFEAS = 41
 
+    
     Primal feasibility tolerance used for
     linear and quadratic optimization problems.
+    
 
-MSK_DPAR_INTPNT_TOL_PSAFE = 34
+MSK_DPAR_INTPNT_TOL_PSAFE = 42
 
+    
     Controls the interior-point primal starting point.
+    
 
-MSK_DPAR_INTPNT_TOL_REL_GAP = 35
+MSK_DPAR_INTPNT_TOL_REL_GAP = 43
 
     Relative gap termination tolerance.
 
-MSK_DPAR_INTPNT_TOL_REL_STEP = 36
+MSK_DPAR_INTPNT_TOL_REL_STEP = 44
 
+    
     Relative step size to the boundary
     for linear and quadratic optimization problems.
+    
 
-MSK_DPAR_INTPNT_TOL_STEP_SIZE = 37
+MSK_DPAR_INTPNT_TOL_STEP_SIZE = 45
 
-    If the step size falls below the value of this parameter, then
-    the interior-point optimizer assumes that it is stalled. In other words the interior-point optimizer does not make any progress and therefore it is better stop.
+    
+    If the step size falls below the value of this
+    parameter, then the interior-point optimizer
+    assumes that it is stalled. In other words the
+    interior-point optimizer does not make any
+    progress and therefore it is better stop.
+    
 
-MSK_DPAR_LOWER_OBJ_CUT = 38
+MSK_DPAR_LOWER_OBJ_CUT = 46
 
+    
     Objective bound.
+    
 
-MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH = 39
+MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH = 47
 
+    
     Objective bound.
+    
 
-MSK_DPAR_MIO_DISABLE_TERM_TIME = 40
+MSK_DPAR_MIO_DISABLE_TERM_TIME = 48
 
+    
     Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+    
 
-MSK_DPAR_MIO_HEURISTIC_TIME = 41
+MSK_DPAR_MIO_MAX_TIME = 49
 
-    Time limit for the mixed-integer heuristics.
-
-MSK_DPAR_MIO_MAX_TIME = 42
-
+    
     Time limit for the mixed-integer optimizer.
+    
 
-MSK_DPAR_MIO_MAX_TIME_APRX_OPT = 43
+MSK_DPAR_MIO_NEAR_TOL_ABS_GAP = 50
 
-    Time limit for the mixed-integer optimizer.
-
-MSK_DPAR_MIO_NEAR_TOL_ABS_GAP = 44
-
+    
     Relaxed absolute optimality tolerance employed by the mixed-integer optimizer.
+    
 
-MSK_DPAR_MIO_NEAR_TOL_REL_GAP = 45
+MSK_DPAR_MIO_NEAR_TOL_REL_GAP = 51
 
+    
     The mixed-integer optimizer is terminated when this tolerance is satisfied.
+    
 
-MSK_DPAR_MIO_REL_ADD_CUT_LIMITED = 46
+MSK_DPAR_MIO_REL_GAP_CONST = 52
 
-    Controls cut generation for mixed-integer optimizer.
-
-MSK_DPAR_MIO_REL_GAP_CONST = 47
-
+    
     This value is used to compute the relative gap for the solution to an integer optimization problem.
+    
 
-MSK_DPAR_MIO_TOL_ABS_GAP = 48
+MSK_DPAR_MIO_TOL_ABS_GAP = 53
 
+    
     Absolute optimality tolerance employed by the mixed-integer optimizer.
+    
 
-MSK_DPAR_MIO_TOL_ABS_RELAX_INT = 49
+MSK_DPAR_MIO_TOL_ABS_RELAX_INT = 54
 
+    
     Integer constraint tolerance.
+    
 
-MSK_DPAR_MIO_TOL_FEAS = 50
+MSK_DPAR_MIO_TOL_FEAS = 55
 
-    Feasibility tolerance for mixed integer solver. Any solution with
-    maximum infeasibility below this value will be considered feasible.
+    
+    Feasibility tolerance for mixed integer solver.
+    
 
-MSK_DPAR_MIO_TOL_MAX_CUT_FRAC_RHS = 51
+MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT = 56
 
+    
     Controls cut generation for mixed-integer optimizer.
+    
 
-MSK_DPAR_MIO_TOL_MIN_CUT_FRAC_RHS = 52
+MSK_DPAR_MIO_TOL_REL_GAP = 57
 
-    Controls cut generation for mixed-integer optimizer.
-
-MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT = 53
-
-    Controls cut generation for mixed-integer optimizer.
-
-MSK_DPAR_MIO_TOL_REL_GAP = 54
-
+    
     Relative optimality tolerance employed by the mixed-integer optimizer.
+    
 
-MSK_DPAR_MIO_TOL_REL_RELAX_INT = 55
+MSK_DPAR_OPTIMIZER_MAX_TIME = 58
 
-    Integer constraint tolerance.
-
-MSK_DPAR_MIO_TOL_X = 56
-
-    Absolute solution tolerance used in mixed-integer optimizer.
-
-MSK_DPAR_NONCONVEX_TOL_FEAS = 57
-
-    Feasibility tolerance used by the nonconvex optimizer.
-
-MSK_DPAR_NONCONVEX_TOL_OPT = 58
-
-    Optimality tolerance used by the nonconvex optimizer.
-
-MSK_DPAR_OPTIMIZER_MAX_TIME = 59
-
+    
     Solver time limit.
+    
 
-MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP = 60
+MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP = 59
 
+    
     Absolute tolerance employed by the
     linear dependency checker.
+    
 
-MSK_DPAR_PRESOLVE_TOL_AIJ = 61
+MSK_DPAR_PRESOLVE_TOL_AIJ = 60
 
+    
     Absolute zero tolerance employed for constraint coefficients in the presolve.
+    
 
-MSK_DPAR_PRESOLVE_TOL_REL_LINDEP = 62
+MSK_DPAR_PRESOLVE_TOL_REL_LINDEP = 61
 
+    
     Relative tolerance employed by the
     linear dependency checker.
+    
 
-MSK_DPAR_PRESOLVE_TOL_S = 63
+MSK_DPAR_PRESOLVE_TOL_S = 62
 
+    
     Absolute zero tolerance employed for slack variables in the presolve.
+    
 
-MSK_DPAR_PRESOLVE_TOL_X = 64
+MSK_DPAR_PRESOLVE_TOL_X = 63
 
+    
     Absolute zero tolerance employed for variables in the presolve.
+    
 
-MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL = 65
+MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL = 64
 
-    This parameter determines when columns are dropped in incomplete cholesky factorization doing reformulation of quadratic problems.
+    
+    This parameter determines when columns are dropped in incomplete Cholesky factorization during reformulation of quadratic problems.
+    
+
+MSK_DPAR_SEMIDEFINITE_TOL_APPROX = 65
+
+    
+    Tolerance to define a matrix to be positive semidefinite.
+    
 
 MSK_DPAR_SIM_LU_TOL_REL_PIV = 66
 
+    
     Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
+    
 
 MSK_DPAR_SIMPLEX_ABS_TOL_PIV = 67
 
+    
     Absolute pivot tolerance employed by the simplex optimizers.
+    
 
 MSK_DPAR_UPPER_OBJ_CUT = 68
 
+    
     Objective bound.
+    
 
 MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH = 69
 
+    
     Objective bound.
+    
 
 Enum simdupvec
 --------------
 
 MSK_SIM_EXPLOIT_DUPVEC_FREE = 2
 
+    
     The simplex optimizer can choose freely.
+    
 
 MSK_SIM_EXPLOIT_DUPVEC_OFF = 0
 
+    
     Disallow the simplex optimizer to exploit duplicated columns.
+    
 
 MSK_SIM_EXPLOIT_DUPVEC_ON = 1
 
+    
     Allow the simplex optimizer to exploit duplicated columns.
+    
 
 Enum compresstype
 -----------------
 
 MSK_COMPRESS_FREE = 1
 
+    
     The type of compression used is chosen automatically.
+    
 
 MSK_COMPRESS_GZIP = 2
 
@@ -10339,22 +12061,34 @@ MSK_NAME_TYPE_MPS = 1
 Enum mpsformat
 --------------
 
+MSK_MPS_FORMAT_CPLEX = 3
+
+    
+    The CPLEX compatible version of the MPS format is employed.
+    
+
 MSK_MPS_FORMAT_FREE = 2
 
+    
     It is assumed that the input file satisfies the free
     MPS format. This implies that spaces
     are not allowed in names. Otherwise
     the format is free.
+    
 
 MSK_MPS_FORMAT_RELAXED = 1
 
+    
     It is assumed that the input file satisfies
     a slightly relaxed version of the MPS format.
+    
 
 MSK_MPS_FORMAT_STRICT = 0
 
+    
     It is assumed that the input file satisfies
     the MPS format strictly.
+    
 
 Enum variabletype
 -----------------
@@ -10398,8 +12132,10 @@ Enum startpointtype
 
 MSK_STARTING_POINT_CONSTANT = 2
 
+    
     The optimizer constructs a starting point by assigning a constant value to all primal and dual variables.
     This starting point is normally robust.
+    
 
 MSK_STARTING_POINT_FREE = 0
 
@@ -10407,13 +12143,17 @@ MSK_STARTING_POINT_FREE = 0
 
 MSK_STARTING_POINT_GUESS = 1
 
+    
     The optimizer guesses a starting point.
+    
 
 MSK_STARTING_POINT_SATISFY_BOUNDS = 3
 
-    The starting point is choosen to satisfy all the simple bounds on nonlinear variables. If this starting point is employed,
+    
+    The starting point is chosen to satisfy all the simple bounds on nonlinear variables. If this starting point is employed,
     then more care than usual should employed when choosing the bounds on the nonlinear variables. In particular very tight bounds
     should be avoided.
+    
 
 Enum soltype
 ------------
@@ -10465,7 +12205,9 @@ MSK_SK_FIX = 5
 
 MSK_SK_INF = 6
 
+    
     The constraint or variable is infeasible in the bounds.
+    
 
 MSK_SK_LOW = 3
 
@@ -10477,7 +12219,9 @@ MSK_SK_SUPBAS = 2
 
 MSK_SK_UNK = 0
 
+    
     The status for the constraint or variable is unknown.
+    
 
 MSK_SK_UPR = 4
 
@@ -10488,413 +12232,518 @@ Enum simreform
 
 MSK_SIM_REFORMULATION_AGGRESSIVE = 3
 
+    
     The simplex optimizer should use an aggressive reformulation strategy.
+    
 
 MSK_SIM_REFORMULATION_FREE = 2
 
+    
     The simplex optimizer can choose freely.
+    
 
 MSK_SIM_REFORMULATION_OFF = 0
 
+    
     Disallow the simplex optimizer to reformulate the problem.
+    
 
 MSK_SIM_REFORMULATION_ON = 1
 
+    
     Allow the simplex optimizer to reformulate the problem.
+    
 
 Enum iinfitem
 -------------
 
 MSK_IINF_ANA_PRO_NUM_CON = 0
 
+    
     Number of constraints in the problem.
+    
 
 MSK_IINF_ANA_PRO_NUM_CON_EQ = 1
 
+    
     Number of equality constraints.
+    
 
 MSK_IINF_ANA_PRO_NUM_CON_FR = 2
 
+    
     Number of unbounded constraints.
+    
 
 MSK_IINF_ANA_PRO_NUM_CON_LO = 3
 
+    
     Number of constraints with a lower bound and an
     infinite upper bound.
+    
 
 MSK_IINF_ANA_PRO_NUM_CON_RA = 4
 
+    
     Number of constraints with finite lower and upper bounds.
+    
 
 MSK_IINF_ANA_PRO_NUM_CON_UP = 5
 
+    
     Number of constraints with an upper bound and an infinite lower bound.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR = 6
 
+    
     Number of variables in the problem.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_BIN = 7
 
+    
     Number of binary variables.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_CONT = 8
 
+    
     Number of continuous variables.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_EQ = 9
 
+    
     Number of fixed variables.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_FR = 10
 
+    
     Number of unbounded constraints.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_INT = 11
 
+    
     Number of general integer variables.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_LO = 12
 
+    
     Number of variables with a lower bound and an
     infinite upper bound.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_RA = 13
 
+    
     Number of variables with finite lower and upper bounds.
+    
 
 MSK_IINF_ANA_PRO_NUM_VAR_UP = 14
 
+    
     Number of variables with an upper bound and an infinite lower bound.
+    
 
-MSK_IINF_CONCURRENT_FASTEST_OPTIMIZER = 15
+MSK_IINF_INTPNT_FACTOR_DIM_DENSE = 15
 
-    The type of the optimizer that finished first in a concurrent optimization.
-
-MSK_IINF_INTPNT_FACTOR_DIM_DENSE = 16
-
+    
     Dimension of the dense sub system in factorization.
+    
 
-MSK_IINF_INTPNT_ITER = 17
+MSK_IINF_INTPNT_ITER = 16
 
-    Number of interior-point iterations
-    since invoking the interior-point optimizer.
+    
+    Number of interior-point iterations since invoking the interior-point optimizer.
+    
 
-MSK_IINF_INTPNT_NUM_THREADS = 18
+MSK_IINF_INTPNT_NUM_THREADS = 17
 
+    
     Number of threads that the interior-point optimizer is using.
+    
 
-MSK_IINF_INTPNT_SOLVE_DUAL = 19
+MSK_IINF_INTPNT_SOLVE_DUAL = 18
 
+    
     Non-zero if the interior-point optimizer is solving the dual problem.
+    
 
-MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS = 20
+MSK_IINF_MIO_ABSGAP_SATISFIED = 19
 
+    
+    Non-zero if absolute gap is within tolerances.
+    
+
+MSK_IINF_MIO_CLIQUE_TABLE_SIZE = 20
+
+    
+    Size of the clique table.
+    
+
+MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS = 21
+
+    
     Number of values in the integer solution that is rounded to an integer value.
+    
 
-MSK_IINF_MIO_CONSTRUCT_SOLUTION = 21
+MSK_IINF_MIO_CONSTRUCT_SOLUTION = 22
 
+    
     If this item is positive, then MOSEK successfully constructed an initial integer feasible solution.
+    
 
-MSK_IINF_MIO_INITIAL_SOLUTION = 22
+MSK_IINF_MIO_INITIAL_SOLUTION = 23
 
+    
     Is non-zero if an initial integer solution is specified.
+    
 
-MSK_IINF_MIO_NUM_ACTIVE_NODES = 23
+MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED = 24
 
-    Number of active brabch bound nodes.
+    
+    Non-zero if absolute gap is within relaxed tolerances.
+    
 
-MSK_IINF_MIO_NUM_BASIS_CUTS = 24
+MSK_IINF_MIO_NEAR_RELGAP_SATISFIED = 25
 
-    Number of basis cuts.
+    
+    Non-zero if relative gap is within relaxed tolerances.
+    
 
-MSK_IINF_MIO_NUM_BRANCH = 25
+MSK_IINF_MIO_NODE_DEPTH = 26
 
+    
+    Depth of the last node solved.
+    
+
+MSK_IINF_MIO_NUM_ACTIVE_NODES = 27
+
+    
+    Number of active branch bound nodes.
+    
+
+MSK_IINF_MIO_NUM_BRANCH = 28
+
+    
     Number of branches performed during the optimization.
+    
 
-MSK_IINF_MIO_NUM_CARDGUB_CUTS = 26
+MSK_IINF_MIO_NUM_CLIQUE_CUTS = 29
 
-    Number of cardgub cuts.
-
-MSK_IINF_MIO_NUM_CLIQUE_CUTS = 27
-
+    
     Number of clique cuts.
+    
 
-MSK_IINF_MIO_NUM_COEF_REDC_CUTS = 28
+MSK_IINF_MIO_NUM_CMIR_CUTS = 30
 
-    Number of coef. redc. cuts.
+    
+    Number of Complemented Mixed Integer Rounding (CMIR) cuts.
+    
 
-MSK_IINF_MIO_NUM_CONTRA_CUTS = 29
+MSK_IINF_MIO_NUM_GOMORY_CUTS = 31
 
-    Number of contra cuts.
-
-MSK_IINF_MIO_NUM_DISAGG_CUTS = 30
-
-    Number of diasagg cuts.
-
-MSK_IINF_MIO_NUM_FLOW_COVER_CUTS = 31
-
-    Number of flow cover cuts.
-
-MSK_IINF_MIO_NUM_GCD_CUTS = 32
-
-    Number of gcd cuts.
-
-MSK_IINF_MIO_NUM_GOMORY_CUTS = 33
-
+    
     Number of Gomory cuts.
+    
 
-MSK_IINF_MIO_NUM_GUB_COVER_CUTS = 34
+MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS = 32
 
-    Number of GUB cover cuts.
+    
+    Number of implied bound cuts.
+    
 
-MSK_IINF_MIO_NUM_INT_SOLUTIONS = 35
+MSK_IINF_MIO_NUM_INT_SOLUTIONS = 33
 
+    
     Number of integer feasible solutions that has been found.
+    
 
-MSK_IINF_MIO_NUM_KNAPSUR_COVER_CUTS = 36
+MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS = 34
 
-    Number of knapsack cover cuts.
+    
+    Number of clique cuts.
+    
 
-MSK_IINF_MIO_NUM_LATTICE_CUTS = 37
+MSK_IINF_MIO_NUM_RELAX = 35
 
-    Number of lattice cuts.
-
-MSK_IINF_MIO_NUM_LIFT_CUTS = 38
-
-    Number of lift cuts.
-
-MSK_IINF_MIO_NUM_OBJ_CUTS = 39
-
-    Number of obj cuts.
-
-MSK_IINF_MIO_NUM_PLAN_LOC_CUTS = 40
-
-    Number of loc cuts.
-
-MSK_IINF_MIO_NUM_RELAX = 41
-
+    
     Number of relaxations solved during the optimization.
+    
 
-MSK_IINF_MIO_NUMCON = 42
+MSK_IINF_MIO_NUM_REPEATED_PRESOLVE = 36
 
-    Number of constraints in the problem solved be the mixed-integer optimizer.
+    
+    Number of times presolve was repeated at root.
+    
 
-MSK_IINF_MIO_NUMINT = 43
+MSK_IINF_MIO_NUMCON = 37
 
+    
+    Number of constraints in the problem solved by the mixed-integer optimizer.
+    
+
+MSK_IINF_MIO_NUMINT = 38
+
+    
     Number of integer variables in the problem solved be the mixed-integer optimizer.
+    
 
-MSK_IINF_MIO_NUMVAR = 44
+MSK_IINF_MIO_NUMVAR = 39
 
-    Number of variables in the problem solved be the mixed-integer optimizer.
+    
+    Number of variables in the problem solved by the mixed-integer optimizer.
+    
 
-MSK_IINF_MIO_OBJ_BOUND_DEFINED = 45
+MSK_IINF_MIO_OBJ_BOUND_DEFINED = 40
 
+    
     Non-zero if a valid objective bound has been found, otherwise zero.
+    
 
-MSK_IINF_MIO_TOTAL_NUM_CUTS = 46
+MSK_IINF_MIO_PRESOLVED_NUMBIN = 41
 
+    
+    Number of binary variables in the problem solved be the mixed-integer optimizer.
+    
+
+MSK_IINF_MIO_PRESOLVED_NUMCON = 42
+
+    
+    Number of constraints in the presolved problem.
+    
+
+MSK_IINF_MIO_PRESOLVED_NUMCONT = 43
+
+    
+    Number of continuous variables in the problem solved be the mixed-integer optimizer.
+    
+
+MSK_IINF_MIO_PRESOLVED_NUMINT = 44
+
+    
+    Number of integer variables in the presolved problem.
+    
+
+MSK_IINF_MIO_PRESOLVED_NUMVAR = 45
+
+    
+    Number of variables in the presolved problem.
+    
+
+MSK_IINF_MIO_RELGAP_SATISFIED = 46
+
+    
+    Non-zero if relative gap is within tolerances.
+    
+
+MSK_IINF_MIO_TOTAL_NUM_CUTS = 47
+
+    
     Total number of cuts generated by the mixed-integer optimizer.
+    
 
-MSK_IINF_MIO_USER_OBJ_CUT = 47
+MSK_IINF_MIO_USER_OBJ_CUT = 48
 
+    
     If it is non-zero, then the objective cut is used.
+    
 
-MSK_IINF_OPT_NUMCON = 48
+MSK_IINF_OPT_NUMCON = 49
 
+    
     Number of constraints in the problem solved when the optimizer is called.
+    
 
-MSK_IINF_OPT_NUMVAR = 49
+MSK_IINF_OPT_NUMVAR = 50
 
+    
     Number of variables in the problem solved when the optimizer is called
+    
 
-MSK_IINF_OPTIMIZE_RESPONSE = 50
+MSK_IINF_OPTIMIZE_RESPONSE = 51
 
-    The reponse code returned by optimize.
+    
+    The response code returned by optimize.
+    
 
-MSK_IINF_RD_NUMBARVAR = 51
+MSK_IINF_RD_NUMBARVAR = 52
 
     Number of variables read.
 
-MSK_IINF_RD_NUMCON = 52
+MSK_IINF_RD_NUMCON = 53
 
     Number of constraints read.
 
-MSK_IINF_RD_NUMCONE = 53
+MSK_IINF_RD_NUMCONE = 54
 
     Number of conic constraints read.
 
-MSK_IINF_RD_NUMINTVAR = 54
+MSK_IINF_RD_NUMINTVAR = 55
 
     Number of integer-constrained variables read.
 
-MSK_IINF_RD_NUMQ = 55
+MSK_IINF_RD_NUMQ = 56
 
-    Number of nonempty Q matrixes read.
+    Number of nonempty Q matrices read.
 
-MSK_IINF_RD_NUMVAR = 56
+MSK_IINF_RD_NUMVAR = 57
 
     Number of variables read.
 
-MSK_IINF_RD_PROTYPE = 57
+MSK_IINF_RD_PROTYPE = 58
 
     Problem type.
 
-MSK_IINF_SIM_DUAL_DEG_ITER = 58
+MSK_IINF_SIM_DUAL_DEG_ITER = 59
 
+    
     The number of dual degenerate iterations.
+    
 
-MSK_IINF_SIM_DUAL_HOTSTART = 59
+MSK_IINF_SIM_DUAL_HOTSTART = 60
 
+    
     If 1 then the dual simplex algorithm is solving from an advanced basis.
+    
 
-MSK_IINF_SIM_DUAL_HOTSTART_LU = 60
+MSK_IINF_SIM_DUAL_HOTSTART_LU = 61
 
     If 1 then a valid basis factorization of full rank was located and used by the dual simplex algorithm.
 
-MSK_IINF_SIM_DUAL_INF_ITER = 61
+MSK_IINF_SIM_DUAL_INF_ITER = 62
 
+    
     The number of iterations taken with dual infeasibility.
+    
 
-MSK_IINF_SIM_DUAL_ITER = 62
+MSK_IINF_SIM_DUAL_ITER = 63
 
+    
     Number of dual simplex iterations during the last optimization.
+    
 
-MSK_IINF_SIM_NETWORK_DUAL_DEG_ITER = 63
+MSK_IINF_SIM_NUMCON = 64
 
-    The number of dual network degenerate iterations.
-
-MSK_IINF_SIM_NETWORK_DUAL_HOTSTART = 64
-
-    If 1 then the dual network simplex algorithm is solving from an advanced basis.
-
-MSK_IINF_SIM_NETWORK_DUAL_HOTSTART_LU = 65
-
-    If 1 then a valid basis factorization of full rank was located and used by the dual network simplex algorithm.
-
-MSK_IINF_SIM_NETWORK_DUAL_INF_ITER = 66
-
-    The number of iterations taken with dual infeasibility in the network optimizer.
-
-MSK_IINF_SIM_NETWORK_DUAL_ITER = 67
-
-    Number of dual network simplex iterations during the last optimization.
-
-MSK_IINF_SIM_NETWORK_PRIMAL_DEG_ITER = 68
-
-    The number of primal network degenerate iterations.
-
-MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART = 69
-
-    If 1 then the primal network simplex algorithm is solving from an advanced basis.
-
-MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART_LU = 70
-
-    If 1 then a valid basis factorization of full rank was located and used by the primal network simplex algorithm.
-
-MSK_IINF_SIM_NETWORK_PRIMAL_INF_ITER = 71
-
-    The number of iterations taken with primal infeasibility in the network optimizer.
-
-MSK_IINF_SIM_NETWORK_PRIMAL_ITER = 72
-
-    Number of primal network simplex iterations during the last optimization.
-
-MSK_IINF_SIM_NUMCON = 73
-
+    
     Number of constraints in the problem solved by the simplex optimizer.
+    
 
-MSK_IINF_SIM_NUMVAR = 74
+MSK_IINF_SIM_NUMVAR = 65
 
+    
     Number of variables in the problem solved by the simplex optimizer.
+    
 
-MSK_IINF_SIM_PRIMAL_DEG_ITER = 75
+MSK_IINF_SIM_PRIMAL_DEG_ITER = 66
 
+    
     The number of primal degenerate iterations.
+    
 
-MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER = 76
+MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER = 67
 
+    
     The number of degenerate major iterations taken by the primal dual simplex algorithm.
+    
 
-MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART = 77
+MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART = 68
 
+    
     If 1 then the primal dual simplex algorithm is solving from an advanced basis.
+    
 
-MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU = 78
+MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU = 69
 
+    
     If 1 then a valid basis factorization of full rank was located and used by the primal dual simplex algorithm.
+    
 
-MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER = 79
+MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER = 70
 
+    
     The number of master iterations with dual infeasibility taken by the primal dual simplex algorithm.
+    
 
-MSK_IINF_SIM_PRIMAL_DUAL_ITER = 80
+MSK_IINF_SIM_PRIMAL_DUAL_ITER = 71
 
+    
     Number of primal dual simplex iterations during the last optimization.
+    
 
-MSK_IINF_SIM_PRIMAL_HOTSTART = 81
+MSK_IINF_SIM_PRIMAL_HOTSTART = 72
 
+    
     If 1 then the primal simplex algorithm is solving from an advanced basis.
+    
 
-MSK_IINF_SIM_PRIMAL_HOTSTART_LU = 82
+MSK_IINF_SIM_PRIMAL_HOTSTART_LU = 73
 
+    
     If 1 then a valid basis factorization of full rank was located and used by the primal simplex algorithm.
+    
 
-MSK_IINF_SIM_PRIMAL_INF_ITER = 83
+MSK_IINF_SIM_PRIMAL_INF_ITER = 74
 
+    
     The number of iterations taken with primal infeasibility.
+    
 
-MSK_IINF_SIM_PRIMAL_ITER = 84
+MSK_IINF_SIM_PRIMAL_ITER = 75
 
+    
     Number of primal simplex iterations during the last optimization.
+    
 
-MSK_IINF_SIM_SOLVE_DUAL = 85
+MSK_IINF_SIM_SOLVE_DUAL = 76
 
     Is non-zero if dual problem is solved.
 
-MSK_IINF_SOL_BAS_PROSTA = 86
+MSK_IINF_SOL_BAS_PROSTA = 77
 
+    
     Problem status of the basic solution. Updated after each optimization.
+    
 
-MSK_IINF_SOL_BAS_SOLSTA = 87
+MSK_IINF_SOL_BAS_SOLSTA = 78
 
+    
     Solution status of the basic solution. Updated after each optimization.
+    
 
-MSK_IINF_SOL_INT_PROSTA = 88
+MSK_IINF_SOL_ITG_PROSTA = 79
 
-    Deprecated.
-
-MSK_IINF_SOL_INT_SOLSTA = 89
-
-    Degrecated.
-
-MSK_IINF_SOL_ITG_PROSTA = 90
-
+    
     Problem status of the integer solution. Updated after each optimization.
+    
 
-MSK_IINF_SOL_ITG_SOLSTA = 91
+MSK_IINF_SOL_ITG_SOLSTA = 80
 
+    
     Solution status of the integer solution. Updated after each optimization.
+    
 
-MSK_IINF_SOL_ITR_PROSTA = 92
+MSK_IINF_SOL_ITR_PROSTA = 81
 
+    
     Problem status of the interior-point solution. Updated after each optimization.
+    
 
-MSK_IINF_SOL_ITR_SOLSTA = 93
+MSK_IINF_SOL_ITR_SOLSTA = 82
 
+    
     Solution status of the interior-point solution. Updated after each optimization.
+    
 
-MSK_IINF_STO_NUM_A_CACHE_FLUSHES = 94
+MSK_IINF_STO_NUM_A_REALLOC = 83
 
-    Number of times the cache of coefficient elements has been flushed.
-
-MSK_IINF_STO_NUM_A_REALLOC = 95
-
+    
     Number of times the storage for storing the linear coefficient matrix has been changed.
-
-MSK_IINF_STO_NUM_A_TRANSPOSES = 96
-
-    Number of times the coefficient matrix has been transposed.
+    
 
 Enum xmlwriteroutputtype
 ------------------------
@@ -10910,51 +12759,33 @@ MSK_WRITE_XML_MODE_ROW = 0
 Enum optimizertype
 ------------------
 
-MSK_OPTIMIZER_CONCURRENT = 10
-
-    The optimizer for nonconvex nonlinear problems.
-
-MSK_OPTIMIZER_CONIC = 2
+MSK_OPTIMIZER_CONIC = 0
 
     The optimizer for problems having conic constraints.
 
-MSK_OPTIMIZER_DUAL_SIMPLEX = 4
+MSK_OPTIMIZER_DUAL_SIMPLEX = 1
 
     The dual simplex optimizer is used.
 
-MSK_OPTIMIZER_FREE = 0
+MSK_OPTIMIZER_FREE = 2
 
     The optimizer is chosen automatically.
 
-MSK_OPTIMIZER_FREE_SIMPLEX = 6
+MSK_OPTIMIZER_FREE_SIMPLEX = 3
 
+    
     One of the simplex optimizers is used.
+    
 
-MSK_OPTIMIZER_INTPNT = 1
+MSK_OPTIMIZER_INTPNT = 4
 
     The interior-point optimizer is used.
 
-MSK_OPTIMIZER_MIXED_INT = 9
+MSK_OPTIMIZER_MIXED_INT = 5
 
     The mixed-integer optimizer.
 
-MSK_OPTIMIZER_MIXED_INT_CONIC = 8
-
-    The mixed-integer optimizer for conic and linear problems.
-
-MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX = 7
-
-    The network primal simplex optimizer is used. It is only applicable to pute network problems.
-
-MSK_OPTIMIZER_NONCONVEX = 11
-
-    The optimizer for nonconvex nonlinear problems.
-
-MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX = 5
-
-    The primal dual simplex optimizer is used.
-
-MSK_OPTIMIZER_PRIMAL_SIMPLEX = 3
+MSK_OPTIMIZER_PRIMAL_SIMPLEX = 6
 
     The primal simplex optimizer is used.
 
@@ -10963,7 +12794,9 @@ Enum presolvemode
 
 MSK_PRESOLVE_MODE_FREE = 2
 
+    
     It is decided automatically whether to presolve before the problem is optimized.
+    
 
 MSK_PRESOLVE_MODE_OFF = 0
 
@@ -10971,33 +12804,43 @@ MSK_PRESOLVE_MODE_OFF = 0
 
 MSK_PRESOLVE_MODE_ON = 1
 
+    
     The problem is presolved before it is optimized.
+    
 
 Enum miocontsoltype
 -------------------
 
 MSK_MIO_CONT_SOL_ITG = 2
 
+    
     The reported interior-point and basic solutions are
     a solution to the problem with all integer variables
     fixed at the value they have in the integer solution.
     A solution is only reported in case the
     problem has a primal feasible solution.
+    
 
 MSK_MIO_CONT_SOL_ITG_REL = 3
 
+    
     In case the problem is primal feasible
     then the reported interior-point and basic solutions
     are a solution to the problem with all integer variables
     fixed at the value they have in the integer solution.
     If the problem is primal infeasible, then the solution to the root node problem is reported.
+    
 
 MSK_MIO_CONT_SOL_NONE = 0
 
+    
     No interior-point or basic solution are reported when the mixed-integer optimizer is used.
+    
 
 MSK_MIO_CONT_SOL_ROOT = 1
 
+    
     The reported interior-point and basic solutions are a solution to the root node problem
     when mixed-integer optimizer is used.
+    
 

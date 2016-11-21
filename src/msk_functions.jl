@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.0.0.35
+# MOSEK 8.0.0.44
 
 export
   analyzenames,
@@ -287,8 +287,7 @@ export
   putlicensecode,
   putlicensedebug,
   putlicensepath,
-  putlicensewait,
-  symnamtovalue
+  putlicensewait
 
 function analyzenames(task_:: MSKtask,whichstream_:: Int32,nametype_:: Int32)
   res = disable_sigint() do
@@ -4343,14 +4342,5 @@ function putlicensewait(env_:: MSKenv,licwait_:: Int32)
   if res != 0
     throw(MosekError(res,""))
   end
-end
-
-function symnamtovalue(name_:: AbstractString)
-  value_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
-  res = disable_sigint() do
-    @msk_ccall( "symnamtovalue",Int32,(Ptr{UInt8},Ptr{UInt8},),string(name_),value_)
-  end
-  value_str = convert(String,value_)
-  (res != 0,value_str[1:searchindex(value_str,'\0')-1])
 end
 
