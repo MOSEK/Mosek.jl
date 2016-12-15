@@ -49,11 +49,17 @@ function status(t::Mosek.MSKtask, r::Int32)
       prosta = Mosek.getprosta(t,sol)
       solsta = Mosek.getsolsta(t,sol)
 
-      if     solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
-          solsta == Mosek.MSK_SOL_STA_PRIM_FEAS ||
+      if  solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS
+          :Suboptimal
+      elseif solsta == Mosek.MSK_SOL_STA_PRIM_FEAS
+          if Mosek.getnumintvar(t) > 0
+              :Suboptimal
+          else
+              :Unknown
+          end
+      if  solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
-          solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
           :Unknown
       elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
