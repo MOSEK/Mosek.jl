@@ -57,7 +57,7 @@ function status(t::Mosek.MSKtask, r::Int32)
           else
               :Unknown
           end
-      if  solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
+      elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
           solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
