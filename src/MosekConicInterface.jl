@@ -589,7 +589,12 @@ end
 MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
 
 function MathProgBase.optimize!(m::MosekMathProgConicModel)
-    m.lasttrm = Mosek.optimize(m.task)
+    try
+        m.lasttrm = Mosek.optimize(m.task)
+        Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
+    catch err
+        m.lasttrm = err.rcode
+    end
 end
 
 MathProgBase.status(m::MosekMathProgConicModel) =

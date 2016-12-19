@@ -648,7 +648,12 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
 end
 
 function MathProgBase.optimize!(m::MosekLinearQuadraticModel)
-    m.lasttrm = Mosek.optimize(m.task)
+    try
+        m.lasttrm = Mosek.optimize(m.task)
+        Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
+    catch err
+        m.lasttrm = err.rcode
+    end
 end
 
 MathProgBase.status(m::MosekLinearQuadraticModel) = status(m.task,m.lasttrm)
