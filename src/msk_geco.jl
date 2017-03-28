@@ -131,7 +131,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   numi = convert(Int,numi_)
   xx = unsafe_wrap(Array{Float64,1},xx_,(nlinfo.numvar,))
   yc = unsafe_wrap(Array{Float64,1},yc_,(nlinfo.numcon,))
-  subi = unsafe_wrap(Array{Int32,1},subi_,(numi,)) .+ 1
+  subi = unsafe_wrap(Array{Int32,1},subi_,(numi,)) .+ Int32(1)
 
   if objval != C_NULL
     unsafe_store!(objval, nlinfo.evalobj(xx))
@@ -147,7 +147,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
     grdobjval_a = unsafe_wrap(Array{Float64,1},grdobjval,(ngrdobjnz,))
     grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(ngrdobjnz,))
 
-    grdobjsub = nlinfo.grdobjsub .+ 1
+    grdobjsub = nlinfo.grdobjsub .+ Int32(1)
     nlinfo.grdobj(xx,
                   grdobjsub,
                   grdobjval_a)
@@ -170,7 +170,7 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
       ptrb = grdconptrb[i]
       n    = grdconptre[i] - grdconptrb[i]
       nlinfo.grdconi(xx,subi[i],
-                     unsafe_wrap(Array{Int32,1},grdconsub_+ptrb*4,(n,)) .+ 1,
+                     unsafe_wrap(Array{Int32,1},grdconsub_+ptrb*4,(n,)) .+ Int32(1),
                      unsafe_wrap(Array{Float64,1},grdconval +ptrb*4,(n,)))
     end
   end

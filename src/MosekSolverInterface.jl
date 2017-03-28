@@ -132,9 +132,9 @@ end
 
 function makebounds(bl_ :: Array{Float64,1},
                     bu_ :: Array{Float64,1})
-    bk = Array(Int32,length(bl_))
-    bl = Array(Float64,length(bl_))
-    bu = Array(Float64,length(bl_))
+    bk = Array{Int32}(length(bl_))
+    bl = Array{Float64}(length(bl_))
+    bu = Array{Float64}(length(bl_))
 
     for i in 1:length(bl_)
         if bl_[i] > -Inf

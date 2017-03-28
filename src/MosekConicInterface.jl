@@ -56,16 +56,16 @@ function MathProgBase.ConicModel(s::MosekSolver)
                                 0,   # numvar
                                 0,   # numcon
 
-                                Array(Int32,0),  # varmap
-                                Array(Int64,0),  # barvarij
+                                Array{Int32}(0),  # varmap
+                                Array{Int64}(0),  # barvarij
 
-                                Array(Int32,0),  # varbk
+                                Array{Int32}(0),  # varbk
 
-                                Array(Bool,0),   # binvarflag
+                                Array{Bool}(0),   # binvarflag
 
-                                Array(Int32,0),  # conslack
-                                Array(Int64,0),  # barconij
-                                Array(Int32,0),  # conbk
+                                Array{Int32}(0),  # conslack
+                                Array{Int64}(0),  # barconij
+                                Array{Int32}(0),  # conbk
                                 Mosek.MSK_RES_OK,
                                 s.options)
     loadoptions!(m)
@@ -132,19 +132,19 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
     Mosek.putmaxnumcone(m.task,numqcvar+numqccon)
     Mosek.putmaxnumbarvar(m.task,numbarvar+numbarcon)
 
-    varmap     = Array(Int32,totnumvar) # nonnegative refer to linear vars, negative to barvars
+    varmap     = Array{Int32}(totnumvar) # nonnegative refer to linear vars, negative to barvars
 
     barvarij   = zeros(Int64,totnumvar)
     barvardim  = zeros(Int32,numbarvar+numbarcon)
 
-    varbk      = Array(Int32,totnumvar)
+    varbk      = Array{Int32}(totnumvar)
 
     linvarptr = 1
     barvarptr = 1
 
     let nvar = numlinvarelm+numqcvarelm
         varbkidx = 1
-        bk = Array(Int32,nvar)
+        bk = Array{Int32}(nvar)
         for (sym,idxs_) in var_cones
             idxs = coneidxstoarray(idxs_)
 
@@ -283,7 +283,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         end
 
         # Add bounds and slacks
-        conbk = Array(Int32,M)
+        conbk = Array{Int32}(M)
         let bk = conbk
             local conptr = 1
 
@@ -367,7 +367,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         end
 
         if numbarcnz > 0
-            barvardim = Array(Int32,numbarvar+numbarcon)
+            barvardim = Array{Int32}(numbarvar+numbarcon)
             n = numbarvar+numbarcon
             barptr = zeros(Int,n+1)
             for i in barcidxs
@@ -377,9 +377,9 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 barptr[i+1] += barptr[i]
             end
 
-            barcsubi = Array(Int32,numbarcnz)
-            barcsubj = Array(Int32,numbarcnz)
-            barcval  = Array(Float64,numbarcnz)
+            barcsubi = Array{Int32}(numbarcnz)
+            barcsubj = Array{Int32}(numbarcnz)
+            barcval  = Array{Float64}(numbarcnz)
             for i in barcidxs
                 j = -varmap[i]
                 L = Mosek.getdimbarvarj(m.task,j)
@@ -725,7 +725,7 @@ end
 
 
 function arepeat{Tv}(a :: Array{Tv,1}, n :: Int)
-    res = Array(Tv,length(a)*n)
+    res = Array{Tv}(length(a)*n)
     m   = length(a)
     for i in 1:length(res):m
         res[i:i+m-1] = a
@@ -734,7 +734,7 @@ function arepeat{Tv}(a :: Array{Tv,1}, n :: Int)
 end
 
 function erepeat{Tv}(a :: Array{Tv,1}, n :: Int)
-    res = Array(Tv,length(a)*n)
+    res = Array{Tv}(length(a)*n)
     m   = length(a)
     for i in 0:length(a)-1
         res[i*n+1:(i+1)*n] = a[i]
@@ -762,8 +762,8 @@ end
 #internal
 function lintriltoij(Ls::Array{Int64,1}, d::Int32)
     n = length(Ls)
-    ii = Array(Int32,length(Ls))
-    jj = Array(Int32,length(Ls))
+    ii = Array{Int32}(length(Ls))
+    jj = Array{Int32}(length(Ls))
     for (k,L) in enumerate(Ls)
         i,j = lintriltoij(L,d)
         ii[k] = i
@@ -800,7 +800,7 @@ ijtolintril(ii::Array{Int32,1}, jj::Array{Int32,1}, n::Int32) =
 #
 function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
     if length(Ls) == 0
-        Array(Int32,0),Array(Int32,0),Array(Float64,0)
+        Array{Int32}(0),Array{Int32}(0),Array{Float64}(0)
     else
         perm = sortperm(Ls)
         # count unique

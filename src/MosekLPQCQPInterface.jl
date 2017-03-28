@@ -30,19 +30,19 @@ end
 
 MathProgBase.LinearQuadraticModel(s::MosekSolver) =
   MosekLinearQuadraticModel(Mosek.maketask(),
-                            Array(Bool,0),
+                            Array{Bool}(0),
                             0,
                             0,
-                            Array(Int32,0),
-                            Array(Float64,0),
-                            Array(Float64,0),
+                            Array{Int32}(0),
+                            Array{Float64}(0),
+                            Array{Float64}(0),
 
-                            Array(Int32,0),
-                            Array(Float64,0),
-                            Array(Float64,0),
+                            Array{Int32}(0),
+                            Array{Float64}(0),
+                            Array{Float64}(0),
 
-                            Array(Int32,0),
-                            Array(Int32,0),
+                            Array{Int32}(0),
+                            Array{Int32}(0),
 
                             Mosek.MSK_RES_OK,
 
@@ -102,7 +102,7 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
     m.numvar = length(m.bkx)
     m.numcon = length(m.bkc)
     m.lincon = Int32[1:nrows;]
-    m.quadcon = Array(Int32,0)
+    m.quadcon = Array{Int32}(0)
     m.binvarflags = fill(false,m.numvar)
 
     # input coefficients
@@ -381,9 +381,9 @@ end
 
 function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
     numnz = sum(Int[ Mosek.getarownumnz(m.task,i) for i in 1:m.numcon ])
-    asubi = Array(Int32,numnz)
-    asubj = Array(Int32,numnz)
-    aval  = Array(Float64,numnz)
+    asubi = Array{Int32}(numnz)
+    asubj = Array{Int32}(numnz)
+    aval  = Array{Float64}(numnz)
 
     let ptr = 1
         for i in 1:m.numcon
@@ -635,7 +635,7 @@ MathProgBase.getbarrieriter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.ta
 MathProgBase.setwarmstart!{T}(m::MosekLinearQuadraticModel, v::Array{T,1}) = MathProgBase.setwarmstart!(m,convert(Array{Float64,1},v))
 function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float64,1})
     n = min(m.numvar,length(v))
-    vals = Array(Float64, n)
+    vals = Array{Float64}( n)
     vals[:] = v[1:n]
 
     nanidxs = find(isnan,vals)

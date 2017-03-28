@@ -52,7 +52,7 @@ module Mosek
     nlinfo:: Any
 
     function MSKtask(env::MSKenv)
-      temp = Array(Ptr{Void}, 1)
+      temp = Array{Ptr{Void}}(1)
       res = @msk_ccall(maketask, Int32, (Ptr{Void}, Int32, Int32, Ptr{Void}), env.env, 0, 0, temp)
 
       if res != MSK_RES_OK
@@ -73,7 +73,7 @@ module Mosek
     end
 
     function MSKtask(t::MSKtask)
-      temp = Array(Ptr{Void}, 1)
+      temp = Array{Ptr{Void}}(1)
       res = @msk_ccall(clonetask, Int32, (Ptr{Void}, Ptr{Void}), t.task, temp)
 
       if res != MSK_RES_OK
@@ -116,7 +116,7 @@ module Mosek
   # ------------
   # TODO: Support other argument
   function makeenv()
-    temp = Array(Ptr{Void}, 1)
+    temp = Array{Ptr{Void}}(1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
     if res != 0
       # TODO: Actually use result code
@@ -126,7 +126,7 @@ module Mosek
   end
 
   function makeenv(func::Function)
-      temp = Array(Ptr{Void}, 1)
+      temp = Array{Ptr{Void}}(1)
       res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
       if res != 0
           # TODO: Actually use result code
@@ -191,7 +191,7 @@ module Mosek
   function deletetask(t::MSKtask)
     if t.task != C_NULL
         if ! t.borrowed
-            temp = Array(Ptr{Void},1)
+            temp = Array{Ptr{Void}}(1)
             temp[1] = t.task
             @msk_ccall(deletetask,Int32,(Ptr{Ptr{Void}},), temp)
         end
@@ -201,7 +201,7 @@ module Mosek
 
   function deleteenv(e::MSKenv)
     if e.env != C_NULL
-      temp = Array(Ptr{Void},1)
+      temp = Array{Ptr{Void}}(1)
       temp[1] = t.env
       @msk_ccall(deleteenv,Int32,(Ptr{Ptr{Void}},), temp)
       e.env = C_NULL
@@ -209,12 +209,12 @@ module Mosek
   end
 
   function getlasterror(t::MSKtask)
-    lasterrcode = Array(Cint,1)
-    lastmsglen = Array(Cint,1)
+    lasterrcode = Array{Cint}(1)
+    lastmsglen = Array{Cint}(1)
 
     @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, 0, lastmsglen, C_NULL)
-    lastmsg = Array(UInt8,lastmsglen[1])
+    lastmsg = Array{UInt8}(lastmsglen[1])
     @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
     convert(String,lastmsg[1:lastmsglen[1]-1])
