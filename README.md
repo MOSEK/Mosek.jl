@@ -28,26 +28,33 @@ Use the Julia package manager to install Mosek.jl:
 Pkg.add("Mosek")
 ```
     
-When installing, the installer will look for the MOSEK library in following places:
-- First, if the environment variable `MOSEKBINDIR` is defined, it will look for the MOSEK library in the directory it points to. I.e. it must point the the `bin/` directory in the MOSEK distro.
-- If `MOSEKBINDIR` is undefined or it points to an invalid directory,
-  the installer will look for the MOSEK distribution in the user's
-  home directory. This usually resolves to:
-  - OS X: `/Users/username`
-  - Linux: `/home/username`
-  - Windows: `C:\Users\username`
-- If no usable MOSEK installation is found here, the installer will
+The `Mosek.jl` package requires the MOSEK distribution binaries run.Upon
+installation it will attempt to either local an installed MOSEK or download and
+install from the MOSEK website (www.mosek.com):
+
+1. If the environment variable `MOSEKBINDIR` is defined, the installer will assume that this directory contains the necessary libraries. If it does not, the installer will fail.
+2. If the current `MOSEK.lj` installation uses a user-defined MOSEK and this is a valid version, this will be used.
+3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used. 
+4. If no usable MOSEK installation is found here, the installer will
   attempt to download and unpack the latest distro. In this case doing
   `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
 
 If the MOSEK distro installation directory is moved it is necessary to rebuild the package using
-
-
 ```
 Pkg.build("Mosek")
 ```
 
-Furthermore, to run an optimization a license is required (these are
+If you have previously installed `Mosek.jl` using a pre-installed
+MOSEK distro, setting the `MOSEKJL_FORCE_DOWNLOAD=YES` will force the
+installer to download MOSEK from the web instead of using the old
+version.
+
+Note that environment variables can be set temporarily from Julia as
+```
+ENV["MOSEKBINDIR"] = "/home/myname/lib"
+```
+
+Furthermore, a license file is required to use MOSEK (these are
 free for academic use). MOSEK will look first for the enironment
 variable `MOSEKLM_LICENSE_FILE` which, if defined, must point to the relevant
 license file. If this is not defined, MOSEK will look for a file

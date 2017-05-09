@@ -83,6 +83,14 @@ instmethod =
         nothing
     end
 
+curmosekbindir = 
+    try
+        open(joinpath(bindepsdir,"mosekbindir"),"r") do f
+            strip(readstring(f))
+        end
+    catch
+        nothing
+    end
 forcedownload = haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
 
 mskbindir =
@@ -109,9 +117,10 @@ mskbindir =
 # 2a. If last build used a user-specified MOSEK, we check if that is still valid and use that again
     elseif ! forcedownload && 
         instmethod == "external" &&
-        bindirIsCurrentVersion(joinpath(bindepsdir,"src","mosek",mskvmajor,"tools","platform",mskplatform,"bin"))
+        curmosekbindir != nothing &&
+        bindirIsCurrentVersion(curmosekbindir)
 
-        joinpath(bindepsdir,"src","mosek",mskvmajor,"tools","platform",mskplatform,"bin")        
+        curmosekbindir
 # 2b. Otherwise, look in the UNIX default installation path
     elseif ! forcedownload && 
         haskey(ENV,"HOME") &&
@@ -201,6 +210,9 @@ else
 
     open(joinpath(bindepsdir,"inst_method"),"w") do f
         write(f,instmethod)
+    end
+    open(joinpath(bindepsdir,"mosekbindir"),"w") do f
+        write(f,mskbindir)
     end
 
 
