@@ -57,7 +57,13 @@ end
 
 function bindirIsCurrentVersion(bindir)
     ver = versionFromBindir(bindir)
-    return ver != nothing && ver[1] == mskvmajor && ver[2] == mskvminor
+    if ver != nothing
+        ver = split(ver,".")
+        
+        return ver[1] == mskvmajor && ver[2] == mskvminor
+    else
+        return false
+    end
 end
 
 
@@ -77,21 +83,37 @@ instmethod =
         nothing
     end
 
-usepreinstalled = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD") && instmethod != "internal"
+forcedownload = = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
+usepreinstalled = instmethod == "external"
 
 mskbindir =
-# 1. Is MOSEKBINDIR set? If so this must point to the binaries dir in the MOSEK DISTRO
-    if  usepreinstalled &&
-        haskey(ENV,"MOSEKBINDIR")  &&
-        bindirIsCurrentVersion(ENV["MOSEKBINDIR"])
-
+# 1. If MOSEKBINDIR we use that path (and if it is not valid we produce an error message)
+    if  ! forcedownload && haskey(ENV,"MOSEKBINDIR")
+        
+        mosekbindir = ENV["MOSEKBINDIR"]
+        
+        if ! bindirIsCurrentVersion(mosekbindir)
+            error("MOSEKBINDIR ($mosekbindir) does not point to a MOSEK bin directory")
+        end
         instmethod = "external"
     
-        ENV["MOSEKBINDIR"]
-    elseif ! usepreinstalled && haskey(ENV,"MOSEK_8_0_BINDIR") && bindirIsCurrentVersion(ENV["MOSEKBINDIR"])
+        mosekbindir
+    elseif ! forcedownload && haskey(ENV,"MOSEK_8_0_BINDIR")
+        mosekbindir = ENV["MOSEK_8_0_BINDIR"]
+        
+        if ! bindirIsCurrentVersion(mosekbindir)
+            error("MOSEK_8_0_BINDIR ($mosekbindir) does not point to a MOSEK bin directory")
+        end
         instmethod = "external"
-        ENV["MOSEK_8_0_BINDIR"]
-# 2a. Otherwise, use the default installation path (Linux)
+    
+        mosekbindir
+# 2a. If last build used a user-specified MOSEK, we check if that is still valid and use that again
+    elseif ! forcedownload &&
+        usepreinstalled &&
+        bindirIsCurrentVersion(joinpath(bindepsdir,"src","mosek",mskvmajor,"tools","platform",mskplatform,"bin"))
+
+        joinpath(bindepsdir,"src","mosek",mskvmajor,"tools","platform",mskplatform,"bin")        
+# 2b. Otherwise, look in the UNIX default installation path
     elseif usepreinstalled &&
         haskey(ENV,"HOME") &&
         bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
@@ -99,7 +121,7 @@ mskbindir =
         instmethod = "external"
         
         joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin")
-# 2b. Windows default install path
+# 2c. Windows default install path
     elseif usepreinstalled &&
         haskey(ENV,"HOMEDRIVE") &&
         haskey(ENV,"HOMEPATH") &&
