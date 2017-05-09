@@ -83,8 +83,7 @@ instmethod =
         nothing
     end
 
-forcedownload = = ! haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
-usepreinstalled = instmethod == "external"
+forcedownload = haskey(ENV,"MOSEKJL_FORCE_DOWNLOAD")
 
 mskbindir =
 # 1. If MOSEKBINDIR we use that path (and if it is not valid we produce an error message)
@@ -108,13 +107,13 @@ mskbindir =
     
         mosekbindir
 # 2a. If last build used a user-specified MOSEK, we check if that is still valid and use that again
-    elseif ! forcedownload &&
-        usepreinstalled &&
+    elseif ! forcedownload && 
+        instmethod == "external" &&
         bindirIsCurrentVersion(joinpath(bindepsdir,"src","mosek",mskvmajor,"tools","platform",mskplatform,"bin"))
 
         joinpath(bindepsdir,"src","mosek",mskvmajor,"tools","platform",mskplatform,"bin")        
 # 2b. Otherwise, look in the UNIX default installation path
-    elseif usepreinstalled &&
+    elseif ! forcedownload && 
         haskey(ENV,"HOME") &&
         bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
 
@@ -122,7 +121,7 @@ mskbindir =
         
         joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin")
 # 2c. Windows default install path
-    elseif usepreinstalled &&
+    elseif ! forcedownload && 
         haskey(ENV,"HOMEDRIVE") &&
         haskey(ENV,"HOMEPATH") &&
         bindirIsCurrentVersion(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","8","tools","platform",mskplatform,"bin"))
