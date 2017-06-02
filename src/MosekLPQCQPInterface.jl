@@ -28,8 +28,8 @@ type MosekNonlinearModel <: MathProgBase.AbstractLinearQuadraticModel
     m :: MosekLinearQuadraticModel
 end
 
-MathProgBase.LinearQuadraticModel(s::MosekSolver) =
-  MosekLinearQuadraticModel(Mosek.maketask(),
+function MathProgBase.LinearQuadraticModel(s::MosekSolver) 
+  r = MosekLinearQuadraticModel(Mosek.maketask(),
                             Array{Bool}(0),
                             0,
                             0,
@@ -47,7 +47,9 @@ MathProgBase.LinearQuadraticModel(s::MosekSolver) =
                             Mosek.MSK_RES_OK,
 
                             s.options)
-
+    loadoptions!(r)
+    r
+end
 ##############################################################
 ## Linear
 ##############################################################
