@@ -2,7 +2,7 @@ import Mosek
 try
     Pkg.installed("JuMP")
     using JuMP
-    using FactCheck
+    using Base.Test
     using Base.Test
 
     solver = Mosek.MosekSolver(QUIET=false)
@@ -23,8 +23,6 @@ try
     include(joinpath(Pkg.dir("JuMP"),"test","qcqpmodel.jl"))
     include(joinpath(Pkg.dir("JuMP"),"test","nonlinear.jl"))
     include(joinpath(Pkg.dir("JuMP"),"test","sdp.jl"))
-
-    FactCheck.exitstatus()
 catch
     # If convex not installed, skip this test
 end

@@ -1,2484 +1,2484 @@
 import Mosek
-using FactCheck
+using Base.Test
 
 vmajor,vminor,vbuild,brevision = Mosek.getversion()
 
 if vmajor == 8 && vminor == 0
-    facts("[Mosek_consts]") do
-        ok,r = Mosek.symnamtovalue("MSK_SOLVE_DUAL"); @fact r == "$(Mosek.MSK_SOLVE_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOLVE_FREE"); @fact r == "$(Mosek.MSK_SOLVE_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOLVE_PRIMAL"); @fact r == "$(Mosek.MSK_SOLVE_PRIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PI_CON"); @fact r == "$(Mosek.MSK_PI_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PI_CONE"); @fact r == "$(Mosek.MSK_PI_CONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PI_VAR"); @fact r == "$(Mosek.MSK_PI_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ACC_CON"); @fact r == "$(Mosek.MSK_ACC_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ACC_VAR"); @fact r == "$(Mosek.MSK_ACC_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_BASIS"); @fact r == "$(Mosek.MSK_SENSITIVITY_TYPE_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION"); @fact r == "$(Mosek.MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_UPLO_LO"); @fact r == "$(Mosek.MSK_UPLO_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_UPLO_UP"); @fact r == "$(Mosek.MSK_UPLO_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_DUAL"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_NONE"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL_DUAL"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_BAS_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_BAS_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_DATA_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_DATA_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_DEBUG_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_DEBUG_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_INT_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_INT_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_ITR_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_ITR_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_MIO_DEBUG_STRING"); @fact r == "$(Mosek.MSK_SPAR_MIO_DEBUG_STRING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_COMMENT_SIGN"); @fact r == "$(Mosek.MSK_SPAR_PARAM_COMMENT_SIGN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_READ_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_PARAM_READ_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_WRITE_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_PARAM_WRITE_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_BOU_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_BOU_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_OBJ_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_OBJ_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RAN_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_RAN_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RHS_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_RHS_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_REMOTE_ACCESS_TOKEN"); @fact r == "$(Mosek.MSK_SPAR_REMOTE_ACCESS_TOKEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_RES_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_LOW"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_LOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_UPR"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_UPR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_LOW"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_LOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_UPR"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_UPR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_STAT_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_KEY"); @fact r == "$(Mosek.MSK_SPAR_STAT_KEY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_NAME"); @fact r == "$(Mosek.MSK_SPAR_STAT_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_WRITE_LP_GEN_VAR_NAME"); @fact r == "$(Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_BASIS"); @fact r == "$(Mosek.MSK_IPAR_ANA_SOL_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_PRINT_VIOLATED"); @fact r == "$(Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"); @fact r == "$(Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_UPDATE_SOL_INFO"); @fact r == "$(Mosek.MSK_IPAR_AUTO_UPDATE_SOL_INFO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE"); @fact r == "$(Mosek.MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_CLEAN_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_BI_CLEAN_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_MAX_ITER"); @fact r == "$(Mosek.MSK_IPAR_BI_IGNORE_MAX_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_NUM_ERROR"); @fact r == "$(Mosek.MSK_IPAR_BI_IGNORE_NUM_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_BI_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CACHE_LICENSE"); @fact r == "$(Mosek.MSK_IPAR_CACHE_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CHECK_CONVEXITY"); @fact r == "$(Mosek.MSK_IPAR_CHECK_CONVEXITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_COMPRESS_STATFILE"); @fact r == "$(Mosek.MSK_IPAR_COMPRESS_STATFILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_GENERIC_NAMES"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_GENERIC_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_PREFER_PRIMAL"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_PREFER_PRIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_AUTO"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_AUTO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_BASIS"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_DIFF_STEP"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_DIFF_STEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_HOTSTART"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_COR"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_COR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MULTI_THREAD"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MULTI_THREAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_OFF_COL_TRH"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_ORDER_METHOD"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_ORDER_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_REGULARIZATION_USE"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_REGULARIZATION_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SCALING"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_SCALING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SOLVE_FORM"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_SOLVE_FORM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_STARTING_POINT"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_STARTING_POINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_DEBUG"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_DEBUG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_PAUSE_TIME"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_PAUSE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_TRH_EXPIRY_WRN"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_TRH_EXPIRY_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG"); @fact r == "$(Mosek.MSK_IPAR_LOG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_ANA_PRO"); @fact r == "$(Mosek.MSK_IPAR_LOG_ANA_PRO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI"); @fact r == "$(Mosek.MSK_IPAR_LOG_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_BI_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CHECK_CONVEXITY"); @fact r == "$(Mosek.MSK_IPAR_LOG_CHECK_CONVEXITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CUT_SECOND_OPT"); @fact r == "$(Mosek.MSK_IPAR_LOG_CUT_SECOND_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_EXPAND"); @fact r == "$(Mosek.MSK_IPAR_LOG_EXPAND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FACTOR"); @fact r == "$(Mosek.MSK_IPAR_LOG_FACTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FEAS_REPAIR"); @fact r == "$(Mosek.MSK_IPAR_LOG_FEAS_REPAIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FILE"); @fact r == "$(Mosek.MSK_IPAR_LOG_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_HEAD"); @fact r == "$(Mosek.MSK_IPAR_LOG_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INFEAS_ANA"); @fact r == "$(Mosek.MSK_IPAR_LOG_INFEAS_ANA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INTPNT"); @fact r == "$(Mosek.MSK_IPAR_LOG_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO"); @fact r == "$(Mosek.MSK_IPAR_LOG_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_MIO_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_LOG_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_ORDER"); @fact r == "$(Mosek.MSK_IPAR_LOG_ORDER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_PRESOLVE"); @fact r == "$(Mosek.MSK_IPAR_LOG_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_RESPONSE"); @fact r == "$(Mosek.MSK_IPAR_LOG_RESPONSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY"); @fact r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY_OPT"); @fact r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_MINOR"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM_MINOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_STORAGE"); @fact r == "$(Mosek.MSK_IPAR_LOG_STORAGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MAX_NUM_WARNINGS"); @fact r == "$(Mosek.MSK_IPAR_MAX_NUM_WARNINGS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_BRANCH_DIR"); @fact r == "$(Mosek.MSK_IPAR_MIO_BRANCH_DIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CONSTRUCT_SOL"); @fact r == "$(Mosek.MSK_IPAR_MIO_CONSTRUCT_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CLIQUE"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_CLIQUE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CMIR"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_CMIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_GMI"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_GMI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_IMPLIED_BOUND"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_IMPLIED_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_KNAPSACK_COVER"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_KNAPSACK_COVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_SELECTION_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_SELECTION_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_HEURISTIC_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_HEURISTIC_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_BRANCHES"); @fact r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_BRANCHES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_RELAXS"); @fact r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_RELAXS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_SOLUTIONS"); @fact r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MODE"); @fact r == "$(Mosek.MSK_IPAR_MIO_MODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MT_USER_CB"); @fact r == "$(Mosek.MSK_IPAR_MIO_MT_USER_CB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_MIO_NODE_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_MIO_NODE_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE"); @fact r == "$(Mosek.MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PROBING_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_PROBING_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_RINS_MAX_NODES"); @fact r == "$(Mosek.MSK_IPAR_MIO_RINS_MAX_NODES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_ROOT_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_MIO_ROOT_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_VB_DETECTION_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_VB_DETECTION_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MT_SPINCOUNT"); @fact r == "$(Mosek.MSK_IPAR_MT_SPINCOUNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_NUM_THREADS"); @fact r == "$(Mosek.MSK_IPAR_NUM_THREADS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_MAX_TERMS_PER_LINE"); @fact r == "$(Mosek.MSK_IPAR_OPF_MAX_TERMS_PER_LINE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HEADER"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_HEADER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HINTS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_HINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PARAMETERS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_PARAMETERS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PROBLEM"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_BAS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_BAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITG"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITR"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOLUTIONS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_CASE_NAME"); @fact r == "$(Mosek.MSK_IPAR_PARAM_READ_CASE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_IGN_ERROR"); @fact r == "$(Mosek.MSK_IPAR_PARAM_READ_IGN_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_USE"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_USE"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_COMPRESSED"); @fact r == "$(Mosek.MSK_IPAR_READ_DATA_COMPRESSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_READ_DATA_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DEBUG"); @fact r == "$(Mosek.MSK_IPAR_READ_DEBUG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_KEEP_FREE_CON"); @fact r == "$(Mosek.MSK_IPAR_READ_KEEP_FREE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU"); @fact r == "$(Mosek.MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_QUOTED_NAMES"); @fact r == "$(Mosek.MSK_IPAR_READ_LP_QUOTED_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_TASK_IGNORE_PARAM"); @fact r == "$(Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_ALL"); @fact r == "$(Mosek.MSK_IPAR_SENSITIVITY_ALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_TYPE"); @fact r == "$(Mosek.MSK_IPAR_SENSITIVITY_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_BASIS_FACTOR_USE"); @fact r == "$(Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DEGEN"); @fact r == "$(Mosek.MSK_IPAR_SIM_DEGEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_CRASH"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_CRASH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_EXPLOIT_DUPVEC"); @fact r == "$(Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART"); @fact r == "$(Mosek.MSK_IPAR_SIM_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IPAR_SIM_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_INTEGER"); @fact r == "$(Mosek.MSK_IPAR_SIM_INTEGER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_SIM_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_NUM_SETBACKS"); @fact r == "$(Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_NON_SINGULAR"); @fact r == "$(Mosek.MSK_IPAR_SIM_NON_SINGULAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_CRASH"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_CRASH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFACTOR_FREQ"); @fact r == "$(Mosek.MSK_IPAR_SIM_REFACTOR_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFORMULATION"); @fact r == "$(Mosek.MSK_IPAR_SIM_REFORMULATION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SAVE_LU"); @fact r == "$(Mosek.MSK_IPAR_SIM_SAVE_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING"); @fact r == "$(Mosek.MSK_IPAR_SIM_SCALING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING_METHOD"); @fact r == "$(Mosek.MSK_IPAR_SIM_SCALING_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SOLVE_FORM"); @fact r == "$(Mosek.MSK_IPAR_SIM_SOLVE_FORM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_STABILITY_PRIORITY"); @fact r == "$(Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SWITCH_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_BASIC"); @fact r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_RANGED"); @fact r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_NAME_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_SOL_READ_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOLUTION_CALLBACK"); @fact r == "$(Mosek.MSK_IPAR_SOLUTION_CALLBACK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_TIMING_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_TIMING_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_CONSTRAINTS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_HEAD"); @fact r == "$(Mosek.MSK_IPAR_WRITE_BAS_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_VARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_BAS_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_COMPRESSED"); @fact r == "$(Mosek.MSK_IPAR_WRITE_DATA_COMPRESSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_DATA_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_PARAM"); @fact r == "$(Mosek.MSK_IPAR_WRITE_DATA_PARAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_FREE_CON"); @fact r == "$(Mosek.MSK_IPAR_WRITE_FREE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES_IO"); @fact r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_CONSTRAINTS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_HEAD"); @fact r == "$(Mosek.MSK_IPAR_WRITE_INT_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_VARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_INT_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_FULL_OBJ"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_FULL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_LINE_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_QUOTED_NAMES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_QUOTED_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_STRICT_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_STRICT_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_TERMS_PER_LINE"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_MPS_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_MPS_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_MPS_INT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_MPS_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_PRECISION"); @fact r == "$(Mosek.MSK_IPAR_WRITE_PRECISION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_BARVARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_CONSTRAINTS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_HEAD"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_VARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_TASK_INC_SOL"); @fact r == "$(Mosek.MSK_IPAR_WRITE_TASK_INC_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_XML_MODE"); @fact r == "$(Mosek.MSK_IPAR_WRITE_XML_MODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_ILLPOSED_CER"); @fact r == "$(Mosek.MSK_SOL_STA_DUAL_ILLPOSED_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_DUAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_INTEGER_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_INTEGER_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_INTEGER_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_ILLPOSED_CER"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_ILLPOSED_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_UNKNOWN"); @fact r == "$(Mosek.MSK_SOL_STA_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MAXIMIZE"); @fact r == "$(Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MINIMIZE"); @fact r == "$(Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLC"); @fact r == "$(Mosek.MSK_SOL_ITEM_SLC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLX"); @fact r == "$(Mosek.MSK_SOL_ITEM_SLX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SNX"); @fact r == "$(Mosek.MSK_SOL_ITEM_SNX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUC"); @fact r == "$(Mosek.MSK_SOL_ITEM_SUC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUX"); @fact r == "$(Mosek.MSK_SOL_ITEM_SUX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XC"); @fact r == "$(Mosek.MSK_SOL_ITEM_XC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XX"); @fact r == "$(Mosek.MSK_SOL_ITEM_XX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_Y"); @fact r == "$(Mosek.MSK_SOL_ITEM_Y)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_FR"); @fact r == "$(Mosek.MSK_BK_FR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_FX"); @fact r == "$(Mosek.MSK_BK_FX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_LO"); @fact r == "$(Mosek.MSK_BK_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_RA"); @fact r == "$(Mosek.MSK_BK_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_UP"); @fact r == "$(Mosek.MSK_BK_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_ALWAYS"); @fact r == "$(Mosek.MSK_BI_ALWAYS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_IF_FEASIBLE"); @fact r == "$(Mosek.MSK_BI_IF_FEASIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_NEVER"); @fact r == "$(Mosek.MSK_BI_NEVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_NO_ERROR"); @fact r == "$(Mosek.MSK_BI_NO_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_RESERVERED"); @fact r == "$(Mosek.MSK_BI_RESERVERED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_DOWN"); @fact r == "$(Mosek.MSK_BRANCH_DIR_DOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_FAR"); @fact r == "$(Mosek.MSK_BRANCH_DIR_FAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_FREE"); @fact r == "$(Mosek.MSK_BRANCH_DIR_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_GUIDED"); @fact r == "$(Mosek.MSK_BRANCH_DIR_GUIDED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_NEAR"); @fact r == "$(Mosek.MSK_BRANCH_DIR_NEAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_PSEUDOCOST"); @fact r == "$(Mosek.MSK_BRANCH_DIR_PSEUDOCOST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_ROOT_LP"); @fact r == "$(Mosek.MSK_BRANCH_DIR_ROOT_LP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_UP"); @fact r == "$(Mosek.MSK_BRANCH_DIR_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_DUAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_INTPNT_FACTOR_NUM_NZ"); @fact r == "$(Mosek.MSK_LIINF_INTPNT_FACTOR_NUM_NZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_INTPNT_ITER"); @fact r == "$(Mosek.MSK_LIINF_MIO_INTPNT_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_PRESOLVED_ANZ"); @fact r == "$(Mosek.MSK_LIINF_MIO_PRESOLVED_ANZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_SIM_MAXITER_SETBACKS"); @fact r == "$(Mosek.MSK_LIINF_MIO_SIM_MAXITER_SETBACKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_SIMPLEX_ITER"); @fact r == "$(Mosek.MSK_LIINF_MIO_SIMPLEX_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMANZ"); @fact r == "$(Mosek.MSK_LIINF_RD_NUMANZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMQNZ"); @fact r == "$(Mosek.MSK_LIINF_RD_NUMQNZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_FREE"); @fact r == "$(Mosek.MSK_SIM_HOTSTART_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_NONE"); @fact r == "$(Mosek.MSK_SIM_HOTSTART_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_STATUS_KEYS"); @fact r == "$(Mosek.MSK_SIM_HOTSTART_STATUS_KEYS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INFEAS_ANA"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_OPTIMIZER"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_READ"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_ROOT_CUTGEN"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_ROOT_CUTGEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_TO_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_TO_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_WRITE"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_END_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_FULL_CONVEXITY_CHECK"); @fact r == "$(Mosek.MSK_CALLBACK_END_FULL_CONVEXITY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INFEAS_ANA"); @fact r == "$(Mosek.MSK_CALLBACK_END_INFEAS_ANA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_END_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_CALLBACK_END_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_END_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_OPTIMIZER"); @fact r == "$(Mosek.MSK_CALLBACK_END_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_REPAIR"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_QCQO_REFORMULATE"); @fact r == "$(Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_READ"); @fact r == "$(Mosek.MSK_CALLBACK_END_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_ROOT_CUTGEN"); @fact r == "$(Mosek.MSK_CALLBACK_END_ROOT_CUTGEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_TO_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_END_TO_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_WRITE"); @fact r == "$(Mosek.MSK_CALLBACK_END_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_IM_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SENSIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK"); @fact r == "$(Mosek.MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_IM_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_CALLBACK_IM_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LU"); @fact r == "$(Mosek.MSK_CALLBACK_IM_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_ORDER"); @fact r == "$(Mosek.MSK_CALLBACK_IM_ORDER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SENSIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_QO_REFORMULATE"); @fact r == "$(Mosek.MSK_CALLBACK_IM_QO_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_READ"); @fact r == "$(Mosek.MSK_CALLBACK_IM_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_ROOT_CUTGEN"); @fact r == "$(Mosek.MSK_CALLBACK_IM_ROOT_CUTGEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_NEW_INT_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_NEW_INT_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF"); @fact r == "$(Mosek.MSK_CALLBACK_READ_OPF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF_SECTION"); @fact r == "$(Mosek.MSK_CALLBACK_READ_OPF_SECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_SOLVING_REMOTE"); @fact r == "$(Mosek.MSK_CALLBACK_SOLVING_REMOTE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_WRITE_OPF"); @fact r == "$(Mosek.MSK_CALLBACK_WRITE_OPF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SYMMAT_TYPE_SPARSE"); @fact r == "$(Mosek.MSK_SYMMAT_TYPE_SPARSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTON"); @fact r == "$(Mosek.MSK_FEATURE_PTON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTS"); @fact r == "$(Mosek.MSK_FEATURE_PTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MARK_LO"); @fact r == "$(Mosek.MSK_MARK_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MARK_UP"); @fact r == "$(Mosek.MSK_MARK_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CT_QUAD"); @fact r == "$(Mosek.MSK_CT_QUAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CT_RQUAD"); @fact r == "$(Mosek.MSK_CT_RQUAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_ERR"); @fact r == "$(Mosek.MSK_STREAM_ERR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_LOG"); @fact r == "$(Mosek.MSK_STREAM_LOG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_MSG"); @fact r == "$(Mosek.MSK_STREAM_MSG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_WRN"); @fact r == "$(Mosek.MSK_STREAM_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READ"); @fact r == "$(Mosek.MSK_IOMODE_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READWRITE"); @fact r == "$(Mosek.MSK_IOMODE_READWRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IOMODE_WRITE"); @fact r == "$(Mosek.MSK_IOMODE_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_ASE"); @fact r == "$(Mosek.MSK_SIM_SELECTION_ASE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_DEVEX"); @fact r == "$(Mosek.MSK_SIM_SELECTION_DEVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FREE"); @fact r == "$(Mosek.MSK_SIM_SELECTION_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FULL"); @fact r == "$(Mosek.MSK_SIM_SELECTION_FULL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_PARTIAL"); @fact r == "$(Mosek.MSK_SIM_SELECTION_PARTIAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_SE"); @fact r == "$(Mosek.MSK_SIM_SELECTION_SE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_COL"); @fact r == "$(Mosek.MSK_WRITE_XML_MODE_COL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_ROW"); @fact r == "$(Mosek.MSK_WRITE_XML_MODE_ROW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_IGNORED"); @fact r == "$(Mosek.MSK_MIO_MODE_IGNORED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_SATISFIED"); @fact r == "$(Mosek.MSK_MIO_MODE_SATISFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_FEAS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_INTPNT_DUAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_OPT_STATUS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_OPT_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_ORDER_TIME"); @fact r == "$(Mosek.MSK_DINF_INTPNT_ORDER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_FEAS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_TIME"); @fact r == "$(Mosek.MSK_DINF_INTPNT_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CLIQUE_SEPARATION_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_CLIQUE_SEPARATION_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CMIR_SEPARATION_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_CMIR_SEPARATION_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"); @fact r == "$(Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"); @fact r == "$(Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_GMI_SEPARATION_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_GMI_SEPARATION_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_HEURISTIC_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_HEURISTIC_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_IMPLIED_BOUND_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_IMPLIED_BOUND_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_ABS_GAP"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_BOUND"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_INT"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_REL_GAP"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OPTIMIZER_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_OPTIMIZER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_PROBING_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_PROBING_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_CUTGEN_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_ROOT_CUTGEN_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_PRESOLVE_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_USER_OBJ_CUT"); @fact r == "$(Mosek.MSK_DINF_MIO_USER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_OPTIMIZER_TIME"); @fact r == "$(Mosek.MSK_DINF_OPTIMIZER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_ELI_TIME"); @fact r == "$(Mosek.MSK_DINF_PRESOLVE_ELI_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_LINDEP_TIME"); @fact r == "$(Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_TIME"); @fact r == "$(Mosek.MSK_DINF_PRESOLVE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"); @fact r == "$(Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION"); @fact r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_TIME"); @fact r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"); @fact r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"); @fact r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_RD_TIME"); @fact r == "$(Mosek.MSK_DINF_RD_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_FEAS"); @fact r == "$(Mosek.MSK_DINF_SIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_OBJ"); @fact r == "$(Mosek.MSK_DINF_SIM_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_PRIMAL_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DUAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_BARX"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_BARX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SLC"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SLC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SLX"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SLX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SUC"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SUC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SUX"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SUX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_XC"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_XC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_XX"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_XX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_Y"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_Y)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_NRM_BARX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_NRM_BARX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_NRM_XC"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_NRM_XC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_NRM_XX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_NRM_XX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLBARVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCONES"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLITG"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DUAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLBARVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCONES"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_BARS"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_BARS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_BARX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_BARX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SLC"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SLC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SLX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SLX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SNX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SNX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SUC"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SUC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SUX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SUX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_XC"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_XC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_XX"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_XX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_Y"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_Y)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLBARVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCONES"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_TO_CONIC_TIME"); @fact r == "$(Mosek.MSK_DINF_TO_CONIC_TIME)" --> true
-       ok,r = Mosek.symnamtovalue("MSK_PAR_DOU_TYPE"); @fact r == "$(Mosek.MSK_PAR_DOU_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_INT_TYPE"); @fact r == "$(Mosek.MSK_PAR_INT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_INVALID_TYPE"); @fact r == "$(Mosek.MSK_PAR_INVALID_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_STR_TYPE"); @fact r == "$(Mosek.MSK_PAR_STR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_ERR"); @fact r == "$(Mosek.MSK_RESPONSE_ERR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_OK"); @fact r == "$(Mosek.MSK_RESPONSE_OK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_TRM"); @fact r == "$(Mosek.MSK_RESPONSE_TRM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_UNK"); @fact r == "$(Mosek.MSK_RESPONSE_UNK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_WRN"); @fact r == "$(Mosek.MSK_RESPONSE_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_INFEAS"); @fact r == "$(Mosek.MSK_PRO_STA_DUAL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_ILL_POSED"); @fact r == "$(Mosek.MSK_PRO_STA_ILL_POSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_NEAR_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_INFEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_UNKNOWN"); @fact r == "$(Mosek.MSK_PRO_STA_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_AGGRESSIVE"); @fact r == "$(Mosek.MSK_SCALING_AGGRESSIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_FREE"); @fact r == "$(Mosek.MSK_SCALING_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_MODERATE"); @fact r == "$(Mosek.MSK_SCALING_MODERATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_NONE"); @fact r == "$(Mosek.MSK_SCALING_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_CODELIST"); @fact r == "$(Mosek.MSK_RES_ERR_AD_INVALID_CODELIST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_ARRAY_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_API_ARRAY_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_CB_CONNECT"); @fact r == "$(Mosek.MSK_RES_ERR_API_CB_CONNECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_FATAL_ERROR"); @fact r == "$(Mosek.MSK_RES_ERR_API_FATAL_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_INTERNAL"); @fact r == "$(Mosek.MSK_RES_ERR_API_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_DIMENSION"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_DIMENSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_LENNEQ"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_LENNEQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_PERM_ARRAY"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_PERM_ARRAY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BAR_VAR_DIM"); @fact r == "$(Mosek.MSK_RES_ERR_BAR_VAR_DIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS"); @fact r == "$(Mosek.MSK_RES_ERR_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_FACTOR"); @fact r == "$(Mosek.MSK_RES_ERR_BASIS_FACTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_SINGULAR"); @fact r == "$(Mosek.MSK_RES_ERR_BASIS_SINGULAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BLANK_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_BLANK_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_CLONE_NL"); @fact r == "$(Mosek.MSK_RES_ERR_CANNOT_CLONE_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_HANDLE_NL"); @fact r == "$(Mosek.MSK_RES_ERR_CANNOT_HANDLE_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_ACOORD"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_ACOORD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_BCOORD"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_BCOORD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_CON"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_INT"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJ"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_CON_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_CON_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_INT_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_INT_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_VAR_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_VAR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VARIABLES"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_NO_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_OBJ_SENSE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_OBJ_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_PARSE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_PARSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_SYNTAX"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_SYNTAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_INTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_INTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_VARIABLES"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_INTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_INTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_VARIABLES"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_UNSUPPORTED"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_UNSUPPORTED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_NSD"); @fact r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_NSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_PSD"); @fact r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_PSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP_APPEND"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP_APPEND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_REP_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_REP_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_SIZE"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE_STR"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_TYPE_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DATA_FILE_EXT"); @fact r == "$(Mosek.MSK_RES_ERR_DATA_FILE_EXT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUP_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_DUP_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_AIJ"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONE_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_END_OF_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_END_OF_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FACTOR"); @fact r == "$(Mosek.MSK_RES_ERR_FACTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX"); @fact r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND"); @fact r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED"); @fact r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_OPEN"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_OPEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_READ"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_WRITE"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRST"); @fact r == "$(Mosek.MSK_RES_ERR_FIRST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTI"); @fact r == "$(Mosek.MSK_RES_ERR_FIRSTI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTJ"); @fact r == "$(Mosek.MSK_RES_ERR_FIRSTJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIXED_BOUND_VALUES"); @fact r == "$(Mosek.MSK_RES_ERR_FIXED_BOUND_VALUES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FLEXLM"); @fact r == "$(Mosek.MSK_RES_ERR_FLEXLM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_AIJ"); @fact r == "$(Mosek.MSK_RES_ERR_HUGE_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_C"); @fact r == "$(Mosek.MSK_RES_ERR_HUGE_C)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IDENTICAL_TASKS"); @fact r == "$(Mosek.MSK_RES_ERR_IDENTICAL_TASKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IN_ARGUMENT"); @fact r == "$(Mosek.MSK_RES_ERR_IN_ARGUMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INF_DOU_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INF_DOU_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INF_INT_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INF_INT_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INF_LINT_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INF_LINT_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INF_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFEAS_UNDEFINED"); @fact r == "$(Mosek.MSK_RES_ERR_INFEAS_UNDEFINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFINITE_BOUND"); @fact r == "$(Mosek.MSK_RES_ERR_INFINITE_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INT64_TO_INT32_CAST"); @fact r == "$(Mosek.MSK_RES_ERR_INT64_TO_INT32_CAST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL"); @fact r == "$(Mosek.MSK_RES_ERR_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL_TEST_FAILED"); @fact r == "$(Mosek.MSK_RES_ERR_INTERNAL_TEST_FAILED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_APTRE"); @fact r == "$(Mosek.MSK_RES_ERR_INV_APTRE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BK"); @fact r == "$(Mosek.MSK_RES_ERR_INV_BK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKC"); @fact r == "$(Mosek.MSK_RES_ERR_INV_BKC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKX"); @fact r == "$(Mosek.MSK_RES_ERR_INV_BKX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE_STR"); @fact r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_MARKI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_MARKJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NAME_ITEM"); @fact r == "$(Mosek.MSK_RES_ERR_INV_NAME_ITEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_NUMI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_NUMJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_INV_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_INV_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBK"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_VAL"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_VAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_VAL"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_VAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK_STR"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SK_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKC"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SKC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKN"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SKN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKX"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SKX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_VAR_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INV_VAR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_ACCMODE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_ACCMODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AIJ"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AMPL_STUB"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_AMPL_STUB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BARVAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_BARVAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_COMPRESSION"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_COMPRESSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CONE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_CONE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FORMAT_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FORMAT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IDX"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_IDX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IOMODE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_IOMODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_MAX_NUM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_MAX_NUM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJ_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_OBJ_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJECTIVE_SENSE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_OBJECTIVE_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_PROBLEM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_PROBLEM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_STREAM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_STREAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SURPLUS"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_SURPLUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SYM_MAT_DIM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_SYM_MAT_DIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_TASK"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_UTF8"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_UTF8)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WCHAR"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_WCHAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WHICHSOL"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_WHICHSOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_DATA"); @fact r == "$(Mosek.MSK_RES_ERR_JSON_DATA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_JSON_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_MISSING_DATA"); @fact r == "$(Mosek.MSK_RES_ERR_JSON_MISSING_DATA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_NUMBER_OVERFLOW"); @fact r == "$(Mosek.MSK_RES_ERR_JSON_NUMBER_OVERFLOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_STRING"); @fact r == "$(Mosek.MSK_RES_ERR_JSON_STRING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_SYNTAX"); @fact r == "$(Mosek.MSK_RES_ERR_JSON_SYNTAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAST"); @fact r == "$(Mosek.MSK_RES_ERR_LAST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTI"); @fact r == "$(Mosek.MSK_RES_ERR_LASTI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTJ"); @fact r == "$(Mosek.MSK_RES_ERR_LASTJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_K"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_K)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_M"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_M)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_N"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_N)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANS"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSA"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSB"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_UPLO"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_UPLO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_SINGULAR_MATRIX"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_SINGULAR_MATRIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_UNKNOWN"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_CONNECT"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_CONNECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_EXPIRED"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_EXPIRED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_FEATURE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_FEATURE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_INVALID_HOSTID"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_INVALID_HOSTID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MAX"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_MAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_LINE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_LINE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER_VERSION"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER_VERSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_VERSION"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_VERSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LINK_FILE_DLL"); @fact r == "$(Mosek.MSK_RES_ERR_LINK_FILE_DLL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LIVING_TASKS"); @fact r == "$(Mosek.MSK_RES_ERR_LIVING_TASKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LOWER_BOUND_IS_A_NAN"); @fact r == "$(Mosek.MSK_RES_ERR_LOWER_BOUND_IS_A_NAN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_DUP_SLACK_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_LP_DUP_SLACK_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_EMPTY"); @fact r == "$(Mosek.MSK_RES_ERR_LP_EMPTY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FILE_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_LP_FILE_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_LP_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FREE_CONSTRAINT"); @fact r == "$(Mosek.MSK_RES_ERR_LP_FREE_CONSTRAINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INCOMPATIBLE"); @fact r == "$(Mosek.MSK_RES_ERR_LP_INCOMPATIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_LP_INVALID_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LU_MAX_NUM_TRIES"); @fact r == "$(Mosek.MSK_RES_ERR_LU_MAX_NUM_TRIES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMBARVAR"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCON"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCONE"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMCONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMQNZ"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMQNZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMVAR"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INTERNAL"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NO_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_NO_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NOT_LOADED"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_NOT_LOADED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MISSING_LICENSE_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_MISSING_LICENSE_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIXED_CONIC_AND_NL"); @fact r == "$(Mosek.MSK_RES_ERR_MIXED_CONIC_AND_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_OVERLAP"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_CONE_OVERLAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_REPEAT"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_CONE_REPEAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_CONE_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_BOUND_KEY"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_BOUND_KEY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_CON_KEY"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_CON_KEY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_FIELD"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_FIELD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_MARKER"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_MARKER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_ORDER"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_ORDER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJ_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJ_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJSENSE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJSENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CSEC"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CSEC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QOBJ"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QOBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QSEC"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QSEC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NO_OBJECTIVE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NO_OBJECTIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NON_SYMMETRIC_Q"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NON_SYMMETRIC_Q)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NULL_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NULL_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_SPLITTED_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_SPLITTED_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD2"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD2)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD3"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD3)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD5"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD5)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MUL_A_ELEMENT"); @fact r == "$(Mosek.MSK_RES_ERR_MUL_A_ELEMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_IS_NULL"); @fact r == "$(Mosek.MSK_RES_ERR_NAME_IS_NULL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_MAX_LEN"); @fact r == "$(Mosek.MSK_RES_ERR_NAME_MAX_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLC"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLX"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUC"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUX"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_C"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_C)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_DOUBLE_DATA"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_DOUBLE_DATA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_APPEND"); @fact r == "$(Mosek.MSK_RES_ERR_NEGATIVE_APPEND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_SURPLUS"); @fact r == "$(Mosek.MSK_RES_ERR_NEGATIVE_SURPLUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEWER_DLL"); @fact r == "$(Mosek.MSK_RES_ERR_NEWER_DLL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARS_FOR_SOLUTION"); @fact r == "$(Mosek.MSK_RES_ERR_NO_BARS_FOR_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARX_FOR_SOLUTION"); @fact r == "$(Mosek.MSK_RES_ERR_NO_BARX_FOR_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BASIS_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_BASIS_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_RES_ERR_NO_DUAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_INIT_ENV"); @fact r == "$(Mosek.MSK_RES_ERR_NO_INIT_ENV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_PRIMAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_RES_ERR_NO_PRIMAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SNX_FOR_BAS_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_SNX_FOR_BAS_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK"); @fact r == "$(Mosek.MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NON_UNIQUE_ARRAY"); @fact r == "$(Mosek.MSK_RES_ERR_NON_UNIQUE_ARRAY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONCONVEX"); @fact r == "$(Mosek.MSK_RES_ERR_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_EQUALITY"); @fact r == "$(Mosek.MSK_RES_ERR_NONLINEAR_EQUALITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED"); @fact r == "$(Mosek.MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_RANGED"); @fact r == "$(Mosek.MSK_RES_ERR_NONLINEAR_RANGED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NR_ARGUMENTS"); @fact r == "$(Mosek.MSK_RES_ERR_NR_ARGUMENTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_ENV"); @fact r == "$(Mosek.MSK_RES_ERR_NULL_ENV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_POINTER"); @fact r == "$(Mosek.MSK_RES_ERR_NULL_POINTER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_TASK"); @fact r == "$(Mosek.MSK_RES_ERR_NULL_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMCONLIM"); @fact r == "$(Mosek.MSK_RES_ERR_NUMCONLIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMVARLIM"); @fact r == "$(Mosek.MSK_RES_ERR_NUMVARLIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_NSD"); @fact r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_NSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_PSD"); @fact r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_PSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJECTIVE_RANGE"); @fact r == "$(Mosek.MSK_RES_ERR_OBJECTIVE_RANGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OLDER_DLL"); @fact r == "$(Mosek.MSK_RES_ERR_OLDER_DLL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPEN_DL"); @fact r == "$(Mosek.MSK_RES_ERR_OPEN_DL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_OPF_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_NEW_VARIABLE"); @fact r == "$(Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_PREMATURE_EOF"); @fact r == "$(Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPTIMIZER_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_OPTIMIZER_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OVERFLOW"); @fact r == "$(Mosek.MSK_RES_ERR_OVERFLOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_DOU"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_DOU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_INT"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_STR"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_VALUE_STR"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_VALUE_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PLATFORM_NOT_LICENSED"); @fact r == "$(Mosek.MSK_RES_ERR_PLATFORM_NOT_LICENSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_POSTSOLVE"); @fact r == "$(Mosek.MSK_RES_ERR_POSTSOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PRO_ITEM"); @fact r == "$(Mosek.MSK_RES_ERR_PRO_ITEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PROB_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_PROB_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_UPPER_TRIANGLE"); @fact r == "$(Mosek.MSK_RES_ERR_QCON_UPPER_TRIANGLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QOBJ_UPPER_TRIANGLE"); @fact r == "$(Mosek.MSK_RES_ERR_QOBJ_UPPER_TRIANGLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_READ_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_MISSING_END_TAG"); @fact r == "$(Mosek.MSK_RES_ERR_READ_LP_MISSING_END_TAG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_NONEXISTING_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_READ_LP_NONEXISTING_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REMOVE_CONE_VARIABLE"); @fact r == "$(Mosek.MSK_RES_ERR_REMOVE_CONE_VARIABLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_INVALID_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_REPAIR_INVALID_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED"); @fact r == "$(Mosek.MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_LO"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_UP"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_RANGE"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_RANGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INVALID_REGEXP"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_INVALID_REGEXP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_NUMERICAL"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_NUMERICAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_SOLUTION_STATUS"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_SOLUTION_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNDEF_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_UNDEF_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_CONNECT"); @fact r == "$(Mosek.MSK_RES_ERR_SERVER_CONNECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_PROTOCOL"); @fact r == "$(Mosek.MSK_RES_ERR_SERVER_PROTOCOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_STATUS"); @fact r == "$(Mosek.MSK_RES_ERR_SERVER_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_TOKEN"); @fact r == "$(Mosek.MSK_RES_ERR_SERVER_TOKEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_CON"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_INTVAR"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_INTVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_NUMCORES"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_NUMCORES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOL_FILE_INVALID_NUMBER"); @fact r == "$(Mosek.MSK_RES_ERR_SOL_FILE_INVALID_NUMBER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLITEM"); @fact r == "$(Mosek.MSK_RES_ERR_SOLITEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLVER_PROBTYPE"); @fact r == "$(Mosek.MSK_RES_ERR_SOLVER_PROBTYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE"); @fact r == "$(Mosek.MSK_RES_ERR_SPACE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_LEAKING"); @fact r == "$(Mosek.MSK_RES_ERR_SPACE_LEAKING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_NO_INFO"); @fact r == "$(Mosek.MSK_RES_ERR_SPACE_NO_INFO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_DUPLICATE"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_DUPLICATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_HUGE"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_HUGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_VALUE"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_VALUE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INCOMPATIBLE"); @fact r == "$(Mosek.MSK_RES_ERR_TASK_INCOMPATIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_TASK_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_COND_INIT"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_COND_INIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_CREATE"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_CREATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_INIT"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_INIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_LOCK"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_LOCK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_UNLOCK"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_UNLOCK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC"); @fact r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD"); @fact r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTRAINT_FX"); @fact r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_FX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTRAINT_RA"); @fact r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD"); @fact r == "$(Mosek.MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ"); @fact r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAXNUMANZ"); @fact r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAXNUMANZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNB_STEP_SIZE"); @fact r == "$(Mosek.MSK_RES_ERR_UNB_STEP_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEF_SOLUTION"); @fact r == "$(Mosek.MSK_RES_ERR_UNDEF_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE"); @fact r == "$(Mosek.MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS"); @fact r == "$(Mosek.MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNKNOWN"); @fact r == "$(Mosek.MSK_RES_ERR_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_BOUND_IS_A_NAN"); @fact r == "$(Mosek.MSK_RES_ERR_UPPER_BOUND_IS_A_NAN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_TRIANGLE"); @fact r == "$(Mosek.MSK_RES_ERR_UPPER_TRIANGLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET"); @fact r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET_DATA"); @fact r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET_DATA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBI"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_FUNC"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_FUNC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHITEM_NOT_ALLOWED"); @fact r == "$(Mosek.MSK_RES_ERR_WHICHITEM_NOT_ALLOWED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHSOL"); @fact r == "$(Mosek.MSK_RES_ERR_WHICHSOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_LP_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_MPS_INVALID_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_MPS_INVALID_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITING_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_WRITING_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_Y_IS_UNDEFINED"); @fact r == "$(Mosek.MSK_RES_ERR_Y_IS_UNDEFINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_OK"); @fact r == "$(Mosek.MSK_RES_OK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL"); @fact r == "$(Mosek.MSK_RES_TRM_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL_STOP"); @fact r == "$(Mosek.MSK_RES_TRM_INTERNAL_STOP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_RES_TRM_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_NUM_SETBACKS"); @fact r == "$(Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_TIME"); @fact r == "$(Mosek.MSK_RES_TRM_MAX_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_ABS_GAP"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_REL_GAP"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_BRANCHES"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_RELAXS"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NUM_RELAXS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS"); @fact r == "$(Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUMERICAL_PROBLEM"); @fact r == "$(Mosek.MSK_RES_TRM_NUMERICAL_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_OBJECTIVE_RANGE"); @fact r == "$(Mosek.MSK_RES_TRM_OBJECTIVE_RANGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_STALL"); @fact r == "$(Mosek.MSK_RES_TRM_STALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_USER_CALLBACK"); @fact r == "$(Mosek.MSK_RES_TRM_USER_CALLBACK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_C_ZERO"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_C_ZERO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_CLOSE_BOUNDS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_CLOSE_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_EMPTY_COLS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_EMPTY_COLS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_LARGE_BOUNDS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_LARGE_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG"); @fact r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG"); @fact r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS"); @fact r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DROPPED_NZ_QOBJ"); @fact r == "$(Mosek.MSK_RES_WRN_DROPPED_NZ_QOBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONE_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ELIMINATOR_SPACE"); @fact r == "$(Mosek.MSK_RES_WRN_ELIMINATOR_SPACE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_EMPTY_NAME"); @fact r == "$(Mosek.MSK_RES_WRN_EMPTY_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_IGNORE_INTEGER"); @fact r == "$(Mosek.MSK_RES_WRN_IGNORE_INTEGER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"); @fact r == "$(Mosek.MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_AIJ"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_BOUND"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CJ"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_CJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CON_FX"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_CON_FX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_LO_BOUND"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_LO_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_UP_BOUND"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_UP_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_EXPIRE"); @fact r == "$(Mosek.MSK_RES_WRN_LICENSE_EXPIRE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"); @fact r == "$(Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_SERVER"); @fact r == "$(Mosek.MSK_RES_WRN_LICENSE_SERVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_DROP_VARIABLE"); @fact r == "$(Mosek.MSK_RES_WRN_LP_DROP_VARIABLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_OLD_QUAD_FORMAT"); @fact r == "$(Mosek.MSK_RES_WRN_LP_OLD_QUAD_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MIO_INFEASIBLE_FINAL"); @fact r == "$(Mosek.MSK_RES_WRN_MIO_INFEASIBLE_FINAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR"); @fact r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR"); @fact r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR"); @fact r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NAME_MAX_LEN"); @fact r == "$(Mosek.MSK_RES_WRN_NAME_MAX_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_DUALIZER"); @fact r == "$(Mosek.MSK_RES_WRN_NO_DUALIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_GLOBAL_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_WRN_NO_GLOBAL_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE"); @fact r == "$(Mosek.MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NZ_IN_UPR_TRI"); @fact r == "$(Mosek.MSK_RES_WRN_NZ_IN_UPR_TRI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_OPEN_PARAM_FILE"); @fact r == "$(Mosek.MSK_RES_WRN_OPEN_PARAM_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_IGNORED_CMIO"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_IGNORED_CMIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_DOU"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_DOU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_INT"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_STR"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_STR_VALUE"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_STR_VALUE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PRESOLVE_OUTOFSPACE"); @fact r == "$(Mosek.MSK_RES_WRN_PRESOLVE_OUTOFSPACE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @fact r == "$(Mosek.MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @fact r == "$(Mosek.MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_CON"); @fact r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_VAR"); @fact r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILTER"); @fact r == "$(Mosek.MSK_RES_WRN_SOL_FILTER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SPAR_MAX_LEN"); @fact r == "$(Mosek.MSK_RES_WRN_SPAR_MAX_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SYM_MAT_LARGE"); @fact r == "$(Mosek.MSK_RES_WRN_SYM_MAT_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_FEW_BASIS_VARS"); @fact r == "$(Mosek.MSK_RES_WRN_TOO_FEW_BASIS_VARS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_MANY_BASIS_VARS"); @fact r == "$(Mosek.MSK_RES_WRN_TOO_MANY_BASIS_VARS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_UNDEF_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_RES_WRN_UNDEF_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_USING_GENERIC_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_USING_GENERIC_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_CHANGED_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_WRITE_CHANGED_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_DISCARDED_CFIX"); @fact r == "$(Mosek.MSK_RES_WRN_WRITE_DISCARDED_CFIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZERO_AIJ"); @fact r == "$(Mosek.MSK_RES_WRN_ZERO_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_COL"); @fact r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_COL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_ROW"); @fact r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_ROW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_BEST"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_BEST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FIRST"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_FIRST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FREE"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_HYBRID"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_HYBRID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_PSEUDO"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_PSEUDO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_WORST"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_WORST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_NO"); @fact r == "$(Mosek.MSK_TRANSPOSE_NO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_YES"); @fact r == "$(Mosek.MSK_TRANSPOSE_YES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OFF"); @fact r == "$(Mosek.MSK_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ON"); @fact r == "$(Mosek.MSK_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_AGGRESSIVE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_AGGRESSIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_FREE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MINIMUM"); @fact r == "$(Mosek.MSK_SIM_DEGEN_MINIMUM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MODERATE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_MODERATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_NONE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_CB"); @fact r == "$(Mosek.MSK_DATA_FORMAT_CB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_EXTENSION"); @fact r == "$(Mosek.MSK_DATA_FORMAT_EXTENSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_FREE_MPS"); @fact r == "$(Mosek.MSK_DATA_FORMAT_FREE_MPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_JSON_TASK"); @fact r == "$(Mosek.MSK_DATA_FORMAT_JSON_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_LP"); @fact r == "$(Mosek.MSK_DATA_FORMAT_LP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_MPS"); @fact r == "$(Mosek.MSK_DATA_FORMAT_MPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_OP"); @fact r == "$(Mosek.MSK_DATA_FORMAT_OP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_TASK"); @fact r == "$(Mosek.MSK_DATA_FORMAT_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_XML"); @fact r == "$(Mosek.MSK_DATA_FORMAT_XML)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_APPMINLOC"); @fact r == "$(Mosek.MSK_ORDER_METHOD_APPMINLOC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_EXPERIMENTAL"); @fact r == "$(Mosek.MSK_ORDER_METHOD_EXPERIMENTAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FORCE_GRAPHPAR"); @fact r == "$(Mosek.MSK_ORDER_METHOD_FORCE_GRAPHPAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FREE"); @fact r == "$(Mosek.MSK_ORDER_METHOD_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_NONE"); @fact r == "$(Mosek.MSK_ORDER_METHOD_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_TRY_GRAPHPAR"); @fact r == "$(Mosek.MSK_ORDER_METHOD_TRY_GRAPHPAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_CONIC"); @fact r == "$(Mosek.MSK_PROBTYPE_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_GECO"); @fact r == "$(Mosek.MSK_PROBTYPE_GECO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_LO"); @fact r == "$(Mosek.MSK_PROBTYPE_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_MIXED"); @fact r == "$(Mosek.MSK_PROBTYPE_MIXED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QCQO"); @fact r == "$(Mosek.MSK_PROBTYPE_QCQO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QO"); @fact r == "$(Mosek.MSK_PROBTYPE_QO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INF_DOU_TYPE"); @fact r == "$(Mosek.MSK_INF_DOU_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INF_INT_TYPE"); @fact r == "$(Mosek.MSK_INF_INT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INF_LINT_TYPE"); @fact r == "$(Mosek.MSK_INF_LINT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_ANA_SOL_INFEAS_TOL"); @fact r == "$(Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_REL_TOL_S"); @fact r == "$(Mosek.MSK_DPAR_BASIS_REL_TOL_S)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_S"); @fact r == "$(Mosek.MSK_DPAR_BASIS_TOL_S)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_BASIS_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_CHECK_CONVEXITY_REL_TOL"); @fact r == "$(Mosek.MSK_DPAR_CHECK_CONVEXITY_REL_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_SYM_MAT_TOL"); @fact r == "$(Mosek.MSK_DPAR_DATA_SYM_MAT_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_SYM_MAT_TOL_HUGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_SYM_MAT_TOL_HUGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_SYM_MAT_TOL_LARGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_SYM_MAT_TOL_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_HUGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_HUGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_LARGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_INF"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_INF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_WRN"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_C_HUGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_C_HUGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_CJ_LARGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_CJ_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_QIJ"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_QIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_INFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_MERIT_BAL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_MERIT_BAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_NEAR_REL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_NEAR_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_STEP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_STEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_INFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_NEAR_REL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_NEAR_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DSAFE"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DSAFE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_INFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PATH"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PATH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PSAFE"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PSAFE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_STEP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_STEP_SIZE"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT"); @fact r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"); @fact r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_DISABLE_TERM_TIME"); @fact r == "$(Mosek.MSK_DPAR_MIO_DISABLE_TERM_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_MAX_TIME"); @fact r == "$(Mosek.MSK_DPAR_MIO_MAX_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_ABS_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_REL_GAP_CONST"); @fact r == "$(Mosek.MSK_DPAR_MIO_REL_GAP_CONST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_RELAX_INT"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_FEAS"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_OPTIMIZER_MAX_TIME"); @fact r == "$(Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_AIJ"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_S"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_S)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"); @fact r == "$(Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_SEMIDEFINITE_TOL_APPROX"); @fact r == "$(Mosek.MSK_DPAR_SEMIDEFINITE_TOL_APPROX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIM_LU_TOL_REL_PIV"); @fact r == "$(Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIMPLEX_ABS_TOL_PIV"); @fact r == "$(Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT"); @fact r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"); @fact r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_FREE"); @fact r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_OFF"); @fact r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_ON"); @fact r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_FREE"); @fact r == "$(Mosek.MSK_COMPRESS_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_GZIP"); @fact r == "$(Mosek.MSK_COMPRESS_GZIP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_NONE"); @fact r == "$(Mosek.MSK_COMPRESS_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_GEN"); @fact r == "$(Mosek.MSK_NAME_TYPE_GEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_LP"); @fact r == "$(Mosek.MSK_NAME_TYPE_LP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_MPS"); @fact r == "$(Mosek.MSK_NAME_TYPE_MPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_CPLEX"); @fact r == "$(Mosek.MSK_MPS_FORMAT_CPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_FREE"); @fact r == "$(Mosek.MSK_MPS_FORMAT_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_RELAXED"); @fact r == "$(Mosek.MSK_MPS_FORMAT_RELAXED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_STRICT"); @fact r == "$(Mosek.MSK_MPS_FORMAT_STRICT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_CONT"); @fact r == "$(Mosek.MSK_VAR_TYPE_CONT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_INT"); @fact r == "$(Mosek.MSK_VAR_TYPE_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_FULL"); @fact r == "$(Mosek.MSK_CHECK_CONVEXITY_FULL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_NONE"); @fact r == "$(Mosek.MSK_CHECK_CONVEXITY_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_SIMPLE"); @fact r == "$(Mosek.MSK_CHECK_CONVEXITY_SIMPLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LANG_DAN"); @fact r == "$(Mosek.MSK_LANG_DAN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LANG_ENG"); @fact r == "$(Mosek.MSK_LANG_ENG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_CONSTANT"); @fact r == "$(Mosek.MSK_STARTING_POINT_CONSTANT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_FREE"); @fact r == "$(Mosek.MSK_STARTING_POINT_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_GUESS"); @fact r == "$(Mosek.MSK_STARTING_POINT_GUESS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_SATISFY_BOUNDS"); @fact r == "$(Mosek.MSK_STARTING_POINT_SATISFY_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_BAS"); @fact r == "$(Mosek.MSK_SOL_BAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITG"); @fact r == "$(Mosek.MSK_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITR"); @fact r == "$(Mosek.MSK_SOL_ITR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_FREE"); @fact r == "$(Mosek.MSK_SCALING_METHOD_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_POW2"); @fact r == "$(Mosek.MSK_SCALING_METHOD_POW2)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LICENSE_BUFFER_LENGTH"); @fact r == "$(Mosek.MSK_LICENSE_BUFFER_LENGTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MAX_STR_LEN"); @fact r == "$(Mosek.MSK_MAX_STR_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_AGGRESSIVE"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_AGGRESSIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_FREE"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_OFF"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_ON"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_EQ"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_EQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_FR"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_FR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_LO"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_RA"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_UP"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_BIN"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_BIN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_CONT"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_CONT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_EQ"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_EQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_FR"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_FR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_INT"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_LO"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_RA"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_UP"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_FACTOR_DIM_DENSE"); @fact r == "$(Mosek.MSK_IINF_INTPNT_FACTOR_DIM_DENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_ITER"); @fact r == "$(Mosek.MSK_IINF_INTPNT_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_NUM_THREADS"); @fact r == "$(Mosek.MSK_IINF_INTPNT_NUM_THREADS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_SOLVE_DUAL"); @fact r == "$(Mosek.MSK_IINF_INTPNT_SOLVE_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_ABSGAP_SATISFIED"); @fact r == "$(Mosek.MSK_IINF_MIO_ABSGAP_SATISFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CLIQUE_TABLE_SIZE"); @fact r == "$(Mosek.MSK_IINF_MIO_CLIQUE_TABLE_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS"); @fact r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_SOLUTION"); @fact r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_INITIAL_SOLUTION"); @fact r == "$(Mosek.MSK_IINF_MIO_INITIAL_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED"); @fact r == "$(Mosek.MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NEAR_RELGAP_SATISFIED"); @fact r == "$(Mosek.MSK_IINF_MIO_NEAR_RELGAP_SATISFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NODE_DEPTH"); @fact r == "$(Mosek.MSK_IINF_MIO_NODE_DEPTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_ACTIVE_NODES"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_ACTIVE_NODES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_BRANCH"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_BRANCH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CLIQUE_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_CLIQUE_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CMIR_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_CMIR_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GOMORY_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_GOMORY_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_INT_SOLUTIONS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_INT_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_RELAX"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_RELAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_REPEATED_PRESOLVE"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_REPEATED_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMCON"); @fact r == "$(Mosek.MSK_IINF_MIO_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMINT"); @fact r == "$(Mosek.MSK_IINF_MIO_NUMINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_MIO_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_OBJ_BOUND_DEFINED"); @fact r == "$(Mosek.MSK_IINF_MIO_OBJ_BOUND_DEFINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMBIN"); @fact r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMBIN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMCON"); @fact r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMCONT"); @fact r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMCONT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMINT"); @fact r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_RELGAP_SATISFIED"); @fact r == "$(Mosek.MSK_IINF_MIO_RELGAP_SATISFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_TOTAL_NUM_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_TOTAL_NUM_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_USER_OBJ_CUT"); @fact r == "$(Mosek.MSK_IINF_MIO_USER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMCON"); @fact r == "$(Mosek.MSK_IINF_OPT_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_OPT_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_OPTIMIZE_RESPONSE"); @fact r == "$(Mosek.MSK_IINF_OPTIMIZE_RESPONSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMBARVAR"); @fact r == "$(Mosek.MSK_IINF_RD_NUMBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCON"); @fact r == "$(Mosek.MSK_IINF_RD_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCONE"); @fact r == "$(Mosek.MSK_IINF_RD_NUMCONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMINTVAR"); @fact r == "$(Mosek.MSK_IINF_RD_NUMINTVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMQ"); @fact r == "$(Mosek.MSK_IINF_RD_NUMQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_RD_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_PROTYPE"); @fact r == "$(Mosek.MSK_IINF_RD_PROTYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMCON"); @fact r == "$(Mosek.MSK_IINF_SIM_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_SIM_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_SOLVE_DUAL"); @fact r == "$(Mosek.MSK_IINF_SIM_SOLVE_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_BAS_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_BAS_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITG_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITG_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITR_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITR_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_REALLOC"); @fact r == "$(Mosek.MSK_IINF_STO_NUM_A_REALLOC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_BAS"); @fact r == "$(Mosek.MSK_SK_BAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_FIX"); @fact r == "$(Mosek.MSK_SK_FIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_INF"); @fact r == "$(Mosek.MSK_SK_INF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_LOW"); @fact r == "$(Mosek.MSK_SK_LOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_SUPBAS"); @fact r == "$(Mosek.MSK_SK_SUPBAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_UNK"); @fact r == "$(Mosek.MSK_SK_UNK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_UPR"); @fact r == "$(Mosek.MSK_SK_UPR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_CONIC"); @fact r == "$(Mosek.MSK_OPTIMIZER_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE"); @fact r == "$(Mosek.MSK_OPTIMIZER_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_FREE_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_INTPNT"); @fact r == "$(Mosek.MSK_OPTIMIZER_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_MIXED_INT"); @fact r == "$(Mosek.MSK_OPTIMIZER_MIXED_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_FREE"); @fact r == "$(Mosek.MSK_PRESOLVE_MODE_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_OFF"); @fact r == "$(Mosek.MSK_PRESOLVE_MODE_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_ON"); @fact r == "$(Mosek.MSK_PRESOLVE_MODE_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG_REL"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_ITG_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_NONE"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ROOT"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_ROOT)" --> true
+    @testset "[Mosek_consts]" begin
+        ok,r = Mosek.symnamtovalue("MSK_SOLVE_DUAL"); @test r == "$(Mosek.MSK_SOLVE_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOLVE_FREE"); @test r == "$(Mosek.MSK_SOLVE_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SOLVE_PRIMAL"); @test r == "$(Mosek.MSK_SOLVE_PRIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_PI_CON"); @test r == "$(Mosek.MSK_PI_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_PI_CONE"); @test r == "$(Mosek.MSK_PI_CONE)"
+        ok,r = Mosek.symnamtovalue("MSK_PI_VAR"); @test r == "$(Mosek.MSK_PI_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_ACC_CON"); @test r == "$(Mosek.MSK_ACC_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_ACC_VAR"); @test r == "$(Mosek.MSK_ACC_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_BASIS"); @test r == "$(Mosek.MSK_SENSITIVITY_TYPE_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION"); @test r == "$(Mosek.MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION)"
+        ok,r = Mosek.symnamtovalue("MSK_UPLO_LO"); @test r == "$(Mosek.MSK_UPLO_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_UPLO_UP"); @test r == "$(Mosek.MSK_UPLO_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_DUAL"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_NONE"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL_DUAL"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_BAS_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_BAS_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_DATA_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_DATA_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_DEBUG_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_DEBUG_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_INT_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_INT_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_ITR_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_ITR_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_MIO_DEBUG_STRING"); @test r == "$(Mosek.MSK_SPAR_MIO_DEBUG_STRING)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_COMMENT_SIGN"); @test r == "$(Mosek.MSK_SPAR_PARAM_COMMENT_SIGN)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_READ_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_PARAM_READ_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_WRITE_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_PARAM_WRITE_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_BOU_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_BOU_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_OBJ_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_OBJ_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RAN_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_RAN_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RHS_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_RHS_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_REMOTE_ACCESS_TOKEN"); @test r == "$(Mosek.MSK_SPAR_REMOTE_ACCESS_TOKEN)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_RES_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_LOW"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_LOW)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_UPR"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_UPR)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_LOW"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_LOW)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_UPR"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_UPR)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_STAT_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_KEY"); @test r == "$(Mosek.MSK_SPAR_STAT_KEY)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_NAME"); @test r == "$(Mosek.MSK_SPAR_STAT_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_WRITE_LP_GEN_VAR_NAME"); @test r == "$(Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_BASIS"); @test r == "$(Mosek.MSK_IPAR_ANA_SOL_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_PRINT_VIOLATED"); @test r == "$(Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"); @test r == "$(Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_UPDATE_SOL_INFO"); @test r == "$(Mosek.MSK_IPAR_AUTO_UPDATE_SOL_INFO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE"); @test r == "$(Mosek.MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_CLEAN_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_BI_CLEAN_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_MAX_ITER"); @test r == "$(Mosek.MSK_IPAR_BI_IGNORE_MAX_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_NUM_ERROR"); @test r == "$(Mosek.MSK_IPAR_BI_IGNORE_NUM_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_BI_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CACHE_LICENSE"); @test r == "$(Mosek.MSK_IPAR_CACHE_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CHECK_CONVEXITY"); @test r == "$(Mosek.MSK_IPAR_CHECK_CONVEXITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_COMPRESS_STATFILE"); @test r == "$(Mosek.MSK_IPAR_COMPRESS_STATFILE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_GENERIC_NAMES"); @test r == "$(Mosek.MSK_IPAR_INFEAS_GENERIC_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_PREFER_PRIMAL"); @test r == "$(Mosek.MSK_IPAR_INFEAS_PREFER_PRIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_AUTO"); @test r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_AUTO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_LEVEL"); @test r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_BASIS"); @test r == "$(Mosek.MSK_IPAR_INTPNT_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_DIFF_STEP"); @test r == "$(Mosek.MSK_IPAR_INTPNT_DIFF_STEP)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_HOTSTART"); @test r == "$(Mosek.MSK_IPAR_INTPNT_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_COR"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_COR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MULTI_THREAD"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MULTI_THREAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_OFF_COL_TRH"); @test r == "$(Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_ORDER_METHOD"); @test r == "$(Mosek.MSK_IPAR_INTPNT_ORDER_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_REGULARIZATION_USE"); @test r == "$(Mosek.MSK_IPAR_INTPNT_REGULARIZATION_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SCALING"); @test r == "$(Mosek.MSK_IPAR_INTPNT_SCALING)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SOLVE_FORM"); @test r == "$(Mosek.MSK_IPAR_INTPNT_SOLVE_FORM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_STARTING_POINT"); @test r == "$(Mosek.MSK_IPAR_INTPNT_STARTING_POINT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_DEBUG"); @test r == "$(Mosek.MSK_IPAR_LICENSE_DEBUG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_PAUSE_TIME"); @test r == "$(Mosek.MSK_IPAR_LICENSE_PAUSE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS"); @test r == "$(Mosek.MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_TRH_EXPIRY_WRN"); @test r == "$(Mosek.MSK_IPAR_LICENSE_TRH_EXPIRY_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_WAIT"); @test r == "$(Mosek.MSK_IPAR_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG"); @test r == "$(Mosek.MSK_IPAR_LOG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_ANA_PRO"); @test r == "$(Mosek.MSK_IPAR_LOG_ANA_PRO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI"); @test r == "$(Mosek.MSK_IPAR_LOG_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_BI_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CHECK_CONVEXITY"); @test r == "$(Mosek.MSK_IPAR_LOG_CHECK_CONVEXITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CUT_SECOND_OPT"); @test r == "$(Mosek.MSK_IPAR_LOG_CUT_SECOND_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_EXPAND"); @test r == "$(Mosek.MSK_IPAR_LOG_EXPAND)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FACTOR"); @test r == "$(Mosek.MSK_IPAR_LOG_FACTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FEAS_REPAIR"); @test r == "$(Mosek.MSK_IPAR_LOG_FEAS_REPAIR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FILE"); @test r == "$(Mosek.MSK_IPAR_LOG_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_HEAD"); @test r == "$(Mosek.MSK_IPAR_LOG_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INFEAS_ANA"); @test r == "$(Mosek.MSK_IPAR_LOG_INFEAS_ANA)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INTPNT"); @test r == "$(Mosek.MSK_IPAR_LOG_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO"); @test r == "$(Mosek.MSK_IPAR_LOG_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_MIO_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_LOG_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_ORDER"); @test r == "$(Mosek.MSK_IPAR_LOG_ORDER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_PRESOLVE"); @test r == "$(Mosek.MSK_IPAR_LOG_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_RESPONSE"); @test r == "$(Mosek.MSK_IPAR_LOG_RESPONSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY"); @test r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY_OPT"); @test r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_MINOR"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM_MINOR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_STORAGE"); @test r == "$(Mosek.MSK_IPAR_LOG_STORAGE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MAX_NUM_WARNINGS"); @test r == "$(Mosek.MSK_IPAR_MAX_NUM_WARNINGS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_BRANCH_DIR"); @test r == "$(Mosek.MSK_IPAR_MIO_BRANCH_DIR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CONSTRUCT_SOL"); @test r == "$(Mosek.MSK_IPAR_MIO_CONSTRUCT_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CLIQUE"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_CLIQUE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CMIR"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_CMIR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_GMI"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_GMI)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_IMPLIED_BOUND"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_IMPLIED_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_KNAPSACK_COVER"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_KNAPSACK_COVER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_SELECTION_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_SELECTION_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_HEURISTIC_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_HEURISTIC_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_BRANCHES"); @test r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_BRANCHES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_RELAXS"); @test r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_RELAXS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_SOLUTIONS"); @test r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MODE"); @test r == "$(Mosek.MSK_IPAR_MIO_MODE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MT_USER_CB"); @test r == "$(Mosek.MSK_IPAR_MIO_MT_USER_CB)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_MIO_NODE_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_SELECTION"); @test r == "$(Mosek.MSK_IPAR_MIO_NODE_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE"); @test r == "$(Mosek.MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PROBING_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_PROBING_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_RINS_MAX_NODES"); @test r == "$(Mosek.MSK_IPAR_MIO_RINS_MAX_NODES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_ROOT_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_MIO_ROOT_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_VB_DETECTION_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_VB_DETECTION_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MT_SPINCOUNT"); @test r == "$(Mosek.MSK_IPAR_MT_SPINCOUNT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_NUM_THREADS"); @test r == "$(Mosek.MSK_IPAR_NUM_THREADS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_MAX_TERMS_PER_LINE"); @test r == "$(Mosek.MSK_IPAR_OPF_MAX_TERMS_PER_LINE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HEADER"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_HEADER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HINTS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_HINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PARAMETERS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_PARAMETERS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PROBLEM"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_BAS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_BAS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITG"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITR"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOLUTIONS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_CASE_NAME"); @test r == "$(Mosek.MSK_IPAR_PARAM_READ_CASE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_IGN_ERROR"); @test r == "$(Mosek.MSK_IPAR_PARAM_READ_IGN_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LEVEL"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_USE"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_USE"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_COMPRESSED"); @test r == "$(Mosek.MSK_IPAR_READ_DATA_COMPRESSED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_FORMAT"); @test r == "$(Mosek.MSK_IPAR_READ_DATA_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DEBUG"); @test r == "$(Mosek.MSK_IPAR_READ_DEBUG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_KEEP_FREE_CON"); @test r == "$(Mosek.MSK_IPAR_READ_KEEP_FREE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU"); @test r == "$(Mosek.MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_QUOTED_NAMES"); @test r == "$(Mosek.MSK_IPAR_READ_LP_QUOTED_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_FORMAT"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_WIDTH"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_TASK_IGNORE_PARAM"); @test r == "$(Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_ALL"); @test r == "$(Mosek.MSK_IPAR_SENSITIVITY_ALL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_TYPE"); @test r == "$(Mosek.MSK_IPAR_SENSITIVITY_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_BASIS_FACTOR_USE"); @test r == "$(Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DEGEN"); @test r == "$(Mosek.MSK_IPAR_SIM_DEGEN)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_CRASH"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_CRASH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_EXPLOIT_DUPVEC"); @test r == "$(Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART"); @test r == "$(Mosek.MSK_IPAR_SIM_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART_LU"); @test r == "$(Mosek.MSK_IPAR_SIM_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_INTEGER"); @test r == "$(Mosek.MSK_IPAR_SIM_INTEGER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_SIM_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_NUM_SETBACKS"); @test r == "$(Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_NON_SINGULAR"); @test r == "$(Mosek.MSK_IPAR_SIM_NON_SINGULAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_CRASH"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_CRASH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFACTOR_FREQ"); @test r == "$(Mosek.MSK_IPAR_SIM_REFACTOR_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFORMULATION"); @test r == "$(Mosek.MSK_IPAR_SIM_REFORMULATION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SAVE_LU"); @test r == "$(Mosek.MSK_IPAR_SIM_SAVE_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING"); @test r == "$(Mosek.MSK_IPAR_SIM_SCALING)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING_METHOD"); @test r == "$(Mosek.MSK_IPAR_SIM_SCALING_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SOLVE_FORM"); @test r == "$(Mosek.MSK_IPAR_SIM_SOLVE_FORM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_STABILITY_PRIORITY"); @test r == "$(Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SWITCH_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_BASIC"); @test r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_RANGED"); @test r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_NAME_WIDTH"); @test r == "$(Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_WIDTH"); @test r == "$(Mosek.MSK_IPAR_SOL_READ_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOLUTION_CALLBACK"); @test r == "$(Mosek.MSK_IPAR_SOLUTION_CALLBACK)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_TIMING_LEVEL"); @test r == "$(Mosek.MSK_IPAR_TIMING_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_CONSTRAINTS"); @test r == "$(Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_HEAD"); @test r == "$(Mosek.MSK_IPAR_WRITE_BAS_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_VARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_BAS_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_COMPRESSED"); @test r == "$(Mosek.MSK_IPAR_WRITE_DATA_COMPRESSED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_FORMAT"); @test r == "$(Mosek.MSK_IPAR_WRITE_DATA_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_PARAM"); @test r == "$(Mosek.MSK_IPAR_WRITE_DATA_PARAM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_FREE_CON"); @test r == "$(Mosek.MSK_IPAR_WRITE_FREE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES"); @test r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES_IO"); @test r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_CONSTRAINTS"); @test r == "$(Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_HEAD"); @test r == "$(Mosek.MSK_IPAR_WRITE_INT_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_VARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_INT_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_FULL_OBJ"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_FULL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_LINE_WIDTH"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_QUOTED_NAMES"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_QUOTED_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_STRICT_FORMAT"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_STRICT_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_TERMS_PER_LINE"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_MPS_FORMAT"); @test r == "$(Mosek.MSK_IPAR_WRITE_MPS_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_MPS_INT"); @test r == "$(Mosek.MSK_IPAR_WRITE_MPS_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_PRECISION"); @test r == "$(Mosek.MSK_IPAR_WRITE_PRECISION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_BARVARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_CONSTRAINTS"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_HEAD"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_VARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_TASK_INC_SOL"); @test r == "$(Mosek.MSK_IPAR_WRITE_TASK_INC_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_XML_MODE"); @test r == "$(Mosek.MSK_IPAR_WRITE_XML_MODE)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_ILLPOSED_CER"); @test r == "$(Mosek.MSK_SOL_STA_DUAL_ILLPOSED_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_DUAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_INTEGER_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_INTEGER_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_INTEGER_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_ILLPOSED_CER"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_ILLPOSED_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_UNKNOWN"); @test r == "$(Mosek.MSK_SOL_STA_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MAXIMIZE"); @test r == "$(Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MINIMIZE"); @test r == "$(Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLC"); @test r == "$(Mosek.MSK_SOL_ITEM_SLC)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLX"); @test r == "$(Mosek.MSK_SOL_ITEM_SLX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SNX"); @test r == "$(Mosek.MSK_SOL_ITEM_SNX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUC"); @test r == "$(Mosek.MSK_SOL_ITEM_SUC)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUX"); @test r == "$(Mosek.MSK_SOL_ITEM_SUX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XC"); @test r == "$(Mosek.MSK_SOL_ITEM_XC)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XX"); @test r == "$(Mosek.MSK_SOL_ITEM_XX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_Y"); @test r == "$(Mosek.MSK_SOL_ITEM_Y)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_FR"); @test r == "$(Mosek.MSK_BK_FR)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_FX"); @test r == "$(Mosek.MSK_BK_FX)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_LO"); @test r == "$(Mosek.MSK_BK_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_RA"); @test r == "$(Mosek.MSK_BK_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_UP"); @test r == "$(Mosek.MSK_BK_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_ALWAYS"); @test r == "$(Mosek.MSK_BI_ALWAYS)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_IF_FEASIBLE"); @test r == "$(Mosek.MSK_BI_IF_FEASIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_NEVER"); @test r == "$(Mosek.MSK_BI_NEVER)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_NO_ERROR"); @test r == "$(Mosek.MSK_BI_NO_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_RESERVERED"); @test r == "$(Mosek.MSK_BI_RESERVERED)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_DOWN"); @test r == "$(Mosek.MSK_BRANCH_DIR_DOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_FAR"); @test r == "$(Mosek.MSK_BRANCH_DIR_FAR)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_FREE"); @test r == "$(Mosek.MSK_BRANCH_DIR_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_GUIDED"); @test r == "$(Mosek.MSK_BRANCH_DIR_GUIDED)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_NEAR"); @test r == "$(Mosek.MSK_BRANCH_DIR_NEAR)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_PSEUDOCOST"); @test r == "$(Mosek.MSK_BRANCH_DIR_PSEUDOCOST)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_ROOT_LP"); @test r == "$(Mosek.MSK_BRANCH_DIR_ROOT_LP)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_UP"); @test r == "$(Mosek.MSK_BRANCH_DIR_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_DUAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_PRIMAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_INTPNT_FACTOR_NUM_NZ"); @test r == "$(Mosek.MSK_LIINF_INTPNT_FACTOR_NUM_NZ)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_INTPNT_ITER"); @test r == "$(Mosek.MSK_LIINF_MIO_INTPNT_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_PRESOLVED_ANZ"); @test r == "$(Mosek.MSK_LIINF_MIO_PRESOLVED_ANZ)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_SIM_MAXITER_SETBACKS"); @test r == "$(Mosek.MSK_LIINF_MIO_SIM_MAXITER_SETBACKS)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_SIMPLEX_ITER"); @test r == "$(Mosek.MSK_LIINF_MIO_SIMPLEX_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMANZ"); @test r == "$(Mosek.MSK_LIINF_RD_NUMANZ)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMQNZ"); @test r == "$(Mosek.MSK_LIINF_RD_NUMQNZ)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_FREE"); @test r == "$(Mosek.MSK_SIM_HOTSTART_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_NONE"); @test r == "$(Mosek.MSK_SIM_HOTSTART_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_STATUS_KEYS"); @test r == "$(Mosek.MSK_SIM_HOTSTART_STATUS_KEYS)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INFEAS_ANA"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_LICENSE_WAIT"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_MIO"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_OPTIMIZER"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_READ"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_ROOT_CUTGEN"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_ROOT_CUTGEN)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_TO_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_TO_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_WRITE"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_END_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_FULL_CONVEXITY_CHECK"); @test r == "$(Mosek.MSK_CALLBACK_END_FULL_CONVEXITY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INFEAS_ANA"); @test r == "$(Mosek.MSK_CALLBACK_END_INFEAS_ANA)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_END_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_LICENSE_WAIT"); @test r == "$(Mosek.MSK_CALLBACK_END_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_MIO"); @test r == "$(Mosek.MSK_CALLBACK_END_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_OPTIMIZER"); @test r == "$(Mosek.MSK_CALLBACK_END_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_END_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_REPAIR"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_QCQO_REFORMULATE"); @test r == "$(Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_READ"); @test r == "$(Mosek.MSK_CALLBACK_END_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_ROOT_CUTGEN"); @test r == "$(Mosek.MSK_CALLBACK_END_ROOT_CUTGEN)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_TO_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_END_TO_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_WRITE"); @test r == "$(Mosek.MSK_CALLBACK_END_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_IM_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SENSIVITY"); @test r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK"); @test r == "$(Mosek.MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_IM_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LICENSE_WAIT"); @test r == "$(Mosek.MSK_CALLBACK_IM_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LU"); @test r == "$(Mosek.MSK_CALLBACK_IM_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_ORDER"); @test r == "$(Mosek.MSK_CALLBACK_IM_ORDER)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SENSIVITY"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_QO_REFORMULATE"); @test r == "$(Mosek.MSK_CALLBACK_IM_QO_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_READ"); @test r == "$(Mosek.MSK_CALLBACK_IM_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_ROOT_CUTGEN"); @test r == "$(Mosek.MSK_CALLBACK_IM_ROOT_CUTGEN)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_NEW_INT_MIO"); @test r == "$(Mosek.MSK_CALLBACK_NEW_INT_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF"); @test r == "$(Mosek.MSK_CALLBACK_READ_OPF)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF_SECTION"); @test r == "$(Mosek.MSK_CALLBACK_READ_OPF_SECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_SOLVING_REMOTE"); @test r == "$(Mosek.MSK_CALLBACK_SOLVING_REMOTE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_WRITE_OPF"); @test r == "$(Mosek.MSK_CALLBACK_WRITE_OPF)"
+        ok,r = Mosek.symnamtovalue("MSK_SYMMAT_TYPE_SPARSE"); @test r == "$(Mosek.MSK_SYMMAT_TYPE_SPARSE)"
+        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTON"); @test r == "$(Mosek.MSK_FEATURE_PTON)"
+        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTS"); @test r == "$(Mosek.MSK_FEATURE_PTS)"
+        ok,r = Mosek.symnamtovalue("MSK_MARK_LO"); @test r == "$(Mosek.MSK_MARK_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_MARK_UP"); @test r == "$(Mosek.MSK_MARK_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_CT_QUAD"); @test r == "$(Mosek.MSK_CT_QUAD)"
+        ok,r = Mosek.symnamtovalue("MSK_CT_RQUAD"); @test r == "$(Mosek.MSK_CT_RQUAD)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_ERR"); @test r == "$(Mosek.MSK_STREAM_ERR)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_LOG"); @test r == "$(Mosek.MSK_STREAM_LOG)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_MSG"); @test r == "$(Mosek.MSK_STREAM_MSG)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_WRN"); @test r == "$(Mosek.MSK_STREAM_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READ"); @test r == "$(Mosek.MSK_IOMODE_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READWRITE"); @test r == "$(Mosek.MSK_IOMODE_READWRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_IOMODE_WRITE"); @test r == "$(Mosek.MSK_IOMODE_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_ASE"); @test r == "$(Mosek.MSK_SIM_SELECTION_ASE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_DEVEX"); @test r == "$(Mosek.MSK_SIM_SELECTION_DEVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FREE"); @test r == "$(Mosek.MSK_SIM_SELECTION_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FULL"); @test r == "$(Mosek.MSK_SIM_SELECTION_FULL)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_PARTIAL"); @test r == "$(Mosek.MSK_SIM_SELECTION_PARTIAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_SE"); @test r == "$(Mosek.MSK_SIM_SELECTION_SE)"
+        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_COL"); @test r == "$(Mosek.MSK_WRITE_XML_MODE_COL)"
+        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_ROW"); @test r == "$(Mosek.MSK_WRITE_XML_MODE_ROW)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_IGNORED"); @test r == "$(Mosek.MSK_MIO_MODE_IGNORED)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_SATISFIED"); @test r == "$(Mosek.MSK_MIO_MODE_SATISFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_TIME"); @test r == "$(Mosek.MSK_DINF_BI_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_FEAS"); @test r == "$(Mosek.MSK_DINF_INTPNT_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_OBJ"); @test r == "$(Mosek.MSK_DINF_INTPNT_DUAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"); @test r == "$(Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_OPT_STATUS"); @test r == "$(Mosek.MSK_DINF_INTPNT_OPT_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_ORDER_TIME"); @test r == "$(Mosek.MSK_DINF_INTPNT_ORDER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_FEAS"); @test r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_TIME"); @test r == "$(Mosek.MSK_DINF_INTPNT_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CLIQUE_SEPARATION_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_CLIQUE_SEPARATION_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CMIR_SEPARATION_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_CMIR_SEPARATION_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"); @test r == "$(Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"); @test r == "$(Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_GMI_SEPARATION_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_GMI_SEPARATION_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_HEURISTIC_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_HEURISTIC_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_IMPLIED_BOUND_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_IMPLIED_BOUND_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_ABS_GAP"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_BOUND"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_INT"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_REL_GAP"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OPTIMIZER_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_OPTIMIZER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_PROBING_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_PROBING_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_CUTGEN_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_ROOT_CUTGEN_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_PRESOLVE_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_USER_OBJ_CUT"); @test r == "$(Mosek.MSK_DINF_MIO_USER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_OPTIMIZER_TIME"); @test r == "$(Mosek.MSK_DINF_OPTIMIZER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_ELI_TIME"); @test r == "$(Mosek.MSK_DINF_PRESOLVE_ELI_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_LINDEP_TIME"); @test r == "$(Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_TIME"); @test r == "$(Mosek.MSK_DINF_PRESOLVE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"); @test r == "$(Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION"); @test r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_TIME"); @test r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"); @test r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"); @test r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_RD_TIME"); @test r == "$(Mosek.MSK_DINF_RD_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_FEAS"); @test r == "$(Mosek.MSK_DINF_SIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_OBJ"); @test r == "$(Mosek.MSK_DINF_SIM_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_PRIMAL_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DUAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_BARX"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_BARX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SLC"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SLC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SLX"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SLX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SUC"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SUC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_SUX"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_SUX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_XC"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_XC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_XX"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_XX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_NRM_Y"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_NRM_Y)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_NRM_BARX"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_NRM_BARX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_NRM_XC"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_NRM_XC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_NRM_XX"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_NRM_XX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLBARVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCONES"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCONES)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLITG"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLITG)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DUAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLBARVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCONES"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCONES)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_BARS"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_BARS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_BARX"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_BARX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SLC"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SLC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SLX"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SLX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SNX"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SNX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SUC"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SUC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_SUX"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_SUX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_XC"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_XC)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_XX"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_XX)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_NRM_Y"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_NRM_Y)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLBARVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCONES"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCONES)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_TO_CONIC_TIME"); @test r == "$(Mosek.MSK_DINF_TO_CONIC_TIME)"
+       ok,r = Mosek.symnamtovalue("MSK_PAR_DOU_TYPE"); @test r == "$(Mosek.MSK_PAR_DOU_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_INT_TYPE"); @test r == "$(Mosek.MSK_PAR_INT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_INVALID_TYPE"); @test r == "$(Mosek.MSK_PAR_INVALID_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_STR_TYPE"); @test r == "$(Mosek.MSK_PAR_STR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_ERR"); @test r == "$(Mosek.MSK_RESPONSE_ERR)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_OK"); @test r == "$(Mosek.MSK_RESPONSE_OK)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_TRM"); @test r == "$(Mosek.MSK_RESPONSE_TRM)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_UNK"); @test r == "$(Mosek.MSK_RESPONSE_UNK)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_WRN"); @test r == "$(Mosek.MSK_RESPONSE_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_INFEAS"); @test r == "$(Mosek.MSK_PRO_STA_DUAL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_ILL_POSED"); @test r == "$(Mosek.MSK_PRO_STA_ILL_POSED)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_NEAR_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_INFEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_UNKNOWN"); @test r == "$(Mosek.MSK_PRO_STA_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_AGGRESSIVE"); @test r == "$(Mosek.MSK_SCALING_AGGRESSIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_FREE"); @test r == "$(Mosek.MSK_SCALING_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_MODERATE"); @test r == "$(Mosek.MSK_SCALING_MODERATE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_NONE"); @test r == "$(Mosek.MSK_SCALING_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_CODELIST"); @test r == "$(Mosek.MSK_RES_ERR_AD_INVALID_CODELIST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_ARRAY_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_API_ARRAY_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_CB_CONNECT"); @test r == "$(Mosek.MSK_RES_ERR_API_CB_CONNECT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_FATAL_ERROR"); @test r == "$(Mosek.MSK_RES_ERR_API_FATAL_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_INTERNAL"); @test r == "$(Mosek.MSK_RES_ERR_API_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_DIMENSION"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_DIMENSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_LENNEQ"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_LENNEQ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_PERM_ARRAY"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_PERM_ARRAY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BAR_VAR_DIM"); @test r == "$(Mosek.MSK_RES_ERR_BAR_VAR_DIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS"); @test r == "$(Mosek.MSK_RES_ERR_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_FACTOR"); @test r == "$(Mosek.MSK_RES_ERR_BASIS_FACTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_SINGULAR"); @test r == "$(Mosek.MSK_RES_ERR_BASIS_SINGULAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BLANK_NAME"); @test r == "$(Mosek.MSK_RES_ERR_BLANK_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_CLONE_NL"); @test r == "$(Mosek.MSK_RES_ERR_CANNOT_CLONE_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_HANDLE_NL"); @test r == "$(Mosek.MSK_RES_ERR_CANNOT_HANDLE_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_ACOORD"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_ACOORD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_BCOORD"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_BCOORD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_CON"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_INT"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJ"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_VAR"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_CON_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_CON_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_INT_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_INT_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_VAR_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_VAR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VARIABLES"); @test r == "$(Mosek.MSK_RES_ERR_CBF_NO_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED"); @test r == "$(Mosek.MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_OBJ_SENSE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_OBJ_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_PARSE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_PARSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_SYNTAX"); @test r == "$(Mosek.MSK_RES_ERR_CBF_SYNTAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_INTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_INTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_VARIABLES"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_INTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_INTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_VARIABLES"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_UNSUPPORTED"); @test r == "$(Mosek.MSK_RES_ERR_CBF_UNSUPPORTED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_NSD"); @test r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_NSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_PSD"); @test r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_PSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_CONE_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP"); @test r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP_APPEND"); @test r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP_APPEND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_REP_VAR"); @test r == "$(Mosek.MSK_RES_ERR_CONE_REP_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_SIZE"); @test r == "$(Mosek.MSK_RES_ERR_CONE_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_CONE_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE_STR"); @test r == "$(Mosek.MSK_RES_ERR_CONE_TYPE_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DATA_FILE_EXT"); @test r == "$(Mosek.MSK_RES_ERR_DATA_FILE_EXT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUP_NAME"); @test r == "$(Mosek.MSK_RES_ERR_DUP_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_AIJ"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONE_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_END_OF_FILE"); @test r == "$(Mosek.MSK_RES_ERR_END_OF_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FACTOR"); @test r == "$(Mosek.MSK_RES_ERR_FACTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX"); @test r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND"); @test r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED"); @test r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_FILE_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_OPEN"); @test r == "$(Mosek.MSK_RES_ERR_FILE_OPEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_READ"); @test r == "$(Mosek.MSK_RES_ERR_FILE_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_WRITE"); @test r == "$(Mosek.MSK_RES_ERR_FILE_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRST"); @test r == "$(Mosek.MSK_RES_ERR_FIRST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTI"); @test r == "$(Mosek.MSK_RES_ERR_FIRSTI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTJ"); @test r == "$(Mosek.MSK_RES_ERR_FIRSTJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIXED_BOUND_VALUES"); @test r == "$(Mosek.MSK_RES_ERR_FIXED_BOUND_VALUES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FLEXLM"); @test r == "$(Mosek.MSK_RES_ERR_FLEXLM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_AIJ"); @test r == "$(Mosek.MSK_RES_ERR_HUGE_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_C"); @test r == "$(Mosek.MSK_RES_ERR_HUGE_C)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IDENTICAL_TASKS"); @test r == "$(Mosek.MSK_RES_ERR_IDENTICAL_TASKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IN_ARGUMENT"); @test r == "$(Mosek.MSK_RES_ERR_IN_ARGUMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INF_DOU_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INF_DOU_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INF_INT_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INF_INT_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INF_LINT_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INF_LINT_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INF_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFEAS_UNDEFINED"); @test r == "$(Mosek.MSK_RES_ERR_INFEAS_UNDEFINED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFINITE_BOUND"); @test r == "$(Mosek.MSK_RES_ERR_INFINITE_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INT64_TO_INT32_CAST"); @test r == "$(Mosek.MSK_RES_ERR_INT64_TO_INT32_CAST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL"); @test r == "$(Mosek.MSK_RES_ERR_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL_TEST_FAILED"); @test r == "$(Mosek.MSK_RES_ERR_INTERNAL_TEST_FAILED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_APTRE"); @test r == "$(Mosek.MSK_RES_ERR_INV_APTRE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BK"); @test r == "$(Mosek.MSK_RES_ERR_INV_BK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKC"); @test r == "$(Mosek.MSK_RES_ERR_INV_BKC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKX"); @test r == "$(Mosek.MSK_RES_ERR_INV_BKX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE_STR"); @test r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKI"); @test r == "$(Mosek.MSK_RES_ERR_INV_MARKI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_MARKJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NAME_ITEM"); @test r == "$(Mosek.MSK_RES_ERR_INV_NAME_ITEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMI"); @test r == "$(Mosek.MSK_RES_ERR_INV_NUMI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_NUMJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_INV_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_INV_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBI"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBK"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_VAL"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_VAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBI"); @test r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_VAL"); @test r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_VAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK"); @test r == "$(Mosek.MSK_RES_ERR_INV_SK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK_STR"); @test r == "$(Mosek.MSK_RES_ERR_INV_SK_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKC"); @test r == "$(Mosek.MSK_RES_ERR_INV_SKC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKN"); @test r == "$(Mosek.MSK_RES_ERR_INV_SKN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKX"); @test r == "$(Mosek.MSK_RES_ERR_INV_SKX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_VAR_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INV_VAR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_ACCMODE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_ACCMODE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AIJ"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AMPL_STUB"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_AMPL_STUB)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BARVAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_BARVAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_COMPRESSION"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_COMPRESSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CONE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_CONE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FORMAT_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FORMAT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IDX"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_IDX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IOMODE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_IOMODE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_MAX_NUM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_MAX_NUM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJ_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_OBJ_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJECTIVE_SENSE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_OBJECTIVE_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_PROBLEM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_PROBLEM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_STREAM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_STREAM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SURPLUS"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_SURPLUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SYM_MAT_DIM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_SYM_MAT_DIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_TASK"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_UTF8"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_UTF8)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WCHAR"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_WCHAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WHICHSOL"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_WHICHSOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_DATA"); @test r == "$(Mosek.MSK_RES_ERR_JSON_DATA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_JSON_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_MISSING_DATA"); @test r == "$(Mosek.MSK_RES_ERR_JSON_MISSING_DATA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_NUMBER_OVERFLOW"); @test r == "$(Mosek.MSK_RES_ERR_JSON_NUMBER_OVERFLOW)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_STRING"); @test r == "$(Mosek.MSK_RES_ERR_JSON_STRING)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_JSON_SYNTAX"); @test r == "$(Mosek.MSK_RES_ERR_JSON_SYNTAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAST"); @test r == "$(Mosek.MSK_RES_ERR_LAST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTI"); @test r == "$(Mosek.MSK_RES_ERR_LASTI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTJ"); @test r == "$(Mosek.MSK_RES_ERR_LASTJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_K"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_K)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_M"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_M)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_N"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_N)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANS"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSA"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSB"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSB)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_UPLO"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_UPLO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX"); @test r == "$(Mosek.MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX"); @test r == "$(Mosek.MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE"); @test r == "$(Mosek.MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_SINGULAR_MATRIX"); @test r == "$(Mosek.MSK_RES_ERR_LAU_SINGULAR_MATRIX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_UNKNOWN"); @test r == "$(Mosek.MSK_RES_ERR_LAU_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_CONNECT"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_CONNECT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_EXPIRED"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_EXPIRED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_FEATURE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_FEATURE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_INVALID_HOSTID"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_INVALID_HOSTID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MAX"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_MAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_LINE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_LINE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER_VERSION"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER_VERSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_VERSION"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_VERSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LINK_FILE_DLL"); @test r == "$(Mosek.MSK_RES_ERR_LINK_FILE_DLL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LIVING_TASKS"); @test r == "$(Mosek.MSK_RES_ERR_LIVING_TASKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LOWER_BOUND_IS_A_NAN"); @test r == "$(Mosek.MSK_RES_ERR_LOWER_BOUND_IS_A_NAN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_DUP_SLACK_NAME"); @test r == "$(Mosek.MSK_RES_ERR_LP_DUP_SLACK_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_EMPTY"); @test r == "$(Mosek.MSK_RES_ERR_LP_EMPTY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FILE_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_LP_FILE_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_LP_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FREE_CONSTRAINT"); @test r == "$(Mosek.MSK_RES_ERR_LP_FREE_CONSTRAINT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INCOMPATIBLE"); @test r == "$(Mosek.MSK_RES_ERR_LP_INCOMPATIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_LP_INVALID_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LU_MAX_NUM_TRIES"); @test r == "$(Mosek.MSK_RES_ERR_LU_MAX_NUM_TRIES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMBARVAR"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCON"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCONE"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMCONE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMQNZ"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMQNZ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMVAR"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INTERNAL"); @test r == "$(Mosek.MSK_RES_ERR_MIO_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NO_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_MIO_NO_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NOT_LOADED"); @test r == "$(Mosek.MSK_RES_ERR_MIO_NOT_LOADED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MISSING_LICENSE_FILE"); @test r == "$(Mosek.MSK_RES_ERR_MISSING_LICENSE_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIXED_CONIC_AND_NL"); @test r == "$(Mosek.MSK_RES_ERR_MIXED_CONIC_AND_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_OVERLAP"); @test r == "$(Mosek.MSK_RES_ERR_MPS_CONE_OVERLAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_REPEAT"); @test r == "$(Mosek.MSK_RES_ERR_MPS_CONE_REPEAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_CONE_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT"); @test r == "$(Mosek.MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_FILE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_BOUND_KEY"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_BOUND_KEY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_CON_KEY"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_CON_KEY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_FIELD"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_FIELD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_MARKER"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_MARKER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_ORDER"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_ORDER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJ_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJ_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJSENSE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJSENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CSEC"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CSEC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QOBJ"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QOBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QSEC"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QSEC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NO_OBJECTIVE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NO_OBJECTIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NON_SYMMETRIC_Q"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NON_SYMMETRIC_Q)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NULL_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NULL_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_SPLITTED_VAR"); @test r == "$(Mosek.MSK_RES_ERR_MPS_SPLITTED_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD2"); @test r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD2)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD3"); @test r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD3)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD5"); @test r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD5)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MUL_A_ELEMENT"); @test r == "$(Mosek.MSK_RES_ERR_MUL_A_ELEMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_IS_NULL"); @test r == "$(Mosek.MSK_RES_ERR_NAME_IS_NULL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_MAX_LEN"); @test r == "$(Mosek.MSK_RES_ERR_NAME_MAX_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLC"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLX"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUC"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUX"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_C"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_C)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_DOUBLE_DATA"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_DOUBLE_DATA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_APPEND"); @test r == "$(Mosek.MSK_RES_ERR_NEGATIVE_APPEND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_SURPLUS"); @test r == "$(Mosek.MSK_RES_ERR_NEGATIVE_SURPLUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEWER_DLL"); @test r == "$(Mosek.MSK_RES_ERR_NEWER_DLL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARS_FOR_SOLUTION"); @test r == "$(Mosek.MSK_RES_ERR_NO_BARS_FOR_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARX_FOR_SOLUTION"); @test r == "$(Mosek.MSK_RES_ERR_NO_BARX_FOR_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BASIS_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_BASIS_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_INFEAS_CER"); @test r == "$(Mosek.MSK_RES_ERR_NO_DUAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_INIT_ENV"); @test r == "$(Mosek.MSK_RES_ERR_NO_INIT_ENV)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_PRIMAL_INFEAS_CER"); @test r == "$(Mosek.MSK_RES_ERR_NO_PRIMAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SNX_FOR_BAS_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_SNX_FOR_BAS_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK"); @test r == "$(Mosek.MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NON_UNIQUE_ARRAY"); @test r == "$(Mosek.MSK_RES_ERR_NON_UNIQUE_ARRAY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONCONVEX"); @test r == "$(Mosek.MSK_RES_ERR_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_EQUALITY"); @test r == "$(Mosek.MSK_RES_ERR_NONLINEAR_EQUALITY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED"); @test r == "$(Mosek.MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_RANGED"); @test r == "$(Mosek.MSK_RES_ERR_NONLINEAR_RANGED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NR_ARGUMENTS"); @test r == "$(Mosek.MSK_RES_ERR_NR_ARGUMENTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_ENV"); @test r == "$(Mosek.MSK_RES_ERR_NULL_ENV)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_POINTER"); @test r == "$(Mosek.MSK_RES_ERR_NULL_POINTER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_TASK"); @test r == "$(Mosek.MSK_RES_ERR_NULL_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMCONLIM"); @test r == "$(Mosek.MSK_RES_ERR_NUMCONLIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMVARLIM"); @test r == "$(Mosek.MSK_RES_ERR_NUMVARLIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_NSD"); @test r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_NSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_PSD"); @test r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_PSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJECTIVE_RANGE"); @test r == "$(Mosek.MSK_RES_ERR_OBJECTIVE_RANGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OLDER_DLL"); @test r == "$(Mosek.MSK_RES_ERR_OLDER_DLL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPEN_DL"); @test r == "$(Mosek.MSK_RES_ERR_OPEN_DL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_OPF_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_NEW_VARIABLE"); @test r == "$(Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_PREMATURE_EOF"); @test r == "$(Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPTIMIZER_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_OPTIMIZER_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OVERFLOW"); @test r == "$(Mosek.MSK_RES_ERR_OVERFLOW)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_DOU"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_DOU)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_INT"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_STR"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_VALUE_STR"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_VALUE_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PLATFORM_NOT_LICENSED"); @test r == "$(Mosek.MSK_RES_ERR_PLATFORM_NOT_LICENSED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_POSTSOLVE"); @test r == "$(Mosek.MSK_RES_ERR_POSTSOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PRO_ITEM"); @test r == "$(Mosek.MSK_RES_ERR_PRO_ITEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PROB_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_PROB_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_UPPER_TRIANGLE"); @test r == "$(Mosek.MSK_RES_ERR_QCON_UPPER_TRIANGLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QOBJ_UPPER_TRIANGLE"); @test r == "$(Mosek.MSK_RES_ERR_QOBJ_UPPER_TRIANGLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_READ_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_MISSING_END_TAG"); @test r == "$(Mosek.MSK_RES_ERR_READ_LP_MISSING_END_TAG)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_NONEXISTING_NAME"); @test r == "$(Mosek.MSK_RES_ERR_READ_LP_NONEXISTING_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REMOVE_CONE_VARIABLE"); @test r == "$(Mosek.MSK_RES_ERR_REMOVE_CONE_VARIABLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_INVALID_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_REPAIR_INVALID_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED"); @test r == "$(Mosek.MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_LO"); @test r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_UP"); @test r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_SEN_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_RANGE"); @test r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_RANGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INVALID_REGEXP"); @test r == "$(Mosek.MSK_RES_ERR_SEN_INVALID_REGEXP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_NUMERICAL"); @test r == "$(Mosek.MSK_RES_ERR_SEN_NUMERICAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_SOLUTION_STATUS"); @test r == "$(Mosek.MSK_RES_ERR_SEN_SOLUTION_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNDEF_NAME"); @test r == "$(Mosek.MSK_RES_ERR_SEN_UNDEF_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_CONNECT"); @test r == "$(Mosek.MSK_RES_ERR_SERVER_CONNECT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_PROTOCOL"); @test r == "$(Mosek.MSK_RES_ERR_SERVER_PROTOCOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_STATUS"); @test r == "$(Mosek.MSK_RES_ERR_SERVER_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SERVER_TOKEN"); @test r == "$(Mosek.MSK_RES_ERR_SERVER_TOKEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_CON"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_INTVAR"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_INTVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_NUMCORES"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_NUMCORES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_VAR"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOL_FILE_INVALID_NUMBER"); @test r == "$(Mosek.MSK_RES_ERR_SOL_FILE_INVALID_NUMBER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLITEM"); @test r == "$(Mosek.MSK_RES_ERR_SOLITEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLVER_PROBTYPE"); @test r == "$(Mosek.MSK_RES_ERR_SOLVER_PROBTYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE"); @test r == "$(Mosek.MSK_RES_ERR_SPACE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_LEAKING"); @test r == "$(Mosek.MSK_RES_ERR_SPACE_LEAKING)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_NO_INFO"); @test r == "$(Mosek.MSK_RES_ERR_SPACE_NO_INFO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_DUPLICATE"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_DUPLICATE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_HUGE"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_HUGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_VALUE"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_VALUE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INCOMPATIBLE"); @test r == "$(Mosek.MSK_RES_ERR_TASK_INCOMPATIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_TASK_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_COND_INIT"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_COND_INIT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_CREATE"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_CREATE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_INIT"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_INIT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_LOCK"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_LOCK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_UNLOCK"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_UNLOCK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC"); @test r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD"); @test r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTRAINT_FX"); @test r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_FX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONSTRAINT_RA"); @test r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD"); @test r == "$(Mosek.MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ"); @test r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAXNUMANZ"); @test r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAXNUMANZ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNB_STEP_SIZE"); @test r == "$(Mosek.MSK_RES_ERR_UNB_STEP_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEF_SOLUTION"); @test r == "$(Mosek.MSK_RES_ERR_UNDEF_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE"); @test r == "$(Mosek.MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS"); @test r == "$(Mosek.MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNKNOWN"); @test r == "$(Mosek.MSK_RES_ERR_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_BOUND_IS_A_NAN"); @test r == "$(Mosek.MSK_RES_ERR_UPPER_BOUND_IS_A_NAN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_TRIANGLE"); @test r == "$(Mosek.MSK_RES_ERR_UPPER_TRIANGLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET"); @test r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET_DATA"); @test r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET_DATA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBI"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_FUNC"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_FUNC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHITEM_NOT_ALLOWED"); @test r == "$(Mosek.MSK_RES_ERR_WHICHITEM_NOT_ALLOWED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHSOL"); @test r == "$(Mosek.MSK_RES_ERR_WHICHSOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_LP_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_MPS_INVALID_NAME"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_MPS_INVALID_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITING_FILE"); @test r == "$(Mosek.MSK_RES_ERR_WRITING_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_Y_IS_UNDEFINED"); @test r == "$(Mosek.MSK_RES_ERR_Y_IS_UNDEFINED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_OK"); @test r == "$(Mosek.MSK_RES_OK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL"); @test r == "$(Mosek.MSK_RES_TRM_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL_STOP"); @test r == "$(Mosek.MSK_RES_TRM_INTERNAL_STOP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_RES_TRM_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_NUM_SETBACKS"); @test r == "$(Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_TIME"); @test r == "$(Mosek.MSK_RES_TRM_MAX_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_ABS_GAP"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_REL_GAP"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_BRANCHES"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_RELAXS"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NUM_RELAXS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS"); @test r == "$(Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUMERICAL_PROBLEM"); @test r == "$(Mosek.MSK_RES_TRM_NUMERICAL_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_OBJECTIVE_RANGE"); @test r == "$(Mosek.MSK_RES_TRM_OBJECTIVE_RANGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_STALL"); @test r == "$(Mosek.MSK_RES_TRM_STALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_USER_CALLBACK"); @test r == "$(Mosek.MSK_RES_TRM_USER_CALLBACK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_C_ZERO"); @test r == "$(Mosek.MSK_RES_WRN_ANA_C_ZERO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_CLOSE_BOUNDS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_CLOSE_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_EMPTY_COLS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_EMPTY_COLS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_LARGE_BOUNDS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_LARGE_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG"); @test r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG"); @test r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS"); @test r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DROPPED_NZ_QOBJ"); @test r == "$(Mosek.MSK_RES_WRN_DROPPED_NZ_QOBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONE_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ELIMINATOR_SPACE"); @test r == "$(Mosek.MSK_RES_WRN_ELIMINATOR_SPACE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_EMPTY_NAME"); @test r == "$(Mosek.MSK_RES_WRN_EMPTY_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_IGNORE_INTEGER"); @test r == "$(Mosek.MSK_RES_WRN_IGNORE_INTEGER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"); @test r == "$(Mosek.MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_AIJ"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_BOUND"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CJ"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_CJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CON_FX"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_CON_FX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_LO_BOUND"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_LO_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_UP_BOUND"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_UP_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_EXPIRE"); @test r == "$(Mosek.MSK_RES_WRN_LICENSE_EXPIRE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"); @test r == "$(Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_SERVER"); @test r == "$(Mosek.MSK_RES_WRN_LICENSE_SERVER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_DROP_VARIABLE"); @test r == "$(Mosek.MSK_RES_WRN_LP_DROP_VARIABLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_OLD_QUAD_FORMAT"); @test r == "$(Mosek.MSK_RES_WRN_LP_OLD_QUAD_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MIO_INFEASIBLE_FINAL"); @test r == "$(Mosek.MSK_RES_WRN_MIO_INFEASIBLE_FINAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR"); @test r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR"); @test r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR"); @test r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NAME_MAX_LEN"); @test r == "$(Mosek.MSK_RES_WRN_NAME_MAX_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_DUALIZER"); @test r == "$(Mosek.MSK_RES_WRN_NO_DUALIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_GLOBAL_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_WRN_NO_GLOBAL_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE"); @test r == "$(Mosek.MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NZ_IN_UPR_TRI"); @test r == "$(Mosek.MSK_RES_WRN_NZ_IN_UPR_TRI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_OPEN_PARAM_FILE"); @test r == "$(Mosek.MSK_RES_WRN_OPEN_PARAM_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_IGNORED_CMIO"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_IGNORED_CMIO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_DOU"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_DOU)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_INT"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_STR"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_STR_VALUE"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_STR_VALUE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PRESOLVE_OUTOFSPACE"); @test r == "$(Mosek.MSK_RES_WRN_PRESOLVE_OUTOFSPACE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @test r == "$(Mosek.MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @test r == "$(Mosek.MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_CON"); @test r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_VAR"); @test r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILTER"); @test r == "$(Mosek.MSK_RES_WRN_SOL_FILTER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SPAR_MAX_LEN"); @test r == "$(Mosek.MSK_RES_WRN_SPAR_MAX_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SYM_MAT_LARGE"); @test r == "$(Mosek.MSK_RES_WRN_SYM_MAT_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_FEW_BASIS_VARS"); @test r == "$(Mosek.MSK_RES_WRN_TOO_FEW_BASIS_VARS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_MANY_BASIS_VARS"); @test r == "$(Mosek.MSK_RES_WRN_TOO_MANY_BASIS_VARS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_UNDEF_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_RES_WRN_UNDEF_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_USING_GENERIC_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_USING_GENERIC_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_CHANGED_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_WRITE_CHANGED_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_DISCARDED_CFIX"); @test r == "$(Mosek.MSK_RES_WRN_WRITE_DISCARDED_CFIX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZERO_AIJ"); @test r == "$(Mosek.MSK_RES_WRN_ZERO_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_COL"); @test r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_COL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_ROW"); @test r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_ROW)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_BEST"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_BEST)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FIRST"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_FIRST)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FREE"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_HYBRID"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_HYBRID)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_PSEUDO"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_PSEUDO)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_WORST"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_WORST)"
+        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_NO"); @test r == "$(Mosek.MSK_TRANSPOSE_NO)"
+        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_YES"); @test r == "$(Mosek.MSK_TRANSPOSE_YES)"
+        ok,r = Mosek.symnamtovalue("MSK_OFF"); @test r == "$(Mosek.MSK_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_ON"); @test r == "$(Mosek.MSK_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_AGGRESSIVE"); @test r == "$(Mosek.MSK_SIM_DEGEN_AGGRESSIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_FREE"); @test r == "$(Mosek.MSK_SIM_DEGEN_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MINIMUM"); @test r == "$(Mosek.MSK_SIM_DEGEN_MINIMUM)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MODERATE"); @test r == "$(Mosek.MSK_SIM_DEGEN_MODERATE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_NONE"); @test r == "$(Mosek.MSK_SIM_DEGEN_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_CB"); @test r == "$(Mosek.MSK_DATA_FORMAT_CB)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_EXTENSION"); @test r == "$(Mosek.MSK_DATA_FORMAT_EXTENSION)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_FREE_MPS"); @test r == "$(Mosek.MSK_DATA_FORMAT_FREE_MPS)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_JSON_TASK"); @test r == "$(Mosek.MSK_DATA_FORMAT_JSON_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_LP"); @test r == "$(Mosek.MSK_DATA_FORMAT_LP)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_MPS"); @test r == "$(Mosek.MSK_DATA_FORMAT_MPS)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_OP"); @test r == "$(Mosek.MSK_DATA_FORMAT_OP)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_TASK"); @test r == "$(Mosek.MSK_DATA_FORMAT_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_XML"); @test r == "$(Mosek.MSK_DATA_FORMAT_XML)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_APPMINLOC"); @test r == "$(Mosek.MSK_ORDER_METHOD_APPMINLOC)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_EXPERIMENTAL"); @test r == "$(Mosek.MSK_ORDER_METHOD_EXPERIMENTAL)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FORCE_GRAPHPAR"); @test r == "$(Mosek.MSK_ORDER_METHOD_FORCE_GRAPHPAR)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FREE"); @test r == "$(Mosek.MSK_ORDER_METHOD_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_NONE"); @test r == "$(Mosek.MSK_ORDER_METHOD_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_TRY_GRAPHPAR"); @test r == "$(Mosek.MSK_ORDER_METHOD_TRY_GRAPHPAR)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_CONIC"); @test r == "$(Mosek.MSK_PROBTYPE_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_GECO"); @test r == "$(Mosek.MSK_PROBTYPE_GECO)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_LO"); @test r == "$(Mosek.MSK_PROBTYPE_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_MIXED"); @test r == "$(Mosek.MSK_PROBTYPE_MIXED)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QCQO"); @test r == "$(Mosek.MSK_PROBTYPE_QCQO)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QO"); @test r == "$(Mosek.MSK_PROBTYPE_QO)"
+        ok,r = Mosek.symnamtovalue("MSK_INF_DOU_TYPE"); @test r == "$(Mosek.MSK_INF_DOU_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_INF_INT_TYPE"); @test r == "$(Mosek.MSK_INF_INT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_INF_LINT_TYPE"); @test r == "$(Mosek.MSK_INF_LINT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_ANA_SOL_INFEAS_TOL"); @test r == "$(Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_REL_TOL_S"); @test r == "$(Mosek.MSK_DPAR_BASIS_REL_TOL_S)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_S"); @test r == "$(Mosek.MSK_DPAR_BASIS_TOL_S)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_X"); @test r == "$(Mosek.MSK_DPAR_BASIS_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_CHECK_CONVEXITY_REL_TOL"); @test r == "$(Mosek.MSK_DPAR_CHECK_CONVEXITY_REL_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_SYM_MAT_TOL"); @test r == "$(Mosek.MSK_DPAR_DATA_SYM_MAT_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_SYM_MAT_TOL_HUGE"); @test r == "$(Mosek.MSK_DPAR_DATA_SYM_MAT_TOL_HUGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_SYM_MAT_TOL_LARGE"); @test r == "$(Mosek.MSK_DPAR_DATA_SYM_MAT_TOL_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_HUGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_HUGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_LARGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_INF"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_INF)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_WRN"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_C_HUGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_C_HUGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_CJ_LARGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_CJ_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_QIJ"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_QIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_X"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_INFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_MERIT_BAL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_MERIT_BAL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_NEAR_REL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_NEAR_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_STEP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_STEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_INFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_NEAR_REL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_NEAR_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_QO_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_QO_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DSAFE"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DSAFE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_INFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PATH"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PATH)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PSAFE"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PSAFE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_STEP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_STEP_SIZE"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT"); @test r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"); @test r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_DISABLE_TERM_TIME"); @test r == "$(Mosek.MSK_DPAR_MIO_DISABLE_TERM_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_MAX_TIME"); @test r == "$(Mosek.MSK_DPAR_MIO_MAX_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_ABS_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_REL_GAP_CONST"); @test r == "$(Mosek.MSK_DPAR_MIO_REL_GAP_CONST)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_RELAX_INT"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_FEAS"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_OPTIMIZER_MAX_TIME"); @test r == "$(Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_AIJ"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_S"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_S)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_X"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"); @test r == "$(Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_SEMIDEFINITE_TOL_APPROX"); @test r == "$(Mosek.MSK_DPAR_SEMIDEFINITE_TOL_APPROX)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIM_LU_TOL_REL_PIV"); @test r == "$(Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIMPLEX_ABS_TOL_PIV"); @test r == "$(Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT"); @test r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"); @test r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_FREE"); @test r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_OFF"); @test r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_ON"); @test r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_FREE"); @test r == "$(Mosek.MSK_COMPRESS_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_GZIP"); @test r == "$(Mosek.MSK_COMPRESS_GZIP)"
+        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_NONE"); @test r == "$(Mosek.MSK_COMPRESS_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_GEN"); @test r == "$(Mosek.MSK_NAME_TYPE_GEN)"
+        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_LP"); @test r == "$(Mosek.MSK_NAME_TYPE_LP)"
+        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_MPS"); @test r == "$(Mosek.MSK_NAME_TYPE_MPS)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_CPLEX"); @test r == "$(Mosek.MSK_MPS_FORMAT_CPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_FREE"); @test r == "$(Mosek.MSK_MPS_FORMAT_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_RELAXED"); @test r == "$(Mosek.MSK_MPS_FORMAT_RELAXED)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_STRICT"); @test r == "$(Mosek.MSK_MPS_FORMAT_STRICT)"
+        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_CONT"); @test r == "$(Mosek.MSK_VAR_TYPE_CONT)"
+        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_INT"); @test r == "$(Mosek.MSK_VAR_TYPE_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_FULL"); @test r == "$(Mosek.MSK_CHECK_CONVEXITY_FULL)"
+        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_NONE"); @test r == "$(Mosek.MSK_CHECK_CONVEXITY_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_SIMPLE"); @test r == "$(Mosek.MSK_CHECK_CONVEXITY_SIMPLE)"
+        ok,r = Mosek.symnamtovalue("MSK_LANG_DAN"); @test r == "$(Mosek.MSK_LANG_DAN)"
+        ok,r = Mosek.symnamtovalue("MSK_LANG_ENG"); @test r == "$(Mosek.MSK_LANG_ENG)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_CONSTANT"); @test r == "$(Mosek.MSK_STARTING_POINT_CONSTANT)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_FREE"); @test r == "$(Mosek.MSK_STARTING_POINT_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_GUESS"); @test r == "$(Mosek.MSK_STARTING_POINT_GUESS)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_SATISFY_BOUNDS"); @test r == "$(Mosek.MSK_STARTING_POINT_SATISFY_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_BAS"); @test r == "$(Mosek.MSK_SOL_BAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITG"); @test r == "$(Mosek.MSK_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITR"); @test r == "$(Mosek.MSK_SOL_ITR)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_FREE"); @test r == "$(Mosek.MSK_SCALING_METHOD_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_POW2"); @test r == "$(Mosek.MSK_SCALING_METHOD_POW2)"
+        ok,r = Mosek.symnamtovalue("MSK_LICENSE_BUFFER_LENGTH"); @test r == "$(Mosek.MSK_LICENSE_BUFFER_LENGTH)"
+        ok,r = Mosek.symnamtovalue("MSK_MAX_STR_LEN"); @test r == "$(Mosek.MSK_MAX_STR_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_AGGRESSIVE"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_AGGRESSIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_FREE"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_OFF"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_ON"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_EQ"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_EQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_FR"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_FR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_LO"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_RA"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_UP"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_BIN"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_BIN)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_CONT"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_CONT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_EQ"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_EQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_FR"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_FR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_INT"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_LO"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_RA"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_UP"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_FACTOR_DIM_DENSE"); @test r == "$(Mosek.MSK_IINF_INTPNT_FACTOR_DIM_DENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_ITER"); @test r == "$(Mosek.MSK_IINF_INTPNT_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_NUM_THREADS"); @test r == "$(Mosek.MSK_IINF_INTPNT_NUM_THREADS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_SOLVE_DUAL"); @test r == "$(Mosek.MSK_IINF_INTPNT_SOLVE_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_ABSGAP_SATISFIED"); @test r == "$(Mosek.MSK_IINF_MIO_ABSGAP_SATISFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CLIQUE_TABLE_SIZE"); @test r == "$(Mosek.MSK_IINF_MIO_CLIQUE_TABLE_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS"); @test r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_SOLUTION"); @test r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_INITIAL_SOLUTION"); @test r == "$(Mosek.MSK_IINF_MIO_INITIAL_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED"); @test r == "$(Mosek.MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NEAR_RELGAP_SATISFIED"); @test r == "$(Mosek.MSK_IINF_MIO_NEAR_RELGAP_SATISFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NODE_DEPTH"); @test r == "$(Mosek.MSK_IINF_MIO_NODE_DEPTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_ACTIVE_NODES"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_ACTIVE_NODES)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_BRANCH"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_BRANCH)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CLIQUE_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_CLIQUE_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CMIR_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_CMIR_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GOMORY_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_GOMORY_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_INT_SOLUTIONS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_INT_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_RELAX"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_RELAX)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_REPEATED_PRESOLVE"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_REPEATED_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMCON"); @test r == "$(Mosek.MSK_IINF_MIO_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMINT"); @test r == "$(Mosek.MSK_IINF_MIO_NUMINT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMVAR"); @test r == "$(Mosek.MSK_IINF_MIO_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_OBJ_BOUND_DEFINED"); @test r == "$(Mosek.MSK_IINF_MIO_OBJ_BOUND_DEFINED)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMBIN"); @test r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMBIN)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMCON"); @test r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMCONT"); @test r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMCONT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMINT"); @test r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMINT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_PRESOLVED_NUMVAR"); @test r == "$(Mosek.MSK_IINF_MIO_PRESOLVED_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_RELGAP_SATISFIED"); @test r == "$(Mosek.MSK_IINF_MIO_RELGAP_SATISFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_TOTAL_NUM_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_TOTAL_NUM_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_USER_OBJ_CUT"); @test r == "$(Mosek.MSK_IINF_MIO_USER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMCON"); @test r == "$(Mosek.MSK_IINF_OPT_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMVAR"); @test r == "$(Mosek.MSK_IINF_OPT_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_OPTIMIZE_RESPONSE"); @test r == "$(Mosek.MSK_IINF_OPTIMIZE_RESPONSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMBARVAR"); @test r == "$(Mosek.MSK_IINF_RD_NUMBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCON"); @test r == "$(Mosek.MSK_IINF_RD_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCONE"); @test r == "$(Mosek.MSK_IINF_RD_NUMCONE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMINTVAR"); @test r == "$(Mosek.MSK_IINF_RD_NUMINTVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMQ"); @test r == "$(Mosek.MSK_IINF_RD_NUMQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMVAR"); @test r == "$(Mosek.MSK_IINF_RD_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_PROTYPE"); @test r == "$(Mosek.MSK_IINF_RD_PROTYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMCON"); @test r == "$(Mosek.MSK_IINF_SIM_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMVAR"); @test r == "$(Mosek.MSK_IINF_SIM_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_SOLVE_DUAL"); @test r == "$(Mosek.MSK_IINF_SIM_SOLVE_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_BAS_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_BAS_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITG_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITG_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITR_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITR_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_REALLOC"); @test r == "$(Mosek.MSK_IINF_STO_NUM_A_REALLOC)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_BAS"); @test r == "$(Mosek.MSK_SK_BAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_FIX"); @test r == "$(Mosek.MSK_SK_FIX)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_INF"); @test r == "$(Mosek.MSK_SK_INF)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_LOW"); @test r == "$(Mosek.MSK_SK_LOW)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_SUPBAS"); @test r == "$(Mosek.MSK_SK_SUPBAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_UNK"); @test r == "$(Mosek.MSK_SK_UNK)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_UPR"); @test r == "$(Mosek.MSK_SK_UPR)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_CONIC"); @test r == "$(Mosek.MSK_OPTIMIZER_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE"); @test r == "$(Mosek.MSK_OPTIMIZER_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_FREE_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_INTPNT"); @test r == "$(Mosek.MSK_OPTIMIZER_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_MIXED_INT"); @test r == "$(Mosek.MSK_OPTIMIZER_MIXED_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_FREE"); @test r == "$(Mosek.MSK_PRESOLVE_MODE_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_OFF"); @test r == "$(Mosek.MSK_PRESOLVE_MODE_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_ON"); @test r == "$(Mosek.MSK_PRESOLVE_MODE_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG_REL"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_ITG_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_NONE"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ROOT"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_ROOT)"
     end
 elseif vmajor == 7 && vminor == 1
-    facts("[Mosek_consts]") do
+    @testset "[Mosek_consts]" begin
 
-        ok,r = Mosek.symnamtovalue("MSK_SOLVE_DUAL"); @fact r == "$(Mosek.MSK_SOLVE_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOLVE_FREE"); @fact r == "$(Mosek.MSK_SOLVE_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOLVE_PRIMAL"); @fact r == "$(Mosek.MSK_SOLVE_PRIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PI_CON"); @fact r == "$(Mosek.MSK_PI_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PI_CONE"); @fact r == "$(Mosek.MSK_PI_CONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PI_VAR"); @fact r == "$(Mosek.MSK_PI_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ACC_CON"); @fact r == "$(Mosek.MSK_ACC_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ACC_VAR"); @fact r == "$(Mosek.MSK_ACC_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_BASIS"); @fact r == "$(Mosek.MSK_SENSITIVITY_TYPE_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION"); @fact r == "$(Mosek.MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_UPLO_LO"); @fact r == "$(Mosek.MSK_UPLO_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_UPLO_UP"); @fact r == "$(Mosek.MSK_UPLO_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_DUAL"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_NONE"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL_DUAL"); @fact r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_BAS_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_BAS_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_DATA_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_DATA_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_DEBUG_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_DEBUG_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_FEASREPAIR_NAME_PREFIX"); @fact r == "$(Mosek.MSK_SPAR_FEASREPAIR_NAME_PREFIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_FEASREPAIR_NAME_SEPARATOR"); @fact r == "$(Mosek.MSK_SPAR_FEASREPAIR_NAME_SEPARATOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_FEASREPAIR_NAME_WSUMVIOL"); @fact r == "$(Mosek.MSK_SPAR_FEASREPAIR_NAME_WSUMVIOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_INT_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_INT_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_ITR_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_ITR_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_MIO_DEBUG_STRING"); @fact r == "$(Mosek.MSK_SPAR_MIO_DEBUG_STRING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_COMMENT_SIGN"); @fact r == "$(Mosek.MSK_SPAR_PARAM_COMMENT_SIGN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_READ_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_PARAM_READ_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_WRITE_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_PARAM_WRITE_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_BOU_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_BOU_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_OBJ_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_OBJ_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RAN_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_RAN_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RHS_NAME"); @fact r == "$(Mosek.MSK_SPAR_READ_MPS_RHS_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_RES_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_LOW"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_LOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_UPR"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_UPR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_LOW"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_LOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_UPR"); @fact r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_UPR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_FILE_NAME"); @fact r == "$(Mosek.MSK_SPAR_STAT_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_KEY"); @fact r == "$(Mosek.MSK_SPAR_STAT_KEY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_NAME"); @fact r == "$(Mosek.MSK_SPAR_STAT_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SPAR_WRITE_LP_GEN_VAR_NAME"); @fact r == "$(Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_ALLOC_ADD_QNZ"); @fact r == "$(Mosek.MSK_IPAR_ALLOC_ADD_QNZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_BASIS"); @fact r == "$(Mosek.MSK_IPAR_ANA_SOL_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_PRINT_VIOLATED"); @fact r == "$(Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"); @fact r == "$(Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_UPDATE_SOL_INFO"); @fact r == "$(Mosek.MSK_IPAR_AUTO_UPDATE_SOL_INFO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE"); @fact r == "$(Mosek.MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_CLEAN_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_BI_CLEAN_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_MAX_ITER"); @fact r == "$(Mosek.MSK_IPAR_BI_IGNORE_MAX_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_NUM_ERROR"); @fact r == "$(Mosek.MSK_IPAR_BI_IGNORE_NUM_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_BI_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CACHE_LICENSE"); @fact r == "$(Mosek.MSK_IPAR_CACHE_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CHECK_CONVEXITY"); @fact r == "$(Mosek.MSK_IPAR_CHECK_CONVEXITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_COMPRESS_STATFILE"); @fact r == "$(Mosek.MSK_IPAR_COMPRESS_STATFILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_NUM_OPTIMIZERS"); @fact r == "$(Mosek.MSK_IPAR_CONCURRENT_NUM_OPTIMIZERS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_FREE_SIMPLEX"); @fact r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_FREE_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_INTPNT"); @fact r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_FEASREPAIR_OPTIMIZE"); @fact r == "$(Mosek.MSK_IPAR_FEASREPAIR_OPTIMIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_GENERIC_NAMES"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_GENERIC_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_PREFER_PRIMAL"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_PREFER_PRIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_AUTO"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_AUTO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_BASIS"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_DIFF_STEP"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_DIFF_STEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_FACTOR_DEBUG_LVL"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_FACTOR_DEBUG_LVL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_FACTOR_METHOD"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_FACTOR_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_HOTSTART"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_COR"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_COR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_OFF_COL_TRH"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_ORDER_METHOD"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_ORDER_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_REGULARIZATION_USE"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_REGULARIZATION_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SCALING"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_SCALING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SOLVE_FORM"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_SOLVE_FORM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_STARTING_POINT"); @fact r == "$(Mosek.MSK_IPAR_INTPNT_STARTING_POINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LIC_TRH_EXPIRY_WRN"); @fact r == "$(Mosek.MSK_IPAR_LIC_TRH_EXPIRY_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_DEBUG"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_DEBUG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_PAUSE_TIME"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_PAUSE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_IPAR_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG"); @fact r == "$(Mosek.MSK_IPAR_LOG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI"); @fact r == "$(Mosek.MSK_IPAR_LOG_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_BI_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CHECK_CONVEXITY"); @fact r == "$(Mosek.MSK_IPAR_LOG_CHECK_CONVEXITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CONCURRENT"); @fact r == "$(Mosek.MSK_IPAR_LOG_CONCURRENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CUT_SECOND_OPT"); @fact r == "$(Mosek.MSK_IPAR_LOG_CUT_SECOND_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_EXPAND"); @fact r == "$(Mosek.MSK_IPAR_LOG_EXPAND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FACTOR"); @fact r == "$(Mosek.MSK_IPAR_LOG_FACTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FEAS_REPAIR"); @fact r == "$(Mosek.MSK_IPAR_LOG_FEAS_REPAIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FILE"); @fact r == "$(Mosek.MSK_IPAR_LOG_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_HEAD"); @fact r == "$(Mosek.MSK_IPAR_LOG_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INFEAS_ANA"); @fact r == "$(Mosek.MSK_IPAR_LOG_INFEAS_ANA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INTPNT"); @fact r == "$(Mosek.MSK_IPAR_LOG_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO"); @fact r == "$(Mosek.MSK_IPAR_LOG_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_MIO_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_NONCONVEX"); @fact r == "$(Mosek.MSK_IPAR_LOG_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_LOG_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_ORDER"); @fact r == "$(Mosek.MSK_IPAR_LOG_ORDER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_PARAM"); @fact r == "$(Mosek.MSK_IPAR_LOG_PARAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_PRESOLVE"); @fact r == "$(Mosek.MSK_IPAR_LOG_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_RESPONSE"); @fact r == "$(Mosek.MSK_IPAR_LOG_RESPONSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY"); @fact r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY_OPT"); @fact r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_MINOR"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM_MINOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_NETWORK_FREQ"); @fact r == "$(Mosek.MSK_IPAR_LOG_SIM_NETWORK_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_STORAGE"); @fact r == "$(Mosek.MSK_IPAR_LOG_STORAGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MAX_NUM_WARNINGS"); @fact r == "$(Mosek.MSK_IPAR_MAX_NUM_WARNINGS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_BRANCH_DIR"); @fact r == "$(Mosek.MSK_IPAR_MIO_BRANCH_DIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_BRANCH_PRIORITIES_USE"); @fact r == "$(Mosek.MSK_IPAR_MIO_BRANCH_PRIORITIES_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CONSTRUCT_SOL"); @fact r == "$(Mosek.MSK_IPAR_MIO_CONSTRUCT_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CONT_SOL"); @fact r == "$(Mosek.MSK_IPAR_MIO_CONT_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CG"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_CG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CMIR"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_CMIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_LEVEL_ROOT"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_LEVEL_ROOT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_LEVEL_TREE"); @fact r == "$(Mosek.MSK_IPAR_MIO_CUT_LEVEL_TREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_FEASPUMP_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_FEASPUMP_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_HEURISTIC_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_HEURISTIC_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_HOTSTART"); @fact r == "$(Mosek.MSK_IPAR_MIO_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_KEEP_BASIS"); @fact r == "$(Mosek.MSK_IPAR_MIO_KEEP_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_LOCAL_BRANCH_NUMBER"); @fact r == "$(Mosek.MSK_IPAR_MIO_LOCAL_BRANCH_NUMBER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_BRANCHES"); @fact r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_BRANCHES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_RELAXS"); @fact r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_RELAXS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_SOLUTIONS"); @fact r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MODE"); @fact r == "$(Mosek.MSK_IPAR_MIO_MODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MT_USER_CB"); @fact r == "$(Mosek.MSK_IPAR_MIO_MT_USER_CB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_MIO_NODE_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_MIO_NODE_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_OPTIMIZER_MODE"); @fact r == "$(Mosek.MSK_IPAR_MIO_OPTIMIZER_MODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PRESOLVE_AGGREGATE"); @fact r == "$(Mosek.MSK_IPAR_MIO_PRESOLVE_AGGREGATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PRESOLVE_PROBING"); @fact r == "$(Mosek.MSK_IPAR_MIO_PRESOLVE_PROBING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PRESOLVE_USE"); @fact r == "$(Mosek.MSK_IPAR_MIO_PRESOLVE_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PROBING_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_MIO_PROBING_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_RINS_MAX_NODES"); @fact r == "$(Mosek.MSK_IPAR_MIO_RINS_MAX_NODES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_ROOT_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_MIO_ROOT_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_STRONG_BRANCH"); @fact r == "$(Mosek.MSK_IPAR_MIO_STRONG_BRANCH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_MT_SPINCOUNT"); @fact r == "$(Mosek.MSK_IPAR_MT_SPINCOUNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_NONCONVEX_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_NONCONVEX_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_NUM_THREADS"); @fact r == "$(Mosek.MSK_IPAR_NUM_THREADS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_MAX_TERMS_PER_LINE"); @fact r == "$(Mosek.MSK_IPAR_OPF_MAX_TERMS_PER_LINE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HEADER"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_HEADER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HINTS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_HINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PARAMETERS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_PARAMETERS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PROBLEM"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_BAS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_BAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITG"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITR"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOLUTIONS"); @fact r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_CASE_NAME"); @fact r == "$(Mosek.MSK_IPAR_PARAM_READ_CASE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_IGN_ERROR"); @fact r == "$(Mosek.MSK_IPAR_PARAM_READ_IGN_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIM_FILL"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIM_FILL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_USE"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_USE"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_USE"); @fact r == "$(Mosek.MSK_IPAR_PRESOLVE_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_QO_SEPARABLE_REFORMULATION"); @fact r == "$(Mosek.MSK_IPAR_QO_SEPARABLE_REFORMULATION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_ANZ"); @fact r == "$(Mosek.MSK_IPAR_READ_ANZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_CON"); @fact r == "$(Mosek.MSK_IPAR_READ_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_CONE"); @fact r == "$(Mosek.MSK_IPAR_READ_CONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_COMPRESSED"); @fact r == "$(Mosek.MSK_IPAR_READ_DATA_COMPRESSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_READ_DATA_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DEBUG"); @fact r == "$(Mosek.MSK_IPAR_READ_DEBUG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_KEEP_FREE_CON"); @fact r == "$(Mosek.MSK_IPAR_READ_KEEP_FREE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU"); @fact r == "$(Mosek.MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_QUOTED_NAMES"); @fact r == "$(Mosek.MSK_IPAR_READ_LP_QUOTED_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_KEEP_INT"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_KEEP_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_OBJ_SENSE"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_OBJ_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_RELAX"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_RELAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_READ_MPS_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_QNZ"); @fact r == "$(Mosek.MSK_IPAR_READ_QNZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_TASK_IGNORE_PARAM"); @fact r == "$(Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_VAR"); @fact r == "$(Mosek.MSK_IPAR_READ_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_ALL"); @fact r == "$(Mosek.MSK_IPAR_SENSITIVITY_ALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_TYPE"); @fact r == "$(Mosek.MSK_IPAR_SENSITIVITY_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_BASIS_FACTOR_USE"); @fact r == "$(Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DEGEN"); @fact r == "$(Mosek.MSK_IPAR_SIM_DEGEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_CRASH"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_CRASH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_DUAL_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_EXPLOIT_DUPVEC"); @fact r == "$(Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART"); @fact r == "$(Mosek.MSK_IPAR_SIM_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IPAR_SIM_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_INTEGER"); @fact r == "$(Mosek.MSK_IPAR_SIM_INTEGER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_IPAR_SIM_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_NUM_SETBACKS"); @fact r == "$(Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_NON_SINGULAR"); @fact r == "$(Mosek.MSK_IPAR_SIM_NON_SINGULAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_CRASH"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_CRASH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_SELECTION"); @fact r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFACTOR_FREQ"); @fact r == "$(Mosek.MSK_IPAR_SIM_REFACTOR_FREQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFORMULATION"); @fact r == "$(Mosek.MSK_IPAR_SIM_REFORMULATION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SAVE_LU"); @fact r == "$(Mosek.MSK_IPAR_SIM_SAVE_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING"); @fact r == "$(Mosek.MSK_IPAR_SIM_SCALING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING_METHOD"); @fact r == "$(Mosek.MSK_IPAR_SIM_SCALING_METHOD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SOLVE_FORM"); @fact r == "$(Mosek.MSK_IPAR_SIM_SOLVE_FORM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_STABILITY_PRIORITY"); @fact r == "$(Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SWITCH_OPTIMIZER"); @fact r == "$(Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_BASIC"); @fact r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_RANGED"); @fact r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_NAME_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_SOL_READ_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOLUTION_CALLBACK"); @fact r == "$(Mosek.MSK_IPAR_SOLUTION_CALLBACK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_TIMING_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_TIMING_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WARNING_LEVEL"); @fact r == "$(Mosek.MSK_IPAR_WARNING_LEVEL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_CONSTRAINTS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_HEAD"); @fact r == "$(Mosek.MSK_IPAR_WRITE_BAS_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_VARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_BAS_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_COMPRESSED"); @fact r == "$(Mosek.MSK_IPAR_WRITE_DATA_COMPRESSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_DATA_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_PARAM"); @fact r == "$(Mosek.MSK_IPAR_WRITE_DATA_PARAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_FREE_CON"); @fact r == "$(Mosek.MSK_IPAR_WRITE_FREE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES_IO"); @fact r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_CONSTRAINTS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_HEAD"); @fact r == "$(Mosek.MSK_IPAR_WRITE_INT_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_VARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_INT_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_LINE_WIDTH"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_QUOTED_NAMES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_QUOTED_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_STRICT_FORMAT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_STRICT_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_TERMS_PER_LINE"); @fact r == "$(Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_MPS_INT"); @fact r == "$(Mosek.MSK_IPAR_WRITE_MPS_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_PRECISION"); @fact r == "$(Mosek.MSK_IPAR_WRITE_PRECISION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_BARVARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_CONSTRAINTS"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_HEAD"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_HEAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_VARIABLES"); @fact r == "$(Mosek.MSK_IPAR_WRITE_SOL_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_TASK_INC_SOL"); @fact r == "$(Mosek.MSK_IPAR_WRITE_TASK_INC_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_XML_MODE"); @fact r == "$(Mosek.MSK_IPAR_WRITE_XML_MODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_DUAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_INTEGER_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_INTEGER_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_INTEGER_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_OPTIMAL"); @fact r == "$(Mosek.MSK_SOL_STA_OPTIMAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_FEAS"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_INFEAS_CER"); @fact r == "$(Mosek.MSK_SOL_STA_PRIM_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_UNKNOWN"); @fact r == "$(Mosek.MSK_SOL_STA_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MAXIMIZE"); @fact r == "$(Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MINIMIZE"); @fact r == "$(Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLC"); @fact r == "$(Mosek.MSK_SOL_ITEM_SLC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLX"); @fact r == "$(Mosek.MSK_SOL_ITEM_SLX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SNX"); @fact r == "$(Mosek.MSK_SOL_ITEM_SNX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUC"); @fact r == "$(Mosek.MSK_SOL_ITEM_SUC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUX"); @fact r == "$(Mosek.MSK_SOL_ITEM_SUX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XC"); @fact r == "$(Mosek.MSK_SOL_ITEM_XC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XX"); @fact r == "$(Mosek.MSK_SOL_ITEM_XX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_Y"); @fact r == "$(Mosek.MSK_SOL_ITEM_Y)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_FR"); @fact r == "$(Mosek.MSK_BK_FR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_FX"); @fact r == "$(Mosek.MSK_BK_FX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_LO"); @fact r == "$(Mosek.MSK_BK_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_RA"); @fact r == "$(Mosek.MSK_BK_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BK_UP"); @fact r == "$(Mosek.MSK_BK_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_ALWAYS"); @fact r == "$(Mosek.MSK_BI_ALWAYS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_IF_FEASIBLE"); @fact r == "$(Mosek.MSK_BI_IF_FEASIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_NEVER"); @fact r == "$(Mosek.MSK_BI_NEVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_NO_ERROR"); @fact r == "$(Mosek.MSK_BI_NO_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BI_RESERVERED"); @fact r == "$(Mosek.MSK_BI_RESERVERED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_DOWN"); @fact r == "$(Mosek.MSK_BRANCH_DIR_DOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_FREE"); @fact r == "$(Mosek.MSK_BRANCH_DIR_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_UP"); @fact r == "$(Mosek.MSK_BRANCH_DIR_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_DUAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_LIINF_BI_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_INTPNT_FACTOR_NUM_NZ"); @fact r == "$(Mosek.MSK_LIINF_INTPNT_FACTOR_NUM_NZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_INTPNT_ITER"); @fact r == "$(Mosek.MSK_LIINF_MIO_INTPNT_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_SIMPLEX_ITER"); @fact r == "$(Mosek.MSK_LIINF_MIO_SIMPLEX_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMANZ"); @fact r == "$(Mosek.MSK_LIINF_RD_NUMANZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMQNZ"); @fact r == "$(Mosek.MSK_LIINF_RD_NUMQNZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_ERR"); @fact r == "$(Mosek.MSK_STREAM_ERR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_LOG"); @fact r == "$(Mosek.MSK_STREAM_LOG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_MSG"); @fact r == "$(Mosek.MSK_STREAM_MSG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STREAM_WRN"); @fact r == "$(Mosek.MSK_STREAM_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_FREE"); @fact r == "$(Mosek.MSK_SIM_HOTSTART_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_NONE"); @fact r == "$(Mosek.MSK_SIM_HOTSTART_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_STATUS_KEYS"); @fact r == "$(Mosek.MSK_SIM_HOTSTART_STATUS_KEYS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_CONCURRENT"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_CONCURRENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INFEAS_ANA"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NETWORK_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_NETWORK_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NETWORK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_NETWORK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NETWORK_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_NETWORK_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NONCONVEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_OPTIMIZER"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_READ"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX_NETWORK_DETECT"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_NETWORK_DETECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_WRITE"); @fact r == "$(Mosek.MSK_CALLBACK_BEGIN_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_CONCURRENT"); @fact r == "$(Mosek.MSK_CALLBACK_END_CONCURRENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_END_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_FULL_CONVEXITY_CHECK"); @fact r == "$(Mosek.MSK_CALLBACK_END_FULL_CONVEXITY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INFEAS_ANA"); @fact r == "$(Mosek.MSK_CALLBACK_END_INFEAS_ANA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_END_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_CALLBACK_END_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_END_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NETWORK_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_NETWORK_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NETWORK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_NETWORK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NETWORK_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_NETWORK_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NONCONVEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_OPTIMIZER"); @fact r == "$(Mosek.MSK_CALLBACK_END_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_REPAIR"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SENSITIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SETUP_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_QCQO_REFORMULATE"); @fact r == "$(Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_READ"); @fact r == "$(Mosek.MSK_CALLBACK_END_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX_NETWORK_DETECT"); @fact r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX_NETWORK_DETECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_WRITE"); @fact r == "$(Mosek.MSK_CALLBACK_END_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_CONIC"); @fact r == "$(Mosek.MSK_CALLBACK_IM_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SENSIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK"); @fact r == "$(Mosek.MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_IM_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LICENSE_WAIT"); @fact r == "$(Mosek.MSK_CALLBACK_IM_LICENSE_WAIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LU"); @fact r == "$(Mosek.MSK_CALLBACK_IM_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_NETWORK_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_NETWORK_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_NETWORK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_NETWORK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_NONCONVEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_ORDER"); @fact r == "$(Mosek.MSK_CALLBACK_IM_ORDER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SENSIVITY"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_QO_REFORMULATE"); @fact r == "$(Mosek.MSK_CALLBACK_IM_QO_REFORMULATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_READ"); @fact r == "$(Mosek.MSK_CALLBACK_IM_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_INTPNT"); @fact r == "$(Mosek.MSK_CALLBACK_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_NEW_INT_MIO"); @fact r == "$(Mosek.MSK_CALLBACK_NEW_INT_MIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_NONCOVEX"); @fact r == "$(Mosek.MSK_CALLBACK_NONCOVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF"); @fact r == "$(Mosek.MSK_CALLBACK_READ_OPF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF_SECTION"); @fact r == "$(Mosek.MSK_CALLBACK_READ_OPF_SECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_NETWORK_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_NETWORK_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_NETWORK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_NETWORK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_NONCONVEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRESOLVE"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"); @fact r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_WRITE_OPF"); @fact r == "$(Mosek.MSK_CALLBACK_WRITE_OPF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SYMMAT_TYPE_SPARSE"); @fact r == "$(Mosek.MSK_SYMMAT_TYPE_SPARSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTOM"); @fact r == "$(Mosek.MSK_FEATURE_PTOM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTON"); @fact r == "$(Mosek.MSK_FEATURE_PTON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTOX"); @fact r == "$(Mosek.MSK_FEATURE_PTOX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTS"); @fact r == "$(Mosek.MSK_FEATURE_PTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MARK_LO"); @fact r == "$(Mosek.MSK_MARK_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MARK_UP"); @fact r == "$(Mosek.MSK_MARK_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CT_QUAD"); @fact r == "$(Mosek.MSK_CT_QUAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CT_RQUAD"); @fact r == "$(Mosek.MSK_CT_RQUAD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEASREPAIR_OPTIMIZE_COMBINED"); @fact r == "$(Mosek.MSK_FEASREPAIR_OPTIMIZE_COMBINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEASREPAIR_OPTIMIZE_NONE"); @fact r == "$(Mosek.MSK_FEASREPAIR_OPTIMIZE_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_FEASREPAIR_OPTIMIZE_PENALTY"); @fact r == "$(Mosek.MSK_FEASREPAIR_OPTIMIZE_PENALTY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READ"); @fact r == "$(Mosek.MSK_IOMODE_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READWRITE"); @fact r == "$(Mosek.MSK_IOMODE_READWRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IOMODE_WRITE"); @fact r == "$(Mosek.MSK_IOMODE_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_ASE"); @fact r == "$(Mosek.MSK_SIM_SELECTION_ASE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_DEVEX"); @fact r == "$(Mosek.MSK_SIM_SELECTION_DEVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FREE"); @fact r == "$(Mosek.MSK_SIM_SELECTION_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FULL"); @fact r == "$(Mosek.MSK_SIM_SELECTION_FULL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_PARTIAL"); @fact r == "$(Mosek.MSK_SIM_SELECTION_PARTIAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_SE"); @fact r == "$(Mosek.MSK_SIM_SELECTION_SE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MSG_MPS_SELECTED"); @fact r == "$(Mosek.MSK_MSG_MPS_SELECTED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MSG_READING_FILE"); @fact r == "$(Mosek.MSK_MSG_READING_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MSG_WRITING_FILE"); @fact r == "$(Mosek.MSK_MSG_WRITING_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_IGNORED"); @fact r == "$(Mosek.MSK_MIO_MODE_IGNORED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_LAZY"); @fact r == "$(Mosek.MSK_MIO_MODE_LAZY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_SATISFIED"); @fact r == "$(Mosek.MSK_MIO_MODE_SATISFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_CLEAN_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_TIME"); @fact r == "$(Mosek.MSK_DINF_BI_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_CONCURRENT_TIME"); @fact r == "$(Mosek.MSK_DINF_CONCURRENT_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_FEAS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_INTPNT_DUAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_OPT_STATUS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_OPT_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_ORDER_TIME"); @fact r == "$(Mosek.MSK_DINF_INTPNT_ORDER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_FEAS"); @fact r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_TIME"); @fact r == "$(Mosek.MSK_DINF_INTPNT_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CG_SEPERATION_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_CG_SEPERATION_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CMIR_SEPERATION_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_CMIR_SEPERATION_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"); @fact r == "$(Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"); @fact r == "$(Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_HEURISTIC_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_HEURISTIC_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_ABS_GAP"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_BOUND"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_INT"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_REL_GAP"); @fact r == "$(Mosek.MSK_DINF_MIO_OBJ_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OPTIMIZER_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_OPTIMIZER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_PROBING_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_PROBING_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_CUTGEN_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_ROOT_CUTGEN_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_PRESOLVE_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_TIME"); @fact r == "$(Mosek.MSK_DINF_MIO_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_USER_OBJ_CUT"); @fact r == "$(Mosek.MSK_DINF_MIO_USER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_OPTIMIZER_TIME"); @fact r == "$(Mosek.MSK_DINF_OPTIMIZER_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_ELI_TIME"); @fact r == "$(Mosek.MSK_DINF_PRESOLVE_ELI_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_LINDEP_TIME"); @fact r == "$(Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_TIME"); @fact r == "$(Mosek.MSK_DINF_PRESOLVE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"); @fact r == "$(Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_TIME"); @fact r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_RD_TIME"); @fact r == "$(Mosek.MSK_DINF_RD_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_FEAS"); @fact r == "$(Mosek.MSK_DINF_SIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_NETWORK_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_NETWORK_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_NETWORK_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_NETWORK_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_NETWORK_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_NETWORK_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_OBJ"); @fact r == "$(Mosek.MSK_DINF_SIM_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_DUAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_PRIMAL_DUAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_PRIMAL_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_TIME"); @fact r == "$(Mosek.MSK_DINF_SIM_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DUAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLBARVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCONES"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLITG"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DUAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLBARVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCONES"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PRIMAL_OBJ"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLBARVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCON"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCONES"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLVAR"); @fact r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_DOU_TYPE"); @fact r == "$(Mosek.MSK_PAR_DOU_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_INT_TYPE"); @fact r == "$(Mosek.MSK_PAR_INT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_INVALID_TYPE"); @fact r == "$(Mosek.MSK_PAR_INVALID_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PAR_STR_TYPE"); @fact r == "$(Mosek.MSK_PAR_STR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_ERR"); @fact r == "$(Mosek.MSK_RESPONSE_ERR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_OK"); @fact r == "$(Mosek.MSK_RESPONSE_OK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_TRM"); @fact r == "$(Mosek.MSK_RESPONSE_TRM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_UNK"); @fact r == "$(Mosek.MSK_RESPONSE_UNK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_WRN"); @fact r == "$(Mosek.MSK_RESPONSE_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_INFEAS"); @fact r == "$(Mosek.MSK_PRO_STA_DUAL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_ILL_POSED"); @fact r == "$(Mosek.MSK_PRO_STA_ILL_POSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_NEAR_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_INFEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_FEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"); @fact r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_UNKNOWN"); @fact r == "$(Mosek.MSK_PRO_STA_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_AGGRESSIVE"); @fact r == "$(Mosek.MSK_SCALING_AGGRESSIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_FREE"); @fact r == "$(Mosek.MSK_SCALING_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_MODERATE"); @fact r == "$(Mosek.MSK_SCALING_MODERATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_NONE"); @fact r == "$(Mosek.MSK_SCALING_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_CODELIST"); @fact r == "$(Mosek.MSK_RES_ERR_AD_INVALID_CODELIST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_OPERAND"); @fact r == "$(Mosek.MSK_RES_ERR_AD_INVALID_OPERAND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_OPERATOR"); @fact r == "$(Mosek.MSK_RES_ERR_AD_INVALID_OPERATOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_MISSING_OPERAND"); @fact r == "$(Mosek.MSK_RES_ERR_AD_MISSING_OPERAND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_MISSING_RETURN"); @fact r == "$(Mosek.MSK_RES_ERR_AD_MISSING_RETURN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_ARRAY_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_API_ARRAY_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_CB_CONNECT"); @fact r == "$(Mosek.MSK_RES_ERR_API_CB_CONNECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_FATAL_ERROR"); @fact r == "$(Mosek.MSK_RES_ERR_API_FATAL_ERROR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_INTERNAL"); @fact r == "$(Mosek.MSK_RES_ERR_API_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_DIMENSION"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_DIMENSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_LENNEQ"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_LENNEQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_PERM_ARRAY"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_PERM_ARRAY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_ARGUMENT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BAR_VAR_DIM"); @fact r == "$(Mosek.MSK_RES_ERR_BAR_VAR_DIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS"); @fact r == "$(Mosek.MSK_RES_ERR_BASIS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_FACTOR"); @fact r == "$(Mosek.MSK_RES_ERR_BASIS_FACTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_SINGULAR"); @fact r == "$(Mosek.MSK_RES_ERR_BASIS_SINGULAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BLANK_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_BLANK_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_CLONE_NL"); @fact r == "$(Mosek.MSK_RES_ERR_CANNOT_CLONE_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_HANDLE_NL"); @fact r == "$(Mosek.MSK_RES_ERR_CANNOT_HANDLE_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_ACOORD"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_ACOORD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_BCOORD"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_BCOORD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_CON"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_INT"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJ"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_CON_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_CON_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_INT_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_INT_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_VAR_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_VAR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VARIABLES"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_NO_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_OBJ_SENSE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_OBJ_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_PARSE"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_PARSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_SYNTAX"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_SYNTAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_INTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_INTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_VARIABLES"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_INTS"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_INTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_VARIABLES"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_VARIABLES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_UNSUPPORTED"); @fact r == "$(Mosek.MSK_RES_ERR_CBF_UNSUPPORTED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_NSD"); @fact r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_NSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_PSD"); @fact r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_PSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONCURRENT_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_CONCURRENT_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP_APPEND"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP_APPEND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_REP_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_REP_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_SIZE"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE_STR"); @fact r == "$(Mosek.MSK_RES_ERR_CONE_TYPE_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DATA_FILE_EXT"); @fact r == "$(Mosek.MSK_RES_ERR_DATA_FILE_EXT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUP_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_DUP_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONE_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_END_OF_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_END_OF_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FACTOR"); @fact r == "$(Mosek.MSK_RES_ERR_FACTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX"); @fact r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND"); @fact r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED"); @fact r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_OPEN"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_OPEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_READ"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_READ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_WRITE"); @fact r == "$(Mosek.MSK_RES_ERR_FILE_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRST"); @fact r == "$(Mosek.MSK_RES_ERR_FIRST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTI"); @fact r == "$(Mosek.MSK_RES_ERR_FIRSTI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTJ"); @fact r == "$(Mosek.MSK_RES_ERR_FIRSTJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIXED_BOUND_VALUES"); @fact r == "$(Mosek.MSK_RES_ERR_FIXED_BOUND_VALUES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FLEXLM"); @fact r == "$(Mosek.MSK_RES_ERR_FLEXLM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_AIJ"); @fact r == "$(Mosek.MSK_RES_ERR_HUGE_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_C"); @fact r == "$(Mosek.MSK_RES_ERR_HUGE_C)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IDENTICAL_TASKS"); @fact r == "$(Mosek.MSK_RES_ERR_IDENTICAL_TASKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IN_ARGUMENT"); @fact r == "$(Mosek.MSK_RES_ERR_IN_ARGUMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INF_DOU_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INF_DOU_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INF_INT_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INF_INT_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_INF_LINT_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INF_LINT_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INF_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFEAS_UNDEFINED"); @fact r == "$(Mosek.MSK_RES_ERR_INFEAS_UNDEFINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFINITE_BOUND"); @fact r == "$(Mosek.MSK_RES_ERR_INFINITE_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INT64_TO_INT32_CAST"); @fact r == "$(Mosek.MSK_RES_ERR_INT64_TO_INT32_CAST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL"); @fact r == "$(Mosek.MSK_RES_ERR_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL_TEST_FAILED"); @fact r == "$(Mosek.MSK_RES_ERR_INTERNAL_TEST_FAILED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_APTRE"); @fact r == "$(Mosek.MSK_RES_ERR_INV_APTRE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BK"); @fact r == "$(Mosek.MSK_RES_ERR_INV_BK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKC"); @fact r == "$(Mosek.MSK_RES_ERR_INV_BKC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKX"); @fact r == "$(Mosek.MSK_RES_ERR_INV_BKX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE_STR"); @fact r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONIC_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_INV_CONIC_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_MARKI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_MARKJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NAME_ITEM"); @fact r == "$(Mosek.MSK_RES_ERR_INV_NAME_ITEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_NUMI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_NUMJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_INV_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_INV_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBK"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_VAL"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QCON_VAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBI"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBJ"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_VAL"); @fact r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_VAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK_STR"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SK_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKC"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SKC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKN"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SKN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKX"); @fact r == "$(Mosek.MSK_RES_ERR_INV_SKX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_VAR_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INV_VAR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_ACCMODE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_ACCMODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AIJ"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AMPL_STUB"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_AMPL_STUB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BARVAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_BARVAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BRANCH_DIRECTION"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_BRANCH_DIRECTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BRANCH_PRIORITY"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_BRANCH_PRIORITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_COMPRESSION"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_COMPRESSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CONE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_CONE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FORMAT_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_FORMAT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IDX"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_IDX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IOMODE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_IOMODE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_MAX_NUM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_MAX_NUM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_NETWORK_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_NETWORK_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJ_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_OBJ_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJECTIVE_SENSE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_OBJECTIVE_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_PROBLEM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_PROBLEM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_STREAM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_STREAM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SURPLUS"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_SURPLUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SYM_MAT_DIM"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_SYM_MAT_DIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_TASK"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_UTF8"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_UTF8)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WCHAR"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_WCHAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WHICHSOL"); @fact r == "$(Mosek.MSK_RES_ERR_INVALID_WHICHSOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAST"); @fact r == "$(Mosek.MSK_RES_ERR_LAST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTI"); @fact r == "$(Mosek.MSK_RES_ERR_LASTI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTJ"); @fact r == "$(Mosek.MSK_RES_ERR_LASTJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_K"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_K)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_M"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_M)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_N"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_N)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANS"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSA"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSB"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_UPLO"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_ARG_UPLO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_SINGULAR_MATRIX"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_SINGULAR_MATRIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_UNKNOWN"); @fact r == "$(Mosek.MSK_RES_ERR_LAU_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_CONNECT"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_CONNECT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_EXPIRED"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_EXPIRED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_FEATURE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_FEATURE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_INVALID_HOSTID"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_INVALID_HOSTID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MAX"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_MAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_LINE"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_LINE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER_VERSION"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER_VERSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_VERSION"); @fact r == "$(Mosek.MSK_RES_ERR_LICENSE_VERSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LINK_FILE_DLL"); @fact r == "$(Mosek.MSK_RES_ERR_LINK_FILE_DLL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LIVING_TASKS"); @fact r == "$(Mosek.MSK_RES_ERR_LIVING_TASKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LOWER_BOUND_IS_A_NAN"); @fact r == "$(Mosek.MSK_RES_ERR_LOWER_BOUND_IS_A_NAN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_DUP_SLACK_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_LP_DUP_SLACK_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_EMPTY"); @fact r == "$(Mosek.MSK_RES_ERR_LP_EMPTY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FILE_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_LP_FILE_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_LP_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FREE_CONSTRAINT"); @fact r == "$(Mosek.MSK_RES_ERR_LP_FREE_CONSTRAINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INCOMPATIBLE"); @fact r == "$(Mosek.MSK_RES_ERR_LP_INCOMPATIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_LP_INVALID_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LU_MAX_NUM_TRIES"); @fact r == "$(Mosek.MSK_RES_ERR_LU_MAX_NUM_TRIES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMBARVAR"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCON"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCONE"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMCONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMQNZ"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMQNZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMVAR"); @fact r == "$(Mosek.MSK_RES_ERR_MAXNUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MBT_INCOMPATIBLE"); @fact r == "$(Mosek.MSK_RES_ERR_MBT_INCOMPATIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MBT_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_MBT_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INTERNAL"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NO_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_NO_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NOT_LOADED"); @fact r == "$(Mosek.MSK_RES_ERR_MIO_NOT_LOADED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MISSING_LICENSE_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_MISSING_LICENSE_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIXED_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_MIXED_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_OVERLAP"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_CONE_OVERLAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_REPEAT"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_CONE_REPEAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_CONE_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_BOUND_KEY"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_BOUND_KEY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_CON_KEY"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_CON_KEY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_FIELD"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_FIELD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_MARKER"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_MARKER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_ORDER"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_ORDER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJ_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJ_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJSENSE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJSENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CSEC"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CSEC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QOBJ"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QOBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QSEC"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QSEC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NO_OBJECTIVE"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NO_OBJECTIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NON_SYMMETRIC_Q"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NON_SYMMETRIC_Q)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NULL_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_NULL_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_SPLITTED_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_SPLITTED_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD2"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD2)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD3"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD3)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD5"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD5)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_CON_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_CON_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MUL_A_ELEMENT"); @fact r == "$(Mosek.MSK_RES_ERR_MUL_A_ELEMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_IS_NULL"); @fact r == "$(Mosek.MSK_RES_ERR_NAME_IS_NULL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_MAX_LEN"); @fact r == "$(Mosek.MSK_RES_ERR_NAME_MAX_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLC"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLX"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUC"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUX"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_C"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_C)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_DOUBLE_DATA"); @fact r == "$(Mosek.MSK_RES_ERR_NAN_IN_DOUBLE_DATA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_APPEND"); @fact r == "$(Mosek.MSK_RES_ERR_NEGATIVE_APPEND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_SURPLUS"); @fact r == "$(Mosek.MSK_RES_ERR_NEGATIVE_SURPLUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEWER_DLL"); @fact r == "$(Mosek.MSK_RES_ERR_NEWER_DLL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARS_FOR_SOLUTION"); @fact r == "$(Mosek.MSK_RES_ERR_NO_BARS_FOR_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARX_FOR_SOLUTION"); @fact r == "$(Mosek.MSK_RES_ERR_NO_BARX_FOR_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BASIS_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_BASIS_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_RES_ERR_NO_DUAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_INFO_FOR_ITG_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_DUAL_INFO_FOR_ITG_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_INIT_ENV"); @fact r == "$(Mosek.MSK_RES_ERR_NO_INIT_ENV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_PRIMAL_INFEAS_CER"); @fact r == "$(Mosek.MSK_RES_ERR_NO_PRIMAL_INFEAS_CER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SNX_FOR_BAS_SOL"); @fact r == "$(Mosek.MSK_RES_ERR_NO_SNX_FOR_BAS_SOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK"); @fact r == "$(Mosek.MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NON_UNIQUE_ARRAY"); @fact r == "$(Mosek.MSK_RES_ERR_NON_UNIQUE_ARRAY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONCONVEX"); @fact r == "$(Mosek.MSK_RES_ERR_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_EQUALITY"); @fact r == "$(Mosek.MSK_RES_ERR_NONLINEAR_EQUALITY)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED"); @fact r == "$(Mosek.MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_RANGED"); @fact r == "$(Mosek.MSK_RES_ERR_NONLINEAR_RANGED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NR_ARGUMENTS"); @fact r == "$(Mosek.MSK_RES_ERR_NR_ARGUMENTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_ENV"); @fact r == "$(Mosek.MSK_RES_ERR_NULL_ENV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_POINTER"); @fact r == "$(Mosek.MSK_RES_ERR_NULL_POINTER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_TASK"); @fact r == "$(Mosek.MSK_RES_ERR_NULL_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMCONLIM"); @fact r == "$(Mosek.MSK_RES_ERR_NUMCONLIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMVARLIM"); @fact r == "$(Mosek.MSK_RES_ERR_NUMVARLIM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_NSD"); @fact r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_NSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_PSD"); @fact r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_PSD)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJECTIVE_RANGE"); @fact r == "$(Mosek.MSK_RES_ERR_OBJECTIVE_RANGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OLDER_DLL"); @fact r == "$(Mosek.MSK_RES_ERR_OLDER_DLL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPEN_DL"); @fact r == "$(Mosek.MSK_RES_ERR_OPEN_DL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_OPF_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_NEW_VARIABLE"); @fact r == "$(Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_PREMATURE_EOF"); @fact r == "$(Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPTIMIZER_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_OPTIMIZER_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ORD_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_ORD_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ORD_INVALID_BRANCH_DIR"); @fact r == "$(Mosek.MSK_RES_ERR_ORD_INVALID_BRANCH_DIR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OVERFLOW"); @fact r == "$(Mosek.MSK_RES_ERR_OVERFLOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_DOU"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_DOU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_INT"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_STR"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_VALUE_STR"); @fact r == "$(Mosek.MSK_RES_ERR_PARAM_VALUE_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PLATFORM_NOT_LICENSED"); @fact r == "$(Mosek.MSK_RES_ERR_PLATFORM_NOT_LICENSED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_POSTSOLVE"); @fact r == "$(Mosek.MSK_RES_ERR_POSTSOLVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PRO_ITEM"); @fact r == "$(Mosek.MSK_RES_ERR_PRO_ITEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PROB_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_PROB_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_LARGE"); @fact r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_SMALL"); @fact r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_SMALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_UPPER_TRIANGLE"); @fact r == "$(Mosek.MSK_RES_ERR_QCON_UPPER_TRIANGLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QOBJ_UPPER_TRIANGLE"); @fact r == "$(Mosek.MSK_RES_ERR_QOBJ_UPPER_TRIANGLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_READ_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_MISSING_END_TAG"); @fact r == "$(Mosek.MSK_RES_ERR_READ_LP_MISSING_END_TAG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_NONEXISTING_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_READ_LP_NONEXISTING_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REMOVE_CONE_VARIABLE"); @fact r == "$(Mosek.MSK_RES_ERR_REMOVE_CONE_VARIABLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_INVALID_PROBLEM"); @fact r == "$(Mosek.MSK_RES_ERR_REPAIR_INVALID_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED"); @fact r == "$(Mosek.MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_LO"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_UP"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_RANGE"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_RANGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INVALID_REGEXP"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_INVALID_REGEXP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_NUMERICAL"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_NUMERICAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_SOLUTION_STATUS"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_SOLUTION_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNDEF_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_UNDEF_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_CON"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_INTVAR"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_INTVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_NUMCORES"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_NUMCORES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_VAR"); @fact r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOL_FILE_INVALID_NUMBER"); @fact r == "$(Mosek.MSK_RES_ERR_SOL_FILE_INVALID_NUMBER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLITEM"); @fact r == "$(Mosek.MSK_RES_ERR_SOLITEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLVER_PROBTYPE"); @fact r == "$(Mosek.MSK_RES_ERR_SOLVER_PROBTYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE"); @fact r == "$(Mosek.MSK_RES_ERR_SPACE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_LEAKING"); @fact r == "$(Mosek.MSK_RES_ERR_SPACE_LEAKING)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_NO_INFO"); @fact r == "$(Mosek.MSK_RES_ERR_SPACE_NO_INFO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_DUPLICATE"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_DUPLICATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_VALUE"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_VALUE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR"); @fact r == "$(Mosek.MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INCOMPATIBLE"); @fact r == "$(Mosek.MSK_RES_ERR_TASK_INCOMPATIBLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INVALID"); @fact r == "$(Mosek.MSK_RES_ERR_TASK_INVALID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_COND_INIT"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_COND_INIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_CREATE"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_CREATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_INIT"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_INIT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_LOCK"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_LOCK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_UNLOCK"); @fact r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_UNLOCK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONVERSION_FAIL"); @fact r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONVERSION_FAIL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS"); @fact r == "$(Mosek.MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ"); @fact r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAXNUMANZ"); @fact r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAXNUMANZ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNB_STEP_SIZE"); @fact r == "$(Mosek.MSK_RES_ERR_UNB_STEP_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEF_SOLUTION"); @fact r == "$(Mosek.MSK_RES_ERR_UNDEF_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE"); @fact r == "$(Mosek.MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS"); @fact r == "$(Mosek.MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNKNOWN"); @fact r == "$(Mosek.MSK_RES_ERR_UNKNOWN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_BOUND_IS_A_NAN"); @fact r == "$(Mosek.MSK_RES_ERR_UPPER_BOUND_IS_A_NAN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_TRIANGLE"); @fact r == "$(Mosek.MSK_RES_ERR_UPPER_TRIANGLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET"); @fact r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET_DATA"); @fact r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET_DATA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBI"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_FUNC"); @fact r == "$(Mosek.MSK_RES_ERR_USER_NLO_FUNC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHITEM_NOT_ALLOWED"); @fact r == "$(Mosek.MSK_RES_ERR_WHICHITEM_NOT_ALLOWED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHSOL"); @fact r == "$(Mosek.MSK_RES_ERR_WHICHSOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_FORMAT"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_LP_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_MPS_INVALID_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_MPS_INVALID_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME"); @fact r == "$(Mosek.MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITING_FILE"); @fact r == "$(Mosek.MSK_RES_ERR_WRITING_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE"); @fact r == "$(Mosek.MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_Y_IS_UNDEFINED"); @fact r == "$(Mosek.MSK_RES_ERR_Y_IS_UNDEFINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_OK"); @fact r == "$(Mosek.MSK_RES_OK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL"); @fact r == "$(Mosek.MSK_RES_TRM_INTERNAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL_STOP"); @fact r == "$(Mosek.MSK_RES_TRM_INTERNAL_STOP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_ITERATIONS"); @fact r == "$(Mosek.MSK_RES_TRM_MAX_ITERATIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_NUM_SETBACKS"); @fact r == "$(Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_TIME"); @fact r == "$(Mosek.MSK_RES_TRM_MAX_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_ABS_GAP"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_REL_GAP"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_BRANCHES"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_RELAXS"); @fact r == "$(Mosek.MSK_RES_TRM_MIO_NUM_RELAXS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS"); @fact r == "$(Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUMERICAL_PROBLEM"); @fact r == "$(Mosek.MSK_RES_TRM_NUMERICAL_PROBLEM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_OBJECTIVE_RANGE"); @fact r == "$(Mosek.MSK_RES_TRM_OBJECTIVE_RANGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_STALL"); @fact r == "$(Mosek.MSK_RES_TRM_STALL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_USER_CALLBACK"); @fact r == "$(Mosek.MSK_RES_TRM_USER_CALLBACK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_C_ZERO"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_C_ZERO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_CLOSE_BOUNDS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_CLOSE_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_EMPTY_COLS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_EMPTY_COLS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_LARGE_BOUNDS"); @fact r == "$(Mosek.MSK_RES_WRN_ANA_LARGE_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG"); @fact r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG"); @fact r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS"); @fact r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DROPPED_NZ_QOBJ"); @fact r == "$(Mosek.MSK_RES_WRN_DROPPED_NZ_QOBJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONE_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ELIMINATOR_SPACE"); @fact r == "$(Mosek.MSK_RES_WRN_ELIMINATOR_SPACE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_EMPTY_NAME"); @fact r == "$(Mosek.MSK_RES_WRN_EMPTY_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_IGNORE_INTEGER"); @fact r == "$(Mosek.MSK_RES_WRN_IGNORE_INTEGER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"); @fact r == "$(Mosek.MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_AIJ"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_BOUND"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CJ"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_CJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CON_FX"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_CON_FX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_LO_BOUND"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_LO_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_UP_BOUND"); @fact r == "$(Mosek.MSK_RES_WRN_LARGE_UP_BOUND)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_EXPIRE"); @fact r == "$(Mosek.MSK_RES_WRN_LICENSE_EXPIRE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"); @fact r == "$(Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_SERVER"); @fact r == "$(Mosek.MSK_RES_WRN_LICENSE_SERVER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_DROP_VARIABLE"); @fact r == "$(Mosek.MSK_RES_WRN_LP_DROP_VARIABLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_OLD_QUAD_FORMAT"); @fact r == "$(Mosek.MSK_RES_WRN_LP_OLD_QUAD_FORMAT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MIO_INFEASIBLE_FINAL"); @fact r == "$(Mosek.MSK_RES_WRN_MIO_INFEASIBLE_FINAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR"); @fact r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR"); @fact r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR"); @fact r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NAME_MAX_LEN"); @fact r == "$(Mosek.MSK_RES_WRN_NAME_MAX_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_DUALIZER"); @fact r == "$(Mosek.MSK_RES_WRN_NO_DUALIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_GLOBAL_OPTIMIZER"); @fact r == "$(Mosek.MSK_RES_WRN_NO_GLOBAL_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE"); @fact r == "$(Mosek.MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NZ_IN_UPR_TRI"); @fact r == "$(Mosek.MSK_RES_WRN_NZ_IN_UPR_TRI)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_OPEN_PARAM_FILE"); @fact r == "$(Mosek.MSK_RES_WRN_OPEN_PARAM_FILE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_IGNORED_CMIO"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_IGNORED_CMIO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_DOU"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_DOU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_INT"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_STR"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_STR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_STR_VALUE"); @fact r == "$(Mosek.MSK_RES_WRN_PARAM_STR_VALUE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PRESOLVE_OUTOFSPACE"); @fact r == "$(Mosek.MSK_RES_WRN_PRESOLVE_OUTOFSPACE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @fact r == "$(Mosek.MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @fact r == "$(Mosek.MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_CON"); @fact r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_VAR"); @fact r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILTER"); @fact r == "$(Mosek.MSK_RES_WRN_SOL_FILTER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SPAR_MAX_LEN"); @fact r == "$(Mosek.MSK_RES_WRN_SPAR_MAX_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_FEW_BASIS_VARS"); @fact r == "$(Mosek.MSK_RES_WRN_TOO_FEW_BASIS_VARS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_MANY_BASIS_VARS"); @fact r == "$(Mosek.MSK_RES_WRN_TOO_MANY_BASIS_VARS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_MANY_THREADS_CONCURRENT"); @fact r == "$(Mosek.MSK_RES_WRN_TOO_MANY_THREADS_CONCURRENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_UNDEF_SOL_FILE_NAME"); @fact r == "$(Mosek.MSK_RES_WRN_UNDEF_SOL_FILE_NAME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_USING_GENERIC_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_USING_GENERIC_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_CHANGED_NAMES"); @fact r == "$(Mosek.MSK_RES_WRN_WRITE_CHANGED_NAMES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_DISCARDED_CFIX"); @fact r == "$(Mosek.MSK_RES_WRN_WRITE_DISCARDED_CFIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZERO_AIJ"); @fact r == "$(Mosek.MSK_RES_WRN_ZERO_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_COL"); @fact r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_COL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_ROW"); @fact r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_ROW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_BEST"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_BEST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FIRST"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_FIRST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FREE"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_HYBRID"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_HYBRID)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_PSEUDO"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_PSEUDO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_WORST"); @fact r == "$(Mosek.MSK_MIO_NODE_SELECTION_WORST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_NO"); @fact r == "$(Mosek.MSK_TRANSPOSE_NO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_YES"); @fact r == "$(Mosek.MSK_TRANSPOSE_YES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OFF"); @fact r == "$(Mosek.MSK_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ON"); @fact r == "$(Mosek.MSK_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_AGGRESSIVE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_AGGRESSIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_FREE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MINIMUM"); @fact r == "$(Mosek.MSK_SIM_DEGEN_MINIMUM)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MODERATE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_MODERATE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_NONE"); @fact r == "$(Mosek.MSK_SIM_DEGEN_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_CB"); @fact r == "$(Mosek.MSK_DATA_FORMAT_CB)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_EXTENSION"); @fact r == "$(Mosek.MSK_DATA_FORMAT_EXTENSION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_FREE_MPS"); @fact r == "$(Mosek.MSK_DATA_FORMAT_FREE_MPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_LP"); @fact r == "$(Mosek.MSK_DATA_FORMAT_LP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_MPS"); @fact r == "$(Mosek.MSK_DATA_FORMAT_MPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_OP"); @fact r == "$(Mosek.MSK_DATA_FORMAT_OP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_TASK"); @fact r == "$(Mosek.MSK_DATA_FORMAT_TASK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_XML"); @fact r == "$(Mosek.MSK_DATA_FORMAT_XML)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_APPMINLOC"); @fact r == "$(Mosek.MSK_ORDER_METHOD_APPMINLOC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_EXPERIMENTAL"); @fact r == "$(Mosek.MSK_ORDER_METHOD_EXPERIMENTAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FORCE_GRAPHPAR"); @fact r == "$(Mosek.MSK_ORDER_METHOD_FORCE_GRAPHPAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FREE"); @fact r == "$(Mosek.MSK_ORDER_METHOD_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_NONE"); @fact r == "$(Mosek.MSK_ORDER_METHOD_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_TRY_GRAPHPAR"); @fact r == "$(Mosek.MSK_ORDER_METHOD_TRY_GRAPHPAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_CONIC"); @fact r == "$(Mosek.MSK_PROBTYPE_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_GECO"); @fact r == "$(Mosek.MSK_PROBTYPE_GECO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_LO"); @fact r == "$(Mosek.MSK_PROBTYPE_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_MIXED"); @fact r == "$(Mosek.MSK_PROBTYPE_MIXED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QCQO"); @fact r == "$(Mosek.MSK_PROBTYPE_QCQO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QO"); @fact r == "$(Mosek.MSK_PROBTYPE_QO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INF_DOU_TYPE"); @fact r == "$(Mosek.MSK_INF_DOU_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INF_INT_TYPE"); @fact r == "$(Mosek.MSK_INF_INT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_INF_LINT_TYPE"); @fact r == "$(Mosek.MSK_INF_LINT_TYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_ANA_SOL_INFEAS_TOL"); @fact r == "$(Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_REL_TOL_S"); @fact r == "$(Mosek.MSK_DPAR_BASIS_REL_TOL_S)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_S"); @fact r == "$(Mosek.MSK_DPAR_BASIS_TOL_S)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_BASIS_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_CHECK_CONVEXITY_REL_TOL"); @fact r == "$(Mosek.MSK_DPAR_CHECK_CONVEXITY_REL_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_HUGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_HUGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_LARGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_INF"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_INF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_WRN"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_WRN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_C_HUGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_C_HUGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_CJ_LARGE"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_CJ_LARGE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_QIJ"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_QIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_DATA_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_FEASREPAIR_TOL"); @fact r == "$(Mosek.MSK_DPAR_FEASREPAIR_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_INFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_MERIT_BAL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_MERIT_BAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_NEAR_REL"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_NEAR_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_STEP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_STEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DSAFE"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DSAFE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_INFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_INFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_MU_RED"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_MU_RED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PATH"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PATH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PFEAS"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PFEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PSAFE"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PSAFE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_STEP"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_STEP_SIZE"); @fact r == "$(Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT"); @fact r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"); @fact r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_DISABLE_TERM_TIME"); @fact r == "$(Mosek.MSK_DPAR_MIO_DISABLE_TERM_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_HEURISTIC_TIME"); @fact r == "$(Mosek.MSK_DPAR_MIO_HEURISTIC_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_MAX_TIME"); @fact r == "$(Mosek.MSK_DPAR_MIO_MAX_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_MAX_TIME_APRX_OPT"); @fact r == "$(Mosek.MSK_DPAR_MIO_MAX_TIME_APRX_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_ABS_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_REL_ADD_CUT_LIMITED"); @fact r == "$(Mosek.MSK_DPAR_MIO_REL_ADD_CUT_LIMITED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_REL_GAP_CONST"); @fact r == "$(Mosek.MSK_DPAR_MIO_REL_GAP_CONST)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_RELAX_INT"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_FEAS"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_MAX_CUT_FRAC_RHS"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_MAX_CUT_FRAC_RHS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_MIN_CUT_FRAC_RHS"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_MIN_CUT_FRAC_RHS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_GAP"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_GAP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_RELAX_INT"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_RELAX_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_MIO_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_NONCONVEX_TOL_FEAS"); @fact r == "$(Mosek.MSK_DPAR_NONCONVEX_TOL_FEAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_NONCONVEX_TOL_OPT"); @fact r == "$(Mosek.MSK_DPAR_NONCONVEX_TOL_OPT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_OPTIMIZER_MAX_TIME"); @fact r == "$(Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_AIJ"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_AIJ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_S"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_S)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_X"); @fact r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_X)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"); @fact r == "$(Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIM_LU_TOL_REL_PIV"); @fact r == "$(Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIMPLEX_ABS_TOL_PIV"); @fact r == "$(Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT"); @fact r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"); @fact r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_FREE"); @fact r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_OFF"); @fact r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_ON"); @fact r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_FREE"); @fact r == "$(Mosek.MSK_COMPRESS_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_GZIP"); @fact r == "$(Mosek.MSK_COMPRESS_GZIP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_NONE"); @fact r == "$(Mosek.MSK_COMPRESS_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_GEN"); @fact r == "$(Mosek.MSK_NAME_TYPE_GEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_LP"); @fact r == "$(Mosek.MSK_NAME_TYPE_LP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_MPS"); @fact r == "$(Mosek.MSK_NAME_TYPE_MPS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_FREE"); @fact r == "$(Mosek.MSK_MPS_FORMAT_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_RELAXED"); @fact r == "$(Mosek.MSK_MPS_FORMAT_RELAXED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_STRICT"); @fact r == "$(Mosek.MSK_MPS_FORMAT_STRICT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_CONT"); @fact r == "$(Mosek.MSK_VAR_TYPE_CONT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_INT"); @fact r == "$(Mosek.MSK_VAR_TYPE_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_FULL"); @fact r == "$(Mosek.MSK_CHECK_CONVEXITY_FULL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_NONE"); @fact r == "$(Mosek.MSK_CHECK_CONVEXITY_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_SIMPLE"); @fact r == "$(Mosek.MSK_CHECK_CONVEXITY_SIMPLE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LANG_DAN"); @fact r == "$(Mosek.MSK_LANG_DAN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LANG_ENG"); @fact r == "$(Mosek.MSK_LANG_ENG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_CONSTANT"); @fact r == "$(Mosek.MSK_STARTING_POINT_CONSTANT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_FREE"); @fact r == "$(Mosek.MSK_STARTING_POINT_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_GUESS"); @fact r == "$(Mosek.MSK_STARTING_POINT_GUESS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_SATISFY_BOUNDS"); @fact r == "$(Mosek.MSK_STARTING_POINT_SATISFY_BOUNDS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_BAS"); @fact r == "$(Mosek.MSK_SOL_BAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITG"); @fact r == "$(Mosek.MSK_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SOL_ITR"); @fact r == "$(Mosek.MSK_SOL_ITR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_FREE"); @fact r == "$(Mosek.MSK_SCALING_METHOD_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_POW2"); @fact r == "$(Mosek.MSK_SCALING_METHOD_POW2)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_LICENSE_BUFFER_LENGTH"); @fact r == "$(Mosek.MSK_LICENSE_BUFFER_LENGTH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MAX_STR_LEN"); @fact r == "$(Mosek.MSK_MAX_STR_LEN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_BAS"); @fact r == "$(Mosek.MSK_SK_BAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_FIX"); @fact r == "$(Mosek.MSK_SK_FIX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_INF"); @fact r == "$(Mosek.MSK_SK_INF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_LOW"); @fact r == "$(Mosek.MSK_SK_LOW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_SUPBAS"); @fact r == "$(Mosek.MSK_SK_SUPBAS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_UNK"); @fact r == "$(Mosek.MSK_SK_UNK)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SK_UPR"); @fact r == "$(Mosek.MSK_SK_UPR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_AGGRESSIVE"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_AGGRESSIVE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_FREE"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_OFF"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_ON"); @fact r == "$(Mosek.MSK_SIM_REFORMULATION_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_EQ"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_EQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_FR"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_FR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_LO"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_RA"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_UP"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_BIN"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_BIN)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_CONT"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_CONT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_EQ"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_EQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_FR"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_FR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_INT"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_LO"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_LO)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_RA"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_RA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_UP"); @fact r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_UP)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_CONCURRENT_FASTEST_OPTIMIZER"); @fact r == "$(Mosek.MSK_IINF_CONCURRENT_FASTEST_OPTIMIZER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_FACTOR_DIM_DENSE"); @fact r == "$(Mosek.MSK_IINF_INTPNT_FACTOR_DIM_DENSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_ITER"); @fact r == "$(Mosek.MSK_IINF_INTPNT_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_NUM_THREADS"); @fact r == "$(Mosek.MSK_IINF_INTPNT_NUM_THREADS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_SOLVE_DUAL"); @fact r == "$(Mosek.MSK_IINF_INTPNT_SOLVE_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS"); @fact r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_SOLUTION"); @fact r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_INITIAL_SOLUTION"); @fact r == "$(Mosek.MSK_IINF_MIO_INITIAL_SOLUTION)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_ACTIVE_NODES"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_ACTIVE_NODES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_BASIS_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_BASIS_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_BRANCH"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_BRANCH)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CARDGUB_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_CARDGUB_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CLIQUE_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_CLIQUE_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_COEF_REDC_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_COEF_REDC_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CONTRA_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_CONTRA_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_DISAGG_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_DISAGG_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_FLOW_COVER_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_FLOW_COVER_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GCD_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_GCD_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GOMORY_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_GOMORY_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GUB_COVER_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_GUB_COVER_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_INT_SOLUTIONS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_INT_SOLUTIONS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_KNAPSUR_COVER_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_KNAPSUR_COVER_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_LATTICE_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_LATTICE_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_LIFT_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_LIFT_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_OBJ_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_OBJ_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_PLAN_LOC_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_PLAN_LOC_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_RELAX"); @fact r == "$(Mosek.MSK_IINF_MIO_NUM_RELAX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMCON"); @fact r == "$(Mosek.MSK_IINF_MIO_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMINT"); @fact r == "$(Mosek.MSK_IINF_MIO_NUMINT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_MIO_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_OBJ_BOUND_DEFINED"); @fact r == "$(Mosek.MSK_IINF_MIO_OBJ_BOUND_DEFINED)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_TOTAL_NUM_CUTS"); @fact r == "$(Mosek.MSK_IINF_MIO_TOTAL_NUM_CUTS)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_USER_OBJ_CUT"); @fact r == "$(Mosek.MSK_IINF_MIO_USER_OBJ_CUT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMCON"); @fact r == "$(Mosek.MSK_IINF_OPT_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_OPT_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_OPTIMIZE_RESPONSE"); @fact r == "$(Mosek.MSK_IINF_OPTIMIZE_RESPONSE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMBARVAR"); @fact r == "$(Mosek.MSK_IINF_RD_NUMBARVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCON"); @fact r == "$(Mosek.MSK_IINF_RD_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCONE"); @fact r == "$(Mosek.MSK_IINF_RD_NUMCONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMINTVAR"); @fact r == "$(Mosek.MSK_IINF_RD_NUMINTVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMQ"); @fact r == "$(Mosek.MSK_IINF_RD_NUMQ)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_RD_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_PROTYPE"); @fact r == "$(Mosek.MSK_IINF_RD_PROTYPE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMCON"); @fact r == "$(Mosek.MSK_IINF_SIM_NUMCON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMVAR"); @fact r == "$(Mosek.MSK_IINF_SIM_NUMVAR)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART_LU"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART_LU)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_INF_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_INF_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_ITER"); @fact r == "$(Mosek.MSK_IINF_SIM_PRIMAL_ITER)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_SOLVE_DUAL"); @fact r == "$(Mosek.MSK_IINF_SIM_SOLVE_DUAL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_BAS_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_BAS_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_INT_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_INT_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_INT_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_INT_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITG_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITG_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_PROSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITR_PROSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_SOLSTA"); @fact r == "$(Mosek.MSK_IINF_SOL_ITR_SOLSTA)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_CACHE_FLUSHES"); @fact r == "$(Mosek.MSK_IINF_STO_NUM_A_CACHE_FLUSHES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_REALLOC"); @fact r == "$(Mosek.MSK_IINF_STO_NUM_A_REALLOC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_TRANSPOSES"); @fact r == "$(Mosek.MSK_IINF_STO_NUM_A_TRANSPOSES)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_COL"); @fact r == "$(Mosek.MSK_WRITE_XML_MODE_COL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_ROW"); @fact r == "$(Mosek.MSK_WRITE_XML_MODE_ROW)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_CONCURRENT"); @fact r == "$(Mosek.MSK_OPTIMIZER_CONCURRENT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_CONIC"); @fact r == "$(Mosek.MSK_OPTIMIZER_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE"); @fact r == "$(Mosek.MSK_OPTIMIZER_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_FREE_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_INTPNT"); @fact r == "$(Mosek.MSK_OPTIMIZER_INTPNT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_MIXED_INT"); @fact r == "$(Mosek.MSK_OPTIMIZER_MIXED_INT)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_MIXED_INT_CONIC"); @fact r == "$(Mosek.MSK_OPTIMIZER_MIXED_INT_CONIC)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_NONCONVEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_NONCONVEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_PRIMAL_SIMPLEX"); @fact r == "$(Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_FREE"); @fact r == "$(Mosek.MSK_PRESOLVE_MODE_FREE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_OFF"); @fact r == "$(Mosek.MSK_PRESOLVE_MODE_OFF)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_ON"); @fact r == "$(Mosek.MSK_PRESOLVE_MODE_ON)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_ITG)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG_REL"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_ITG_REL)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_NONE"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_NONE)" --> true
-        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ROOT"); @fact r == "$(Mosek.MSK_MIO_CONT_SOL_ROOT)" --> true
+        ok,r = Mosek.symnamtovalue("MSK_SOLVE_DUAL"); @test r == "$(Mosek.MSK_SOLVE_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOLVE_FREE"); @test r == "$(Mosek.MSK_SOLVE_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SOLVE_PRIMAL"); @test r == "$(Mosek.MSK_SOLVE_PRIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_PI_CON"); @test r == "$(Mosek.MSK_PI_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_PI_CONE"); @test r == "$(Mosek.MSK_PI_CONE)"
+        ok,r = Mosek.symnamtovalue("MSK_PI_VAR"); @test r == "$(Mosek.MSK_PI_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_ACC_CON"); @test r == "$(Mosek.MSK_ACC_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_ACC_VAR"); @test r == "$(Mosek.MSK_ACC_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_BASIS"); @test r == "$(Mosek.MSK_SENSITIVITY_TYPE_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION"); @test r == "$(Mosek.MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION)"
+        ok,r = Mosek.symnamtovalue("MSK_UPLO_LO"); @test r == "$(Mosek.MSK_UPLO_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_UPLO_UP"); @test r == "$(Mosek.MSK_UPLO_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_DUAL"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_NONE"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_INTPNT_HOTSTART_PRIMAL_DUAL"); @test r == "$(Mosek.MSK_INTPNT_HOTSTART_PRIMAL_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_BAS_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_BAS_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_DATA_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_DATA_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_DEBUG_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_DEBUG_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_FEASREPAIR_NAME_PREFIX"); @test r == "$(Mosek.MSK_SPAR_FEASREPAIR_NAME_PREFIX)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_FEASREPAIR_NAME_SEPARATOR"); @test r == "$(Mosek.MSK_SPAR_FEASREPAIR_NAME_SEPARATOR)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_FEASREPAIR_NAME_WSUMVIOL"); @test r == "$(Mosek.MSK_SPAR_FEASREPAIR_NAME_WSUMVIOL)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_INT_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_INT_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_ITR_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_ITR_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_MIO_DEBUG_STRING"); @test r == "$(Mosek.MSK_SPAR_MIO_DEBUG_STRING)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_COMMENT_SIGN"); @test r == "$(Mosek.MSK_SPAR_PARAM_COMMENT_SIGN)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_READ_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_PARAM_READ_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_PARAM_WRITE_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_PARAM_WRITE_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_BOU_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_BOU_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_OBJ_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_OBJ_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RAN_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_RAN_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_READ_MPS_RHS_NAME"); @test r == "$(Mosek.MSK_SPAR_READ_MPS_RHS_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SENSITIVITY_RES_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_LOW"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_LOW)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XC_UPR"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XC_UPR)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_LOW"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_LOW)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_SOL_FILTER_XX_UPR"); @test r == "$(Mosek.MSK_SPAR_SOL_FILTER_XX_UPR)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_FILE_NAME"); @test r == "$(Mosek.MSK_SPAR_STAT_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_KEY"); @test r == "$(Mosek.MSK_SPAR_STAT_KEY)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_STAT_NAME"); @test r == "$(Mosek.MSK_SPAR_STAT_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_SPAR_WRITE_LP_GEN_VAR_NAME"); @test r == "$(Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_ALLOC_ADD_QNZ"); @test r == "$(Mosek.MSK_IPAR_ALLOC_ADD_QNZ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_BASIS"); @test r == "$(Mosek.MSK_IPAR_ANA_SOL_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_ANA_SOL_PRINT_VIOLATED"); @test r == "$(Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"); @test r == "$(Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_AUTO_UPDATE_SOL_INFO"); @test r == "$(Mosek.MSK_IPAR_AUTO_UPDATE_SOL_INFO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE"); @test r == "$(Mosek.MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_CLEAN_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_BI_CLEAN_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_MAX_ITER"); @test r == "$(Mosek.MSK_IPAR_BI_IGNORE_MAX_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_IGNORE_NUM_ERROR"); @test r == "$(Mosek.MSK_IPAR_BI_IGNORE_NUM_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_BI_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_BI_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CACHE_LICENSE"); @test r == "$(Mosek.MSK_IPAR_CACHE_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CHECK_CONVEXITY"); @test r == "$(Mosek.MSK_IPAR_CHECK_CONVEXITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_COMPRESS_STATFILE"); @test r == "$(Mosek.MSK_IPAR_COMPRESS_STATFILE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_NUM_OPTIMIZERS"); @test r == "$(Mosek.MSK_IPAR_CONCURRENT_NUM_OPTIMIZERS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_FREE_SIMPLEX"); @test r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_FREE_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_INTPNT"); @test r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_CONCURRENT_PRIORITY_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_IPAR_CONCURRENT_PRIORITY_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_FEASREPAIR_OPTIMIZE"); @test r == "$(Mosek.MSK_IPAR_FEASREPAIR_OPTIMIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_GENERIC_NAMES"); @test r == "$(Mosek.MSK_IPAR_INFEAS_GENERIC_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_PREFER_PRIMAL"); @test r == "$(Mosek.MSK_IPAR_INFEAS_PREFER_PRIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_AUTO"); @test r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_AUTO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INFEAS_REPORT_LEVEL"); @test r == "$(Mosek.MSK_IPAR_INFEAS_REPORT_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_BASIS"); @test r == "$(Mosek.MSK_IPAR_INTPNT_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_DIFF_STEP"); @test r == "$(Mosek.MSK_IPAR_INTPNT_DIFF_STEP)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_FACTOR_DEBUG_LVL"); @test r == "$(Mosek.MSK_IPAR_INTPNT_FACTOR_DEBUG_LVL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_FACTOR_METHOD"); @test r == "$(Mosek.MSK_IPAR_INTPNT_FACTOR_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_HOTSTART"); @test r == "$(Mosek.MSK_IPAR_INTPNT_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_COR"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_COR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS"); @test r == "$(Mosek.MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_OFF_COL_TRH"); @test r == "$(Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_ORDER_METHOD"); @test r == "$(Mosek.MSK_IPAR_INTPNT_ORDER_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_REGULARIZATION_USE"); @test r == "$(Mosek.MSK_IPAR_INTPNT_REGULARIZATION_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SCALING"); @test r == "$(Mosek.MSK_IPAR_INTPNT_SCALING)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_SOLVE_FORM"); @test r == "$(Mosek.MSK_IPAR_INTPNT_SOLVE_FORM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_INTPNT_STARTING_POINT"); @test r == "$(Mosek.MSK_IPAR_INTPNT_STARTING_POINT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LIC_TRH_EXPIRY_WRN"); @test r == "$(Mosek.MSK_IPAR_LIC_TRH_EXPIRY_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_DEBUG"); @test r == "$(Mosek.MSK_IPAR_LICENSE_DEBUG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_PAUSE_TIME"); @test r == "$(Mosek.MSK_IPAR_LICENSE_PAUSE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS"); @test r == "$(Mosek.MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LICENSE_WAIT"); @test r == "$(Mosek.MSK_IPAR_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG"); @test r == "$(Mosek.MSK_IPAR_LOG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI"); @test r == "$(Mosek.MSK_IPAR_LOG_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_BI_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_BI_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CHECK_CONVEXITY"); @test r == "$(Mosek.MSK_IPAR_LOG_CHECK_CONVEXITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CONCURRENT"); @test r == "$(Mosek.MSK_IPAR_LOG_CONCURRENT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_CUT_SECOND_OPT"); @test r == "$(Mosek.MSK_IPAR_LOG_CUT_SECOND_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_EXPAND"); @test r == "$(Mosek.MSK_IPAR_LOG_EXPAND)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FACTOR"); @test r == "$(Mosek.MSK_IPAR_LOG_FACTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FEAS_REPAIR"); @test r == "$(Mosek.MSK_IPAR_LOG_FEAS_REPAIR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_FILE"); @test r == "$(Mosek.MSK_IPAR_LOG_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_HEAD"); @test r == "$(Mosek.MSK_IPAR_LOG_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INFEAS_ANA"); @test r == "$(Mosek.MSK_IPAR_LOG_INFEAS_ANA)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_INTPNT"); @test r == "$(Mosek.MSK_IPAR_LOG_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO"); @test r == "$(Mosek.MSK_IPAR_LOG_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_MIO_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_MIO_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_NONCONVEX"); @test r == "$(Mosek.MSK_IPAR_LOG_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_LOG_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_ORDER"); @test r == "$(Mosek.MSK_IPAR_LOG_ORDER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_PARAM"); @test r == "$(Mosek.MSK_IPAR_LOG_PARAM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_PRESOLVE"); @test r == "$(Mosek.MSK_IPAR_LOG_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_RESPONSE"); @test r == "$(Mosek.MSK_IPAR_LOG_RESPONSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY"); @test r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SENSITIVITY_OPT"); @test r == "$(Mosek.MSK_IPAR_LOG_SENSITIVITY_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_MINOR"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM_MINOR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_SIM_NETWORK_FREQ"); @test r == "$(Mosek.MSK_IPAR_LOG_SIM_NETWORK_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_LOG_STORAGE"); @test r == "$(Mosek.MSK_IPAR_LOG_STORAGE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MAX_NUM_WARNINGS"); @test r == "$(Mosek.MSK_IPAR_MAX_NUM_WARNINGS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_BRANCH_DIR"); @test r == "$(Mosek.MSK_IPAR_MIO_BRANCH_DIR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_BRANCH_PRIORITIES_USE"); @test r == "$(Mosek.MSK_IPAR_MIO_BRANCH_PRIORITIES_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CONSTRUCT_SOL"); @test r == "$(Mosek.MSK_IPAR_MIO_CONSTRUCT_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CONT_SOL"); @test r == "$(Mosek.MSK_IPAR_MIO_CONT_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CG"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_CG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_CMIR"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_CMIR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_LEVEL_ROOT"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_LEVEL_ROOT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_CUT_LEVEL_TREE"); @test r == "$(Mosek.MSK_IPAR_MIO_CUT_LEVEL_TREE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_FEASPUMP_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_FEASPUMP_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_HEURISTIC_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_HEURISTIC_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_HOTSTART"); @test r == "$(Mosek.MSK_IPAR_MIO_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_KEEP_BASIS"); @test r == "$(Mosek.MSK_IPAR_MIO_KEEP_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_LOCAL_BRANCH_NUMBER"); @test r == "$(Mosek.MSK_IPAR_MIO_LOCAL_BRANCH_NUMBER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_BRANCHES"); @test r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_BRANCHES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_RELAXS"); @test r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_RELAXS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MAX_NUM_SOLUTIONS"); @test r == "$(Mosek.MSK_IPAR_MIO_MAX_NUM_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MODE"); @test r == "$(Mosek.MSK_IPAR_MIO_MODE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_MT_USER_CB"); @test r == "$(Mosek.MSK_IPAR_MIO_MT_USER_CB)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_MIO_NODE_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_NODE_SELECTION"); @test r == "$(Mosek.MSK_IPAR_MIO_NODE_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_OPTIMIZER_MODE"); @test r == "$(Mosek.MSK_IPAR_MIO_OPTIMIZER_MODE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PRESOLVE_AGGREGATE"); @test r == "$(Mosek.MSK_IPAR_MIO_PRESOLVE_AGGREGATE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PRESOLVE_PROBING"); @test r == "$(Mosek.MSK_IPAR_MIO_PRESOLVE_PROBING)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PRESOLVE_USE"); @test r == "$(Mosek.MSK_IPAR_MIO_PRESOLVE_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_PROBING_LEVEL"); @test r == "$(Mosek.MSK_IPAR_MIO_PROBING_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_RINS_MAX_NODES"); @test r == "$(Mosek.MSK_IPAR_MIO_RINS_MAX_NODES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_ROOT_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_MIO_ROOT_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_STRONG_BRANCH"); @test r == "$(Mosek.MSK_IPAR_MIO_STRONG_BRANCH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_MIO_USE_MULTITHREADED_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_MT_SPINCOUNT"); @test r == "$(Mosek.MSK_IPAR_MT_SPINCOUNT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_NONCONVEX_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_NONCONVEX_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_NUM_THREADS"); @test r == "$(Mosek.MSK_IPAR_NUM_THREADS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_MAX_TERMS_PER_LINE"); @test r == "$(Mosek.MSK_IPAR_OPF_MAX_TERMS_PER_LINE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HEADER"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_HEADER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_HINTS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_HINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PARAMETERS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_PARAMETERS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_PROBLEM"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_BAS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_BAS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITG"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOL_ITR"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOL_ITR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPF_WRITE_SOLUTIONS"); @test r == "$(Mosek.MSK_IPAR_OPF_WRITE_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_CASE_NAME"); @test r == "$(Mosek.MSK_IPAR_PARAM_READ_CASE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PARAM_READ_IGN_ERROR"); @test r == "$(Mosek.MSK_IPAR_PARAM_READ_IGN_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIM_FILL"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIM_FILL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_ELIMINATOR_USE"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LEVEL"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_LINDEP_USE"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_LINDEP_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRESOLVE_USE"); @test r == "$(Mosek.MSK_IPAR_PRESOLVE_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_QO_SEPARABLE_REFORMULATION"); @test r == "$(Mosek.MSK_IPAR_QO_SEPARABLE_REFORMULATION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_ANZ"); @test r == "$(Mosek.MSK_IPAR_READ_ANZ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_CON"); @test r == "$(Mosek.MSK_IPAR_READ_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_CONE"); @test r == "$(Mosek.MSK_IPAR_READ_CONE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_COMPRESSED"); @test r == "$(Mosek.MSK_IPAR_READ_DATA_COMPRESSED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DATA_FORMAT"); @test r == "$(Mosek.MSK_IPAR_READ_DATA_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_DEBUG"); @test r == "$(Mosek.MSK_IPAR_READ_DEBUG)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_KEEP_FREE_CON"); @test r == "$(Mosek.MSK_IPAR_READ_KEEP_FREE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU"); @test r == "$(Mosek.MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_LP_QUOTED_NAMES"); @test r == "$(Mosek.MSK_IPAR_READ_LP_QUOTED_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_FORMAT"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_KEEP_INT"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_KEEP_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_OBJ_SENSE"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_OBJ_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_RELAX"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_RELAX)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_MPS_WIDTH"); @test r == "$(Mosek.MSK_IPAR_READ_MPS_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_QNZ"); @test r == "$(Mosek.MSK_IPAR_READ_QNZ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_TASK_IGNORE_PARAM"); @test r == "$(Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_READ_VAR"); @test r == "$(Mosek.MSK_IPAR_READ_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_ALL"); @test r == "$(Mosek.MSK_IPAR_SENSITIVITY_ALL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SENSITIVITY_TYPE"); @test r == "$(Mosek.MSK_IPAR_SENSITIVITY_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_BASIS_FACTOR_USE"); @test r == "$(Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DEGEN"); @test r == "$(Mosek.MSK_IPAR_SIM_DEGEN)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_CRASH"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_CRASH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_DUAL_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_DUAL_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_EXPLOIT_DUPVEC"); @test r == "$(Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART"); @test r == "$(Mosek.MSK_IPAR_SIM_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_HOTSTART_LU"); @test r == "$(Mosek.MSK_IPAR_SIM_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_INTEGER"); @test r == "$(Mosek.MSK_IPAR_SIM_INTEGER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_IPAR_SIM_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_MAX_NUM_SETBACKS"); @test r == "$(Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_NON_SINGULAR"); @test r == "$(Mosek.MSK_IPAR_SIM_NON_SINGULAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_CRASH"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_CRASH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_PRIMAL_SELECTION"); @test r == "$(Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFACTOR_FREQ"); @test r == "$(Mosek.MSK_IPAR_SIM_REFACTOR_FREQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_REFORMULATION"); @test r == "$(Mosek.MSK_IPAR_SIM_REFORMULATION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SAVE_LU"); @test r == "$(Mosek.MSK_IPAR_SIM_SAVE_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING"); @test r == "$(Mosek.MSK_IPAR_SIM_SCALING)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SCALING_METHOD"); @test r == "$(Mosek.MSK_IPAR_SIM_SCALING_METHOD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SOLVE_FORM"); @test r == "$(Mosek.MSK_IPAR_SIM_SOLVE_FORM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_STABILITY_PRIORITY"); @test r == "$(Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SIM_SWITCH_OPTIMIZER"); @test r == "$(Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_BASIC"); @test r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_FILTER_KEEP_RANGED"); @test r == "$(Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_NAME_WIDTH"); @test r == "$(Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOL_READ_WIDTH"); @test r == "$(Mosek.MSK_IPAR_SOL_READ_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_SOLUTION_CALLBACK"); @test r == "$(Mosek.MSK_IPAR_SOLUTION_CALLBACK)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_TIMING_LEVEL"); @test r == "$(Mosek.MSK_IPAR_TIMING_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WARNING_LEVEL"); @test r == "$(Mosek.MSK_IPAR_WARNING_LEVEL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_CONSTRAINTS"); @test r == "$(Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_HEAD"); @test r == "$(Mosek.MSK_IPAR_WRITE_BAS_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_BAS_VARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_BAS_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_COMPRESSED"); @test r == "$(Mosek.MSK_IPAR_WRITE_DATA_COMPRESSED)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_FORMAT"); @test r == "$(Mosek.MSK_IPAR_WRITE_DATA_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_DATA_PARAM"); @test r == "$(Mosek.MSK_IPAR_WRITE_DATA_PARAM)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_FREE_CON"); @test r == "$(Mosek.MSK_IPAR_WRITE_FREE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES"); @test r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_GENERIC_NAMES_IO"); @test r == "$(Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_CONIC_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_NL_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS"); @test r == "$(Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_PSD_ITEMS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_CONSTRAINTS"); @test r == "$(Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_HEAD"); @test r == "$(Mosek.MSK_IPAR_WRITE_INT_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_INT_VARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_INT_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_LINE_WIDTH"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_QUOTED_NAMES"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_QUOTED_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_STRICT_FORMAT"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_STRICT_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_LP_TERMS_PER_LINE"); @test r == "$(Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_MPS_INT"); @test r == "$(Mosek.MSK_IPAR_WRITE_MPS_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_PRECISION"); @test r == "$(Mosek.MSK_IPAR_WRITE_PRECISION)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_BARVARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_CONSTRAINTS"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_HEAD"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_HEAD)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_SOL_VARIABLES"); @test r == "$(Mosek.MSK_IPAR_WRITE_SOL_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_TASK_INC_SOL"); @test r == "$(Mosek.MSK_IPAR_WRITE_TASK_INC_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_IPAR_WRITE_XML_MODE"); @test r == "$(Mosek.MSK_IPAR_WRITE_XML_MODE)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_DUAL_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_DUAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_INTEGER_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_INTEGER_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_DUAL_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_INTEGER_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_NEAR_PRIM_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_OPTIMAL"); @test r == "$(Mosek.MSK_SOL_STA_OPTIMAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_FEAS"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_PRIM_INFEAS_CER"); @test r == "$(Mosek.MSK_SOL_STA_PRIM_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_STA_UNKNOWN"); @test r == "$(Mosek.MSK_SOL_STA_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MAXIMIZE"); @test r == "$(Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_OBJECTIVE_SENSE_MINIMIZE"); @test r == "$(Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLC"); @test r == "$(Mosek.MSK_SOL_ITEM_SLC)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SLX"); @test r == "$(Mosek.MSK_SOL_ITEM_SLX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SNX"); @test r == "$(Mosek.MSK_SOL_ITEM_SNX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUC"); @test r == "$(Mosek.MSK_SOL_ITEM_SUC)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_SUX"); @test r == "$(Mosek.MSK_SOL_ITEM_SUX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XC"); @test r == "$(Mosek.MSK_SOL_ITEM_XC)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_XX"); @test r == "$(Mosek.MSK_SOL_ITEM_XX)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITEM_Y"); @test r == "$(Mosek.MSK_SOL_ITEM_Y)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_FR"); @test r == "$(Mosek.MSK_BK_FR)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_FX"); @test r == "$(Mosek.MSK_BK_FX)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_LO"); @test r == "$(Mosek.MSK_BK_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_RA"); @test r == "$(Mosek.MSK_BK_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_BK_UP"); @test r == "$(Mosek.MSK_BK_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_ALWAYS"); @test r == "$(Mosek.MSK_BI_ALWAYS)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_IF_FEASIBLE"); @test r == "$(Mosek.MSK_BI_IF_FEASIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_NEVER"); @test r == "$(Mosek.MSK_BI_NEVER)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_NO_ERROR"); @test r == "$(Mosek.MSK_BI_NO_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_BI_RESERVERED"); @test r == "$(Mosek.MSK_BI_RESERVERED)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_DOWN"); @test r == "$(Mosek.MSK_BRANCH_DIR_DOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_FREE"); @test r == "$(Mosek.MSK_BRANCH_DIR_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_BRANCH_DIR_UP"); @test r == "$(Mosek.MSK_BRANCH_DIR_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_DUAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DUAL_SUB_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_CLEAN_PRIMAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_DUAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_BI_PRIMAL_ITER"); @test r == "$(Mosek.MSK_LIINF_BI_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_INTPNT_FACTOR_NUM_NZ"); @test r == "$(Mosek.MSK_LIINF_INTPNT_FACTOR_NUM_NZ)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_INTPNT_ITER"); @test r == "$(Mosek.MSK_LIINF_MIO_INTPNT_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_MIO_SIMPLEX_ITER"); @test r == "$(Mosek.MSK_LIINF_MIO_SIMPLEX_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMANZ"); @test r == "$(Mosek.MSK_LIINF_RD_NUMANZ)"
+        ok,r = Mosek.symnamtovalue("MSK_LIINF_RD_NUMQNZ"); @test r == "$(Mosek.MSK_LIINF_RD_NUMQNZ)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_ERR"); @test r == "$(Mosek.MSK_STREAM_ERR)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_LOG"); @test r == "$(Mosek.MSK_STREAM_LOG)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_MSG"); @test r == "$(Mosek.MSK_STREAM_MSG)"
+        ok,r = Mosek.symnamtovalue("MSK_STREAM_WRN"); @test r == "$(Mosek.MSK_STREAM_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_FREE"); @test r == "$(Mosek.MSK_SIM_HOTSTART_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_NONE"); @test r == "$(Mosek.MSK_SIM_HOTSTART_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_HOTSTART_STATUS_KEYS"); @test r == "$(Mosek.MSK_SIM_HOTSTART_STATUS_KEYS)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_CONCURRENT"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_CONCURRENT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INFEAS_ANA"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_LICENSE_WAIT"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_MIO"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NETWORK_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_NETWORK_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NETWORK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_NETWORK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NETWORK_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_NETWORK_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_NONCONVEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_OPTIMIZER"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_READ"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_SIMPLEX_NETWORK_DETECT"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_NETWORK_DETECT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_BEGIN_WRITE"); @test r == "$(Mosek.MSK_CALLBACK_BEGIN_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_CONCURRENT"); @test r == "$(Mosek.MSK_CALLBACK_END_CONCURRENT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_END_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_FULL_CONVEXITY_CHECK"); @test r == "$(Mosek.MSK_CALLBACK_END_FULL_CONVEXITY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INFEAS_ANA"); @test r == "$(Mosek.MSK_CALLBACK_END_INFEAS_ANA)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_END_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_LICENSE_WAIT"); @test r == "$(Mosek.MSK_CALLBACK_END_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_MIO"); @test r == "$(Mosek.MSK_CALLBACK_END_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NETWORK_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_NETWORK_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NETWORK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_NETWORK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NETWORK_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_NETWORK_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_NONCONVEX"); @test r == "$(Mosek.MSK_CALLBACK_END_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_OPTIMIZER"); @test r == "$(Mosek.MSK_CALLBACK_END_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_END_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_REPAIR"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SENSITIVITY"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SETUP_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_QCQO_REFORMULATE"); @test r == "$(Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_READ"); @test r == "$(Mosek.MSK_CALLBACK_END_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_SIMPLEX_NETWORK_DETECT"); @test r == "$(Mosek.MSK_CALLBACK_END_SIMPLEX_NETWORK_DETECT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_END_WRITE"); @test r == "$(Mosek.MSK_CALLBACK_END_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_CONIC"); @test r == "$(Mosek.MSK_CALLBACK_IM_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SENSIVITY"); @test r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK"); @test r == "$(Mosek.MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_IM_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LICENSE_WAIT"); @test r == "$(Mosek.MSK_CALLBACK_IM_LICENSE_WAIT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_LU"); @test r == "$(Mosek.MSK_CALLBACK_IM_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_NETWORK_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_NETWORK_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_NETWORK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_NETWORK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_NONCONVEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_ORDER"); @test r == "$(Mosek.MSK_CALLBACK_IM_ORDER)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SENSIVITY"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_QO_REFORMULATE"); @test r == "$(Mosek.MSK_CALLBACK_IM_QO_REFORMULATE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_READ"); @test r == "$(Mosek.MSK_CALLBACK_IM_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_IM_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_IM_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_INTPNT"); @test r == "$(Mosek.MSK_CALLBACK_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_NEW_INT_MIO"); @test r == "$(Mosek.MSK_CALLBACK_NEW_INT_MIO)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_NONCOVEX"); @test r == "$(Mosek.MSK_CALLBACK_NONCOVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF"); @test r == "$(Mosek.MSK_CALLBACK_READ_OPF)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_READ_OPF_SECTION"); @test r == "$(Mosek.MSK_CALLBACK_READ_OPF_SECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_NETWORK_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_NETWORK_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_NETWORK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_NETWORK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_NONCONVEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRESOLVE"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_DUAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"); @test r == "$(Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI)"
+        ok,r = Mosek.symnamtovalue("MSK_CALLBACK_WRITE_OPF"); @test r == "$(Mosek.MSK_CALLBACK_WRITE_OPF)"
+        ok,r = Mosek.symnamtovalue("MSK_SYMMAT_TYPE_SPARSE"); @test r == "$(Mosek.MSK_SYMMAT_TYPE_SPARSE)"
+        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTOM"); @test r == "$(Mosek.MSK_FEATURE_PTOM)"
+        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTON"); @test r == "$(Mosek.MSK_FEATURE_PTON)"
+        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTOX"); @test r == "$(Mosek.MSK_FEATURE_PTOX)"
+        ok,r = Mosek.symnamtovalue("MSK_FEATURE_PTS"); @test r == "$(Mosek.MSK_FEATURE_PTS)"
+        ok,r = Mosek.symnamtovalue("MSK_MARK_LO"); @test r == "$(Mosek.MSK_MARK_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_MARK_UP"); @test r == "$(Mosek.MSK_MARK_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_CT_QUAD"); @test r == "$(Mosek.MSK_CT_QUAD)"
+        ok,r = Mosek.symnamtovalue("MSK_CT_RQUAD"); @test r == "$(Mosek.MSK_CT_RQUAD)"
+        ok,r = Mosek.symnamtovalue("MSK_FEASREPAIR_OPTIMIZE_COMBINED"); @test r == "$(Mosek.MSK_FEASREPAIR_OPTIMIZE_COMBINED)"
+        ok,r = Mosek.symnamtovalue("MSK_FEASREPAIR_OPTIMIZE_NONE"); @test r == "$(Mosek.MSK_FEASREPAIR_OPTIMIZE_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_FEASREPAIR_OPTIMIZE_PENALTY"); @test r == "$(Mosek.MSK_FEASREPAIR_OPTIMIZE_PENALTY)"
+        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READ"); @test r == "$(Mosek.MSK_IOMODE_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_IOMODE_READWRITE"); @test r == "$(Mosek.MSK_IOMODE_READWRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_IOMODE_WRITE"); @test r == "$(Mosek.MSK_IOMODE_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_ASE"); @test r == "$(Mosek.MSK_SIM_SELECTION_ASE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_DEVEX"); @test r == "$(Mosek.MSK_SIM_SELECTION_DEVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FREE"); @test r == "$(Mosek.MSK_SIM_SELECTION_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_FULL"); @test r == "$(Mosek.MSK_SIM_SELECTION_FULL)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_PARTIAL"); @test r == "$(Mosek.MSK_SIM_SELECTION_PARTIAL)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_SELECTION_SE"); @test r == "$(Mosek.MSK_SIM_SELECTION_SE)"
+        ok,r = Mosek.symnamtovalue("MSK_MSG_MPS_SELECTED"); @test r == "$(Mosek.MSK_MSG_MPS_SELECTED)"
+        ok,r = Mosek.symnamtovalue("MSK_MSG_READING_FILE"); @test r == "$(Mosek.MSK_MSG_READING_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_MSG_WRITING_FILE"); @test r == "$(Mosek.MSK_MSG_WRITING_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_IGNORED"); @test r == "$(Mosek.MSK_MIO_MODE_IGNORED)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_LAZY"); @test r == "$(Mosek.MSK_MIO_MODE_LAZY)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_MODE_SATISFIED"); @test r == "$(Mosek.MSK_MIO_MODE_SATISFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_CLEAN_TIME"); @test r == "$(Mosek.MSK_DINF_BI_CLEAN_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_BI_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_BI_TIME"); @test r == "$(Mosek.MSK_DINF_BI_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_CONCURRENT_TIME"); @test r == "$(Mosek.MSK_DINF_CONCURRENT_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_FEAS"); @test r == "$(Mosek.MSK_DINF_INTPNT_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_DUAL_OBJ"); @test r == "$(Mosek.MSK_DINF_INTPNT_DUAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"); @test r == "$(Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_OPT_STATUS"); @test r == "$(Mosek.MSK_DINF_INTPNT_OPT_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_ORDER_TIME"); @test r == "$(Mosek.MSK_DINF_INTPNT_ORDER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_FEAS"); @test r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_INTPNT_TIME"); @test r == "$(Mosek.MSK_DINF_INTPNT_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CG_SEPERATION_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_CG_SEPERATION_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CMIR_SEPERATION_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_CMIR_SEPERATION_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"); @test r == "$(Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"); @test r == "$(Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_HEURISTIC_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_HEURISTIC_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_ABS_GAP"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_BOUND"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_INT"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OBJ_REL_GAP"); @test r == "$(Mosek.MSK_DINF_MIO_OBJ_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_OPTIMIZER_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_OPTIMIZER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_PROBING_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_PROBING_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_CUTGEN_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_ROOT_CUTGEN_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_ROOT_PRESOLVE_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_TIME"); @test r == "$(Mosek.MSK_DINF_MIO_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_MIO_USER_OBJ_CUT"); @test r == "$(Mosek.MSK_DINF_MIO_USER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_OPTIMIZER_TIME"); @test r == "$(Mosek.MSK_DINF_OPTIMIZER_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_ELI_TIME"); @test r == "$(Mosek.MSK_DINF_PRESOLVE_ELI_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_LINDEP_TIME"); @test r == "$(Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRESOLVE_TIME"); @test r == "$(Mosek.MSK_DINF_PRESOLVE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"); @test r == "$(Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_QCQO_REFORMULATE_TIME"); @test r == "$(Mosek.MSK_DINF_QCQO_REFORMULATE_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_RD_TIME"); @test r == "$(Mosek.MSK_DINF_RD_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_FEAS"); @test r == "$(Mosek.MSK_DINF_SIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_NETWORK_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_NETWORK_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_NETWORK_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_NETWORK_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_NETWORK_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_NETWORK_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_OBJ"); @test r == "$(Mosek.MSK_DINF_SIM_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_DUAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_PRIMAL_DUAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_PRIMAL_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_PRIMAL_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SIM_TIME"); @test r == "$(Mosek.MSK_DINF_SIM_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DUAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_DVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_DVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_BAS_PVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_BAS_PVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLBARVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLCONES"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLCONES)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLITG"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLITG)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITG_PVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITG_PVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DUAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLBARVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLCONES"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLCONES)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_DVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_DVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PRIMAL_OBJ"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLBARVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCON"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCON)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLCONES"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLCONES)"
+        ok,r = Mosek.symnamtovalue("MSK_DINF_SOL_ITR_PVIOLVAR"); @test r == "$(Mosek.MSK_DINF_SOL_ITR_PVIOLVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_DOU_TYPE"); @test r == "$(Mosek.MSK_PAR_DOU_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_INT_TYPE"); @test r == "$(Mosek.MSK_PAR_INT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_INVALID_TYPE"); @test r == "$(Mosek.MSK_PAR_INVALID_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_PAR_STR_TYPE"); @test r == "$(Mosek.MSK_PAR_STR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_ERR"); @test r == "$(Mosek.MSK_RESPONSE_ERR)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_OK"); @test r == "$(Mosek.MSK_RESPONSE_OK)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_TRM"); @test r == "$(Mosek.MSK_RESPONSE_TRM)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_UNK"); @test r == "$(Mosek.MSK_RESPONSE_UNK)"
+        ok,r = Mosek.symnamtovalue("MSK_RESPONSE_WRN"); @test r == "$(Mosek.MSK_RESPONSE_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_DUAL_INFEAS"); @test r == "$(Mosek.MSK_PRO_STA_DUAL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_ILL_POSED"); @test r == "$(Mosek.MSK_PRO_STA_ILL_POSED)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_NEAR_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_NEAR_PRIM_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_NEAR_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_AND_DUAL_INFEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_AND_DUAL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_FEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"); @test r == "$(Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED)"
+        ok,r = Mosek.symnamtovalue("MSK_PRO_STA_UNKNOWN"); @test r == "$(Mosek.MSK_PRO_STA_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_AGGRESSIVE"); @test r == "$(Mosek.MSK_SCALING_AGGRESSIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_FREE"); @test r == "$(Mosek.MSK_SCALING_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_MODERATE"); @test r == "$(Mosek.MSK_SCALING_MODERATE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_NONE"); @test r == "$(Mosek.MSK_SCALING_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_CODELIST"); @test r == "$(Mosek.MSK_RES_ERR_AD_INVALID_CODELIST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_OPERAND"); @test r == "$(Mosek.MSK_RES_ERR_AD_INVALID_OPERAND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_INVALID_OPERATOR"); @test r == "$(Mosek.MSK_RES_ERR_AD_INVALID_OPERATOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_MISSING_OPERAND"); @test r == "$(Mosek.MSK_RES_ERR_AD_MISSING_OPERAND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_AD_MISSING_RETURN"); @test r == "$(Mosek.MSK_RES_ERR_AD_MISSING_RETURN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_ARRAY_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_API_ARRAY_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_CB_CONNECT"); @test r == "$(Mosek.MSK_RES_ERR_API_CB_CONNECT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_FATAL_ERROR"); @test r == "$(Mosek.MSK_RES_ERR_API_FATAL_ERROR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_API_INTERNAL"); @test r == "$(Mosek.MSK_RES_ERR_API_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARG_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_ARG_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_DIMENSION"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_DIMENSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_LENNEQ"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_LENNEQ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_PERM_ARRAY"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_PERM_ARRAY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ARGUMENT_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_ARGUMENT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BAR_VAR_DIM"); @test r == "$(Mosek.MSK_RES_ERR_BAR_VAR_DIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS"); @test r == "$(Mosek.MSK_RES_ERR_BASIS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_FACTOR"); @test r == "$(Mosek.MSK_RES_ERR_BASIS_FACTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BASIS_SINGULAR"); @test r == "$(Mosek.MSK_RES_ERR_BASIS_SINGULAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_BLANK_NAME"); @test r == "$(Mosek.MSK_RES_ERR_BLANK_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_CLONE_NL"); @test r == "$(Mosek.MSK_RES_ERR_CANNOT_CLONE_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CANNOT_HANDLE_NL"); @test r == "$(Mosek.MSK_RES_ERR_CANNOT_HANDLE_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_ACOORD"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_ACOORD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_BCOORD"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_BCOORD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_CON"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_INT"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJ"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_DUPLICATE_VAR"); @test r == "$(Mosek.MSK_RES_ERR_CBF_DUPLICATE_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_CON_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_CON_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_INT_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_INT_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_INVALID_VAR_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_INVALID_VAR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VARIABLES"); @test r == "$(Mosek.MSK_RES_ERR_CBF_NO_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED"); @test r == "$(Mosek.MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_OBJ_SENSE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_OBJ_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_PARSE"); @test r == "$(Mosek.MSK_RES_ERR_CBF_PARSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_SYNTAX"); @test r == "$(Mosek.MSK_RES_ERR_CBF_SYNTAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_INTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_INTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_FEW_VARIABLES"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_FEW_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_INTS"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_INTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_TOO_MANY_VARIABLES"); @test r == "$(Mosek.MSK_RES_ERR_CBF_TOO_MANY_VARIABLES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CBF_UNSUPPORTED"); @test r == "$(Mosek.MSK_RES_ERR_CBF_UNSUPPORTED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_NSD"); @test r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_NSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CON_Q_NOT_PSD"); @test r == "$(Mosek.MSK_RES_ERR_CON_Q_NOT_PSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONCURRENT_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_CONCURRENT_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_CONE_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP"); @test r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_OVERLAP_APPEND"); @test r == "$(Mosek.MSK_RES_ERR_CONE_OVERLAP_APPEND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_REP_VAR"); @test r == "$(Mosek.MSK_RES_ERR_CONE_REP_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_SIZE"); @test r == "$(Mosek.MSK_RES_ERR_CONE_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_CONE_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_CONE_TYPE_STR"); @test r == "$(Mosek.MSK_RES_ERR_CONE_TYPE_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DATA_FILE_EXT"); @test r == "$(Mosek.MSK_RES_ERR_DATA_FILE_EXT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUP_NAME"); @test r == "$(Mosek.MSK_RES_ERR_DUP_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONE_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_END_OF_FILE"); @test r == "$(Mosek.MSK_RES_ERR_END_OF_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FACTOR"); @test r == "$(Mosek.MSK_RES_ERR_FACTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX"); @test r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND"); @test r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED"); @test r == "$(Mosek.MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_FILE_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_OPEN"); @test r == "$(Mosek.MSK_RES_ERR_FILE_OPEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_READ"); @test r == "$(Mosek.MSK_RES_ERR_FILE_READ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FILE_WRITE"); @test r == "$(Mosek.MSK_RES_ERR_FILE_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRST"); @test r == "$(Mosek.MSK_RES_ERR_FIRST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTI"); @test r == "$(Mosek.MSK_RES_ERR_FIRSTI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIRSTJ"); @test r == "$(Mosek.MSK_RES_ERR_FIRSTJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FIXED_BOUND_VALUES"); @test r == "$(Mosek.MSK_RES_ERR_FIXED_BOUND_VALUES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_FLEXLM"); @test r == "$(Mosek.MSK_RES_ERR_FLEXLM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_AIJ"); @test r == "$(Mosek.MSK_RES_ERR_HUGE_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_HUGE_C"); @test r == "$(Mosek.MSK_RES_ERR_HUGE_C)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IDENTICAL_TASKS"); @test r == "$(Mosek.MSK_RES_ERR_IDENTICAL_TASKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_IN_ARGUMENT"); @test r == "$(Mosek.MSK_RES_ERR_IN_ARGUMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INDEX_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_INDEX_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INF_DOU_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_DOU_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INF_DOU_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INF_INT_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_INT_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INF_INT_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_INF_LINT_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_LINT_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INF_LINT_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INF_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INF_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFEAS_UNDEFINED"); @test r == "$(Mosek.MSK_RES_ERR_INFEAS_UNDEFINED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INFINITE_BOUND"); @test r == "$(Mosek.MSK_RES_ERR_INFINITE_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INT64_TO_INT32_CAST"); @test r == "$(Mosek.MSK_RES_ERR_INT64_TO_INT32_CAST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL"); @test r == "$(Mosek.MSK_RES_ERR_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INTERNAL_TEST_FAILED"); @test r == "$(Mosek.MSK_RES_ERR_INTERNAL_TEST_FAILED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_APTRE"); @test r == "$(Mosek.MSK_RES_ERR_INV_APTRE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BK"); @test r == "$(Mosek.MSK_RES_ERR_INV_BK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKC"); @test r == "$(Mosek.MSK_RES_ERR_INV_BKC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_BKX"); @test r == "$(Mosek.MSK_RES_ERR_INV_BKX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONE_TYPE_STR"); @test r == "$(Mosek.MSK_RES_ERR_INV_CONE_TYPE_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_CONIC_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_INV_CONIC_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKI"); @test r == "$(Mosek.MSK_RES_ERR_INV_MARKI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_MARKJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_MARKJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NAME_ITEM"); @test r == "$(Mosek.MSK_RES_ERR_INV_NAME_ITEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMI"); @test r == "$(Mosek.MSK_RES_ERR_INV_NUMI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_NUMJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_NUMJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_INV_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_INV_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBI"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_SUBK"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_SUBK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QCON_VAL"); @test r == "$(Mosek.MSK_RES_ERR_INV_QCON_VAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBI"); @test r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_SUBJ"); @test r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_SUBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_QOBJ_VAL"); @test r == "$(Mosek.MSK_RES_ERR_INV_QOBJ_VAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK"); @test r == "$(Mosek.MSK_RES_ERR_INV_SK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SK_STR"); @test r == "$(Mosek.MSK_RES_ERR_INV_SK_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKC"); @test r == "$(Mosek.MSK_RES_ERR_INV_SKC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKN"); @test r == "$(Mosek.MSK_RES_ERR_INV_SKN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_SKX"); @test r == "$(Mosek.MSK_RES_ERR_INV_SKX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INV_VAR_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INV_VAR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_ACCMODE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_ACCMODE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AIJ"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_AMPL_STUB"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_AMPL_STUB)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BARVAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_BARVAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BRANCH_DIRECTION"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_BRANCH_DIRECTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_BRANCH_PRIORITY"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_BRANCH_PRIORITY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_COMPRESSION"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_COMPRESSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_CONE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_CONE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FILE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_FORMAT_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_FORMAT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IDX"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_IDX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_IOMODE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_IOMODE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_MAX_NUM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_MAX_NUM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_NETWORK_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_NETWORK_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJ_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_OBJ_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_OBJECTIVE_SENSE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_OBJECTIVE_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_PROBLEM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_PROBLEM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_STREAM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_STREAM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SURPLUS"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_SURPLUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_SYM_MAT_DIM"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_SYM_MAT_DIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_TASK"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_UTF8"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_UTF8)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WCHAR"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_WCHAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_INVALID_WHICHSOL"); @test r == "$(Mosek.MSK_RES_ERR_INVALID_WHICHSOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAST"); @test r == "$(Mosek.MSK_RES_ERR_LAST)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTI"); @test r == "$(Mosek.MSK_RES_ERR_LASTI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LASTJ"); @test r == "$(Mosek.MSK_RES_ERR_LASTJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_K"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_K)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_M"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_M)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_N"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_N)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANS"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSA"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_TRANSB"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_TRANSB)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_ARG_UPLO"); @test r == "$(Mosek.MSK_RES_ERR_LAU_ARG_UPLO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_SINGULAR_MATRIX"); @test r == "$(Mosek.MSK_RES_ERR_LAU_SINGULAR_MATRIX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LAU_UNKNOWN"); @test r == "$(Mosek.MSK_RES_ERR_LAU_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_CANNOT_CONNECT"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_CANNOT_CONNECT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_EXPIRED"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_EXPIRED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_FEATURE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_FEATURE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_INVALID_HOSTID"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_INVALID_HOSTID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MAX"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_MAX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_LINE"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_LINE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_SERVER_VERSION"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_SERVER_VERSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LICENSE_VERSION"); @test r == "$(Mosek.MSK_RES_ERR_LICENSE_VERSION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LINK_FILE_DLL"); @test r == "$(Mosek.MSK_RES_ERR_LINK_FILE_DLL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LIVING_TASKS"); @test r == "$(Mosek.MSK_RES_ERR_LIVING_TASKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LOWER_BOUND_IS_A_NAN"); @test r == "$(Mosek.MSK_RES_ERR_LOWER_BOUND_IS_A_NAN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_DUP_SLACK_NAME"); @test r == "$(Mosek.MSK_RES_ERR_LP_DUP_SLACK_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_EMPTY"); @test r == "$(Mosek.MSK_RES_ERR_LP_EMPTY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FILE_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_LP_FILE_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_LP_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_FREE_CONSTRAINT"); @test r == "$(Mosek.MSK_RES_ERR_LP_FREE_CONSTRAINT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INCOMPATIBLE"); @test r == "$(Mosek.MSK_RES_ERR_LP_INCOMPATIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_INVALID_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_LP_INVALID_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_LU_MAX_NUM_TRIES"); @test r == "$(Mosek.MSK_RES_ERR_LU_MAX_NUM_TRIES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMBARVAR"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCON"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMCONE"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMCONE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMQNZ"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMQNZ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MAXNUMVAR"); @test r == "$(Mosek.MSK_RES_ERR_MAXNUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MBT_INCOMPATIBLE"); @test r == "$(Mosek.MSK_RES_ERR_MBT_INCOMPATIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MBT_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_MBT_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INTERNAL"); @test r == "$(Mosek.MSK_RES_ERR_MIO_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NO_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_ERR_MIO_NO_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIO_NOT_LOADED"); @test r == "$(Mosek.MSK_RES_ERR_MIO_NOT_LOADED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MISSING_LICENSE_FILE"); @test r == "$(Mosek.MSK_RES_ERR_MISSING_LICENSE_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MIXED_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_MIXED_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_OVERLAP"); @test r == "$(Mosek.MSK_RES_ERR_MPS_CONE_OVERLAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_REPEAT"); @test r == "$(Mosek.MSK_RES_ERR_MPS_CONE_REPEAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_CONE_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_CONE_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT"); @test r == "$(Mosek.MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_FILE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_BOUND_KEY"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_BOUND_KEY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_CON_KEY"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_CON_KEY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_FIELD"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_FIELD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_MARKER"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_MARKER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INV_SEC_ORDER"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INV_SEC_ORDER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJ_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJ_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_INVALID_OBJSENSE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_INVALID_OBJSENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_CSEC"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_CSEC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QOBJ"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QOBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_MUL_QSEC"); @test r == "$(Mosek.MSK_RES_ERR_MPS_MUL_QSEC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NO_OBJECTIVE"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NO_OBJECTIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NON_SYMMETRIC_Q"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NON_SYMMETRIC_Q)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NULL_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_NULL_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_NULL_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_SPLITTED_VAR"); @test r == "$(Mosek.MSK_RES_ERR_MPS_SPLITTED_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD2"); @test r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD2)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD3"); @test r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD3)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_TAB_IN_FIELD5"); @test r == "$(Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD5)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_CON_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_CON_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MPS_UNDEF_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_MPS_UNDEF_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_MUL_A_ELEMENT"); @test r == "$(Mosek.MSK_RES_ERR_MUL_A_ELEMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_IS_NULL"); @test r == "$(Mosek.MSK_RES_ERR_NAME_IS_NULL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAME_MAX_LEN"); @test r == "$(Mosek.MSK_RES_ERR_NAME_MAX_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLC"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BLX"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BLX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUC"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_BUX"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_BUX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_C"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_C)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NAN_IN_DOUBLE_DATA"); @test r == "$(Mosek.MSK_RES_ERR_NAN_IN_DOUBLE_DATA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_APPEND"); @test r == "$(Mosek.MSK_RES_ERR_NEGATIVE_APPEND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEGATIVE_SURPLUS"); @test r == "$(Mosek.MSK_RES_ERR_NEGATIVE_SURPLUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NEWER_DLL"); @test r == "$(Mosek.MSK_RES_ERR_NEWER_DLL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARS_FOR_SOLUTION"); @test r == "$(Mosek.MSK_RES_ERR_NO_BARS_FOR_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BARX_FOR_SOLUTION"); @test r == "$(Mosek.MSK_RES_ERR_NO_BARX_FOR_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_BASIS_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_BASIS_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_INFEAS_CER"); @test r == "$(Mosek.MSK_RES_ERR_NO_DUAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_DUAL_INFO_FOR_ITG_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_DUAL_INFO_FOR_ITG_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_INIT_ENV"); @test r == "$(Mosek.MSK_RES_ERR_NO_INIT_ENV)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_PRIMAL_INFEAS_CER"); @test r == "$(Mosek.MSK_RES_ERR_NO_PRIMAL_INFEAS_CER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SNX_FOR_BAS_SOL"); @test r == "$(Mosek.MSK_RES_ERR_NO_SNX_FOR_BAS_SOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK"); @test r == "$(Mosek.MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NON_UNIQUE_ARRAY"); @test r == "$(Mosek.MSK_RES_ERR_NON_UNIQUE_ARRAY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONCONVEX"); @test r == "$(Mosek.MSK_RES_ERR_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_EQUALITY"); @test r == "$(Mosek.MSK_RES_ERR_NONLINEAR_EQUALITY)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED"); @test r == "$(Mosek.MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NONLINEAR_RANGED"); @test r == "$(Mosek.MSK_RES_ERR_NONLINEAR_RANGED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NR_ARGUMENTS"); @test r == "$(Mosek.MSK_RES_ERR_NR_ARGUMENTS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_ENV"); @test r == "$(Mosek.MSK_RES_ERR_NULL_ENV)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_POINTER"); @test r == "$(Mosek.MSK_RES_ERR_NULL_POINTER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NULL_TASK"); @test r == "$(Mosek.MSK_RES_ERR_NULL_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMCONLIM"); @test r == "$(Mosek.MSK_RES_ERR_NUMCONLIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_NUMVARLIM"); @test r == "$(Mosek.MSK_RES_ERR_NUMVARLIM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_NSD"); @test r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_NSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJ_Q_NOT_PSD"); @test r == "$(Mosek.MSK_RES_ERR_OBJ_Q_NOT_PSD)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OBJECTIVE_RANGE"); @test r == "$(Mosek.MSK_RES_ERR_OBJECTIVE_RANGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OLDER_DLL"); @test r == "$(Mosek.MSK_RES_ERR_OLDER_DLL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPEN_DL"); @test r == "$(Mosek.MSK_RES_ERR_OPEN_DL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_OPF_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_NEW_VARIABLE"); @test r == "$(Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPF_PREMATURE_EOF"); @test r == "$(Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OPTIMIZER_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_OPTIMIZER_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ORD_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_ORD_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_ORD_INVALID_BRANCH_DIR"); @test r == "$(Mosek.MSK_RES_ERR_ORD_INVALID_BRANCH_DIR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_OVERFLOW"); @test r == "$(Mosek.MSK_RES_ERR_OVERFLOW)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_IS_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_IS_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_DOU"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_DOU)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_INT"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_NAME_STR"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_NAME_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PARAM_VALUE_STR"); @test r == "$(Mosek.MSK_RES_ERR_PARAM_VALUE_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PLATFORM_NOT_LICENSED"); @test r == "$(Mosek.MSK_RES_ERR_PLATFORM_NOT_LICENSED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_POSTSOLVE"); @test r == "$(Mosek.MSK_RES_ERR_POSTSOLVE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PRO_ITEM"); @test r == "$(Mosek.MSK_RES_ERR_PRO_ITEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_PROB_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_PROB_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_LARGE"); @test r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_SUBI_TOO_SMALL"); @test r == "$(Mosek.MSK_RES_ERR_QCON_SUBI_TOO_SMALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QCON_UPPER_TRIANGLE"); @test r == "$(Mosek.MSK_RES_ERR_QCON_UPPER_TRIANGLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_QOBJ_UPPER_TRIANGLE"); @test r == "$(Mosek.MSK_RES_ERR_QOBJ_UPPER_TRIANGLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_READ_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_MISSING_END_TAG"); @test r == "$(Mosek.MSK_RES_ERR_READ_LP_MISSING_END_TAG)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_READ_LP_NONEXISTING_NAME"); @test r == "$(Mosek.MSK_RES_ERR_READ_LP_NONEXISTING_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REMOVE_CONE_VARIABLE"); @test r == "$(Mosek.MSK_RES_ERR_REMOVE_CONE_VARIABLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_INVALID_PROBLEM"); @test r == "$(Mosek.MSK_RES_ERR_REPAIR_INVALID_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED"); @test r == "$(Mosek.MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_LO"); @test r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_BOUND_INVALID_UP"); @test r == "$(Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_SEN_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INDEX_RANGE"); @test r == "$(Mosek.MSK_RES_ERR_SEN_INDEX_RANGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_INVALID_REGEXP"); @test r == "$(Mosek.MSK_RES_ERR_SEN_INVALID_REGEXP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_NUMERICAL"); @test r == "$(Mosek.MSK_RES_ERR_SEN_NUMERICAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_SOLUTION_STATUS"); @test r == "$(Mosek.MSK_RES_ERR_SEN_SOLUTION_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNDEF_NAME"); @test r == "$(Mosek.MSK_RES_ERR_SEN_UNDEF_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_CON"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_INTVAR"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_INTVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_NUMCORES"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_NUMCORES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SIZE_LICENSE_VAR"); @test r == "$(Mosek.MSK_RES_ERR_SIZE_LICENSE_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOL_FILE_INVALID_NUMBER"); @test r == "$(Mosek.MSK_RES_ERR_SOL_FILE_INVALID_NUMBER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLITEM"); @test r == "$(Mosek.MSK_RES_ERR_SOLITEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SOLVER_PROBTYPE"); @test r == "$(Mosek.MSK_RES_ERR_SOLVER_PROBTYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE"); @test r == "$(Mosek.MSK_RES_ERR_SPACE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_LEAKING"); @test r == "$(Mosek.MSK_RES_ERR_SPACE_LEAKING)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SPACE_NO_INFO"); @test r == "$(Mosek.MSK_RES_ERR_SPACE_NO_INFO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_DUPLICATE"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_DUPLICATE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_INVALID_VALUE"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_INVALID_VALUE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR"); @test r == "$(Mosek.MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INCOMPATIBLE"); @test r == "$(Mosek.MSK_RES_ERR_TASK_INCOMPATIBLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TASK_INVALID"); @test r == "$(Mosek.MSK_RES_ERR_TASK_INVALID)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_COND_INIT"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_COND_INIT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_CREATE"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_CREATE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_INIT"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_INIT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_LOCK"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_LOCK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_THREAD_MUTEX_UNLOCK"); @test r == "$(Mosek.MSK_RES_ERR_THREAD_MUTEX_UNLOCK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOCONIC_CONVERSION_FAIL"); @test r == "$(Mosek.MSK_RES_ERR_TOCONIC_CONVERSION_FAIL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS"); @test r == "$(Mosek.MSK_RES_ERR_TOO_MANY_CONCURRENT_TASKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ"); @test r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_TOO_SMALL_MAXNUMANZ"); @test r == "$(Mosek.MSK_RES_ERR_TOO_SMALL_MAXNUMANZ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNB_STEP_SIZE"); @test r == "$(Mosek.MSK_RES_ERR_UNB_STEP_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEF_SOLUTION"); @test r == "$(Mosek.MSK_RES_ERR_UNDEF_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE"); @test r == "$(Mosek.MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS"); @test r == "$(Mosek.MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UNKNOWN"); @test r == "$(Mosek.MSK_RES_ERR_UNKNOWN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_BOUND_IS_A_NAN"); @test r == "$(Mosek.MSK_RES_ERR_UPPER_BOUND_IS_A_NAN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_UPPER_TRIANGLE"); @test r == "$(Mosek.MSK_RES_ERR_UPPER_TRIANGLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET"); @test r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_FUNC_RET_DATA"); @test r == "$(Mosek.MSK_RES_ERR_USER_FUNC_RET_DATA)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBI"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_USER_NLO_FUNC"); @test r == "$(Mosek.MSK_RES_ERR_USER_NLO_FUNC)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHITEM_NOT_ALLOWED"); @test r == "$(Mosek.MSK_RES_ERR_WHICHITEM_NOT_ALLOWED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WHICHSOL"); @test r == "$(Mosek.MSK_RES_ERR_WHICHSOL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_FORMAT"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_LP_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_MPS_INVALID_NAME"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_MPS_INVALID_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME"); @test r == "$(Mosek.MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_WRITING_FILE"); @test r == "$(Mosek.MSK_RES_ERR_WRITING_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE"); @test r == "$(Mosek.MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_ERR_Y_IS_UNDEFINED"); @test r == "$(Mosek.MSK_RES_ERR_Y_IS_UNDEFINED)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_OK"); @test r == "$(Mosek.MSK_RES_OK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL"); @test r == "$(Mosek.MSK_RES_TRM_INTERNAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_INTERNAL_STOP"); @test r == "$(Mosek.MSK_RES_TRM_INTERNAL_STOP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_ITERATIONS"); @test r == "$(Mosek.MSK_RES_TRM_MAX_ITERATIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_NUM_SETBACKS"); @test r == "$(Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MAX_TIME"); @test r == "$(Mosek.MSK_RES_TRM_MAX_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_ABS_GAP"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NEAR_REL_GAP"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NEAR_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_BRANCHES"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_MIO_NUM_RELAXS"); @test r == "$(Mosek.MSK_RES_TRM_MIO_NUM_RELAXS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS"); @test r == "$(Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_NUMERICAL_PROBLEM"); @test r == "$(Mosek.MSK_RES_TRM_NUMERICAL_PROBLEM)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_OBJECTIVE_RANGE"); @test r == "$(Mosek.MSK_RES_TRM_OBJECTIVE_RANGE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_STALL"); @test r == "$(Mosek.MSK_RES_TRM_STALL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_TRM_USER_CALLBACK"); @test r == "$(Mosek.MSK_RES_TRM_USER_CALLBACK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_C_ZERO"); @test r == "$(Mosek.MSK_RES_WRN_ANA_C_ZERO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_CLOSE_BOUNDS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_CLOSE_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_EMPTY_COLS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_EMPTY_COLS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ANA_LARGE_BOUNDS"); @test r == "$(Mosek.MSK_RES_WRN_ANA_LARGE_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG"); @test r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG"); @test r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS"); @test r == "$(Mosek.MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DROPPED_NZ_QOBJ"); @test r == "$(Mosek.MSK_RES_WRN_DROPPED_NZ_QOBJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONE_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ELIMINATOR_SPACE"); @test r == "$(Mosek.MSK_RES_WRN_ELIMINATOR_SPACE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_EMPTY_NAME"); @test r == "$(Mosek.MSK_RES_WRN_EMPTY_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_IGNORE_INTEGER"); @test r == "$(Mosek.MSK_RES_WRN_IGNORE_INTEGER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"); @test r == "$(Mosek.MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_AIJ"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_BOUND"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CJ"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_CJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_CON_FX"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_CON_FX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_LO_BOUND"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_LO_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LARGE_UP_BOUND"); @test r == "$(Mosek.MSK_RES_WRN_LARGE_UP_BOUND)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_EXPIRE"); @test r == "$(Mosek.MSK_RES_WRN_LICENSE_EXPIRE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"); @test r == "$(Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LICENSE_SERVER"); @test r == "$(Mosek.MSK_RES_WRN_LICENSE_SERVER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_DROP_VARIABLE"); @test r == "$(Mosek.MSK_RES_WRN_LP_DROP_VARIABLE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_LP_OLD_QUAD_FORMAT"); @test r == "$(Mosek.MSK_RES_WRN_LP_OLD_QUAD_FORMAT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MIO_INFEASIBLE_FINAL"); @test r == "$(Mosek.MSK_RES_WRN_MIO_INFEASIBLE_FINAL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR"); @test r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR"); @test r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR"); @test r == "$(Mosek.MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NAME_MAX_LEN"); @test r == "$(Mosek.MSK_RES_WRN_NAME_MAX_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_DUALIZER"); @test r == "$(Mosek.MSK_RES_WRN_NO_DUALIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_GLOBAL_OPTIMIZER"); @test r == "$(Mosek.MSK_RES_WRN_NO_GLOBAL_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE"); @test r == "$(Mosek.MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_NZ_IN_UPR_TRI"); @test r == "$(Mosek.MSK_RES_WRN_NZ_IN_UPR_TRI)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_OPEN_PARAM_FILE"); @test r == "$(Mosek.MSK_RES_WRN_OPEN_PARAM_FILE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_IGNORED_CMIO"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_IGNORED_CMIO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_DOU"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_DOU)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_INT"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_NAME_STR"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_NAME_STR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PARAM_STR_VALUE"); @test r == "$(Mosek.MSK_RES_WRN_PARAM_STR_VALUE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_PRESOLVE_OUTOFSPACE"); @test r == "$(Mosek.MSK_RES_WRN_PRESOLVE_OUTOFSPACE)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @test r == "$(Mosek.MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"); @test r == "$(Mosek.MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_CON"); @test r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILE_IGNORED_VAR"); @test r == "$(Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SOL_FILTER"); @test r == "$(Mosek.MSK_RES_WRN_SOL_FILTER)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_SPAR_MAX_LEN"); @test r == "$(Mosek.MSK_RES_WRN_SPAR_MAX_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_FEW_BASIS_VARS"); @test r == "$(Mosek.MSK_RES_WRN_TOO_FEW_BASIS_VARS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_MANY_BASIS_VARS"); @test r == "$(Mosek.MSK_RES_WRN_TOO_MANY_BASIS_VARS)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_TOO_MANY_THREADS_CONCURRENT"); @test r == "$(Mosek.MSK_RES_WRN_TOO_MANY_THREADS_CONCURRENT)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_UNDEF_SOL_FILE_NAME"); @test r == "$(Mosek.MSK_RES_WRN_UNDEF_SOL_FILE_NAME)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_USING_GENERIC_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_USING_GENERIC_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_CHANGED_NAMES"); @test r == "$(Mosek.MSK_RES_WRN_WRITE_CHANGED_NAMES)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_WRITE_DISCARDED_CFIX"); @test r == "$(Mosek.MSK_RES_WRN_WRITE_DISCARDED_CFIX)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZERO_AIJ"); @test r == "$(Mosek.MSK_RES_WRN_ZERO_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_COL"); @test r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_COL)"
+        ok,r = Mosek.symnamtovalue("MSK_RES_WRN_ZEROS_IN_SPARSE_ROW"); @test r == "$(Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_ROW)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_BEST"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_BEST)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FIRST"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_FIRST)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_FREE"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_HYBRID"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_HYBRID)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_PSEUDO"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_PSEUDO)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_NODE_SELECTION_WORST"); @test r == "$(Mosek.MSK_MIO_NODE_SELECTION_WORST)"
+        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_NO"); @test r == "$(Mosek.MSK_TRANSPOSE_NO)"
+        ok,r = Mosek.symnamtovalue("MSK_TRANSPOSE_YES"); @test r == "$(Mosek.MSK_TRANSPOSE_YES)"
+        ok,r = Mosek.symnamtovalue("MSK_OFF"); @test r == "$(Mosek.MSK_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_ON"); @test r == "$(Mosek.MSK_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_AGGRESSIVE"); @test r == "$(Mosek.MSK_SIM_DEGEN_AGGRESSIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_FREE"); @test r == "$(Mosek.MSK_SIM_DEGEN_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MINIMUM"); @test r == "$(Mosek.MSK_SIM_DEGEN_MINIMUM)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_MODERATE"); @test r == "$(Mosek.MSK_SIM_DEGEN_MODERATE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_DEGEN_NONE"); @test r == "$(Mosek.MSK_SIM_DEGEN_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_CB"); @test r == "$(Mosek.MSK_DATA_FORMAT_CB)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_EXTENSION"); @test r == "$(Mosek.MSK_DATA_FORMAT_EXTENSION)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_FREE_MPS"); @test r == "$(Mosek.MSK_DATA_FORMAT_FREE_MPS)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_LP"); @test r == "$(Mosek.MSK_DATA_FORMAT_LP)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_MPS"); @test r == "$(Mosek.MSK_DATA_FORMAT_MPS)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_OP"); @test r == "$(Mosek.MSK_DATA_FORMAT_OP)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_TASK"); @test r == "$(Mosek.MSK_DATA_FORMAT_TASK)"
+        ok,r = Mosek.symnamtovalue("MSK_DATA_FORMAT_XML"); @test r == "$(Mosek.MSK_DATA_FORMAT_XML)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_APPMINLOC"); @test r == "$(Mosek.MSK_ORDER_METHOD_APPMINLOC)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_EXPERIMENTAL"); @test r == "$(Mosek.MSK_ORDER_METHOD_EXPERIMENTAL)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FORCE_GRAPHPAR"); @test r == "$(Mosek.MSK_ORDER_METHOD_FORCE_GRAPHPAR)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_FREE"); @test r == "$(Mosek.MSK_ORDER_METHOD_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_NONE"); @test r == "$(Mosek.MSK_ORDER_METHOD_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_ORDER_METHOD_TRY_GRAPHPAR"); @test r == "$(Mosek.MSK_ORDER_METHOD_TRY_GRAPHPAR)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_CONIC"); @test r == "$(Mosek.MSK_PROBTYPE_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_GECO"); @test r == "$(Mosek.MSK_PROBTYPE_GECO)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_LO"); @test r == "$(Mosek.MSK_PROBTYPE_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_MIXED"); @test r == "$(Mosek.MSK_PROBTYPE_MIXED)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QCQO"); @test r == "$(Mosek.MSK_PROBTYPE_QCQO)"
+        ok,r = Mosek.symnamtovalue("MSK_PROBTYPE_QO"); @test r == "$(Mosek.MSK_PROBTYPE_QO)"
+        ok,r = Mosek.symnamtovalue("MSK_INF_DOU_TYPE"); @test r == "$(Mosek.MSK_INF_DOU_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_INF_INT_TYPE"); @test r == "$(Mosek.MSK_INF_INT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_INF_LINT_TYPE"); @test r == "$(Mosek.MSK_INF_LINT_TYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_ANA_SOL_INFEAS_TOL"); @test r == "$(Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_REL_TOL_S"); @test r == "$(Mosek.MSK_DPAR_BASIS_REL_TOL_S)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_S"); @test r == "$(Mosek.MSK_DPAR_BASIS_TOL_S)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_BASIS_TOL_X"); @test r == "$(Mosek.MSK_DPAR_BASIS_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_CHECK_CONVEXITY_REL_TOL"); @test r == "$(Mosek.MSK_DPAR_CHECK_CONVEXITY_REL_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_HUGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_HUGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_AIJ_LARGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_AIJ_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_INF"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_INF)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_BOUND_WRN"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_BOUND_WRN)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_C_HUGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_C_HUGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_CJ_LARGE"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_CJ_LARGE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_QIJ"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_QIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_DATA_TOL_X"); @test r == "$(Mosek.MSK_DPAR_DATA_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_FEASREPAIR_TOL"); @test r == "$(Mosek.MSK_DPAR_FEASREPAIR_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_INFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_CO_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_MERIT_BAL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_MERIT_BAL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_NEAR_REL"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_NEAR_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_NL_TOL_REL_STEP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_STEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_DSAFE"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_DSAFE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_INFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_INFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_MU_RED"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_MU_RED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PATH"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PATH)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PFEAS"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PFEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_PSAFE"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_PSAFE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_REL_STEP"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_INTPNT_TOL_STEP_SIZE"); @test r == "$(Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT"); @test r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"); @test r == "$(Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_DISABLE_TERM_TIME"); @test r == "$(Mosek.MSK_DPAR_MIO_DISABLE_TERM_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_HEURISTIC_TIME"); @test r == "$(Mosek.MSK_DPAR_MIO_HEURISTIC_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_MAX_TIME"); @test r == "$(Mosek.MSK_DPAR_MIO_MAX_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_MAX_TIME_APRX_OPT"); @test r == "$(Mosek.MSK_DPAR_MIO_MAX_TIME_APRX_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_ABS_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_NEAR_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_NEAR_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_REL_ADD_CUT_LIMITED"); @test r == "$(Mosek.MSK_DPAR_MIO_REL_ADD_CUT_LIMITED)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_REL_GAP_CONST"); @test r == "$(Mosek.MSK_DPAR_MIO_REL_GAP_CONST)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_ABS_RELAX_INT"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_FEAS"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_MAX_CUT_FRAC_RHS"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_MAX_CUT_FRAC_RHS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_MIN_CUT_FRAC_RHS"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_MIN_CUT_FRAC_RHS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_GAP"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_GAP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_REL_RELAX_INT"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_REL_RELAX_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_MIO_TOL_X"); @test r == "$(Mosek.MSK_DPAR_MIO_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_NONCONVEX_TOL_FEAS"); @test r == "$(Mosek.MSK_DPAR_NONCONVEX_TOL_FEAS)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_NONCONVEX_TOL_OPT"); @test r == "$(Mosek.MSK_DPAR_NONCONVEX_TOL_OPT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_OPTIMIZER_MAX_TIME"); @test r == "$(Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_AIJ"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_AIJ)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_S"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_S)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_PRESOLVE_TOL_X"); @test r == "$(Mosek.MSK_DPAR_PRESOLVE_TOL_X)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"); @test r == "$(Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIM_LU_TOL_REL_PIV"); @test r == "$(Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_SIMPLEX_ABS_TOL_PIV"); @test r == "$(Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT"); @test r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"); @test r == "$(Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_FREE"); @test r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_OFF"); @test r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_EXPLOIT_DUPVEC_ON"); @test r == "$(Mosek.MSK_SIM_EXPLOIT_DUPVEC_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_FREE"); @test r == "$(Mosek.MSK_COMPRESS_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_GZIP"); @test r == "$(Mosek.MSK_COMPRESS_GZIP)"
+        ok,r = Mosek.symnamtovalue("MSK_COMPRESS_NONE"); @test r == "$(Mosek.MSK_COMPRESS_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_GEN"); @test r == "$(Mosek.MSK_NAME_TYPE_GEN)"
+        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_LP"); @test r == "$(Mosek.MSK_NAME_TYPE_LP)"
+        ok,r = Mosek.symnamtovalue("MSK_NAME_TYPE_MPS"); @test r == "$(Mosek.MSK_NAME_TYPE_MPS)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_FREE"); @test r == "$(Mosek.MSK_MPS_FORMAT_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_RELAXED"); @test r == "$(Mosek.MSK_MPS_FORMAT_RELAXED)"
+        ok,r = Mosek.symnamtovalue("MSK_MPS_FORMAT_STRICT"); @test r == "$(Mosek.MSK_MPS_FORMAT_STRICT)"
+        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_CONT"); @test r == "$(Mosek.MSK_VAR_TYPE_CONT)"
+        ok,r = Mosek.symnamtovalue("MSK_VAR_TYPE_INT"); @test r == "$(Mosek.MSK_VAR_TYPE_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_FULL"); @test r == "$(Mosek.MSK_CHECK_CONVEXITY_FULL)"
+        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_NONE"); @test r == "$(Mosek.MSK_CHECK_CONVEXITY_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_CHECK_CONVEXITY_SIMPLE"); @test r == "$(Mosek.MSK_CHECK_CONVEXITY_SIMPLE)"
+        ok,r = Mosek.symnamtovalue("MSK_LANG_DAN"); @test r == "$(Mosek.MSK_LANG_DAN)"
+        ok,r = Mosek.symnamtovalue("MSK_LANG_ENG"); @test r == "$(Mosek.MSK_LANG_ENG)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_CONSTANT"); @test r == "$(Mosek.MSK_STARTING_POINT_CONSTANT)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_FREE"); @test r == "$(Mosek.MSK_STARTING_POINT_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_GUESS"); @test r == "$(Mosek.MSK_STARTING_POINT_GUESS)"
+        ok,r = Mosek.symnamtovalue("MSK_STARTING_POINT_SATISFY_BOUNDS"); @test r == "$(Mosek.MSK_STARTING_POINT_SATISFY_BOUNDS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_BAS"); @test r == "$(Mosek.MSK_SOL_BAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITG"); @test r == "$(Mosek.MSK_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_SOL_ITR"); @test r == "$(Mosek.MSK_SOL_ITR)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_FREE"); @test r == "$(Mosek.MSK_SCALING_METHOD_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SCALING_METHOD_POW2"); @test r == "$(Mosek.MSK_SCALING_METHOD_POW2)"
+        ok,r = Mosek.symnamtovalue("MSK_LICENSE_BUFFER_LENGTH"); @test r == "$(Mosek.MSK_LICENSE_BUFFER_LENGTH)"
+        ok,r = Mosek.symnamtovalue("MSK_MAX_STR_LEN"); @test r == "$(Mosek.MSK_MAX_STR_LEN)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_BAS"); @test r == "$(Mosek.MSK_SK_BAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_FIX"); @test r == "$(Mosek.MSK_SK_FIX)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_INF"); @test r == "$(Mosek.MSK_SK_INF)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_LOW"); @test r == "$(Mosek.MSK_SK_LOW)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_SUPBAS"); @test r == "$(Mosek.MSK_SK_SUPBAS)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_UNK"); @test r == "$(Mosek.MSK_SK_UNK)"
+        ok,r = Mosek.symnamtovalue("MSK_SK_UPR"); @test r == "$(Mosek.MSK_SK_UPR)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_AGGRESSIVE"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_AGGRESSIVE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_FREE"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_OFF"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_SIM_REFORMULATION_ON"); @test r == "$(Mosek.MSK_SIM_REFORMULATION_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_EQ"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_EQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_FR"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_FR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_LO"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_RA"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_CON_UP"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_CON_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_BIN"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_BIN)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_CONT"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_CONT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_EQ"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_EQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_FR"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_FR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_INT"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_LO"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_LO)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_RA"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_RA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_ANA_PRO_NUM_VAR_UP"); @test r == "$(Mosek.MSK_IINF_ANA_PRO_NUM_VAR_UP)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_CONCURRENT_FASTEST_OPTIMIZER"); @test r == "$(Mosek.MSK_IINF_CONCURRENT_FASTEST_OPTIMIZER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_FACTOR_DIM_DENSE"); @test r == "$(Mosek.MSK_IINF_INTPNT_FACTOR_DIM_DENSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_ITER"); @test r == "$(Mosek.MSK_IINF_INTPNT_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_NUM_THREADS"); @test r == "$(Mosek.MSK_IINF_INTPNT_NUM_THREADS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_INTPNT_SOLVE_DUAL"); @test r == "$(Mosek.MSK_IINF_INTPNT_SOLVE_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS"); @test r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_CONSTRUCT_SOLUTION"); @test r == "$(Mosek.MSK_IINF_MIO_CONSTRUCT_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_INITIAL_SOLUTION"); @test r == "$(Mosek.MSK_IINF_MIO_INITIAL_SOLUTION)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_ACTIVE_NODES"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_ACTIVE_NODES)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_BASIS_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_BASIS_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_BRANCH"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_BRANCH)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CARDGUB_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_CARDGUB_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CLIQUE_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_CLIQUE_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_COEF_REDC_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_COEF_REDC_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_CONTRA_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_CONTRA_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_DISAGG_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_DISAGG_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_FLOW_COVER_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_FLOW_COVER_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GCD_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_GCD_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GOMORY_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_GOMORY_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_GUB_COVER_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_GUB_COVER_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_INT_SOLUTIONS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_INT_SOLUTIONS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_KNAPSUR_COVER_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_KNAPSUR_COVER_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_LATTICE_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_LATTICE_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_LIFT_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_LIFT_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_OBJ_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_OBJ_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_PLAN_LOC_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_PLAN_LOC_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUM_RELAX"); @test r == "$(Mosek.MSK_IINF_MIO_NUM_RELAX)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMCON"); @test r == "$(Mosek.MSK_IINF_MIO_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMINT"); @test r == "$(Mosek.MSK_IINF_MIO_NUMINT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_NUMVAR"); @test r == "$(Mosek.MSK_IINF_MIO_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_OBJ_BOUND_DEFINED"); @test r == "$(Mosek.MSK_IINF_MIO_OBJ_BOUND_DEFINED)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_TOTAL_NUM_CUTS"); @test r == "$(Mosek.MSK_IINF_MIO_TOTAL_NUM_CUTS)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_MIO_USER_OBJ_CUT"); @test r == "$(Mosek.MSK_IINF_MIO_USER_OBJ_CUT)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMCON"); @test r == "$(Mosek.MSK_IINF_OPT_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_OPT_NUMVAR"); @test r == "$(Mosek.MSK_IINF_OPT_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_OPTIMIZE_RESPONSE"); @test r == "$(Mosek.MSK_IINF_OPTIMIZE_RESPONSE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMBARVAR"); @test r == "$(Mosek.MSK_IINF_RD_NUMBARVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCON"); @test r == "$(Mosek.MSK_IINF_RD_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMCONE"); @test r == "$(Mosek.MSK_IINF_RD_NUMCONE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMINTVAR"); @test r == "$(Mosek.MSK_IINF_RD_NUMINTVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMQ"); @test r == "$(Mosek.MSK_IINF_RD_NUMQ)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_NUMVAR"); @test r == "$(Mosek.MSK_IINF_RD_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_RD_PROTYPE"); @test r == "$(Mosek.MSK_IINF_RD_PROTYPE)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_DUAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_DUAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NETWORK_PRIMAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_NETWORK_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMCON"); @test r == "$(Mosek.MSK_IINF_SIM_NUMCON)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_NUMVAR"); @test r == "$(Mosek.MSK_IINF_SIM_NUMVAR)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_DEG_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_DUAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_DUAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_HOTSTART_LU"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART_LU)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_INF_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_INF_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_PRIMAL_ITER"); @test r == "$(Mosek.MSK_IINF_SIM_PRIMAL_ITER)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SIM_SOLVE_DUAL"); @test r == "$(Mosek.MSK_IINF_SIM_SOLVE_DUAL)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_BAS_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_BAS_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_BAS_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_INT_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_INT_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_INT_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_INT_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITG_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITG_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITG_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_PROSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITR_PROSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_SOL_ITR_SOLSTA"); @test r == "$(Mosek.MSK_IINF_SOL_ITR_SOLSTA)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_CACHE_FLUSHES"); @test r == "$(Mosek.MSK_IINF_STO_NUM_A_CACHE_FLUSHES)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_REALLOC"); @test r == "$(Mosek.MSK_IINF_STO_NUM_A_REALLOC)"
+        ok,r = Mosek.symnamtovalue("MSK_IINF_STO_NUM_A_TRANSPOSES"); @test r == "$(Mosek.MSK_IINF_STO_NUM_A_TRANSPOSES)"
+        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_COL"); @test r == "$(Mosek.MSK_WRITE_XML_MODE_COL)"
+        ok,r = Mosek.symnamtovalue("MSK_WRITE_XML_MODE_ROW"); @test r == "$(Mosek.MSK_WRITE_XML_MODE_ROW)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_CONCURRENT"); @test r == "$(Mosek.MSK_OPTIMIZER_CONCURRENT)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_CONIC"); @test r == "$(Mosek.MSK_OPTIMIZER_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE"); @test r == "$(Mosek.MSK_OPTIMIZER_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_FREE_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_FREE_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_INTPNT"); @test r == "$(Mosek.MSK_OPTIMIZER_INTPNT)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_MIXED_INT"); @test r == "$(Mosek.MSK_OPTIMIZER_MIXED_INT)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_MIXED_INT_CONIC"); @test r == "$(Mosek.MSK_OPTIMIZER_MIXED_INT_CONIC)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_NONCONVEX"); @test r == "$(Mosek.MSK_OPTIMIZER_NONCONVEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_OPTIMIZER_PRIMAL_SIMPLEX"); @test r == "$(Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX)"
+        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_FREE"); @test r == "$(Mosek.MSK_PRESOLVE_MODE_FREE)"
+        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_OFF"); @test r == "$(Mosek.MSK_PRESOLVE_MODE_OFF)"
+        ok,r = Mosek.symnamtovalue("MSK_PRESOLVE_MODE_ON"); @test r == "$(Mosek.MSK_PRESOLVE_MODE_ON)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_ITG)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ITG_REL"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_ITG_REL)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_NONE"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_NONE)"
+        ok,r = Mosek.symnamtovalue("MSK_MIO_CONT_SOL_ROOT"); @test r == "$(Mosek.MSK_MIO_CONT_SOL_ROOT)"
     end
 end

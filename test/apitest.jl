@@ -1,8 +1,8 @@
-using Mosek,FactCheck
+using Mosek, Base.Test
 
-facts("[apitest]") do
+@testset "[apitest]" begin
 
-    context("lo1") do
+    @testset "lo1" begin
         printstream(msg::String) = nothing # print(msg)
 
         bkc = [MSK_BK_FX MSK_BK_LO MSK_BK_UP]
@@ -46,9 +46,9 @@ facts("[apitest]") do
         solsta = getsolsta(task,MSK_SOL_BAS)
         prosta = getprosta(task,MSK_SOL_BAS)
 
-        @fact getsolsta(task,MSK_SOL_ITR) --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact solsta --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test getsolsta(task,MSK_SOL_ITR) in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
 
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                            MSK_SOL_STA_NEAR_OPTIMAL ]
@@ -57,7 +57,7 @@ facts("[apitest]") do
         end
     end
 
-    context("qo1") do
+    @testset "qo1" begin
         printstream(msg::String) = nothing # print(msg)
         bkc   = [ MSK_BK_LO ]
         blc   = [ 1.0 ]
@@ -92,8 +92,8 @@ facts("[apitest]") do
         prosta = getprosta(task,MSK_SOL_ITR)
         solsta = getsolsta(task,MSK_SOL_ITR)
 
-        @fact solsta --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
 
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                            MSK_SOL_STA_NEAR_OPTIMAL ]
@@ -102,7 +102,7 @@ facts("[apitest]") do
         end
     end
 
-    context("qcqo1") do
+    @testset "qcqo1" begin
         printstream(msg::String) = nothing # print(msg)
         task = maketask()
         putstreamfunc(task,MSK_STREAM_LOG,m -> nothing)
@@ -140,8 +140,8 @@ facts("[apitest]") do
         solsta = getsolsta(task,MSK_SOL_ITR)
 
 
-        @fact solsta --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
 
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                           MSK_SOL_STA_NEAR_OPTIMAL ]
@@ -150,7 +150,7 @@ facts("[apitest]") do
         end
     end
 
-    context("milo1") do
+    @testset "milo1" begin
         printstream(msg::String) = nothing #print(msg)
         task = maketask()
         putstreamfunc(task,MSK_STREAM_LOG,printstream)
@@ -179,8 +179,8 @@ facts("[apitest]") do
         prosta = getprosta(task,MSK_SOL_ITG)
         solsta = getsolsta(task,MSK_SOL_ITG)
 
-        @fact solsta --> anyof(MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_STA_NEAR_INTEGER_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_FEAS,MSK_PRO_STA_NEAR_PRIM_FEAS)
+        @test solsta in (MSK_SOL_STA_INTEGER_OPTIMAL, MSK_SOL_STA_NEAR_INTEGER_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_FEAS,MSK_PRO_STA_NEAR_PRIM_FEAS)
 
         if solsta in     [ MSK_SOL_STA_INTEGER_OPTIMAL, 
                           MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
@@ -189,7 +189,7 @@ facts("[apitest]") do
         end
     end
 
-    context("cqo") do
+    @testset "cqo" begin
         printstream(msg::String) = nothing # print(msg)
         callback(where,dinf,iinf,liinf) = 0 
         bkc = [ MSK_BK_FX ]
@@ -224,8 +224,8 @@ facts("[apitest]") do
         prosta = getprosta(task,MSK_SOL_ITR)
         solsta = getsolsta(task,MSK_SOL_ITR)
 
-        @fact solsta --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
 
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                           MSK_SOL_STA_NEAR_OPTIMAL ]
@@ -234,7 +234,7 @@ facts("[apitest]") do
         end
     end
 
-    context("sdo1") do
+    @testset "sdo1" begin
         task = maketask()
         putstreamfunc(task,MSK_STREAM_LOG,m -> nothing)
         bkc = [MSK_BK_FX,
@@ -291,8 +291,8 @@ facts("[apitest]") do
         prosta = getprosta(task,MSK_SOL_ITR)
         solsta = getsolsta(task,MSK_SOL_ITR)
 
-        @fact solsta --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
         
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                           MSK_SOL_STA_NEAR_OPTIMAL ]
@@ -301,7 +301,7 @@ facts("[apitest]") do
         end
     end
 
-    context("nlo1") do
+    @testset "nlo1" begin
         t = maketask()
         putstreamfunc(t,MSK_STREAM_LOG,m -> nothing)
         appendvars(t,3)
@@ -374,8 +374,8 @@ facts("[apitest]") do
         solsta = getsolsta(t,MSK_SOL_ITR)
         prosta = getprosta(t,MSK_SOL_ITR)
 
-        @fact solsta --> anyof(MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @fact prosta --> anyof(MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
+        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
 
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                           MSK_SOL_STA_NEAR_OPTIMAL ]
