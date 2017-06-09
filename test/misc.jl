@@ -2,12 +2,12 @@
 module TestMiscSDP
 
 import Mosek
-using JuMP,FactCheck
+using JuMP, Base.Test
 
-facts("[sdp] Robust uncertainty example") do
+@testset "[sdp] Robust uncertainty example" begin
     solver = Mosek.MosekSolver(QUIET=true)
 
-    context("With solver $(typeof(solver))") do
+    @testset "With solver $(typeof(solver))" begin
         include(joinpath(Pkg.dir("JuMP"), "test","data","robust_uncertainty.jl"))
         R = 1
         d = 3
@@ -18,8 +18,8 @@ facts("[sdp] Robust uncertainty example") do
         Γ1(𝛿,N) = (R/sqrt(N))*(2+sqrt(2*log(1/𝛿)))
         Γ2(𝛿,N) = (2R^2/sqrt(N))*(2+sqrt(2*log(2/𝛿)))
 
-        #for d in [3,5,8]; context("d = $d") do
-        for d in [3]; context("d = $d") do
+        #for d in [3,5,8]; @testset "d = $d" begin
+        for d in [3]; @testset "d = $d" begin
             μhat = μhats[d]
             M = Ms[d]
             Σhat = 1/(d-1)*(M-ones(d)*μhat')'*(M-ones(d)*μhat')
@@ -53,8 +53,8 @@ facts("[sdp] Robust uncertainty example") do
 
             object = getObjectiveValue(m)
             exact = dot(μhat,c) + Γ1(𝛿/2,N)*norm(c) + sqrt((1-ɛ)/ɛ)*sqrt(dot(c,(Σhat+Γ2(𝛿/2,N)*eye(d,d))*c))
-            @fact stat --> :Optimal
-            @fact abs(object - exact) --> roughly(0, 1e-5)
+            @test stat == :Optimal
+            @test isapprox(abs(object - exact), 0, atol=1e-5)
 
 
             resΣ  = getValue(Σ)

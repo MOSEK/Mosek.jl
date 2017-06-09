@@ -3,15 +3,15 @@ module MosekExtraMathProgTests
 using MathProgBase
 using MathProgBase.SolverInterface
 using Mosek
-using FactCheck
+using Base.Test
 
 
 solver = MosekSolver(QUIET=true)
 
 
-facts("[mathprogextra]") do
+@testset "[mathprogextra]" begin
 
-    # context("addelmtest") do
+    # @testset "addelmtest" begin
     #     objtol = 1e-7
     #     primaltol = 1e-6
     #     m = MathProgBase.model(Mosek.MosekSolver())
@@ -41,7 +41,7 @@ facts("[mathprogextra]") do
     #     #stat=MathProgBase.status(m) # = :Unbounded
     # end
 
-    context("dualsigntest") do
+    @testset "dualsigntest" begin
         duals=true
         # Problem 4 - lo1 from MOSEK docs
         # Property: All duals are non-zero
@@ -66,17 +66,17 @@ facts("[mathprogextra]") do
             Any[(:Zero,1),(:NonPos,2),(:NonNeg,3),(:NonNeg,4)],
             [(:NonNeg,1:4)])
             MathProgBase.optimize!(m)
-            @fact MathProgBase.status(m) --> :Optimal
+            @test MathProgBase.status(m) == :Optimal
             d = MathProgBase.getdual(m)
             # d[1] is free
 
-            @fact d[2] --> less_than(1e-6)
-            @fact d[3] --> greater_than(-1e-6)
-            @fact d[4] --> greater_than(-1e-6)
+            @test d[2] <= 1e-6
+            @test d[3] >= -1e-6
+            @test d[4] >= -1e-6
         end
     end
 
-    # context("cqo1test1") do
+    # @testset "cqo1test1" begin
     #     s=MosekSolver()
     #     duals=true
     #     # Problem cqo1 from MOSEK docs
@@ -100,19 +100,19 @@ facts("[mathprogextra]") do
 
     #         MathProgBase.optimize!(m)
 
-    #         @fact MathProgBase.status(m) --> :Optimal
+    #         @test MathProgBase.status(m) == :Optimal
 
     #         pobj = MathProgBase.getobjval(m)
 
-    #         @fact pobj --> roughly(7.07106782e-01, 1e-6)
+    #         @test isapprox(pobj, 7.07106782e-01, atol=1e-6)
 
     #         xx = MathProgBase.getsolution(m)
     #         xc = MathProgBase.getconstrsolution(m)
 
-    #         @fact (pobj-dot(xx,[ 0.0,0.0,0.0,1.0,0.5,1.0 ])) --> roughly(0.0,1e-6)
+    #         @test abs(pobj-dot(xx,[ 0.0,0.0,0.0,1.0,0.5,1.0 ])) < 1e-6
     #     end
     # end
-    # context("cqo1test2") do
+    # @testset "cqo1test2" begin
     #     s=MosekSolver()
     #     duals=true
 
@@ -131,20 +131,20 @@ facts("[mathprogextra]") do
 
     #         MathProgBase.optimize!(m)
 
-    #         @fact MathProgBase.status(m) --> :Optimal
+    #         @test MathProgBase.status(m) == :Optimal
 
     #         pobj = MathProgBase.getobjval(m)
 
-    #         @fact pobj --> roughly(7.07106782e-01, 1e-6)
+    #         @test isapprox(pobj, 7.07106782e-01, atol=1e-6)
 
     #         xx = MathProgBase.getsolution(m)
     #         xc = MathProgBase.getconstrsolution(m)
-    #         @fact (pobj-dot(xx,[ 0.0,0.0,0.0,1.0,0.5,1.0 ])) --> roughly(0.0,1e-6)
+    #         @test abs(pobj-dot(xx,[ 0.0,0.0,0.0,1.0,0.5,1.0 ])) < 1e-6
 
     #     end
     # end
 
-    # context("cqo1test4") do
+    # @testset "cqo1test4" begin
     #     s=MosekSolver()
     #     duals=true
     #     # Input as linear, add conic constraints as quadratic constraints
@@ -162,21 +162,21 @@ facts("[mathprogextra]") do
 
     #         MathProgBase.optimize!(m)
             
-    #         @fact MathProgBase.status(m) --> :Optimal
+    #         @test MathProgBase.status(m) == :Optimal
 
     #         pobj = MathProgBase.getobjval(m)
             
-    #         @fact pobj --> roughly(7.07106782e-01, 1e-6)
+    #         @test isapprox(pobj, 7.07106782e-01, atol=1e-6)
             
     #         xx = MathProgBase.getsolution(m)
     #         xc = MathProgBase.getconstrsolution(m)
 
-    #         @fact (pobj-dot(xx,[ 0.0,0.0,0.0,1.0,0.5,1.0 ])) --> roughly(0.0,1e-6)
+    #         @test abs(pobj-dot(xx,[ 0.0,0.0,0.0,1.0,0.5,1.0 ])) < 1e-6
     #     end
     # end
     
     
-    context("qcqo1test") do
+    @testset "qcqo1test" begin
         duals=true
         # Problem qcqo1 from MOSEK docs
         # min     - x2      + x1^2 -     x1*x3+ 0.1 x2^2 +     x3^2
@@ -201,21 +201,21 @@ facts("[mathprogextra]") do
                                     1.0)
         MathProgBase.optimize!(m)
         
-        @fact MathProgBase.status(m) --> :Optimal
+        @test MathProgBase.status(m) == :Optimal
 
         pobj = MathProgBase.getobjval(m)
         
-        @fact pobj --> roughly(-4.91766743e-01,1e-6)
+        @test isapprox(pobj, -4.91766743e-01, atol=1e-6)
         
         xx = MathProgBase.getsolution(m)
         
-        @fact pobj - (-xx[2]+xx[1]^2-xx[1]*xx[3]+0.1*xx[2]^2+xx[3]^2) --> roughly(0.0,1e-6)
+        @test isapprox(pobj, -xx[2]+xx[1]^2-xx[1]*xx[3]+0.1*xx[2]^2+xx[3]^2, atol=1e-6)
 
         #xc = MathProgBase.getquadconstrsolution(m)
         #@test_approx_eq_eps xc[1] (xx[1]+xx[2]+xx[3] - xx[1]^2 + 0.2*xx[1]*xx[3] - xx[2]^2 - 0.1 * xx[3]^2) 1e-6
     end
 
-    context("modifymodeltest") do
+    @testset "modifymodeltest" begin
         mmin = MathProgBase.LinearQuadraticModel(solver)
         mmax = MathProgBase.LinearQuadraticModel(solver)
 
@@ -247,13 +247,13 @@ facts("[mathprogextra]") do
         # test: modify buc
         setconstrUB!(mmax,[ 1.0, 2.0, 3.0, 4.0 ]);
         MathProgBase.optimize!(mmax)
-        @fact MathProgBase.status(mmax) --> :Optimal
+        @test MathProgBase.status(mmax) == :Optimal
         xx = MathProgBase.getsolution(mmax)
 
-        @fact xx[1] --> roughly(1.0, 1e-8)
-        @fact xx[2] --> roughly(2.0, 1e-8)
-        @fact xx[3] --> roughly(3.0, 1e-8)
-        @fact xx[4] --> roughly(4.0, 1e-8)
+        @test isapprox(xx[1], 1.0, atol=1e-8)
+        @test isapprox(xx[2], 2.0, atol=1e-8)
+        @test isapprox(xx[3], 3.0, atol=1e-8)
+        @test isapprox(xx[4], 4.0, atol=1e-8)
 
         writeproblem(mmax,"testmax.opf")
         #writeproblem(mmax,"testmin.task")
@@ -261,35 +261,35 @@ facts("[mathprogextra]") do
         # test: modify blc
         setconstrLB!(mmin,[ -1.0, -2.0, -3.0, -4.0 ]);
         MathProgBase.optimize!(mmin)
-        @fact MathProgBase.status(mmin) --> :Optimal
+        @test MathProgBase.status(mmin) == :Optimal
         xx = MathProgBase.getsolution(mmin)
 
-        @fact xx[1] --> roughly(-1.0, 1e-8)
-        @fact xx[2] --> roughly(-2.0, 1e-8)
-        @fact xx[3] --> roughly(-3.0, 1e-8)
-        @fact xx[4] --> roughly(-4.0, 1e-8)
+        @test isapprox(xx[1], -1.0, atol=1e-8)
+        @test isapprox(xx[2], -2.0, atol=1e-8)
+        @test isapprox(xx[3], -3.0, atol=1e-8)
+        @test isapprox(xx[4], -4.0, atol=1e-8)
 
         # test: modify bux
         setvarUB!(mmax,[ 0.5, 1.5, 2.5, 3.5 ]);
         MathProgBase.optimize!(mmax)
-        @fact MathProgBase.status(mmax) --> :Optimal
+        @test MathProgBase.status(mmax) == :Optimal
         xx = MathProgBase.getsolution(mmax)
 
-        @fact xx[1] --> roughly(0.5, 1e-8)
-        @fact xx[2] --> roughly(1.5, 1e-8)
-        @fact xx[3] --> roughly(2.5, 1e-8)
-        @fact xx[4] --> roughly(3.5, 1e-8)
+        @test isapprox(xx[1], 0.5, atol=1e-8)
+        @test isapprox(xx[2], 1.5, atol=1e-8)
+        @test isapprox(xx[3], 2.5, atol=1e-8)
+        @test isapprox(xx[4], 3.5, atol=1e-8)
 
         # test: modify blx
         setvarLB!(mmin,[ -0.5, -1.5, -2.5, -3.5 ]);
         MathProgBase.optimize!(mmin)
-        @fact MathProgBase.status(mmin) --> :Optimal
+        @test MathProgBase.status(mmin) == :Optimal
         xx = MathProgBase.getsolution(mmin)
 
-        @fact xx[1] --> roughly(-0.5, 1e-8)
-        @fact xx[2] --> roughly(-1.5, 1e-8)
-        @fact xx[3] --> roughly(-2.5, 1e-8)
-        @fact xx[4] --> roughly(-3.5, 1e-8)
+        @test isapprox(xx[1], -0.5, atol=1e-8)
+        @test isapprox(xx[2], -1.5, atol=1e-8)
+        @test isapprox(xx[3], -2.5, atol=1e-8)
+        @test isapprox(xx[4], -3.5, atol=1e-8)
     end
 end
 
