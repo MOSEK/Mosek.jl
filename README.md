@@ -24,7 +24,7 @@ Installation
 
 Use the Julia package manager to install Mosek.jl:
 
-```
+```julia
 Pkg.add("Mosek")
 ```
     
@@ -40,7 +40,7 @@ install from the MOSEK website (www.mosek.com):
   `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
 
 If the MOSEK distro installation directory is moved it is necessary to rebuild the package using
-```
+```julia
 Pkg.build("Mosek")
 ```
 
@@ -50,7 +50,7 @@ installer to download MOSEK from the web instead of using the old
 version.
 
 Note that environment variables can be set temporarily from Julia as
-```
+```julia
 ENV["MOSEKBINDIR"] = "/home/myname/lib"
 ```
 
@@ -61,7 +61,7 @@ license file. If this is not defined, MOSEK will look for a file
 called `mosek.lic` in the default install path, e.g.
 
 
-```
+```sh
 $HOME/mosek/mosek.lic
 ```
 
@@ -73,13 +73,13 @@ possible.
 
 You can see if the MOSEK distro was installed internally this way:
 
-```
+```julia
 is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f readstring(f) == "internal" end
 ```
 
 ### When installation does not work
 If you experience problems installing (in particular on Windows or OS X), you can try to pull the latest revision and see if that works
-```
+```julia
 Pkg.checkout("Mosek","master")
 Pkg.build("Mosek")
 ```
