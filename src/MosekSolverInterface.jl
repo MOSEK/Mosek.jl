@@ -1,4 +1,4 @@
-module MosekMathProgSolverInterface
+4module MosekMathProgSolverInterface
 import ..Mosek
 
 export MosekSolver
@@ -359,5 +359,12 @@ end
 #include("MosekNLPSolverInterface.jl")
 include("MosekLPQCQPInterface.jl")
 include("MosekConicInterface.jl")
+
+
+
+
+
+
+
 
 end
