@@ -86,11 +86,11 @@ maketask() do t
     end
 
     putnlcallbacks(t,
-                   [2,3], # subscripts of non-zeros in the gradient of the objective
+                   Int[2,3], # subscripts of non-zeros in the gradient of the objective
                    Int[], # subscripts of non-zeros in the gradient of the constraints
-                   [1,1], # rowptr for subscripts of non-zeros in the gradient of the constraints
-                   [2,3,3], # hessubi
-                   [2,2,3], # hessubj
+                   Int[1,1], # rowptr for subscripts of non-zeros in the gradient of the constraints
+                   Int[2,3,3], # hessubi
+                   Int[2,2,3], # hessubj
                    evalobj,
                    evalconi,
                    grdlag,

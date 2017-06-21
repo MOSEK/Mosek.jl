@@ -243,11 +243,11 @@ function putnlcallbacks(task::MSKtask,
 
   nlinfo = MSKnlinfo(nvar,ncon,
                      nlgetsp,nlgetva,
-                     round(Int32,grdobjsub .- 1),
-                     round(Int32,grdconsub .- 1),
-                     round(Int32,grdconptr .- 1),
-                     round(Int32,hessubi .- 1),
-                     round(Int32,hessubj .- 1),
+                     round.(Int32,grdobjsub .- 1),
+                     round.(Int32,grdconsub .- 1),
+                     round.(Int32,grdconptr .- 1),
+                     round.(Int32,hessubi .- 1),
+                     round.(Int32,hessubj .- 1),
                      evalobj,evalconi, grdlag,heslag,grdobj,grdconi)
 
   @msk_ccall("putnlfunc",
