@@ -1,4 +1,4 @@
-include("LinkedInts.lj")
+include("LinkedInts.jl")
 
 mosek_block_type_unallocated = 0
 mosek_block_type_zero   = 1
@@ -10,13 +10,17 @@ mosek_block_type_rqcone = 6
 mosek_block_type_psd    = 7
 mosek_block_type_integer = 8
 
+
+import MathProgBase
+
+
 """
-    MosekMathProgModel <: MathProgBase.AbstractMathModel
+    MosekModel <: MathProgBase.AbstractModel
 
 Linear variables and constraint can be deleted. MOSEK does not support
 deleting PSD variables.
 """
-mutable struct MosekMathProgModel  <: MathProgBase.AbstractMathModel
+mutable struct MosekModel  <: MathProgBase.AbstractModel
     task :: MSKtask
     
     x_block :: LinkedInts
@@ -49,11 +53,11 @@ Mosek_VAR   = 1
 Mosek_SLACK = 2
 
 
-function MathProgBase.freemodel!(m::MosekMathProgModel)
+function MathProgBase.freemodel!(m::MosekModel)
     deletetask(m.task)
 end
 
-function MathProgBase.optimize!(m::MosekMathProgModel)
+function MathProgBase.optimize!(m::MosekModel)
     m.trm = MSK_optimize(m.task)
 end
 
@@ -63,126 +67,22 @@ end
 #function MathProgBase.setparameters! ()
 #end
 
-MathProgBase.candelete(m::MosekMathProgModel,ref::VariableReference) =
-    isvalid(m,ref)
-MathProgBase.isvalid(m::MosekMathProgModel, ref::VariableReference) = 
-    allocated(m.x_block,BlockId(ref.value))
 
-function MathProgBase.addvariables!(m::MosekMathProgModel, N :: Int)
-    ensurefree(m.x_block,N)
-    r = VariableReference[ VariableReference(newblock(m.x_block,Mosek_VAR,1).id) for i in 1:N ]
-    ids = BlockId[ newblock(m.x_block,Mosek_VAR,1) for i in 1:N ]
-    if length(s.x_block) > numvar
-        appendvars(s.task, length(s.x_block) - numvar)
-    end
+include("variable.jl")
 
-    # clear the variables
-    idxs = Array{Int,1}(N)
-    for i in 1:N
-        getindexes(s.x_block,ids[i],idxs,i)
-    end
-    
-    bld = Array{Float64}(N)
-    putvarboundlist(m.task,
-                    convert(Array{Int32,1}, getindexes(s.x_block, id)),
-                    Int32[MSK_BK_FR for i in 1:N],
-                    bnd,bld)
-    
-    VariableReference[VariableReference(id.id) for id in ids]
-end
 
-function MathProgBase.addvariable!(m::MosekMathProgModel)
-    N = 1
-    ensurefree(m.x_block,N)
-    id = newblock(m.x_block,Mosek_VAR,N)
-    numvar = getnumvar(s.task)
-    if length(s.x_block) > numvar
-        appendvars(s.task, length(s.x_block) - numvar)
-    end
-    
-    bld = Array{Float64}(N)
-    putvarboundlist(m.task,
-                    convert(Array{Int32,1}, getindexes(s.x_block, id)),
-                    Int32[MSK_BK_FR for i in 1:N],
-                    bnd,bld)
-
-    VariableReference(id.id)
-end
-
-function Base.delete!(m::MosekMathProgModel, refs::Vector{VariableReference})
-    if ! all(r -> candelete(m,ref),refs)
-        throw(CannotDelete())
-    else
-        ids = BlockId[ BlockId(ref.value) for ref in refs]
-        sizes = Int[blocksize(m.x_block,id) for id in ids]
-        N = sum(sizes)
-        indexes = Array{Int}(N)
-        offset = 1
-        for i in 1:length(ids)
-            getindexes(m.x_block,ids[i],indexes,offset)
-            offset += sizes[i]
-        end
-
-        # clear all non-zeros in columns
-        putacollist(m.task, 
-                    indexes,
-                    zeros{Int64}(N),
-                    zeros{Int64}(N),
-                    Int32[],
-                    Float64[])
-        # clear bounds
-        bnd = Array{Float64,1}(N)
-        putvarboundlist(m.task,
-                        indexes,
-                        Int32[MSK_BK_FR for i in 1:N],
-                        bnd,bnd)
-
-        for i in 1:length(ids)
-            deleteblock(s.x_block,ids[i])
-        end
-    end
-        
-end
-
-function Base.delete!(m::MosekMathProgModel, ref::VariableReference)
-    if ! candelete(m,ref)
-        throw(CannotDelete())
-    else
-        id = BlockId(ref.value)
-        
-        indexes = convert(Array{Int32,1},getindexes(s.x_block,id))
-        N = blocksize(s.x_blocks,id)
-
-        # clear all non-zeros in columns
-        putacollist(m.task, 
-                    indexes,
-                    zeros{Int64}(N),
-                    zeros{Int64}(N),
-                    Int32[],
-                    Float64[])
-        # clear bounds
-        bnd = Array{Float64,1}(N)
-        putvarboundlist(m.task,
-                        indexes,
-                        Int32[MSK_BK_FR for i in 1:N],
-                        bnd,bnd)
-
-        deleteblock(s.x_block,id)
-    end
-end
-
-candelete(m::MosekMathProgModel, ref::ConstraintReference) = isvalid(m,ref)
-isvalid(m::MosekMathProgModel, ref::ConstraintReference) = allocated(m.c_block,BlockId(ref.value))
+candelete(m::MosekModel, ref::ConstraintReference) = isvalid(m,ref)
+isvalid(m::MosekModel, ref::ConstraintReference) = allocated(m.c_block,BlockId(ref.value))
 
 #Base.delete!(m::AbstractMathProgModel, ref::ConstraintReference) = throw(MethodError())
 
-#function MathProgBase.addconstraint!(m::MosekMathProgModel, b :: Vector{Float64}, a_varidx, a_coef, Q_vari, Q_varj, Q_coef, S::MosekSet)::QuadraticConstraintReference{typeof(S)}
+#function MathProgBase.addconstraint!(m::MosekModel, b :: Vector{Float64}, a_varidx, a_coef, Q_vari, Q_varj, Q_coef, S::MosekSet)::QuadraticConstraintReference{typeof(S)}
 #end
 
 
 
 function allocateconstraints(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     N           :: Int)
     numcon = getnumcon(m.task)
     ensurefree(m.c_block,N)
@@ -195,7 +95,7 @@ end
 
 
 function makeconstr{T <: MathProgBase.AbstractSet}(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     a_constridx :: Vector{Int},
     a_varidx    :: Vector{VariableReference},
     a_coef      :: Vector{Float64},
@@ -218,7 +118,7 @@ function makeconstr{T <: MathProgBase.AbstractSet}(
 end
 
 function MathProgBase.addconstraint!(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     b           :: Vector{Float64},
     a_constridx :: Vector{Int},
     a_varidx    :: Vector{VariableReference},
@@ -236,7 +136,7 @@ function MathProgBase.addconstraint!(
 end
 
 function MathProgBase.addconstraint!(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     b           :: Vector{Float64},
     a_constridx :: Vector{Int},
     a_varidx    :: Vector{VariableReference},
@@ -254,7 +154,7 @@ function MathProgBase.addconstraint!(
 end
 
 function MathProgBase.addconstraint!(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     b           :: Vector{Float64},
     a_constridx :: Vector{Int},
     a_varidx    :: Vector{VariableReference},
@@ -272,7 +172,7 @@ function MathProgBase.addconstraint!(
 end
 
 function MathProgBase.addconstraint!(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     b           :: Vector{Float64},
     a_constridx :: Vector{Int},
     a_varidx    :: Vector{VariableReference},
@@ -293,7 +193,7 @@ function MathProgBase.addconstraint!(
 end
 
 function MathProgBase.addconstraint!(
-    m           :: MosekMathProgModel,
+    m           :: MosekModel,
     varidx      :: VariableReference,
     S           :: MathProgBase.Integers)
 
@@ -301,16 +201,16 @@ function MathProgBase.addconstraint!(
     MathProgBase.ConstraintReference{S}(varidx)
 end
 
-function MathProgBase.addconstraint!(m::MosekMathProgModel, varidx, S::AbstractSet)::VariablewiseConstraintReference{typeof(S)}
+function MathProgBase.addconstraint!(m::MosekModel, varidx, S::MathProgBase.AbstractSet)::VariablewiseConstraintReference{typeof(S)}
 end
 
 
-function MathProgBase.setobjective!(m::AbstractMathProgModel, N::Int, b, a_varidx, a_coef, Q_vari, Q_varj, Q_coef)
+function MathProgBase.setobjective!(m::MosekModel, N::Int, b, a_varidx, a_coef, Q_vari, Q_varj, Q_coef)
 end
-function MathProgBase.modifyobjective!(m::AbstractMathProgModel, i::Int, args...) end
-function MathProgBase.modifyobjective!(m::AbstractMathProgModel, i::Int, b) end
-function MathProgBase.modifyobjective!(m::AbstractMathProgModel, i::Int, a_varidx, a_coef) end
-function MathProgBase.modifyobjective!(m::AbstractMathProgModel, i::Int, Q_vari, Q_varj, Q_coef) end
+function MathProgBase.modifyobjective!(m::MosekModel, i::Int, args...) end
+function MathProgBase.modifyobjective!(m::MosekModel, i::Int, b) end
+function MathProgBase.modifyobjective!(m::MosekModel, i::Int, a_varidx, a_coef) end
+function MathProgBase.modifyobjective!(m::MosekModel, i::Int, Q_vari, Q_varj, Q_coef) end
 function MathProgBase.getobjective(m, i:Int) end
 
 

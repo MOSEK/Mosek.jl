@@ -1,59 +1,65 @@
 
 struct BlockId id :: Int end
 mutable struct LinkedInts
-    next :: Array{Int,1}
-    prev :: Array{Int,1}
+    next :: Vector{Int}
+    prev :: Vector{Int}
 
     free_ptr :: Int
     free_cap :: Int
-    roots :: Array{Int,1}
-    cap   :: Array{Int,1}
+    root     :: Int
 
-    block :: Array{Int,1}
-    size  :: Array{Int,1}
-    owner :: Array{Int,1}
+    block :: Vector{Int}
+    size  :: Vector{Int}
 
-    function LinkedInts(nlists :: Int) 
-        new(Int[],Int[],0,0,zeros{Int}(nlists),zeros{Int}(nlists),Int[],Int[],Int[])
+    function LinkedInts()
+        new(Int[], # next
+            Int[], # prev
+            0, # free_ptr
+            0, # free_cap
+            0,
+            Int[], # block
+            Int[]) # size
     end
 end
-
-
 
 
 allocated(s::LinkedInts, id :: BlockId) = id.id > 0 && id.id <= length(s.block) && s.block[id.id] > 0
 blocksize(s::LinkedInts, id :: BlockId) = s.size[id.id]
 Base.length(s::LinkedInts) = length(s.next)
+
 """
-    allocate(s::LinkedInts, N :: Int, idx :: Int)
+    ensurefree(s::LinkedInts, N :: Int)
 
-Allocate `N` item and place it in list `idx`.
-
-Return the index if the first allocated element.
+Ensure that there are at least `N` elements free, and allocate as necessary.
 """
 function ensurefree(s::LinkedInts, N :: Int)
     if s.free_cap < N
         num = N - s.free_cap
 
         cap = length(s.next)
-        append!(s.next,Int[i+1 for i in cap+1:cap+num])
-        append!(s.prev,Int[i-1 for i in cap+1:cap+num])
+        first = cap+1
+        last  = cap+num
+        
+        append!(s.next,Int[i+1 for i in first:last])
+        append!(s.prev,Int[i-1 for i in first:last])
 
-        s.next[cap+num] = 0
-        s.prev[cap+1] = s.roots[idx]
-        if s.prev[cap+1] > 0
-            s.next[s.prev[cap+1]] = cap+1
+        s.next[last] = 0
+        s.prev[first] = s.free_ptr
+        if s.prev[first] > 0
+            s.next[s.prev[first]] = first
         end
-        s.free_ptr = cap+num
+        s.free_ptr = last
         s.free_cap += num
     end
 end
 
 """
+    newblock(s::LinkedInts, N :: Int)
+
 Add a new block in list `idx`
 """
-function newblock(s::LinkedInts, idx :: Int, N :: Int)
-    ensurefree(N)
+function newblock(s::LinkedInts, N :: Int)    
+    ensurefree(s,N)
     # remove from free list
     ptre = s.free_ptr
     ptrb = ptre
@@ -66,16 +72,18 @@ function newblock(s::LinkedInts, idx :: Int, N :: Int)
     if prev > 0
         s.next[prev] = 0
     end
+
+    s.free_ptr = s.prev[ptrb]
+    s.free_cap -= N
     
     # insert into list `idx`
-    s.prev[ptrb] = s.roots[idx]
-    if s.roots[idx] > 0
-        s.next[s.roots[idx]] = ptrb
+    s.prev[ptrb] = s.root
+    if s.root > 0
+        s.next[s.root] = ptrb
     end
-    s.roots[idx] = ptre
+    s.root = ptre
     push!(s.block,ptrb)
     push!(s.size,N)
-    push!(s.owner,idx)
 
     id = length(s.block)
     
@@ -88,7 +96,6 @@ Move a block to the free list.
 function deleteblock(s::LinkedInts, id_ :: BlockId)
     id = id_.id
     if s.size[id] > 0
-        idx = s.owner[id]
         ptrb = s.block[id]
         N = s.size[id]
         ptre = ptrb
@@ -99,16 +106,18 @@ function deleteblock(s::LinkedInts, id_ :: BlockId)
         next = s.next[ptre]
         
         # remove from list and clear the block id
-        if prev s.next[prev] = next end
-        if next s.prev[next] = prev end
-        s.cap[idx] -= N
-        s.size[id] = 0
-        s.block = 0
+        if s.root == ptre s.root = prev end
+        if prev > 0 s.next[prev] = next end
+        if next > 0 s.prev[next] = prev end
+            
+        s.size[id]  = 0
+        s.block[id] = 0
         
-        # add to free list
+        # add to free list        
         if s.free_ptr > 0
-            s.prev[ptrb] = s.free_ptr
+            s.next[s.free_ptr] = ptrb
         end
+        s.prev[ptrb] = s.free_ptr
         s.free_ptr = ptre
         s.next[ptre] = 0
 
@@ -142,4 +151,50 @@ function getindexes(s::LinkedInts, id :: BlockId, target :: Array{Int,1}, offset
         target[i+offset] = p
         p = s.next[p]
     end
+end
+
+"""
+Get a list if the currently free elements.
+"""
+function getfreeindexes(s::LinkedInts)    
+    N = s.free_cap
+    r = Array{Int}(N)
+    ptr = s.free_ptr
+    for i in 1:N
+        r[N-i+1] = ptr
+        ptr  = s.prev[ptr]
+    end
+    r
+end
+
+
+
+"""
+Get a list if the currently free elements.
+""" 
+function getusedindexes(s::LinkedInts)    
+    N = length(s.next) - s.free_cap
+    r = Array{Int}(N)
+    ptr = s.root
+    for i in 1:N
+        r[N-i+1] = ptr
+        ptr  = s.prev[ptr]
+    end
+    r
+end
+
+
+
+"""
+Check consistency of the internal structures.
+"""
+function checkconsistency(s::LinkedInts) :: Bool
+    if length(s.prev) != length(s.next)
+        return false
+    end
+    
+    N = length(s.prev)
+
+    all(i -> s.prev[i] == 0 || s.next[s.prev[i]] == i, 1:N) &&
+    all(i -> s.next[i] == 0 || s.prev[s.next[i]] == i, 1:N)
 end

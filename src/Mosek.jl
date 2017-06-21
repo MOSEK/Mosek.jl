@@ -1,5 +1,6 @@
 __precompile__()
 module Mosek
+
 if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
 else
@@ -269,9 +270,10 @@ include("msk_functions.jl")
 include("msk_callback.jl")
 include("msk_geco.jl")
 
-include("MosekSolverInterface.jl")
-using Mosek.MosekMathProgSolverInterface
-export MosekSolver
+include("MosekSolverImpl.jl")
+#include("MosekSolverInterface.jl")
+#using Mosek.MosekMathProgSolverInterface
+#export MosekSolver
 
 
 end
