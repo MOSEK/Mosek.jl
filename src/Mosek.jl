@@ -7,7 +7,7 @@ else
     error("Mosek not properly installed. Please run Pkg.build(\"Mosek\")")
 end
 
-import MathProgBase
+import MathOptInterface
 
 
 export

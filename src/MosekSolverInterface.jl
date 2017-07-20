@@ -1,4 +1,4 @@
-4module MosekMathProgSolverInterface
+module MosekMathProgSolverInterface
 import ..Mosek
 
 export MosekSolver

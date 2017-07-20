@@ -1,5 +1,4 @@
 
-struct BlockId id :: Int end
 mutable struct LinkedInts
     next :: Vector{Int}
     prev :: Vector{Int}
@@ -10,21 +9,16 @@ mutable struct LinkedInts
 
     block :: Vector{Int}
     size  :: Vector{Int}
-
-    function LinkedInts()
-        new(Int[], # next
-            Int[], # prev
-            0, # free_ptr
-            0, # free_cap
-            0,
-            Int[], # block
-            Int[]) # size
-    end
 end
 
+LinkedInts(capacity=128) =
+    LinkedInts(Int[],Int[],
+               0,0,0,
+               Int[],
+               Int[])
 
-allocated(s::LinkedInts, id :: BlockId) = id.id > 0 && id.id <= length(s.block) && s.block[id.id] > 0
-blocksize(s::LinkedInts, id :: BlockId) = s.size[id.id]
+allocated(s::LinkedInts, id :: Int) = id > 0 && id <= length(s.block) && s.block[id] > 0
+blocksize(s::LinkedInts, id :: Int) = s.size[id]
 Base.length(s::LinkedInts) = length(s.next)
 
 """
@@ -58,7 +52,7 @@ end
 
 Add a new block in list `idx`
 """
-function newblock(s::LinkedInts, N :: Int)    
+function newblock(s::LinkedInts, N :: Int) :: Int
     ensurefree(s,N)
     # remove from free list
     ptre = s.free_ptr
@@ -87,14 +81,13 @@ function newblock(s::LinkedInts, N :: Int)
 
     id = length(s.block)
     
-    BlockId(id)
+    id
 end
 
 """
 Move a block to the free list.
 """
-function deleteblock(s::LinkedInts, id_ :: BlockId)
-    id = id_.id
+function deleteblock(s::LinkedInts, id :: Int)
     if s.size[id] > 0
         ptrb = s.block[id]
         N = s.size[id]
@@ -133,10 +126,10 @@ contains the requested number of items.
 
 Return an array of integers.
 """
-function getindexes(s::LinkedInts, id :: BlockId)
-    N = s.size[id.id]
+function getindexes(s::LinkedInts, id :: Int)
+    N = s.size[id]
     r = Array{Int}(N)
-    p = s.block[id.id]
+    p = s.block[id]
     for i in 1:N
         r[i] = p
         p = s.next[p]
@@ -144,13 +137,14 @@ function getindexes(s::LinkedInts, id :: BlockId)
     r
 end
 
-function getindexes(s::LinkedInts, id :: BlockId, target :: Array{Int,1}, offset :: Int)
-    N = s.size[id.id]
-    p = s.block[id.id]
+function getindexes(s::LinkedInts, id :: Int, target :: Array{Int,1}, offset :: Int)
+    N = s.size[id]
+    p = s.block[id]
     for i in 1:N
-        target[i+offset] = p
+        target[i+offset-1] = p
         p = s.next[p]
     end
+    N
 end
 
 """

@@ -11,19 +11,43 @@ mosek_block_type_psd    = 7
 mosek_block_type_integer = 8
 
 
-import MathProgBase
+problemtype_linear    = 0
+problemtype_conic     = 1
+problemtype_quadratic = 2
+
+import MathOptInterface
+
+immutable MosekSolver <: MathOptInterface.AbstractSolver
+  options
+end
+
+MosekSolver(;kwargs...) = MosekSolver(kwargs)
 
 
-"""
-    MosekModel <: MathProgBase.AbstractModel
-
-Linear variables and constraint can be deleted. MOSEK does not support
-deleting PSD variables.
-"""
-mutable struct MosekModel  <: MathProgBase.AbstractModel
-    task :: MSKtask
+boundflag_lower = 0x1
+boundflag_upper = 0x2
+boundflag_cone  = 0x4
     
-    x_block :: LinkedInts
+"""
+    MosekModel <: MathOptInterface.AbstractModel
+
+Linear variables and constraint can be deleted. For some reason MOSEK
+does not support deleting PSD variables.
+
+Note also that adding variables and constraints will permanently add
+some (currently between 1 and 3) Int64s that a `delete!` will not
+remove. This ensures that References (Variable and constraint) that
+are deleted are thereafter invalid. 
+"""
+mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
+    task :: MSKtask
+
+    problemtype :: Int
+
+    x_block      :: LinkedInts
+    xc_block     :: LinkedInts
+    x_boundflags :: Vector{Int}
+    
     """
     Counts for each variable the number of integer constraints that
     are imposed on that variable. Zero means continuous.
@@ -31,21 +55,22 @@ mutable struct MosekModel  <: MathProgBase.AbstractModel
     x_block_integer :: Vector{Int}
 
     ###########################
-
     c_block :: LinkedInts
+
+    c_constant :: Vector{Float64}
+
     """
-    Type of the constraint block.
+    Native index of the cone to which the constraint block belongs.
     """
-    c_block_type    :: Array{Int,1}
-    c_block_coneidx :: Array{Int,1}
+    c_block_coneidx :: Vector{Int}
     """
-    Each element is either 
+    Each element is either
     - 0, meaning: no slack, when domain is defined directly as a bound,
-    - a `x_block` reference, e.g. for qcones, or
-    - a PSD variable index
+    - a `x_block` reference (positive number), e.g. for qcones, or
+    - a PSD variable index (negative number)
     """
-    c_block_slack   :: Array{Int,1}
-    
+    c_block_slack   :: Vector{Int}
+
     ###########################
     trm :: Int32
 end
@@ -53,169 +78,145 @@ Mosek_VAR   = 1
 Mosek_SLACK = 2
 
 
-function MathProgBase.freemodel!(m::MosekModel)
+function MathOptInterface.SolverInstance(solver::MosekSolver)
+    MosekModel(maketask(),
+               problemtype_linear,
+               LinkedInts(),
+               LinkedInts(),
+               Int[],
+               Int[],
+               LinkedInts(),
+               Int[],
+               Int[],
+               Int[],
+               Mosek.MSK_RES_OK)
+end
+
+function MathOptInterface.free!(m::MosekModel)
     deletetask(m.task)
 end
 
-function MathProgBase.optimize!(m::MosekModel)
-    m.trm = MSK_optimize(m.task)
+function MathOptInterface.optimize!(m::MosekModel)
+    m.trm = optimize(m.task)
 end
 
-#function MathProgBase.loadproblem!(...)
-#end
+function MathOptInterface.writeproblem(m::MosekModel, filename :: String)
+    writedata(m.task,filename)
+end
 
-#function MathProgBase.setparameters! ()
-#end
+# For linear objectives we accept:
+# EITER affine left-hand side and ranged, unbounded, half-open, fixed (equality), PSD or SOC domains
+# OR affine and quadratic left-hand side, and ranged, unbounded, half-open, fixed (equality) domains (quadratic constraints must be unbounded or half-open)
+#
+# For non-quadratic problems we allow binary and integer variables (but not constraints)
+function MathOptInterface.supportsproblem(m::MosekModel, objective_type::MathOptInterface.ScalarAffineFunction, constraint_types::Vector) :: Bool
+    isquad == any( (fun,dom) => (typeof(fun) == MathOptInterface.ScalarQuadraticFunction ||
+                                 typeof(fun) == MathOptInterface.VectorQuadraticFunction))
+
+    if isquad
+        for (fun,dom) in constraint_types
+            if  typeof(fun) in [MathOptInterface.ScalarQuadraticFunction,
+                                MathOptInterface.VectorQuadraticFunction ] &&
+                typeof(dom) in [MathOptInterface.Reals,
+                                MathOptInterface.Nonnegatives,
+                                MathOptInterface.Nonpositives,
+                                MathOptInterface.GreaterThan,
+                                MathOptInterface.LessThan]
+                # ok
+            elseif typeof(fun) in [MathOptInterface.ScalarAffineFunction,
+                                   MathOptInterface.ScalarVariablewiseFunction,
+                                   MathOptInterface.VectorAffineFunction] &&
+                typeof(dom) in [MathOptInterface.Zeros,
+                                MathOptInterface.Reals,
+                                MathOptInterface.Nonnegatives,
+                                MathOptInterface.Nonpositives,
+                                MathOptInterface.GreaterThan,
+                                MathOptInterface.LessThan,
+                                MathOptInterface.EqualTo]
+                # ok
+            else
+                return false
+            end           
+        end
+    else # ! isquad
+        for (fun,dom) in constraint_types
+            if  typeof(fun) in [MathOptInterface.ScalarAffineFunction,
+                                MathOptInterface.ScalarVariablewiseFunction,
+                                MathOptInterface.VectorAffineFunction] &&
+                typeof(dom) in [MathOptInterface.Zeros,
+                                MathOptInterface.Reals,
+                                MathOptInterface.Nonnegatives,
+                                MathOptInterface.Nonpositives,
+                                MathOptInterface.GreaterThan,
+                                MathOptInterface.LessThan,
+                                MathOptInterface.EqualTo,
+                                MathOptInterface.Interval,
+                                MathOptInterface.SecondOrderCone,
+                                MathOptInterface.RotatedSecondOrderCone,
+                                MathOptInterface.PositiveSemidefiniteConeTriangle ]
+                # ok
+            elseif typeof(dom) in [MathOptInterface.ZeroOne,
+                                   MathOptInterface.Integer] &&
+                typeof(fun) in [MathOptInterface.ScalarVariablewiseFunction,
+                                MathOptInterface.VectorVariablewiseFunction]
+                # ok
+            else
+                return false
+            end
+        end
+    end
+    return true
+end
+
+# For affine+quadratic objective, we accept linear and convec quadratic constraints
+function MathOptInterface.supportsproblem(m::MosekModel, objective_type::MathOptInterface.ScalarQuadraticFunction, constraint_types::Vector) :: Bool
+    for (fun,dom) in constraint_types
+        if typeof(dom) in [MathOptInterface.Zeros,
+                           MathOptInterface.Reals,
+                           MathOptInterface.Nonnegatives,
+                           MathOptInterface.Nonpositives,
+                           MathOptInterface.GreaterThan,
+                           MathOptInterface.LessThan,
+                           MathOptInterface.EqualTo] &&
+            typeof(fun) in [MathOptInterface.ScalarAffineFunction,
+                            MathOptInterface.ScalarVariablewiseFunction,
+                            MathOptInterface.VectorAffineFunction,
+                            MathOptInterface.ScalarQuadraticFunction,
+                            MathOptInterface.VectorQuadraticFunction]
+            # ok
+        elseif typeof(dom) in [MathOptInterface.Reals,
+                               MathOptInterface.Nonnegatives,
+                               MathOptInterface.Nonpositives,
+                               MathOptInterface.GreaterThan,
+                               MathOptInterface.LessThan] &&
+            typeof(fun) in [MathOptInterface.ScalarQuadraticFunction,
+                            MathOptInterface.VectorQuadraticFunction]
+            # ok
+        else
+            return false
+        end
+    end
+    
+    return true
+end
+
+
 
 
 include("variable.jl")
+include("constraint.jl")
 
 
-candelete(m::MosekModel, ref::ConstraintReference) = isvalid(m,ref)
-isvalid(m::MosekModel, ref::ConstraintReference) = allocated(m.c_block,BlockId(ref.value))
-
-#Base.delete!(m::AbstractMathProgModel, ref::ConstraintReference) = throw(MethodError())
-
-#function MathProgBase.addconstraint!(m::MosekModel, b :: Vector{Float64}, a_varidx, a_coef, Q_vari, Q_varj, Q_coef, S::MosekSet)::QuadraticConstraintReference{typeof(S)}
+#function MathOptInterface.setobjective!(m::MosekModel, N::Int, b, a_varidx, a_coef, Q_vari, Q_varj, Q_coef)
 #end
+#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, args...) end
+#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, b) end
+#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, a_varidx, a_coef) end
+#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, Q_vari, Q_varj, Q_coef) end
+#function MathOptInterface.getobjectiveaffine(m::MosekModel) end
+#function MathOptInterface.getobjectiveconstant(m::MosekModel) end
+#function MathOptInterface.modifyobjective!(m::MosekModel,i::Int, b) end
 
 
 
-function allocateconstraints(
-    m           :: MosekModel,
-    N           :: Int)
-    numcon = getnumcon(m.task)
-    ensurefree(m.c_block,N)
-    if length(s.c_block) > numcon
-        appendcons(s.task, length(s.c_block) - numcon)
-    end
-end
-
-
-
-
-function makeconstr{T <: MathProgBase.AbstractSet}(
-    m           :: MosekModel,
-    a_constridx :: Vector{Int},
-    a_varidx    :: Vector{VariableReference},
-    a_coef      :: Vector{Float64},
-    N           :: Int)
-
-    allocateconstraints(m,N)
-    
-    varidxs = Array{Int}(length(a_varidx))
-    for i in 1:length(a_varidx)
-        getindexes(m.c_block,a_varidx[i],varidxs,i)
-    end
-
-    conid = newblock(m.c_block,1,N)
-    conidxs = getindexes(m.c_block,conid)
-
-    At = sparse(idxs, a_constridx, a_coef, getnumvar(m.task), N)    
-    putarowlist(m.task,conidxs,At)
-
-    conid,conidxs
-end
-
-function MathProgBase.addconstraint!(
-    m           :: MosekModel,
-    b           :: Vector{Float64},
-    a_constridx :: Vector{Int},
-    a_varidx    :: Vector{VariableReference},
-    a_coef      :: Vector{Float64},
-    S           :: MathProgBase.NonNegative)
-
-    N = S.dim
-    conid,conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-    putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),-b,b)
-
-    push!(m.c_block_type, mosek_block_type_noneg)
-    push!(m.c_block_coneidx, 0)
-    push!(m.c_block_slack,   0)
-    MathProgBase.ConstraintReference{S}(conid)
-end
-
-function MathProgBase.addconstraint!(
-    m           :: MosekModel,
-    b           :: Vector{Float64},
-    a_constridx :: Vector{Int},
-    a_varidx    :: Vector{VariableReference},
-    a_coef      :: Vector{Float64},
-    S           :: MathProgBase.NonPositive)
-
-    N = S.dim
-    conid,conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-    putconboundlist(m.task,conidxs,fill(MSK_BK_UP,N),b,-b)
-
-    push!(m.c_block_type, mosek_block_type_nopos)
-    push!(m.c_block_coneidx, 0)
-    push!(m.c_block_slack,   0)
-    MathProgBase.ConstraintReference{S}(conid)
-end
-
-function MathProgBase.addconstraint!(
-    m           :: MosekModel,
-    b           :: Vector{Float64},
-    a_constridx :: Vector{Int},
-    a_varidx    :: Vector{VariableReference},
-    a_coef      :: Vector{Float64},
-    S           :: MathProgBase.Zero)
-
-    N = S.dim
-    conid,conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-    putconboundlist(m.task,conidxs,fill(MSK_BK_FX,N),-b,-b)
-
-    push!(m.c_block_type, mosek_block_type_nopos)
-    push!(m.c_block_coneidx, 0)
-    push!(m.c_block_slack,   0)
-    MathProgBase.ConstraintReference{S}(conid)
-end
-
-function MathProgBase.addconstraint!(
-    m           :: MosekModel,
-    b           :: Vector{Float64},
-    a_constridx :: Vector{Int},
-    a_varidx    :: Vector{VariableReference},
-    a_coef      :: Vector{Float64},
-    S           :: MathProgBase.Interval)
-
-    N = length(S.lower)
-    conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-
-    bl = S.lower - b
-    bu = S.upper - b
-    putconboundlist(m.task,conidxs,fill(MSK_BK_RA,N),bl,bu)
-
-    push!(m.c_block_type, mosek_block_type_nopos)
-    push!(m.c_block_coneidx, 0)
-    push!(m.c_block_slack,   0)
-    MathProgBase.ConstraintReference{S}(conid)
-end
-
-function MathProgBase.addconstraint!(
-    m           :: MosekModel,
-    varidx      :: VariableReference,
-    S           :: MathProgBase.Integers)
-
-    N = S.dim
-    MathProgBase.ConstraintReference{S}(varidx)
-end
-
-function MathProgBase.addconstraint!(m::MosekModel, varidx, S::MathProgBase.AbstractSet)::VariablewiseConstraintReference{typeof(S)}
-end
-
-
-function MathProgBase.setobjective!(m::MosekModel, N::Int, b, a_varidx, a_coef, Q_vari, Q_varj, Q_coef)
-end
-function MathProgBase.modifyobjective!(m::MosekModel, i::Int, args...) end
-function MathProgBase.modifyobjective!(m::MosekModel, i::Int, b) end
-function MathProgBase.modifyobjective!(m::MosekModel, i::Int, a_varidx, a_coef) end
-function MathProgBase.modifyobjective!(m::MosekModel, i::Int, Q_vari, Q_varj, Q_coef) end
-function MathProgBase.getobjective(m, i:Int) end
-
-
-
-# COMMENTS:
-#
-# Missing: addcostraint!(m, varidxs,S)
-# Treating integrality as a constraint gives me a headache.
+export MosekSolver, MosekModel
