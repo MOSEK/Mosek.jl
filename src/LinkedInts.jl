@@ -20,6 +20,7 @@ LinkedInts(capacity=128) =
 allocated(s::LinkedInts, id :: Int) = id > 0 && id <= length(s.block) && s.block[id] > 0
 blocksize(s::LinkedInts, id :: Int) = s.size[id]
 Base.length(s::LinkedInts) = length(s.next)
+numblocks(s::LinkedInts) = length(s.block)
 
 """
     ensurefree(s::LinkedInts, N :: Int)
@@ -44,6 +45,10 @@ function ensurefree(s::LinkedInts, N :: Int)
         end
         s.free_ptr = last
         s.free_cap += num
+
+        num
+    else
+        0
     end
 end
 
@@ -119,12 +124,9 @@ function deleteblock(s::LinkedInts, id :: Int)
 end
 
 """
-    get(s::LinkedInts, ptrb :: Int, N :: Int)
+    getindexes(s::LinkedInts, id :: Int)
 
-Get `N` integers starting at `ptrb`. It is not checked if the list
-contains the requested number of items.
 
-Return an array of integers.
 """
 function getindexes(s::LinkedInts, id :: Int)
     N = s.size[id]
@@ -137,6 +139,7 @@ function getindexes(s::LinkedInts, id :: Int)
     r
 end
 
+
 function getindexes(s::LinkedInts, id :: Int, target :: Array{Int,1}, offset :: Int)
     N = s.size[id]
     p = s.block[id]
@@ -146,6 +149,16 @@ function getindexes(s::LinkedInts, id :: Int, target :: Array{Int,1}, offset :: 
     end
     N
 end
+
+function getoneindex(s::LinkedInts, id :: Int)
+    N = s.size[id]
+    if N < 1
+        error("No values at id")
+    end
+
+    s.block[i]
+end
+
 
 """
 Get a list if the currently free elements.

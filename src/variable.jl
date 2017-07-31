@@ -1,17 +1,10 @@
 
 MathOptInterface.candelete(m::MosekModel,ref::MathOptInterface.VariableReference) = isvalid(m,ref)
-isvalid(m::MosekModel, ref::MathOptInterface.VariableReference) = allocated(m.x_block,Int(ref.value))
+isvalid(m::MosekModel, ref::MathOptInterface.VariableReference) = allocated(m.x_block,ref2id(ref))
 
 function MathOptInterface.addvariables!(m::MosekModel, N :: Int)
-    ensurefree(m.x_block,N)    
-    ids = [ newblock(m.x_block,1) for i in 1:N ]
-    numvar = getnumvar(m.task)
-    if length(m.x_block) > numvar
-        appendvars(m.task, length(m.x_block) - numvar)
-        append!(m.x_boundflags, zeros(Int,length(m.x_block) - numvar))
-    end
-        
-    # clear the variables
+    ids = [ allocatevariable(m,1) for i in 1:N ]
+
     idxs = Vector{Int}(N)
     for i in 1:N
         getindexes(m.x_block,ids[i],idxs,i)
@@ -23,38 +16,30 @@ function MathOptInterface.addvariables!(m::MosekModel, N :: Int)
                     fill(MSK_BK_FR,N),
                     bnd,bnd)
     
-    MathOptInterface.VariableReference[MathOptInterface.VariableReference(id) for id in ids]
+    [ id2vref(id) for id in ids]
 end
 
 function MathOptInterface.addvariable!(m::MosekModel)
     N = 1
-    ensurefree(m.x_block,N)
-    id = newblock(m.x_block,N)
-    numvar = getnumvar(m.task)
-    if length(m.x_block) > numvar
-        appendvars(m.task, length(m.x_block) - numvar)
-        append!(m.x_boundflags, zeros(Int,length(m.x_block) - numvar))
-    end
-    
+    id = allocatevariable(m,1)
     bnd = Vector{Float64}(N)
     putvarboundlist(m.task,
                     convert(Vector{Int32}, getindexes(m.x_block, id)),
                     fill(MSK_BK_FR,N),
                     bnd,bnd)
 
-    MathOptInterface.VariableReference(id)
+    id2vref(id)
 end
-
-
-
 
 
 function Base.delete!(m::MosekModel, refs::Vector{MathOptInterface.VariableReference})
     assert(0)
-    if ! all(r -> MathOptInterface.candelete(m,ref),refs)
+    ids = Int[ ref2id(ref) for ref in refs ]
+    if ! all(id -> m.x_numxc[id] == 0, idxs)
+        error("Cannot delete a variable while a bound constraint is defined on it")
+    elseif ! all(r -> MathOptInterface.candelete(m,ref),refs)
         throw(CannotDelete())
     else
-        ids = Int[ ref.value for Int(ref) in refs ]
         sizes = Int[blocksize(m.x_block,id) for id in ids]
         N = sum(sizes)
         indexes = Array{Int}(N)
@@ -85,10 +70,12 @@ function Base.delete!(m::MosekModel, refs::Vector{MathOptInterface.VariableRefer
 end
 
 function Base.delete!(m::MosekModel, ref::MathOptInterface.VariableReference)
-    if ! MathOptInterface.candelete(m,ref)
+    if m.x_numxc[ref2id(ref)] != 0
+        error("Cannot delete a variable while a bound constraint is defined on it")
+    elseif ! MathOptInterface.candelete(m,ref)
         throw(CannotDelete())
     else
-        id = Int(ref.value)
+        id = ref2id(ref)
         
         indexes = convert(Array{Int32,1},getindexes(m.x_block,id))
         N = blocksize(m.x_block,id)
