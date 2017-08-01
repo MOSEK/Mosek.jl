@@ -13,7 +13,6 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractScalarSet
     end
     conidxs = getindexes(m.c_block,conid)
     m.c_constant[conidxs] = axb.constant
-    append!(m.c_block_slack,0)
     
     addbound!(m,conid,conidxs,Float64[axb.constant],dom)
 
@@ -32,10 +31,27 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractVectorSet
                  axb.coefficients)
     conidxs = getindexes(m.c_block,conid)
     m.c_constant[conidxs] = axb.constant
-    append!(m.c_block_slack,0)
 
     addbound!(m,conid,conidxs,axb.constant,dom)
     MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(conid) << 1)
+end
+
+function MathOptInterface.addconstraint!(m   :: MosekModel,
+                                         axb :: MathOptInterface.VectorAffineFunction{Float64},
+                                         dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
+    N = MathOptInterface.dimension(dom)
+    M = (N+1)*N >> 1
+    conid = allocateconstraints(m,M)
+    addlhsblock!(m,
+                 conid,
+                 axb.outputindex,
+                 axb.variables,
+                 axb.coefficients)
+    conidxs = getindexes(m.c_block,conid)
+    m.c_constant[conidxs] = axb.constant
+
+    addbound!(m,conid,conidxs,axb.constant,dom)
+    MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,MathOptInterface.PositiveSemidefiniteConeTriangle}(UInt64(conid) << 1)
 end
 
 ################################################################################
@@ -67,8 +83,8 @@ domain_type_mask(dom :: MathOptInterface.RotatedSecondOrderCone) = boundflag_con
 domain_type_mask(dom :: MathOptInterface.ExponentialCone)        = boundflag_cone
 domain_type_mask(dom :: MathOptInterface.PowerCone)              = boundflag_cone
 
-domain_type_mask(dom :: MathOptInterface.PositiveSemidefiniteConeTriangle) = 0                                                   
-domain_type_mask(dom :: MathOptInterface.PositiveSemidefiniteConeScaled)   = 0                                                    
+domain_type_mask(dom :: MathOptInterface.PositiveSemidefiniteConeTriangle) = 0
+domain_type_mask(dom :: MathOptInterface.PositiveSemidefiniteConeScaled)   = 0
 
 domain_type_mask(dom :: MathOptInterface.Integer) = boundflag_int
 domain_type_mask(dom :: MathOptInterface.ZeroOne) = (boundflag_int | boundflag_upper | boundflag_lower)
@@ -252,7 +268,8 @@ function addlhsblock!(m        :: MosekModel,
     end
 
     N = length(consubi)    
-    
+
+    println("subj = $subj, conidxs = $conidxs, numvar = $(getnumvar(m.task)), $N")
     At = sparse(subj, conidxs, cofs, getnumvar(m.task), N)
     putarowlist(m.task,convert(Vector{Int32},consubi),At)
 end
@@ -269,10 +286,10 @@ addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vec
 
 function add_slack!(m :: MosekModel, conidxs :: Vector{Int}, constant :: Vector{Float64}, N :: Int)
     ensurefree(m.x_block,N)
-    varid = newblock(m.x_block,Mosek_VAR,N)
+    varid = newblock(m.x_block,N)
 
     numvar = getnumvar(m.task)
-    if length(s.x_block) > numvar
+    if length(m.x_block) > numvar
         appendvars(m.task, length(m.x_block) - numvar)
     end
 
@@ -281,7 +298,7 @@ function add_slack!(m :: MosekModel, conidxs :: Vector{Int}, constant :: Vector{
     putaijlist(m.task,conidxs,subj,-ones(Float64,N))
     putvarboundlist(m.task,subj,fill(MSK_BK_FR,N),zeros(Float64,N),zeros(Float64,N))
     
-    putconboundlist(m.task,conidxs,Float64[MSK_BK_FX],-constant,-constant)
+    putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_FX,N),-constant,-constant)
 
     varid,subj
 end
@@ -291,7 +308,7 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
 
     varid,subj = add_slack!(m,conidxs,constant,N)
     
-    appendcone(m.task,MSK_CT_QUAD,subj)
+    appendcone(m.task,MSK_CT_QUAD,0.0,subj)
     numcone = getnumcone(m.task)
     m.c_block_slack[conid]   = varid
 end
@@ -301,7 +318,7 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
 
     varid,subj = add_slack!(m,conidxs,constant,N)
     
-    appendcone(m.task,MSK_CT_RQUAD,subj)
+    appendcone(m.task,MSK_CT_RQUAD,0.0,subj)
     numcone = getnumcone(m.task)
     m.c_block_slack[conid]   = varid
 end
@@ -314,16 +331,16 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
 
     idx = 1
     for j in 1:dim
-        for i in i : dim
+        for i in j:dim
             matrixid = appendsparsesymmat(m.task,Int32(dim), Int32[i], Int32[j], Float64[-1.0])
-            putbaraij(m.task, conidxs[idx], numvarvar, Int[matrixid], Float64[1.0])
+            putbaraij(m.task, conidxs[idx], barvaridx, Int[matrixid], Float64[1.0])
             idx += 1
         end
     end
 
-    putconboundlist(m.task,conidxs,Float64[MSK_BK_FX],-constant,-constant)
+    putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_FX,length(constant)),-constant,-constant)
 
-    c_block_coneidx[conid] = -barvaridx
+    m.c_block_slack[conid] = -barvaridx
 end
 
 
@@ -550,31 +567,5 @@ function allocatevariable(m :: MosekModel,N :: Int)
     end
     newblock(m.x_block,N)
 end
-
-
-
-
-# function makeconstr(m           :: MosekModel,
-#                     a_constridx :: Vector{Int},
-#                     a_varidx    :: Vector{MathOptInterface.VariableReference},
-#                     a_coef      :: Vector{Float64},
-#                     N           :: Int)
-
-#     allocateconstraints(m,N)
-    
-#     varidxs = Array{Int}(length(a_varidx))
-#     for i in 1:length(a_varidx)
-#         getindexes(m.c_block,a_varidx[i],varidxs,i)
-#     end
-
-#     conid = newblock(m.c_block,1,N)
-#     conidxs = getindexes(m.c_block,conid)
-
-#     At = sparse(idxs, a_constridx, a_coef, getnumvar(m.task), N)    
-#     putarowlist(m.task,conidxs,At)
-
-#     conid,conidxs
-# end
-
 
 isvalid(m::MosekModel, ref::MathOptInterface.ConstraintReference) = allocated(m.c_block,BlockId(ref.value))

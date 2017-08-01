@@ -106,8 +106,6 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     ###########################
     trm :: Int32
 end
-Mosek_VAR   = 1
-Mosek_SLACK = 2
 
 
 function MathOptInterface.SolverInstance(solver::MosekSolver)

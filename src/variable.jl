@@ -97,3 +97,6 @@ function Base.delete!(m::MosekModel, ref::MathOptInterface.VariableReference)
         deleteblock(m.x_block,id)
     end
 end
+
+
+
