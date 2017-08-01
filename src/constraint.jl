@@ -1,37 +1,41 @@
 MathOptInterface.candelete(m::MosekModel, ref::MathOptInterface.ConstraintReference) = isvalid(m,ref)
 MathOptInterface.delete!(  m::MosekModel, ref::MathOptInterface.ConstraintReference) = throw(MethodError())
 
-function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m   :: MosekModel,
-                                                                            axb :: MathOptInterface.ScalarAffineFunction{Float64},
-                                                                            dom :: D)
-    N = MathOptInterface.dimension(dom)
+function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractScalarSet}(m   :: MosekModel,
+                                                                                  axb :: MathOptInterface.ScalarAffineFunction{Float64},
+                                                                                  dom :: D)
+    N = 1
     conid = allocateconstraints(m,N)
-    addlhsblock!(m, conid, Int[1],axb.variables, axb.coefficients)
+    addlhsblock!(m, conid, fill(1,length(axb.variables)),axb.variables, axb.coefficients)
     
-    append!(m.c_block_coneidx,0)
-    if length(m.c_block_constant) < length(m.c_block)
-        append!(m.c_block_constant,zeros(Float64,length(m.c_block) - length(m.c_block_constant)))
+    if length(m.c_constant) < length(m.c_block)
+        append!(m.c_constant,zeros(Float64,length(m.c_block) - length(m.c_constant)))
     end
-    m.c_block_constant[conidxs] = axb.constant
+    conidxs = getindexes(m.c_block,conid)
+    m.c_constant[conidxs] = axb.constant
     append!(m.c_block_slack,0)
     
-    addbound!(m,conidxs,Float64[axb.constant],dom)
-    id2cref(conid)
+    addbound!(m,conid,conidxs,Float64[axb.constant],dom)
+
+    MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(conid) << 1)
 end
 
-function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m   :: MosekModel,
-                                                                            axb :: MathOptInterface.VectorAffineFunction{Float64},
-                                                                            dom :: D)
-    conid,conidxs = addlhsblock!(m, MathOptInterface.dimension(dom), Int[1], axb.variables, axb.coefficients)
-    append!(m.c_block_coneidx,0)
-    if length(m.c_block_constant) < length(m.c_block)
-        append!(m.c_block_constant,zeros(Float64,length(m.c_block) - length(m.c_block_constant)))
-    end
-    m.c_block_constant[conidxs] = axb.constant
+function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractVectorSet}(m   :: MosekModel,
+                                                                                  axb :: MathOptInterface.VectorAffineFunction{Float64},
+                                                                                  dom :: D)
+    N = MathOptInterface.dimension(dom)
+    conid = allocateconstraints(m,N)
+    addlhsblock!(m,
+                 conid,
+                 axb.outputindex,
+                 axb.variables,
+                 axb.coefficients)
+    conidxs = getindexes(m.c_block,conid)
+    m.c_constant[conidxs] = axb.constant
     append!(m.c_block_slack,0)
 
-    addbound!(m,conidxs,constant,dom)
-    MathOptInterface.ConstraintReference{S}(conid)
+    addbound!(m,conid,conidxs,axb.constant,dom)
+    MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(conid) << 1)
 end
 
 ################################################################################
@@ -128,7 +132,7 @@ addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.Secon
 addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.RotatedSecondOrderCone) = appendcone(m.task,MSK_CT_RQUAD, 0.0, subj)
 
 
-function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m :: MosekModel, xs :: MathOptInterface.SingleVariable, dom :: D)
+function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m :: MosekModel, xs :: MathOptInterface.SingleVariable, dom :: D)    
     subj = getindexes(m.x_block, ref2id(xs.variable))
     
     mask = domain_type_mask(dom)
@@ -141,9 +145,7 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
     elseif is_conic_set(dom)
         error("Invalid size for conic set")
     else
-        println("xc_block = ",m.xc_block)
         id = allocatevarconstraints(m,1)
-        println("xc_block = ",m.xc_block)
 
         xc_sub = getindexes(m.xc_block,id)
         m.xc_bounds[xc_sub[1]] = mask
@@ -154,11 +156,7 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
         m.x_boundflags[subj[1]] .|= mask
 
         #id2cref{MathOptInterface.SingleVariable,D}(id)
-        if id < 0
-            MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}((UInt64(-id) << 1) | 1)
-        else
-            MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(id) << 1)
-        end
+        MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(id) << 1)
     end
 end
 
@@ -212,7 +210,8 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
         # not, in fact, a real variable constraint, but rather a real
         # constraint, but to resolve return value at compile time we
         # need to disguise it as a variable constraint.
-        id2cref{MathOptInterface.VectorOfVariables,D}(-id)
+        #id2cref{MathOptInterface.VectorOfVariables,D}(-id)
+        MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}((UInt64(-id) << 1) | 1)
     else        
         allocated = ensurefree(m.xc_block,N)
         id = newblock(m.xc_block,N)
@@ -230,39 +229,11 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
         m.x_boundflags[subj] .|= mask
         
         #id2cref{MathOptInterface.VectorOfVariables,D}(id)
-        if id < 0
-            MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}((UInt64(-id) << 1) | 1)
-        else
-            MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}(UInt64(id) << 1)
-        end
+        MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}(UInt64(id) << 1)
     end
 
     
 end
-
-
-# function MathOptInterface.addconstraint!(m   :: MosekModel,
-#                                          xs  :: MathOptInterface.VectorOfVariables,
-#                                          dom :: MathOptInterface.)
-#     if MathOptInterface.dimension(dom) != 1
-#         error("Invalid set size")
-#     end
-
-# ......    
-
-#     conid,conidxs = addlhsblock!(m, N, Int[1], axb.variables, axb.coefficients)
-    
-#     append!(m.c_block_coneidx,0)
-#     if length(m.c_block_constant) < length(m.c_block)
-#         append!(m.c_block_constant,zeros(Float64,length(m.c_block) - length(m.c_block_constant)))
-#     end
-#     m.c_block_constant[conidxs] = axb.constant
-#     append!(m.c_block_slack,0)
-    
-#     addbound!(m,conidxs,Float64[axb.constant],dom)
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
 
 ################################################################################
 ################################################################################
@@ -273,27 +244,28 @@ function addlhsblock!(m        :: MosekModel,
                       conid    :: Int,
                       conidxs  :: Vector{Int},
                       varidxs  :: Vector{MathOptInterface.VariableReference},
-                      cofs     :: Vector{Float64})    
-    subi = getindexes(m.c_block,conid)
+                      cofs     :: Vector{Float64})
+    consubi = getindexes(m.c_block,conid)
     subj = Array{Int}(length(varidxs))
     for i in 1:length(subj)
-        getindexes(m.x_block,varidx[i],subj,i)
+        getindexes(m.x_block,ref2id(varidxs[i]),subj,i)
     end
 
+    N = length(consubi)    
+    
     At = sparse(subj, conidxs, cofs, getnumvar(m.task), N)
-    putarowlist(m.task,convert(Vector{Int32},subi),At)
-end    
+    putarowlist(m.task,convert(Vector{Int32},consubi),At)
+end
 
 
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Reals) = putconboundlist(m.task,conidxs,fill(MSK_BK_FR,MathOptInterface.dimension(dom)),-constant,-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Zeros) = putconboundlist(m.task,conidxs,fill(MSK_BK_FX,MathOptInterface.dimension(dim)),-constant,-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Nonnegatives) = putconboundlist(m.task,conidxs,fill(MSK_BK_LO,MathOptInterface.dimension(dim)),-constant,-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Nonpositives) = putconboundlist(m.task,conidxs,fill(MSK_BK_UP,MathOptInterface.dimension(dim)),-constant,-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.GreaterThan{Float64}) = putconboundlist(m.task,conidxs,Float64[MSK_BK_LO],dom.lower-constant,dom.lower-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.LessThan{Float64})    = putconboundlist(m.task,conidxs,Float64[MSK_BK_UP],dom.upper-constant,dom.upper-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.EqualTo{Float64})     = putconboundlist(m.task,conidxs,Float64[MSK_BK_FX],dom.value-constant,dom.value-constant)
-addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Interval{Float64})    = putconboundlist(m.task,conidxs,Float64[MSK_BK_RA],dom.lower-constant,dom.upper-constant)
-
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Reals)                = putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_FR,MathOptInterface.dimension(dom)),-constant,-constant)
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Zeros)                = putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_FX,MathOptInterface.dimension(dom)),-constant,-constant)
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Nonnegatives)         = putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_LO,MathOptInterface.dimension(dom)),-constant,-constant)
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Nonpositives)         = putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_UP,MathOptInterface.dimension(dom)),-constant,-constant)
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.GreaterThan{Float64}) = putconbound(m.task,Int32(conidxs[1]),MSK_BK_LO,dom.lower-constant[1],dom.lower-constant[1])
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.LessThan{Float64})    = putconbound(m.task,Int32(conidxs[1]),MSK_BK_UP,dom.upper-constant[1],dom.upper-constant[1])
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.EqualTo{Float64})     = putconbound(m.task,Int32(conidxs[1]),MSK_BK_FX,dom.value-constant[1],dom.value-constant[1])
+addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Interval{Float64})    = putconbound(m.task,Int32(conidxs[1]),MSK_BK_RA,dom.lower-constant[1],dom.upper-constant[1])
 
 function add_slack!(m :: MosekModel, conidxs :: Vector{Int}, constant :: Vector{Float64}, N :: Int)
     ensurefree(m.x_block,N)
@@ -321,7 +293,6 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
     
     appendcone(m.task,MSK_CT_QUAD,subj)
     numcone = getnumcone(m.task)
-    m.c_block_coneidx[conid] = numcone
     m.c_block_slack[conid]   = varid
 end
 
@@ -332,7 +303,6 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
     
     appendcone(m.task,MSK_CT_RQUAD,subj)
     numcone = getnumcone(m.task)
-    m.c_block_coneidx[conid] = numcone
     m.c_block_slack[conid]   = varid
 end
 
@@ -353,7 +323,6 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
 
     putconboundlist(m.task,conidxs,Float64[MSK_BK_FX],-constant,-constant)
 
-    c_block_coneidx[conid] = -barvaridx
     c_block_coneidx[conid] = -barvaridx
 end
 
@@ -553,7 +522,7 @@ function allocateconstraints(m :: MosekModel,
     numcon = getnumcon(m.task)
     alloced = ensurefree(m.c_block,N)
     if alloced > 0
-        appendcons(s.task, alloced)
+        appendcons(m.task, alloced)
         append!(m.c_constant, zeros(Float64,alloced))
         append!(m.c_block_slack, zeros(Float64,alloced))
     end
