@@ -5,6 +5,8 @@ isvalid(m::MosekModel, ref::MathOptInterface.VariableReference) = allocated(m.x_
 function MathOptInterface.addvariables!(m::MosekModel, N :: Int)
     ids = [ allocatevariable(m,1) for i in 1:N ]
 
+    m.publicnumvar += N
+    
     idxs = Vector{Int}(N)
     for i in 1:N
         getindexes(m.x_block,ids[i],idxs,i)
@@ -15,13 +17,14 @@ function MathOptInterface.addvariables!(m::MosekModel, N :: Int)
                     convert(Vector{Int32}, idxs),
                     fill(MSK_BK_FR,N),
                     bnd,bnd)
-    
+
     [ id2vref(id) for id in ids]
 end
 
 function MathOptInterface.addvariable!(m::MosekModel)
     N = 1
     id = allocatevariable(m,1)
+    m.publicnumvar += N
     bnd = Vector{Float64}(N)
     putvarboundlist(m.task,
                     convert(Vector{Int32}, getindexes(m.x_block, id)),
@@ -42,6 +45,7 @@ function Base.delete!(m::MosekModel, refs::Vector{MathOptInterface.VariableRefer
     else
         sizes = Int[blocksize(m.x_block,id) for id in ids]
         N = sum(sizes)
+        m.publicnumvar -= length(refs)
         indexes = Array{Int}(N)
         offset = 1
         for i in 1:length(ids)
@@ -76,6 +80,8 @@ function Base.delete!(m::MosekModel, ref::MathOptInterface.VariableReference)
         throw(CannotDelete())
     else
         id = ref2id(ref)
+
+        m.publicnumvar -= 1
         
         indexes = convert(Array{Int32,1},getindexes(m.x_block,id))
         N = blocksize(m.x_block,id)
@@ -100,3 +106,5 @@ end
 
 
 
+###############################################################################
+## ATTRIBUTES

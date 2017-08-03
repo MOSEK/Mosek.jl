@@ -27,6 +27,7 @@ boundflag_lower = 0x1
 boundflag_upper = 0x2
 boundflag_cone  = 0x4
 boundflag_int   = 0x8
+boundflag_all   = 0x0f
     
 """
     MosekModel <: MathOptInterface.AbstractModel
@@ -44,6 +45,16 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
 
     problemtype :: Int
 
+    """
+    Number of variables explicitly created by user
+    """
+    publicnumvar :: Int 
+
+    """
+    Number of constraints explicitly created by user
+    """
+    publicnumcon :: Int
+    
     """
     The total length of `x_block` matches the number of variables in
     the underlying task, and the number of blocks corresponds to the
@@ -110,6 +121,7 @@ end
 
 function MathOptInterface.SolverInstance(solver::MosekSolver)
     MosekModel(maketask(),# task
+               0,0,
                problemtype_linear, # problemtype
                LinkedInts(),# c_block
                Int[], # x_boundflags
@@ -132,6 +144,7 @@ function MathOptInterface.optimize!(m::MosekModel)
 end
 
 function MathOptInterface.writeproblem(m::MosekModel, filename :: String)
+    putintparam(m.task,MSK_IPAR_OPF_WRITE_SOLUTIONS, MSK_ON)
     writedata(m.task,filename)
 end
 
@@ -178,7 +191,6 @@ end
 
 MathOptInterface.supportsproblem(m::MosekModel, objective_type::MathOptInterface.ScalarQuadraticFunction, constraint_types::Vector) = false
 
-
 ref2id(ref :: MathOptInterface.VariableReference) :: Int =
     if ref.value & 1 == 0
         Int(ref.value >> 1)
@@ -207,9 +219,10 @@ id2vref(id :: Int) :: MathOptInterface.VariableReference =
 #        MathOptInterface.ConstraintReference{F,S}(UInt64(id) << 1)
 #    end
 
-
+include("objective.jl")
 include("variable.jl")
 include("constraint.jl")
+include("attributes.jl")
 
 #function MathOptInterface.setobjective!(m::MosekModel, N::Int, b, a_varidx, a_coef, Q_vari, Q_varj, Q_coef)
 #end

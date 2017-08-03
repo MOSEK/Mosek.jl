@@ -6,6 +6,7 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractScalarSet
                                                                                   dom :: D)
     N = 1
     conid = allocateconstraints(m,N)
+    m.publicnumcon += 1
     addlhsblock!(m, conid, fill(1,length(axb.variables)),axb.variables, axb.coefficients)
     
     if length(m.c_constant) < length(m.c_block)
@@ -23,6 +24,7 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractVectorSet
                                                                                   axb :: MathOptInterface.VectorAffineFunction{Float64},
                                                                                   dom :: D)
     N = MathOptInterface.dimension(dom)
+    m.publicnumcon += 1
     conid = allocateconstraints(m,N)
     addlhsblock!(m,
                  conid,
@@ -40,6 +42,7 @@ function MathOptInterface.addconstraint!(m   :: MosekModel,
                                          axb :: MathOptInterface.VectorAffineFunction{Float64},
                                          dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
     N = MathOptInterface.dimension(dom)
+    m.publicnumcon += 1
     M = (N+1)*N >> 1
     conid = allocateconstraints(m,M)
     addlhsblock!(m,
@@ -269,7 +272,6 @@ function addlhsblock!(m        :: MosekModel,
 
     N = length(consubi)    
 
-    println("subj = $subj, conidxs = $conidxs, numvar = $(getnumvar(m.task)), $N")
     At = sparse(subj, conidxs, cofs, getnumvar(m.task), N)
     putarowlist(m.task,convert(Vector{Int32},consubi),At)
 end
