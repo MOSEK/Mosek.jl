@@ -10,12 +10,12 @@ MathOptInterface.getattribute(m::Union{MosekSolver,MosekModel},::MathOptInterfac
 
 #### objective
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.ObjectiveValue)
-    solitems = Float64[]
-    if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,getdouinf(m.task,MSK_DINF_SOL_ITG_PRIMAL_OBJ)) end
-    if solutiondef(m.task,MSK_SOL_BAS) append!(solitems,getdouinf(m.task,MSK_DINF_SOL_BAS_PRIMAL_IBJ)) end
-    if solutiondef(m.task,MSK_SOL_ITR) append!(solitems,getdouinf(m.task,MSK_DINF_ITR_PRIMAL_OBJ)) end
-    
-    solitems[attr.resultindex]
+    solitems = Int32[]
+    if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,getdouinf(m.task,MSK_SOL_ITG)) end
+    if solutiondef(m.task,MSK_SOL_BAS) append!(solitems,getdouinf(m.task,MSK_SOL_BAS)) end
+    if solutiondef(m.task,MSK_SOL_ITR) append!(solitems,getdouinf(m.task,MSK_SOL_ITR)) end
+
+    getprimalobj(m.task,solitems[attr.resultindex])
 end
 
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.ObjectiveValue) = true
@@ -50,7 +50,7 @@ MathOptInterface.cansetattribute(m::MosekModel,attr::MathOptInterface.ObjectiveS
 # NOTE: The MOSEK interface currently only supports Min and Max
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.ObjectiveSense)
     sense = getobjsense(m.task)
-    if sense == MSK_OBJECTIVE_SENSE_MIN
+    if sense == MSK_OBJECTIVE_SENSE_MINIMIZE
         MathOptInterface.MinSense
     else
         MathOptInterface.MaxSense
@@ -59,9 +59,9 @@ end
 
 function MathOptInterface.setattribute!(m::MosekModel,attr::MathOptInterface.ObjectiveSense, sense::MathOptInterface.OptimizationSense)
     if sense == MathOptInterface.MinSense
-        setobjsense(m.task,MSK_OBJECTIVE_SENSE_MIN)
+        setobjsense(m.task,MSK_OBJECTIVE_SENSE_MINIMIZE)
     elseif sense == MathOptInterface.MaxSense
-        setobjsense(m.task,MSK_OBJECTIVE_SENSE_MAX)
+        setobjsense(m.task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
     else
         error("Sense '$sense' is not supported")
     end
@@ -119,13 +119,14 @@ MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.NumberOfVa
 MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.NumberOfVariables) = m.publicnumvar
 
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.NumberOfConstraints) = true
-MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.NumberOfConstraints) = true
-MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.NumberOfConstraints) = m.publicnumcon
+MathOptInterface.cangetattribute{F,D}(m::MosekModel,attr::MathOptInterface.NumberOfConstraints{F,D}) = true
+MathOptInterface.getattribute{F,D}(m::MosekModel,attr::MathOptInterface.NumberOfConstraints{F,D}) = length(select(m.constrmap,F,D))
 
 #MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.ListOfVariableReferences) = false
-#MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.ListOfConstraintReferences) = false
 #MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.ListOfConstraints) = false
 
+MathOptInterface.cangetattribute{F,D}(m::MosekSolver,attr::MathOptInterface.ListOfConstraintReferences{F,D}) = true
+MathOptInterface.getattribute{F,D}(m::MosekSolver,attr::MathOptInterface.ListOfConstraintReferences{F,D}) = keys(select(m.constrmap,F,D))
 
 
 #### Warm start values
@@ -189,16 +190,24 @@ MathOptInterface.cansetattribute(m::MosekModel,attr::MathOptInterface.Constraint
 
 #### Variable solution values
 
-MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.VariablePrimal) = true
 function MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.VariablePrimal)
     num = 0
     if solutiondef(m.task,MSK_SOL_ITG) num += 1 end
     if solutiondef(m.task,MSK_SOL_BAS) num += 1 end
     if solutiondef(m.task,MSK_SOL_ITR) num += 1 end
 
+    println("can get ... $(attr.N > 0 && attr.N <= num)")
     attr.N > 0 && attr.N <= num
 end
+
+MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.VariablePrimal) = true 
+
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.VariablePrimal,vs::Vector{MathOptInterface.VariableReference}) = MathOptInterface.cangetattribute(m,attr)
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.VariablePrimal,v::MathOptInterface.VariableReference) = MathOptInterface.cangetattribute(m,attr)
+
+
 function MathOptInterface.getattribute!(output::Vector{Float64},m::MosekModel,attr::MathOptInterface.VariablePrimal, vs::Vector{MathOptInterface.VariableReference})
+    println("get! VariablePrimal... ")
     solitems = Float64[]
     if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,MSK_SOL_ITG) end
     if solutiondef(m.task,MSK_SOL_BAS) append!(solitems,MSK_SOL_BAS) end
@@ -210,14 +219,31 @@ function MathOptInterface.getattribute!(output::Vector{Float64},m::MosekModel,at
     end
     
     xx = getxx(m.task, solitems[attr.N])
+    println("xx = $xx")
     output[1:length(output)] = xx[subj]
 end
 
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.VariablePrimal, vs::Vector{MathOptInterface.VariableReference})
-    output = Array(Int64,length(vs))
-    MathOptInterface.getattribute!(output,attr,vs)
+    println("get VariablePrimal... ")
+    output = Vector{Int64}(length(vs))
+    MathOptInterface.getattribute!(output,m,attr,vs)
     output
 end
+
+function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.VariablePrimal, vref::MathOptInterface.VariableReference)
+    solitems = Float64[]
+    if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,MSK_SOL_ITG) end
+    if solutiondef(m.task,MSK_SOL_BAS) append!(solitems,MSK_SOL_BAS) end
+    if solutiondef(m.task,MSK_SOL_ITR) append!(solitems,MSK_SOL_ITR) end
+
+    subj = getindexes(m.x_block,ref2id(vref))
+    xx = getxxslice(m.task, subj[1],subj[1]+1,solitems[attr.N])
+    xx[1]
+end
+
+
+
+
 
 
 
@@ -338,6 +364,7 @@ end
 
 
 #### Status codes
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.TerminationStatus) = true
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.TerminationStatus)
     if     m.trm == MSK_RES_OK
         MathOptInterface.Success
@@ -374,6 +401,7 @@ function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.Term
     end
 end
 
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.PrimalStatus) = true
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.PrimalStatus)
     solitems = Int32[]
     if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,MSK_SOL_ITG) end
@@ -421,6 +449,7 @@ function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.Prim
     end
 end
 
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.DualStatus) = true
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.DualStatus)
     solitems = Int32[]
     if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,MSK_SOL_ITG) end

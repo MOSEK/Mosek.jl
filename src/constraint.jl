@@ -6,7 +6,6 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractScalarSet
                                                                                   dom :: D)
     N = 1
     conid = allocateconstraints(m,N)
-    m.publicnumcon += 1
     addlhsblock!(m, conid, fill(1,length(axb.variables)),axb.variables, axb.coefficients)
     
     if length(m.c_constant) < length(m.c_block)
@@ -17,14 +16,17 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractScalarSet
     
     addbound!(m,conid,conidxs,Float64[axb.constant],dom)
 
-    MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(conid) << 1)
+    
+    conref = MathOptInterface.ConstraintReference{MathOptInterface.ScalarAffineFunction{Float64},D}(UInt64(conid) << 1)
+    select(m.constrmap,MathOptInterface.ScalarAffineFunction{Float64},D)[conref.value] = conid
+    
+    conref
 end
 
 function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractVectorSet}(m   :: MosekModel,
                                                                                   axb :: MathOptInterface.VectorAffineFunction{Float64},
                                                                                   dom :: D)
     N = MathOptInterface.dimension(dom)
-    m.publicnumcon += 1
     conid = allocateconstraints(m,N)
     addlhsblock!(m,
                  conid,
@@ -35,14 +37,16 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractVectorSet
     m.c_constant[conidxs] = axb.constant
 
     addbound!(m,conid,conidxs,axb.constant,dom)
-    MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(conid) << 1)
+    conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},D}(UInt64(conid) << 1)
+    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},D)[conref.value] = conid    
+    
+    conref
 end
 
 function MathOptInterface.addconstraint!(m   :: MosekModel,
                                          axb :: MathOptInterface.VectorAffineFunction{Float64},
                                          dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
     N = MathOptInterface.dimension(dom)
-    m.publicnumcon += 1
     M = (N+1)*N >> 1
     conid = allocateconstraints(m,M)
     addlhsblock!(m,
@@ -54,7 +58,9 @@ function MathOptInterface.addconstraint!(m   :: MosekModel,
     m.c_constant[conidxs] = axb.constant
 
     addbound!(m,conid,conidxs,axb.constant,dom)
-    MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,MathOptInterface.PositiveSemidefiniteConeTriangle}(UInt64(conid) << 1)
+    conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle}(UInt64(conid) << 1)
+    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle)[conref.value] = conid
+    conref
 end
 
 ################################################################################
@@ -174,11 +180,71 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
 
         m.x_boundflags[subj[1]] .|= mask
 
-        #id2cref{MathOptInterface.SingleVariable,D}(id)
-        MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(id) << 1)
+        #id2cref{MathOptInterface.SingleVariable,D}(id)        
+        conref = MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}(UInt64(id) << 1)
+        select(m.constrmap,MathOptInterface.SingleVariable,D)[conref.value] = id
+        conref
     end
 end
 
+function MathOptInterface.addconstraint!(m :: MosekModel, xs :: MathOptInterface.VectorOfVariables, dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
+    subj = Vector{Int}(length(xs.variables))
+    for i in 1:length(subj)
+        getindexes(m.x_block, ref2id(xs.variables[i]),subj,i)
+    end
+    
+    mask = domain_type_mask(dom)
+    if any(mask .& m.x_boundflags[subj[1]] .> 0)
+        error("Cannot multiple bound sets of the same type to a variable")
+    end
+
+    N = MathOptInterface.dimension(dom)
+
+    if N < 3
+        error("Invalid dimension for semidefinite constraint")
+    end
+
+    NN = (N*(N+1)) >> 1
+
+    if length(subj) != NN
+        error("Mismatching variable length for semidefinite constraint")
+    end
+    
+    id = allocateconstraints(m,NN)
+
+    appendbarvars(m.task,Int32(N))
+    barvaridx = getnumbarvar(m.task)
+    
+    subi = getindexes(m.c_block,id)
+    m.c_block_slack[subi] = -barvaridx
+
+    subii32 = convert(Vector{Int32},subi)
+    putaijlist(m.task,
+               subii32,
+               convert(Vector{Int32},subj),
+               ones(Float64,NN))
+    putconboundlist(m.task,subii32,fill(MSK_BK_FX,NN),zeros(Float64,NN),zeros(Float64,NN))
+    idx = 1
+    for j in 1:N
+        for i in 1:N
+            symmatidx = appendsparsesymmat(m.task,N,Int32[i],Int32[j],Float64[-1.0])
+            putbaraij(m.task,subii32[idx],barvaridx,[symmatidx],Float64[1.0])
+            idx += 1
+        end
+    end
+
+    # HACK: We need to return a negative to indicate that this is
+    # not, in fact, a real variable constraint, but rather a real
+    # constraint, but to resolve return value at compile time we
+    # need to disguise it as a variable constraint.
+    #id2cref{MathOptInterface.VectorOfVariables,D}(-id)
+    conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,MathOptInterface.PositiveSemidefiniteConeTriangle}((UInt64(-id) << 1) | 1)
+    select(m.constrmap,MathOptInterface.VectorOfVariables,MathOptInterface.PositiveSemidefiniteConeTriangle)[conref.value] = id
+    
+    conref 
+end
+
+    
 function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m :: MosekModel, xs :: MathOptInterface.VectorOfVariables, dom :: D)
     subj = Vector{Int}(length(xs.variables))
     for i in 1:length(subj)
@@ -191,67 +257,24 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
     end
 
     N = MathOptInterface.dimension(dom)
-    if is_positivesemidefinite_set(dom)
-        if N < 3
-            error("Invalid dimension for semidefinite constraint")
-        end
-
-        NN = (N*(N+1)) >> 1
-
-        if length(subj) != NN
-            error("Mismatching variable length for semidefinite constraint")
-        end
-        
-        id = allocateconstraints(m,NN)
-
-        appendbarvars(m.task,Int32(N))
-        barvaridx = getnumbarvar(m.task)
-        
-        subi = getindexes(m.c_block,id)
-        m.c_block_slack[subi] = -barvaridx
-
-        subii32 = convert(Vector{Int32},subi)
-        putaijlist(m.task,
-                   subii32,
-                   convert(Vector{Int32},subj),
-                   ones(Float64,NN))
-        putconboundlist(m.task,subii32,fill(MSK_BK_FX,NN),zeros(Float64,NN),zeros(Float64,NN))
-        idx = 1
-        for j in 1:N
-            for i in 1:N
-                symmatidx = appendsparsesymmat(m.task,N,Int32[i],Int32[j],Float64[-1.0])
-                putbaraij(m.task,subii32[idx],barvaridx,[symmatidx],Float64[1.0])
-                idx += 1
-            end
-        end
-
-        # HACK: We need to return a negative to indicate that this is
-        # not, in fact, a real variable constraint, but rather a real
-        # constraint, but to resolve return value at compile time we
-        # need to disguise it as a variable constraint.
-        #id2cref{MathOptInterface.VectorOfVariables,D}(-id)
-        MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}((UInt64(-id) << 1) | 1)
-    else        
-        allocated = ensurefree(m.xc_block,N)
-        id = newblock(m.xc_block,N)
-        if allocated > 0
-            append!(m.xc_bounds, zeros(Int,allocated))
-            append!(m.xc_idxs,   zeros(Int,allocated))
-        end
-
-        xc_sub = getindexes(m.xc_block,id)
-        m.xc_bounds[xc_sub] = mask
-        m.xc_idxs[xc_sub] = subj
-
-        addvarconstr(m,subj,dom)
-
-        m.x_boundflags[subj] .|= mask
-        
-        #id2cref{MathOptInterface.VectorOfVariables,D}(id)
-        MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}(UInt64(id) << 1)
+    allocated = ensurefree(m.xc_block,N)
+    id = newblock(m.xc_block,N)
+    if allocated > 0
+        append!(m.xc_bounds, zeros(Int,allocated))
+        append!(m.xc_idxs,   zeros(Int,allocated))
     end
 
+    xc_sub = getindexes(m.xc_block,id)
+    m.xc_bounds[xc_sub] = mask
+    m.xc_idxs[xc_sub] = subj
+
+    addvarconstr(m,subj,dom)
+
+    m.x_boundflags[subj] .|= mask
     
+    conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorOfVariables,D}(UInt64(id) << 1)
+    select(m.constrmap,MathOptInterface.VectorOfVariables,D)[conref.value] = id
+    conref
 end
 
 ################################################################################

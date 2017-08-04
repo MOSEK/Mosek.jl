@@ -29,6 +29,64 @@ boundflag_cone  = 0x4
 boundflag_int   = 0x8
 boundflag_all   = 0x0f
     
+
+# Mapping of all constraint types to its index
+struct ConstraintMap
+    x_lessthan           :: Dict{UInt64,Int} # (SingleVariable,LessThan) -> constraint number
+    x_greaterthan        :: Dict{UInt64,Int} # (SingleVariable,GreaterThan) -> constraint number
+    x_equalto            :: Dict{UInt64,Int} # (SingleVariable,EqualTo) -> constraint number
+    x_interval           :: Dict{UInt64,Int} # (SingleVariable,Interval) -> constraint number
+    x_nonpositives       :: Dict{UInt64,Int} # (SingleVariable,Nonpositives) -> constraint number
+    x_nonnegatives       :: Dict{UInt64,Int} # (SingleVariable,Nonnegatives) -> constraint number
+
+    xs_nonpositives      :: Dict{UInt64,Int} # (VectorOfVariables,Nonpositives) -> constraint number
+    xs_nonnegatives      :: Dict{UInt64,Int} # (VectorOfVariables,Nonnegatives) -> constraint number
+    xs_qcone             :: Dict{UInt64,Int} # (VectorOfVariables,SecondOrderCone) -> constraint number 
+    xs_rqcone            :: Dict{UInt64,Int} # (VectorOfVariables,RotatedSecondOrderCone) -> constraint number
+    xs_psdconetriangle   :: Dict{UInt64,Int} # (VectorOfVariables,PositiveSemidefiniteConeTriangle) -> constraint number
+
+    axb_lessthan         :: Dict{UInt64,Int} # (ScalarAffineFunction,LessThan) -> constraint number
+    axb_greaterthan      :: Dict{UInt64,Int} # (ScalarAffineFunction,GreaterThan) -> constraint number
+    axb_equalto          :: Dict{UInt64,Int} # (ScalarAffineFunction,EqualTo) -> constraint number
+    axb_interval         :: Dict{UInt64,Int} # (ScalarAffineFunction,Interval) -> constraint number
+    axb_nonpositives     :: Dict{UInt64,Int} # (ScalarAffineFunction,Nonpositives) -> constraint number
+    axb_nonnegatives     :: Dict{UInt64,Int} # (ScalarAffineFunction,Nonnegatives) -> constraint number
+
+    axbs_nonpositives    :: Dict{UInt64,Int} # (VectorAffineFunction,Nonpositives) -> constraint number
+    axbs_nonnegatives    :: Dict{UInt64,Int} # (VectorAffineFunction,Nonnegatives) -> constraint number
+    axbs_qcone           :: Dict{UInt64,Int} # (VectorAffineFunction,SecondOrderCone) -> constraint number 
+    axbs_rqcone          :: Dict{UInt64,Int} # (VectorAffineFunction,RotatedSecondOrderCone) -> constraint number
+    axbs_psdconetriangle :: Dict{UInt64,Int} # (VectorAffineFunction,PositiveSemidefiniteConeTriangle) -> constraint number
+end
+
+ConstraintMap() = ConstraintMap([Dict{UInt64,Int}() for i in 1:22]...)
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.LessThan{Float64}}) =                               cm.x_lessthan
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.GreaterThan{Float64}}) =                            cm.x_greaterthan       
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.EqualTo{Float64}}) =                                cm.x_equalto           
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Interval{Float64}}) =                               cm.x_interval          
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonpositives}) =                           cm.x_nonpositives      
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonnegatives}) =                           cm.x_nonnegatives      
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonpositives}) =                        cm.xs_nonpositives     
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonnegatives}) =                        cm.xs_nonnegatives     
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.SecondOrderCone}) =                     cm.xs_qcone            
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.RotatedSecondOrderCone}) =              cm.xs_rqcone           
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.PositiveSemidefiniteConeTriangle}) =    cm.xs_psdconetriangle  
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.LessThan{Float64}}) =                         cm.axb_lessthan        
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.GreaterThan{Float64}}) =                      cm.axb_greaterthan     
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.EqualTo{Float64}}) =                          cm.axb_equalto         
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Interval{Float64}}) =                         cm.axb_interval        
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axb_nonpositives    
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axb_nonnegatives    
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axbs_nonpositives   
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axbs_nonnegatives   
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.SecondOrderCone}) =                  cm.axbs_qcone          
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.RotatedSecondOrderCone}) =           cm.axbs_rqcone         
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.PositiveSemidefiniteConeTriangle}) = cm.axbs_psdconetriangle
+select{F,D}(cm::ConstraintMap,::Type{F},::Type{D}) = Dict{F,D}()
+
+Base.getindex{F,D}(cm::ConstraintMap,r :: MathOptInterface.ConstraintReference{F,D}) = select(cm,F,D)[r.value]
+
+                                                                                                    
 """
     MosekModel <: MathOptInterface.AbstractModel
 
@@ -43,17 +101,14 @@ are deleted are thereafter invalid.
 mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     task :: MSKtask
 
-    problemtype :: Int
-
     """
     Number of variables explicitly created by user
     """
     publicnumvar :: Int 
 
     """
-    Number of constraints explicitly created by user
     """
-    publicnumcon :: Int
+    constrmap :: ConstraintMap
     
     """
     The total length of `x_block` matches the number of variables in
@@ -121,8 +176,8 @@ end
 
 function MathOptInterface.SolverInstance(solver::MosekSolver)
     MosekModel(maketask(),# task
-               0,0,
-               problemtype_linear, # problemtype
+               0, # public numvar
+               ConstraintMap(), # public constraints
                LinkedInts(),# c_block
                Int[], # x_boundflags
                Int[], # x_boundflags
@@ -153,43 +208,39 @@ end
 # OR affine and quadratic left-hand side, and ranged, unbounded, half-open, fixed (equality) domains (quadratic constraints must be unbounded or half-open)
 #
 # For non-quadratic problems we allow binary and integer variables (but not constraints)
-function MathOptInterface.supportsproblem(m::MosekModel, objective_type::MathOptInterface.ScalarAffineFunction, constraint_types::Vector) :: Bool
-    if any( (fun,dom) => (typeof(fun) == MathOptInterface.ScalarQuadraticFunction ||
-                          typeof(fun) == MathOptInterface.VectorQuadraticFunction))
-        return false
-    end
-    
-
+function supportsconstraints(m::MosekSolver, constraint_types) :: Bool
     for (fun,dom) in constraint_types
-        if  typeof(fun) in [MathOptInterface.ScalarAffineFunction,
-                            MathOptInterface.ScalarVariablewiseFunction,
-                            MathOptInterface.VectorAffineFunction] &&
-                                typeof(dom) in [MathOptInterface.Zeros,
-                                                MathOptInterface.Reals,
-                                                MathOptInterface.Nonnegatives,
-                                                MathOptInterface.Nonpositives,
-                                                MathOptInterface.GreaterThan,
-                                                MathOptInterface.LessThan,
-                                                MathOptInterface.EqualTo,
-                                                MathOptInterface.Interval,
-                                                MathOptInterface.SecondOrderCone,
-                                                MathOptInterface.RotatedSecondOrderCone,
-                                                MathOptInterface.PositiveSemidefiniteConeTriangle ]
+        if  fun in [MathOptInterface.ScalarAffineFunction{Float64},
+                    MathOptInterface.SingleVariable,
+                    MathOptInterface.VectorAffineFunction{Float64}] &&
+            dom in [MathOptInterface.Zeros,
+                    MathOptInterface.Reals,
+                    MathOptInterface.Nonnegatives,
+                    MathOptInterface.Nonpositives,
+                    MathOptInterface.GreaterThan{Float64},
+                    MathOptInterface.LessThan{Float64},
+                    MathOptInterface.EqualTo{Float64},
+                    MathOptInterface.Interval{Float64},
+                    MathOptInterface.SecondOrderCone,
+                    MathOptInterface.RotatedSecondOrderCone,
+                    MathOptInterface.PositiveSemidefiniteConeTriangle ]
             # ok
-        elseif typeof(dom) in [MathOptInterface.ZeroOne,
-                               MathOptInterface.Integer] &&
-                                   typeof(fun) in [MathOptInterface.ScalarVariablewiseFunction,
-                                                   MathOptInterface.VectorVariablewiseFunction]
+        elseif dom in [MathOptInterface.ZeroOne,
+                       MathOptInterface.Integer] &&
+                           fun in [MathOptInterface.SingleVariable,
+                                   MathOptInterface.VectorOfVariables]
             # ok
         else
             return false
         end
     end
-
-    return true
+    true
 end
 
-MathOptInterface.supportsproblem(m::MosekModel, objective_type::MathOptInterface.ScalarQuadraticFunction, constraint_types::Vector) = false
+
+MathOptInterface.supportsproblem(m::MosekSolver, ::Type{MathOptInterface.SingleVariable},                constraint_types) :: Bool = supportsconstraints(m,constraint_types)
+MathOptInterface.supportsproblem(m::MosekSolver, ::Type{MathOptInterface.ScalarAffineFunction{Float64}}, constraint_types) :: Bool = supportsconstraints(m,constraint_types)
+MathOptInterface.supportsproblem{F}(m::MosekSolver, ::Type{F}, constraint_types) :: Bool = false
 
 ref2id(ref :: MathOptInterface.VariableReference) :: Int =
     if ref.value & 1 == 0
