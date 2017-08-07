@@ -87,6 +87,24 @@ select{F,D}(cm::ConstraintMap,::Type{F},::Type{D}) = Dict{F,D}()
 Base.getindex{F,D}(cm::ConstraintMap,r :: MathOptInterface.ConstraintReference{F,D}) = select(cm,F,D)[r.value]
 
                                                                                                     
+struct MosekSolution
+    whichsol :: Int32
+    solsta   :: Int32
+    prosta   :: Int32
+
+    xxstatus :: Vector{Int32}
+    xx       :: Vector{Float64}
+    slx      :: Vector{Float64}
+    sux      :: Vector{Float64}
+    snx      :: Vector{Float64}
+
+    cstatus  :: Vector{Int32}
+    xc       :: Vector{Float64}
+    slc      :: Vector{Float64}
+    suc      :: Vector{Float64}
+    y        :: Vector{Float64}
+end
+
 """
     MosekModel <: MathOptInterface.AbstractModel
 
@@ -101,6 +119,7 @@ are deleted are thereafter invalid.
 mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     task :: MSKtask
 
+    
     """
     Number of variables explicitly created by user
     """
@@ -171,6 +190,8 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
 
     ###########################
     trm :: Int32
+    solutions :: Vector{MosekSolution}
+
 end
 
 
@@ -187,7 +208,8 @@ function MathOptInterface.SolverInstance(solver::MosekSolver)
                LinkedInts(), # c_block
                Float64[], # c_constant
                Int[], # c_block_slack
-               Mosek.MSK_RES_OK) # trm
+               Mosek.MSK_RES_OK,
+               MosekSolution[]) # trm
 end
 
 function MathOptInterface.free!(m::MosekModel)
@@ -196,6 +218,55 @@ end
 
 function MathOptInterface.optimize!(m::MosekModel)
     m.trm = optimize(m.task)
+    m.solutions = MosekSolution[]
+    if solutiondef(m.task,MSK_SOL_ITG)
+        push!(m.solutions,
+              MosekSolution(MSK_SOL_ITG,
+                            getsolsta(m.task,MSK_SOL_ITG),
+                            getprosta(m.task,MSK_SOL_ITG),
+                            getskx(m.task,MSK_SOL_ITG),
+                            getxx(m.task,MSK_SOL_ITG),
+                            Float64[],
+                            Float64[],
+                            Float64[],
+                            getskc(m.task,MSK_SOL_ITG),
+                            getxc(m.task,MSK_SOL_ITG),
+                            Float64[],
+                            Float64[],
+                            Float64[]))
+    end
+    if solutiondef(m.task,MSK_SOL_BAS)
+        push!(m.solutions,
+              MosekSolution(MSK_SOL_BAS,
+                            getsolsta(m.task,MSK_SOL_BAS),
+                            getprosta(m.task,MSK_SOL_BAS),
+                            getskx(m.task,MSK_SOL_BAS),
+                            getxx(m.task,MSK_SOL_BAS),
+                            getslx(m.task,MSK_SOL_BAS),
+                            getsux(m.task,MSK_SOL_BAS),
+                            Float64[],
+                            getskc(m.task,MSK_SOL_BAS),
+                            getxc(m.task,MSK_SOL_BAS),
+                            getslc(m.task,MSK_SOL_BAS),
+                            getsuc(m.task,MSK_SOL_BAS),
+                            gety(m.task,MSK_SOL_BAS)))
+    end
+    if solutiondef(m.task,MSK_SOL_ITR)
+        push!(m.solutions,
+              MosekSolution(MSK_SOL_ITR,
+                            getsolsta(m.task,MSK_SOL_ITR),
+                            getprosta(m.task,MSK_SOL_ITR),
+                            getskx(m.task,MSK_SOL_ITR),
+                            getxx(m.task,MSK_SOL_ITR),
+                            getslx(m.task,MSK_SOL_ITR),
+                            getsux(m.task,MSK_SOL_ITR), 
+                            getsnx(m.task,MSK_SOL_ITR), 
+                            getskc(m.task,MSK_SOL_ITR),
+                            getxc(m.task,MSK_SOL_ITR),
+                            getslc(m.task,MSK_SOL_ITR),
+                            getsuc(m.task,MSK_SOL_ITR),
+                            gety(m.task,MSK_SOL_ITR)))
+    end
 end
 
 function MathOptInterface.writeproblem(m::MosekModel, filename :: String)
