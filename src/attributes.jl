@@ -541,6 +541,7 @@ function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.Prim
 
     solsta = getsolsta(m.task,solitems[attr.N])
 
+
     if     solsta == MSK_SOL_STA_UNKNOWN
         MathOptInterface.UnknownResultStatus
     elseif solsta == MSK_SOL_STA_OPTIMAL

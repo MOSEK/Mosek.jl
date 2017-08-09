@@ -1,5 +1,7 @@
 include("LinkedInts.jl")
 
+DEBUG = true
+
 mosek_block_type_unallocated = 0
 mosek_block_type_zero   = 1
 mosek_block_type_nonneg = 2

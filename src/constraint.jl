@@ -45,6 +45,13 @@ function Base.delete!(
     cid = ref2id(cref)
     subi = getindexes(m.c_block,cid)
 
+    n = length(subi)
+    subi_i32 = convert(Vector{Int32},subi)
+    ptr = fill(Int64(0),n)
+    putarowlist(m.task,subi_i32,ptr,ptr,Int32[],Float64[])
+    b = fill(0.0,n)
+    putconboundlist(m.task,subi_i32,fill(MSK_BK_FX,n),b,b)
+
     m.c_constant[subi] = 0.0
     deleteblock(m.c_block,cid)
 end
@@ -529,6 +536,25 @@ function MathOptInterface.modifyconstraint!(
     bl,bu = modifybounds(bl,bu,dom)
     putvarbound(m.task,j,bk,bl,bu)
 end
+
+function MathOptInterface.modifyconstraint!(
+    m    ::MosekModel,
+    cref ::MathOptInterface.ConstraintReference{MathOptInterface.ScalarAffineFunction,D},
+    dom  ::D) where { D <: Union{MathOptInterface.LessThan{Float64},
+                                 MathOptInterface.GreaterThan{Float64},
+                                 MathOptInterface.EqualTo{Float64},
+                                 MathOptInterface.Interval{Float64} } }
+
+    cid = ref2id(cref)
+    subi = getindexes(m.c_block,cid)
+
+    for i in subi
+        bk,bl,bu = getconbound(m.task,i)
+        bl,bu = modifybounds(bl,bu,dom)
+        putconbound(m.task,j,bk,bl,bu)
+    end
+end
+
 modifybounds(bl :: Float64, bu :: Float64, dom :: MathOptInterface.LessThan{Float64})    = (bl,dom.upper)
 modifybounds(bl :: Float64, bu :: Float64, dom :: MathOptInterface.GreaterThan{Float64}) = (dom.lower,bu)
 modifybounds(bl :: Float64, bu :: Float64, dom :: MathOptInterface.EqualTo{Float64})     = (dom.value,dom.value)
@@ -598,187 +624,6 @@ function MathOptInterface.modifyconstraint!(m::MosekModel,
 end
 
 
-
-
-
-
-# function MathOptInterface.addconstraint!(m   :: MosekModel,
-#                                          axb :: MathOptInterface.ScalarAffineFunction{Float64},
-#                                          dom :: MathOptInterface.AbstractSet)
-#     N = 1
-#     if N != MathOptInterface.dimension(dom)
-#         error("Dimensions mismatch")
-#     end
-
-#     conid,conidxs = makeconstr(m,ones(Int,length(axb.coefficients)),axb.variables,axb.coefficients,N,1)
-#     bfix = axb.constant
-#     if     typeof(dom) == MathOptInterface.Zeros
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_FX,N),Float64[-bfix],Float64[-bfix])
-#     elseif typeof(dom) == MathOptInterface.Reals
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_FR,N),Float64[-bfix],Float64[-bfix])
-#     elseif typeof(dom) == MathOptInterface.Nonnegatives
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),Float64[-bfix],Float64[-bfix])
-#     elseif typeof(dom) == MathOptInterface.Nonpositives
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_UP,N),Float64[-bfix],Float64[-bfix])
-#     elseif typeof(dom) == MathOptInterface.GreaterThan{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),Float64[dom.lower-bfix],Float64[0])
-#     elseif typeof(dom) == MathOptInterface.LessThan{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_UP,N),Float64[0],Float64[dom.upper-bfix])
-#     elseif typeof(dom) == MathOptInterface.EqualTo{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_FX,N),Float64[dom.value-bfix],Float64[dom.value-bfix])
-#     elseif typeof(dom) == MathOptInterface.Interval{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_RA,N),Float64[dom.lower-bfix],Float64[dom.upper-bfix])
-#     else
-#         error("Invalid domain set")
-#     end
-
-#     push!(m.c_block_type, mosek_block_type_noneg)
-#     push!(m.c_block_coneidx, 0)
-#     push!(m.c_block_slack,   0)
-    
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
-# function MathOptInterface.addconstraint!(m   :: MosekModel,
-#                                          axb :: MathOptInterface.VectorAffineFunction{Float64},
-#                                          dom :: MathOptInterface.Abstract)
-#     N = MathOptInterface.dimension(dom)
-
-#     conid,conidxs = makeconstr(m,axb.outputindex,axb.variables,axb.coefficients,N)
-#     bfix = axb.constant
-#     if     typeof(dom) == MathOptInterface.Zeros
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_FX,N),-bfix,-bfix)
-#     elseif typeof(dom) == MathOptInterface.Reals
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_FR,N),-bfix,-bfix)
-#     elseif typeof(dom) == MathOptInterface.Nonnegatives
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),-bfix,-bfix)
-#     elseif typeof(dom) == MathOptInterface.Nonpositives
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_UP,N),-bfix,-bfix)
-#     elseif typeof(dom) == MathOptInterface.GreaterThan{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),Float64[dom.lower-bfix[1]],Float64[0])
-#     elseif typeof(dom) == MathOptInterface.LessThan{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_UP,N),Float64[0],Float64[dom.upper-bfix[1]])
-#     elseif typeof(dom) == MathOptInterface.EqualTo{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_FX,N),Float64[dom.value-bfix[1]],Float64[dom.value-bfix[1]])
-#     elseif typeof(dom) == MathOptInterface.Interval{Float64}
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_RA,N),Float64[dom.lower-bfix[1]],Float64[dom.upper-bfix[1]])
-#     elseif typeof(dom) in [MathOptInterface.SecondOrderCone{Float64},
-                           
-#         if 
-#         putaijlist()
-        
-#         putconboundlist(m.task,conidxs,fill(MSK_BK_RA,N),Float64[dom.lower-bfix[1]],Float64[dom.upper-bfix[1]])
-        
-#     else
-#         error("Invalid domain set")
-#     end
-
-    
-    
-#     putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),-b,b)
-
-#     push!(m.c_block_type, mosek_block_type_noneg)
-#     push!(m.c_block_coneidx, 0)
-#     push!(m.c_block_slack,   0)
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
-# function MathOptInterface.addconstraint!(m   :: MosekModel,
-#                                          fun :: MathOptInterface.ScalarQuadraticFunction,
-#                                          dom :: MathOptInterface.Abstract)
-# end
-
-# function MathOptInterface.addconstraint!(m   :: MosekModel,
-#                                          fun :: MathOptInterface.VectorQuadraticFunction,
-#                                          dom :: MathOptInterface.Abstract)
-# end
-
-
-
-
-# function MathOptInterface.addconstraint!(
-#     m           :: MosekModel,
-#     b           :: Vector{Float64},
-#     a_constridx :: Vector{Int},
-#     a_varidx    :: Vector{VariableReference},
-#     a_coef      :: Vector{Float64},
-#     S           :: MathOptInterface.NonNegative)
-
-#     N = S.dim
-#     conid,conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-#     putconboundlist(m.task,conidxs,fill(MSK_BK_LO,N),-b,b)
-
-#     push!(m.c_block_type, mosek_block_type_noneg)
-#     push!(m.c_block_coneidx, 0)
-#     push!(m.c_block_slack,   0)
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
-# function MathOptInterface.addconstraint!(
-#     m           :: MosekModel,
-#     b           :: Vector{Float64},
-#     a_constridx :: Vector{Int},
-#     a_varidx    :: Vector{VariableReference},
-#     a_coef      :: Vector{Float64},
-#     S           :: MathOptInterface.NonPositive)
-
-#     N = S.dim
-#     conid,conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-#     putconboundlist(m.task,conidxs,fill(MSK_BK_UP,N),b,-b)
-
-#     push!(m.c_block_type, mosek_block_type_nopos)
-#     push!(m.c_block_coneidx, 0)
-#     push!(m.c_block_slack,   0)
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
-# function MathOptInterface.addconstraint!(
-#     m           :: MosekModel,
-#     b           :: Vector{Float64},
-#     a_constridx :: Vector{Int},
-#     a_varidx    :: Vector{VariableReference},
-#     a_coef      :: Vector{Float64},
-#     S           :: MathOptInterface.Zero)
-
-#     N = S.dim
-#     conid,conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-#     putconboundlist(m.task,conidxs,fill(MSK_BK_FX,N),-b,-b)
-
-#     push!(m.c_block_type, mosek_block_type_nopos)
-#     push!(m.c_block_coneidx, 0)
-#     push!(m.c_block_slack,   0)
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
-# function MathOptInterface.addconstraint!(
-#     m           :: MosekModel,
-#     b           :: Vector{Float64},
-#     a_constridx :: Vector{Int},
-#     a_varidx    :: Vector{VariableReference},
-#     a_coef      :: Vector{Float64},
-#     S           :: MathOptInterface.Interval)
-
-#     N = length(S.lower)
-#     conidxs = makeconstr(m,a_constridx, a_varidx,a_coef,N)
-
-#     bl = S.lower - b
-#     bu = S.upper - b
-#     putconboundlist(m.task,conidxs,fill(MSK_BK_RA,N),bl,bu)
-
-#     push!(m.c_block_type, mosek_block_type_nopos)
-#     push!(m.c_block_coneidx, 0)
-#     push!(m.c_block_slack,   0)
-#     MathOptInterface.ConstraintReference{S}(conid)
-# end
-
-# function MathOptInterface.addconstraint!(
-#     m           :: MosekModel,
-#     varidx      :: VariableReference,
-#     S           :: MathOptInterface.Integers)
-
-# #     N = S.dim
-# #     MathOptInterface.ConstraintReference{S}(varidx)
-# # end
 
 
 

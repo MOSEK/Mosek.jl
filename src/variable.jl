@@ -18,6 +18,13 @@ function MathOptInterface.addvariables!(m::MosekModel, N :: Int)
                     fill(MSK_BK_FR,N),
                     bnd,bnd)
 
+    # if DEBUG
+    if DEBUG
+        for i in idxs
+            putvarname(m.task,Int32(i),"x$i")
+        end
+    end
+
     [ id2vref(id) for id in ids]
 end
 
@@ -26,10 +33,17 @@ function MathOptInterface.addvariable!(m::MosekModel)
     id = allocatevariable(m,1)
     m.publicnumvar += N
     bnd = Vector{Float64}(N)
+    subj = convert(Vector{Int32}, getindexes(m.x_block, id))
     putvarboundlist(m.task,
-                    convert(Vector{Int32}, getindexes(m.x_block, id)),
+                    subj,
                     fill(MSK_BK_FR,N),
                     bnd,bnd)
+    # if DEBUG
+    if DEBUG
+        for i in subj
+            putvarname(m.task,Int32(i),"x$i")
+        end
+    end
 
     id2vref(id)
 end
@@ -59,14 +73,21 @@ function Base.delete!(m::MosekModel, refs::Vector{MathOptInterface.VariableRefer
                     zeros(Int64,N),
                     zeros(Int64,N),
                     Int32[],
-                    Float64[])
+                    Float64[])        
+        putclist(m.task,indexes,zeros(Int64,N))
         # clear bounds
-        bnd = Array{Float64,1}(N)
+        bnd = zeros(Float64,N)
         putvarboundlist(m.task,
                         indexes,
-                        Int32[MSK_BK_FR for i in 1:N],
+                        fill(MSK_BK_FX,N),
                         bnd,bnd)
 
+        if DEBUG
+            for i in idxs
+                putvarname(m.task,Int32(idxs),"deleted$i")
+            end
+        end
+        
         for i in 1:length(ids)
             deleteblock(s.x_block,ids[i])
         end
@@ -87,6 +108,9 @@ function Base.delete!(m::MosekModel, ref::MathOptInterface.VariableReference)
         N = blocksize(m.x_block,id)
 
         # clear all non-zeros in columns
+        for i in indexes
+            putcj(m.task,i,0.0)
+        end
         putacollist(m.task, 
                     indexes,
                     zeros(Int64,N),
@@ -94,11 +118,16 @@ function Base.delete!(m::MosekModel, ref::MathOptInterface.VariableReference)
                     Int32[],
                     Float64[])
         # clear bounds
-        bnd = Array{Float64,1}(N)
+        bnd = zeros(Float64,N)
         putvarboundlist(m.task,
                         indexes,
-                        fill(MSK_BK_FR,N),
+                        fill(MSK_BK_FX,N),
                         bnd,bnd)
+        if DEBUG
+            for i in indexes
+                putvarname(m.task,Int32(i),"deleted$i")
+            end
+        end
 
         deleteblock(m.x_block,id)
     end
