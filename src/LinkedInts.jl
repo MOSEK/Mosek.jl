@@ -22,6 +22,30 @@ blocksize(s::LinkedInts, id :: Int) = s.size[id]
 Base.length(s::LinkedInts) = length(s.next)
 numblocks(s::LinkedInts) = length(s.block)
 
+function Base.string(l::LinkedInts)
+    r = String[]
+    push!(r,"LinkedInts(\n")
+    push!(r,@sprintf("  Number of blocks: %d\n", length(l.block)))
+    push!(r,"  Blocks:\n")
+
+    for i in 1:length(l.block)
+        if l.block[i] > 0
+            idxs = getindexes(l,i)            
+            push!(r,@sprintf("    #%d: %s\n",i,string(idxs)))
+        end
+    end
+    p = l.free_ptr
+    freelst = Int[]
+    while p > 0
+        push!(freelst,p)
+        p = l.prev[p]
+    end
+    push!(r,@sprintf("  Free: %s\n",string(freelst)))
+    
+    push!(r,")")
+    join(r)
+end
+
 """
     ensurefree(s::LinkedInts, N :: Int)
 
@@ -58,6 +82,7 @@ end
 Add a new block in list `idx`
 """
 function newblock(s::LinkedInts, N :: Int) :: Int
+    assert(N>0)
     ensurefree(s,N)
     # remove from free list
     ptre = s.free_ptr

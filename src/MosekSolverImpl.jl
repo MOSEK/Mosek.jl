@@ -158,7 +158,7 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     One entry per variable-constraint block indicating which bound
     types it defines. The values are binary ORed `boundflag_...` values.
     """
-    xc_bounds    :: Vector{Int} # ORed boundflag values
+    xc_bounds    :: Vector{Int}
 
     """
     One entry per scalar variable-constraint, defining which native
@@ -220,6 +220,7 @@ function MathOptInterface.optimize!(m::MosekModel)
     m.trm = optimize(m.task)
     m.solutions = MosekSolution[]
     if solutiondef(m.task,MSK_SOL_ITG)
+        
         push!(m.solutions,
               MosekSolution(MSK_SOL_ITG,
                             getsolsta(m.task,MSK_SOL_ITG),

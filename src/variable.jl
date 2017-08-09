@@ -1,5 +1,5 @@
 
-MathOptInterface.candelete(m::MosekModel,ref::MathOptInterface.VariableReference) = isvalid(m,ref)
+MathOptInterface.candelete(m::MosekModel,ref::MathOptInterface.VariableReference) = isvalid(m,ref) && m.x_numxc[ref2id(ref)] == 0
 isvalid(m::MosekModel, ref::MathOptInterface.VariableReference) = allocated(m.x_block,ref2id(ref))
 
 function MathOptInterface.addvariables!(m::MosekModel, N :: Int)
@@ -36,8 +36,8 @@ end
 
 
 function Base.delete!(m::MosekModel, refs::Vector{MathOptInterface.VariableReference})
-    assert(0)
     ids = Int[ ref2id(ref) for ref in refs ]
+
     if ! all(id -> m.x_numxc[id] == 0, idxs)
         error("Cannot delete a variable while a bound constraint is defined on it")
     elseif ! all(r -> MathOptInterface.candelete(m,ref),refs)

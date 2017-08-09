@@ -1,5 +1,4 @@
 
-
 #### solver attributes
 MathOptInterface.getattribute(m::Union{MosekSolver,MosekModel},::MathOptInterface.SupportsDuals) = true
 MathOptInterface.getattribute(m::Union{MosekSolver,MosekModel},::MathOptInterface.SupportsAddConstraintAfterSolve) = true
@@ -305,35 +304,39 @@ MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.Constraint
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ConstraintDual, crefs::Vector{MathOptInterface.ConstraintReference}) = MathOptInterface.cangetattribute(m,attr)
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ConstraintDual, cref::MathOptInterface.ConstraintReference) = MathOptInterface.cangetattribute(m,attr)
 
+
 function MathOptInterface.getattribute{D}(
     m     ::MosekModel,
     attr  ::MathOptInterface.ConstraintDual,
     cref  ::MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D})
 
-    conid = ref2id(cref)
-    idxs  = getindexes(m.xc_block,conid)
-    subj  = m.xc_idxs[idxs[1]][1]
 
+    xcid = ref2id(cref)
+    idxs = getindexes(m.xc_block,xcid) # variable ids
+
+    assert(blocksize(m.xc_block,xcid) > 0)
+
+    subj  = getindexes(m.x_block, m.xc_idxs[idxs][1])[1]
     if (getobjsense(m.task) == MSK_OBJECTIVE_SENSE_MINIMIZE)
-        if     (m.xc_bounds[conid] & (boundflag_lower | boundflag_upper)) != 0
+        if     m.xc_bounds[xcid] & boundflag_lower != 0 && m.xc_bounds[xcid] & boundflag_upper != 0
             m.solutions[attr.N].slx[subj] - m.solutions[attr.N].sux[subj]
-        elseif (m.xc_bounds[conid] & boundflag_lower) != 0
+        elseif (m.xc_bounds[xcid] & boundflag_lower) != 0
             m.solutions[attr.N].slx[subj]
-        elseif (m.xc_bounds[conid] & boundflag_upper) != 0 
+        elseif (m.xc_bounds[xcid] & boundflag_upper) != 0 
             - m.solutions[attr.N].sux[subj]
-        elseif (m.xc_bounds[conid] & boundflag_cone) != 0
+        elseif (m.xc_bounds[xcid] & boundflag_cone) != 0
             m.solutions[attr.N].snx[subj]
         else
             error("Dual value available for this constraint")
         end
     else
-        if     (m.xc_bounds[conid] & (boundflag_lower | boundflag_upper)) != 0
+        if     m.xc_bounds[xcid] & boundflag_lower != 0 && m.xc_bounds[xcid] & boundflag_upper != 0
             m.solutions[attr.N].sux[subj] - m.solutions[attr.N].slx[subj]
-        elseif (m.xc_bounds[conid] & boundflag_lower) != 0
+        elseif (m.xc_bounds[xcid] & boundflag_lower) != 0
             - m.solutions[attr.N].slx[subj]
-        elseif (m.xc_bounds[conid] & boundflag_upper) != 0 
+        elseif (m.xc_bounds[xcid] & boundflag_upper) != 0 
             m.solutions[attr.N].sux[subj]
-        elseif (m.xc_bounds[conid] & boundflag_cone) != 0
+        elseif (m.xc_bounds[xcid] & boundflag_cone) != 0
             - m.solutions[attr.N].snx[subj]
         else
             error("Dual value available for this constraint")
@@ -376,7 +379,7 @@ function MathOptInterface.getattribute!{D}(
     subj = m.xc_idxs[idxs]
 
     if (getobjsense(m.task) == MSK_OBJECTIVE_SENSE_MINIMIZE)
-        if     (m.xc_bounds[conid] & (boundflag_lower | boundflag_upper)) != 0
+        if     m.xc_bounds[conid] & boundflag_lower != 0 && m.xc_bounds[conid] & boundflag_upper != 0
             output[1:length(output)] = m.solutions[attr.N].slx[subj] - m.solutions[attr.N].sux[subj]
         elseif (m.xc_bounds[conid] & boundflag_lower) != 0
             output[1:length(output)] = m.solutions[attr.N].slx[subj]
@@ -388,7 +391,7 @@ function MathOptInterface.getattribute!{D}(
             error("Dual value available for this constraint")
         end
     else
-        if     (m.xc_bounds[conid] & (boundflag_lower | boundflag_upper)) != 0
+        if     m.xc_bounds[conid] & boundflag_lower != 0 && m.xc_bounds[conid] & boundflag_upper != 0
             output[1:length(output)] = m.solutions[attr.N].sux[subj] - m.solutions[attr.N].slx[subj]
         elseif (m.xc_bounds[conid] & boundflag_lower) != 0
             output[1:length(output)] = - m.solutions[attr.N].slx[subj]

@@ -46,7 +46,7 @@ function MathOptInterface.modifyobjective!(m::MosekModel, change :: MathOptInter
 end
 
 function MathOptInterface.modifyobjective!(m::MosekModel, change :: MathOptInterface.ScalarCoefficientChange)
-    vid = ref2id(func.variable)
+    vid = ref2id(change.variable)
     subj = getindexes(m.x_block,vid)
     putcj(m.task,Int32(subj[1]),change.new_coefficient)
 end
