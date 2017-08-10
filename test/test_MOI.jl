@@ -5,7 +5,7 @@ const MOI = MathOptInterface
 
 include(joinpath(Pkg.dir("MathOptInterface"),"test","contlinear.jl"))
 @testset "Continuous linear problems" begin
-    contlineartest(MosekSolver())
+    #contlineartest(MosekSolver())
 end
 
 # include("contquadratic.jl")
@@ -13,12 +13,12 @@ end
 #     # contquadratictest(GurobiSolver())
 # end
 
-# include("contconic.jl")
-# @testset "Continuous conic problems" begin
-#     # contconictest(SCSSolver(verbose=0))
-# end
+include(joinpath(Pkg.dir("MathOptInterface"),"test","contconic.jl"))
+@testset "Continuous conic problems" begin
+    #contconictest(MosekSolver())
+end
 
-# include("intlinear.jl")
-# @testset "Mixed-integer linear problems" begin
-#     # intlineartest(GLPKSolverMIP())
-# end
+include(joinpath(Pkg.dir("MathOptInterface"),"test","intlinear.jl"))
+@testset "Mixed-integer linear problems" begin
+    intlineartest(MosekSolver())
+end

@@ -190,9 +190,11 @@ function MathOptInterface.addconstraint!(
     conidxs = getindexes(m.c_block,conid)
     m.c_constant[conidxs] = axb.constant
 
+    m.c_block_slack[conid]
+    
     addbound!(m,conid,conidxs,axb.constant,dom)
     conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},D}(UInt64(conid) << 1)
-    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},D)[conref.value] = conid    
+    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},D)[conref.value] = conid
     
     conref
 end
@@ -213,7 +215,7 @@ function MathOptInterface.addconstraint!(m   :: MosekModel,
 
     addbound!(m,conid,conidxs,axb.constant,dom)
     conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle}(UInt64(conid) << 1)
-    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle)[conref.value] = conid
+    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle)[conref] = conid
     conref
 end
 
@@ -647,6 +649,8 @@ function allocateconstraints(m :: MosekModel,
                              N :: Int)
     numcon = getnumcon(m.task)
     alloced = ensurefree(m.c_block,N)
+    id = newblock(m.c_block,N)
+
     M = numblocks(m.c_block) - length(m.c_block_slack)
     if alloced > 0
         appendcons(m.task, alloced)
@@ -655,8 +659,7 @@ function allocateconstraints(m :: MosekModel,
     if M > 0
         append!(m.c_block_slack, zeros(Float64,M))
     end
-
-    newblock(m.c_block,N)
+    id
 end
 
 

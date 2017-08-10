@@ -43,6 +43,8 @@ struct ConstraintMap
 
     xs_nonpositives      :: Dict{UInt64,Int} # (VectorOfVariables,Nonpositives) -> constraint number
     xs_nonnegatives      :: Dict{UInt64,Int} # (VectorOfVariables,Nonnegatives) -> constraint number
+    xs_zeros             :: Dict{UInt64,Int} # (VectorOfVariables,Zeros) -> constraint number
+    xs_reals             :: Dict{UInt64,Int} # (VectorOfVariables,Reals) -> constraint number
     xs_qcone             :: Dict{UInt64,Int} # (VectorOfVariables,SecondOrderCone) -> constraint number 
     xs_rqcone            :: Dict{UInt64,Int} # (VectorOfVariables,RotatedSecondOrderCone) -> constraint number
     xs_psdconetriangle   :: Dict{UInt64,Int} # (VectorOfVariables,PositiveSemidefiniteConeTriangle) -> constraint number
@@ -56,12 +58,14 @@ struct ConstraintMap
 
     axbs_nonpositives    :: Dict{UInt64,Int} # (VectorAffineFunction,Nonpositives) -> constraint number
     axbs_nonnegatives    :: Dict{UInt64,Int} # (VectorAffineFunction,Nonnegatives) -> constraint number
+    axbs_zeros           :: Dict{UInt64,Int} # (VectorAffineFunction,Zeros) -> constraint number
+    axbs_reals           :: Dict{UInt64,Int} # (VectorAffineFunction,Reals) -> constraint number
     axbs_qcone           :: Dict{UInt64,Int} # (VectorAffineFunction,SecondOrderCone) -> constraint number 
     axbs_rqcone          :: Dict{UInt64,Int} # (VectorAffineFunction,RotatedSecondOrderCone) -> constraint number
     axbs_psdconetriangle :: Dict{UInt64,Int} # (VectorAffineFunction,PositiveSemidefiniteConeTriangle) -> constraint number
 end
 
-ConstraintMap() = ConstraintMap([Dict{UInt64,Int}() for i in 1:22]...)
+ConstraintMap() = ConstraintMap([Dict{UInt64,Int}() for i in 1:26]...)
 select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.LessThan{Float64}}) =                               cm.x_lessthan
 select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.GreaterThan{Float64}}) =                            cm.x_greaterthan       
 select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.EqualTo{Float64}}) =                                cm.x_equalto           
@@ -70,6 +74,8 @@ select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{Ma
 select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonnegatives}) =                           cm.x_nonnegatives      
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonpositives}) =                        cm.xs_nonpositives     
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonnegatives}) =                        cm.xs_nonnegatives     
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Zeros}) =                        cm.xs_zeros
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Reals}) =                        cm.xs_reals     
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.SecondOrderCone}) =                     cm.xs_qcone            
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.RotatedSecondOrderCone}) =              cm.xs_rqcone           
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.PositiveSemidefiniteConeTriangle}) =    cm.xs_psdconetriangle  
@@ -77,18 +83,19 @@ select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},
 select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.GreaterThan{Float64}}) =                      cm.axb_greaterthan     
 select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.EqualTo{Float64}}) =                          cm.axb_equalto         
 select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Interval{Float64}}) =                         cm.axb_interval        
-select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axb_nonpositives    
-select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axb_nonnegatives    
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axbs_nonpositives   
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axbs_nonnegatives   
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.SecondOrderCone}) =                  cm.axbs_qcone          
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.RotatedSecondOrderCone}) =           cm.axbs_rqcone         
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axb_nonpositives
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axb_nonnegatives
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axbs_nonpositives
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axbs_nonnegatives
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Zeros}) =                     cm.axbs_zeros
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Reals}) =                     cm.axbs_reals
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.SecondOrderCone}) =                  cm.axbs_qcone
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.RotatedSecondOrderCone}) =           cm.axbs_rqcone
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.PositiveSemidefiniteConeTriangle}) = cm.axbs_psdconetriangle
-select{F,D}(cm::ConstraintMap,::Type{F},::Type{D}) = Dict{F,D}()
 
 Base.getindex{F,D}(cm::ConstraintMap,r :: MathOptInterface.ConstraintReference{F,D}) = select(cm,F,D)[r.value]
 
-                                                                                                    
+
 struct MosekSolution
     whichsol :: Int32
     solsta   :: Int32

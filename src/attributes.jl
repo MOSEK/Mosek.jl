@@ -302,13 +302,15 @@ end
 
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ConstraintDual) = attr.N > 0 && attr.N <= length(m.solutions)
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ConstraintDual, crefs::Vector{MathOptInterface.ConstraintReference}) = MathOptInterface.cangetattribute(m,attr)
-MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ConstraintDual, cref::MathOptInterface.ConstraintReference) = MathOptInterface.cangetattribute(m,attr)
+MathOptInterface.cangetattribute(m::MosekModel,
+                                 attr::MathOptInterface.ConstraintDual,
+                                 cref::MathOptInterface.ConstraintReference{F,D}) where {F,D} = MathOptInterface.cangetattribute(m,attr)
 
 
-function MathOptInterface.getattribute{D}(
+function MathOptInterface.getattribute(
     m     ::MosekModel,
     attr  ::MathOptInterface.ConstraintDual,
-    cref  ::MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D})
+    cref  ::MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D}) where { D <: MathOptInterface.AbstractSet }
 
 
     xcid = ref2id(cref)
@@ -419,12 +421,22 @@ function MathOptInterface.getattribute{D}(m     ::MosekModel,
 end
 
 
-
-function MathOptInterface.getattribute!{D}(
+function MathOptInterface.getattribute(
+    m     ::MosekModel,
+    attr  ::MathOptInterface.ConstraintDual,
+    cref  ::MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},D}) where { D <: MathOptInterface.AbstractSet }
+    
+    n = blocksize(m.c_block,ref2id(cref))
+    println("blocksize = $n")
+    res = Vector{Float64}(n)
+    MathOptInterface.getattribute!(res,m,attr,cref)
+    res
+end
+function MathOptInterface.getattribute!(
     output::Vector{Float64},
     m     ::MosekModel,
     attr  ::MathOptInterface.ConstraintDual,
-    cref  ::MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},D})
+    cref  ::MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},D}) where { D <: MathOptInterface.AbstractSet }
 
     cid = ref2id(cref)
     subi = getindexes(m.c_block,cid)
@@ -446,7 +458,7 @@ function MathOptInterface.getattribute!{D}(
         elseif m.c_block_slack[cid] >  0 # qcone slack
             xid = m.c_block_slack[cid]
             subj = getindexes(m.x_block, xid)
-            output[1:length(output)] = - m.solutions[attr.N].snx[xsubj]
+            output[1:length(output)] = - m.solutions[attr.N].snx[subj]
         elseif m.c_block_slack[cid]  # psd slack
             xid = - m.c_block_slack[cid]
             output[1:length(output)] = - getbarsj(m.task,m.solutions[attr.N].whichsol,Int32(xid))
@@ -532,16 +544,34 @@ function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.Term
     end
 end
 
-MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.PrimalStatus) = true
+function MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.PrimalStatus)
+    if attr.N < 0 || attr.N > length(m.solutions)
+        false
+    else
+        solsta = m.solutions[attr.N].solsta
+        if     solsta == MSK_SOL_STA_UNKNOWN true
+        elseif solsta == MSK_SOL_STA_OPTIMAL true
+        elseif solsta == MSK_SOL_STA_PRIM_FEAS true
+        elseif solsta == MSK_SOL_STA_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_NEAR_OPTIMAL true
+        elseif solsta == MSK_SOL_STA_NEAR_PRIM_FEAS true
+        elseif solsta == MSK_SOL_STA_NEAR_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER false
+        elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER true
+        elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER false
+        elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER true
+        elseif solsta == MSK_SOL_STA_PRIM_ILLPOSED_CER false
+        elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER true
+        elseif solsta == MSK_SOL_STA_INTEGER_OPTIMAL true
+        elseif solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL true
+        else false
+        end
+    end
+end
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.PrimalStatus)
-    solitems = Int32[]
-    if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,MSK_SOL_ITG) end
-    if solutiondef(m.task,MSK_SOL_BAS) append!(solitems,MSK_SOL_BAS) end
-    if solutiondef(m.task,MSK_SOL_ITR) append!(solitems,MSK_SOL_ITR) end
-
-    solsta = getsolsta(m.task,solitems[attr.N])
-
-
+    solsta = m.solutions[attr.N].solsta
     if     solsta == MSK_SOL_STA_UNKNOWN
         MathOptInterface.UnknownResultStatus
     elseif solsta == MSK_SOL_STA_OPTIMAL
@@ -581,15 +611,34 @@ function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.Prim
     end
 end
 
-MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.DualStatus) = true
+function MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.DualStatus)
+    if attr.N < 0 || attr.N > length(m.solutions)
+        false
+    else
+        solsta = m.solutions[attr.N].solsta
+        if     solsta == MSK_SOL_STA_UNKNOWN true
+        elseif solsta == MSK_SOL_STA_OPTIMAL true
+        elseif solsta == MSK_SOL_STA_PRIM_FEAS true
+        elseif solsta == MSK_SOL_STA_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_NEAR_OPTIMAL true
+        elseif solsta == MSK_SOL_STA_NEAR_PRIM_FEAS true
+        elseif solsta == MSK_SOL_STA_NEAR_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS true
+        elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER true
+        elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER false
+        elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER true
+        elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER false
+        elseif solsta == MSK_SOL_STA_PRIM_ILLPOSED_CER true
+        elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER false
+        elseif solsta == MSK_SOL_STA_INTEGER_OPTIMAL false
+        elseif solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL false
+        else false
+        end
+    end
+end
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.DualStatus)
-    solitems = Int32[]
-    if solutiondef(m.task,MSK_SOL_ITG) append!(solitems,MSK_SOL_ITG) end
-    if solutiondef(m.task,MSK_SOL_BAS) append!(solitems,MSK_SOL_BAS) end
-    if solutiondef(m.task,MSK_SOL_ITR) append!(solitems,MSK_SOL_ITR) end
-
-    solsta = getsolsta(m.task,solitems[attr.N])
-
+    solsta = m.solutions[attr.N].solsta
     if     solsta == MSK_SOL_STA_UNKNOWN
         MathOptInterface.UnknownResultStatus
     elseif solsta == MSK_SOL_STA_OPTIMAL
