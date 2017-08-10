@@ -1,6 +1,4 @@
 
-
-
 MathOptInterface.candelete(
     m   ::MosekModel,
     cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.ScalarAffineFunction,
@@ -96,7 +94,9 @@ function Base.delete!(
                                                                        MathOptInterface.Zeros,
                                                                        MathOptInterface.Nonpositives,
                                                                        MathOptInterface.Nonnegatives,
-                                                                       MathOptInterface.Reals}}
+                                                                       MathOptInterface.Reals,
+                                                                       MathOptInterface.ZeroOne,
+                                                                       MathOptInterface.Integer}}
     delete!(select(m.constrmap, F, D), cref.value)
     
     xcid = ref2id(cref)
@@ -106,6 +106,12 @@ function Base.delete!(
     N = length(subj)
 
     m.x_boundflags[subj] .&= ~m.xc_bounds[xcid]
+    if m.xc_bounds[xcid] & boundflag_int != 0
+        for i in 1:length(subj)
+            putvartype(m.task,subj[i],MSK_VAR_TYPE_CONT)
+        end
+    end
+    
     if m.xc_bounds[xcid] & boundflag_lower != 0 && m.xc_bounds[xcid] & boundflag_upper != 0
         bnd = fill(0.0, length(N))
         putvarboundlist(m.task,convert(Vector{Int32},subj),fill(MSK_BK_FR,N),bnd,bnd)
@@ -178,7 +184,7 @@ end
 function MathOptInterface.addconstraint!(
     m   :: MosekModel,
     axb :: MathOptInterface.VectorAffineFunction{Float64},
-    dom :: D) where {D <: MathOptInterface.AbstractVectorSet}
+    dom :: D) where { D <: MathOptInterface.AbstractVectorSet }
     
     N = MathOptInterface.dimension(dom)
     conid = allocateconstraints(m,N)
@@ -272,6 +278,11 @@ function addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterf
 end
 addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.Interval) = putvarbound(m.task,subj[1],MSK_BK_RA,dom.lower, dom.upper)
 addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.EqualTo) = putvarbound(m.task,subj[1],MSK_BK_FX,dom.value, dom.value)
+addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.Integer) = putvartype(m.task,subj[1],MSK_VAR_TYPE_INT)
+function addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.ZeroOne)
+    putvartype(m.task,subj[1],MSK_VAR_TYPE_INT)
+    putvarbound(m.task,subj[1],MSK_BK_RA,0.0,1.0)
+end
 
 function addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.LessThan)
     bk,lo,up = getvarbound(m.task,subj[1])

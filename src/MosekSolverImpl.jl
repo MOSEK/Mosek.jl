@@ -30,7 +30,7 @@ boundflag_upper = 0x2
 boundflag_cone  = 0x4
 boundflag_int   = 0x8
 boundflag_all   = 0x0f
-    
+
 
 # Mapping of all constraint types to its index
 struct ConstraintMap
@@ -40,12 +40,14 @@ struct ConstraintMap
     x_interval           :: Dict{UInt64,Int} # (SingleVariable,Interval) -> constraint number
     x_nonpositives       :: Dict{UInt64,Int} # (SingleVariable,Nonpositives) -> constraint number
     x_nonnegatives       :: Dict{UInt64,Int} # (SingleVariable,Nonnegatives) -> constraint number
+    x_binary             :: Dict{UInt64,Int} # (SingleVariable,ZeroOne) -> constraint number
+    x_integer            :: Dict{UInt64,Int} # (SingleVariable,Integer) -> constraint number
 
     xs_nonpositives      :: Dict{UInt64,Int} # (VectorOfVariables,Nonpositives) -> constraint number
     xs_nonnegatives      :: Dict{UInt64,Int} # (VectorOfVariables,Nonnegatives) -> constraint number
     xs_zeros             :: Dict{UInt64,Int} # (VectorOfVariables,Zeros) -> constraint number
     xs_reals             :: Dict{UInt64,Int} # (VectorOfVariables,Reals) -> constraint number
-    xs_qcone             :: Dict{UInt64,Int} # (VectorOfVariables,SecondOrderCone) -> constraint number 
+    xs_qcone             :: Dict{UInt64,Int} # (VectorOfVariables,SecondOrderCone) -> constraint number
     xs_rqcone            :: Dict{UInt64,Int} # (VectorOfVariables,RotatedSecondOrderCone) -> constraint number
     xs_psdconetriangle   :: Dict{UInt64,Int} # (VectorOfVariables,PositiveSemidefiniteConeTriangle) -> constraint number
 
@@ -55,34 +57,40 @@ struct ConstraintMap
     axb_interval         :: Dict{UInt64,Int} # (ScalarAffineFunction,Interval) -> constraint number
     axb_nonpositives     :: Dict{UInt64,Int} # (ScalarAffineFunction,Nonpositives) -> constraint number
     axb_nonnegatives     :: Dict{UInt64,Int} # (ScalarAffineFunction,Nonnegatives) -> constraint number
+    axb_binary           :: Dict{UInt64,Int} # (ScalarAffineFunction,ZeroOne) -> constraint number
+    axb_integer          :: Dict{UInt64,Int} # (ScalarAffineFunction,Integer) -> constraint number
 
     axbs_nonpositives    :: Dict{UInt64,Int} # (VectorAffineFunction,Nonpositives) -> constraint number
     axbs_nonnegatives    :: Dict{UInt64,Int} # (VectorAffineFunction,Nonnegatives) -> constraint number
     axbs_zeros           :: Dict{UInt64,Int} # (VectorAffineFunction,Zeros) -> constraint number
     axbs_reals           :: Dict{UInt64,Int} # (VectorAffineFunction,Reals) -> constraint number
-    axbs_qcone           :: Dict{UInt64,Int} # (VectorAffineFunction,SecondOrderCone) -> constraint number 
+    axbs_qcone           :: Dict{UInt64,Int} # (VectorAffineFunction,SecondOrderCone) -> constraint number
     axbs_rqcone          :: Dict{UInt64,Int} # (VectorAffineFunction,RotatedSecondOrderCone) -> constraint number
     axbs_psdconetriangle :: Dict{UInt64,Int} # (VectorAffineFunction,PositiveSemidefiniteConeTriangle) -> constraint number
 end
 
-ConstraintMap() = ConstraintMap([Dict{UInt64,Int}() for i in 1:26]...)
+ConstraintMap() = ConstraintMap([Dict{UInt64,Int}() for i in 1:30]...)
 select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.LessThan{Float64}}) =                               cm.x_lessthan
-select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.GreaterThan{Float64}}) =                            cm.x_greaterthan       
-select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.EqualTo{Float64}}) =                                cm.x_equalto           
-select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Interval{Float64}}) =                               cm.x_interval          
-select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonpositives}) =                           cm.x_nonpositives      
-select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonnegatives}) =                           cm.x_nonnegatives      
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonpositives}) =                        cm.xs_nonpositives     
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonnegatives}) =                        cm.xs_nonnegatives     
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.GreaterThan{Float64}}) =                            cm.x_greaterthan
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.EqualTo{Float64}}) =                                cm.x_equalto
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Interval{Float64}}) =                               cm.x_interval
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonpositives}) =                           cm.x_nonpositives
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Nonnegatives}) =                           cm.x_nonnegatives
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.ZeroOne}) =                           cm.x_binary
+select(cm::ConstraintMap,::Type{MathOptInterface.SingleVariable},      ::Type{MathOptInterface.Integer}) =                           cm.x_integer
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonpositives}) =                        cm.xs_nonpositives
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Nonnegatives}) =                        cm.xs_nonnegatives
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Zeros}) =                        cm.xs_zeros
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Reals}) =                        cm.xs_reals     
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.SecondOrderCone}) =                     cm.xs_qcone            
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.RotatedSecondOrderCone}) =              cm.xs_rqcone           
-select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.PositiveSemidefiniteConeTriangle}) =    cm.xs_psdconetriangle  
-select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.LessThan{Float64}}) =                         cm.axb_lessthan        
-select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.GreaterThan{Float64}}) =                      cm.axb_greaterthan     
-select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.EqualTo{Float64}}) =                          cm.axb_equalto         
-select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Interval{Float64}}) =                         cm.axb_interval        
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.Reals}) =                        cm.xs_reals
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.SecondOrderCone}) =                     cm.xs_qcone
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.RotatedSecondOrderCone}) =              cm.xs_rqcone
+select(cm::ConstraintMap,::Type{MathOptInterface.VectorOfVariables},   ::Type{MathOptInterface.PositiveSemidefiniteConeTriangle}) =    cm.xs_psdconetriangle
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.LessThan{Float64}}) =                         cm.axb_lessthan
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.GreaterThan{Float64}}) =                      cm.axb_greaterthan
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.EqualTo{Float64}}) =                          cm.axb_equalto
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Interval{Float64}}) =                         cm.axb_interval
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.ZeroOne}) =                         cm.axb_binary
+select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Integer}) =                         cm.axb_integer
 select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axb_nonpositives
 select(cm::ConstraintMap,::Type{MathOptInterface.ScalarAffineFunction{Float64}},::Type{MathOptInterface.Nonnegatives}) =                     cm.axb_nonnegatives
 select(cm::ConstraintMap,::Type{MathOptInterface.VectorAffineFunction{Float64}},::Type{MathOptInterface.Nonpositives}) =                     cm.axbs_nonpositives
@@ -123,33 +131,33 @@ does not support deleting PSD variables.
 Note also that adding variables and constraints will permanently add
 some (currently between 1 and 3) Int64s that a `delete!` will not
 remove. This ensures that References (Variable and constraint) that
-are deleted are thereafter invalid. 
+are deleted are thereafter invalid.
 """
 mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     task :: MSKtask
 
-    
+
     """
     Number of variables explicitly created by user
     """
-    publicnumvar :: Int 
+    publicnumvar :: Int
 
     """
     """
     constrmap :: ConstraintMap
-    
+
     """
     The total length of `x_block` matches the number of variables in
     the underlying task, and the number of blocks corresponds to the
     number variables allocated in the Model.
     """
     x_block      :: LinkedInts
-    
+
     """
     One entry per scalar variable in the task indicating which bound types are defined
     """
     x_boundflags :: Vector{Int}
-    
+
     """
     One entry per scalar variable in the task defining the number of
     variable constraints imposed on that variable. It is not allowed
@@ -162,7 +170,7 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     One entry per variable-constraint
     """
     xc_block     :: LinkedInts
-    
+
     """
     One entry per variable-constraint block indicating which bound
     types it defines. The values are binary ORed `boundflag_...` values.
@@ -229,7 +237,7 @@ function MathOptInterface.optimize!(m::MosekModel)
     m.trm = optimize(m.task)
     m.solutions = MosekSolution[]
     if solutiondef(m.task,MSK_SOL_ITG)
-        
+
         push!(m.solutions,
               MosekSolution(MSK_SOL_ITG,
                             getsolsta(m.task,MSK_SOL_ITG),
@@ -269,8 +277,8 @@ function MathOptInterface.optimize!(m::MosekModel)
                             getskx(m.task,MSK_SOL_ITR),
                             getxx(m.task,MSK_SOL_ITR),
                             getslx(m.task,MSK_SOL_ITR),
-                            getsux(m.task,MSK_SOL_ITR), 
-                            getsnx(m.task,MSK_SOL_ITR), 
+                            getsux(m.task,MSK_SOL_ITR),
+                            getsnx(m.task,MSK_SOL_ITR),
                             getskc(m.task,MSK_SOL_ITR),
                             getxc(m.task,MSK_SOL_ITR),
                             getslc(m.task,MSK_SOL_ITR),
