@@ -63,7 +63,21 @@ function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
     bl = Vector{Float64}(n)
     bu = Vector{Float64}(n)
     for i in 1:n
-        bki,bli,bui = getvarbound(t,i)
+        bki,bli,bui = getvarbound(t,subj[i])
+        bk[i] = bki
+        bl[i] = bli
+        bu[i] = bui
+    end
+    bk,bl,bu
+end
+
+function getconboundlist(t::MSKtask, subj :: Vector{Int32})
+    n = length(subj)
+    bk = Vector{Int32}(n)
+    bl = Vector{Float64}(n)
+    bu = Vector{Float64}(n)
+    for i in 1:n
+        bki,bli,bui = getconbound(t,subj[i])
         bk[i] = bki
         bl[i] = bli
         bu[i] = bui
@@ -519,7 +533,6 @@ function MathOptInterface.modifyconstraint!{F <: Union{MathOptInterface.SingleVa
     error("Cannot redefine variable constraint")
 end
 
-# Hmm... Allow changing the _type_ of the constraint?!?
 function MathOptInterface.modifyconstraint!(
     m    ::MosekModel,
     cref ::MathOptInterface.ConstraintReference{MathOptInterface.SingleVariable,D},
@@ -537,9 +550,10 @@ function MathOptInterface.modifyconstraint!(
     putvarbound(m.task,j,bk,bl,bu)
 end
 
+
 function MathOptInterface.modifyconstraint!(
     m    ::MosekModel,
-    cref ::MathOptInterface.ConstraintReference{MathOptInterface.ScalarAffineFunction,D},
+    cref ::MathOptInterface.ConstraintReference{MathOptInterface.ScalarAffineFunction{Float64},D},
     dom  ::D) where { D <: Union{MathOptInterface.LessThan{Float64},
                                  MathOptInterface.GreaterThan{Float64},
                                  MathOptInterface.EqualTo{Float64},
@@ -551,7 +565,7 @@ function MathOptInterface.modifyconstraint!(
     for i in subi
         bk,bl,bu = getconbound(m.task,i)
         bl,bu = modifybounds(bl,bu,dom)
-        putconbound(m.task,j,bk,bl,bu)
+        putconbound(m.task,i,bk,bl,bu)
     end
 end
 
@@ -597,16 +611,12 @@ function MathOptInterface.modifyconstraint!(m::MosekModel,
     bk = Vector{Int32}(length(subi))
     bl = Vector{Float64}(length(subi))
     bu = Vector{Float64}(length(subi))
-    for i in 1:length(subi)
-        bki,bli,bui = getconboundlist(m.task,subi[i])
-        bk[i] = bki
-        bl[i] = bli
-        bu[i] = bui
-    end
 
+    bk,bl,bu = getconboundlist(m.task,convert(Vector{Int32},subi))
     bl += m.c_constant[subi] - func.new_constant
     bu += m.c_constant[subi] - func.new_constant
     m.c_constant[subi] = func.new_constant
+    
     putconboundlist(m.task,convert(Vector{Int32},subi),bk,bl,bu)
 end
 
