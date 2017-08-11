@@ -1,6 +1,6 @@
 include("LinkedInts.jl")
 
-const DEBUG = true
+const DEBUG = false
 
 mosek_block_type_unallocated = 0
 mosek_block_type_zero   = 1

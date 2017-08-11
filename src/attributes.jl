@@ -12,13 +12,11 @@ MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.ObjectiveValu
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.ObjectiveValue) = true
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ObjectiveValue) = attr.resultindex > 0 && attr.resultindex <= length(m.solutions)
 
-MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.ObjectiveBound) = true
-MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ObjectiveBound) = true
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.ObjectiveBound) = getintinf(m.task,MSK_IINF_MIO_NUM_RELAX) > 0
 MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.ObjectiveBound) = getdouinf(m.task,MSK_DINF_MIO_OBJ_BOUND)
 
-MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.RelativeGap) = true
-MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.RelativeGap) = true
-MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.RelativeGap) = getdouinf(m.task,MSK_DINF_MIO_REL_GAP)
+MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.RelativeGap) = getdouinf(m.task,MSK_DINF_MIO_OBJ_REL_GAP) > -1.0
+MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.RelativeGap) = getdouinf(m.task,MSK_DINF_MIO_OBJ_REL_GAP)
 
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.SolveTime) = true
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.SolveTime) = true
@@ -54,29 +52,29 @@ end
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.SimplexIterations) = true
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.SimplexIterations) = true
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.SimplexIterations)
-    miosimiter = getliintinf(m.task,MSK_LIINF_MIO_SIMPLEX_ITER)
+    miosimiter = getlintinf(m.task,MSK_LIINF_MIO_SIMPLEX_ITER)
     if miosimiter > 0
         Int(miosimiter)
     else
-        Int(getiintinf(m.task,MSK_IINF_SIM_PRIMAL_ITER) + getliintinf(m.task,MSK_IINF_SIM_DUAL_ITER))
+        Int(getintinf(m.task,MSK_IINF_SIM_PRIMAL_ITER) + getintinf(m.task,MSK_IINF_SIM_DUAL_ITER))
     end
 end
 
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.BarrierIterations) = true
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.BarrierIterations) = true
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.BarrierIterations)
-    miosimiter = getliintinf(m.task,MSK_LIINF_MIO_INTPNT_ITER)
+    miosimiter = getlintinf(m.task,MSK_LIINF_MIO_INTPNT_ITER)
     if miosimiter > 0
         Int(miosimiter)
     else
-        Int(getiintinf(m.task,MSK_IINF_INTPNT_ITER))
+        Int(getintinf(m.task,MSK_IINF_INTPNT_ITER))
     end
 end
 
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.NodeCount) = true
 MathOptInterface.cangetattribute(m::MosekModel,attr::MathOptInterface.NodeCount) = true
 function MathOptInterface.getattribute(m::MosekModel,attr::MathOptInterface.NodeCount)
-        Int(getiintinf(m.task,MSK_IINF_NUM_BRANCH))
+        Int(getintinf(m.task,MSK_IINF_MIO_NUM_BRANCH))
 end
 
 MathOptInterface.cangetattribute(m::MosekSolver,attr::MathOptInterface.RawSolver) = true
@@ -427,7 +425,6 @@ function MathOptInterface.getattribute(
     cref  ::MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},D}) where { D <: MathOptInterface.AbstractSet }
     
     n = blocksize(m.c_block,ref2id(cref))
-    println("blocksize = $n")
     res = Vector{Float64}(n)
     MathOptInterface.getattribute!(res,m,attr,cref)
     res

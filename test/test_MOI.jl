@@ -5,7 +5,7 @@ const MOI = MathOptInterface
 
 include(joinpath(Pkg.dir("MathOptInterface"),"test","contlinear.jl"))
 @testset "Continuous linear problems" begin
-    #contlineartest(MosekSolver())
+    contlineartest(MosekSolver())
 end
 
 # include("contquadratic.jl")
@@ -15,7 +15,7 @@ end
 
 include(joinpath(Pkg.dir("MathOptInterface"),"test","contconic.jl"))
 @testset "Continuous conic problems" begin
-    #contconictest(MosekSolver())
+    contconictest(MosekSolver())
 end
 
 include(joinpath(Pkg.dir("MathOptInterface"),"test","intlinear.jl"))

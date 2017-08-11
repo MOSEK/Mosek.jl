@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.0.0.59
+# MOSEK 8.1.0.17
 
 export
   analyzenames,
@@ -849,7 +849,7 @@ function getbarcblocktriplet(task_:: MSKtask)
   subl_ = __tmp_var_5
   __tmp_var_6 = (maxnum_)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
-  valijkl_ = __tmp_var_7
+  valjkl_ = __tmp_var_7
   res = disable_sigint() do
     @msk_ccall( "getbarcblocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
@@ -945,10 +945,10 @@ end
 
 getbarvarname{T1}(task:: MSKtask,i:: T1) = getbarvarname(task,Int32(i))
 function getbarvarname(task_:: MSKtask,i_:: Int32)
-  maxlen_ = (1 + getbarvarnamelen(task_,(i_)))
-  name_ = zeros(UInt8,(maxlen_)+1)
+  sizename_ = (1 + getbarvarnamelen(task_,(i_)))
+  name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
+    @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK
@@ -1144,10 +1144,10 @@ end
 
 getconename{T1}(task:: MSKtask,i:: T1) = getconename(task,Int32(i))
 function getconename(task_:: MSKtask,i_:: Int32)
-  maxlen_ = (1 + getconenamelen(task_,(i_)))
-  name_ = zeros(UInt8,(maxlen_)+1)
+  sizename_ = (1 + getconenamelen(task_,(i_)))
+  name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
+    @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK
@@ -1185,10 +1185,10 @@ end
 
 getconname{T1}(task:: MSKtask,i:: T1) = getconname(task,Int32(i))
 function getconname(task_:: MSKtask,i_:: Int32)
-  maxlen_ = (1 + getconnamelen(task_,(i_)))
-  name_ = zeros(UInt8,(maxlen_)+1)
+  sizename_ = (1 + getconnamelen(task_,(i_)))
+  name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,maxlen_,name_)
+    @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK
@@ -1530,10 +1530,10 @@ function getmemusage(task_:: MSKtask)
   (convert(Int64,meminuse_[1]),convert(Int64,maxmemuse_[1]))
 end
 
-function getnadouinf(task_:: MSKtask,whichdinf_:: AbstractString)
+function getnadouinf(task_:: MSKtask,infitemname_:: AbstractString)
   dvalue_ = Array{Float64}((1,))
   res = disable_sigint() do
-    @msk_ccall( "getnadouinf",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Float64},),task_.task,string(whichdinf_),dvalue_)
+    @msk_ccall( "getnadouinf",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Float64},),task_.task,string(infitemname_),dvalue_)
   end
   if res != MSK_RES_OK
     msg = getlasterror(task_)
@@ -1578,12 +1578,12 @@ function getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
   (convert(Int32,parvalue_[1]))
 end
 
-getnastrparam{T2}(task:: MSKtask,paramname:: AbstractString,maxlen:: T2) = getnastrparam(task,paramname,Int32(maxlen))
-function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,maxlen_:: Int32)
+getnastrparam{T2}(task:: MSKtask,paramname:: AbstractString,sizeparamname:: T2) = getnastrparam(task,paramname,Int32(sizeparamname))
+function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname_:: Int32)
   len_ = Array{Int32}((1,))
-  parvalue_ = zeros(UInt8,(maxlen_)+1)
+  parvalue_ = zeros(UInt8,(sizeparamname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),maxlen_,len_,parvalue_)
+    @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
   end
   parvalue_str = convert(String,parvalue_)
   if res != MSK_RES_OK
@@ -1788,10 +1788,10 @@ function getnumvar(task_:: MSKtask)
 end
 
 function getobjname(task_:: MSKtask)
-  maxlen_ = (1 + getobjnamelen(task_))
-  objname_ = zeros(UInt8,(maxlen_)+1)
+  sizeobjname_ = (1 + getobjnamelen(task_))
+  objname_ = zeros(UInt8,(sizeobjname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getobjname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,maxlen_,objname_)
+    @msk_ccall( "getobjname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,sizeobjname_,objname_)
   end
   objname_str = convert(String,objname_)
   if res != MSK_RES_OK
@@ -2407,10 +2407,10 @@ function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
 end
 
 function gettaskname(task_:: MSKtask)
-  maxlen_ = (1 + gettasknamelen(task_))
-  taskname_ = zeros(UInt8,(maxlen_)+1)
+  sizetaskname_ = (1 + gettasknamelen(task_))
+  taskname_ = zeros(UInt8,(sizetaskname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "gettaskname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,maxlen_,taskname_)
+    @msk_ccall( "gettaskname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,sizetaskname_,taskname_)
   end
   taskname_str = convert(String,taskname_)
   if res != MSK_RES_OK
@@ -2469,10 +2469,10 @@ end
 
 getvarname{T1}(task:: MSKtask,j:: T1) = getvarname(task,Int32(j))
 function getvarname(task_:: MSKtask,j_:: Int32)
-  maxlen_ = (1 + getvarnamelen(task_,(j_)))
-  name_ = zeros(UInt8,(maxlen_)+1)
+  sizename_ = (1 + getvarnamelen(task_,(j_)))
+  name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,maxlen_,name_)
+    @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK
@@ -2866,16 +2866,6 @@ function putacolslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2,A:: SparseMatri
   putacolslice(task,first,last,ptrb,ptre,asub,aval)
 end
 function putacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Array{Int64},ptre_:: Array{Int64},asub_:: Array{Int32},aval_:: Array{Float64})
-  __tmp_var_0 = ((last_) - (first_))
-  if length(ptrb_) < __tmp_var_0
-    println("Array argument ptrb is not long enough")
-    throw(BoundsError())
-  end
-  __tmp_var_1 = ((last_) - (first_))
-  if length(ptre_) < __tmp_var_1
-    println("Array argument ptre is not long enough")
-    throw(BoundsError())
-  end
   res = disable_sigint() do
     @msk_ccall( "putacolslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
@@ -3195,11 +3185,11 @@ function putconbound(task_:: MSKtask,i_:: Int32,bk_:: Int32,bl_:: Float64,bu_:: 
   end
 end
 
-putconboundlist{T1,T3,T4}(task:: MSKtask,sub:: Array{T1},bkc:: Array{Int32},blc:: Array{T3},buc:: Array{T4}) = putconboundlist(task,convert(Array{Int32},sub),bkc,convert(Array{Float64},blc),convert(Array{Float64},buc))
-function putconboundlist(task_:: MSKtask,sub_:: Array{Int32},bkc_:: Array{Int32},blc_:: Array{Float64},buc_:: Array{Float64})
-  num_ = minimum([ length(sub_),length(bkc_),length(blc_),length(buc_) ])
+putconboundlist{T1,T3,T4}(task:: MSKtask,sub:: Array{T1},bk:: Array{Int32},bl:: Array{T3},bu:: Array{T4}) = putconboundlist(task,convert(Array{Int32},sub),bk,convert(Array{Float64},bl),convert(Array{Float64},bu))
+function putconboundlist(task_:: MSKtask,sub_:: Array{Int32},bk_:: Array{Int32},bl_:: Array{Float64},bu_:: Array{Float64})
+  num_ = minimum([ length(sub_),length(bk_),length(bl_),length(bu_) ])
   res = disable_sigint() do
-    @msk_ccall( "putconboundlist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bkc_,blc_,buc_)
+    @msk_ccall( "putconboundlist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bk_,bl_,bu_)
   end
   if res != MSK_RES_OK
     msg = getlasterror(task_)

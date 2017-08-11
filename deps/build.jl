@@ -2,7 +2,7 @@ include("liftedfrombindeps.jl")
 
 # define current version:
 mskvmajor = "8"
-mskvminor = "0"
+mskvminor = "1"
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
@@ -22,21 +22,19 @@ mskplatform,distroext =
 
 libalternatives =
   if     mskplatform == "linux32x86"
-                                       [ ("libmosek.so.8.0",     "libmosekscopt8_0.so"),    ]
+                                       [ ("libmosek.so.$(mskvmajor).$(mskvminor)",     "libmosekscopt$(mskvmajor)_$(mskvminor).so"),    ]
   elseif mskplatform == "linux64x86"
-                                       [ ("libmosek64.so.8.0",   "libmosekscopt8_0.so"),    ]
+                                       [ ("libmosek64.so.$(mskvmajor).$(mskvminor)",   "libmosekscopt$(mskvmajor)_$(mskvminor).so"),    ]
   elseif mskplatform == "osx64x86"
-                                       [ ("libmosek64.8.0.dylib","libmosekscopt8_0.dylib"), ]
+                                       [ ("libmosek64.$(mskvmajor).$(mskvminor).dylib","libmosekscopt$(mskvmajor)_$(mskvminor).dylib"), ]
   elseif mskplatform == "win32x86"
-                                       [ ("mosek8_0.dll",        "mosekscopt8_0.dll"),      ]
+                                       [ ("mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"),      ]
   elseif mskplatform == "win64x86"
-                                       [ ("mosek64_8_0.dll",     "mosekscopt8_0.dll"),      ]
+                                       [ ("mosek64_$(mskvmajor)_$(mskvminor).dll",     "mosekscopt$(mskvmajor)_$(mskvminor).dll"),      ]
   else   error("Platform not supported")
   end
 
 bindepsdir = dirname(@__FILE__)
-
-
 
 
 
@@ -105,11 +103,11 @@ mskbindir =
         instmethod = "external"
     
         mosekbindir
-    elseif ! forcedownload && haskey(ENV,"MOSEK_8_0_BINDIR")
-        mosekbindir = ENV["MOSEK_8_0_BINDIR"]
+    elseif ! forcedownload && haskey(ENV,"MOSEK_$(mskvmajor)_$(mskvminor)_BINDIR")
+        mosekbindir = ENV["MOSEK_$(mskvmajor)_$(mskvminor)_BINDIR"]
         
         if ! bindirIsCurrentVersion(mosekbindir)
-            error("MOSEK_8_0_BINDIR ($mosekbindir) does not point to a MOSEK bin directory")
+            error("MOSEK_$(mskvmajor)_$(mskvminor)_BINDIR ($mosekbindir) does not point to a MOSEK bin directory")
         end
         instmethod = "external"
     
@@ -124,22 +122,22 @@ mskbindir =
 # 2b. Otherwise, look in the UNIX default installation path
     elseif ! forcedownload && 
         haskey(ENV,"HOME") &&
-        bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin"))
+        bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","$mskvmajor","tools","platform",mskplatform,"bin"))
 
         instmethod = "external"
         
-        joinpath(ENV["HOME"],"mosek","8","tools","platform",mskplatform,"bin")
+        joinpath(ENV["HOME"],"mosek","$mskvmajor","tools","platform",mskplatform,"bin")
 # 2c. Windows default install path
     elseif ! forcedownload && 
         haskey(ENV,"HOMEDRIVE") &&
         haskey(ENV,"HOMEPATH") &&
-        bindirIsCurrentVersion(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","8","tools","platform",mskplatform,"bin"))
+        bindirIsCurrentVersion(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","$mskvmajor","tools","platform",mskplatform,"bin"))
         
         home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
 
         instmethod = "external"
         
-        joinpath(home,"mosek","8","tools","platform",mskplatform,"bin")
+        joinpath(home,"mosek","$mskvmajor","tools","platform",mskplatform,"bin")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
         srcdir   = joinpath(bindepsdir,"src")

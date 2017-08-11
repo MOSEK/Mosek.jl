@@ -328,12 +328,14 @@ function MathOptInterface.addconstraint!(
     m :: MosekModel,
     xs :: MathOptInterface.SingleVariable,
     dom :: D) where {D <: MathOptInterface.AbstractScalarSet}
+
     
     subj = getindexes(m.x_block, ref2id(xs.variable))
     
     mask = domain_type_mask(dom)
+    #println(dom," ",@sprintf("%x",m.x_boundflags[subj[1]]))
     if mask & m.x_boundflags[subj[1]] != 0
-        error("Cannot multiple bound sets of the same type to a variable")
+        error("Cannot put multiple bound sets of the same type on a variable")
     end
 
     xcid = allocatevarconstraints(m,1)
@@ -353,7 +355,9 @@ function MathOptInterface.addconstraint!(
     conref
 end
 
-function MathOptInterface.addconstraint!(m :: MosekModel, xs :: MathOptInterface.VectorOfVariables, dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
+function MathOptInterface.addconstraint!(m   :: MosekModel,
+                                         xs  :: MathOptInterface.VectorOfVariables,
+                                         dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
     subj = Vector{Int}(length(xs.variables))
     for i in 1:length(subj)
         getindexes(m.x_block, ref2id(xs.variables[i]),subj,i)
@@ -361,7 +365,7 @@ function MathOptInterface.addconstraint!(m :: MosekModel, xs :: MathOptInterface
     
     mask = domain_type_mask(dom)
     if any(mask .& m.x_boundflags[subj[1]] .> 0)
-        error("Cannot multiple bound sets of the same type to a variable")
+        error("Cannot put multiple bound sets of the same type to a variable")
     end
 
     N = MathOptInterface.dimension(dom)
