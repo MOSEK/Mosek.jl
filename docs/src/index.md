@@ -1,3 +1,7 @@
+```@meta
+CurrentModule = Mosek
+```
+
 # MOSEK Solver API Reference
 
 ## Create and destroy MOSEK objects 

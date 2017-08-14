@@ -1,10 +1,12 @@
-using Documenter, Mosek
+using Documenter
+import Mosek
 
 makedocs(
     format = :html,
     sitename = "Mosek",
     pages = [
-        "index.md",
+        "Index"         => "index.md",
+        "API Reference" => "Mosek-Functions.md"
     ]
 )
 
