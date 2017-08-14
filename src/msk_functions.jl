@@ -343,9 +343,9 @@ possibly dual) objective value and the solution status.
 
 Following parameters can be used to configure the printed statistics:
 
-* ``MSK_IPAR_ANA_SOL_BASIS`` enables or disables printing of statistics specific to the basis solution (condition number, number of basic variables etc.). Default is on.
-* ``MSK_IPAR_ANA_SOL_PRINT_VIOLATED`` enables or disables listing names of all constraints (both primal and dual) which are violated by the solution. Default is off.
-* ``MSK_DPAR_ANA_SOL_INFEAS_TOL`` is the tolerance defining when a constraint is considered violated. If a constraint is violated more than this, it will be listed in the summary.
+* `MSK_IPAR_ANA_SOL_BASIS`` enables or disables printing of statistics specific to the basis solution (condition number, number of basic variables etc.). Default is on.
+* `MSK_IPAR_ANA_SOL_PRINT_VIOLATED`` enables or disables listing names of all constraints (both primal and dual) which are violated by the solution. Default is off.
+* `MSK_DPAR_ANA_SOL_INFEAS_TOL`` is the tolerance defining when a constraint is considered violated. If a constraint is violated more than this, it will be listed in the summary.
 """
 function analyzesolution end
 function analyzesolution(task_:: MSKtask,whichstream_:: Int32,whichsol_:: Int32)
@@ -392,80 +392,33 @@ end
 Appends a new conic constraint to the problem. Hence, add a constraint
 
 ```math
- 
-\\hat
-{x} 
-\\in
- 
-\\K
+ \\hat{x} \\in \\mathcal{K}
 ```
-to the problem where ``\\K`` is a convex cone. ``\\hat{x}`` is a
+to the problem where ``\\mathcal{K}`` is a convex cone. ``\\hat{x}`` is a
 subset of the variables which will be specified by the argument
 `submem`.
 
 Depending on the value of `ct` this function
-appends a normal (``MSK_XXX_CONETYPE.QUAD``) or
+appends a normal (`MSK_CT_QUAD`) or
 rotated quadratic cone
-(``MSK_XXX_CONETYPE.RQUAD``).
+(`MSK_CT_RQUAD`).
 
 Define 
 
 ```math
- 
-\\hat
-{x} = x_{
-\\mathtt
-{submem}[0]},
-\\ldots
-,x_{
-\\mathtt
-{submem}[
-\\mathtt
-{nummem}-1]}.
+ \\hat{x} = x_{\\mathtt{submem}[0]},\\ldots,x_{\\mathtt{submem}[\\mathtt{nummem}-1]}.
 ```
 Depending on the value of `ct` this function appends one of the constraints:
 
-* Quadratic cone (``MSK_XXX_CONETYPE.QUAD``) : 
+* Quadratic cone (`MSK_CT_QUAD`) : 
 
 ```math
- 
-\\hat
-{x}_0 
-\\geq
- 
-\\sqrt
-{
-\\sum
-_{i=1}^{i<
-\\mathtt
-{nummem}} 
-\\hat
-{x}_i^2}
+ \\hat{x}_0 \\geq \\sqrt{\\sum_{i=1}^{i<\\mathtt{nummem}} \\hat{x}_i^2}
 ```
-* Rotated quadratic cone (``MSK_XXX_CONETYPE.RQUAD``) : 
+* Rotated quadratic cone (`MSK_CT_RQUAD`) : 
 
 ```math
- 2 
-\\hat
-{x}_0 
-\\hat
-{x}_1 
-\\geq
- 
-\\sum
-_{i=2}^{i<
-\\mathtt
-{nummem}} 
-\\hat
-{x}^2_i, 
-\\mathcal{C}_q
- 
-\\hat
-{x}_{0}, 
-\\hat
-{x}_1 
-\\geq
- 0
+ 2 \\hat{x}_0 \\hat{x}_1 \\geq \\sum_{i=2}^{i<\\mathtt{nummem}} \\hat{x}^2_i, \\mathcal{C}_q \\hat{x}_{0}, \\hat{x}_1 \\geq 0
 ```
 Please note that the sets of variables appearing in different conic constraints must be disjoint.
 
@@ -644,13 +597,11 @@ outlined in :cite:`STEWART:98:A`, pp. 388-391.
 By definition the 1-norm condition number of a matrix ``B`` is defined as
 
 ```math
- 
-\\kappa
-_1(B) := \|B\|_1 \|B^{-1}\|_1.
+ \\kappa_1(B) := \\|B\\|_1 \\|B^{-1}\\|_1.
 ```
 Moreover, the larger the condition number is the harder it is to solve
 linear equation systems involving ``B``.  Given estimates for
-``\|B\|_1`` and ``\|B^{-1}\|_1`` it is also possible to
+``\\|B\\|_1`` and ``\\|B^{-1}\\|_1`` it is also possible to
 estimate ``\\kappa_1(B)``.
 """
 function basiscond end
@@ -716,7 +667,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 
-This function checks if a quadratic optimization problem is convex. The amount of checking is controlled by ``MSK_IPAR_CHECK_CONVEXITY``.
+This function checks if a quadratic optimization problem is convex. The amount of checking is controlled by `MSK_IPAR_CHECK_CONVEXITY``.
 
 The function reports an error if the problem is not convex.
 """
@@ -765,81 +716,31 @@ end
 * `value :: Float64`. New value for the bound.
 
 Changes a bound for one constraint or variable. If
-`accmode` equals ``MSK_XXX_ACCMODE.CON``, a
+`accmode` equals `MSK_ACC_CON`, a
 constraint bound is changed, otherwise a variable
 bound is changed.
 
 If `lower` is non-zero, then the lower bound is changed as follows:
 
 ```math
-
-
-    
-\\mbox
-{new lower bound} =
-        
-\\left
-\{
-            
-\\begin
-{array}{ll}
-                - 
-\\infty
-,     & 
-\\mathtt
-{finite}=0, \\
-                
-\\mathtt
-{value} & 
-\\mbox
-{otherwise}. 
-            
-\\end
-{array}
-        
-\\right
-.
-
-
-
-
-
+\\mbox{new lower bound} =
+    \\left\\{
+        \\begin{array}{ll}
+            - \\infty,     & \\mathtt{finite}=0, \\\\
+            \\mathtt{value} & \\mbox{otherwise}. 
+        \\end{array}
+    \\right.
 ```
 Otherwise if `lower` is zero, then
 
 ```math
-
-
-    
-\\mbox
-{new upper bound} = 
-        
-\\left
-\{ 
-            
-\\begin
-{array}{ll}
-                
-\\infty
-,     & 
-\\mathtt
-{finite}=0, \\
-                
-\\mathtt
-{value} & 
-\\mbox
-{otherwise}. 
-            
-\\end
-{array}
-        
-\\right
-.
-
-
-
-
-
+\\mbox{new upper bound} = 
+    \\left\\{ 
+        \\begin{array}{ll}
+            \\infty,     & \\mathtt{finite}=0, \\\\
+            \\mathtt{value} & \\mbox{otherwise}. 
+        \\end{array}
+    \\right.
 ```
 Please note that this function automatically
 updates the bound key for bound, in particular, if
@@ -873,73 +774,24 @@ Changes a bound for one constraint.
 If `lower` is non-zero, then the lower bound is changed as follows:
 
 ```math
-
-
-    
-\\mbox
-{new lower bound} =
-      
-\\left
-\{
-        
-\\begin
-{array}{ll}
-          - 
-\\infty
-,       & 
-\\mathtt
-{finite}=0, \\
-          
-\\mathtt
-{value}  & 
-\\mbox
-{otherwise}. 
-        
-\\end
-{array}
-      
-\\right
-.
-
-
-
-
+\\mbox{new lower bound} =
+  \\left\\{
+    \\begin{array}{ll}
+      - \\infty,       & \\mathtt{finite}=0, \\\\
+      \\mathtt{value}  & \\mbox{otherwise}. 
+    \\end{array}
+  \\right.
 ```
 Otherwise if `lower` is zero, then
 
 ```math
-
-
-    
-\\mbox
-{new upper bound} = 
-      
-\\left
-\{
-        
-\\begin
-{array}{ll}
-          
-\\infty
-,        & 
-\\mathtt
-{finite}=0, \\
-          
-\\mathtt
-{value} & 
-\\mbox
-{otherwise}. 
-        
-\\end
-{array}
-      
-\\right
-.
-
-
-
-
-
+\\mbox{new upper bound} = 
+  \\left\\{
+    \\begin{array}{ll}
+      \\infty,        & \\mathtt{finite}=0, \\\\
+      \\mathtt{value} & \\mbox{otherwise}. 
+    \\end{array}
+  \\right.
 ```
 Please note that this function automatically updates the bound key for the 
 bound, in particular, if the lower and upper bounds are identical, the
@@ -972,72 +824,24 @@ Changes a bound for one variable.
 If `lower` is non-zero, then the lower bound is changed as follows:
 
 ```math
-
-
-    
-\\mbox
-{new lower bound} =
-      
-\\left
-\{
-        
-\\begin
-{array}{ll}
-          - 
-\\infty
-,     & 
-\\mathtt
-{finite}=0, \\
-          
-\\mathtt
-{value} & 
-\\mbox
-{otherwise}. 
-        
-\\end
-{array}
-      
-\\right
-.
-
-
-
-
+\\mbox{new lower bound} =
+  \\left\\{
+    \\begin{array}{ll}
+      - \\infty,     & \\mathtt{finite}=0, \\\\
+      \\mathtt{value} & \\mbox{otherwise}. 
+    \\end{array}
+  \\right.
 ```
 Otherwise if `lower` is zero, then
 
 ```math
-
-
-    
-\\mbox
-{new upper bound} = 
-      
-\\left
-\{
-        
-\\begin
-{array}{ll}
-          
-\\infty
-,     & 
-\\mathtt
-{finite}=0, \\
-          
-\\mathtt
-{value} & 
-\\mbox
-{otherwise}. 
-        
-\\end
-{array}
-      
-\\right
-.
-
-
-
-
+\\mbox{new upper bound} = 
+  \\left\\{
+    \\begin{array}{ll}
+      \\infty,     & \\mathtt{finite}=0, \\\\
+      \\mathtt{value} & \\mbox{otherwise}. 
+    \\end{array}
+  \\right.
 ```
 Please note that this function automatically updates the bound key for the bound,
 in particular, if the lower and upper bounds are identical, the bound key is
@@ -1129,15 +933,9 @@ end
 Calculates sensitivity information for objective coefficients. The indexes of the coefficients to analyze are
 
 ```math
- \{
-\\mathtt
-{subj}[i] ~|~ i = 0,
-\\ldots
-,
-\\mathtt
-{numj}-1\}
+ \\{\\mathtt{subj}[i] ~|~ i = 0,\\ldots,\\mathtt{numj}-1\\}
 ```
-The type of sensitivity analysis to perform (basis or optimal partition) is controlled by the parameter ``MSK_IPAR_SENSITIVITY_TYPE``.
+The type of sensitivity analysis to perform (basis or optimal partition) is controlled by the parameter `MSK_IPAR_SENSITIVITY_TYPE``.
 
 For an example, please see Section :ref:`doc.shared.sensitivity_example`.
 """
@@ -1302,25 +1100,7 @@ end
 Obtains the number non-zeros in a rectangular piece of ``A``, i.e. the number of elements in the set
 
 ```math
- \{ (i,j)~:~ a_{i,j} 
-\\neq
- 0,~ 
-\\mathtt
-{firsti} 
-\\leq
- i 
-\\leq
- 
-\\mathtt
-{lasti}-1, ~
-\\mathtt
-{firstj} 
-\\leq
- j 
-\\leq
- 
-\\mathtt
-{lastj}-1\}
+ \\{ (i,j)~:~ a_{i,j} \\neq 0,~ \\mathtt{firsti} \\leq i \\leq \\mathtt{lasti}-1, ~\\mathtt{firstj} \\leq j \\leq \\mathtt{lastj}-1\\}
 ```
 This function is not an efficient way to obtain the number of non-zeros in one
 row or column. In that case use the function `Mosek.getarownumnz` or `Mosek.getacolnumnz`.
@@ -1861,7 +1641,7 @@ end
 * `j :: Int32`. Index of the semidefinite variable.
 * `barsj :: Array{Float64}`. Value of the j'th dual variable of barx.
 
-Obtains the dual solution for a semidefinite variable. Only the lower triangular part of ``\\barS_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
+Obtains the dual solution for a semidefinite variable. Only the lower triangular part of ``\\bar S_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
 """
 function getbarsj end
 getbarsj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarsj(task,whichsol,Int32(j))
@@ -1962,7 +1742,7 @@ end
 * `j :: Int32`. Index of the semidefinite variable.
 * `barxj :: Array{Float64}`. Value of the j'th variable of barx.
 
-Obtains the primal solution for a semidefinite variable. Only the lower triangular part of ``\\barX_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
+Obtains the primal solution for a semidefinite variable. Only the lower triangular part of ``\\bar X_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
 """
 function getbarxj end
 getbarxj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarxj(task,whichsol,Int32(j))
@@ -2545,20 +2325,12 @@ end
 * `sub :: Array{Int32}`. An array of indexes of barx variables.
 * `viol :: Array{Float64}`. List of violations corresponding to sub.
 
-Let ``(\\barS_j)^*`` be the value of variable ``\\barS_j`` for the
+Let ``(\\bar S_j)^*`` be the value of variable ``\\bar S_j`` for the
 specified solution.  Then the dual violation of the solution associated with
-variable ``\\barS_j`` is given by
+variable ``\\bar S_j`` is given by
 
 ```math
- 
-\\max
-(-
-\\lambda
-_{
-\\min
-}(
-\\barS
-_j),\ 0.0).
+ \\max(-\\lambda_{\\min}(\\bar S_j),\\ 0.0).
 ```
 Both when the solution is a certificate of primal infeasibility and when it is
 dual feasible solution the violation should be small.
@@ -2593,44 +2365,18 @@ The violation of the dual solution associated with the ``i``-th constraint
 is computed as follows
 
 ```math
- 
-\\max
-( 
-\\rho
-( (s_l^c)_i^*,(b_l^c)_i ),\ 
-\\rho
-( (s_u^c)_i^*, -(b_u^c)_i ),\ |-y_i+(s_l^c)_i^*-(s_u^c)_i^*| )
+ \\max( \\rho( (s_l^c)_i^*,(b_l^c)_i ),\\ \\rho( (s_u^c)_i^*, -(b_u^c)_i ),\\ |-y_i+(s_l^c)_i^*-(s_u^c)_i^*| )
 ```
 where
 
 ```math
-
-
-    
-\\rho
-(x,l) =
-      
-\\left
-\{
-        
-\\begin
-{array}{ll}
-           -x,   & l > -
-\\infty
- , \\
-           |x|, &  
-\\mbox
-{otherwise}.\\
-        
-\\end
-{array}
-      
-\\right
-.
-
-
-
-
+\\rho(x,l) =
+  \\left\\{
+    \\begin{array}{ll}
+       -x,   & l > -\\infty , \\\\
+       |x|, &  \\mbox{otherwise}.\\\\
+    \\end{array}
+  \\right.
 ```
 Both when the solution is a certificate of primal infeasibility or it is a dual feasible solution the violation should be small.
 """
@@ -2665,34 +2411,12 @@ specified solution. For simplicity let us assume that ``s_n^x`` is a member
 of a quadratic cone, then the violation is computed as follows
 
 ```math
-
-
-    
-\\left
-\{
-      
-\\begin
-{array}{ll}
-        
-\\max
-(0,(\|s_n^x\|_{2:n}^*-(s_n^x)_1^*) / 
-\\sqrt
-{2}, & (s_n^x)^* 
-\\geq
- -\|(s_n^x)_{2:n}^*\|, \\
-        \|(s_n^x)^*\|, & 
-\\mbox
-{otherwise.}
-      
-\\end
-{array}
-    
-\\right
-.
-
-
-
-
+\\left\\{
+  \\begin{array}{ll}
+    \\max(0,(\\|s_n^x\\|_{2:n}^*-(s_n^x)_1^*) / \\sqrt{2}, & (s_n^x)^* \\geq -\\|(s_n^x)_{2:n}^*\\|, \\\\
+    \\|(s_n^x)^*\\|, & \\mbox{otherwise.}
+  \\end{array}
+\\right.
 ```
 Both when the solution is a certificate of primal infeasibility or when it is a
 dual feasible solution the violation should be small.
@@ -2727,57 +2451,18 @@ The violation of the dual solution associated with the ``j``-th variable is
 computed as follows
 
 ```math
- 
-\\max
- 
-\\left
-(
-\\rho
-((s_l^x)_j^*,(b_l^x)_j),\ 
-\\rho
-((s_u^x)_j^*,-(b_u^x)_j),\ |
-\\sum
-_{i=
-\\idxbeg
-}^{
-\\idxend
-{numcon}} a_{ij} y_i+(s_l^x)_j^*-(s_u^x)_j^* - 
-\\tau
- c_j| 
-\\right
-)
+ \\max \\left(\\rho((s_l^x)_j^*,(b_l^x)_j),\\ \\rho((s_u^x)_j^*,-(b_u^x)_j),\\ |\\sum_{i=1}^{+1{numcon}} a_{ij} y_i+(s_l^x)_j^*-(s_u^x)_j^* - \\tau c_j| \\right)
 ```
 where
 
 ```math
-
-
-  
-\\rho
-(x,l) =
-    
-\\left
-\{
-      
-\\begin
-{array}{ll}
-         -x,   & l > -
-\\infty
- , \\
-         |x|, &  
-\\mbox
-{otherwise}
-      
-\\end
-{array}
-    
-\\right
-.
-
-
-
-
-
+\\rho(x,l) =
+  \\left\\{
+    \\begin{array}{ll}
+       -x,   & l > -\\infty , \\\\
+       |x|, &  \\mbox{otherwise}
+    \\end{array}
+  \\right.
 ```
 and ``\\tau=0`` if the solution is a certificate of primal infeasibility and ``\\tau=1`` otherwise. The formula for computing the violation is only shown
 for the linear case but is generalized appropriately for the more general problems. Both when the solution is a certificate of primal infeasibility or when it is a dual feasible solution the violation should be small.
@@ -3753,20 +3438,12 @@ end
 * `viol :: Array{Float64}`. List of violations corresponding to sub.
 
 Computes the primal solution violation for a set of semidefinite variables. 
-Let ``(\\barX_j)^*`` be the value of the variable ``\\barX_j`` for the
+Let ``(\\bar X_j)^*`` be the value of the variable ``\\bar X_j`` for the
 specified solution.  Then the primal violation of the solution associated with
-variable ``\\barX_j`` is given by
+variable ``\\bar X_j`` is given by
 
 ```math
- 
-\\max
-(-
-\\lambda
-_{
-\\min
-}(
-\\barX
-_j),\ 0.0).
+ \\max(-\\lambda_{\\min}(\\bar X_j),\\ 0.0).
 ```
 Both when the solution is a certificate of dual infeasibility or when it is primal feasible the violation should be small.
 """
@@ -3800,19 +3477,7 @@ Computes the primal solution violation for a set of constraints.
 The primal violation of the solution associated with the ``i``-th constraint is given by
 
 ```math
- 
-\\max
-(
-\\tau
- l_i^c - (x_i^c)^*,\ (x_i^c)^* - 
-\\tau
- u_i^c),\ |
-\\sum
-_{j=
-\\idxbeg
-}^{
-\\idxend
-{numvar}} a_{ij} x_j^* - x_i^c|)
+ \\max(\\tau l_i^c - (x_i^c)^*,\\ (x_i^c)^* - \\tau u_i^c),\\ |\\sum_{j=1}^{+1{numvar}} a_{ij} x_j^* - x_i^c|)
 ```
 where ``\\tau=0`` if the solution is a certificate of
 dual infeasibility and ``\\tau=1`` otherwise. Both when
@@ -3852,34 +3517,12 @@ For simplicity let us assume that ``x`` is a member of a quadratic cone, then
 the violation is computed as follows
 
 ```math
-
-
-  
-\\left
-\{
-    
-\\begin
-{array}{ll}
-      
-\\max
-(0,\|x_{2:n}\|-x_1) / 
-\\sqrt
-{2}, & x_1 
-\\geq
- -\|x_{2:n}\|, \\
-      \|x\|, & 
-\\mbox
-{otherwise.}
-    
-\\end
-{array}
-  
-\\right
-.
-
-
-
-
+\\left\\{
+  \\begin{array}{ll}
+    \\max(0,\\|x_{2:n}\\|-x_1) / \\sqrt{2}, & x_1 \\geq -\\|x_{2:n}\\|, \\\\
+    \\|x\\|, & \\mbox{otherwise.}
+  \\end{array}
+\\right.
 ```
 Both when the solution is a certificate of dual infeasibility or when it is primal feasible the violation should be small.
 """
@@ -3915,13 +3558,7 @@ solution.  Then the primal violation of the solution associated with variable
 ``x_j`` is given by
 
 ```math
- 
-\\max
-( 
-\\tau
- l_j^x - x_j^*,\ x_j^* - 
-\\tau
- u_j^x,\ 0).
+ \\max( \\tau l_j^x - x_j^*,\\ x_j^* - \\tau u_j^x,\\ 0).
 ```
 where ``\\tau=0`` if the solution is a certificate of
 dual infeasibility and ``\\tau=1`` otherwise. Both when
@@ -4062,22 +3699,9 @@ end
 Computes the reduced costs for a slice of variables and returns them in the array `redcosts` i.e.
 
 ```math
+:label: ais-eq-redcost
 
-    :label: ais-eq-redcost
-
-    
-\\mathtt
-{redcosts}[j-
-\\mathtt
-{first}] = (s_l^x)_j-(s_u^x)_j, ~j=
-\\mathtt
-{first},
-\\ldots
-,
-\\mathtt
-{last}-1
-
-
+\\mathtt{redcosts}[j-\\mathtt{first}] = (s_l^x)_j-(s_u^x)_j, ~j=\\mathtt{first},\\ldots,\\mathtt{last}-1
 ```
 
 """
@@ -4399,94 +4023,34 @@ Obtains the complete solution.
 Consider the case of linear programming. The primal problem is given by
 
 ```math
-
-
-   
-\\begin
-{array}{lccccl}
-     
-\\mbox
-{minimize}              &      &      & c^T x+c^f &      &        \\
-     
-\\mbox
-{subject to} &  l^c & 
-\\leq
- & A x       & 
-\\leq
- & u^c,     \\
-     &  l^x & 
-\\leq
- & x         & 
-\\leq
- & u^x.   \\
-   
-\\end
-{array}
-
-
-
-
-
+\\begin{array}{lccccl}
+  \\mbox{minimize}              &      &      & c^T x+c^f &      &        \\\\
+  \\mbox{subject to} &  l^c & \\leq & A x       & \\leq & u^c,     \\\\
+  &  l^x & \\leq & x         & \\leq & u^x.   \\\\
+\\end{array}
 ```
 and the corresponding dual problem is
 
 ```math
-
-
-   
-\\begin
-{array}{lccl}
-     
-\\mbox
-{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &  \\
-     & + (l^x)^T s_l^x - (u^x)^T s_u^x + c^f &  \\
-     
-\\mbox
-{subject to} & A^T y + s_l^x - s_u^x                 & = & c, \\
-     & -y    + s_l^c - s_u^c                 & = & 0, \\
-     & s_l^c,s_u^c,s_l^x,s_u^x 
-\\geq
- 0.       &   &    \\
-   
-\\end
-{array}
-
-
-
-
-
+\\begin{array}{lccl}
+  \\mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &  \\\\
+  & + (l^x)^T s_l^x - (u^x)^T s_u^x + c^f &  \\\\
+  \\mbox{subject to} & A^T y + s_l^x - s_u^x                 & = & c, \\\\
+  & -y    + s_l^c - s_u^c                 & = & 0, \\\\
+  & s_l^c,s_u^c,s_l^x,s_u^x \\geq 0.       &   &    \\\\
+\\end{array}
 ```
 A conic optimization problem has the same primal variables as in the linear case. Recall that the dual of a conic optimization problem is given by:
 
 ```math
-
-
-  
-\\begin
-{array}{lccccc}
-    
-\\mbox
-{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &      &    \\
-    & +(l^x)^T s_l^x - (u^x)^T s_u^x + c^f  &      &    \\
-    
-\\mbox
-{subject to} & A^T y + s_l^x - s_u^x + s_n^x         & =    & c, \\
-    & -y + s_l^c - s_u^c                    & =    & 0, \\
-    & s_l^c,s_u^c,s_l^x,s_u^x               & 
-\\geq
- & 0, \\
-    & s_n^x 
-\\in
- 
-\\K
-^*                        &      &    \\
-  
-\\end
-{array}
-
-
-
-
+\\begin{array}{lccccc}
+  \\mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &      &    \\\\
+  & +(l^x)^T s_l^x - (u^x)^T s_u^x + c^f  &      &    \\\\
+  \\mbox{subject to} & A^T y + s_l^x - s_u^x + s_n^x         & =    & c, \\\\
+  & -y + s_l^c - s_u^c                    & =    & 0, \\\\
+  & s_l^c,s_u^c,s_l^x,s_u^x               & \\geq & 0, \\\\
+  & s_n^x \\in \\mathcal{K}^*                        &      &    \\\\
+\\end{array}
 ```
 The mapping between variables and arguments to the function is as follows:
 
@@ -4501,15 +4065,15 @@ The mapping between variables and arguments to the function is as follows:
 
 The meaning of the values returned by this function depend on the *solution status* returned in the argument `solsta`. The most important possible values  of `solsta` are:
 
-* ``MSK_XXX_SOLSTA.OPTIMAL`` : An optimal solution satisfying the optimality criteria for continuous problems is returned.
+* `MSK_SOL_STA_OPTIMAL` : An optimal solution satisfying the optimality criteria for continuous problems is returned.
 
-* ``MSK_XXX_SOLSTA.INTEGER_OPTIMAL`` : An optimal solution satisfying the optimality criteria for integer problems is returned.
+* `MSK_SOL_STA_INTEGER_OPTIMAL` : An optimal solution satisfying the optimality criteria for integer problems is returned.
 
-* ``MSK_XXX_SOLSTA.PRIM_FEAS`` : A solution satisfying the feasibility criteria.
+* `MSK_SOL_STA_PRIM_FEAS` : A solution satisfying the feasibility criteria.
 
-* ``MSK_XXX_SOLSTA.PRIM_INFEAS_CER`` : A primal certificate of infeasibility is returned.
+* `MSK_SOL_STA_PRIM_INFEAS_CER` : A primal certificate of infeasibility is returned.
 
-* ``MSK_XXX_SOLSTA.DUAL_INFEAS_CER`` : A dual certificate of infeasibility is returned.
+* `MSK_SOL_STA_DUAL_INFEAS_CER` : A dual certificate of infeasibility is returned.
 
 In order to retrieve the primal and dual values of semidefinite variables see `Mosek.getbarxj` and `Mosek.getbarsj`.
 """
@@ -5482,7 +5046,7 @@ end
 Calls the optimizer. Depending on the problem type and the selected optimizer
 this will call one of the optimizers in MOSEK. By default the interior point
 optimizer will be selected for continuous problems.  The optimizer may be
-selected manually by setting the parameter ``MSK_IPAR_OPTIMIZER``.
+selected manually by setting the parameter `MSK_IPAR_OPTIMIZER``.
 
 .. msk_only:: c
 
@@ -5490,7 +5054,7 @@ selected manually by setting the parameter ``MSK_IPAR_OPTIMIZER``.
 
 .. msk_only:: java and dotnet and python
 
-   This function throws an exception if an error has occurred during the optimization, e.g the optimizer has run out of memory. Moreover it provides a termination code, relaying information about the conditions under which the optimizer terminated. For example ``MSK_XXX_RESCODE.TRM_MAX_ITERATIONS`` indicates that the optimizer finished because it reached the maximum number of iterations specified by the user.
+   This function throws an exception if an error has occurred during the optimization, e.g the optimizer has run out of memory. Moreover it provides a termination code, relaying information about the conditions under which the optimizer terminated. For example `MSK_RES_TRM_MAX_ITERATIONS` indicates that the optimizer finished because it reached the maximum number of iterations specified by the user.
 """
 function optimize end
 function optimize(task_:: MSKtask)
@@ -5522,7 +5086,7 @@ solve it. If an optimal solution is required the problem should be optimized aft
 The function is applicable to linear and conic problems possibly with integer variables.
 
 Observe that when computing the minimal weighted relaxation the termination tolerance specified by the parameters of the task is employed. For instance
-the parameter ``MSK_IPAR_MIO_MODE`` can be used to make MOSEK ignore the integer constraints during the repair which usually leads to a much faster repair.
+the parameter `MSK_IPAR_MIO_MODE`` can be used to make MOSEK ignore the integer constraints during the repair which usually leads to a much faster repair.
 However, the drawback is of course that the repaired problem may not have an integer feasible solution.
 
 Note the function modifies the task in place. If this is not desired, then apply the function to a cloned task.
@@ -5581,7 +5145,7 @@ Calculates sensitivity information for bounds on variables and constraints. For 
 analysis, the definitions of *shadow price* and *linearity interval* and an example see Section :ref:`doc.sensitivity_analysis`.
 
 The type of sensitivity analysis to be performed (basis or optimal partition)
-is controlled by the parameter ``MSK_IPAR_SENSITIVITY_TYPE``.
+is controlled by the parameter `MSK_IPAR_SENSITIVITY_TYPE``.
 """
 function primalsensitivity end
 primalsensitivity{T1,T3}(task:: MSKtask,subi:: Array{T1},marki:: Array{Int32},subj:: Array{T3},markj:: Array{Int32}) = primalsensitivity(task,convert(Array{Int32},subi),marki,convert(Array{Int32},subj),markj)
@@ -5689,19 +5253,7 @@ end
 Change one column of the linear constraint matrix ``A``. Resets all the elements in column ``j`` to zero and then sets
 
 ```math
- a_{
-\\mathtt
-{subj}[k],
-\\mathtt
-{j}} = 
-\\mathtt
-{valj}[k], 
-\\mathcal{C}_q
- k=0,
-\\ldots
-,
-\\mathtt
-{nzj}-1.
+ a_{\\mathtt{subj}[k],\\mathtt{j}} = \\mathtt{valj}[k], \\mathcal{C}_q k=0,\\ldots,\\mathtt{nzj}-1.
 ```
 
 """
@@ -5734,40 +5286,10 @@ end
 Change a set of columns in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with:
 
 ```math
-
-
-    
-\\begin
-{array}{rl}
-      
-\\mathtt
-{for} & i=
-\\idxbeg
-,
-\\ldots
-,
-\\idxend
-{num}\\
-                  & a_{
-\\mathtt
-{asub}[k],
-\\mathtt
-{sub}[i]} = 
-\\mathtt
-{aval}[k],
-\\mathcal{C}_q
- k=
-\\mathtt
-{ptrb}[i],
-\\ldots
-,
-\\mathtt
-{ptre}[i]-1. 
-    
-\\end
-{array}
-
-
+\\begin{array}{rl}
+  \\mathtt{for} & i=1,\\ldots,+1{num}\\\\
+              & a_{\\mathtt{asub}[k],\\mathtt{sub}[i]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+\\end{array}
 ```
 
 """
@@ -5808,38 +5330,10 @@ end
 Change a slice of columns in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with: 
 
 ```math
-
-
-    
-\\begin
-{array}{rl}
-      
-\\mathtt
-{for} & i=
-\\mathtt
-{first},
-\\ldots
-,
-\\mathtt
-{last}-1\\
-                  & a_{
-\\mathtt
-{asub}[k],i} = 
-\\mathtt
-{aval}[k],
-\\mathcal{C}_q
- k=
-\\mathtt
-{ptrb}[i],
-\\ldots
-,
-\\mathtt
-{ptre}[i]-1. 
-    
-\\end
-{array}
-
-
+\\begin{array}{rl}
+  \\mathtt{for} & i=\\mathtt{first},\\ldots,\\mathtt{last}-1\\\\
+              & a_{\\mathtt{asub}[k],i} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+\\end{array}
 ```
 
 """
@@ -5874,9 +5368,7 @@ end
 Changes a coefficient in the linear coefficient matrix ``A`` using the method
 
 ```math
- a_{i,j} = 
-\\mathtt
-{aij}.
+ a_{i,j} = \\mathtt{aij}.
 ```
 
 """
@@ -5904,21 +5396,7 @@ end
 Changes one or more coefficients in ``A`` using the method
 
 ```math
- a_{
-\\mathtt
-{subi[k]},
-\\mathtt
-{subj[k]}} = 
-\\mathtt
-{valij[k]}, 
-\\mathcal{C}_q
- k=
-\\idxbeg
-,
-\\ldots
-,
-\\idxend
-{num}.
+ a_{\\mathtt{subi[k]},\\mathtt{subj[k]}} = \\mathtt{valij[k]}, \\mathcal{C}_q k=1,\\ldots,+1{num}.
 ```
 Duplicates are not allowed.
 """
@@ -5947,19 +5425,7 @@ end
 Change one column of the linear constraint matrix ``A``. Resets all the elements in row ``i`` to zero and then sets
 
 ```math
- a_{
-\\mathtt
-{i},
-\\mathtt
-{subi}[k]} = 
-\\mathtt
-{vali}[k], 
-\\mathcal{C}_q
- k=0,
-\\ldots
-,
-\\mathtt
-{nzi}-1.
+ a_{\\mathtt{i},\\mathtt{subi}[k]} = \\mathtt{vali}[k], \\mathcal{C}_q k=0,\\ldots,\\mathtt{nzi}-1.
 ```
 
 """
@@ -5992,40 +5458,10 @@ end
 Change a set of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested rows are set to zero and then updated with:  
 
 ```math
-
-
-    
-\\begin
-{array}{rl}
-      
-\\mathtt
-{for} & i=
-\\idxbeg
-,
-\\ldots
-,
-\\idxend
-{num} \\
-                   & a_{
-\\mathtt
-{sub}[i],
-\\mathtt
-{asub}[k]} = 
-\\mathtt
-{aval}[k],
-\\mathcal{C}_q
- k=
-\\mathtt
-{ptrb}[i],
-\\ldots
-,
-\\mathtt
-{ptre}[i]-1. 
-    
-\\end
-{array}
-
-
+\\begin{array}{rl}
+  \\mathtt{for} & i=1,\\ldots,+1{num} \\\\
+               & a_{\\mathtt{sub}[i],\\mathtt{asub}[k]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+\\end{array}
 ```
 
 """
@@ -6066,40 +5502,10 @@ end
 Change a slice of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with:
 
 ```math
-
-
-    
-\\begin
-{array}{rl}
-      
-\\mathtt
-{for} & i=
-\\mathtt
-{first},
-\\ldots
-,
-\\mathtt
-{last}-1 \\
-                   & a_{
-\\mathtt
-{sub}[i],
-\\mathtt
-{asub}[k]} = 
-\\mathtt
-{aval}[k],
-\\mathcal{C}_q
- k=
-\\mathtt
-{ptrb}[i],
-\\ldots
-,
-\\mathtt
-{ptre}[i]-1. 
-    
-\\end
-{array}
-
-
+\\begin{array}{rl}
+  \\mathtt{for} & i=\\mathtt{first},\\ldots,\\mathtt{last}-1 \\\\
+               & a_{\\mathtt{sub}[i],\\mathtt{asub}[k]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+\\end{array}
 ```
 
 """
@@ -6387,9 +5793,9 @@ end
 Changes the bound for either one constraint or one variable.
 
 If the bound value specified is numerically larger than
-``MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
+`MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
 changed accordingly. If a bound value is numerically larger than
-``MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is
+`MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is
 inputted as specified.
 """
 function putbound end
@@ -6505,13 +5911,9 @@ end
 Modifies one coefficient in the linear objective vector ``c``, i.e.
 
 ```math
- c_{
-\\mathtt
-{j}} = 
-\\mathtt
-{cj}.
+ c_{\\mathtt{j}} = \\mathtt{cj}.
 ```
-If the absolute value exceeds ``MSK_DPAR_DATA_TOL_C_HUGE`` an error is generated. If the absolute value exceeds ``MSK_DPAR_DATA_TOL_CJ_LARGE``, a warning is generated, but the coefficient is inputted as specified.
+If the absolute value exceeds `MSK_DPAR_DATA_TOL_C_HUGE`` an error is generated. If the absolute value exceeds `MSK_DPAR_DATA_TOL_CJ_LARGE``, a warning is generated, but the coefficient is inputted as specified.
 """
 function putcj end
 putcj{T1,T2}(task:: MSKtask,j:: T1,cj:: T2) = putcj(task,Int32(j),Float64(cj))
@@ -6536,19 +5938,7 @@ end
 Modifies the coefficients in the linear term ``c`` in the objective using the principle
 
 ```math
- c_{
-\\mathtt
-{subj[t]}} = 
-\\mathtt
-{val[t]}, 
-\\mathcal{C}_q
- t=
-\\idxbeg
-,
-\\ldots
-,
-\\idxend
-{num}.
+ c_{\\mathtt{subj[t]}} = \\mathtt{val[t]}, \\mathcal{C}_q t=1,\\ldots,+1{num}.
 ```
 If a variable index is specified multiple times in `subj` only the last entry is used. Data checks are performed as in `Mosek.putcj`.
 """
@@ -6577,8 +5967,8 @@ end
 
 Changes the bounds for one constraint.
 
-If the bound value specified is numerically larger than ``MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
-changed accordingly. If a bound value is numerically larger than ``MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is inputted as specified.
+If the bound value specified is numerically larger than `MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
+changed accordingly. If a bound value is numerically larger than `MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is inputted as specified.
 """
 function putconbound end
 putconbound{T1,T3,T4}(task:: MSKtask,i:: T1,bk:: Int32,bl:: T3,bu:: T4) = putconbound(task,Int32(i),bk,Float64(bl),Float64(bu))
@@ -6738,15 +6128,7 @@ end
 Modifies a slice in the linear term ``c`` in the objective using the principle
 
 ```math
- c_{
-\\mathtt
-{j}} = 
-\\mathtt
-{slice[j-first]}, 
-\\mathcal{C}_q
- j=first,..,
-\\idxend
-{last}
+ c_{\\mathtt{j}} = \\mathtt{slice[j-first]}, \\mathcal{C}_q j=first,..,+1{last}
 ```
 Data checks are performed as in `Mosek.putcj`.
 """
@@ -6803,7 +6185,7 @@ Sets the value of an integer parameter.
 
    Please notice that some parameters take values that are defined in Enum
    classes. This function accepts only integer values, so to use e.g. the value
-   ``MSK_XXX_ONOFFKEY.ON``, is necessary to use the member `.value`. For example: ::
+   `MSK_ON`, is necessary to use the member `.value`. For example: ::
 
        task.putintparam(mosek.iparam.opf_write_problem, mosek.onoffkey.on.value)
 """
@@ -7141,54 +6523,14 @@ end
 Replace all quadratic entries in the constraints. The list of constraints has the form
 
 ```math
- l_k^c 
-\\leq
-  
-\\half
- 
-\\sum
-_{i=0}^{
-\\idxend
-{numvar}} 
-\\sum
-_{j=0}^{
-\\idxend
-{numvar}} q_{ij}^k x_i x_j + 
-\\sum
-_{j=0}^{
-\\idxend
-{numvar}} a_{kj} x_j 
-\\leq
- u_k^c, ~\  k=0,
-\\ldots
-,m-1.
+ l_k^c \\leq  \\frac{1}{2} \\sum_{i=0}^{+1{numvar}} \\sum_{j=0}^{+1{numvar}} q_{ij}^k x_i x_j + \\sum_{j=0}^{+1{numvar}} a_{kj} x_j \\leq u_k^c, ~\\  k=0,\\ldots,m-1.
 ```
 This function sets all the quadratic terms to zero and then performs the update:
 
 ```math
- q_{
-\\mathtt
-{qcsubi[t]},
-\\mathtt
-{qcsubj[t]}}^{
-\\mathtt
-{qcsubk[t]}} = q_{
-\\mathtt
-{
-\\mathtt
-{qcsubj[t]},qcsubi[t]}}^{
-\\mathtt
-{qcsubk[t]}} = q_{
-\\mathtt
-{
-\\mathtt
-{qcsubj[t]},qcsubi[t]}}^{
-\\mathtt
-{qcsubk[t]}}  + 
-\\mathtt
-{qcval[t]},
+ q_{\\mathtt{qcsubi[t]},\\mathtt{qcsubj[t]}}^{\\mathtt{qcsubk[t]}} = q_{\\mathtt{\\mathtt{qcsubj[t]},qcsubi[t]}}^{\\mathtt{qcsubk[t]}} = q_{\\mathtt{\\mathtt{qcsubj[t]},qcsubi[t]}}^{\\mathtt{qcsubk[t]}}  + \\mathtt{qcval[t]},
 ```
-for ``t=\\idxbeg,\\ldots,\\idxend{numqcnz}``.
+for ``t=1,\\ldots,+1{numqcnz}``.
 
 Please note that:
 
@@ -7262,42 +6604,14 @@ end
 Replace all quadratic terms in the objective. If the objective has the form
 
 ```math
- 
-\\half
- 
-\\sum
-_{i=0}^{
-\\idxend
-{numvar}} 
-\\sum
-_{j=0}^{
-\\idxend
-{numvar}} q_{ij}^o x_i x_j + 
-\\sum
-_{j=0}^{
-\\idxend
-{numvar}} c_{j} x_j + c^f
+ \\frac{1}{2} \\sum_{i=0}^{+1{numvar}} \\sum_{j=0}^{+1{numvar}} q_{ij}^o x_i x_j + \\sum_{j=0}^{+1{numvar}} c_{j} x_j + c^f
 ```
 then this function sets all the quadratic terms to zero and then performs the update:
 
 ```math
- q_{
-\\mathtt
-{qosubi[t]},
-\\mathtt
-{qosubj[t]}}^{o} = q_{
-\\mathtt
-{
-\\mathtt
-{qosubj[t]},qosubi[t]}}^{o} = q_{
-\\mathtt
-{
-\\mathtt
-{qosubj[t]},qosubi[t]}}^{o}  + 
-\\mathtt
-{qoval[t]},
+ q_{\\mathtt{qosubi[t]},\\mathtt{qosubj[t]}}^{o} = q_{\\mathtt{\\mathtt{qosubj[t]},qosubi[t]}}^{o} = q_{\\mathtt{\\mathtt{qosubj[t]},qosubi[t]}}^{o}  + \\mathtt{qoval[t]},
 ```
-for ``t=\\idxbeg,\\ldots,\\idxend{numqonz}``.
+for ``t=1,\\ldots,+1{numqonz}``.
 
 See the description of `Mosek.putqcon` for important remarks and example.
 """
@@ -7335,9 +6649,7 @@ Replaces one coefficient in the quadratic term in the objective. The function
 performs the assignment
 
 ```math
- q_{ij}^o = q_{ji}^o = 
-\\mathtt
-{qoij}.
+ q_{ij}^o = q_{ji}^o = \\mathtt{qoij}.
 ```
 Only the elements in the lower triangular part are accepted. Setting
 ``q_{ij}`` with ``j>i`` will cause an error.
@@ -7882,9 +7194,9 @@ end
 Changes the bounds for one variable.
 
 If the bound value specified is numerically larger than
-``MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
+`MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
 changed accordingly. If a bound value is numerically larger than
-``MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is
+`MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is
 inputted as specified.
 """
 function putvarbound end
@@ -8544,33 +7856,19 @@ matrix denoted ``B``.  This function solves either the linear
 equation system
 
 ```math
+:label: ais-eq-Bxb
 
-   :label: ais-eq-Bxb
-
-   B 
-\\barX
- = b                       
-
-
-
-
+B \\bar X = b                       
 ```
 or the system
 
 ```math
+:label: ais-eq-Btxb
 
-   :label: ais-eq-Btxb
-
-   B^T 
-\\barX
- = b
-
-
-
-
+B^T \\bar X = b
 ```
-for the unknowns ``\\barX``, with ``b`` being a user-defined  vector.                    
-In order to make sense of the solution ``\\barX`` it is important
+for the unknowns ``\\bar X``, with ``b`` being a user-defined  vector.                    
+In order to make sense of the solution ``\\bar X`` it is important
 to know the ordering of the variables in the basis because the
 ordering specifies how ``B`` is constructed. When calling
 `Mosek.initbasissolve` an ordering of the basis variables is
@@ -8580,38 +7878,16 @@ obtained, which can be used to deduce how MOSEK has constructed
 
 
 ```math
- B_{i,k} = A_{i,j}, ~i=
-\\idxbeg
-,
-\\ldots
-,
-\\idxend
-{numcon}.
+ B_{i,k} = A_{i,j}, ~i=1,\\ldots,+1{numcon}.
 ```
 Otherwise if the ``k``-th basis variable is variable ``x_j^c`` it implies that
 
 ```math
-
-
-  B_{i,k} = 
-\\left
-\{ 
-\\begin
-{array}{ll}
-                          -1, & i = j, \\
-                          0 , & i 
-\\neq
- j. \\
-                      
-\\end
-{array} 
-              
-\\right
-.
-
-
-
-
+B_{i,k} = \\left\\{ \\begin{array}{ll}
+                        -1, & i = j, \\\\
+                        0 , & i \\neq j. \\\\
+                    \\end{array} 
+            \\right.
 ```
 The function `Mosek.initbasissolve` must be called before a call to this function.
 Please note that this function exploits the
@@ -8714,7 +7990,7 @@ Writes problem data associated with the optimization task to a file in one of
 the supported formats. See Section :ref:`doc.shared.file_formats` for the complete list.
 
 By default the data file format is determined by the file name extension. This
-behaviour can be overridden by setting the ``MSK_IPAR_WRITE_DATA_FORMAT``
+behaviour can be overridden by setting the `MSK_IPAR_WRITE_DATA_FORMAT``
 parameter. To write
 in compressed format append the extension `.gz`.  E.g to write a gzip
 compressed MPS file use the extension `mps.gz`.
@@ -8722,7 +7998,7 @@ compressed MPS file use the extension `mps.gz`.
 Please note that MPS, LP and OPF files require all variables to have unique
 names. If a task contains no names, it is possible to write the file with
 automatically generated anonymous names by setting the
-``MSK_IPAR_WRITE_GENERIC_NAMES`` parameter to ``MSK_XXX_ONOFFKEY.ON``.
+`MSK_IPAR_WRITE_GENERIC_NAMES`` parameter to `MSK_ON`.
 
 Data is written to the file `filename`
 if it is a nonempty string. Otherwise data is written

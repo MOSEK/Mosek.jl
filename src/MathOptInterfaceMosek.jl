@@ -315,7 +315,8 @@ function supportsconstraints(m::MosekSolver, constraint_types) :: Bool
                     MathOptInterface.Interval{Float64},
                     MathOptInterface.SecondOrderCone,
                     MathOptInterface.RotatedSecondOrderCone,
-                    MathOptInterface.PositiveSemidefiniteConeTriangle ]
+                    MathOptInterface.PositiveSemidefiniteConeTriangle,
+                    MathOptInterface.PositiveSemidefiniteConeScaled ]
             # ok
         elseif dom in [MathOptInterface.ZeroOne,
                        MathOptInterface.Integer] &&
