@@ -392,9 +392,14 @@ end
 Appends a new conic constraint to the problem. Hence, add a constraint
 
 ```math
- \hat{x} \in \K
+ 
+\\hat
+{x} 
+\\in
+ 
+\\K
 ```
-to the problem where ``\K`` is a convex cone. ``\hat{x}`` is a
+to the problem where ``\\K`` is a convex cone. ``\\hat{x}`` is a
 subset of the variables which will be specified by the argument
 `submem`.
 
@@ -406,21 +411,61 @@ rotated quadratic cone
 Define 
 
 ```math
- \hat{x} = x_{\mathtt{submem}[0]},\ldots,x_{\mathtt{submem}[\mathtt{nummem}-1]}.
+ 
+\\hat
+{x} = x_{
+\\mathtt
+{submem}[0]},
+\\ldots
+,x_{
+\\mathtt
+{submem}[
+\\mathtt
+{nummem}-1]}.
 ```
 Depending on the value of `ct` this function appends one of the constraints:
 
 * Quadratic cone (``MSK_XXX_CONETYPE.QUAD``) : 
 
 ```math
- \hat{x}_0 \geq \sqrt{\sum_{i=1}^{i<\mathtt{nummem}} \hat{x}_i^2}
+ 
+\\hat
+{x}_0 
+\\geq
+ 
+\\sqrt
+{
+\\sum
+_{i=1}^{i<
+\\mathtt
+{nummem}} 
+\\hat
+{x}_i^2}
 ```
 * Rotated quadratic cone (``MSK_XXX_CONETYPE.RQUAD``) : 
 
 ```math
- 2 \hat{x}_0 \hat{x}_1 \geq \sum_{i=2}^{i<\mathtt{nummem}} \hat{x}^2_i, 
-\mathcal{C}_q
- \hat{x}_{0}, \hat{x}_1 \geq 0
+ 2 
+\\hat
+{x}_0 
+\\hat
+{x}_1 
+\\geq
+ 
+\\sum
+_{i=2}^{i<
+\\mathtt
+{nummem}} 
+\\hat
+{x}^2_i, 
+\\mathcal{C}_q
+ 
+\\hat
+{x}_{0}, 
+\\hat
+{x}_1 
+\\geq
+ 0
 ```
 Please note that the sets of variables appearing in different conic constraints must be disjoint.
 
@@ -531,7 +576,7 @@ end
 * `idx :: Int64`. Unique index assigned to the inputted matrix.
 
 MOSEK maintains a storage of symmetric data matrices that is used to build
-``\bar C`` and ``\bar A``. The storage can be thought of as a vector of
+``\\bar C`` and ``\\bar A``. The storage can be thought of as a vector of
 symmetric matrices denoted ``E``. Hence, ``E_i`` is a symmetric matrix of certain
 dimension.
 
@@ -599,12 +644,14 @@ outlined in :cite:`STEWART:98:A`, pp. 388-391.
 By definition the 1-norm condition number of a matrix ``B`` is defined as
 
 ```math
- \kappa_1(B) := \|B\|_1 \|B^{-1}\|_1.
+ 
+\\kappa
+_1(B) := \|B\|_1 \|B^{-1}\|_1.
 ```
 Moreover, the larger the condition number is the harder it is to solve
 linear equation systems involving ``B``.  Given estimates for
 ``\|B\|_1`` and ``\|B^{-1}\|_1`` it is also possible to
-estimate ``\kappa_1(B)``.
+estimate ``\\kappa_1(B)``.
 """
 function basiscond end
 function basiscond(task_:: MSKtask)
@@ -727,13 +774,31 @@ If `lower` is non-zero, then the lower bound is changed as follows:
 ```math
 
 
-    \mbox{new lower bound} =
-        \left\{
-            \begin{array}{ll}
-                - \infty,     & \mathtt{finite}=0, \\
-                \mathtt{value} & \mbox{otherwise}. 
-            \end{array}
-        \right.
+    
+\\mbox
+{new lower bound} =
+        
+\\left
+\{
+            
+\\begin
+{array}{ll}
+                - 
+\\infty
+,     & 
+\\mathtt
+{finite}=0, \\
+                
+\\mathtt
+{value} & 
+\\mbox
+{otherwise}. 
+            
+\\end
+{array}
+        
+\\right
+.
 
 
 
@@ -745,13 +810,31 @@ Otherwise if `lower` is zero, then
 ```math
 
 
-    \mbox{new upper bound} = 
-        \left\{ 
-            \begin{array}{ll}
-                \infty,     & \mathtt{finite}=0, \\
-                \mathtt{value} & \mbox{otherwise}. 
-            \end{array}
-        \right.
+    
+\\mbox
+{new upper bound} = 
+        
+\\left
+\{ 
+            
+\\begin
+{array}{ll}
+                
+\\infty
+,     & 
+\\mathtt
+{finite}=0, \\
+                
+\\mathtt
+{value} & 
+\\mbox
+{otherwise}. 
+            
+\\end
+{array}
+        
+\\right
+.
 
 
 
@@ -792,13 +875,31 @@ If `lower` is non-zero, then the lower bound is changed as follows:
 ```math
 
 
-    \mbox{new lower bound} =
-      \left\{
-        \begin{array}{ll}
-          - \infty,       & \mathtt{finite}=0, \\
-          \mathtt{value}  & \mbox{otherwise}. 
-        \end{array}
-      \right.
+    
+\\mbox
+{new lower bound} =
+      
+\\left
+\{
+        
+\\begin
+{array}{ll}
+          - 
+\\infty
+,       & 
+\\mathtt
+{finite}=0, \\
+          
+\\mathtt
+{value}  & 
+\\mbox
+{otherwise}. 
+        
+\\end
+{array}
+      
+\\right
+.
 
 
 
@@ -809,13 +910,31 @@ Otherwise if `lower` is zero, then
 ```math
 
 
-    \mbox{new upper bound} = 
-      \left\{
-        \begin{array}{ll}
-          \infty,        & \mathtt{finite}=0, \\
-          \mathtt{value} & \mbox{otherwise}. 
-        \end{array}
-      \right.
+    
+\\mbox
+{new upper bound} = 
+      
+\\left
+\{
+        
+\\begin
+{array}{ll}
+          
+\\infty
+,        & 
+\\mathtt
+{finite}=0, \\
+          
+\\mathtt
+{value} & 
+\\mbox
+{otherwise}. 
+        
+\\end
+{array}
+      
+\\right
+.
 
 
 
@@ -855,13 +974,31 @@ If `lower` is non-zero, then the lower bound is changed as follows:
 ```math
 
 
-    \mbox{new lower bound} =
-      \left\{
-        \begin{array}{ll}
-          - \infty,     & \mathtt{finite}=0, \\
-          \mathtt{value} & \mbox{otherwise}. 
-        \end{array}
-      \right.
+    
+\\mbox
+{new lower bound} =
+      
+\\left
+\{
+        
+\\begin
+{array}{ll}
+          - 
+\\infty
+,     & 
+\\mathtt
+{finite}=0, \\
+          
+\\mathtt
+{value} & 
+\\mbox
+{otherwise}. 
+        
+\\end
+{array}
+      
+\\right
+.
 
 
 
@@ -872,13 +1009,31 @@ Otherwise if `lower` is zero, then
 ```math
 
 
-    \mbox{new upper bound} = 
-      \left\{
-        \begin{array}{ll}
-          \infty,     & \mathtt{finite}=0, \\
-          \mathtt{value} & \mbox{otherwise}. 
-        \end{array}
-      \right.
+    
+\\mbox
+{new upper bound} = 
+      
+\\left
+\{
+        
+\\begin
+{array}{ll}
+          
+\\infty
+,     & 
+\\mathtt
+{finite}=0, \\
+          
+\\mathtt
+{value} & 
+\\mbox
+{otherwise}. 
+        
+\\end
+{array}
+      
+\\right
+.
 
 
 
@@ -974,7 +1129,13 @@ end
 Calculates sensitivity information for objective coefficients. The indexes of the coefficients to analyze are
 
 ```math
- \{\mathtt{subj}[i] ~|~ i = 0,\ldots,\mathtt{numj}-1\}
+ \{
+\\mathtt
+{subj}[i] ~|~ i = 0,
+\\ldots
+,
+\\mathtt
+{numj}-1\}
 ```
 The type of sensitivity analysis to perform (basis or optimal partition) is controlled by the parameter ``MSK_IPAR_SENSITIVITY_TYPE``.
 
@@ -1141,7 +1302,25 @@ end
 Obtains the number non-zeros in a rectangular piece of ``A``, i.e. the number of elements in the set
 
 ```math
- \{ (i,j)~:~ a_{i,j} \neq 0,~ \mathtt{firsti} \leq i \leq \mathtt{lasti}-1, ~\mathtt{firstj} \leq j \leq \mathtt{lastj}-1\}
+ \{ (i,j)~:~ a_{i,j} 
+\\neq
+ 0,~ 
+\\mathtt
+{firsti} 
+\\leq
+ i 
+\\leq
+ 
+\\mathtt
+{lasti}-1, ~
+\\mathtt
+{firstj} 
+\\leq
+ j 
+\\leq
+ 
+\\mathtt
+{lastj}-1\}
 ```
 This function is not an efficient way to obtain the number of non-zeros in one
 row or column. In that case use the function `Mosek.getarownumnz` or `Mosek.getacolnumnz`.
@@ -1340,7 +1519,7 @@ end
 * `subl :: Array{Int32}`. Block column index.
 * `valijkl :: Array{Float64}`. The numerical value associated with each block triplet.
 
-Obtains ``\bar A`` in block triplet form.
+Obtains ``\\bar A`` in block triplet form.
 """
 function getbarablocktriplet end
 function getbarablocktriplet(task_:: MSKtask)
@@ -1387,14 +1566,14 @@ end
 * `sub :: Array{Int64}`. A list indexes of the elements from symmetric matrix storage that appear in the weighted sum.
 * `weights :: Array{Float64}`. The weights associated with each term in the weighted sum.
 
-Obtains information about an element in ``\bar A``. Since ``\bar A``
+Obtains information about an element in ``\\bar A``. Since ``\\bar A``
 is a sparse matrix of symmetric matrices, only the nonzero elements in
-``\bar A`` are stored in order to save space. Now ``\bar A`` is
+``\\bar A`` are stored in order to save space. Now ``\\bar A`` is
 stored vectorized i.e. as one long vector. This function makes it
 possible to obtain information such as the row index and the column index of a
-particular element of the vectorized form of ``\bar A``.
+particular element of the vectorized form of ``\\bar A``.
 
-Please observe if one element of ``\bar A`` is inputted multiple times
+Please observe if one element of ``\\bar A`` is inputted multiple times
 then it may be stored several times in vectorized form. In that case the
 element with the highest index is the one that is used.
 """
@@ -1431,14 +1610,14 @@ end
 * `i :: Int32`. Row index of the element at position idx.
 * `j :: Int32`. Column index of the element at position idx.
 
-Obtains information about an element in ``\bar A``. Since ``\bar A``
+Obtains information about an element in ``\\bar A``. Since ``\\bar A``
 is a sparse matrix of symmetric matrices, only the nonzero elements in
-``\bar A`` are stored in order to save space. Now ``\bar A`` is
+``\\bar A`` are stored in order to save space. Now ``\\bar A`` is
 stored vectorized i.e. as one long vector.  This function makes it
 possible to obtain information such as the row index and the column index of a
-particular element of the vectorized form of ``\bar A``.
+particular element of the vectorized form of ``\\bar A``.
 
-Please note that if one element of ``\bar A`` is inputted multiple times
+Please note that if one element of ``\\bar A`` is inputted multiple times
 then it may be stored several times in vectorized form. In that case the
 element with the highest index is the one that is used.
 """
@@ -1465,7 +1644,7 @@ end
 * `idx :: Int64`. The internal position of the element for which information should be obtained.
 * `num :: Int64`. Number of terms in the weighted sum that form the specified element in barA.
 
-Each nonzero element in ``\bar A_{ij}`` is formed as a weighted sum of
+Each nonzero element in ``\\bar A_{ij}`` is formed as a weighted sum of
 symmetric matrices. Using this function the number of terms in the weighted sum
 can be obtained. See description of `Mosek.appendsparsesymmat` for details
 about the weighted sum.
@@ -1491,12 +1670,12 @@ end
 * `numnz :: Int64`. Number of nonzero elements in barA.
 * `idxij :: Array{Int64}`. Position of each nonzero element in the vector representation of barA.
 
-The matrix ``\bar A`` is assumed to be a sparse matrix of symmetric matrices.
-This implies that many of the elements in ``\bar A`` are likely to be zero matrices.
-Therefore, in order to save space, only nonzero elements in ``\bar A`` are stored
+The matrix ``\\bar A`` is assumed to be a sparse matrix of symmetric matrices.
+This implies that many of the elements in ``\\bar A`` are likely to be zero matrices.
+Therefore, in order to save space, only nonzero elements in ``\\bar A`` are stored
 on vectorized form. This function is used to obtain the sparsity pattern of
-``\bar A`` and the position of each nonzero element in the vectorized form of
-``\bar A``. From the index detailed information about each nonzero ``\bar A_{i,j}`` can be
+``\\bar A`` and the position of each nonzero element in the vectorized form of
+``\\bar A``. From the index detailed information about each nonzero ``\\bar A_{i,j}`` can be
 obtained using `Mosek.getbaraidxinfo` and `Mosek.getbaraidx`.
 """
 function getbarasparsity end
@@ -1527,7 +1706,7 @@ end
 * `subl :: Array{Int32}`. Block column index.
 * `valjkl :: Array{Float64}`. The numerical value associated with each block triplet.
 
-Obtains ``\bar C`` in block triplet form.
+Obtains ``\\bar C`` in block triplet form.
 """
 function getbarcblocktriplet end
 function getbarcblocktriplet(task_:: MSKtask)
@@ -1569,7 +1748,7 @@ end
 * `sub :: Array{Int64}`. Elements appearing the weighted sum.
 * `weights :: Array{Float64}`. Weights of terms in the weighted sum.
 
-Obtains information about an element in ``\bar C``.
+Obtains information about an element in ``\\bar C``.
 """
 function getbarcidx end
 getbarcidx{T1}(task:: MSKtask,idx:: T1) = getbarcidx(task,Int64(idx))
@@ -1602,7 +1781,7 @@ end
 * `idx :: Int64`. Index of the element for which information should be obtained. The value is an index of a symmetric sparse variable.
 * `num :: Int64`. Number of terms that appear in the weighted sum that forms the requested element.
 
-Obtains the number of terms in the weighted sum that forms a particular element in ``\bar C``.
+Obtains the number of terms in the weighted sum that forms a particular element in ``\\bar C``.
 """
 function getbarcidxinfo end
 getbarcidxinfo{T1}(task:: MSKtask,idx:: T1) = getbarcidxinfo(task,Int64(idx))
@@ -1626,7 +1805,7 @@ end
 * `idx :: Int64`. Index of the element for which information should be obtained.
 * `j :: Int32`. Row index in barc.
 
-Obtains the row index of an element in ``\bar C``.
+Obtains the row index of an element in ``\\bar C``.
 """
 function getbarcidxj end
 getbarcidxj{T1}(task:: MSKtask,idx:: T1) = getbarcidxj(task,Int64(idx))
@@ -1649,10 +1828,10 @@ end
 * `numnz :: Int64`. Number of nonzero elements in barc.
 * `idxj :: Array{Int64}`. Internal positions of the nonzeros elements in barc.
 
-Internally only the nonzero elements of ``\bar C`` are stored 
-in a vector. This function is used to obtain the nonzero elements of ``\bar C``
+Internally only the nonzero elements of ``\\bar C`` are stored 
+in a vector. This function is used to obtain the nonzero elements of ``\\bar C``
 and their indexes in the internal vector representation (in `idx`). From the index
-detailed information about each nonzero ``\bar C_j`` can be
+detailed information about each nonzero ``\\bar C_j`` can be
 obtained using `Mosek.getbarcidxinfo` and `Mosek.getbarcidx`.
 """
 function getbarcsparsity end
@@ -1682,7 +1861,7 @@ end
 * `j :: Int32`. Index of the semidefinite variable.
 * `barsj :: Array{Float64}`. Value of the j'th dual variable of barx.
 
-Obtains the dual solution for a semidefinite variable. Only the lower triangular part of ``\barS_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
+Obtains the dual solution for a semidefinite variable. Only the lower triangular part of ``\\barS_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
 """
 function getbarsj end
 getbarsj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarsj(task,whichsol,Int32(j))
@@ -1783,7 +1962,7 @@ end
 * `j :: Int32`. Index of the semidefinite variable.
 * `barxj :: Array{Float64}`. Value of the j'th variable of barx.
 
-Obtains the primal solution for a semidefinite variable. Only the lower triangular part of ``\barX_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
+Obtains the primal solution for a semidefinite variable. Only the lower triangular part of ``\\barX_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
 """
 function getbarxj end
 getbarxj{T2}(task:: MSKtask,whichsol:: Int32,j:: T2) = getbarxj(task,whichsol,Int32(j))
@@ -2366,12 +2545,20 @@ end
 * `sub :: Array{Int32}`. An array of indexes of barx variables.
 * `viol :: Array{Float64}`. List of violations corresponding to sub.
 
-Let ``(\barS_j)^*`` be the value of variable ``\barS_j`` for the
+Let ``(\\barS_j)^*`` be the value of variable ``\\barS_j`` for the
 specified solution.  Then the dual violation of the solution associated with
-variable ``\barS_j`` is given by
+variable ``\\barS_j`` is given by
 
 ```math
- \max(-\lambda_{\min}(\barS_j),\ 0.0).
+ 
+\\max
+(-
+\\lambda
+_{
+\\min
+}(
+\\barS
+_j),\ 0.0).
 ```
 Both when the solution is a certificate of primal infeasibility and when it is
 dual feasible solution the violation should be small.
@@ -2406,20 +2593,40 @@ The violation of the dual solution associated with the ``i``-th constraint
 is computed as follows
 
 ```math
- \max( \rho( (s_l^c)_i^*,(b_l^c)_i ),\ \rho( (s_u^c)_i^*, -(b_u^c)_i ),\ |-y_i+(s_l^c)_i^*-(s_u^c)_i^*| )
+ 
+\\max
+( 
+\\rho
+( (s_l^c)_i^*,(b_l^c)_i ),\ 
+\\rho
+( (s_u^c)_i^*, -(b_u^c)_i ),\ |-y_i+(s_l^c)_i^*-(s_u^c)_i^*| )
 ```
 where
 
 ```math
 
 
-    \rho(x,l) =
-      \left\{
-        \begin{array}{ll}
-           -x,   & l > -\infty , \\
-           |x|, &  \mbox{otherwise}.\\
-        \end{array}
-      \right.
+    
+\\rho
+(x,l) =
+      
+\\left
+\{
+        
+\\begin
+{array}{ll}
+           -x,   & l > -
+\\infty
+ , \\
+           |x|, &  
+\\mbox
+{otherwise}.\\
+        
+\\end
+{array}
+      
+\\right
+.
 
 
 
@@ -2460,12 +2667,28 @@ of a quadratic cone, then the violation is computed as follows
 ```math
 
 
-    \left\{
-      \begin{array}{ll}
-        \max(0,(\|s_n^x\|_{2:n}^*-(s_n^x)_1^*) / \sqrt{2}, & (s_n^x)^* \geq -\|(s_n^x)_{2:n}^*\|, \\
-        \|(s_n^x)^*\|, & \mbox{otherwise.}
-      \end{array}
-    \right.
+    
+\\left
+\{
+      
+\\begin
+{array}{ll}
+        
+\\max
+(0,(\|s_n^x\|_{2:n}^*-(s_n^x)_1^*) / 
+\\sqrt
+{2}, & (s_n^x)^* 
+\\geq
+ -\|(s_n^x)_{2:n}^*\|, \\
+        \|(s_n^x)^*\|, & 
+\\mbox
+{otherwise.}
+      
+\\end
+{array}
+    
+\\right
+.
 
 
 
@@ -2504,27 +2727,59 @@ The violation of the dual solution associated with the ``j``-th variable is
 computed as follows
 
 ```math
- \max \left(\rho((s_l^x)_j^*,(b_l^x)_j),\ \rho((s_u^x)_j^*,-(b_u^x)_j),\ |\sum_{i=\idxbeg}^{\idxend{numcon}} a_{ij} y_i+(s_l^x)_j^*-(s_u^x)_j^* - \tau c_j| \right)
+ 
+\\max
+ 
+\\left
+(
+\\rho
+((s_l^x)_j^*,(b_l^x)_j),\ 
+\\rho
+((s_u^x)_j^*,-(b_u^x)_j),\ |
+\\sum
+_{i=
+\\idxbeg
+}^{
+\\idxend
+{numcon}} a_{ij} y_i+(s_l^x)_j^*-(s_u^x)_j^* - 
+\\tau
+ c_j| 
+\\right
+)
 ```
 where
 
 ```math
 
 
-  \rho(x,l) =
-    \left\{
-      \begin{array}{ll}
-         -x,   & l > -\infty , \\
-         |x|, &  \mbox{otherwise}
-      \end{array}
-    \right.
+  
+\\rho
+(x,l) =
+    
+\\left
+\{
+      
+\\begin
+{array}{ll}
+         -x,   & l > -
+\\infty
+ , \\
+         |x|, &  
+\\mbox
+{otherwise}
+      
+\\end
+{array}
+    
+\\right
+.
 
 
 
 
 
 ```
-and ``\tau=0`` if the solution is a certificate of primal infeasibility and ``\tau=1`` otherwise. The formula for computing the violation is only shown
+and ``\\tau=0`` if the solution is a certificate of primal infeasibility and ``\\tau=1`` otherwise. The formula for computing the violation is only shown
 for the linear case but is generalized appropriately for the more general problems. Both when the solution is a certificate of primal infeasibility or when it is a dual feasible solution the violation should be small.
 """
 function getdviolvar end
@@ -3011,7 +3266,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. An upper bound on the number of elements in the block triplet form of bara.
 
-Obtains an upper bound on the number of elements in the block triplet form of ``\bar A``.
+Obtains an upper bound on the number of elements in the block triplet form of ``\\bar A``.
 """
 function getnumbarablocktriplets end
 function getnumbarablocktriplets(task_:: MSKtask)
@@ -3032,7 +3287,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `nz :: Int64`. The number of nonzero block elements in barA.
 
-Get the number of nonzero elements in ``\bar A``.
+Get the number of nonzero elements in ``\\bar A``.
 """
 function getnumbaranz end
 function getnumbaranz(task_:: MSKtask)
@@ -3053,7 +3308,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. An upper bound on the number of elements in the block triplet form of barc.
 
-Obtains an upper bound on the number of elements in the block triplet form of ``\bar C``.
+Obtains an upper bound on the number of elements in the block triplet form of ``\\bar C``.
 """
 function getnumbarcblocktriplets end
 function getnumbarcblocktriplets(task_:: MSKtask)
@@ -3074,7 +3329,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `nz :: Int64`. The number of nonzero elements in barc.
 
-Obtains the number of nonzero elements in ``\bar C``.
+Obtains the number of nonzero elements in ``\\bar C``.
 """
 function getnumbarcnz end
 function getnumbarcnz(task_:: MSKtask)
@@ -3498,12 +3753,20 @@ end
 * `viol :: Array{Float64}`. List of violations corresponding to sub.
 
 Computes the primal solution violation for a set of semidefinite variables. 
-Let ``(\barX_j)^*`` be the value of the variable ``\barX_j`` for the
+Let ``(\\barX_j)^*`` be the value of the variable ``\\barX_j`` for the
 specified solution.  Then the primal violation of the solution associated with
-variable ``\barX_j`` is given by
+variable ``\\barX_j`` is given by
 
 ```math
- \max(-\lambda_{\min}(\barX_j),\ 0.0).
+ 
+\\max
+(-
+\\lambda
+_{
+\\min
+}(
+\\barX
+_j),\ 0.0).
 ```
 Both when the solution is a certificate of dual infeasibility or when it is primal feasible the violation should be small.
 """
@@ -3537,10 +3800,22 @@ Computes the primal solution violation for a set of constraints.
 The primal violation of the solution associated with the ``i``-th constraint is given by
 
 ```math
- \max(\tau l_i^c - (x_i^c)^*,\ (x_i^c)^* - \tau u_i^c),\ |\sum_{j=\idxbeg}^{\idxend{numvar}} a_{ij} x_j^* - x_i^c|)
+ 
+\\max
+(
+\\tau
+ l_i^c - (x_i^c)^*,\ (x_i^c)^* - 
+\\tau
+ u_i^c),\ |
+\\sum
+_{j=
+\\idxbeg
+}^{
+\\idxend
+{numvar}} a_{ij} x_j^* - x_i^c|)
 ```
-where ``\tau=0`` if the solution is a certificate of
-dual infeasibility and ``\tau=1`` otherwise. Both when
+where ``\\tau=0`` if the solution is a certificate of
+dual infeasibility and ``\\tau=1`` otherwise. Both when
 the solution is a certificate of dual infeasibility and when it is primal
 feasible the violation should be small. The above formula applies for
 the linear case but is appropriately generalized in other cases.
@@ -3579,12 +3854,28 @@ the violation is computed as follows
 ```math
 
 
-  \left\{
-    \begin{array}{ll}
-      \max(0,\|x_{2:n}\|-x_1) / \sqrt{2}, & x_1 \geq -\|x_{2:n}\|, \\
-      \|x\|, & \mbox{otherwise.}
-    \end{array}
-  \right.
+  
+\\left
+\{
+    
+\\begin
+{array}{ll}
+      
+\\max
+(0,\|x_{2:n}\|-x_1) / 
+\\sqrt
+{2}, & x_1 
+\\geq
+ -\|x_{2:n}\|, \\
+      \|x\|, & 
+\\mbox
+{otherwise.}
+    
+\\end
+{array}
+  
+\\right
+.
 
 
 
@@ -3624,10 +3915,16 @@ solution.  Then the primal violation of the solution associated with variable
 ``x_j`` is given by
 
 ```math
- \max( \tau l_j^x - x_j^*,\ x_j^* - \tau u_j^x,\ 0).
+ 
+\\max
+( 
+\\tau
+ l_j^x - x_j^*,\ x_j^* - 
+\\tau
+ u_j^x,\ 0).
 ```
-where ``\tau=0`` if the solution is a certificate of
-dual infeasibility and ``\tau=1`` otherwise. Both when
+where ``\\tau=0`` if the solution is a certificate of
+dual infeasibility and ``\\tau=1`` otherwise. Both when
 the solution is a certificate of dual infeasibility and when it is primal
 feasible the violation should be small.
 """
@@ -3768,7 +4065,17 @@ Computes the reduced costs for a slice of variables and returns them in the arra
 
     :label: ais-eq-redcost
 
-    \mathtt{redcosts}[j-\mathtt{first}] = (s_l^x)_j-(s_u^x)_j, ~j=\mathtt{first},\ldots,\mathtt{last}-1
+    
+\\mathtt
+{redcosts}[j-
+\\mathtt
+{first}] = (s_l^x)_j-(s_u^x)_j, ~j=
+\\mathtt
+{first},
+\\ldots
+,
+\\mathtt
+{last}-1
 
 
 ```
@@ -4094,11 +4401,27 @@ Consider the case of linear programming. The primal problem is given by
 ```math
 
 
-   \begin{array}{lccccl}
-     \mbox{minimize}              &      &      & c^T x+c^f &      &        \\
-     \mbox{subject to} &  l^c & \leq & A x       & \leq & u^c,     \\
-     &  l^x & \leq & x         & \leq & u^x.   \\
-   \end{array}
+   
+\\begin
+{array}{lccccl}
+     
+\\mbox
+{minimize}              &      &      & c^T x+c^f &      &        \\
+     
+\\mbox
+{subject to} &  l^c & 
+\\leq
+ & A x       & 
+\\leq
+ & u^c,     \\
+     &  l^x & 
+\\leq
+ & x         & 
+\\leq
+ & u^x.   \\
+   
+\\end
+{array}
 
 
 
@@ -4110,13 +4433,23 @@ and the corresponding dual problem is
 ```math
 
 
-   \begin{array}{lccl}
-     \mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &  \\
+   
+\\begin
+{array}{lccl}
+     
+\\mbox
+{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &  \\
      & + (l^x)^T s_l^x - (u^x)^T s_u^x + c^f &  \\
-     \mbox{subject to} & A^T y + s_l^x - s_u^x                 & = & c, \\
+     
+\\mbox
+{subject to} & A^T y + s_l^x - s_u^x                 & = & c, \\
      & -y    + s_l^c - s_u^c                 & = & 0, \\
-     & s_l^c,s_u^c,s_l^x,s_u^x \geq 0.       &   &    \\
-   \end{array}
+     & s_l^c,s_u^c,s_l^x,s_u^x 
+\\geq
+ 0.       &   &    \\
+   
+\\end
+{array}
 
 
 
@@ -4128,14 +4461,28 @@ A conic optimization problem has the same primal variables as in the linear case
 ```math
 
 
-  \begin{array}{lccccc}
-    \mbox{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &      &    \\
+  
+\\begin
+{array}{lccccc}
+    
+\\mbox
+{maximize}   & (l^c)^T s_l^c - (u^c)^T s_u^c         &      &    \\
     & +(l^x)^T s_l^x - (u^x)^T s_u^x + c^f  &      &    \\
-    \mbox{subject to} & A^T y + s_l^x - s_u^x + s_n^x         & =    & c, \\
+    
+\\mbox
+{subject to} & A^T y + s_l^x - s_u^x + s_n^x         & =    & c, \\
     & -y + s_l^c - s_u^c                    & =    & 0, \\
-    & s_l^c,s_u^c,s_l^x,s_u^x               & \geq & 0, \\
-    & s_n^x \in \K^*                        &      &    \\
-  \end{array}
+    & s_l^c,s_u^c,s_l^x,s_u^x               & 
+\\geq
+ & 0, \\
+    & s_n^x 
+\\in
+ 
+\\K
+^*                        &      &    \\
+  
+\\end
+{array}
 
 
 
@@ -5342,9 +5689,19 @@ end
 Change one column of the linear constraint matrix ``A``. Resets all the elements in column ``j`` to zero and then sets
 
 ```math
- a_{\mathtt{subj}[k],\mathtt{j}} = \mathtt{valj}[k], 
-\mathcal{C}_q
- k=0,\ldots,\mathtt{nzj}-1.
+ a_{
+\\mathtt
+{subj}[k],
+\\mathtt
+{j}} = 
+\\mathtt
+{valj}[k], 
+\\mathcal{C}_q
+ k=0,
+\\ldots
+,
+\\mathtt
+{nzj}-1.
 ```
 
 """
@@ -5379,12 +5736,36 @@ Change a set of columns in the linear constraint matrix ``A`` with data in spars
 ```math
 
 
-    \begin{array}{rl}
-      \mathtt{for} & i=\idxbeg,\ldots,\idxend{num}\\
-                  & a_{\mathtt{asub}[k],\mathtt{sub}[i]} = \mathtt{aval}[k],
-\mathcal{C}_q
- k=\mathtt{ptrb}[i],\ldots,\mathtt{ptre}[i]-1. 
-    \end{array}
+    
+\\begin
+{array}{rl}
+      
+\\mathtt
+{for} & i=
+\\idxbeg
+,
+\\ldots
+,
+\\idxend
+{num}\\
+                  & a_{
+\\mathtt
+{asub}[k],
+\\mathtt
+{sub}[i]} = 
+\\mathtt
+{aval}[k],
+\\mathcal{C}_q
+ k=
+\\mathtt
+{ptrb}[i],
+\\ldots
+,
+\\mathtt
+{ptre}[i]-1. 
+    
+\\end
+{array}
 
 
 ```
@@ -5429,12 +5810,34 @@ Change a slice of columns in the linear constraint matrix ``A`` with data in spa
 ```math
 
 
-    \begin{array}{rl}
-      \mathtt{for} & i=\mathtt{first},\ldots,\mathtt{last}-1\\
-                  & a_{\mathtt{asub}[k],i} = \mathtt{aval}[k],
-\mathcal{C}_q
- k=\mathtt{ptrb}[i],\ldots,\mathtt{ptre}[i]-1. 
-    \end{array}
+    
+\\begin
+{array}{rl}
+      
+\\mathtt
+{for} & i=
+\\mathtt
+{first},
+\\ldots
+,
+\\mathtt
+{last}-1\\
+                  & a_{
+\\mathtt
+{asub}[k],i} = 
+\\mathtt
+{aval}[k],
+\\mathcal{C}_q
+ k=
+\\mathtt
+{ptrb}[i],
+\\ldots
+,
+\\mathtt
+{ptre}[i]-1. 
+    
+\\end
+{array}
 
 
 ```
@@ -5471,7 +5874,9 @@ end
 Changes a coefficient in the linear coefficient matrix ``A`` using the method
 
 ```math
- a_{i,j} = \mathtt{aij}.
+ a_{i,j} = 
+\\mathtt
+{aij}.
 ```
 
 """
@@ -5499,9 +5904,21 @@ end
 Changes one or more coefficients in ``A`` using the method
 
 ```math
- a_{\mathtt{subi[k]},\mathtt{subj[k]}} = \mathtt{valij[k]}, 
-\mathcal{C}_q
- k=\idxbeg,\ldots,\idxend{num}.
+ a_{
+\\mathtt
+{subi[k]},
+\\mathtt
+{subj[k]}} = 
+\\mathtt
+{valij[k]}, 
+\\mathcal{C}_q
+ k=
+\\idxbeg
+,
+\\ldots
+,
+\\idxend
+{num}.
 ```
 Duplicates are not allowed.
 """
@@ -5530,9 +5947,19 @@ end
 Change one column of the linear constraint matrix ``A``. Resets all the elements in row ``i`` to zero and then sets
 
 ```math
- a_{\mathtt{i},\mathtt{subi}[k]} = \mathtt{vali}[k], 
-\mathcal{C}_q
- k=0,\ldots,\mathtt{nzi}-1.
+ a_{
+\\mathtt
+{i},
+\\mathtt
+{subi}[k]} = 
+\\mathtt
+{vali}[k], 
+\\mathcal{C}_q
+ k=0,
+\\ldots
+,
+\\mathtt
+{nzi}-1.
 ```
 
 """
@@ -5567,12 +5994,36 @@ Change a set of rows in the linear constraint matrix ``A`` with data in sparse t
 ```math
 
 
-    \begin{array}{rl}
-      \mathtt{for} & i=\idxbeg,\ldots,\idxend{num} \\
-                   & a_{\mathtt{sub}[i],\mathtt{asub}[k]} = \mathtt{aval}[k],
-\mathcal{C}_q
- k=\mathtt{ptrb}[i],\ldots,\mathtt{ptre}[i]-1. 
-    \end{array}
+    
+\\begin
+{array}{rl}
+      
+\\mathtt
+{for} & i=
+\\idxbeg
+,
+\\ldots
+,
+\\idxend
+{num} \\
+                   & a_{
+\\mathtt
+{sub}[i],
+\\mathtt
+{asub}[k]} = 
+\\mathtt
+{aval}[k],
+\\mathcal{C}_q
+ k=
+\\mathtt
+{ptrb}[i],
+\\ldots
+,
+\\mathtt
+{ptre}[i]-1. 
+    
+\\end
+{array}
 
 
 ```
@@ -5617,12 +6068,36 @@ Change a slice of rows in the linear constraint matrix ``A`` with data in sparse
 ```math
 
 
-    \begin{array}{rl}
-      \mathtt{for} & i=\mathtt{first},\ldots,\mathtt{last}-1 \\
-                   & a_{\mathtt{sub}[i],\mathtt{asub}[k]} = \mathtt{aval}[k],
-\mathcal{C}_q
- k=\mathtt{ptrb}[i],\ldots,\mathtt{ptre}[i]-1. 
-    \end{array}
+    
+\\begin
+{array}{rl}
+      
+\\mathtt
+{for} & i=
+\\mathtt
+{first},
+\\ldots
+,
+\\mathtt
+{last}-1 \\
+                   & a_{
+\\mathtt
+{sub}[i],
+\\mathtt
+{asub}[k]} = 
+\\mathtt
+{aval}[k],
+\\mathcal{C}_q
+ k=
+\\mathtt
+{ptrb}[i],
+\\ldots
+,
+\\mathtt
+{ptre}[i]-1. 
+    
+\\end
+{array}
 
 
 ```
@@ -5669,7 +6144,7 @@ end
 * `subl :: Array{Int32}`. Block column index.
 * `valijkl :: Array{Float64}`. The numerical value associated with each block triplet.
 
-Inputs the ``\bar A`` matrix in block triplet form.
+Inputs the ``\\bar A`` matrix in block triplet form.
 """
 function putbarablocktriplet end
 putbarablocktriplet{T1,T2,T3,T4,T5,T6}(task:: MSKtask,num:: T1,subi:: Array{T2},subj:: Array{T3},subk:: Array{T4},subl:: Array{T5},valijkl:: Array{T6}) = putbarablocktriplet(task,Int64(num),convert(Array{Int32},subi),convert(Array{Int32},subj),convert(Array{Int32},subk),convert(Array{Int32},subl),convert(Array{Float64},valijkl))
@@ -5718,12 +6193,12 @@ end
 * `sub :: Array{Int64}`. Element indexes in matrix storage.
 * `weights :: Array{Float64}`. Weights in the weighted sum.
 
-This function sets one element in the ``\bar A`` matrix.
+This function sets one element in the ``\\bar A`` matrix.
 
-Each element in the ``\bar A`` matrix is a weighted sum of
+Each element in the ``\\bar A`` matrix is a weighted sum of
 symmetric matrices from the symmetric matrix storage ``E``, so
-``\bar A_{ij}`` is a symmetric matrix. By default all elements in
-``\bar A`` are 0, so only non-zero elements need be added.
+``\\bar A_{ij}`` is a symmetric matrix. By default all elements in
+``\\bar A`` are 0, so only non-zero elements need be added.
 Setting the same element again will overwrite the earlier entry. 
 
 The symmetric matrices from ``E`` are defined separately
@@ -5753,7 +6228,7 @@ end
 * `subl :: Array{Int32}`. Block column index.
 * `valjkl :: Array{Float64}`. The numerical value associated with each block triplet.
 
-Inputs the ``\bar C`` matrix in block triplet form.
+Inputs the ``\\bar C`` matrix in block triplet form.
 """
 function putbarcblocktriplet end
 putbarcblocktriplet{T1,T2,T3,T4,T5}(task:: MSKtask,num:: T1,subj:: Array{T2},subk:: Array{T3},subl:: Array{T4},valjkl:: Array{T5}) = putbarcblocktriplet(task,Int64(num),convert(Array{Int32},subj),convert(Array{Int32},subk),convert(Array{Int32},subl),convert(Array{Float64},valjkl))
@@ -5796,12 +6271,12 @@ end
 * `sub :: Array{Int64}`. sub is list of indexes of those symmetric matrices appearing in sum.
 * `weights :: Array{Float64}`. The weights of the terms in the weighted sum.
 
-This function sets one entry in the ``\bar C`` vector.
+This function sets one entry in the ``\\bar C`` vector.
 
-Each element in the ``\bar C`` vector is a weighted sum of
+Each element in the ``\\bar C`` vector is a weighted sum of
 symmetric matrices from the symmetric matrix storage ``E``, so
-``\bar C_{j}`` is a symmetric matrix. By default all elements in
-``\bar C`` are 0, so only non-zero elements need be added.
+``\\bar C_{j}`` is a symmetric matrix. By default all elements in
+``\\bar C`` are 0, so only non-zero elements need be added.
 Setting the same element again will overwrite the earlier entry. 
 
 The symmetric matrices from ``E`` are defined separately
@@ -6030,7 +6505,11 @@ end
 Modifies one coefficient in the linear objective vector ``c``, i.e.
 
 ```math
- c_{\mathtt{j}} = \mathtt{cj}.
+ c_{
+\\mathtt
+{j}} = 
+\\mathtt
+{cj}.
 ```
 If the absolute value exceeds ``MSK_DPAR_DATA_TOL_C_HUGE`` an error is generated. If the absolute value exceeds ``MSK_DPAR_DATA_TOL_CJ_LARGE``, a warning is generated, but the coefficient is inputted as specified.
 """
@@ -6057,9 +6536,19 @@ end
 Modifies the coefficients in the linear term ``c`` in the objective using the principle
 
 ```math
- c_{\mathtt{subj[t]}} = \mathtt{val[t]}, 
-\mathcal{C}_q
- t=\idxbeg,\ldots,\idxend{num}.
+ c_{
+\\mathtt
+{subj[t]}} = 
+\\mathtt
+{val[t]}, 
+\\mathcal{C}_q
+ t=
+\\idxbeg
+,
+\\ldots
+,
+\\idxend
+{num}.
 ```
 If a variable index is specified multiple times in `subj` only the last entry is used. Data checks are performed as in `Mosek.putcj`.
 """
@@ -6249,9 +6738,15 @@ end
 Modifies a slice in the linear term ``c`` in the objective using the principle
 
 ```math
- c_{\mathtt{j}} = \mathtt{slice[j-first]}, 
-\mathcal{C}_q
- j=first,..,\idxend{last}
+ c_{
+\\mathtt
+{j}} = 
+\\mathtt
+{slice[j-first]}, 
+\\mathcal{C}_q
+ j=first,..,
+\\idxend
+{last}
 ```
 Data checks are performed as in `Mosek.putcj`.
 """
@@ -6646,14 +7141,54 @@ end
 Replace all quadratic entries in the constraints. The list of constraints has the form
 
 ```math
- l_k^c \leq  \half \sum_{i=0}^{\idxend{numvar}} \sum_{j=0}^{\idxend{numvar}} q_{ij}^k x_i x_j + \sum_{j=0}^{\idxend{numvar}} a_{kj} x_j \leq u_k^c, ~\  k=0,\ldots,m-1.
+ l_k^c 
+\\leq
+  
+\\half
+ 
+\\sum
+_{i=0}^{
+\\idxend
+{numvar}} 
+\\sum
+_{j=0}^{
+\\idxend
+{numvar}} q_{ij}^k x_i x_j + 
+\\sum
+_{j=0}^{
+\\idxend
+{numvar}} a_{kj} x_j 
+\\leq
+ u_k^c, ~\  k=0,
+\\ldots
+,m-1.
 ```
 This function sets all the quadratic terms to zero and then performs the update:
 
 ```math
- q_{\mathtt{qcsubi[t]},\mathtt{qcsubj[t]}}^{\mathtt{qcsubk[t]}} = q_{\mathtt{\mathtt{qcsubj[t]},qcsubi[t]}}^{\mathtt{qcsubk[t]}} = q_{\mathtt{\mathtt{qcsubj[t]},qcsubi[t]}}^{\mathtt{qcsubk[t]}}  + \mathtt{qcval[t]},
+ q_{
+\\mathtt
+{qcsubi[t]},
+\\mathtt
+{qcsubj[t]}}^{
+\\mathtt
+{qcsubk[t]}} = q_{
+\\mathtt
+{
+\\mathtt
+{qcsubj[t]},qcsubi[t]}}^{
+\\mathtt
+{qcsubk[t]}} = q_{
+\\mathtt
+{
+\\mathtt
+{qcsubj[t]},qcsubi[t]}}^{
+\\mathtt
+{qcsubk[t]}}  + 
+\\mathtt
+{qcval[t]},
 ```
-for ``t=\idxbeg,\ldots,\idxend{numqcnz}``.
+for ``t=\\idxbeg,\\ldots,\\idxend{numqcnz}``.
 
 Please note that:
 
@@ -6727,14 +7262,42 @@ end
 Replace all quadratic terms in the objective. If the objective has the form
 
 ```math
- \half \sum_{i=0}^{\idxend{numvar}} \sum_{j=0}^{\idxend{numvar}} q_{ij}^o x_i x_j + \sum_{j=0}^{\idxend{numvar}} c_{j} x_j + c^f
+ 
+\\half
+ 
+\\sum
+_{i=0}^{
+\\idxend
+{numvar}} 
+\\sum
+_{j=0}^{
+\\idxend
+{numvar}} q_{ij}^o x_i x_j + 
+\\sum
+_{j=0}^{
+\\idxend
+{numvar}} c_{j} x_j + c^f
 ```
 then this function sets all the quadratic terms to zero and then performs the update:
 
 ```math
- q_{\mathtt{qosubi[t]},\mathtt{qosubj[t]}}^{o} = q_{\mathtt{\mathtt{qosubj[t]},qosubi[t]}}^{o} = q_{\mathtt{\mathtt{qosubj[t]},qosubi[t]}}^{o}  + \mathtt{qoval[t]},
+ q_{
+\\mathtt
+{qosubi[t]},
+\\mathtt
+{qosubj[t]}}^{o} = q_{
+\\mathtt
+{
+\\mathtt
+{qosubj[t]},qosubi[t]}}^{o} = q_{
+\\mathtt
+{
+\\mathtt
+{qosubj[t]},qosubi[t]}}^{o}  + 
+\\mathtt
+{qoval[t]},
 ```
-for ``t=\idxbeg,\ldots,\idxend{numqonz}``.
+for ``t=\\idxbeg,\\ldots,\\idxend{numqonz}``.
 
 See the description of `Mosek.putqcon` for important remarks and example.
 """
@@ -6772,7 +7335,9 @@ Replaces one coefficient in the quadratic term in the objective. The function
 performs the assignment
 
 ```math
- q_{ij}^o = q_{ji}^o = \mathtt{qoij}.
+ q_{ij}^o = q_{ji}^o = 
+\\mathtt
+{qoij}.
 ```
 Only the elements in the lower triangular part are accepted. Setting
 ``q_{ij}`` with ``j>i`` will cause an error.
@@ -7982,7 +8547,9 @@ equation system
 
    :label: ais-eq-Bxb
 
-   B \barX = b                       
+   B 
+\\barX
+ = b                       
 
 
 
@@ -7994,14 +8561,16 @@ or the system
 
    :label: ais-eq-Btxb
 
-   B^T \barX = b
+   B^T 
+\\barX
+ = b
 
 
 
 
 ```
-for the unknowns ``\barX``, with ``b`` being a user-defined  vector.                    
-In order to make sense of the solution ``\barX`` it is important
+for the unknowns ``\\barX``, with ``b`` being a user-defined  vector.                    
+In order to make sense of the solution ``\\barX`` it is important
 to know the ordering of the variables in the basis because the
 ordering specifies how ``B`` is constructed. When calling
 `Mosek.initbasissolve` an ordering of the basis variables is
@@ -8011,18 +8580,34 @@ obtained, which can be used to deduce how MOSEK has constructed
 
 
 ```math
- B_{i,k} = A_{i,j}, ~i=\idxbeg,\ldots,\idxend{numcon}.
+ B_{i,k} = A_{i,j}, ~i=
+\\idxbeg
+,
+\\ldots
+,
+\\idxend
+{numcon}.
 ```
 Otherwise if the ``k``-th basis variable is variable ``x_j^c`` it implies that
 
 ```math
 
 
-  B_{i,k} = \left\{ \begin{array}{ll}
+  B_{i,k} = 
+\\left
+\{ 
+\\begin
+{array}{ll}
                           -1, & i = j, \\
-                          0 , & i \neq j. \\
-                      \end{array} 
-              \right.
+                          0 , & i 
+\\neq
+ j. \\
+                      
+\\end
+{array} 
+              
+\\right
+.
 
 
 

@@ -205,11 +205,15 @@ function MathOptInterface.addconstraint!(
     conref
 end
 
+dim(dom :: MathOptInterface.PositiveSemidefiniteConeTriangle) = floor(Int,-.5 + sqrt(.25+2*MathOptInterface.dimension(dom)))
+dim(dom :: MathOptInterface.PositiveSemidefiniteConeScaled) = floor(Int,-.5 + sqrt(.25+2*MathOptInterface.dimension(dom)))
+
 function MathOptInterface.addconstraint!(m   :: MosekModel,
                                          axb :: MathOptInterface.VectorAffineFunction{Float64},
-                                         dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
-    N = MathOptInterface.dimension(dom)
-    M = (N+1)*N >> 1
+                                         dom :: PSDCone) where { PSDCone <: Union{MathOptInterface.PositiveSemidefiniteConeTriangle,MathOptInterface.PositiveSemidefiniteConeScaled} }
+    M = MathOptInterface.dimension(dom)
+    N = dim(dom)
+    
     conid = allocateconstraints(m,M)
     addlhsblock!(m,
                  conid,
@@ -220,8 +224,8 @@ function MathOptInterface.addconstraint!(m   :: MosekModel,
     m.c_constant[conidxs] = axb.constant
 
     addbound!(m,conid,conidxs,axb.constant,dom)
-    conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle}(UInt64(conid) << 1)
-    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},MathOptInterface.PositiveSemidefiniteConeTriangle)[conref] = conid
+    conref = MathOptInterface.ConstraintReference{MathOptInterface.VectorAffineFunction{Float64},PSDCone}(UInt64(conid) << 1)
+    select(m.constrmap,MathOptInterface.VectorAffineFunction{Float64},PSDCone)[conref] = conid
     conref
 end
 
@@ -514,8 +518,8 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
 end
 
 function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
-    dim = MathOptInterface.dimension(dom)
-
+    dim = dim(dom)
+    n = MathOptInterface.dimension(dom)
     appendbarvars(m.task,Int32[dim])
     barvaridx = getnumbarvar(m.task)
 
@@ -523,6 +527,31 @@ function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, consta
     for j in 1:dim
         for i in j:dim
             matrixid = appendsparsesymmat(m.task,Int32(dim), Int32[i], Int32[j], Float64[-1.0])
+            putbaraij(m.task, conidxs[idx], barvaridx, Int[matrixid], Float64[1.0])
+            idx += 1
+        end
+    end
+
+    putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_FX,length(constant)),-constant,-constant)
+
+    m.c_block_slack[conid] = -barvaridx
+end
+
+function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.PositiveSemidefiniteConeScaled)
+    dim = dim(dom)
+    n = MathOptInterface.dimension(dom)
+
+    appendbarvars(m.task,Int32[dim])
+    barvaridx = getnumbarvar(m.task)
+
+    idx = 1
+    for j in 1:dim
+        for i in j:dim
+            if i != j
+                matrixid = appendsparsesymmat(m.task,Int32(dim), Int32[i], Int32[j], Float64[- sqrt(2.0)])
+            else
+                matrixid = appendsparsesymmat(m.task,Int32(dim), Int32[i], Int32[j], Float64[-1.0])
+            end
             putbaraij(m.task, conidxs[idx], barvaridx, Int[matrixid], Float64[1.0])
             idx += 1
         end
