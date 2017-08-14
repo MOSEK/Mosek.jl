@@ -1,8 +1,6 @@
 module MosekMathProgSolverInterface
 import ..Mosek
 
-export MosekSolver
-
 # Known issues:
 #  - SOCP and QP cannot be mixed, but this is not checked (an error from mosek will be produced, though)
 #  - Adding a conic quadratic constraint will add an empty constraint to ensure that the number of values
@@ -16,6 +14,8 @@ export MosekSolver
 #    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
 
 import MathProgBase
+
+
 
 
 
@@ -247,13 +247,6 @@ type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
 end
 
 
-
-immutable MosekSolver <: MathProgBase.AbstractMathProgSolver
-  options
-end
-
-MosekSolver(;kwargs...) = MosekSolver(kwargs)
-
 type MosekMathProgModelError <: Exception
   msg :: AbstractString
 end
@@ -359,5 +352,12 @@ end
 #include("MosekNLPSolverInterface.jl")
 include("MosekLPQCQPInterface.jl")
 include("MosekConicInterface.jl")
+
+
+
+
+
+
+
 
 end
