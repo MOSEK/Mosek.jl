@@ -8,10 +8,10 @@ function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{UInt8})
   convert(Int32,0)::Int32
 end
 
-function putstreamfunc(t::MSKtask, whichstream:: Int32, f :: Function)  
+function putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)  
   cbfunc = cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Void},Ptr{UInt8}))
-  r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Void},Int32, Any, Ptr{Void}),t.task,whichstream,f,cbfunc)
-  if r != MSK_RES_OK
+  r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Void},Int32, Any, Ptr{Void}),t.task,whichstream.value,f,cbfunc)
+  if r != MSK_RES_OK.value
     throw(MosekError(r,getlasterror(t)))
   end
   t.streamcallbackfunc = cbfunc
@@ -34,11 +34,11 @@ function msk_info_callback_wrapper(t::Ptr{Void}, userdata::Ptr{Void}, where :: I
             if task.usercallbackfunc == nothing
                 0
             else
-                dinfa  = unsafe_wrap(Array{Float64,1},douinf,(MSK_DINF_END,),false)
-                iinfa  = unsafe_wrap(Array{Int32,1},intinf,(MSK_IINF_END,),false)
-                liinfa = unsafe_wrap(Array{Int64,1},lintinf,(MSK_LIINF_END,),false)
+                dinfa  = unsafe_wrap(Vector{Float64},douinf,(length(Dinfitem),),false)
+                iinfa  = unsafe_wrap(Vector{Int32},intinf,(length(Iinfitem),),false)
+                liinfa = unsafe_wrap(Vector{Int64},lintinf,(length(Liinfitem),),false)
 
-                task.usercallbackfunc(Int32(where), dinfa, iinfa, liinfa)
+                task.usercallbackfunc(Callbackcode(where), dinfa, iinfa, liinfa)
             end
         end
     

@@ -53,7 +53,7 @@ type MSKtask
         temp = Array{Ptr{Void}}(1)
         res = @msk_ccall(maketask, Int32, (Ptr{Void}, Int32, Int32, Ptr{Void}), env.env, 0, 0, temp)
 
-        if res != MSK_RES_OK
+        if res != MSK_RES_OK.value
             throw(MosekError(res,""))
         end
 
@@ -63,7 +63,7 @@ type MSKtask
         finalizer(task,deletetask)
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
-        if r != MSK_RES_OK
+        if r != MSK_RES_OK.value
             throw(MosekError(r,getlasterror(t)))
         end
 
@@ -74,7 +74,7 @@ type MSKtask
         temp = Array{Ptr{Void}}(1)
         res = @msk_ccall(clonetask, Int32, (Ptr{Void}, Ptr{Void}), t.task, temp)
 
-        if res != MSK_RES_OK
+        if res != MSK_RES_OK.value
             throw(MosekError(res,""))
         end
 
@@ -85,7 +85,7 @@ type MSKtask
         finalizer(task,deletetask)
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
-        if r != MSK_RES_OK
+        if r != MSK_RES_OK.value
             throw(MosekError(r,getlasterror(t)))
         end
 
@@ -100,7 +100,7 @@ type MSKtask
         finalizer(task,deletetask)
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
-        if r != MSK_RES_OK
+        if r != MSK_RES_OK.value
             throw(MosekError(r,getlasterror(t)))
         end
 

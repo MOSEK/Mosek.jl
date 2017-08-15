@@ -108,17 +108,17 @@ Base.getindex{F,D}(cm::ConstraintMap,r :: MathOptInterface.ConstraintReference{F
 
 
 struct MosekSolution
-    whichsol :: Int32
-    solsta   :: Int32
-    prosta   :: Int32
+    whichsol :: Soltype
+    solsta   :: Solsta
+    prosta   :: Prosta
 
-    xxstatus :: Vector{Int32}
+    xxstatus :: Vector{Stakey}
     xx       :: Vector{Float64}
     slx      :: Vector{Float64}
     sux      :: Vector{Float64}
     snx      :: Vector{Float64}
 
-    cstatus  :: Vector{Int32}
+    cstatus  :: Vector{Stakey}
     xc       :: Vector{Float64}
     slc      :: Vector{Float64}
     suc      :: Vector{Float64}
@@ -209,9 +209,8 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     c_block_slack   :: Vector{Int}
 
     ###########################
-    trm :: Int32
+    trm :: Rescode
     solutions :: Vector{MosekSolution}
-
 end
 
 

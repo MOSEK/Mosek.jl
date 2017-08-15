@@ -15,16 +15,18 @@ printstream(msg::String) = print(msg)
 ############################
 ## Define problem data
 
-bkc = [MSK_BK_FX MSK_BK_LO MSK_BK_UP]
+bkc = [MSK_BK_FX
+       MSK_BK_LO
+       MSK_BK_UP]
 
 # Bound values for constraints
 blc = [30.0, 15.0, -Inf]
 buc = [30.0, +Inf, 25.0]
 
 # Bound keys for variables
-bkx = [ MSK_BK_LO,
-        MSK_BK_RA,
-        MSK_BK_LO,
+bkx = [ MSK_BK_LO
+        MSK_BK_RA
+        MSK_BK_LO
         MSK_BK_LO ]
 
 # Bound values for variables

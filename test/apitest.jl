@@ -5,7 +5,7 @@ using Mosek, Base.Test
     @testset "lo1" begin
         printstream(msg::String) = nothing # print(msg)
 
-        bkc = [MSK_BK_FX MSK_BK_LO MSK_BK_UP]
+        bkc = [MSK_BK_FX, MSK_BK_LO, MSK_BK_UP]
         blc = [30.0, 15.0, -Inf]
         buc = [30.0, +Inf, 25.0]
         bkx = [ MSK_BK_LO, MSK_BK_RA, MSK_BK_LO, MSK_BK_LO ]
@@ -46,9 +46,9 @@ using Mosek, Base.Test
         solsta = getsolsta(task,MSK_SOL_BAS)
         prosta = getprosta(task,MSK_SOL_BAS)
 
-        @test getsolsta(task,MSK_SOL_ITR) in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-        @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
+        @test getsolsta(task,MSK_SOL_ITR) in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL ]
+        @test solsta in [ MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL ]
+        @test prosta in [MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS]
 
         if solsta in     [ MSK_SOL_STA_OPTIMAL, 
                            MSK_SOL_STA_NEAR_OPTIMAL ]
@@ -260,9 +260,9 @@ using Mosek, Base.Test
         appendbarvars(task,barvardim)
         putcj(task, 1, 1.0)
         putvarboundslice(task,1,numvar+1,
-                         [ MSK_BK_FR::Int32 for i in 1:numvar ],
-                         [ -Inf             for i in 1:numvar ],
-                         [ +Inf             for i in 1:numvar ])
+                         [ MSK_BK_FR for i in 1:numvar ],
+                         [ -Inf      for i in 1:numvar ],
+                         [ +Inf      for i in 1:numvar ])
         putconboundslice(task,1,numcon+1, bkc,blc,buc)
         putacolslice(task,1,numvar+1,
                      A.colptr[1:numvar], A.colptr[2:numvar+1],
@@ -320,36 +320,36 @@ using Mosek, Base.Test
             end
             return 0
         end
-        evalobj(x :: Array{Float64,1}) = log(x[2]+x[3])
-        evalconi(x:: Array{Float64,1},i:: Int32) = 0.0
-        function grdobj(x :: Array{Float64,1},sub:: Array{Int32,1}, val:: Array{Float64,1})
+        evalobj(x :: Vector{Float64}) = log(x[2]+x[3])
+        evalconi(x:: Vector{Float64},i:: Int32) = 0.0
+        function grdobj(x :: Vector{Float64},sub:: Vector{Int32}, val:: Vector{Float64})
             for j in 1:length(sub)
                 if sub[j] == 2 || sub[j] == 3
                     val[j] = -1.0 / (x[2]+x[3])
                 end
             end
         end
-        function grdconi(x  :: Array{Float64,1},
+        function grdconi(x  :: Vector{Float64},
                          i  :: Int32,
-                         sub:: Array{Int32,1},
-                         val:: Array{Float64,1})
+                         sub:: Vector{Int32},
+                         val:: Vector{Float64})
             none
         end
-        function grdlag(x ::   Array{Float64,1},
+        function grdlag(x ::   Vector{Float64},
                         yo::   Float64,
-                        yc::   Array{Float64,1},
-                        subi:: Array{Int32,1},
-                        val::  Array{Float64,1})
+                        yc::   Vector{Float64},
+                        subi:: Vector{Int32},
+                        val::  Vector{Float64})
             val[2] = - yo * 1.0 / (x[2]+x[3])
             val[3] = - yo * 1.0 / (x[2]+x[3])
         end 
-        function heslag(x ::      Array{Float64,1},
+        function heslag(x ::      Vector{Float64},
                         yo::      Float64,
-                        yc::      Array{Float64,1},
-                        subi::    Array{Int32,1},
-                        hessubi:: Array{Int32,1},
-                        hessubj:: Array{Int32,1},
-                        hesval::  Array{Float64,1})
+                        yc::      Vector{Float64},
+                        subi::    Vector{Int32},
+                        hessubi:: Vector{Int32},
+                        hessubj:: Vector{Int32},
+                        hesval::  Vector{Float64})
 
             hessubi[1] = 2; hessubj[1] = 2; hesval[1] = (x[2]+x[3])^(-2)
             hessubi[2] = 3; hessubj[2] = 2; hesval[2] = (x[2]+x[3])^(-2)

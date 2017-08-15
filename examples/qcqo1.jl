@@ -15,8 +15,8 @@ bkc   = [ MSK_BK_LO ]
 blc   = [ 1.0 ]
 buc   = [ Inf ]
   
-bkx   = [ MSK_BK_LO,
-          MSK_BK_LO,
+bkx   = [ MSK_BK_LO
+          MSK_BK_LO
           MSK_BK_LO ]
 blx   = [ 0.0,  0.0, 0.0 ]
 bux   = [ Inf,  Inf, Inf ]

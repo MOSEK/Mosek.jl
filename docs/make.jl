@@ -6,7 +6,9 @@ makedocs(
     sitename = "Mosek",
     pages = [
         "Index"         => "index.md",
-        "API Reference" => "Mosek-Functions.md"
+        "API Reference" => "Mosek-Functions.md",
+        "Solver parameters"    => "parameters.md",
+        "Symbolic values"    => "enums.md"
     ]
 )
 

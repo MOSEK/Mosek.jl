@@ -11,8 +11,8 @@ using Mosek
 printstream(msg::String) = print(msg)
 
 # Bound keys for constraints
-bkc = [MSK_BK_FX,
-       MSK_BK_FX]
+bkc = [ MSK_BK_FX
+        MSK_BK_FX]
 
 # Bound values for constraints
 blc = [1.0, 0.5]
@@ -59,9 +59,9 @@ maketask() do task
     # Set the bounds on variable j
     # blx[j] <= x_j <= bux[j] 
     putvarboundslice(task,1,numvar+1,
-                     [ MSK_BK_FR::Int32 for i in 1:numvar ],
-                     [ -Inf             for i in 1:numvar ],
-                     [ +Inf             for i in 1:numvar ])
+                     [ MSK_BK_FR for i in 1:numvar ],
+                     [ -Inf      for i in 1:numvar ],
+                     [ +Inf      for i in 1:numvar ])
 
     # Set the bounds on constraints.
     # blc[i] <= constraint_i <= buc[i]

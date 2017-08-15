@@ -57,7 +57,7 @@ end
 
 function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
     n = length(subj)
-    bk = Vector{Int32}(n)
+    bk = Vector{Boundkey}(n)
     bl = Vector{Float64}(n)
     bu = Vector{Float64}(n)
     for i in 1:n
@@ -71,7 +71,7 @@ end
 
 function getconboundlist(t::MSKtask, subj :: Vector{Int32})
     n = length(subj)
-    bk = Vector{Int32}(n)
+    bk = Vector{Boundkey}(n)
     bl = Vector{Float64}(n)
     bu = Vector{Float64}(n)
     for i in 1:n
@@ -126,8 +126,8 @@ function Base.delete!(
                 bk[i] = MSK_BK_FR
             end
         end
-        
-        putvarboundlist(m.task,convert(Vector{Int32},convert(Vector{Int32},subj)),bk,bl,bu)
+
+        putvarboundlist(m.task,convert(Vector{Int32},subj),bk,bl,bu)
     elseif m.xc_bounds[xcid] & boundflag_upper != 0
         bnd = fill(0.0, length(N))
         bk,bl,bu = getvarboundlist(m.task, subj)
@@ -140,7 +140,7 @@ function Base.delete!(
             end
         end
         
-        putvarboundlist(m.task,convert(Vector{Int32},convert(Vector{Int32},subj)),bk,bl,bu)
+        putvarboundlist(m.task,convert(Vector{Int32},subj),bk,bl,bu)
     else
         assert(false)
         # should not happen

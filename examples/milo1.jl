@@ -82,9 +82,9 @@ maketask() do task
         println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")
-    elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+    elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
         println("Primal or dual infeasibility.\n")
-    elseif MSK_SOL_STA_UNKNOWN
+    elseif solsta == MSK_SOL_STA_UNKNOWN
         println("Unknown solution status")
     else
         println("Other solution status")
