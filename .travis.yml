@@ -1,0 +1,17 @@
+## Documentation: http://docs.travis-ci.com/user/languages/julia/
+language: julia
+os:
+  - linux
+  - osx
+  - windows
+julia:
+  - 0.6
+notifications:
+  email: false
+git:
+  depth: 99999999
+script:
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("Mosek"); Pkg.test("Mosek"; coverage=true)'
+after_success:
+  - julia -e 'Pkg.add("Documenter")'
+  - julia -e 'cd(Pkg.dir("Mosek")); include(joinpath("docs", "make.jl"))'
