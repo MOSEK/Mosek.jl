@@ -206,6 +206,149 @@ function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
   return convert(Int32,0) :: Int32
 end
 
+"""
+    putnlcallbacks(task::MSKtask,
+                   grdobjsub :: Vector{Int},
+                   grdconsub :: Vector{Int},
+                   grdconptr :: Vector{Int},
+                   hessubi   :: Vector{Int},
+                   hessubj   :: Vector{Int},
+                   evalobj   :: Function,
+                   evalconi  :: Function,
+                   grdlag    :: Function,
+                   grdobj    :: Function,
+                   grdconi   :: Function,
+                   heslag    :: Function)
+
+This sets up the structure of the non-linear terms and sets the non-linear callback functions.
+
+* `grdobjsub` The subscripts of the variables that appear in non-linear terms in the objective.
+* `grdconsub` The subscripts of the variables that appear in constraints. 
+* `grdconptr` Defines the positions in `grdconsub` where rows begin, so that `grdconsub[grdconptr[i]]` is the index of the first non-linear variable in constraint `i`. 
+* `hessubi` Row subscripts of the non-zero elements of the Hessian of the Lagrangian. This matrix is symmetrix and only elements in the lower triangular should be inputted.
+* `hessubj` Column subscripts of the non-zero elements of the Hessian of the Lagrangian. This matrix is symmetrix and only elements in the lower triangular should be inputted.
+* `evalobj` Function that evaluates the non-linear part of the objective at a given point. See below.
+* `evalconi` Function that evaluates the non-linear part of a constraint at a given point. See below.
+* `grdlag` Function that evaluates the gradient of the Lagrangian at a given point. See below.
+* `grdobj` Function that evluates the gradient of the objective at a given point. See below.
+* `grdconi` Function that evaluates the gradient of a constraint at a given point. See below.
+* `heslag` Function that evaluates the Hessian of the Lagrangian at a given point. See below.
+
+The Lagrangian of the non-linear part of the problem has the following form:
+
+```math
+\\mathcal{L}(x,yo,yc) = \\mbox{yo}\\cdot f_0(x) + \\sum^m_{i=1} \\mbox{yc}_i\\cdot f_i(x)
+```
+
+It is the first and second derivatives of this that should be computed. The following sections show the form of the callback functions. 
+
+
+
+
+
+## evalobj
+
+    function evalobj(x::Vector{Float64}) -> Float64
+
+Evaluate the non-linear part of the objective at the point `x`.
+
+
+## evalconi
+
+    function evalconi(x:: Vector{Float64},i:: Int32) -> Float64
+
+Evaluate the non-linear part of constraint `i` at the point `x`.
+
+## grdlag  
+
+    function grdlag
+    ( x   :: Vector{Float64},
+      yo  :: Float64,
+      yc  :: Vector{Float64},
+      subi:: Vector{Int32},
+      val :: Vector{Float64} )
+
+Evaluate the gradient of the Lagrangian
+
+```math
+\\mbox{yo}\\cdot f_0'(x) + \\sum_i \\mbox{yc}_i f_{\\mbox{subi}[i]}'(x)
+```
+
+Evaluate the gradient of the Lagrangian at the point `x`. Here
+* `x` is the point where the function should be evaluated.
+* `yo` the multiplier for the objective gradient
+* `subi` the indexes of the constraints that should be included in the Lagrangian
+* `yc` the multipliers for the constraints that should be included in the Lagrangian
+* `val` a vector of length `numvar` where the gradient values are returned. Only the non-zero places should be overwritten.
+
+## grdobj  
+
+    function grdobj
+    ( x  :: Vector{Float64},
+      sub:: Vector{Int32}, 
+      val:: Vector{Float64} )
+
+Evaluate the gradient of ``f_0``:
+
+```math
+\\mbox{val}[k] \\leftarrow \\frac{d}{dx_{\\mbox{sub}[k]}} f_0'(x)
+```
+
+* `x` is the point where the function should be evaluated
+* `sub` the variable subscripts corresponding to the non-zero places in the objective
+* `val` the array that return the gradient values
+
+## grdconi 
+
+    function grdconi
+    ( x  :: Vector{Float64},
+      i  :: Int32, 
+      sub:: Vector{Int32}, 
+      val:: Vector{Float64})
+
+Evaluate the gradient of :math:`f_i`:
+
+```math
+\\mbox{val}[k] \\leftarrow \\frac{d}{dx_{\\mbox{sub}[k]}} f_i'(x)
+```
+
+* `x` is the point where the function should be evaluated
+* `i` the constraint index 
+* `sub` the variable subscripts corresponding to the non-zero places in the constraint
+* `val` the array that return the gradient values
+
+
+## heslag 
+
+    function heslag
+    ( x ::      Vector{Float64},
+      yo::      Float64,
+      yc::      Vector{Float64},
+      subi::    Vector{Int32},
+      hessubi:: Vector{Int32},
+      hessubj:: Vector{Int32},
+      hesval::  Vector{Float64})
+
+Evaluate the Hessian of the Lagrangian:
+
+```math
+\\frac{d^2}{dx^2} \\mathcal{L}(x,yo,yc)
+```
+
+Note that the Hessian is symmetric. Only elements from the lower triangular part should be inputted, i.e. all elements
+
+```math        
+\\frac{d^2}{dx_idx_j} \\mathcal{L}(x,yo,yc),~ j\\leq i
+```
+
+* `x` is the point where the function should be evaluated.
+* `yo` the multiplier for the objective gradient
+* `subi` the indexes of the constraints that should be included in the Lagrangian
+* `yc` the multipliers for the constraints that should be included in the Lagrangian
+* `hessubi` row subscripts of the non-zeros
+* `hessubj` column subscripts of the non-zeros
+* `hesval` non-zero values of the Hessian
+"""
 function putnlcallbacks(task::MSKtask,
                         grdobjsub :: Array{Int,1},
                         grdconsub :: Array{Int,1},
@@ -256,6 +399,11 @@ function putnlcallbacks(task::MSKtask,
   task.nlinfo = nlinfo
 end
 
+"""
+    clearnlcallbacks(task::MSKtask)
+
+Remove all non-linear callbacks from the problem.
+"""
 function clearnlcallbacks(task::MSKtask)
   @msk_ccall("putnlfunc",
              Int32, (Ptr{Void},Ptr{Void},Ptr{Void},Ptr{Void}),

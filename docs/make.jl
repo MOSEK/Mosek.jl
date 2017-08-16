@@ -7,6 +7,7 @@ makedocs(
     pages = [
         "Index"         => "index.md",
         "API Reference" => "Mosek-Functions.md",
+        "General Convex API" => "geco.md",
         "Solver parameters"    => "parameters.md",
         "Symbolic values"    => "enums.md"
     ]
