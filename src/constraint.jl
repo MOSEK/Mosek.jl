@@ -617,8 +617,8 @@ function Base.delete!(
     m.xc_coneid[xcid] = 0
     removecone(m.task,coneidx)
 
-    m.x_numxc[subj] -= 1
-    m.xc_idxs[sub] = 0
+    m.x_numxc[subj]  -= 1
+    m.xc_idxs[sub]    = 0
     m.xc_bounds[xcid] = 0
     
     deleteblock(m.xc_block,xcid)

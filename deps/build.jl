@@ -157,7 +157,14 @@ mskbindir =
             end
 
         info("Get latest MOSEK version (http://download.mosek.com/stable/version)")
-        success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
+        if true # hack until 8.1 becomes official stable
+          newver = "8.1.0.15"
+          open(joinpath(dldir,"new_version"),"w") do f
+            write(f,newver)
+          end
+        else  
+          success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
+        end   
 
         new_version =
             open(joinpath(dldir,"new_version"),"r") do f
