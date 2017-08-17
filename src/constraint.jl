@@ -533,7 +533,9 @@ end
 MathOptInterface.candelete(
     m   ::MosekModel,
     cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.ScalarAffineFunction,
-                                                                       MathOptInterface.VectorAffineFunction},
+                                                                       MathOptInterface.VectorAffineFunction,
+                                                                       MathOptInterface.SingleVariable,
+                                                                       MathOptInterface.VectorOfVariables},
                                                             D <: Union{MathOptInterface.LessThan,
                                                                        MathOptInterface.GreaterThan,
                                                                        MathOptInterface.EqualTo,
@@ -553,7 +555,16 @@ MathOptInterface.candelete(
                                                                        MathOptInterface.PowerCone,
                                                                        MathOptInterface.DualPowerCone}} = false
 
-
+MathOptInterface.candelete(
+    m   ::MosekModel,
+    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.SingleVariable,
+                                                                       MathOptInterface.VectorOfVariables},
+                                                            D <: Union{MathOptInterface.SecondOrderCone,
+                                                                       MathOptInterface.RotatedSecondOrderCone,
+                                                                       MathOptInterface.ExponentialCone,
+                                                                       MathOptInterface.DualExponentialCone,
+                                                                       MathOptInterface.PowerCone,
+                                                                       MathOptInterface.DualPowerCone}} = true
 
 
 function Base.delete!(
@@ -584,6 +595,35 @@ function Base.delete!(
     m.c_constant[subi] = 0.0
     deleteblock(m.c_block,cid)
 end
+
+function Base.delete!(
+    m::MosekModel,
+    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.VectorAffineFunction},
+                                                            D <: Union{MathOptInterface.SecondOrderCone,
+                                                                       MathOptInterface.RotatedSecondOrderCone,
+                                                                       MathOptInterface.ExponentialCone,
+                                                                       MathOptInterface.DualExponentialCone,
+                                                                       MathOptInterface.PowerCone,
+                                                                       MathOptInterface.DualPowerCone}}
+    
+    delete!(select(m.constrmap, F, D), cref.value)
+    xcid = ref2id(cref)
+    sub = getindexes(m.xc_block,xcid)
+
+    subj = [ getindexes(m.x_block,i)[1] for i in sub ]
+    N = length(subj)
+    m.x_boundflags[subj] .&= ~m.xc_bounds[xcid]    
+    asgn,coneidx = getconenameindex(m.task,"$(m.xc_coneid[xcid])")
+    m.xc_coneid[xcid] = 0
+    removecone(m.task,coneidx)
+
+    m.x_numxc[subj] -= 1
+    m.xc_idxs[sub] = 0
+    m.xc_bounds[xcid] = 0
+    
+    deleteblock(m.xc_block,xcid)
+end
+
 
 function Base.delete!(
     m::MosekModel,
