@@ -157,7 +157,8 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     x_block      :: LinkedInts
 
     """
-    One entry per scalar variable in the task indicating which bound types are defined
+    One entry per scalar variable in the task indicating which bound
+    types are defined
     """
     x_boundflags :: Vector{Int}
 
@@ -178,7 +179,11 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     One entry per variable-constraint block indicating which bound
     types it defines. The values are binary ORed `boundflag_...` values.
     """
-    xc_bounds    :: Vector{Int}
+    xc_bounds    :: Vector{UInt8}
+    """
+    One entry per variable-constraint block indicating which cone it belongs to, 0 if none.
+    """
+    xc_coneid    :: Vector{Int}
 
     """
     One entry per scalar variable-constraint, defining which native
@@ -207,7 +212,14 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
     - negative: Negated index of a PSD variable in the underlying task
     """
     c_block_slack   :: Vector{Int}
+    """
+    One entry per variable-constraint block indicating which cone it belongs to, 0 if none.
+    """
+    c_coneid   :: Vector{Int}
 
+    ###########################
+    conecounter :: Int
+    
     ###########################
     trm :: Rescode
     solutions :: Vector{MosekSolution}
@@ -222,11 +234,14 @@ function MathOptInterface.SolverInstance(solver::MosekSolver)
                Int[], # x_boundflags
                Int[], # x_boundflags
                LinkedInts(), # xc_block
-               Int[], # xc_bounds
+               UInt8[], # xc_bounds
+               Int[], # xc_coneid
                Int[], # xc_idxs
                LinkedInts(), # c_block
                Float64[], # c_constant
                Int[], # c_block_slack
+               Int[], # c_coneid
+               0, # cone counter
                Mosek.MSK_RES_OK,
                MosekSolution[]) # trm
 end

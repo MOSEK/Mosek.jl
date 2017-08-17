@@ -1,161 +1,6 @@
-
-MathOptInterface.candelete(
-    m   ::MosekModel,
-    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.ScalarAffineFunction,
-                                                                       MathOptInterface.VectorAffineFunction},
-                                                            D <: Union{MathOptInterface.LessThan,
-                                                                       MathOptInterface.GreaterThan,
-                                                                       MathOptInterface.EqualTo,
-                                                                       MathOptInterface.Interval,
-                                                                       MathOptInterface.Zeros,
-                                                                       MathOptInterface.Nonpositives,
-                                                                       MathOptInterface.Nonnegatives,
-                                                                       MathOptInterface.Reals}} = isvalid(m,cref)
-
-MathOptInterface.candelete(
-    m   ::MosekModel,
-    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: MathOptInterface.AbstractFunction,
-                                                            D <: Union{MathOptInterface.SecondOrderCone,
-                                                                       MathOptInterface.RotatedSecondOrderCone,
-                                                                       MathOptInterface.ExponentialCone,
-                                                                       MathOptInterface.DualExponentialCone,
-                                                                       MathOptInterface.PowerCone,
-                                                                       MathOptInterface.DualPowerCone}} = false
-
-
-
-
-function Base.delete!(
-    m::MosekModel,
-    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.ScalarAffineFunction,
-                                                                       MathOptInterface.VectorAffineFunction},
-                                                            D <: Union{MathOptInterface.LessThan,
-                                                                       MathOptInterface.GreaterThan,
-                                                                       MathOptInterface.EqualTo,
-                                                                       MathOptInterface.Interval,
-                                                                       MathOptInterface.Zeros,
-                                                                       MathOptInterface.Nonpositives,
-                                                                       MathOptInterface.Nonnegatives,
-                                                                       MathOptInterface.Reals}}
-
-    delete!(select(m.constrmap, F, D), cref.value)
-    
-    cid = ref2id(cref)
-    subi = getindexes(m.c_block,cid)
-
-    n = length(subi)
-    subi_i32 = convert(Vector{Int32},subi)
-    ptr = fill(Int64(0),n)
-    putarowlist(m.task,subi_i32,ptr,ptr,Int32[],Float64[])
-    b = fill(0.0,n)
-    putconboundlist(m.task,subi_i32,fill(MSK_BK_FX,n),b,b)
-
-    m.c_constant[subi] = 0.0
-    deleteblock(m.c_block,cid)
-end
-
-
-function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
-    n = length(subj)
-    bk = Vector{Boundkey}(n)
-    bl = Vector{Float64}(n)
-    bu = Vector{Float64}(n)
-    for i in 1:n
-        bki,bli,bui = getvarbound(t,subj[i])
-        bk[i] = bki
-        bl[i] = bli
-        bu[i] = bui
-    end
-    bk,bl,bu
-end
-
-function getconboundlist(t::MSKtask, subj :: Vector{Int32})
-    n = length(subj)
-    bk = Vector{Boundkey}(n)
-    bl = Vector{Float64}(n)
-    bu = Vector{Float64}(n)
-    for i in 1:n
-        bki,bli,bui = getconbound(t,subj[i])
-        bk[i] = bki
-        bl[i] = bli
-        bu[i] = bui
-    end
-    bk,bl,bu
-end
-
-function Base.delete!(
-    m::MosekModel,
-    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.SingleVariable,
-                                                                       MathOptInterface.VectorOfVariables},
-                                                            D <: Union{MathOptInterface.LessThan,
-                                                                       MathOptInterface.GreaterThan,
-                                                                       MathOptInterface.EqualTo,
-                                                                       MathOptInterface.Interval,
-                                                                       MathOptInterface.Zeros,
-                                                                       MathOptInterface.Nonpositives,
-                                                                       MathOptInterface.Nonnegatives,
-                                                                       MathOptInterface.Reals,
-                                                                       MathOptInterface.ZeroOne,
-                                                                       MathOptInterface.Integer}}
-    delete!(select(m.constrmap, F, D), cref.value)
-    
-    xcid = ref2id(cref)
-    sub = getindexes(m.xc_block,xcid)
-
-    subj = [ getindexes(m.x_block,i)[1] for i in sub ]
-    N = length(subj)
-
-    m.x_boundflags[subj] .&= ~m.xc_bounds[xcid]
-    if m.xc_bounds[xcid] & boundflag_int != 0
-        for i in 1:length(subj)
-            putvartype(m.task,subj[i],MSK_VAR_TYPE_CONT)
-        end
-    end
-    
-    if m.xc_bounds[xcid] & boundflag_lower != 0 && m.xc_bounds[xcid] & boundflag_upper != 0
-        bnd = fill(0.0, length(N))
-        putvarboundlist(m.task,convert(Vector{Int32},subj),fill(MSK_BK_FR,N),bnd,bnd)
-    elseif m.xc_bounds[xcid] & boundflag_lower != 0
-        bnd = fill(0.0, length(N))
-        bk,bl,bu = getvarboundlist(m.task, convert(Vector{Int32},subj))
-
-        for i in 1:N
-            if MSK_BK_RA == bk[i] || MSK_BK_FX == bk[i]
-                bk[i] = MSK_BK_UP
-            else
-                bk[i] = MSK_BK_FR
-            end
-        end
-
-        putvarboundlist(m.task,convert(Vector{Int32},subj),bk,bl,bu)
-    elseif m.xc_bounds[xcid] & boundflag_upper != 0
-        bnd = fill(0.0, length(N))
-        bk,bl,bu = getvarboundlist(m.task, subj)
-
-        for i in 1:N
-            if MSK_BK_RA == bk[i] || MSK_BK_FX == bk[i]
-                bk[i] = MSK_BK_LO
-            else
-                bk[i] = MSK_BK_FR
-            end
-        end
-        
-        putvarboundlist(m.task,convert(Vector{Int32},subj),bk,bl,bu)
-    else
-        assert(false)
-        # should not happen
-    end
-
-    m.x_numxc[subj] -= 1
-    m.xc_idxs[sub] = 0
-    m.xc_bounds[xcid] = 0
-    
-    deleteblock(m.xc_block,xcid)
-end
-
-
-
-
+################################################################################
+# ADD CONSTRAINT ###############################################################
+################################################################################
 
 function MathOptInterface.addconstraint!(
     m   :: MosekModel,
@@ -274,7 +119,6 @@ is_conic_set(dom :: Union{MathOptInterface.SecondOrderCone,
                           MathOptInterface.DualExponentialCone}) = true
 is_conic_set(dom) = false
 
-
 addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.Reals) = nothing
 function addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.Zeros)
     bnd = zeros(Float64,length(subj))
@@ -324,20 +168,17 @@ function addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterf
     putvarboundlist(m.task,subj,bkx,blx,bux)
 end
 
-addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.SecondOrderCone)        = appendcone(m.task,MSK_CT_QUAD,  0.0, subj)
-addvarconstr(m :: MosekModel, subj :: Vector{Int}, dom :: MathOptInterface.RotatedSecondOrderCone) = appendcone(m.task,MSK_CT_RQUAD, 0.0, subj)
 
-
+abstractset2ct(dom::MathOptInterface.SecondOrderCone) = MSK_CT_QUAD
+abstractset2ct(dom::MathOptInterface.RotatedSecondOrderCone) = MSK_CT_RQUAD
 function MathOptInterface.addconstraint!(
     m :: MosekModel,
     xs :: MathOptInterface.SingleVariable,
     dom :: D) where {D <: MathOptInterface.AbstractScalarSet}
-
     
     subj = getindexes(m.x_block, ref2id(xs.variable))
     
     mask = domain_type_mask(dom)
-    #println(dom," ",@sprintf("%x",m.x_boundflags[subj[1]]))
     if mask & m.x_boundflags[subj[1]] != 0
         error("Cannot put multiple bound sets of the same type on a variable")
     end
@@ -361,7 +202,8 @@ end
 
 function MathOptInterface.addconstraint!(m   :: MosekModel,
                                          xs  :: MathOptInterface.VectorOfVariables,
-                                         dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
+                                         dom :: Union{MathOptInterface.PositiveSemidefiniteConeTriangle,
+                                                      MathOptInterface.PositiveSemidefiniteConeScaled})
     subj = Vector{Int}(length(xs.variables))
     for i in 1:length(subj)
         getindexes(m.x_block, ref2id(xs.variables[i]),subj,i)
@@ -397,15 +239,18 @@ function MathOptInterface.addconstraint!(m   :: MosekModel,
                subii32,
                convert(Vector{Int32},subj),
                ones(Float64,NN))
-    putconboundlist(m.task,subii32,fill(MSK_BK_FX,NN),zeros(Float64,NN),zeros(Float64,NN))
-    idx = 1
-    for j in 1:N
-        for i in 1:N
-            symmatidx = appendsparsesymmat(m.task,N,Int32[i],Int32[j],Float64[-1.0])
-            putbaraij(m.task,subii32[idx],barvaridx,[symmatidx],Float64[1.0])
-            idx += 1
-        end
-    end
+
+    addbound!(m,id,subi,zeros(Float64,NN),dom)
+    
+    #putconboundlist(m.task,subii32,fill(MSK_BK_FX,NN),zeros(Float64,NN),zeros(Float64,NN))
+    #idx = 1
+    #for j in 1:N
+    #    for i in 1:N
+    #        symmatidx = appendsparsesymmat(m.task,N,Int32[i],Int32[j],Float64[-1.0])
+    #        putbaraij(m.task,subii32[idx],barvaridx,[symmatidx],Float64[1.0])
+    #        idx += 1
+    #    end
+    #end
 
     # HACK: We need to return a negative to indicate that this is
     # not, in fact, a real variable constraint, but rather a real
@@ -418,7 +263,20 @@ function MathOptInterface.addconstraint!(m   :: MosekModel,
     conref 
 end
 
-    
+
+
+function aux_setvardom(m :: MosekModel,
+                       xcid :: Int,
+                       subj :: Vector{Int},
+                       dom :: D) where { D <: Union{MathOptInterface.SecondOrderCone, MathOptInterface.RotatedSecondOrderCone} }
+    appendcone(m.task,abstractset2ct(dom),  0.0, subj)
+    coneidx = getnumcone(m.task)    
+    m.conecounter += 1
+    putconename(m.task,coneidx,"$(m.conecounter)")
+    m.xc_coneid[xcid] = m.conecounter
+end
+aux_setvardom(m :: MosekModel, xcid :: Int, subj :: Vector{Int},dom :: D) where {D <: MathOptInterface.AbstractSet} = addvarconstr(m,subj,dom)
+
 function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m :: MosekModel, xs :: MathOptInterface.VectorOfVariables, dom :: D)
     subj = Vector{Int}(length(xs.variables))
     for i in 1:length(subj)
@@ -437,7 +295,7 @@ function MathOptInterface.addconstraint!{D <: MathOptInterface.AbstractSet}(m ::
     m.xc_bounds[xcid]  = mask
     m.xc_idxs[xc_sub] = subj
 
-    addvarconstr(m,subj,dom)
+    aux_setvardom(m,xcid,subj,dom)
 
     m.x_boundflags[subj] .|= mask
     
@@ -478,43 +336,28 @@ addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vec
 addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.EqualTo{Float64})     = putconbound(m.task,Int32(conidxs[1]),MSK_BK_FX,dom.value-constant[1],dom.value-constant[1])
 addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.Interval{Float64})    = putconbound(m.task,Int32(conidxs[1]),MSK_BK_RA,dom.lower-constant[1],dom.upper-constant[1])
 
-function add_slack!(m :: MosekModel, conidxs :: Vector{Int}, constant :: Vector{Float64}, N :: Int)
-    ensurefree(m.x_block,N)
+function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: D) where { D <: Union{MathOptInterface.SecondOrderCone,MathOptInterface.RotatedSecondOrderCone} }
+    N = MathOptInterface.dimension(dom)
+    nalloc = ensurefree(m.x_block,N)
+    
     varid = newblock(m.x_block,N)
-
     numvar = getnumvar(m.task)
     if length(m.x_block) > numvar
         appendvars(m.task, length(m.x_block) - numvar)
     end
-
     subj = getindexes(m.x_block,varid)
 
     putaijlist(m.task,conidxs,subj,-ones(Float64,N))
     putvarboundlist(m.task,subj,fill(MSK_BK_FR,N),zeros(Float64,N),zeros(Float64,N))
-    
     putconboundlist(m.task,convert(Vector{Int32},conidxs),fill(MSK_BK_FX,N),-constant,-constant)
 
-    varid,subj
-end
+    m.c_block_slack[conid] = varid
 
-function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.SecondOrderCone)
-    N = MathOptInterface.dimension(dom)
-
-    varid,subj = add_slack!(m,conidxs,constant,N)
-    
-    appendcone(m.task,MSK_CT_QUAD,0.0,subj)
-    numcone = getnumcone(m.task)
-    m.c_block_slack[conid]   = varid
-end
-
-function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.RotatedSecondOrderCone)
-    N = MathOptInterface.dimension(dom)
-
-    varid,subj = add_slack!(m,conidxs,constant,N)
-    
-    appendcone(m.task,MSK_CT_RQUAD,0.0,subj)
-    numcone = getnumcone(m.task)
-    m.c_block_slack[conid]   = varid
+    appendcone(m.task,abstractset2ct(dom),0.0,subj)
+    coneidx = getnumcone(m.task)
+    m.conecounter += 1
+    putconename(m.task,coneidx,"$(m.conecounter)")
+    m.c_coneid[conid] = m.conecounter
 end
 
 function addbound!(m :: MosekModel, conid :: Int, conidxs :: Vector{Int}, constant :: Vector{Float64}, dom :: MathOptInterface.PositiveSemidefiniteConeTriangle)
@@ -682,12 +525,144 @@ end
 
 
 
+################################################################################
+##  DELETE #####################################################################
+################################################################################
+
+
+MathOptInterface.candelete(
+    m   ::MosekModel,
+    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.ScalarAffineFunction,
+                                                                       MathOptInterface.VectorAffineFunction},
+                                                            D <: Union{MathOptInterface.LessThan,
+                                                                       MathOptInterface.GreaterThan,
+                                                                       MathOptInterface.EqualTo,
+                                                                       MathOptInterface.Interval,
+                                                                       MathOptInterface.Zeros,
+                                                                       MathOptInterface.Nonpositives,
+                                                                       MathOptInterface.Nonnegatives,
+                                                                       MathOptInterface.Reals}} = isvalid(m,cref)
+
+MathOptInterface.candelete(
+    m   ::MosekModel,
+    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: MathOptInterface.AbstractFunction,
+                                                            D <: Union{MathOptInterface.SecondOrderCone,
+                                                                       MathOptInterface.RotatedSecondOrderCone,
+                                                                       MathOptInterface.ExponentialCone,
+                                                                       MathOptInterface.DualExponentialCone,
+                                                                       MathOptInterface.PowerCone,
+                                                                       MathOptInterface.DualPowerCone}} = false
+
+
+
+
+function Base.delete!(
+    m::MosekModel,
+    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.ScalarAffineFunction,
+                                                                       MathOptInterface.VectorAffineFunction},
+                                                            D <: Union{MathOptInterface.LessThan,
+                                                                       MathOptInterface.GreaterThan,
+                                                                       MathOptInterface.EqualTo,
+                                                                       MathOptInterface.Interval,
+                                                                       MathOptInterface.Zeros,
+                                                                       MathOptInterface.Nonpositives,
+                                                                       MathOptInterface.Nonnegatives,
+                                                                       MathOptInterface.Reals}}
+
+    delete!(select(m.constrmap, F, D), cref.value)
+    
+    cid = ref2id(cref)
+    subi = getindexes(m.c_block,cid)
+
+    n = length(subi)
+    subi_i32 = convert(Vector{Int32},subi)
+    ptr = fill(Int64(0),n)
+    putarowlist(m.task,subi_i32,ptr,ptr,Int32[],Float64[])
+    b = fill(0.0,n)
+    putconboundlist(m.task,subi_i32,fill(MSK_BK_FX,n),b,b)
+
+    m.c_constant[subi] = 0.0
+    deleteblock(m.c_block,cid)
+end
+
+function Base.delete!(
+    m::MosekModel,
+    cref::MathOptInterface.ConstraintReference{F,D}) where {F <: Union{MathOptInterface.SingleVariable,
+                                                                       MathOptInterface.VectorOfVariables},
+                                                            D <: Union{MathOptInterface.LessThan,
+                                                                       MathOptInterface.GreaterThan,
+                                                                       MathOptInterface.EqualTo,
+                                                                       MathOptInterface.Interval,
+                                                                       MathOptInterface.Zeros,
+                                                                       MathOptInterface.Nonpositives,
+                                                                       MathOptInterface.Nonnegatives,
+                                                                       MathOptInterface.Reals,
+                                                                       MathOptInterface.ZeroOne,
+                                                                       MathOptInterface.Integer}}
+    delete!(select(m.constrmap, F, D), cref.value)
+    
+    xcid = ref2id(cref)
+    sub = getindexes(m.xc_block,xcid)
+
+    subj = [ getindexes(m.x_block,i)[1] for i in sub ]
+    N = length(subj)
+
+    m.x_boundflags[subj] .&= ~m.xc_bounds[xcid]
+    if m.xc_bounds[xcid] & boundflag_int != 0
+        for i in 1:length(subj)
+            putvartype(m.task,subj[i],MSK_VAR_TYPE_CONT)
+        end
+    end
+    
+    if m.xc_bounds[xcid] & boundflag_lower != 0 && m.xc_bounds[xcid] & boundflag_upper != 0
+        bnd = fill(0.0, length(N))
+        putvarboundlist(m.task,convert(Vector{Int32},subj),fill(MSK_BK_FR,N),bnd,bnd)
+    elseif m.xc_bounds[xcid] & boundflag_lower != 0
+        bnd = fill(0.0, length(N))
+        bk,bl,bu = getvarboundlist(m.task, convert(Vector{Int32},subj))
+
+        for i in 1:N
+            if MSK_BK_RA == bk[i] || MSK_BK_FX == bk[i]
+                bk[i] = MSK_BK_UP
+            else
+                bk[i] = MSK_BK_FR
+            end
+        end
+
+        putvarboundlist(m.task,convert(Vector{Int32},subj),bk,bl,bu)
+    elseif m.xc_bounds[xcid] & boundflag_upper != 0
+        bnd = fill(0.0, length(N))
+        bk,bl,bu = getvarboundlist(m.task, subj)
+
+        for i in 1:N
+            if MSK_BK_RA == bk[i] || MSK_BK_FX == bk[i]
+                bk[i] = MSK_BK_LO
+            else
+                bk[i] = MSK_BK_FR
+            end
+        end
+        
+        putvarboundlist(m.task,convert(Vector{Int32},subj),bk,bl,bu)
+    else
+        assert(false)
+        # should not happen
+    end
+
+    m.x_numxc[subj] -= 1
+    m.xc_idxs[sub] = 0
+    m.xc_bounds[xcid] = 0
+    
+    deleteblock(m.xc_block,xcid)
+end
 
 
 
 
 
 
+################################################################################
+################################################################################
+################################################################################
 
 function allocateconstraints(m :: MosekModel,
                              N :: Int)
@@ -702,6 +677,7 @@ function allocateconstraints(m :: MosekModel,
     end
     if M > 0
         append!(m.c_block_slack, zeros(Float64,M))
+        append!(m.c_coneid, zeros(Float64,M))
     end
     id
 end
@@ -715,6 +691,7 @@ function allocatevarconstraints(m :: MosekModel,
     M = numblocks(m.xc_block) - length(m.xc_bounds)
     if M > 0
         append!(m.xc_bounds,zeros(Float64,M))
+        append!(m.xc_coneid,zeros(Float64,M))
     end
     if nalloc > 0
         append!(m.xc_idxs, zeros(Float64,nalloc))
@@ -737,3 +714,32 @@ end
 isvalid(m::MosekModel, ref::MathOptInterface.ConstraintReference) = allocated(m.c_block,BlockId(ref.value))
 
 
+
+
+function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
+    n = length(subj)
+    bk = Vector{Boundkey}(n)
+    bl = Vector{Float64}(n)
+    bu = Vector{Float64}(n)
+    for i in 1:n
+        bki,bli,bui = getvarbound(t,subj[i])
+        bk[i] = bki
+        bl[i] = bli
+        bu[i] = bui
+    end
+    bk,bl,bu
+end
+
+function getconboundlist(t::MSKtask, subj :: Vector{Int32})
+    n = length(subj)
+    bk = Vector{Boundkey}(n)
+    bl = Vector{Float64}(n)
+    bu = Vector{Float64}(n)
+    for i in 1:n
+        bki,bli,bui = getconbound(t,subj[i])
+        bk[i] = bki
+        bl[i] = bli
+        bu[i] = bui
+    end
+    bk,bl,bu
+end
