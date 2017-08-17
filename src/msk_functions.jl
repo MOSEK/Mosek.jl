@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.17
+# MOSEK 8.1.0.19
 
 export
   analyzenames,
@@ -519,8 +519,8 @@ function appendcons(task_:: MSKtask,num_:: Int32)
 end
 
 """
-    appendsparsesymmat{T1,T2,T3,T4}(task:: MSKtask,dim:: T1,subi:: Vector{T2},subj:: Vector{T3},valij:: Vector{T4})
-    appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
+    idx = appendsparsesymmat{T1,T2,T3,T4}(task:: MSKtask,dim:: T1,subi:: Vector{T2},subj:: Vector{T3},valij:: Vector{T4})
+    idx = appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
 * `dim :: Int32`. Dimension of the symmetric matrix that is appended.
@@ -584,7 +584,7 @@ function appendvars(task_:: MSKtask,num_:: Int32)
 end
 
 """
-    basiscond(task_:: MSKtask)
+    (nrmbasis,nrminvbasis) = basiscond(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `nrmbasis :: Float64`. An estimate for the 1-norm of the basis.
@@ -620,7 +620,7 @@ function basiscond(task_:: MSKtask)
 end
 
 """
-    bktostr(task_:: MSKtask,bk_:: Boundkey)
+    str = bktostr(task_:: MSKtask,bk_:: Boundkey)
 
 * `task :: MSKtask`. An optimization task.
 * `bk :: Boundkey`. Bound key.
@@ -643,7 +643,7 @@ function bktostr(task_:: MSKtask,bk_:: Boundkey)
 end
 
 """
-    callbackcodetostr(code_:: Callbackcode)
+    callbackcodestr = callbackcodetostr(code_:: Callbackcode)
 
 * `code :: Callbackcode`. A callback code.
 * `callbackcodestr :: AbstractString`. String corresponding to the callback code.
@@ -879,7 +879,7 @@ function commitchanges(task_:: MSKtask)
 end
 
 """
-    conetypetostr(task_:: MSKtask,ct_:: Conetype)
+    str = conetypetostr(task_:: MSKtask,ct_:: Conetype)
 
 * `task :: MSKtask`. An optimization task.
 * `ct :: Conetype`. Specifies the type of the cone.
@@ -921,8 +921,8 @@ function deletesolution(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    dualsensitivity{T1}(task:: MSKtask,subj:: Vector{T1})
-    dualsensitivity(task_:: MSKtask,subj_:: Vector{Int32})
+    (leftpricej,rightpricej,leftrangej,rightrangej) = dualsensitivity{T1}(task:: MSKtask,subj:: Vector{T1})
+    (leftpricej,rightpricej,leftrangej,rightrangej) = dualsensitivity(task_:: MSKtask,subj_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `subj :: Vector{Int32}`. Indexes of objective coefficients to analyze.
@@ -967,8 +967,8 @@ function dualsensitivity(task_:: MSKtask,subj_:: Vector{Int32})
 end
 
 """
-    getacol{T1}(task:: MSKtask,j:: T1)
-    getacol(task_:: MSKtask,j_:: Int32)
+    (nzj,subj,valj) = getacol{T1}(task:: MSKtask,j:: T1)
+    (nzj,subj,valj) = getacol(task_:: MSKtask,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the column.
@@ -1000,8 +1000,8 @@ function getacol(task_:: MSKtask,j_:: Int32)
 end
 
 """
-    getacolnumnz{T1}(task:: MSKtask,i:: T1)
-    getacolnumnz(task_:: MSKtask,i_:: Int32)
+    nzj = getacolnumnz{T1}(task:: MSKtask,i:: T1)
+    nzj = getacolnumnz(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the column.
@@ -1024,8 +1024,8 @@ function getacolnumnz(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getacolslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
-    getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
+    (subi,subj,val) = getacolslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    (subi,subj,val) = getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. Index of the first column in the sequence.
@@ -1063,8 +1063,8 @@ function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
 end
 
 """
-    getaij{T1,T2}(task:: MSKtask,i:: T1,j:: T2)
-    getaij(task_:: MSKtask,i_:: Int32,j_:: Int32)
+    aij = getaij{T1,T2}(task:: MSKtask,i:: T1,j:: T2)
+    aij = getaij(task_:: MSKtask,i_:: Int32,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Row index of the coefficient to be returned.
@@ -1088,8 +1088,8 @@ function getaij(task_:: MSKtask,i_:: Int32,j_:: Int32)
 end
 
 """
-    getapiecenumnz{T1,T2,T3,T4}(task:: MSKtask,firsti:: T1,lasti:: T2,firstj:: T3,lastj:: T4)
-    getapiecenumnz(task_:: MSKtask,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32)
+    numnz = getapiecenumnz{T1,T2,T3,T4}(task:: MSKtask,firsti:: T1,lasti:: T2,firstj:: T3,lastj:: T4)
+    numnz = getapiecenumnz(task_:: MSKtask,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `firsti :: Int32`. Index of the first row in the rectangular piece.
@@ -1121,8 +1121,8 @@ function getapiecenumnz(task_:: MSKtask,firsti_:: Int32,lasti_:: Int32,firstj_::
 end
 
 """
-    getarow{T1}(task:: MSKtask,i:: T1)
-    getarow(task_:: MSKtask,i_:: Int32)
+    (nzi,subi,vali) = getarow{T1}(task:: MSKtask,i:: T1)
+    (nzi,subi,vali) = getarow(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the row.
@@ -1154,8 +1154,8 @@ function getarow(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getarownumnz{T1}(task:: MSKtask,i:: T1)
-    getarownumnz(task_:: MSKtask,i_:: Int32)
+    nzi = getarownumnz{T1}(task:: MSKtask,i:: T1)
+    nzi = getarownumnz(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the row.
@@ -1178,8 +1178,8 @@ function getarownumnz(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getarowslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
-    getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
+    (subi,subj,val) = getarowslicetrip{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    (subi,subj,val) = getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. Index of the first row in the sequence.
@@ -1219,8 +1219,8 @@ function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
 end
 
 """
-    getaslice{T2,T3}(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3)
-    getaslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
+    (ptrb,ptre,sub,val) = getaslice{T2,T3}(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3)
+    (ptrb,ptre,sub,val) = getaslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `accmode :: Accmode`. Defines whether a column slice or a row slice is requested.
@@ -1264,8 +1264,8 @@ function getaslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int
 end
 
 """
-    getaslicenumnz{T2,T3}(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3)
-    getaslicenumnz(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
+    numnz = getaslicenumnz{T2,T3}(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3)
+    numnz = getaslicenumnz(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `accmode :: Accmode`. Defines whether non-zeros are counted in a column slice or a row slice.
@@ -1290,7 +1290,7 @@ function getaslicenumnz(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:
 end
 
 """
-    getbarablocktriplet(task_:: MSKtask)
+    (num,subi,subj,subk,subl,valijkl) = getbarablocktriplet(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. Number of elements in the block triplet form.
@@ -1336,8 +1336,8 @@ function getbarablocktriplet(task_:: MSKtask)
 end
 
 """
-    getbaraidx{T1}(task:: MSKtask,idx:: T1)
-    getbaraidx(task_:: MSKtask,idx_:: Int64)
+    (i,j,num,sub,weights) = getbaraidx{T1}(task:: MSKtask,idx:: T1)
+    (i,j,num,sub,weights) = getbaraidx(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Position of the element in the vectorized form.
@@ -1383,8 +1383,8 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getbaraidxij{T1}(task:: MSKtask,idx:: T1)
-    getbaraidxij(task_:: MSKtask,idx_:: Int64)
+    (i,j) = getbaraidxij{T1}(task:: MSKtask,idx:: T1)
+    (i,j) = getbaraidxij(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Position of the element in the vectorized form.
@@ -1418,8 +1418,8 @@ function getbaraidxij(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getbaraidxinfo{T1}(task:: MSKtask,idx:: T1)
-    getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
+    num = getbaraidxinfo{T1}(task:: MSKtask,idx:: T1)
+    num = getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. The internal position of the element for which information should be obtained.
@@ -1445,7 +1445,7 @@ function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getbarasparsity(task_:: MSKtask)
+    (numnz,idxij) = getbarasparsity(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numnz :: Int64`. Number of nonzero elements in barA.
@@ -1478,7 +1478,7 @@ function getbarasparsity(task_:: MSKtask)
 end
 
 """
-    getbarcblocktriplet(task_:: MSKtask)
+    (num,subj,subk,subl,valjkl) = getbarcblocktriplet(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. Number of elements in the block triplet form.
@@ -1519,8 +1519,8 @@ function getbarcblocktriplet(task_:: MSKtask)
 end
 
 """
-    getbarcidx{T1}(task:: MSKtask,idx:: T1)
-    getbarcidx(task_:: MSKtask,idx_:: Int64)
+    (j,num,sub,weights) = getbarcidx{T1}(task:: MSKtask,idx:: T1)
+    (j,num,sub,weights) = getbarcidx(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Index of the element for which information should be obtained.
@@ -1555,8 +1555,8 @@ function getbarcidx(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getbarcidxinfo{T1}(task:: MSKtask,idx:: T1)
-    getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
+    num = getbarcidxinfo{T1}(task:: MSKtask,idx:: T1)
+    num = getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Index of the element for which information should be obtained. The value is an index of a symmetric sparse variable.
@@ -1579,8 +1579,8 @@ function getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getbarcidxj{T1}(task:: MSKtask,idx:: T1)
-    getbarcidxj(task_:: MSKtask,idx_:: Int64)
+    j = getbarcidxj{T1}(task:: MSKtask,idx:: T1)
+    j = getbarcidxj(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Index of the element for which information should be obtained.
@@ -1603,7 +1603,7 @@ function getbarcidxj(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getbarcsparsity(task_:: MSKtask)
+    (numnz,idxj) = getbarcsparsity(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numnz :: Int64`. Number of nonzero elements in barc.
@@ -1634,8 +1634,8 @@ function getbarcsparsity(task_:: MSKtask)
 end
 
 """
-    getbarsj{T2}(task:: MSKtask,whichsol:: Soltype,j:: T2)
-    getbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
+    barsj = getbarsj{T2}(task:: MSKtask,whichsol:: Soltype,j:: T2)
+    barsj = getbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -1661,8 +1661,8 @@ function getbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
 end
 
 """
-    getbarvarname{T1}(task:: MSKtask,i:: T1)
-    getbarvarname(task_:: MSKtask,i_:: Int32)
+    name = getbarvarname{T1}(task:: MSKtask,i:: T1)
+    name = getbarvarname(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the variable.
@@ -1687,7 +1687,7 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
+    (asgn,index) = getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `somename :: String`. The name of the variable.
@@ -1711,8 +1711,8 @@ function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
 end
 
 """
-    getbarvarnamelen{T1}(task:: MSKtask,i:: T1)
-    getbarvarnamelen(task_:: MSKtask,i_:: Int32)
+    len = getbarvarnamelen{T1}(task:: MSKtask,i:: T1)
+    len = getbarvarnamelen(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the variable.
@@ -1735,8 +1735,8 @@ function getbarvarnamelen(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getbarxj{T2}(task:: MSKtask,whichsol:: Soltype,j:: T2)
-    getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
+    barxj = getbarxj{T2}(task:: MSKtask,whichsol:: Soltype,j:: T2)
+    barxj = getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -1762,8 +1762,8 @@ function getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
 end
 
 """
-    getbound{T2}(task:: MSKtask,accmode:: Accmode,i:: T2)
-    getbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32)
+    (bk,bl,bu) = getbound{T2}(task:: MSKtask,accmode:: Accmode,i:: T2)
+    (bk,bl,bu) = getbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `accmode :: Accmode`. Defines if operations are performed row-wise (constraint-oriented) or column-wise (variable-oriented).
@@ -1791,8 +1791,8 @@ function getbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32)
 end
 
 """
-    getboundslice{T2,T3}(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3)
-    getboundslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
+    (bk,bl,bu) = getboundslice{T2,T3}(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3)
+    (bk,bl,bu) = getboundslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `accmode :: Accmode`. Defines if operations are performed row-wise (constraint-oriented) or column-wise (variable-oriented).
@@ -1826,7 +1826,7 @@ function getboundslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_::
 end
 
 """
-    getc(task_:: MSKtask)
+    c = getc(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `c :: Vector{Float64}`. Linear terms of the objective as a dense vector. The length is the number of variables.
@@ -1849,7 +1849,7 @@ function getc(task_:: MSKtask)
 end
 
 """
-    getcfix(task_:: MSKtask)
+    cfix = getcfix(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `cfix :: Float64`. Fixed term in the objective.
@@ -1870,8 +1870,8 @@ function getcfix(task_:: MSKtask)
 end
 
 """
-    getcj{T1}(task:: MSKtask,j:: T1)
-    getcj(task_:: MSKtask,j_:: Int32)
+    cj = getcj{T1}(task:: MSKtask,j:: T1)
+    cj = getcj(task_:: MSKtask,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the variable for which the c coefficient should be obtained.
@@ -1894,8 +1894,8 @@ function getcj(task_:: MSKtask,j_:: Int32)
 end
 
 """
-    getconbound{T1}(task:: MSKtask,i:: T1)
-    getconbound(task_:: MSKtask,i_:: Int32)
+    (bk,bl,bu) = getconbound{T1}(task:: MSKtask,i:: T1)
+    (bk,bl,bu) = getconbound(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the constraint for which the bound information should be obtained.
@@ -1922,8 +1922,8 @@ function getconbound(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getconboundslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
-    getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
+    (bk,bl,bu) = getconboundslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    (bk,bl,bu) = getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. First index in the sequence.
@@ -1956,8 +1956,8 @@ function getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 end
 
 """
-    getcone{T1}(task:: MSKtask,k:: T1)
-    getcone(task_:: MSKtask,k_:: Int32)
+    (ct,conepar,nummem,submem) = getcone{T1}(task:: MSKtask,k:: T1)
+    (ct,conepar,nummem,submem) = getcone(task_:: MSKtask,k_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Index of the cone.
@@ -1989,8 +1989,8 @@ function getcone(task_:: MSKtask,k_:: Int32)
 end
 
 """
-    getconeinfo{T1}(task:: MSKtask,k:: T1)
-    getconeinfo(task_:: MSKtask,k_:: Int32)
+    (ct,conepar,nummem) = getconeinfo{T1}(task:: MSKtask,k:: T1)
+    (ct,conepar,nummem) = getconeinfo(task_:: MSKtask,k_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Index of the cone.
@@ -2017,8 +2017,8 @@ function getconeinfo(task_:: MSKtask,k_:: Int32)
 end
 
 """
-    getconename{T1}(task:: MSKtask,i:: T1)
-    getconename(task_:: MSKtask,i_:: Int32)
+    name = getconename{T1}(task:: MSKtask,i:: T1)
+    name = getconename(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the cone.
@@ -2043,7 +2043,7 @@ function getconename(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getconenameindex(task_:: MSKtask,somename_:: AbstractString)
+    (asgn,index) = getconenameindex(task_:: MSKtask,somename_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `somename :: String`. The name which should be checked.
@@ -2067,8 +2067,8 @@ function getconenameindex(task_:: MSKtask,somename_:: AbstractString)
 end
 
 """
-    getconenamelen{T1}(task:: MSKtask,i:: T1)
-    getconenamelen(task_:: MSKtask,i_:: Int32)
+    len = getconenamelen{T1}(task:: MSKtask,i:: T1)
+    len = getconenamelen(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the cone.
@@ -2091,8 +2091,8 @@ function getconenamelen(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getconname{T1}(task:: MSKtask,i:: T1)
-    getconname(task_:: MSKtask,i_:: Int32)
+    name = getconname{T1}(task:: MSKtask,i:: T1)
+    name = getconname(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the constraint.
@@ -2117,7 +2117,7 @@ function getconname(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getconnameindex(task_:: MSKtask,somename_:: AbstractString)
+    (asgn,index) = getconnameindex(task_:: MSKtask,somename_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `somename :: String`. The name which should be checked.
@@ -2141,8 +2141,8 @@ function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
 end
 
 """
-    getconnamelen{T1}(task:: MSKtask,i:: T1)
-    getconnamelen(task_:: MSKtask,i_:: Int32)
+    len = getconnamelen{T1}(task:: MSKtask,i:: T1)
+    len = getconnamelen(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the constraint.
@@ -2165,8 +2165,8 @@ function getconnamelen(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getcslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
-    getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
+    c = getcslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    c = getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. First index in the sequence.
@@ -2192,8 +2192,8 @@ function getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 end
 
 """
-    getdimbarvarj{T1}(task:: MSKtask,j:: T1)
-    getdimbarvarj(task_:: MSKtask,j_:: Int32)
+    dimbarvarj = getdimbarvarj{T1}(task:: MSKtask,j:: T1)
+    dimbarvarj = getdimbarvarj(task_:: MSKtask,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the semidefinite variable whose dimension is requested.
@@ -2216,7 +2216,7 @@ function getdimbarvarj(task_:: MSKtask,j_:: Int32)
 end
 
 """
-    getdouinf(task_:: MSKtask,whichdinf_:: Dinfitem)
+    dvalue = getdouinf(task_:: MSKtask,whichdinf_:: Dinfitem)
 
 * `task :: MSKtask`. An optimization task.
 * `whichdinf :: Dinfitem`. Specifies a double information item.
@@ -2238,7 +2238,7 @@ function getdouinf(task_:: MSKtask,whichdinf_:: Dinfitem)
 end
 
 """
-    getdouparam(task_:: MSKtask,param_:: Dparam)
+    parvalue = getdouparam(task_:: MSKtask,param_:: Dparam)
 
 * `task :: MSKtask`. An optimization task.
 * `param :: Dparam`. Which parameter.
@@ -2260,7 +2260,7 @@ function getdouparam(task_:: MSKtask,param_:: Dparam)
 end
 
 """
-    getdualobj(task_:: MSKtask,whichsol_:: Soltype)
+    dualobj = getdualobj(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -2284,7 +2284,7 @@ function getdualobj(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getdualsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
+    (nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars) = getdualsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -2318,8 +2318,8 @@ function getdualsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getdviolbarvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getdviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getdviolbarvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getdviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -2354,8 +2354,8 @@ function getdviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32}
 end
 
 """
-    getdviolcon{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getdviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getdviolcon{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getdviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -2399,8 +2399,8 @@ function getdviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 end
 
 """
-    getdviolcones{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getdviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getdviolcones{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getdviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -2440,8 +2440,8 @@ function getdviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 end
 
 """
-    getdviolvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getdviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getdviolvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getdviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -2486,7 +2486,7 @@ function getdviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 end
 
 """
-    getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Soltype)
+    inftask = getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Which solution to use when determining the infeasible subproblem.
@@ -2520,8 +2520,8 @@ function getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getinfname{T2}(task:: MSKtask,inftype:: Inftype,whichinf:: T2)
-    getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
+    infname = getinfname{T2}(task:: MSKtask,inftype:: Inftype,whichinf:: T2)
+    infname = getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `inftype :: Inftype`. Type of the information item.
@@ -2546,7 +2546,7 @@ function getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
 end
 
 """
-    getintinf(task_:: MSKtask,whichiinf_:: Iinfitem)
+    ivalue = getintinf(task_:: MSKtask,whichiinf_:: Iinfitem)
 
 * `task :: MSKtask`. An optimization task.
 * `whichiinf :: Iinfitem`. Specifies an integer information item.
@@ -2568,7 +2568,7 @@ function getintinf(task_:: MSKtask,whichiinf_:: Iinfitem)
 end
 
 """
-    getintparam(task_:: MSKtask,param_:: Iparam)
+    parvalue = getintparam(task_:: MSKtask,param_:: Iparam)
 
 * `task :: MSKtask`. An optimization task.
 * `param :: Iparam`. Which parameter.
@@ -2590,8 +2590,8 @@ function getintparam(task_:: MSKtask,param_:: Iparam)
 end
 
 """
-    getlenbarvarj{T1}(task:: MSKtask,j:: T1)
-    getlenbarvarj(task_:: MSKtask,j_:: Int32)
+    lenbarvarj = getlenbarvarj{T1}(task:: MSKtask,j:: T1)
+    lenbarvarj = getlenbarvarj(task_:: MSKtask,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the semidefinite variable whose length if requested.
@@ -2614,7 +2614,7 @@ function getlenbarvarj(task_:: MSKtask,j_:: Int32)
 end
 
 """
-    getlintinf(task_:: MSKtask,whichliinf_:: Liinfitem)
+    ivalue = getlintinf(task_:: MSKtask,whichliinf_:: Liinfitem)
 
 * `task :: MSKtask`. An optimization task.
 * `whichliinf :: Liinfitem`. Specifies a long information item.
@@ -2636,7 +2636,7 @@ function getlintinf(task_:: MSKtask,whichliinf_:: Liinfitem)
 end
 
 """
-    getmaxnumanz(task_:: MSKtask)
+    maxnumanz = getmaxnumanz(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumanz :: Int64`. Number of preallocated non-zero linear matrix elements.
@@ -2657,7 +2657,7 @@ function getmaxnumanz(task_:: MSKtask)
 end
 
 """
-    getmaxnumbarvar(task_:: MSKtask)
+    maxnumbarvar = getmaxnumbarvar(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumbarvar :: Int32`. Maximum number of symmetric matrix variables for which space is currently preallocated.
@@ -2678,7 +2678,7 @@ function getmaxnumbarvar(task_:: MSKtask)
 end
 
 """
-    getmaxnumcon(task_:: MSKtask)
+    maxnumcon = getmaxnumcon(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumcon :: Int32`. Number of preallocated constraints in the optimization task.
@@ -2699,7 +2699,7 @@ function getmaxnumcon(task_:: MSKtask)
 end
 
 """
-    getmaxnumcone(task_:: MSKtask)
+    maxnumcone = getmaxnumcone(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumcone :: Int32`. Number of preallocated conic constraints in the optimization task.
@@ -2722,7 +2722,7 @@ function getmaxnumcone(task_:: MSKtask)
 end
 
 """
-    getmaxnumqnz(task_:: MSKtask)
+    maxnumqnz = getmaxnumqnz(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumqnz :: Int64`. Number of non-zero elements preallocated in quadratic coefficient matrices.
@@ -2745,7 +2745,7 @@ function getmaxnumqnz(task_:: MSKtask)
 end
 
 """
-    getmaxnumvar(task_:: MSKtask)
+    maxnumvar = getmaxnumvar(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumvar :: Int32`. Number of preallocated variables in the optimization task.
@@ -2766,7 +2766,7 @@ function getmaxnumvar(task_:: MSKtask)
 end
 
 """
-    getmemusage(task_:: MSKtask)
+    (meminuse,maxmemuse) = getmemusage(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `meminuse :: Int64`. Amount of memory currently used by the task.
@@ -2789,7 +2789,7 @@ function getmemusage(task_:: MSKtask)
 end
 
 """
-    getnadouinf(task_:: MSKtask,infitemname_:: AbstractString)
+    dvalue = getnadouinf(task_:: MSKtask,infitemname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `infitemname :: String`. The name of a double information item.
@@ -2811,7 +2811,7 @@ function getnadouinf(task_:: MSKtask,infitemname_:: AbstractString)
 end
 
 """
-    getnadouparam(task_:: MSKtask,paramname_:: AbstractString)
+    parvalue = getnadouparam(task_:: MSKtask,paramname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `paramname :: String`. Name of a parameter.
@@ -2833,7 +2833,7 @@ function getnadouparam(task_:: MSKtask,paramname_:: AbstractString)
 end
 
 """
-    getnaintinf(task_:: MSKtask,infitemname_:: AbstractString)
+    ivalue = getnaintinf(task_:: MSKtask,infitemname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `infitemname :: String`. The name of an integer information item.
@@ -2855,7 +2855,7 @@ function getnaintinf(task_:: MSKtask,infitemname_:: AbstractString)
 end
 
 """
-    getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
+    parvalue = getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `paramname :: String`. Name of a parameter.
@@ -2877,8 +2877,8 @@ function getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
 end
 
 """
-    getnastrparam{T2}(task:: MSKtask,paramname:: AbstractString,sizeparamname:: T2)
-    getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname_:: Int32)
+    (len,parvalue) = getnastrparam{T2}(task:: MSKtask,paramname:: AbstractString,sizeparamname:: T2)
+    (len,parvalue) = getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `paramname :: String`. Name of a parameter.
@@ -2905,7 +2905,7 @@ function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname
 end
 
 """
-    getnumanz(task_:: MSKtask)
+    numanz = getnumanz(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numanz :: Int32`. Number of non-zero elements in the linear constraint matrix.
@@ -2926,7 +2926,7 @@ function getnumanz(task_:: MSKtask)
 end
 
 """
-    getnumanz64(task_:: MSKtask)
+    numanz = getnumanz64(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numanz :: Int64`. Number of non-zero elements in the linear constraint matrix.
@@ -2947,7 +2947,7 @@ function getnumanz64(task_:: MSKtask)
 end
 
 """
-    getnumbarablocktriplets(task_:: MSKtask)
+    num = getnumbarablocktriplets(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. An upper bound on the number of elements in the block triplet form of bara.
@@ -2968,7 +2968,7 @@ function getnumbarablocktriplets(task_:: MSKtask)
 end
 
 """
-    getnumbaranz(task_:: MSKtask)
+    nz = getnumbaranz(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `nz :: Int64`. The number of nonzero block elements in barA.
@@ -2989,7 +2989,7 @@ function getnumbaranz(task_:: MSKtask)
 end
 
 """
-    getnumbarcblocktriplets(task_:: MSKtask)
+    num = getnumbarcblocktriplets(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. An upper bound on the number of elements in the block triplet form of barc.
@@ -3010,7 +3010,7 @@ function getnumbarcblocktriplets(task_:: MSKtask)
 end
 
 """
-    getnumbarcnz(task_:: MSKtask)
+    nz = getnumbarcnz(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `nz :: Int64`. The number of nonzero elements in barc.
@@ -3031,7 +3031,7 @@ function getnumbarcnz(task_:: MSKtask)
 end
 
 """
-    getnumbarvar(task_:: MSKtask)
+    numbarvar = getnumbarvar(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numbarvar :: Int32`. Number of semidefinite variables in the problem.
@@ -3052,7 +3052,7 @@ function getnumbarvar(task_:: MSKtask)
 end
 
 """
-    getnumcon(task_:: MSKtask)
+    numcon = getnumcon(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numcon :: Int32`. Number of constraints.
@@ -3073,7 +3073,7 @@ function getnumcon(task_:: MSKtask)
 end
 
 """
-    getnumcone(task_:: MSKtask)
+    numcone = getnumcone(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numcone :: Int32`. Number of conic constraints.
@@ -3094,8 +3094,8 @@ function getnumcone(task_:: MSKtask)
 end
 
 """
-    getnumconemem{T1}(task:: MSKtask,k:: T1)
-    getnumconemem(task_:: MSKtask,k_:: Int32)
+    nummem = getnumconemem{T1}(task:: MSKtask,k:: T1)
+    nummem = getnumconemem(task_:: MSKtask,k_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Index of the cone.
@@ -3118,7 +3118,7 @@ function getnumconemem(task_:: MSKtask,k_:: Int32)
 end
 
 """
-    getnumintvar(task_:: MSKtask)
+    numintvar = getnumintvar(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numintvar :: Int32`. Number of integer variables.
@@ -3139,7 +3139,7 @@ function getnumintvar(task_:: MSKtask)
 end
 
 """
-    getnumparam(task_:: MSKtask,partype_:: Parametertype)
+    numparam = getnumparam(task_:: MSKtask,partype_:: Parametertype)
 
 * `task :: MSKtask`. An optimization task.
 * `partype :: Parametertype`. Parameter type.
@@ -3161,8 +3161,8 @@ function getnumparam(task_:: MSKtask,partype_:: Parametertype)
 end
 
 """
-    getnumqconknz{T1}(task:: MSKtask,k:: T1)
-    getnumqconknz(task_:: MSKtask,k_:: Int32)
+    numqcnz = getnumqconknz{T1}(task:: MSKtask,k:: T1)
+    numqcnz = getnumqconknz(task_:: MSKtask,k_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Index of the constraint for which the number quadratic terms should be obtained.
@@ -3185,7 +3185,7 @@ function getnumqconknz(task_:: MSKtask,k_:: Int32)
 end
 
 """
-    getnumqobjnz(task_:: MSKtask)
+    numqonz = getnumqobjnz(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numqonz :: Int64`. Number of non-zero elements in the quadratic objective terms.
@@ -3206,7 +3206,7 @@ function getnumqobjnz(task_:: MSKtask)
 end
 
 """
-    getnumsymmat(task_:: MSKtask)
+    num = getnumsymmat(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `num :: Int64`. The number of symmetric sparse matrices.
@@ -3227,7 +3227,7 @@ function getnumsymmat(task_:: MSKtask)
 end
 
 """
-    getnumvar(task_:: MSKtask)
+    numvar = getnumvar(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numvar :: Int32`. Number of variables.
@@ -3248,7 +3248,7 @@ function getnumvar(task_:: MSKtask)
 end
 
 """
-    getobjname(task_:: MSKtask)
+    objname = getobjname(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `objname :: AbstractString`. Assigned the objective name.
@@ -3271,7 +3271,7 @@ function getobjname(task_:: MSKtask)
 end
 
 """
-    getobjnamelen(task_:: MSKtask)
+    len = getobjnamelen(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `len :: Int32`. Assigned the length of the objective name.
@@ -3292,7 +3292,7 @@ function getobjnamelen(task_:: MSKtask)
 end
 
 """
-    getobjsense(task_:: MSKtask)
+    sense = getobjsense(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `sense :: Int32`. The returned objective sense.
@@ -3313,8 +3313,8 @@ function getobjsense(task_:: MSKtask)
 end
 
 """
-    getparamname{T2}(task:: MSKtask,partype:: Parametertype,param:: T2)
-    getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
+    parname = getparamname{T2}(task:: MSKtask,partype:: Parametertype,param:: T2)
+    parname = getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `partype :: Parametertype`. Parameter type.
@@ -3339,7 +3339,7 @@ function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
 end
 
 """
-    getprimalobj(task_:: MSKtask,whichsol_:: Soltype)
+    primalobj = getprimalobj(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3361,7 +3361,7 @@ function getprimalobj(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getprimalsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
+    (nrmxc,nrmxx,nrmbarx) = getprimalsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3387,7 +3387,7 @@ function getprimalsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getprobtype(task_:: MSKtask)
+    probtype = getprobtype(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `probtype :: Int32`. The problem type.
@@ -3408,7 +3408,7 @@ function getprobtype(task_:: MSKtask)
 end
 
 """
-    getprosta(task_:: MSKtask,whichsol_:: Soltype)
+    prosta = getprosta(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3430,8 +3430,8 @@ function getprosta(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getpviolbarvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getpviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getpviolbarvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getpviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3466,8 +3466,8 @@ function getpviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32}
 end
 
 """
-    getpviolcon{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getpviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getpviolcon{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getpviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3504,8 +3504,8 @@ function getpviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 end
 
 """
-    getpviolcones{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getpviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getpviolcones{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getpviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3545,8 +3545,8 @@ function getpviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 end
 
 """
-    getpviolvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
-    getpviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
+    viol = getpviolvar{T2}(task:: MSKtask,whichsol:: Soltype,sub:: Vector{T2})
+    viol = getpviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3584,8 +3584,8 @@ function getpviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
 end
 
 """
-    getqconk{T1}(task:: MSKtask,k:: T1)
-    getqconk(task_:: MSKtask,k_:: Int32)
+    (numqcnz,qcsubi,qcsubj,qcval) = getqconk{T1}(task:: MSKtask,k:: T1)
+    (numqcnz,qcsubi,qcsubj,qcval) = getqconk(task_:: MSKtask,k_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Which constraint.
@@ -3625,7 +3625,7 @@ function getqconk(task_:: MSKtask,k_:: Int32)
 end
 
 """
-    getqobj(task_:: MSKtask)
+    (numqonz,qosubi,qosubj,qoval) = getqobj(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `numqonz :: Int64`. Number of non-zero elements in the quadratic objective terms.
@@ -3663,8 +3663,8 @@ function getqobj(task_:: MSKtask)
 end
 
 """
-    getqobjij{T1,T2}(task:: MSKtask,i:: T1,j:: T2)
-    getqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32)
+    qoij = getqobjij{T1,T2}(task:: MSKtask,i:: T1,j:: T2)
+    qoij = getqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Row index of the coefficient.
@@ -3688,8 +3688,8 @@ function getqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32)
 end
 
 """
-    getreducedcosts{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getreducedcosts(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    redcosts = getreducedcosts{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    redcosts = getreducedcosts(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3723,7 +3723,7 @@ function getreducedcosts(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last
 end
 
 """
-    getskc(task_:: MSKtask,whichsol_:: Soltype)
+    skc = getskc(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3746,8 +3746,8 @@ function getskc(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getskcslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    skc = getskcslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    skc = getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3773,7 +3773,7 @@ function getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getskx(task_:: MSKtask,whichsol_:: Soltype)
+    skx = getskx(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3796,8 +3796,8 @@ function getskx(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getskxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    skx = getskxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    skx = getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3823,7 +3823,7 @@ function getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getslc(task_:: MSKtask,whichsol_:: Soltype)
+    slc = getslc(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3847,8 +3847,8 @@ function getslc(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getslcslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    slc = getslcslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    slc = getslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3875,7 +3875,7 @@ function getslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getslx(task_:: MSKtask,whichsol_:: Soltype)
+    slx = getslx(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3899,8 +3899,8 @@ function getslx(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getslxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    slx = getslxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    slx = getslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3927,7 +3927,7 @@ function getslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getsnx(task_:: MSKtask,whichsol_:: Soltype)
+    snx = getsnx(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3951,8 +3951,8 @@ function getsnx(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getsnxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    snx = getsnxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    snx = getsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -3979,7 +3979,7 @@ function getsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getsolsta(task_:: MSKtask,whichsol_:: Soltype)
+    solsta = getsolsta(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4001,7 +4001,7 @@ function getsolsta(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getsolution(task_:: MSKtask,whichsol_:: Soltype)
+    (prosta,solsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx) = getsolution(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4123,8 +4123,8 @@ function getsolution(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getsolutioni{T2}(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype)
-    getsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: Soltype)
+    (sk,x,sl,su,sn) = getsolutioni{T2}(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype)
+    (sk,x,sl,su,sn) = getsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `accmode :: Accmode`. Defines whether solution information for a constraint or for a variable is retrieved.
@@ -4157,7 +4157,7 @@ function getsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: 
 end
 
 """
-    getsolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
+    (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone) = getsolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4199,8 +4199,8 @@ function getsolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getsolutionslice{T3,T4}(task:: MSKtask,whichsol:: Soltype,solitem:: Solitem,first:: T3,last:: T4)
-    getsolutionslice(task_:: MSKtask,whichsol_:: Soltype,solitem_:: Solitem,first_:: Int32,last_:: Int32)
+    values = getsolutionslice{T3,T4}(task:: MSKtask,whichsol:: Soltype,solitem:: Solitem,first:: T3,last:: T4)
+    values = getsolutionslice(task_:: MSKtask,whichsol_:: Soltype,solitem_:: Solitem,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4228,8 +4228,8 @@ function getsolutionslice(task_:: MSKtask,whichsol_:: Soltype,solitem_:: Solitem
 end
 
 """
-    getsparsesymmat{T1}(task:: MSKtask,idx:: T1)
-    getsparsesymmat(task_:: MSKtask,idx_:: Int64)
+    (subi,subj,valij) = getsparsesymmat{T1}(task:: MSKtask,idx:: T1)
+    (subi,subj,valij) = getsparsesymmat(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Index of the matrix to retrieve.
@@ -4265,7 +4265,7 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    getstrparam(task_:: MSKtask,param_:: Sparam)
+    (len,parvalue) = getstrparam(task_:: MSKtask,param_:: Sparam)
 
 * `task :: MSKtask`. An optimization task.
 * `param :: Sparam`. Which parameter.
@@ -4291,7 +4291,7 @@ function getstrparam(task_:: MSKtask,param_:: Sparam)
 end
 
 """
-    getstrparamlen(task_:: MSKtask,param_:: Sparam)
+    len = getstrparamlen(task_:: MSKtask,param_:: Sparam)
 
 * `task :: MSKtask`. An optimization task.
 * `param :: Sparam`. Which parameter.
@@ -4313,7 +4313,7 @@ function getstrparamlen(task_:: MSKtask,param_:: Sparam)
 end
 
 """
-    getsuc(task_:: MSKtask,whichsol_:: Soltype)
+    suc = getsuc(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4337,8 +4337,8 @@ function getsuc(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getsucslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    suc = getsucslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    suc = getsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4365,7 +4365,7 @@ function getsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getsux(task_:: MSKtask,whichsol_:: Soltype)
+    sux = getsux(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4389,8 +4389,8 @@ function getsux(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getsuxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    sux = getsuxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    sux = getsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4417,8 +4417,8 @@ function getsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
-    getsymmatinfo{T1}(task:: MSKtask,idx:: T1)
-    getsymmatinfo(task_:: MSKtask,idx_:: Int64)
+    (dim,nz,type) = getsymmatinfo{T1}(task:: MSKtask,idx:: T1)
+    (dim,nz,type) = getsymmatinfo(task_:: MSKtask,idx_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `idx :: Int64`. Index of the matrix for which information is requested.
@@ -4445,7 +4445,7 @@ function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
 end
 
 """
-    gettaskname(task_:: MSKtask)
+    taskname = gettaskname(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `taskname :: AbstractString`. Returns the task name.
@@ -4468,7 +4468,7 @@ function gettaskname(task_:: MSKtask)
 end
 
 """
-    gettasknamelen(task_:: MSKtask)
+    len = gettasknamelen(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `len :: Int32`. Returns the length of the task name.
@@ -4489,8 +4489,8 @@ function gettasknamelen(task_:: MSKtask)
 end
 
 """
-    getvarbound{T1}(task:: MSKtask,i:: T1)
-    getvarbound(task_:: MSKtask,i_:: Int32)
+    (bk,bl,bu) = getvarbound{T1}(task:: MSKtask,i:: T1)
+    (bk,bl,bu) = getvarbound(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the variable for which the bound information should be obtained.
@@ -4517,8 +4517,8 @@ function getvarbound(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getvarboundslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
-    getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
+    (bk,bl,bu) = getvarboundslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    (bk,bl,bu) = getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. First index in the sequence.
@@ -4551,8 +4551,8 @@ function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 end
 
 """
-    getvarname{T1}(task:: MSKtask,j:: T1)
-    getvarname(task_:: MSKtask,j_:: Int32)
+    name = getvarname{T1}(task:: MSKtask,j:: T1)
+    name = getvarname(task_:: MSKtask,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of a variable.
@@ -4577,7 +4577,7 @@ function getvarname(task_:: MSKtask,j_:: Int32)
 end
 
 """
-    getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
+    (asgn,index) = getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `somename :: String`. The name which should be checked.
@@ -4601,8 +4601,8 @@ function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
 end
 
 """
-    getvarnamelen{T1}(task:: MSKtask,i:: T1)
-    getvarnamelen(task_:: MSKtask,i_:: Int32)
+    len = getvarnamelen{T1}(task:: MSKtask,i:: T1)
+    len = getvarnamelen(task_:: MSKtask,i_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of a variable.
@@ -4625,8 +4625,8 @@ function getvarnamelen(task_:: MSKtask,i_:: Int32)
 end
 
 """
-    getvartype{T1}(task:: MSKtask,j:: T1)
-    getvartype(task_:: MSKtask,j_:: Int32)
+    vartype = getvartype{T1}(task:: MSKtask,j:: T1)
+    vartype = getvartype(task_:: MSKtask,j_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the variable.
@@ -4649,8 +4649,8 @@ function getvartype(task_:: MSKtask,j_:: Int32)
 end
 
 """
-    getvartypelist{T1}(task:: MSKtask,subj:: Vector{T1})
-    getvartypelist(task_:: MSKtask,subj_:: Vector{Int32})
+    vartype = getvartypelist{T1}(task:: MSKtask,subj:: Vector{T1})
+    vartype = getvartypelist(task_:: MSKtask,subj_:: Vector{Int32})
 
 * `task :: MSKtask`. An optimization task.
 * `subj :: Vector{Int32}`. A list of variable indexes.
@@ -4675,7 +4675,7 @@ function getvartypelist(task_:: MSKtask,subj_:: Vector{Int32})
 end
 
 """
-    getxc(task_:: MSKtask,whichsol_:: Soltype)
+    xc = getxc(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4699,8 +4699,8 @@ function getxc(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getxcslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    xc = getxcslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    xc = getxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4727,7 +4727,7 @@ function getxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
 end
 
 """
-    getxx(task_:: MSKtask,whichsol_:: Soltype)
+    xx = getxx(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4751,8 +4751,8 @@ function getxx(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getxxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    xx = getxxslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    xx = getxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4779,7 +4779,7 @@ function getxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
 end
 
 """
-    gety(task_:: MSKtask,whichsol_:: Soltype)
+    y = gety(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4803,8 +4803,8 @@ function gety(task_:: MSKtask,whichsol_:: Soltype)
 end
 
 """
-    getyslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
-    getyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
+    y = getyslice{T2,T3}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3)
+    y = getyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -4831,7 +4831,7 @@ function getyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: In
 end
 
 """
-    initbasissolve(task_:: MSKtask)
+    basis = initbasissolve(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `basis :: Vector{Int32}`. The array of basis indexes to use.
@@ -4913,7 +4913,7 @@ function inputdata(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,c_:: Ve
 end
 
 """
-    isdouparname(task_:: MSKtask,parname_:: AbstractString)
+    param = isdouparname(task_:: MSKtask,parname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `parname :: String`. Parameter name.
@@ -4935,7 +4935,7 @@ function isdouparname(task_:: MSKtask,parname_:: AbstractString)
 end
 
 """
-    isintparname(task_:: MSKtask,parname_:: AbstractString)
+    param = isintparname(task_:: MSKtask,parname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `parname :: String`. Parameter name.
@@ -4957,7 +4957,7 @@ function isintparname(task_:: MSKtask,parname_:: AbstractString)
 end
 
 """
-    isstrparname(task_:: MSKtask,parname_:: AbstractString)
+    param = isstrparname(task_:: MSKtask,parname_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `parname :: String`. Parameter name.
@@ -5041,7 +5041,7 @@ function optimizersummary(task_:: MSKtask,whichstream_:: Streamtype)
 end
 
 """
-    optimize(task_:: MSKtask)
+    trmcode = optimize(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
 * `trmcode :: Int32`. Is either OK or a termination response code.
@@ -5127,8 +5127,8 @@ function primalrepair(task_:: MSKtask,wlc_:: Vector{Float64},wuc_:: Vector{Float
 end
 
 """
-    primalsensitivity{T1,T3}(task:: MSKtask,subi:: Vector{T1},marki:: Vector{Mark},subj:: Vector{T3},markj:: Vector{Mark})
-    primalsensitivity(task_:: MSKtask,subi_:: Vector{Int32},marki_:: Vector{Mark},subj_:: Vector{Int32},markj_:: Vector{Mark})
+    (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej) = primalsensitivity{T1,T3}(task:: MSKtask,subi:: Vector{T1},marki:: Vector{Mark},subj:: Vector{T3},markj:: Vector{Mark})
+    (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej) = primalsensitivity(task_:: MSKtask,subi_:: Vector{Int32},marki_:: Vector{Mark},subj_:: Vector{Int32},markj_:: Vector{Mark})
 
 * `task :: MSKtask`. An optimization task.
 * `subi :: Vector{Int32}`. Indexes of constraints to analyze.
@@ -7364,7 +7364,7 @@ function putvartypelist(task_:: MSKtask,subj_:: Vector{Int32},vartype_:: Vector{
 end
 
 """
-    putxc(task_:: MSKtask,whichsol_:: Soltype)
+    xc = putxc(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -7818,7 +7818,7 @@ function setdefaults(task_:: MSKtask)
 end
 
 """
-    solutiondef(task_:: MSKtask,whichsol_:: Soltype)
+    isdef = solutiondef(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
@@ -7859,8 +7859,8 @@ function solutionsummary(task_:: MSKtask,whichstream_:: Streamtype)
 end
 
 """
-    solvewithbasis{T1,T2,T3,T4}(task:: MSKtask,transp:: T1,numnz:: T2,sub:: Vector{T3},val:: Vector{T4})
-    solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Vector{Int32},val_:: Vector{Float64})
+    numnz = solvewithbasis{T1,T2,T3,T4}(task:: MSKtask,transp:: T1,numnz:: T2,sub:: Vector{T3},val:: Vector{T4})
+    numnz = solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Vector{Int32},val_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
 * `transp :: Int32`. Controls which problem formulation is solved.
@@ -7937,7 +7937,7 @@ function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Ve
 end
 
 """
-    strtoconetype(task_:: MSKtask,str_:: AbstractString)
+    conetype = strtoconetype(task_:: MSKtask,str_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `str :: String`. String corresponding to the cone type code.
@@ -7959,7 +7959,7 @@ function strtoconetype(task_:: MSKtask,str_:: AbstractString)
 end
 
 """
-    strtosk(task_:: MSKtask,str_:: AbstractString)
+    sk = strtosk(task_:: MSKtask,str_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
 * `str :: String`. Status key string.
@@ -8208,7 +8208,7 @@ function echointro(env_:: MSKenv,longver_:: Int32)
 end
 
 """
-    getcodedesc(code_:: Rescode)
+    (symname,str) = getcodedesc(code_:: Rescode)
 
 * `code :: Rescode`. A valid response code.
 * `symname :: AbstractString`. Symbolic name corresponding to the code.
@@ -8232,7 +8232,7 @@ function getcodedesc(code_:: Rescode)
 end
 
 """
-    getversion()
+    (major,minor,build,revision) = getversion()
 
 * `major :: Int32`. Major version number.
 * `minor :: Int32`. Minor version number.
