@@ -13,6 +13,7 @@ git:
 before-install:
   - sudo apt-get install curl
 script:
+  - julia -e 'Pkg.clone("https://github.com/JuliaOpt/MathOptInterface.jl.git"); Pkg.clone("https://github.com/JuliaOpt/MathOptInterfaceUtilities.jl.git");'
   - julia -e 'Pkg.clone(pwd()); Pkg.build("Mosek"); Pkg.test("Mosek"; coverage=true)'
 after_success:
   - julia -e 'Pkg.add("Documenter")'
