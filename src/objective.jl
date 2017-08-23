@@ -41,6 +41,9 @@ function MathOptInterface.setobjective!(m::MosekModel, sense :: MathOptInterface
     putcfix(m.task,func.constant)
 end
 
+MathOptInterface.canmodifyobjective(m::MosekModel, change :: MathOptInterface.ScalarConstantChange) = true
+MathOptInterface.canmodifyobjective(m::MosekModel, change :: MathOptInterface.ScalarCoefficientChange) = true
+
 function MathOptInterface.modifyobjective!(m::MosekModel, change :: MathOptInterface.ScalarConstantChange)
     putcfix(m.task,change.new_constant)
 end
