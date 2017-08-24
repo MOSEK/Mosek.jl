@@ -596,7 +596,7 @@ MathOptInterface.candelete(
                                                                        MathOptInterface.Zeros,
                                                                        MathOptInterface.Nonpositives,
                                                                        MathOptInterface.Nonnegatives,
-                                                                       MathOptInterface.Reals}} = isvalid(m,cref)
+                                                                       MathOptInterface.Reals}} = MathOptInterface.isvalid(m,cref)
 
 MathOptInterface.candelete(
     m   ::MosekModel,
@@ -804,7 +804,8 @@ function allocatevariable(m :: MosekModel,N :: Int)
     newblock(m.x_block,N)
 end
 
-isvalid(m::MosekModel, ref::MathOptInterface.ConstraintReference{F,D}) where { F,D } = haskey(select(m.constrmap,F,D),ref.value) 
+MathOptInterface.isvalid(m::MosekModel, ref::MathOptInterface.ConstraintReference{F,D}) where { F,D } = haskey(select(m.constrmap,F,D),ref.value)
+MathOptInterface.isvalid(m::MosekModel, ref::MathOptInterface.VariableReference) = allocated(m.x_block,ref2id(ref))
 
 
 function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
