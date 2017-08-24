@@ -808,7 +808,7 @@ MathOptInterface.isvalid(m::MosekModel, ref::MathOptInterface.ConstraintReferenc
 MathOptInterface.isvalid(m::MosekModel, ref::MathOptInterface.VariableReference) = allocated(m.x_block,ref2id(ref))
 
 
-function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
+function getvarboundlist(t::Mosek.Task, subj :: Vector{Int32})
     n = length(subj)
     bk = Vector{Boundkey}(n)
     bl = Vector{Float64}(n)
@@ -822,7 +822,7 @@ function getvarboundlist(t::MSKtask, subj :: Vector{Int32})
     bk,bl,bu
 end
 
-function getconboundlist(t::MSKtask, subj :: Vector{Int32})
+function getconboundlist(t::Mosek.Task, subj :: Vector{Int32})
     n = length(subj)
     bk = Vector{Boundkey}(n)
     bl = Vector{Float64}(n)

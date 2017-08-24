@@ -1,4 +1,4 @@
-using MathOptInterface, Base.Test,Mosek
+using MathOptInterface, Base.Test, Mosek.MathOptInterfaceMosek
 # TODO using solvers?
 
 const MOI = MathOptInterface

@@ -30,16 +30,16 @@ end
 
 
 
-# Environment: typedef void * MSKenv_t;
-type MSKenv
+# Environment: typedef void * Env_t;
+type Env
     env::Ptr{Void}
     streamcallbackfunc::Any
 end
 
 
-# Task: typedef void * MSKtask_t;
-type MSKtask
-    env::MSKenv
+# Task: typedef void * Task_t;
+type Task
+    env::Env
     task::Ptr{Void}
     borrowed::Bool
     # need to keep a reference to callback funcs for GC
@@ -49,7 +49,7 @@ type MSKtask
     usercallbackfunc:: Any
     nlinfo:: Any
 
-    function MSKtask(env::MSKenv)
+    function Task(env::Env)
         temp = Array{Ptr{Void}}(1)
         res = @msk_ccall(maketask, Int32, (Ptr{Void}, Int32, Int32, Ptr{Void}), env.env, 0, 0, temp)
 
@@ -70,7 +70,7 @@ type MSKtask
         task
     end
 
-    function MSKtask(t::MSKtask)
+    function Task(t::Task)
         temp = Array{Ptr{Void}}(1)
         res = @msk_ccall(clonetask, Int32, (Ptr{Void}, Ptr{Void}), t.task, temp)
 
@@ -92,7 +92,7 @@ type MSKtask
         task
     end
 
-    function MSKtask(t::Ptr{Void},borrowed::Bool)
+    function Task(t::Ptr{Void},borrowed::Bool)
         task = new(msk_global_env,t,borrowed,nothing,nothing,nothing,nothing,nothing)
         task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
         task.usercallbackfunc = nothing
@@ -107,7 +107,8 @@ type MSKtask
         task
     end
 end
-
+const MSKtask = Task
+const MSKenv  = Env
 
 # ------------
 # API wrappers
@@ -125,7 +126,7 @@ function makeenv()
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
-    MSKenv(temp[1],nothing)
+    Env(temp[1],nothing)
 end
 
 """
@@ -140,7 +141,7 @@ function makeenv(func::Function)
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
-    env = MSKenv(temp[1],nothing)
+    env = Env(temp[1],nothing)
 
     try
         func(env)
@@ -156,76 +157,70 @@ end
 #  value is put in msk_global_env). It appears that static
 #  initializers must be called from __init__(). That is called a bad solution here:
 #    https://github.com/JuliaLang/julia/issues/12010
-msk_global_env = makeenv() :: MSKenv
+msk_global_env = makeenv() :: Env
 __init__() = (global msk_global_env = makeenv())
 
-"""
-    mosektask(env:MSKenv)
 
-Create a MOSEK task belonging to `env`.
 """
-function maketask(env::MSKenv)
+    maketask(env:Env)
+    maketask()
 
-    MSKtask(env)
+Create a task that belongs to either the given `env` or to the global `env`.
+
+    maketask(task::Task)
+
+Create a clone of `task`.
+
+    maketask(func::Function, env::Env)
+    maketask(func::Function)
+
+Create a task that either longs to the given `env` or to the global `env`. The `func` parameter is a function
+
+```julia
+func(task :: Task) :: Any
+```
+
+This can be used with the `do`-syntax:
+
+```julia
+maketask(env) do task
+    readdata(task,"MyFile.task")
+end
+```
+"""
+function maketask end
+maketask(env::Env) = Task(env)
+maketask(task::Task) = Task(task)
+maketask() = Task(msk_global_env)
+function maketask(func::Function, env::Env)
+    t = Task(env)
+    try
+        func(t)
+    finally
+        deletetask(t)
+    end
+end
+function maketask(func::Function)
+    t = Task(msk_global_env)
+    try
+        func(t)
+    finally
+        deletetask(t)
+    end
 end
 
-"""
-    mosektask(task::MSKtask)
-
-Create a clone of a MOSEK task.
-"""
-function maketask(task::MSKtask)
-    MSKtask(task)
-end
-
-"""
-    mosektask()
-
-Create a new MOSEK task belonging to the global environment.
-"""
-function maketask()
-    MSKtask(msk_global_env)
-end
 
 function maketask_ptr(t::Ptr{Void},borrowed::Bool)
-    MSKtask(t,borrowed)
+    Task(t,borrowed)
 end
 
-"""
-    maketask(fnuc::Function, env::MSKenv)
-
-Create a new MOSEK task for use with `do`-notation.
-"""
-function maketask(func::Function, env::MSKenv)
-    t = MSKtask(env)
-    try
-        func(t)
-    finally
-        deletetask(t)
-    end
-end
 
 """
-    maketask(func::Function, env::MSKenv)
-
-Create a new MOSEK task belonging to the global environment for use
-with `do`-notation.
-"""
-function maketask(func::Function)
-    t = MSKtask(msk_global_env)
-    try
-        func(t)
-    finally
-        deletetask(t)
-    end
-end
-
-"""
-    deletetask(t::MSKtask)
+    deletetask(t::Task)
 
 Destroy the task object.
 """
-function deletetask(t::MSKtask)
+function deletetask(t::Task)
     if t.task != C_NULL
         if ! t.borrowed
             temp = Array{Ptr{Void}}(1)
@@ -237,11 +232,11 @@ function deletetask(t::MSKtask)
 end
 
 """
-    deleteenv(t::MSKenv)
+    deleteenv(t::Env)
 
 Destroy the task object.
 """
-function deleteenv(e::MSKenv)
+function deleteenv(e::Env)
     if e.env != C_NULL
         temp = Array{Ptr{Void}}(1)
         temp[1] = t.env
@@ -250,7 +245,7 @@ function deleteenv(e::MSKenv)
     end
 end
 
-function getlasterror(t::MSKtask)
+function getlasterror(t::Task)
     lasterrcode = Array{Cint}(1)
     lastmsglen = Array{Cint}(1)
 

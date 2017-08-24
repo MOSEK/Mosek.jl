@@ -1,3 +1,7 @@
+module MathOptInterfaceMosek
+
+#import Mosek
+using Mosek
 import MathOptInterface
 
 
@@ -137,7 +141,7 @@ remove. This ensures that References (Variable and constraint) that
 are deleted are thereafter invalid.
 """
 mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
-    task :: MSKtask
+    task :: Mosek.MSKtask
 
 
     """
@@ -370,30 +374,13 @@ id2vref(id :: Int) :: MathOptInterface.VariableReference =
         MathOptInterface.VariableReference(UInt64(id) << 1)
     end
 
-#id2cref{F,S}(id :: Int) :: MathOptInterface.ConstraintReference{F,S} =
-#    if id < 0
-#        MathOptInterface.ConstraintReference{F,S}((UInt64(-id) << 1) | 1)
-#    else
-#        MathOptInterface.ConstraintReference{F,S}(UInt64(id) << 1)
-#    end
-
 include("objective.jl")
 include("variable.jl")
 include("constraint.jl")
 include("attributes.jl")
 
-#function MathOptInterface.setobjective!(m::MosekModel, N::Int, b, a_varidx, a_coef, Q_vari, Q_varj, Q_coef)
-#end
-#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, args...) end
-#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, b) end
-#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, a_varidx, a_coef) end
-#function MathOptInterface.modifyobjective!(m::MosekModel, i::Int, Q_vari, Q_varj, Q_coef) end
-#function MathOptInterface.getobjectiveaffine(m::MosekModel) end
-#function MathOptInterface.getobjectiveconstant(m::MosekModel) end
-#function MathOptInterface.modifyobjective!(m::MosekModel,i::Int, b) end
-
-
-
-
 
 export MosekSolver, MosekModel
+
+
+end # module
