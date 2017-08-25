@@ -11,7 +11,7 @@ MathProgBase.supportedcones(::MosekSolver) = msk_accepted_cones
 
 
 
-type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
+mutable struct MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     task      :: Mosek.MSKtask
 
     # Length of the variable and constraint vector in the user model
@@ -24,15 +24,15 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     # map to barvars. When varmap[UserVarIndex] < 0, it refers to a
     # Mosek barvar index, and barvarij refers to the linear element
     # index of the barvar.
-    varmap   :: Array{Int32,1}
-    barvarij :: Array{Int64,1}
+    varmap   :: Vector{Int32}
+    barvarij :: Vector{Int64}
 
     # varbk: The boundkeys of variables, index by UserVarIndex. These
     # are necessary when first setting a variable to Binary (thus
     # changing the bounds to MSK_BK_RA), then to Continuous.
-    varbk      :: Array{Int32,1}
-    # Flags indicating that these variables are binary (integer plus [0,1] bounded)
-    binvarflag :: Array{Bool,1}
+    varbk      :: Vector{Mosek.Boundkey}
+    # Flags indicating that these variables are binary (integer plus [0] bounded)
+    binvarflag :: Vector{Bool}
 
     # Index of slack variables for conic constraints.
     #   conslack[UserConIndex] = 0 => No slack, constraint is linear
@@ -40,12 +40,12 @@ type MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     #   conslack[UserConIndex] < 0 => Slack is PSD variable (maps to MosekBarvarIndex).
     #                                 In this case barconij[UserConIndex] maps to the
     #                                 linear index of the element in barvar.
-    conslack :: Array{Int32,1}
-    barconij :: Array{Int64,1}
-    conbk    :: Array{Int32,1}
+    conslack :: Vector{Int32}
+    barconij :: Vector{Int64}
+    conbk    :: Vector{Mosek.Boundkey}
 
     # last termination code, used for status(task)
-    lasttrm :: Int32
+    lasttrm :: Mosek.Rescode
 
     # Solver options
     options
@@ -56,16 +56,16 @@ function MathProgBase.ConicModel(s::MosekSolver)
                                 0,   # numvar
                                 0,   # numcon
 
-                                Array{Int32}(0),  # varmap
-                                Array{Int64}(0),  # barvarij
+                                Vector{Int32}(0),  # varmap
+                                Vector{Int64}(0),  # barvarij
 
-                                Array{Int32}(0),  # varbk
+                                Vector{Int32}(0),  # varbk
 
-                                Array{Bool}(0),   # binvarflag
+                                Vector{Bool}(0),   # binvarflag
 
-                                Array{Int32}(0),  # conslack
-                                Array{Int64}(0),  # barconij
-                                Array{Int32}(0),  # conbk
+                                Vector{Int32}(0),  # conslack
+                                Vector{Int64}(0),  # barconij
+                                Vector{Int32}(0),  # conbk
                                 Mosek.MSK_RES_OK,
                                 s.options)
     loadoptions!(m)
@@ -132,19 +132,19 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
     Mosek.putmaxnumcone(m.task,numqcvar+numqccon)
     Mosek.putmaxnumbarvar(m.task,numbarvar+numbarcon)
 
-    varmap     = Array{Int32}(totnumvar) # nonnegative refer to linear vars, negative to barvars
+    varmap     = Vector{Int32}(totnumvar) # nonnegative refer to linear vars, negative to barvars
 
     barvarij   = zeros(Int64,totnumvar)
     barvardim  = zeros(Int32,numbarvar+numbarcon)
 
-    varbk      = Array{Int32}(totnumvar)
+    varbk      = Vector{Mosek.Boundkey}(totnumvar)
 
     linvarptr = 1
     barvarptr = 1
 
     let nvar = numlinvarelm+numqcvarelm
         varbkidx = 1
-        bk = Array{Int32}(nvar)
+        bk = Vector{Mosek.Boundkey}(nvar)
         for (sym,idxs_) in var_cones
             idxs = coneidxstoarray(idxs_)
 
@@ -196,7 +196,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
             end
         end
         bx = zeros(Float64,nvar)
-        Mosek.putvarboundslice(m.task,1,nvar+1,bk,bx,bx)
+        Mosek.putvarboundslice(m.task,Int32(1),Int32(nvar+1),bk,bx,bx)
     end
 
     conslack = zeros(Int32,M) # 0 means no slack, positive means linear var, negative means semidefinite slack
@@ -283,7 +283,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         end
 
         # Add bounds and slacks
-        conbk = Array{Int32}(M)
+        conbk = Vector{Mosek.Boundkey}(M)
         let bk = conbk
             local conptr = 1
 
@@ -317,7 +317,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
                     local bx = zeros(Float64,n)
-                    Mosek.putvarboundslice(m.task,firstslack,lastslack+1,Int32[Mosek.MSK_BK_FR for i in 1:n],bx,bx)
+                    Mosek.putvarboundslice(m.task,Int32(firstslack),Int32(lastslack+1),Mosek.Boundkey[Mosek.MSK_BK_FR for i in 1:n],bx,bx)
                     Mosek.putaijlist(m.task,Int32[firstcon:lastcon;],Int32[firstslack:lastslack;],-ones(Float64,n))
                     if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
                     elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
@@ -351,7 +351,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 end
             end
 
-            Mosek.putconboundslice(m.task,1,M+1,bk,-b,-b)
+            Mosek.putconboundslice(m.task,Int32(1),Int32(M+1),bk,-b,-b)
         end
     end
 
@@ -437,7 +437,7 @@ function MathProgBase.setbvec!(m::MosekMathProgConicModel, b::Array{Float64,1})
         throw(MosekMathProgSolverInterface.MosekMathProgModelError("Invalid b vector dimension"))
     end
 
-    Mosek.putconboundslice(m.task,1,length(b)+1,m.conbk,-b,-b)
+    Mosek.putconboundslice(m.task,Int32(1),Int32(length(b)+1),m.conbk,-b,-b)
 end
 
 function MathProgBase.setbvec!(m::MosekMathProgConicModel, b)
@@ -452,10 +452,6 @@ end
 
 function MathProgBase.getsolution(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
-    if sol < 0
-        throw(MosekMathProgModelError("No solution available"))
-    end
-
     xx = Mosek.getxx(m.task,sol)
     barx = [ Mosek.getbarxj(m.task,sol,j) for j in 1:Mosek.getnumbarvar(m.task) ]
     # rescale primal solution to svec form
@@ -478,9 +474,6 @@ end
 
 function MathProgBase.getvardual(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
-    if sol < 0 || sol == Mosek.MSK_SOL_ITG
-        throw(Mosek.MosekMathProgModelError("Solution not available"))
-    end
     solsta = Mosek.getsolsta(m.task,sol)
 
     if sol == Mosek.MSK_SOL_BAS
@@ -514,9 +507,6 @@ end
 
 function getconstrsolution_internal(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
-    if sol < 0
-        throw(Mosek.MosekMathProgModelError("No solution available"))
-    end
 
     xc = Mosek.getxc(m.task,sol)
     xx = Mosek.getxx(m.task,sol)
@@ -531,9 +521,7 @@ end
 
 function getvarduals_internal(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
-    if sol < 0
-        throw(Mosek.MosekMathProgModelError("No solution available"))
-    elseif sol == Mosek.MSK_SOL_ITG
+    if sol == Mosek.MSK_SOL_ITG
         throw(Mosek.MosekMathProgModelError("No dual solution information available"))
     end
 
@@ -547,9 +535,7 @@ end
 
 function MathProgBase.getdual(m::MosekMathProgConicModel)
     sol = getsoldef(m.task)
-    if sol < 0
-        throw(Mosek.MosekMathProgModelError("No solution available"))
-    elseif sol == Mosek.MSK_SOL_ITG
+    if sol == Mosek.MSK_SOL_ITG
         throw(Mosek.MosekMathProgModelError("No dual solution information available"))
     end
 
@@ -631,10 +617,10 @@ function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector
 
         idxs        = find(i -> m.varmap[i] > 0,1:n) # indexes into intvarflag for non-PSD vars
 
-        newbk = Int32[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
+        newbk = Mosek.Boundkey[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
         newbl = Float64[0.0 for i in idxs ]
         newbu = Float64[if (intvarflag[i] == :Bin) 1.0 else 0.0 end for i in idxs ]
-        newvt = Int32[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflag ]
+        newvt = Mosek.Variabletype[if (c == :Cont) Mosek.MSK_VAR_TYPE_CONT else Mosek.MSK_VAR_TYPE_INT end for c in intvarflag ]
 
         Mosek.putvartypelist(m.task,m.varmap[idxs],newvt)
         Mosek.putvarboundlist(m.task,m.varmap[idxs],newbk,newbl,newbu)

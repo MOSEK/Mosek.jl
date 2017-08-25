@@ -265,9 +265,9 @@ include("msk_geco.jl")
 
 
 include("MathOptInterfaceMosek.jl")
-#include("MosekSolverInterface.jl")
+include("MosekSolverInterface.jl")
 #using Mosek.MosekMathProgSolverInterface
-export MosekSolver
+#export MosekSolver
 
 
 end

@@ -15,27 +15,26 @@ import ..Mosek
 
 import MathProgBase
 
-
-
-
-
-status(t::Mosek.MSKtask) = status(t,Mosek.MSK_RES_OK)
-
-function status(t::Mosek.MSKtask, r::Int32)  
+status(t::Mosek.Task) = status(t,Mosek.MSK_RES_OK)
+function status(t::Mosek.Task, r::Mosek.Rescode)
     if     r == Mosek.MSK_RES_OK
-        sol = (if     (Mosek.solutiondef(t,Mosek.MSK_SOL_ITG) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITG) != Mosek.MSK_SOL_STA_UNKNOWN) Mosek.MSK_SOL_ITG
-               elseif (Mosek.solutiondef(t,Mosek.MSK_SOL_BAS) && Mosek.getsolsta(t,Mosek.MSK_SOL_BAS) != Mosek.MSK_SOL_STA_UNKNOWN) Mosek.MSK_SOL_BAS
-               elseif (Mosek.solutiondef(t,Mosek.MSK_SOL_ITR) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITR) != Mosek.MSK_SOL_STA_UNKNOWN) Mosek.MSK_SOL_ITR
-        else -1 end)
-
-        if sol < 0
+        if ! ( (Mosek.solutiondef(t,Mosek.MSK_SOL_ITG) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITG) != Mosek.MSK_SOL_STA_UNKNOWN) || 
+               (Mosek.solutiondef(t,Mosek.MSK_SOL_BAS) && Mosek.getsolsta(t,Mosek.MSK_SOL_BAS) != Mosek.MSK_SOL_STA_UNKNOWN) ||
+               (Mosek.solutiondef(t,Mosek.MSK_SOL_ITR) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITR) != Mosek.MSK_SOL_STA_UNKNOWN) )
             :Unknown
         else
+            sol =
+                if     Mosek.solutiondef(t,Mosek.MSK_SOL_ITG) && Mosek.getsolsta(t,Mosek.MSK_SOL_ITG) != Mosek.MSK_SOL_STA_UNKNOWN
+                    Mosek.MSK_SOL_ITG
+                elseif Mosek.solutiondef(t,Mosek.MSK_SOL_BAS) && Mosek.getsolsta(t,Mosek.MSK_SOL_BAS) != Mosek.MSK_SOL_STA_UNKNOWN
+                    Mosek.MSK_SOL_BAS
+                else
+                    Mosek.MSK_SOL_ITR
+                end
 
             prosta = Mosek.getprosta(t,sol)
             solsta = Mosek.getsolsta(t,sol)
 
-            
             if  solsta == Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS
                 #:Suboptimal # Not a standard code
                 :Unknown
@@ -84,14 +83,14 @@ function status(t::Mosek.MSKtask, r::Int32)
         :Stall
     elseif r == Mosek.MSK_RES_TRM_USER_CALLBACK
         :UserBreak
-    elseif r >= 1000 && r < 10000 # awful hack! Means: MSK_RES_ERR_*. r < 1000 is MSK_RES_WRN_*, r >= 10000 means MSK_RES_TRM_*
+    elseif r.value >= 1000 && r.value < 10000 # awful hack! Means: MSK_RES_ERR_*. r < 1000 is MSK_RES_WRN_*, r >= 10000 means MSK_RES_TRM_*
         :Error
     else
         :Unknown
     end
 end
 
-function getsense(t::Mosek.MSKtask)
+function getsense(t::Mosek.Task)
     sense = Mosek.getobjsense(t)
     if sense == Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE
         :Max
@@ -102,7 +101,7 @@ function getsense(t::Mosek.MSKtask)
     end
 end
 
-function setsense!(t::Mosek.MSKtask,sense)
+function setsense!(t::Mosek.Task,sense)
     if     sense == :Max
         Mosek.putobjsense(t,Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE)
     elseif sense == :Min
@@ -111,7 +110,7 @@ function setsense!(t::Mosek.MSKtask,sense)
 end
 
 
-function getobjgap(t::Mosek.MSKtask)
+function getobjgap(t::Mosek.Task)
     sol = getsoldef(t)
     if sol == MSK_SOL_ITG
         Mosek.getdouinf(m.task,MSK_DINF_MIO_OBJ_REL_GAP)
@@ -120,21 +119,13 @@ function getobjgap(t::Mosek.MSKtask)
     end
 end
 
-function getobjval(t::Mosek.MSKtask)
-    let sol = getsoldef(t)
-        if sol < 0
-            throw(MosekMathProgModelError("No solution available"))
-        else
-            Mosek.getprimalobj(t,sol)
-        end
-    end
-end
+getobjval(t::Mosek.Task) = Mosek.getprimalobj(t,getsoldef(t))
 
-function makebounds(bl_ :: Array{Float64,1},
-                    bu_ :: Array{Float64,1})
-    bk = Array{Int32}(length(bl_))
-    bl = Array{Float64}(length(bl_))
-    bu = Array{Float64}(length(bl_))
+function makebounds(bl_ :: Vector{Float64},
+                    bu_ :: Vector{Float64}) :: Tuple{Vector{Mosek.Boundkey},Vector{Float64},Vector{Float64}}
+    bk = Vector{Mosek.Boundkey}(length(bl_))
+    bl = Vector{Float64}(length(bl_))
+    bu = Vector{Float64}(length(bl_))
 
     for i in 1:length(bl_)
         if bl_[i] > -Inf
@@ -178,11 +169,16 @@ end
 
 
 
+struct MosekSolver <: MathProgBase.AbstractMathProgSolver
+    options
+end
+
+MosekSolver(; kwargs...) = MosekSolver(kwargs)
 
 
-
-type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
-  task :: Mosek.MSKtask
+#mutable struct MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
+type MosekMathProgModel <: MathProgBase.AbstractMathProgModel
+  task :: Mosek.Task
   probtype :: Int
 
   # numvar
@@ -196,8 +192,8 @@ type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
   #   - varmap[i] < 0: it refers to MOSEK SDP variable index (-varmap[i]),
   #     and barvarij[i] is the linear linear index into the
   #     column-oriented lower triangular part of the SDP variable.
-  varmap   :: Array{Int32,1}
-  barvarij :: Array{Int64,1}
+  varmap   :: Vector{Int32}
+  barvarij :: Vector{Int64}
 
   # numbarvar
   #   Number of used elements in barvarmap.
@@ -207,11 +203,11 @@ type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
   #   using the Semidefinite interface, these are the semidefinite
   #   variables thar can be accessed.  Semidefinite variables added
   #   thorugh loadconicproblem!() are not mapped here.
-  barvarmap :: Array{Int32,1}
+  barvarmap :: Vector{Int32}
 
   # binvarflag
   #   Defines per variable if it is binary
-  binvarflag :: Array{Bool,1}
+  binvarflag :: Vector{Bool}
 
   # numcon
   #   Number of elements used in conmap
@@ -224,7 +220,7 @@ type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
   #   from the user's point of view, but doesn't map to a MOSEK
   #   constraint (used specifically as a place-holder constraint for
   #   conic-quadratic constraints).
-  conmap   :: Array{Int32,1}
+  conmap   :: Vector{Int32}
   # conslack
   #   Maps Model constraint to corresponding slack variable
   #
@@ -235,12 +231,12 @@ type MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
   #   MOSEK variable -coneslack[i]. barconij[i] is the linear index
   #   into the column-oriented lower triangular part of the SDP
   #   variable.
-  conslack :: Array{Int32,1}
-  barconij :: Array{Int64,1}
+  conslack :: Vector{Int32}
+  barconij :: Vector{Int64}
 
   # quadratic constraints
   numqcon :: Int32
-  qconmap :: Array{Int32,1}
+  qconmap :: Vector{Int32}
 
   # options Options from MosekSolver
   options
@@ -251,7 +247,7 @@ type MosekMathProgModelError <: Exception
   msg :: AbstractString
 end
 
-function loadoptions_internal!(t::Mosek.MSKtask, options)
+function loadoptions_internal!(t::Mosek.Task, options)
     # write to console by default
     printstream(msg::AbstractString) = print(msg)
 
@@ -340,24 +336,19 @@ function compubk(bk,bu)
   end
 end
 
-function getsoldef(t::Mosek.MSKtask)
+function getsoldef(t::Mosek.Task)
     for sol in (Mosek.MSK_SOL_ITG, Mosek.MSK_SOL_BAS, Mosek.MSK_SOL_ITR)
         if Mosek.solutiondef(t,sol) && Mosek.getsolsta(t,sol) != Mosek.MSK_SOL_STA_UNKNOWN
             return sol
         end
     end
-    return -1
+    throw(MosekMathProgModelError("No solution available"))
 end
 
 #include("MosekNLPSolverInterface.jl")
 include("MosekLPQCQPInterface.jl")
 include("MosekConicInterface.jl")
 
-
-
-
-
-
-
+export MosekSolver
 
 end
