@@ -263,11 +263,17 @@ include("msk_callback.jl")
 include("msk_geco.jl")
 
 
+using MathProgBase
+# Convex.jl only works if MosekSovler is defined in the top-level module
+immutable MosekSolver <: MathProgBase.AbstractMathProgSolver
+  options
+end
+
+MosekSolver(;kwargs...) = MosekSolver(kwargs)
+export MosekSolver
 
 include("MathOptInterfaceMosek.jl")
 include("MosekSolverInterface.jl")
-#using Mosek.MosekMathProgSolverInterface
-#export MosekSolver
 
 
 end

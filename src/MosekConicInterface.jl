@@ -7,7 +7,7 @@ const msk_accepted_cones = [:Free,
                             :SDP ]
 
 
-MathProgBase.supportedcones(::MosekSolver) = msk_accepted_cones
+MathProgBase.supportedcones(::Mosek.MosekSolver) = msk_accepted_cones
 
 
 
@@ -51,7 +51,7 @@ mutable struct MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     options
 end
 
-function MathProgBase.ConicModel(s::MosekSolver)
+function MathProgBase.ConicModel(s::Mosek.MosekSolver)
     m = MosekMathProgConicModel(Mosek.maketask(),
                                 0,   # numvar
                                 0,   # numcon

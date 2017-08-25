@@ -6,9 +6,14 @@ include("testexamples.jl")
 #include("mathprogtestextra.jl")
 
 
-if false
-  # Not yet compatible with the switch to MOI 
-  include("testconvex.jl")
+if (try Pkg.installed("Convex") != nothing catch false end)
+    include("testconvex.jl")
 end
 
-include("test_mathoptinterface.jl")
+if (try Pkg.installed("MathOptInterface") != nothing catch false end)
+    include("test_mathoptinterface.jl")
+end
+
+if (try Pkg.installed("MathProgBase") != nothing catch false end)
+    include("test_mathprogbase.jl")
+end

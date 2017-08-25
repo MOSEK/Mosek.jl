@@ -8285,7 +8285,6 @@ end
 
 Sends all output from the stream defined by `whichstream` to the file given by `filename`.
 """
-function linkfiletostream end
 linkfiletostream{T3}(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) = linkfiletostream(env,whichstream,filename,Int32(append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do

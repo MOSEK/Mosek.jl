@@ -169,12 +169,6 @@ end
 
 
 
-struct MosekSolver <: MathProgBase.AbstractMathProgSolver
-    options
-end
-
-MosekSolver(; kwargs...) = MosekSolver(kwargs)
-
 
 #mutable struct MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
 type MosekMathProgModel <: MathProgBase.AbstractMathProgModel
@@ -255,7 +249,7 @@ function loadoptions_internal!(t::Mosek.Task, options)
     for (option,val) in options
         parname = string(option)
         if parname == "QUIET"
-            if convert(Bool,val) be_quiet = true end
+            be_quiet = convert(Bool,val)
         elseif startswith(parname, "MSK_IPAR_")
             Mosek.putnaintparam(t, parname, convert(Integer, val))
         elseif startswith(parname, "MSK_DPAR_")
@@ -349,6 +343,5 @@ end
 include("MosekLPQCQPInterface.jl")
 include("MosekConicInterface.jl")
 
-export MosekSolver
-
 end
+

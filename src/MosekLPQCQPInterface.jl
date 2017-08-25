@@ -28,7 +28,7 @@ type MosekNonlinearModel <: MathProgBase.AbstractLinearQuadraticModel
     m :: MosekLinearQuadraticModel
 end
 
-function MathProgBase.LinearQuadraticModel(s::MosekSolver) 
+function MathProgBase.LinearQuadraticModel(s::Mosek.MosekSolver) 
   r = MosekLinearQuadraticModel(Mosek.maketask(),
                             Array{Bool}(0),
                             0,
@@ -864,7 +864,7 @@ end
 ## Nonlinear
 #############################################################
 
-MathProgBase.NonlinearModel(s::MosekSolver) = MosekNonlinearModel(MathProgBase.LinearQuadraticModel(s))
+MathProgBase.NonlinearModel(s::Mosek.MosekSolver) = MosekNonlinearModel(MathProgBase.LinearQuadraticModel(s))
 
 type CallbackData
     d::MathProgBase.AbstractNLPEvaluator

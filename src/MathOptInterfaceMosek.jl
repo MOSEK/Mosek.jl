@@ -1,8 +1,15 @@
 module MathOptInterfaceMosek
 
-#import Mosek
-using Mosek
 import MathOptInterface
+using Mosek
+
+immutable MathOptMosekSolver <: MathOptInterface.AbstractSolver
+  options
+end
+
+MathOptMosekSolver(;kwargs...) = MathOptMosekSolver(kwargs)
+export MathOptMosekSolver
+
 
 
 include("LinkedInts.jl")
@@ -25,11 +32,6 @@ problemtype_quadratic = 2
 
 import MathOptInterface
 
-immutable MosekSolver <: MathOptInterface.AbstractSolver
-  options
-end
-
-MosekSolver(;kwargs...) = MosekSolver(kwargs)
 
 
 boundflag_lower = 0x1
@@ -230,24 +232,57 @@ mutable struct MosekModel  <: MathOptInterface.AbstractSolverInstance
 end
 
 
-function MathOptInterface.SolverInstance(solver::MosekSolver)
-    MosekModel(maketask(),# task
-               0, # public numvar
-               ConstraintMap(), # public constraints
-               LinkedInts(),# c_block
-               Int[], # x_boundflags
-               Int[], # x_boundflags
-               LinkedInts(), # xc_block
-               UInt8[], # xc_bounds
-               Int[], # xc_coneid
-               Int[], # xc_idxs
-               LinkedInts(), # c_block
-               Float64[], # c_constant
-               Int[], # c_block_slack
-               Int[], # c_coneid
-               0, # cone counter
-               Mosek.MSK_RES_OK,
-               MosekSolution[]) # trm
+function MathOptInterface.SolverInstance(solver::MathOptMosekSolver)
+    t = maketask()
+    try
+        be_quiet = false
+        for (option,val) in solver.options
+            parname = string(option)
+            if parname == "QUIET"
+                be_quiet = be_quiet || convert(Bool,val)
+            elseif startswith(parname, "MSK_IPAR_")
+                Mosek.putnaintparam(t, parname, convert(Integer, val))
+            elseif startswith(parname, "MSK_DPAR_")
+                Mosek.putnadouparam(t, parname, convert(AbstractFloat, val))
+            elseif startswith(parname, "MSK_SPAR_")
+                Mosek.putnastrparam(t, parname, convert(AbstractString, val))
+            elseif isa(val, Integer)
+                parname = "MSK_IPAR_$parname"
+                Mosek.putnaintparam(t, parname, val)
+            elseif isa(val, AbstractFloat)
+                parname = "MSK_DPAR_$parname"
+                Mosek.putnadouparam(t, parname, val)
+            elseif isa(val, AbstractString)
+                parname = "MSK_SPAR_$parname"
+                Mosek.putnastrparam(t, parname, val)
+            else
+                error("Value $val for parameter $option has unrecognized type")
+            end
+        end
+        if ! be_quiet
+            Mosek.putstreamfunc(t,Mosek.MSK_STREAM_LOG,printstream)
+        end
+        MosekModel(t,# task
+                   0, # public numvar
+                   ConstraintMap(), # public constraints
+                   LinkedInts(),# c_block
+                   Int[], # x_boundflags
+                   Int[], # x_boundflags
+                   LinkedInts(), # xc_block
+                   UInt8[], # xc_bounds
+                   Int[], # xc_coneid
+                   Int[], # xc_idxs
+                   LinkedInts(), # c_block
+                   Float64[], # c_constant
+                   Int[], # c_block_slack
+                   Int[], # c_coneid
+                   0, # cone counter
+                   Mosek.MSK_RES_OK,
+                   MosekSolution[]) # trm
+    catch
+        deletetask(m.task)
+        rethrow()
+    end
 end
 
 function MathOptInterface.free!(m::MosekModel)
@@ -318,7 +353,7 @@ end
 # OR affine and quadratic left-hand side, and ranged, unbounded, half-open, fixed (equality) domains (quadratic constraints must be unbounded or half-open)
 #
 # For non-quadratic problems we allow binary and integer variables (but not constraints)
-function supportsconstraints(m::MosekSolver, constraint_types) :: Bool
+function supportsconstraints(m::MathOptMosekSolver, constraint_types) :: Bool
     for (fun,dom) in constraint_types
         if  fun in [MathOptInterface.ScalarAffineFunction{Float64},
                     MathOptInterface.SingleVariable,
@@ -349,9 +384,9 @@ function supportsconstraints(m::MosekSolver, constraint_types) :: Bool
 end
 
 
-MathOptInterface.supportsproblem(m::MosekSolver, ::Type{MathOptInterface.SingleVariable},                constraint_types) :: Bool = supportsconstraints(m,constraint_types)
-MathOptInterface.supportsproblem(m::MosekSolver, ::Type{MathOptInterface.ScalarAffineFunction{Float64}}, constraint_types) :: Bool = supportsconstraints(m,constraint_types)
-MathOptInterface.supportsproblem{F}(m::MosekSolver, ::Type{F}, constraint_types) :: Bool = false
+MathOptInterface.supportsproblem(m::MathOptMosekSolver, ::Type{MathOptInterface.SingleVariable},                constraint_types) :: Bool = supportsconstraints(m,constraint_types)
+MathOptInterface.supportsproblem(m::MathOptMosekSolver, ::Type{MathOptInterface.ScalarAffineFunction{Float64}}, constraint_types) :: Bool = supportsconstraints(m,constraint_types)
+MathOptInterface.supportsproblem{F}(m::MathOptMosekSolver, ::Type{F}, constraint_types) :: Bool = false
 
 ref2id(ref :: MathOptInterface.VariableReference) :: Int =
     if ref.value & 1 == 0
@@ -380,7 +415,7 @@ include("constraint.jl")
 include("attributes.jl")
 
 
-export MosekSolver, MosekModel
+export MosekModel
 
 
 end # module
