@@ -4,7 +4,7 @@ export
   putnlcallbacks,
   clearnlcallbacks
 
-type MSKnlinfo
+mutable struct MSKnlinfo
   numvar :: Int
   numcon :: Int
 
