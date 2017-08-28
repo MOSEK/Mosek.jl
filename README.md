@@ -98,8 +98,8 @@ For a more complete description of functions, please refer to
 The General Convex interface is not documented at all, but the example 
 `nlo1.jl` show the general idea.
 
-MathProgBase interface
-----------------------
+`MathProgBase` interface
+------------------------
 
 Mosek implements the solver-independent
 [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) interface,
@@ -114,3 +114,9 @@ For example, you can suppress output by either saying
 ``LOG`` corresponds to the `MSK_IPAR_LOG` parameter in the API. When
 the prefix is excluded the type of the parameter is inferred by the
 provided value.
+
+
+`MathOptInterface`
+------------------
+
+The `MathOptInterface` for MOSEK is a separate package called `MathOptInterfaceMosek`.

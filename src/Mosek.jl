@@ -272,7 +272,6 @@ end
 MosekSolver(;kwargs...) = MosekSolver(kwargs)
 export MosekSolver
 
-include("MathOptInterfaceMosek.jl")
 include("MosekSolverInterface.jl")
 
 

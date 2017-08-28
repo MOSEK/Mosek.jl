@@ -157,14 +157,7 @@ mskbindir =
             end
 
         info("Get latest MOSEK version (http://download.mosek.com/stable/version)")
-        if true # hack until 8.1 becomes official stable
-          newver = "8.1.0.15"
-          open(joinpath(dldir,"new_version"),"w") do f
-            write(f,newver)
-          end
-        else  
-          success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
-        end   
+        success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
 
         new_version =
             open(joinpath(dldir,"new_version"),"r") do f
@@ -175,6 +168,12 @@ mskbindir =
         instmethod = "internal"
         
         if cur_version == nothing || cur_version != new_version
+            verarr = split(new_version,'.')
+            if verarr[2] != mskvminor
+                error("Latest MOSEK version is not compatible with this package version")
+            end
+
+            
             archurl = "http://download.mosek.com/stable/$(new_version)/$archname"
             info("Download MOSEK distro ($archurl)")
             
