@@ -101,22 +101,10 @@ The General Convex interface is not documented at all, but the example
 `MathProgBase` interface
 ------------------------
 
-Mosek implements the solver-independent
-[MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) interface,
-that allows it to works solver in e.g. [JuMP](https://github.com/JuliaOpt/JuMP.jl).
-
-The solver object is called ``MosekSolver``. Parameters are accepted
-and mirror the names in the Mosek documentation but the
-``MSK_[IDS]PAR`` prefix is optional.
-
-For example, you can suppress output by either saying
-``MosekSolver(MSK_IPAR_LOG=0)`` or ``MosekSolver(LOG=0)``, where
-``LOG`` corresponds to the `MSK_IPAR_LOG` parameter in the API. When
-the prefix is excluded the type of the parameter is inferred by the
-provided value.
+The [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) for MOSEK is a separate package called `MathProgBaseMosek`.
 
 
 `MathOptInterface`
 ------------------
 
-The `MathOptInterface` for MOSEK is a separate package called `MathOptInterfaceMosek`.
+The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called `MathOptInterfaceMosek`.
