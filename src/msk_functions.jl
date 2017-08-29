@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.19
+# MOSEK 8.1.0.23
 
 export
   analyzenames,
@@ -5796,12 +5796,6 @@ end
 * `bu :: Float64`. New upper bound.
 
 Changes the bound for either one constraint or one variable.
-
-If the bound value specified is numerically larger than
-`MSK_DPAR_DATA_TOL_BOUND_INF`` it is considered infinite and the bound key is
-changed accordingly. If a bound value is numerically larger than
-`MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is
-inputted as specified.
 """
 function putbound end
 putbound{T2,T4,T5}(task:: MSKtask,accmode:: Accmode,i:: T2,bk:: Boundkey,bl:: T4,bu:: T5) = putbound(task,accmode,Int32(i),bk,Float64(bl),Float64(bu))
@@ -5826,9 +5820,7 @@ end
 * `bl :: Vector{Float64}`. Values for lower bounds.
 * `bu :: Vector{Float64}`. Values for upper bounds.
 
-Changes the bounds for either some constraints or some variables.
-If multiple bound changes are specified for
-a constraint or a variable, only the last change takes effect. Data checks are performed as described in `Mosek.putbound`.
+Changes the bounds of constraints or variables.
 """
 function putboundlist end
 putboundlist{T2,T4,T5}(task:: MSKtask,accmode:: Accmode,sub:: Vector{T2},bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) = putboundlist(task,accmode,convert(Vector{Int32},sub),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
@@ -5856,7 +5848,7 @@ end
 * `bl :: Vector{Float64}`. Values for lower bounds.
 * `bu :: Vector{Float64}`. Values for upper bounds.
 
-Changes the bounds for a slice of variables or constraints. Data checks are performed as described in `Mosek.putbound`.
+Changes the bounds for a slice of constraints or variables.
 """
 function putboundslice end
 putboundslice{T2,T3,T5,T6}(task:: MSKtask,con:: Accmode,first:: T2,last:: T3,bk:: Vector{Boundkey},bl:: Vector{T5},bu:: Vector{T6}) = putboundslice(task,con,Int32(first),Int32(last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
@@ -7915,7 +7907,7 @@ sparsity in the vector ``b`` to speed up the computations.
 function solvewithbasis end
 solvewithbasis{T1,T2,T3,T4}(task:: MSKtask,transp:: T1,numnz:: T2,sub:: Vector{T3},val:: Vector{T4}) = solvewithbasis(task,Int32(transp),Int32(numnz),convert(Vector{Int32},sub),convert(Vector{Float64},val))
 function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Vector{Int32},val_:: Vector{Float64})
-  __tmp_var_0 = [ numnz ]
+  __tmp_var_0 = Int32[ numnz_ ]
   __tmp_var_1 = getnumcon(task_)
   if length(sub_) < __tmp_var_1
     println("Array argument sub is not long enough")
@@ -8285,6 +8277,7 @@ end
 
 Sends all output from the stream defined by `whichstream` to the file given by `filename`.
 """
+function linkfiletostream end
 linkfiletostream{T3}(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) = linkfiletostream(env,whichstream,filename,Int32(append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
