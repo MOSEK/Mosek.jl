@@ -147,7 +147,15 @@ mskbindir =
         srcdir   = joinpath(bindepsdir,"src")
         dldir    = joinpath(bindepsdir,"downloads")
         archname = "mosektools$(mskplatform)$(distroext)"
-        verurl   = "http://download.mosek.com/stable/$mskvmajor/version"
+        hosturl  = "https://www.mosek.com/downloads/default_dns.txt"
+
+        success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK version")
+        downloadhost =
+            open(joinpath(dldir,"downloadhostname"),"r") do f
+                strip(readstring(f))
+            end
+        
+        verurl   = "https://$downloadhost/stable/$mskvmajor/version"
 
         mkpath(dldir)
 
@@ -181,7 +189,7 @@ mskbindir =
             
             verarr = split(new_version,'.')
             
-            archurl = "http://download.mosek.com/stable/$(new_version)/$archname"
+            archurl = "https://$downloadhost/stable/$(new_version)/$archname"
             info("Download MOSEK distro ($archurl)")
             
             basename,ext,sndext = splittarpath(archname)
