@@ -192,8 +192,8 @@ mskbindir =
             info("Unpack MOSEK distro ($dldir/$archname -> $srcdir)")
             success(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
             
-            joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
             info("MOSEK installation complete.")
+            joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
         else
             info("Update not necessary")
             joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
