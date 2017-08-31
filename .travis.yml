@@ -1,0 +1,16 @@
+## Documentation: http://docs.travis-ci.com/user/languages/julia/
+language: julia
+os:
+  - linux
+julia:
+  - 0.6
+notifications:
+  email: false
+git:
+  depth: 99999999
+before-install:
+  - sudo apt-get install curl
+script:
+  - julia -e 'Pkg.clone(pwd());'
+  - julia -e 'Pkg.build("Mosek");'
+
