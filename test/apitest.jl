@@ -183,7 +183,6 @@ function test_milo1()
     if solsta in     [ MSK_SOL_STA_INTEGER_OPTIMAL, 
                        MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITG)
-        # check feasibility and optimality of solution
     end
 end
 

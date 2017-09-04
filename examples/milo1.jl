@@ -76,14 +76,6 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITG)
         @printf("Optimal solution: %s\n", xx')
-    elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
-        println("Primal or dual infeasibility.\n")
-    elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
-        println("Primal or dual infeasibility.\n")
-    elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
-        println("Primal or dual infeasibility.\n")
-    elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
-        println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_UNKNOWN
         println("Unknown solution status")
     else
