@@ -22,16 +22,16 @@ mskplatform,distroext =
 
 bindepsdir = dirname(@__FILE__)
 
-function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::AbstractString) 
+function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::AbstractString)
     moseklib,scoptlib =
         if Sys.ARCH == :i386 || Sys.ARCH == :i686
             if     is_windows() "mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
         elseif Sys.ARCH == :x86_64
-            if     is_linux()   "libmosek64.so.$(mskvmajor).$(mskvminor)",   "libmosekscopt$(mskvmajor)_$(mskvminor).so"
-            elseif is_apple()   "mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"
-            elseif is_windows() "mosek64_$(mskvmajor)_$(mskvminor).dll",     "mosekscopt$(mskvmajor)_$(mskvminor).dll"
+            if     is_linux()   "libmosek64.so.$(mskvmajor).$(mskvminor)",    "libmosekscopt$(mskvmajor)_$(mskvminor).so"
+            elseif is_apple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib", "libmosekscopt$(mskvmajor)_$(mskvminor).dylib"
+            elseif is_windows() "mosek64_$(mskvmajor)_$(mskvminor).dll",      "mosekscopt$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
         else
@@ -45,7 +45,7 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
             error("Library '$moseklib' not found ($path)")
         elseif ! isfile(scoptlibpath)
             error("Library '$scoptlib' not found ($path)")
-        else    
+        else
             moseklibpath,scoptlibpath
         end
     end
@@ -70,7 +70,7 @@ function bindirIsCurrentVersion(bindir)
     ver = versionFromBindir(bindir)
     if ver != nothing
         ver = split(ver,".")
-        
+
         return ver[1] == mskvmajor && parse(Int,ver[2]) >= mskvminor_minimum
         #return ver[1] == mskvmajor && ver[2] == mskvminor
     else
@@ -95,7 +95,7 @@ instmethod =
         nothing
     end
 
-curmosekbindir = 
+curmosekbindir =
     try
         open(joinpath(bindepsdir,"mosekbindir"),"r") do f
             strip(readstring(f))
@@ -109,38 +109,38 @@ mskbindir =
 # 1. If MOSEKBINDIR we use that path (and if it is not valid we produce an error message)
     if  ! forcedownload && haskey(ENV,"MOSEKBINDIR")
         mosekbindir = ENV["MOSEKBINDIR"]
-        
+
         if ! bindirIsCurrentVersion(mosekbindir)
             error("MOSEKBINDIR ($mosekbindir) does not point to a MOSEK bin directory")
         end
         instmethod = "external"
-    
+
         mosekbindir
 # 2a. If last build used a user-specified MOSEK, we check if that is still valid and use that again
-    elseif ! forcedownload && 
+    elseif ! forcedownload &&
         instmethod == "external" &&
         curmosekbindir != nothing &&
         bindirIsCurrentVersion(curmosekbindir)
 
         curmosekbindir
 # 2b. Otherwise, look in the UNIX default installation path
-    elseif ! forcedownload && 
+    elseif ! forcedownload &&
         haskey(ENV,"HOME") &&
         bindirIsCurrentVersion(joinpath(ENV["HOME"],"mosek","$mskvmajor","tools","platform",mskplatform,"bin"))
 
         instmethod = "external"
-        
+
         joinpath(ENV["HOME"],"mosek","$mskvmajor","tools","platform",mskplatform,"bin")
 # 2c. Windows default install path
-    elseif ! forcedownload && 
+    elseif ! forcedownload &&
         haskey(ENV,"HOMEDRIVE") &&
         haskey(ENV,"HOMEPATH") &&
         bindirIsCurrentVersion(joinpath(string(ENV["HOMEDRIVE"],ENV["HOMEPATH"]),"mosek","$mskvmajor","tools","platform",mskplatform,"bin"))
-        
+
         home = string(ENV["HOMEDRIVE"],ENV["HOMEPATH"])
 
         instmethod = "external"
-        
+
         joinpath(home,"mosek","$mskvmajor","tools","platform",mskplatform,"bin")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
@@ -149,15 +149,15 @@ mskbindir =
         archname = "mosektools$(mskplatform)$(distroext)"
         hosturl  = "https://www.mosek.com/downloads/default_dns.txt"
 
+        mkpath(dldir)
+        # run(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) && exit(1)
         success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK version")
         downloadhost =
             open(joinpath(dldir,"downloadhostname"),"r") do f
                 strip(readstring(f))
             end
-        
-        verurl   = "https://$downloadhost/stable/$mskvmajor/version"
 
-        mkpath(dldir)
+        verurl   = "https://$downloadhost/stable/$mskvmajor/version"
 
         cur_version =
             if isfile(joinpath(bindepsdir,"version"))
@@ -167,7 +167,7 @@ mskbindir =
             else
                 nothing
             end
-        
+
         info("Get latest MOSEK version ($verurl)")
         success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
 
@@ -178,20 +178,20 @@ mskbindir =
         info("Latest MOSEK version = $new_version, currently installed = $cur_version")
 
         instmethod = "internal"
-        
-                    
 
-        
+
+
+
 
         if  cur_version == nothing ||
             cur_version != new_version ||
             !bindirIsCurrentVersion(joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin"))
-            
+
             verarr = split(new_version,'.')
-            
+
             archurl = "https://$downloadhost/stable/$(new_version)/$archname"
             info("Download MOSEK distro ($archurl)")
-            
+
             basename,ext,sndext = splittarpath(archname)
 
             success(download_cmd(archurl, joinpath(dldir,archname))) || error("Failed to download MOSEK distro")
@@ -199,13 +199,13 @@ mskbindir =
             mkpath(srcdir)
             info("Unpack MOSEK distro ($dldir/$archname -> $srcdir)")
             success(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
-            
-            joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
+
             info("MOSEK installation complete.")
+            joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
         else
             info("Update not necessary")
             joinpath(srcdir,"mosek",mskvmajor,"tools","platform",mskplatform,"bin")
-        end        
+        end
     end
 
 mskbindir = replace(mskbindir,"\\","/")
