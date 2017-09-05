@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.23
+# MOSEK 8.1.0.24
 
 export
   analyzenames,
@@ -639,7 +639,7 @@ function bktostr(task_:: MSKtask,bk_:: Boundkey)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (str_str[1:searchindex(str_str,'\0')])
+  (str_str[1:searchindex(str_str,'\0')-1])
 end
 
 """
@@ -660,7 +660,7 @@ function callbackcodetostr(code_:: Callbackcode)
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
   end
-  (callbackcodestr_str[1:searchindex(callbackcodestr_str,'\0')])
+  (callbackcodestr_str[1:searchindex(callbackcodestr_str,'\0')-1])
 end
 
 """
@@ -898,7 +898,7 @@ function conetypetostr(task_:: MSKtask,ct_:: Conetype)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (str_str[1:searchindex(str_str,'\0')])
+  (str_str[1:searchindex(str_str,'\0')-1])
 end
 
 """
@@ -1683,7 +1683,7 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:searchindex(name_str,'\0')])
+  (name_str[1:searchindex(name_str,'\0')-1])
 end
 
 """
@@ -1768,7 +1768,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `accmode :: Accmode`. Defines if operations are performed row-wise (constraint-oriented) or column-wise (variable-oriented).
 * `i :: Int32`. Index of the constraint or variable for which the bound information should be obtained.
-* `bk :: Int32`. Bound keys.
+* `bk :: Boundkey`. Bound keys.
 * `bl :: Float64`. Values for lower bounds.
 * `bu :: Float64`. Values for upper bounds.
 
@@ -1899,7 +1899,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the constraint for which the bound information should be obtained.
-* `bk :: Int32`. Bound keys.
+* `bk :: Boundkey`. Bound keys.
 * `bl :: Float64`. Values for lower bounds.
 * `bu :: Float64`. Values for upper bounds.
 
@@ -1961,7 +1961,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Index of the cone.
-* `ct :: Int32`. Specifies the type of the cone.
+* `ct :: Conetype`. Specifies the type of the cone.
 * `conepar :: Float64`. This argument is currently not used. It can be set to 0
 * `nummem :: Int32`. Number of member variables in the cone.
 * `submem :: Vector{Int32}`. Variable subscripts of the members in the cone.
@@ -1994,7 +1994,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `k :: Int32`. Index of the cone.
-* `ct :: Int32`. Specifies the type of the cone.
+* `ct :: Conetype`. Specifies the type of the cone.
 * `conepar :: Float64`. This argument is currently not used. It can be set to 0
 * `nummem :: Int32`. Number of member variables in the cone.
 
@@ -2039,7 +2039,7 @@ function getconename(task_:: MSKtask,i_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:searchindex(name_str,'\0')])
+  (name_str[1:searchindex(name_str,'\0')-1])
 end
 
 """
@@ -2113,7 +2113,7 @@ function getconname(task_:: MSKtask,i_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:searchindex(name_str,'\0')])
+  (name_str[1:searchindex(name_str,'\0')-1])
 end
 
 """
@@ -2542,7 +2542,7 @@ function getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (infname_str[1:searchindex(infname_str,'\0')])
+  (infname_str[1:searchindex(infname_str,'\0')-1])
 end
 
 """
@@ -2901,7 +2901,7 @@ function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')])
+  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')-1])
 end
 
 """
@@ -3267,7 +3267,7 @@ function getobjname(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (objname_str[1:searchindex(objname_str,'\0')])
+  (objname_str[1:searchindex(objname_str,'\0')-1])
 end
 
 """
@@ -3295,7 +3295,7 @@ end
     sense = getobjsense(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
-* `sense :: Int32`. The returned objective sense.
+* `sense :: Objsense`. The returned objective sense.
 
 Gets the objective sense of the task.
 """
@@ -3335,7 +3335,7 @@ function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (parname_str[1:searchindex(parname_str,'\0')])
+  (parname_str[1:searchindex(parname_str,'\0')-1])
 end
 
 """
@@ -3390,7 +3390,7 @@ end
     probtype = getprobtype(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
-* `probtype :: Int32`. The problem type.
+* `probtype :: Problemtype`. The problem type.
 
 Obtains the problem type.
 """
@@ -3412,7 +3412,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
-* `prosta :: Int32`. Problem status.
+* `prosta :: Prosta`. Problem status.
 
 Obtains the problem status.
 """
@@ -3601,14 +3601,14 @@ function getqconk end
 getqconk{T1}(task:: MSKtask,k:: T1) = getqconk(task,Int32(k))
 function getqconk(task_:: MSKtask,k_:: Int32)
   numqcnz_ = Vector{Int64}(1)
-  maxnumqcnz_ = getnumqconknz(task_,(k_))
-  __tmp_var_0 = getnumqconknz(task_,(k_))
+  maxnumqcnz_ = getnumqconknz(task_,(k_)-1)
+  __tmp_var_0 = getnumqconknz(task_,(k_)-1)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   qcsubi_ = __tmp_var_1
-  __tmp_var_2 = getnumqconknz(task_,(k_))
+  __tmp_var_2 = getnumqconknz(task_,(k_)-1)
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
   qcsubj_ = __tmp_var_3
-  __tmp_var_4 = getnumqconknz(task_,(k_))
+  __tmp_var_4 = getnumqconknz(task_,(k_)-1)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   qcval_ = __tmp_var_5
   qcsurp_ = convert(Int64,length(qcsubi_))
@@ -3983,7 +3983,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
-* `solsta :: Int32`. Solution status.
+* `solsta :: Solsta`. Solution status.
 
 Obtains the solution status.
 """
@@ -4005,8 +4005,8 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
-* `prosta :: Int32`. Problem status.
-* `solsta :: Int32`. Solution status.
+* `prosta :: Prosta`. Problem status.
+* `solsta :: Solsta`. Solution status.
 * `skc :: Vector{Stakey}`. Status keys for the constraints.
 * `skx :: Vector{Stakey}`. Status keys for the variables.
 * `skn :: Vector{Stakey}`. Status keys for the conic constraints.
@@ -4130,7 +4130,7 @@ end
 * `accmode :: Accmode`. Defines whether solution information for a constraint or for a variable is retrieved.
 * `i :: Int32`. Index of the constraint or variable.
 * `whichsol :: Soltype`. Selects a solution.
-* `sk :: Int32`. Status key of the constraint of variable.
+* `sk :: Stakey`. Status key of the constraint of variable.
 * `x :: Float64`. Solution value of the primal variable.
 * `sl :: Float64`. Solution value of the dual variable associated with the lower bound.
 * `su :: Float64`. Solution value of the dual variable associated with the upper bound.
@@ -4287,7 +4287,7 @@ function getstrparam(task_:: MSKtask,param_:: Sparam)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')])
+  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')-1])
 end
 
 """
@@ -4424,7 +4424,7 @@ end
 * `idx :: Int64`. Index of the matrix for which information is requested.
 * `dim :: Int32`. Returns the dimension of the requested matrix.
 * `nz :: Int64`. Returns the number of non-zeros in the requested matrix.
-* `type :: Int32`. Returns the type of the requested matrix.
+* `type :: Symmattype`. Returns the type of the requested matrix.
 
 MOSEK maintains a vector denoted by ``E`` of symmetric data matrices. This function makes it possible to obtain important information about a single matrix in ``E``.
 """
@@ -4464,7 +4464,7 @@ function gettaskname(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (taskname_str[1:searchindex(taskname_str,'\0')])
+  (taskname_str[1:searchindex(taskname_str,'\0')-1])
 end
 
 """
@@ -4494,7 +4494,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the variable for which the bound information should be obtained.
-* `bk :: Int32`. Bound keys.
+* `bk :: Boundkey`. Bound keys.
 * `bl :: Float64`. Values for lower bounds.
 * `bu :: Float64`. Values for upper bounds.
 
@@ -4573,7 +4573,7 @@ function getvarname(task_:: MSKtask,j_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:searchindex(name_str,'\0')])
+  (name_str[1:searchindex(name_str,'\0')-1])
 end
 
 """
@@ -4630,7 +4630,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the variable.
-* `vartype :: Int32`. Variable type of variable index j.
+* `vartype :: Variabletype`. Variable type of variable index j.
 
 Gets the variable type of one variable.
 """
@@ -4917,7 +4917,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `parname :: String`. Parameter name.
-* `param :: Int32`. Returns the parameter corresponding to the name, if one exists.
+* `param :: Dparam`. Returns the parameter corresponding to the name, if one exists.
 
 Checks whether `parname` is a valid double parameter name.
 """
@@ -4939,7 +4939,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `parname :: String`. Parameter name.
-* `param :: Int32`. Returns the parameter corresponding to the name, if one exists.
+* `param :: Iparam`. Returns the parameter corresponding to the name, if one exists.
 
 Checks whether `parname` is a valid integer parameter name.
 """
@@ -4961,7 +4961,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `parname :: String`. Parameter name.
-* `param :: Int32`. Returns the parameter corresponding to the name, if one exists.
+* `param :: Sparam`. Returns the parameter corresponding to the name, if one exists.
 
 Checks whether `parname` is a valid string parameter name.
 """
@@ -5044,7 +5044,7 @@ end
     trmcode = optimize(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
-* `trmcode :: Int32`. Is either OK or a termination response code.
+* `trmcode :: Rescode`. Is either OK or a termination response code.
 
 Calls the optimizer. Depending on the problem type and the selected optimizer
 this will call one of the optimizers in MOSEK. By default the interior point
@@ -5424,10 +5424,10 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Row index.
-* `subi :: Vector{Int32}`. Row indexes of non-zero values in row.
+* `subi :: Vector{Int32}`. Column indexes of non-zero values in row.
 * `vali :: Vector{Float64}`. New non-zero values of row.
 
-Change one column of the linear constraint matrix ``A``. Resets all the elements in row ``i`` to zero and then sets
+Change one row of the linear constraint matrix ``A``. Resets all the elements in row ``i`` to zero and then sets
 
 ```math
  a_{\\mathtt{i},\\mathtt{subi}[k]} = \\mathtt{vali}[k], \\mathcal{C}_q k=0,\\ldots,\\mathtt{nzi}-1.
@@ -7933,7 +7933,7 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `str :: String`. String corresponding to the cone type code.
-* `conetype :: Int32`. The cone type corresponding to str.
+* `conetype :: Conetype`. The cone type corresponding to str.
 
 Obtains cone type code corresponding to a cone type string.
 """
@@ -8220,7 +8220,7 @@ function getcodedesc(code_:: Rescode)
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
   end
-  (symname_str[1:searchindex(symname_str,'\0')],str_str[1:searchindex(str_str,'\0')])
+  (symname_str[1:searchindex(symname_str,'\0')-1],str_str[1:searchindex(str_str,'\0')-1])
 end
 
 """
@@ -8277,7 +8277,6 @@ end
 
 Sends all output from the stream defined by `whichstream` to the file given by `filename`.
 """
-function linkfiletostream end
 linkfiletostream{T3}(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) = linkfiletostream(env,whichstream,filename,Int32(append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
