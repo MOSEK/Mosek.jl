@@ -8,6 +8,7 @@ include("../examples/nlo1.jl")
 include("../examples/solvebasis.jl")
 include("../examples/portfolio.jl")
 include("../examples/production.jl")
+include("../examples/callback.jl")
 
 push!(ARGS, "$(dirname(dirname(@__FILE__)))/examples/feasrepair.lp")
 include("../examples/feasrepairex1.jl")
