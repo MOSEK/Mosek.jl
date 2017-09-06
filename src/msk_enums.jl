@@ -1263,10 +1263,10 @@ export
   MSK_MIO_CONT_SOL_ROOT
 
 abstract type MosekEnum end
-Base.convert{T <: MosekEnum}(::Type{Int32},c::T) = c.value
-Base.start{T <: MosekEnum}(c::T) = 1
-Base.next{T <: MosekEnum}(c::T,state::Int) = members(T)[state],state+1
-Base.done{T <: MosekEnum}(c::T,state::Int) = state > Base.length(T)
+Base.convert(::Type{Int32},c::T) where {T <: MosekEnum} = c.value
+Base.start(c::T) where {T <: MosekEnum} = 1
+Base.next(c::T,state::Int) where {T <: MosekEnum} = members(T)[state],state+1
+Base.done(c::T,state::Int) where {T <: MosekEnum} = state > Base.length(T)
 
 """
     Solveform

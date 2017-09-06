@@ -23,7 +23,7 @@ end
 # -----
 # Types
 # -----
-type MosekError <: Exception
+mutable struct MosekError <: Exception
     rcode :: Int32
     msg   :: String
 end
@@ -31,14 +31,14 @@ end
 
 
 # Environment: typedef void * Env_t;
-type Env
+mutable struct Env
     env::Ptr{Void}
     streamcallbackfunc::Any
 end
 
 
 # Task: typedef void * Task_t;
-type Task
+mutable struct Task
     env::Env
     task::Ptr{Void}
     borrowed::Bool
