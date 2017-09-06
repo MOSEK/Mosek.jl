@@ -162,19 +162,14 @@ __init__() = (global msk_global_env = makeenv())
 
 
 """
-    maketask(env:Env)
-    maketask()
+    maketask(;env::Env = msk_global_env, filename::String = "")
+    
+Create a task. If `filename` is not 0-length, initialize the task from this file.
 
-Create a task that belongs to either the given `env` or to the global `env`.
+    maketask(func :: Function;env::Env = msk_global_env, filename::String = "")
 
-    maketask(task::Task)
-
-Create a clone of `task`.
-
-    maketask(func::Function, env::Env)
-    maketask(func::Function)
-
-Create a task that either longs to the given `env` or to the global `env`. The `func` parameter is a function
+Create a task. If `filename` is not 0-length, initialize the task from
+this file. The `func` parameter is a function 
 
 ```julia
 func(task :: Task) :: Any
@@ -187,28 +182,35 @@ maketask(env) do task
     readdata(task,"MyFile.task")
 end
 ```
+    maketask(task::Task)
+
+Create a clone of `task`.
 """
 function maketask end
-maketask(env::Env) = Task(env)
-maketask(task::Task) = Task(task)
-maketask() = Task(msk_global_env)
-function maketask(func::Function, env::Env)
+function maketask(;env::Env = msk_global_env, filename::String = "")
     t = Task(env)
-    try
-        func(t)
-    finally
-        deletetask(t)
+    if length(filename) > 0
+        try
+            readdata(t,filename)
+        catch
+            deletetask(t)
+            throw()
+        end
     end
-end
-function maketask(func::Function)
-    t = Task(msk_global_env)
-    try
-        func(t)
-    finally
-        deletetask(t)
-    end
+    t
 end
 
+function maketask(func :: Function;env::Env = msk_global_env, filename::String = "")
+    t = Task(env)
+    try
+        if length(filename) > 0 readdata(t,filename) end
+        func(t)
+    finally
+        deletetask(t)
+    end    
+end
+
+maketask(task::Task) = Task(task)
 
 function maketask_ptr(t::Ptr{Void},borrowed::Bool)
     Task(t,borrowed)
@@ -262,5 +264,6 @@ include("msk_functions.jl")
 include("msk_callback.jl")
 include("msk_geco.jl")
 
-
+include("show.jl")
+include("ext_functions.jl")
 end
