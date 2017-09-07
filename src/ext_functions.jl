@@ -209,20 +209,30 @@ mkbarvarname(t,j) =
         end
     end
 
-function Base.show(f::IO, con :: Objective)
+Base.show(f::IO,con :: Objective) = Base.show(f,con,20)
+Base.showall(f::IO,con :: Objective) = Base.show(f,con,0)
+function Base.show(f::IO, con :: Objective, limit :: Int)
     t = con.t
     name = getobjname(t)
 
     print(f,"Objective('$name': ")
 
+    termslimit = if limit > 0 limit else typemax(Int) end
+    termsomitted = 0
+    nterms = 0    
     for j in 1:getnumvar(t)
         cj = getcj(t,j)
         if cj < 0 || cj > 0
-            varname = Mosek.escapename(getvarname(t,j))
-            if length(varname) == 0
-                varname = "#x$j"
+            if nterms < termslimit
+                varname = Mosek.escapename(getvarname(t,j))
+                if length(varname) == 0
+                    varname = "#x$j"
+                end
+                print(f,"$(Mosek.fmtcof(cj)) $varname ")
+                nterms += 1
+            else
+                termsomitted += 1
             end
-            print(f,"$(Mosek.fmtcof(cj)) $varname ")
         end
     end
 
@@ -230,16 +240,21 @@ function Base.show(f::IO, con :: Objective)
         _,barcidx = getbarcsparsity(t)
         
         for idx in barcidx
-            (barcj,num,sub,w) = getbarcidx(t,idx)
+            if nterms < termslimit
+                (barcj,num,sub,w) = getbarcidx(t,idx)
 
-            barvarname = mkbarvarname(t,barcj)
+                barvarname = mkbarvarname(t,barcj)
 
-            if num == 1
-                print(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1]) ⋅ $barvarname) ")
-            elseif num > 1
-                print(f,"(")
-                printf(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1])")
-                print(f,") ⋅ $barvarname ")
+                if num == 1
+                    print(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1]) ⋅ $barvarname) ")
+                elseif num > 1
+                    print(f,"(")
+                    printf(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1])")
+                    print(f,") ⋅ $barvarname ")
+                end
+                nterms += 1
+            else
+                termsomitted += 1
             end
         end
     end
@@ -248,15 +263,24 @@ function Base.show(f::IO, con :: Objective)
     if numqobjnz > 0
         (nnz,qcsubi,qcsubj,qcval) = getqobj(t)
         for k in 1:nnz
-            if qcsubi[k] == qcsubj[k]
-                ni = mkvarname(t,qcsubi[k])
-                print(f,"$(Mosek.fmtcof(qcval[k])) $ni ^ 2")
+            if nterms < termslimit
+                if qcsubi[k] == qcsubj[k]
+                    ni = mkvarname(t,qcsubi[k])
+                    print(f,"$(Mosek.fmtcof(qcval[k])) $ni ^ 2")
+                else
+                    ni = mkvarname(t,qcsubi[k])
+                    nj = mkvarname(t,qcsubj[k])
+                    print(f,"$(Mosek.fmtcof(qcval[k])) $ni ⋅ $nj")
+                end
+                nterms += 1
             else
-                ni = mkvarname(t,qcsubi[k])
-                nj = mkvarname(t,qcsubj[k])
-                print(f,"$(Mosek.fmtcof(qcval[k])) $ni ⋅ $nj")
+                termsomitted += 1
             end
         end
+    end
+
+    if termsomitted > 0
+        print(f," ...($termsomitted terms omitted)")
     end
 
     print(f,")")
