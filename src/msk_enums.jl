@@ -1264,9 +1264,9 @@ export
 
 abstract type MosekEnum end
 Base.convert(::Type{Int32},c::T) where {T <: MosekEnum} = c.value
-Base.start(c::T) where {T <: MosekEnum} = 1
-Base.next(c::T,state::Int) where {T <: MosekEnum} = members(T)[state],state+1
-Base.done(c::T,state::Int) where {T <: MosekEnum} = state > Base.length(T)
+Base.start(::Type{T}) where {T <: MosekEnum} = 1
+Base.next(::Type{T},state::Int) where {T <: MosekEnum} = members(T)[state],state+1
+Base.done(::Type{T},state::Int) where {T <: MosekEnum} = state > Base.length(T)
 
 """
     Solveform

@@ -35,9 +35,6 @@ immutable BarvarSolution
     index :: Int64
 end
 
-
-
-
 immutable Variable
     t::Mosek.Task
     index :: Int32
@@ -152,7 +149,7 @@ function Base.show(f::IO, var :: Variable)
 end
 
 function Base.show(f::IO, var :: SemidefiniteVariable)
-    if var.index > 0 && var.index < getnumbarvar(var.t)
+    if var.index > 0 && var.index <= getnumbarvar(var.t)
         dim,ns,tp = getsymmatinfo(var.t,var.index)
         name = mkbarvarname(var.t,var.index)
         
@@ -369,7 +366,7 @@ solstainfo(solsta) =
     elseif solsta == MSK_SOL_STA_PRIM_FEAS                "PrimalFeasible",true,false
     elseif solsta == MSK_SOL_STA_PRIM_ILLPOSED_CER        "PrimalIllposedCertificate",false,true
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER          "PrimakInfeasibleCertificate",false,true
-    else "Unknown",false,false
+    else "Unknown",true,true
     end
 
 function Base.show(f::IO, sol :: Solution, limit :: Int)
@@ -452,7 +449,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                         else              print(f,"                |")
                         end
                         if i > 1
-                            for k in 1:i-1 print("           ") end
+                            for k in 1:i-1 print(f,"           ") end
                         end
                         for j in i:dim
                             @printf(f," %10.2e",barx[px])
@@ -464,7 +461,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                         end
 
                         if i > 1
-                            for k in 1:i-1 print("           ") end
+                            for k in 1:i-1 print(f,"           ") end
                         end
                         for j in i:dim
                             @printf(f," %10.2e",bars[ps])
@@ -488,7 +485,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                         else              print(f,"                |")
                         end
                         if i > 1
-                            for k in 1:i-1 print("           ") end
+                            for k in 1:i-1 print(f,"           ") end
                         end
                         for j in i:dim
                             @printf(f," %10.2e",barx[p])
@@ -512,7 +509,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                         else              print(f,"                |")
                         end
                         if i > 1
-                            for k in 1:i-1 print("           ") end
+                            for k in 1:i-1 print(f,"           ") end
                         end
                         for j in i:dim
                             @printf(f," %10.2e",bars[p])
@@ -616,7 +613,7 @@ function Base.show(f::IO,sol::BarvarSolution)
         else              print(f,"      |")
         end
         if i > 1
-            for k in 1:i-1 print("           ") end
+            for k in 1:i-1 print(f,"           ") end
         end
         for j in i:dim
             @printf(f," %10.2e",barx[px])
@@ -628,7 +625,7 @@ function Base.show(f::IO,sol::BarvarSolution)
         end
 
         if i > 1
-            for k in 1:i-1 print("           ") end
+            for k in 1:i-1 print(f,"           ") end
         end
         for j in i:dim
             @printf(f," %10.2e",bars[ps])

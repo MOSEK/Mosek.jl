@@ -1707,7 +1707,7 @@ function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]))
+  (convert(Int32,asgn_[1]),convert(Int32,index_[1]+1))
 end
 
 """
@@ -3601,14 +3601,14 @@ function getqconk end
 getqconk(task:: MSKtask,k:: T1) where {T1} = getqconk(task,Int32(k))
 function getqconk(task_:: MSKtask,k_:: Int32)
   numqcnz_ = Vector{Int64}(1)
-  maxnumqcnz_ = getnumqconknz(task_,(k_)-1)
-  __tmp_var_0 = getnumqconknz(task_,(k_)-1)
+  maxnumqcnz_ = getnumqconknz(task_,(k_))
+  __tmp_var_0 = getnumqconknz(task_,(k_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   qcsubi_ = __tmp_var_1
-  __tmp_var_2 = getnumqconknz(task_,(k_)-1)
+  __tmp_var_2 = getnumqconknz(task_,(k_))
   __tmp_var_3 = zeros(Int32,__tmp_var_2)
   qcsubj_ = __tmp_var_3
-  __tmp_var_4 = getnumqconknz(task_,(k_)-1)
+  __tmp_var_4 = getnumqconknz(task_,(k_))
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   qcval_ = __tmp_var_5
   qcsurp_ = convert(Int64,length(qcsubi_))
@@ -5300,7 +5300,7 @@ Change a set of columns in the linear constraint matrix ``A`` with data in spars
 """
 function putacollist end
 putacollist(task:: MSKtask,sub:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},asub:: Vector{T4},aval:: Vector{T5}) where {T1,T2,T3,T4,T5} = putacollist(task,convert(Vector{Int32},sub),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval))
-function putacollist(task:: MSKtask,sub:: Vector{T1},A:: SparseMatrixCSC{Float64}) where T1
+function putacollist(task:: MSKtask,sub:: Vector{T1},A:: SparseMatrixCSC{Float64}) where {T1}
   ptrb = A.colptr[1:size(A,2)]
   ptre = A.colptr[2:size(A,2)+1]
   asub = A.rowval
@@ -5472,7 +5472,7 @@ Change a set of rows in the linear constraint matrix ``A`` with data in sparse t
 """
 function putarowlist end
 putarowlist(task:: MSKtask,sub:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},asub:: Vector{T4},aval:: Vector{T5}) where {T1,T2,T3,T4,T5} = putarowlist(task,convert(Vector{Int32},sub),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval))
-function putarowlist(task:: MSKtask,sub:: Vector{T1},At:: SparseMatrixCSC{Float64}) where T1
+function putarowlist(task:: MSKtask,sub:: Vector{T1},At:: SparseMatrixCSC{Float64}) where {T1}
   ptrb = At.colptr[1:size(At,2)]
   ptre = At.colptr[2:size(At,2)+1]
   asub = At.rowval
@@ -6572,7 +6572,7 @@ Replaces all the quadratic entries in one constraint. This function performs the
 """
 function putqconk end
 putqconk(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4}) where {T1,T2,T3,T4} = putqconk(task,Int32(k),convert(Vector{Int32},qcsubi),convert(Vector{Int32},qcsubj),convert(Vector{Float64},qcval))
-function putqconk(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64}) where T1
+function putqconk(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64}) where {T1}
   ptrb = Qk.colptr[1:size(Qk,2)]
   ptre = Qk.colptr[2:size(Qk,2)+1]
   qcsubi = Qk.rowval

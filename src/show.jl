@@ -40,7 +40,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     if limit > 0 termslimit = min(limit,termslimit) end
 
     if numvar == 0 && numcon == 0 && numbarvar == 0
-        println("Empty Task")
+        println(f,"Empty Task")
     else
         varnames = String[ escapename(getvarname(t,i)) for i in 1:numvar] 
         barvarnames = String[ escapename(getbarvarname(t,i)) for i in 1:numbarvar] 
@@ -170,7 +170,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
         if cfix < 0 || cfix > 0
             print(f,fmtcof(cfix))
         end
-        println()
+        println(f)
 
         # Constraints
         if numcon+numcone > 0
@@ -243,7 +243,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 end
             end
             if limitnumcon < numcon
-                println("        ... ($(numcon-limitnumcon) constraints omitted)")
+                println(f,"        ... ($(numcon-limitnumcon) constraints omitted)")
             end
 
             if numcone > 0
@@ -263,7 +263,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 end
 
                 if limitnumcone < numcone
-                    println("        ... ($(numcone-limitnumcone) cones omitted)")
+                    println(f,"        ... ($(numcone-limitnumcone) cones omitted)")
                 end
             end
         end
@@ -292,7 +292,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 end
             end
             if limitnumvar < numvar
-                println("        ... ($(numvar-limitnumvar) variable bounds omitted)")
+                println(f,"        ... ($(numvar-limitnumvar) variable bounds omitted)")
             end
 
 
@@ -301,7 +301,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 println(f,"        $(barvarnames[j]) ∈ S($dim)")
             end
             if limitnumbarvar < numbarvar
-                println("        ... ($(numbarvar-limitnumbarvar) semidefinite variables omitted)")
+                println(f,"        ... ($(numbarvar-limitnumbarvar) semidefinite variables omitted)")
             end
         end
 
