@@ -15,7 +15,28 @@ immutable Sol which :: Mosek.Soltype end
 immutable Solution
     t::Mosek.Task
     which :: Mosek.Soltype
-end  
+end
+
+immutable VariableSolution
+    t::Mosek.Task
+    which :: Mosek.Soltype
+    index :: Int32
+end
+
+immutable ConstraintSolution
+    t::Mosek.Task
+    which :: Mosek.Soltype
+    index :: Int32
+end
+
+immutable BarvarSolution
+    t::Mosek.Task
+    which :: Mosek.Soltype
+    index :: Int64
+end
+
+
+
 
 immutable Variable
     t::Mosek.Task
@@ -26,7 +47,6 @@ immutable SemidefiniteVariable
     t::Mosek.Task
     index :: Int32
 end
-
 
 immutable Constraint
     t::Mosek.Task
@@ -107,6 +127,10 @@ function Base.getindex(t::Mosek.Task, index :: Symmat)
     sparse(subi,subj,valij,dim,dim)
 end
 
+Base.getindex(s::Solution, index :: VarByIndex) = VariableSolution(s.t,s.which,index.index)
+Base.getindex(s::Solution, index :: ConByIndex) = ConstraintSolution(s.t,s.which,index.index)
+Base.getindex(s::Solution, index :: BarvarByIndex) = BarvarSolution(s.t,s.which,index.index)
+
 function Base.show(f::IO, var :: Variable)
     bk,bl,bu = getvarbound(var.t,var.index)
     name = getvarname(var.t,var.index)
@@ -165,6 +189,15 @@ mkvarname(t,j) =
     let n = getvarname(t,j)
         if length(n) == 0
             "#x$j"
+        else
+            Mosek.escapename(n)
+        end
+    end
+
+mkconname(t,j) =
+    let n = getconname(t,j)
+        if length(n) == 0
+            "#c$j"
         else
             Mosek.escapename(n)
         end
@@ -314,7 +347,32 @@ function Base.show(f::IO, con :: Constraint)
 end
 
 
-function Base.show(f::IO, sol :: Solution)
+
+
+Base.showall(f::IO, sol :: Solution) = Base.show(f,sol,0)
+Base.show(f::IO, sol :: Solution) = Base.show(f,sol,20)
+
+solstainfo(solsta) = 
+    if     solsta == MSK_SOL_STA_DUAL_FEAS                "DualFeasible",false,true
+    elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER        "DualIllposedCertificate",true,false
+    elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER          "DualInfeasibilityCertificate",true,false
+    elseif solsta == MSK_SOL_STA_INTEGER_OPTIMAL          "IntegerOptimal",true,false
+    elseif solsta == MSK_SOL_STA_NEAR_DUAL_FEAS           "NearDualFeasible",true,false
+    elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER     "NearDualInfeasibleCertificate",true,false
+    elseif solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL     "NearIntegerOptimal",true,false
+    elseif solsta == MSK_SOL_STA_NEAR_OPTIMAL             "NearOptimal",true,true
+    elseif solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS  "NearPrimalAndDualFeasible",true,true
+    elseif solsta == MSK_SOL_STA_NEAR_PRIM_FEAS           "NearPrimalFeasible",true,false
+    elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER     "NearPrimalInfeasibilityCertificate",false,true
+    elseif solsta == MSK_SOL_STA_OPTIMAL                  "Optimal",true,true
+    elseif solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS       "PrimalAndDualFeasible",true,true
+    elseif solsta == MSK_SOL_STA_PRIM_FEAS                "PrimalFeasible",true,false
+    elseif solsta == MSK_SOL_STA_PRIM_ILLPOSED_CER        "PrimalIllposedCertificate",false,true
+    elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER          "PrimakInfeasibleCertificate",false,true
+    else "Unknown",false,false
+    end
+
+function Base.show(f::IO, sol :: Solution, limit :: Int)
     t = sol.t
     if solutiondef(t,sol.which)
         solname =
@@ -327,49 +385,52 @@ function Base.show(f::IO, sol :: Solution)
         numbarvar = getnumbarvar(t)
         prosta,solsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx = getsolution(t,sol.which)
 
-        solstaname,pdef,ddef =
-            if     solsta == MSK_SOL_STA_DUAL_FEAS                "DualFeasible",false,true
-            elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER        "DualIllposedCertificate",true,false
-            elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER          "DualInfeasibilityCertificate",true,false
-            elseif solsta == MSK_SOL_STA_INTEGER_OPTIMAL          "IntegerOptimal",true,false
-            elseif solsta == MSK_SOL_STA_NEAR_DUAL_FEAS           "NearDualFeasible",true,false
-            elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER     "NearDualInfeasibleCertificate",true,false
-            elseif solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL     "NearIntegerOptimal",true,false
-            elseif solsta == MSK_SOL_STA_NEAR_OPTIMAL             "NearOptimal",true,true
-            elseif solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS  "NearPrimalAndDualFeasible",true,true
-            elseif solsta == MSK_SOL_STA_NEAR_PRIM_FEAS           "NearPrimalFeasible",true,false
-            elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER     "NearPrimalInfeasibilityCertificate",false,true
-            elseif solsta == MSK_SOL_STA_OPTIMAL                  "Optimal",true,true
-            elseif solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS       "PrimalAndDualFeasible",true,true
-            elseif solsta == MSK_SOL_STA_PRIM_FEAS                "PrimalFeasible",true,false
-            elseif solsta == MSK_SOL_STA_PRIM_ILLPOSED_CER        "PrimalIllposedCertificate",false,true
-            elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER          "PrimakInfeasibleCertificate",false,true
-            else "Unknown",false,false
-            end
+        solstaname,pdef,ddef = solstainfo(solsta)
 
         println(f,"$solname, status = $solstaname")
 
+        limitnumvar = if limit == 0 numvar else min(numvar,limit) end
+        limitnumcon = if limit == 0 numcon else min(numcon,limit) end
+
+        if pdef && ddef
+            pobj = getprimalobj(t,sol.which)
+            dobj = getdualobj(t,sol.which)
+            println(f,"    Objective: $pobj | $dobj")
+        elseif pdef
+            pobj = getprimalobj(t,sol.which)
+            println(f,"    Objective: $pobj | -")
+        elseif ddef
+            dobj = getdualobj(t,sol.which)
+            println(f,"    Objective: - | $dobj")
+        else
+            println(f,"    Objective: - | -")
+        end
+        
         if numvar > 0
             println(f,"    Variable solution")
 
             if pdef && ddef
                 @printf(f,"        %-20s  %13s  %13s  %13s  %13s\n","name","level","dual lower","dual upper","dual conic")
-                for j in 1:numvar
+                for j in 1:limitnumvar
                     name = mkvarname(t,j)
                     @printf(f,"        %-20s: %13.4e  %13.4e  %13.4e  %13.4e\n",name,xx[j],slx[j],sux[j],snx[j])
                 end
             elseif pdef
                 @printf(f,"        %-20s  %13s  -  -  -\n","name","level")
-                for j in 1:numvar
+                
+                for j in 1:limitnumvar
                     name = mkvarname(t,j)
                     @printf(f,"        %-20s: %13.4e  -  -  -\n",name,xx[j])
                 end
             elseif ddef
                 @printf(f,"        %-20s    %13s  %13s  %13s\n","name","dual lower","dual upper","dual conic")
-                for j in 1:numvar
+                for j in 1:limitnumvar
                     name = mkvarname(t,j)
                     @printf(f,"        %-20s: - %13.4e  %13.4e  %13.4e\n",name,slx[j],sux[j],snx[j])
                 end
+            end
+            if limitnumvar < numvar
+                println(f,"        ... ($(numvar-limitnumvar) variables omitted)")
             end
         end
 
@@ -387,8 +448,8 @@ function Base.show(f::IO, sol :: Solution)
                     px = 1
                     ps = 1
                     for i in 1:dim
-                        if i == markatrow print(f,"        X̄ = |")
-                        else print(f,"            |")
+                        if i == markatrow print(f,"            X̄ = |")
+                        else              print(f,"                |")
                         end
                         if i > 1
                             for k in 1:i-1 print("           ") end
@@ -398,8 +459,8 @@ function Base.show(f::IO, sol :: Solution)
                             px += 1
                         end
 
-                        if i == markatrow print(f,"|    S̄ = |")
-                        else              print(f,"|        |")
+                        if i == markatrow print(f," |    S̄ = |")
+                        else              print(f," |        |")
                         end
 
                         if i > 1
@@ -423,8 +484,8 @@ function Base.show(f::IO, sol :: Solution)
                     println(f,"        $name: Symmetric $dim × $dim")
                     p = 1
                     for i in 1:dim
-                        if i == markatrow print(f,"        X̄ = |")
-                        else print(f,"            |")
+                        if i == markatrow print(f,"            X̄ = |")
+                        else              print(f,"                |")
                         end
                         if i > 1
                             for k in 1:i-1 print("           ") end
@@ -447,8 +508,8 @@ function Base.show(f::IO, sol :: Solution)
                     println(f,"        $name: Symmetric $dim × $dim")
                     p = 1
                     for i in 1:dim
-                        if i == markatrow print(f,"        S̄ = |")
-                        else print(f,"            |")
+                        if i == markatrow print(f,"            S̄ = |")
+                        else              print(f,"                |")
                         end
                         if i > 1
                             for k in 1:i-1 print("           ") end
@@ -470,28 +531,144 @@ function Base.show(f::IO, sol :: Solution)
             println(f,"    Constraint solution")
             if pdef && ddef
                 @printf(f,"        %-20s  %13s  %13s  %13s  %13s\n","name","level","dual lower","dual upper","y")
-                for j in 1:numvar
-                    name = mkvarname(t,j)
+                for j in 1:limitnumcon
+                    name = mkconname(t,j)
                     @printf(f,"        %-20s: %13.4e  %13.4e  %13.4e  %13.4e\n",name,xc[j],slc[j],suc[j],y[j]) # 412
                 end
             elseif pdef
                 @printf(f,"        %-20s  %13s  -  -  -\n","name","level")
-                for j in 1:numvar
-                    name = mkvarname(t,j)
+                for j in 1:limitnumcon
+                    name = mkconname(t,j)
                     @printf(f,"        %-20s: %13.4e  -  -  -\n",name,xc[j])
                 end
             elseif ddef
                 @printf(f,"        %-20s    %13s  %13s  %13s\n","name","dual lower","dual upper","y")
-                for j in 1:numvar
-                    name = mkvarname(t,j)
+                for j in 1:limitnumcon
+                    name = mkconname(t,j)
                     @printf(f,"        %-20s: - %13.4e  %13.4e  %13e\n",name,slc[j],suc[j],y[j])
                 end
+            end
+            if limitnumcon < numcon
+                println(f,"        ... ($(numcon-limitnumcon) constraints omitted)")
             end
         end
         
     else
         error("Solution not defined")
     end
+end
+
+function Base.show(f::IO,sol::VariableSolution)
+    t = sol.t
+    name = mkvarname(t,sol.index)
+    xx =
+        try
+            getxxslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+    slx =
+        try
+            getslxslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+    sux =
+        try
+            getsuxslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+    snx =
+        try
+            getsnxslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+
+    println(f,"$name: $xx, dual lower: $slx, dual upper: $sux, dual conic: $snx")
+end
+
+function Base.show(f::IO,sol::BarvarSolution)
+    t = sol.t
+    name = mkvarname(t,sol.index)
+    dim = getdimbarvarj(t,sol.index)
+    markatrow = dim >> 1
+    barx =
+        try
+            getbarxj(t,sol.which,sol.index)
+        catch
+            fill(NaN,dim*(dim+1) >> 1)
+        end
+    bars =
+        try
+            getbarsj(t,sol.which,sol.index)
+        catch
+            fill(NaN,dim*(dim+1) >> 1)
+        end
+    
+
+    println(f,"$name: Symmetric $dim × $dim")
+    px = 1
+    ps = 1
+    for i in 1:dim
+        if i == markatrow print(f,"  X̄ = |")
+        else              print(f,"      |")
+        end
+        if i > 1
+            for k in 1:i-1 print("           ") end
+        end
+        for j in i:dim
+            @printf(f," %10.2e",barx[px])
+            px += 1
+        end
+
+        if i == markatrow print(f," |    S̄ = |")
+        else              print(f," |        |")
+        end
+
+        if i > 1
+            for k in 1:i-1 print("           ") end
+        end
+        for j in i:dim
+            @printf(f," %10.2e",bars[ps])
+            ps += 1
+        end
+
+        println(f," |")
+    end
+end
+
+
+function Base.show(f::IO,sol::ConstraintSolution)
+    t = sol.t
+    name = mkconname(t,sol.index)
+    xc =
+        try
+            getxcslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+    slc =
+        try
+            getslcslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+    suc =
+        try
+            getsucslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+    y   =
+        try
+            getyslice(t,sol.which,sol.index,sol.index+1)[1]
+        catch
+            NaN
+        end
+
+    println(f,"$name: $xc, dual lower: $slc, dual upper: $suc, dual conic: $y")
 end
 
 

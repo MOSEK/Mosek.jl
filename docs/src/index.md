@@ -77,7 +77,19 @@ show(t[Symmat(1)]
 Finally, if there are solutions available, they can be printed as
 
 ```julia
-show(t[Sol(MSK_SOL_ITR)])
+sol = t[Sol(MSK_SOL_ITR)]
+
+# examine entire solution (use showall instead to show everything)
+show(sol)
+
+# examine solution values for variable 1
+show(sol[Var(1)]]
+
+# examine solution values for constraint 1
+show(sol[Con(1)]]
+
+# examine solution values for semidefinite variable 1
+show(sol[Barvar(1)]]
 ```
 
 # MOSEK Solver API Reference
