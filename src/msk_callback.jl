@@ -8,6 +8,14 @@ function msk_stream_callback_wrapper(userdata::Ptr{Void}, msg :: Ptr{UInt8})
   convert(Int32,0)::Int32
 end
 
+"""
+    putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)
+
+Attach a log printing callback function to a task stream.
+
+- `whichstream` Defines the stream to attach to. `MSK_STREAM_LOG` will catch the combined output from error and message streams.
+- `f` is a function `function(msg::String)`
+"""
 function putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)  
   cbfunc = cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Void},Ptr{UInt8}))
   r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Void},Int32, Any, Ptr{Void}),t.task,whichstream.value,f,cbfunc)
@@ -47,6 +55,18 @@ end
 
 # f :: where :: Cint, dinf :: Array{Float64,1}, iinf :: Array{Int32,1}, linf :: Array{Int64,1} -> Int32
 # NOTE: On Win32 the callback function should be stdcall
+"""
+    putcallbackfunc(t::MSKtask, f::Function)
+
+Set a callback. This will be called at various points during optimization. The `f` argument is a function of the form
+```julia
+    function(where::Callbackcode, dinf::Vector{Float64}, iinf::Vector{Int32}, liinf::Vector{Int64})
+```
+There are very strict rules about what you can call from the callback
+function. Basically: Do not call anything using the same task as the
+callback was called from. The one exception is `getxx()` that can be called when solving a mixed integer problem.
+
+"""
 function putcallbackfunc(t::MSKtask, f::Function)
     t.usercallbackfunc = f
     nothing

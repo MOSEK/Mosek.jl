@@ -583,5 +583,4 @@ export
     findvars,
     findcons,
     findcones
-
 end
