@@ -67,7 +67,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
 
         for i in 1:numbarvar
             if length(barvarnames[i]) == 0
-                barvarnames[i] = "#X̂$i"
+                barvarnames[i] = "#X̄$i"
             end
         end
 
@@ -250,8 +250,8 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 for k in 1:limitnumcone
                     (ct,conepar,nummem,submem) = getcone(t,k)
                     dom =
-                        if ct == MSK_CT_QUAD "Q"
-                        elseif ct == MSK_CT_RQUAD "Q_r"
+                        if ct == MSK_CT_QUAD "𝒞_q"
+                        elseif ct == MSK_CT_RQUAD "𝒞_qr"
                         else "?"
                         end
 
@@ -259,7 +259,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                     for i in 2:nummem
                         print(f,",$(varnames[submem[i]])")
                     end
-                    println(f,") ∈ $dom(nummem)")
+                    println(f,") ∈ $dom($nummem)")
                 end
 
                 if limitnumcone < numcone

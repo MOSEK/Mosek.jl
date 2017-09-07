@@ -17,7 +17,9 @@ convex) and MIP (mixed-integer problems). These can be mixed as follows:
 - LP+QP+MIP
 - LP+QP+GECO
 
-MOSEK is commercial software, but free licenses are available for academic use. See [here](http://mosek.com/resources/academic-license/) for details.
+MOSEK is commercial software, but free licenses are available for
+academic use. See [here](http://mosek.com/resources/academic-license/)
+for details.
 
 Installation
 ------------
@@ -28,7 +30,7 @@ Use the Julia package manager to install Mosek.jl:
 Pkg.add("Mosek")
 ```
     
-The `Mosek.jl` package requires the MOSEK distribution binaries run.Upon
+The `Mosek.jl` package requires the MOSEK distribution binaries run. Upon
 installation it will attempt to either local an installed MOSEK or download and
 install from the MOSEK website (www.mosek.com):
 
@@ -85,7 +87,6 @@ Pkg.build("Mosek")
 ```
 
 If this also fails, please post an issue in Github.
-
 
 Documentation
 -------------

@@ -192,9 +192,9 @@ function maketask(;env::Env = msk_global_env, filename::String = "")
     if length(filename) > 0
         try
             readdata(t,filename)
-        catch
+        catch e
             deletetask(t)
-            throw()
+            rethrow()
         end
     end
     t

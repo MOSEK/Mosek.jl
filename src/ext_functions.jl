@@ -10,6 +10,13 @@ immutable ConByName  name  :: String end
 immutable ConeByIndex index :: Int32 end
 immutable ConeByName  name  :: String end
 
+immutable Sol which :: Mosek.Soltype end
+
+immutable Solution
+    t::Mosek.Task
+    which :: Mosek.Soltype
+end  
+
 immutable Variable
     t::Mosek.Task
     index :: Int32
@@ -42,6 +49,8 @@ end
 immutable Symmat
     index :: Int
 end
+
+Base.getindex(t::Mosek.Task, sol :: Sol) = Solution(t,sol.which)
 
 Base.getindex(t::Mosek.Task, index :: VarByIndex) = Variable(t,index.index)
 function Base.getindex(t::Mosek.Task, name :: VarByName)
@@ -123,7 +132,7 @@ function Base.show(f::IO, var :: SemidefiniteVariable)
         dim,ns,tp = getsymmatinfo(var.t,var.index)
         name = mkbarvarname(var.t,var.index)
         
-        print(f,"SemidefiniteVariable('$name' ∈ S($dim))")
+        print(f,"SemidefiniteVariable('$name' ∈ 𝒞_S($dim))")
     else
         error("Invalid reference")
     end
@@ -134,8 +143,8 @@ function Base.show(f::IO, cone :: ConeConstraint)
     ct,cp,nummem,submem = getcone(cone.t,cone.index)
 
     dom =
-        if ct == MSK_CT_QUAD "Q"
-        elseif ct == MSK_CT_RQUAD "Q_r"
+        if ct == MSK_CT_QUAD "𝒞_q"
+        elseif ct == MSK_CT_RQUAD "𝒞_qr"
         else "?"
         end
     
@@ -149,11 +158,11 @@ function Base.show(f::IO, cone :: ConeConstraint)
              end,
         submem),",")
     
-    print(f,"ConeByIndex('$name': ($varnames) ∈ $dom)")
+    print(f,"ConeByIndex('$name': ($varnames) ∈ $dom($nummem))")
 end
 
 mkvarname(t,j) =
-    let n = getbarvarname(t,j)
+    let n = getvarname(t,j)
         if length(n) == 0
             "#x$j"
         else
@@ -164,7 +173,7 @@ mkvarname(t,j) =
 mkbarvarname(t,j) =
     let n = getbarvarname(t,j)
         if length(n) == 0
-            "#X̂$j"
+            "#X̄$j"
         else
             Mosek.escapename(n)
         end
@@ -304,6 +313,188 @@ function Base.show(f::IO, con :: Constraint)
     print(f,")")
 end
 
+
+function Base.show(f::IO, sol :: Solution)
+    t = sol.t
+    if solutiondef(t,sol.which)
+        solname =
+            if     sol.which == MSK_SOL_ITG "Integer Solution"
+            elseif sol.which == MSK_SOL_BAS "Basis Solution"
+            else                            "Interior Solution"
+            end
+        numvar = getnumvar(t)
+        numcon = getnumcon(t)
+        numbarvar = getnumbarvar(t)
+        prosta,solsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx = getsolution(t,sol.which)
+
+        solstaname,pdef,ddef =
+            if     solsta == MSK_SOL_STA_DUAL_FEAS                "DualFeasible",false,true
+            elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER        "DualIllposedCertificate",true,false
+            elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER          "DualInfeasibilityCertificate",true,false
+            elseif solsta == MSK_SOL_STA_INTEGER_OPTIMAL          "IntegerOptimal",true,false
+            elseif solsta == MSK_SOL_STA_NEAR_DUAL_FEAS           "NearDualFeasible",true,false
+            elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER     "NearDualInfeasibleCertificate",true,false
+            elseif solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL     "NearIntegerOptimal",true,false
+            elseif solsta == MSK_SOL_STA_NEAR_OPTIMAL             "NearOptimal",true,true
+            elseif solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS  "NearPrimalAndDualFeasible",true,true
+            elseif solsta == MSK_SOL_STA_NEAR_PRIM_FEAS           "NearPrimalFeasible",true,false
+            elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER     "NearPrimalInfeasibilityCertificate",false,true
+            elseif solsta == MSK_SOL_STA_OPTIMAL                  "Optimal",true,true
+            elseif solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS       "PrimalAndDualFeasible",true,true
+            elseif solsta == MSK_SOL_STA_PRIM_FEAS                "PrimalFeasible",true,false
+            elseif solsta == MSK_SOL_STA_PRIM_ILLPOSED_CER        "PrimalIllposedCertificate",false,true
+            elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER          "PrimakInfeasibleCertificate",false,true
+            else "Unknown",false,false
+            end
+
+        println(f,"$solname, status = $solstaname")
+
+        if numvar > 0
+            println(f,"    Variable solution")
+
+            if pdef && ddef
+                @printf(f,"        %-20s  %13s  %13s  %13s  %13s\n","name","level","dual lower","dual upper","dual conic")
+                for j in 1:numvar
+                    name = mkvarname(t,j)
+                    @printf(f,"        %-20s: %13.4e  %13.4e  %13.4e  %13.4e\n",name,xx[j],slx[j],sux[j],snx[j])
+                end
+            elseif pdef
+                @printf(f,"        %-20s  %13s  -  -  -\n","name","level")
+                for j in 1:numvar
+                    name = mkvarname(t,j)
+                    @printf(f,"        %-20s: %13.4e  -  -  -\n",name,xx[j])
+                end
+            elseif ddef
+                @printf(f,"        %-20s    %13s  %13s  %13s\n","name","dual lower","dual upper","dual conic")
+                for j in 1:numvar
+                    name = mkvarname(t,j)
+                    @printf(f,"        %-20s: - %13.4e  %13.4e  %13.4e\n",name,slx[j],sux[j],snx[j])
+                end
+            end
+        end
+
+        if numbarvar > 0
+            println(f,"    PSD Variable solution")            
+            if pdef && ddef
+                for k in 1:numbarvar
+                    dim = getdimbarvarj(t,k)
+                    markatrow = dim >> 1
+                    barx = getbarxj(t,sol.which,k)
+                    bars = getbarsj(t,sol.which,k)
+                    name = mkbarvarname(t,k)
+
+                    println(f,"        $name: Symmetric $dim × $dim")
+                    px = 1
+                    ps = 1
+                    for i in 1:dim
+                        if i == markatrow print(f,"        X̄ = |")
+                        else print(f,"            |")
+                        end
+                        if i > 1
+                            for k in 1:i-1 print("           ") end
+                        end
+                        for j in i:dim
+                            @printf(f," %10.2e",barx[px])
+                            px += 1
+                        end
+
+                        if i == markatrow print(f,"|    S̄ = |")
+                        else              print(f,"|        |")
+                        end
+
+                        if i > 1
+                            for k in 1:i-1 print("           ") end
+                        end
+                        for j in i:dim
+                            @printf(f," %10.2e",bars[ps])
+                            ps += 1
+                        end
+
+                        println(f," |")
+                    end
+                end
+            elseif pdef
+                for k in 1:numbarvar
+                    dim = getdimbarvarj(t,k)
+                    markatrow = dim >> 1
+                    barx = getbarxj(t,sol.which,k)
+                    name = mkbarvarname(t,k)
+
+                    println(f,"        $name: Symmetric $dim × $dim")
+                    p = 1
+                    for i in 1:dim
+                        if i == markatrow print(f,"        X̄ = |")
+                        else print(f,"            |")
+                        end
+                        if i > 1
+                            for k in 1:i-1 print("           ") end
+                        end
+                        for j in i:dim
+                            @printf(f," %10.2e",barx[p])
+                            p += 1
+                        end
+
+                        println(f," |")
+                    end
+                end
+            elseif ddef
+                for k in 1:numbarvar
+                    dim = getdimbarvarj(t,k)
+                    markatrow = dim >> 1
+                    bars = getbarsj(t,sol.which,k)
+                    name = mkbarvarname(t,k)
+
+                    println(f,"        $name: Symmetric $dim × $dim")
+                    p = 1
+                    for i in 1:dim
+                        if i == markatrow print(f,"        S̄ = |")
+                        else print(f,"            |")
+                        end
+                        if i > 1
+                            for k in 1:i-1 print("           ") end
+                        end
+                        for j in i:dim
+                            @printf(f," %10.2e",bars[p])
+                            p += 1
+                        end
+
+                        println(f," |")
+                    end
+                end
+                    
+            end
+            
+        end
+
+        if numcon > 0
+            println(f,"    Constraint solution")
+            if pdef && ddef
+                @printf(f,"        %-20s  %13s  %13s  %13s  %13s\n","name","level","dual lower","dual upper","y")
+                for j in 1:numvar
+                    name = mkvarname(t,j)
+                    @printf(f,"        %-20s: %13.4e  %13.4e  %13.4e  %13.4e\n",name,xc[j],slc[j],suc[j],y[j]) # 412
+                end
+            elseif pdef
+                @printf(f,"        %-20s  %13s  -  -  -\n","name","level")
+                for j in 1:numvar
+                    name = mkvarname(t,j)
+                    @printf(f,"        %-20s: %13.4e  -  -  -\n",name,xc[j])
+                end
+            elseif ddef
+                @printf(f,"        %-20s    %13s  %13s  %13s\n","name","dual lower","dual upper","y")
+                for j in 1:numvar
+                    name = mkvarname(t,j)
+                    @printf(f,"        %-20s: - %13.4e  %13.4e  %13e\n",name,slc[j],suc[j],y[j])
+                end
+            end
+        end
+        
+    else
+        error("Solution not defined")
+    end
+end
+
+
 function findvars(t::Mosek.Task, name::String)
     res = VarByIndex[]
     for j in 1:getnumvar(t)
@@ -380,6 +571,17 @@ Con(name::String) = ConByName(name)
 Cone{I <: Integer}(index::I) = ConeByIndex(convert(Int32,index))
 Cone(name::String) = ConeByName(name)
 
-export Var,Barvar,Con,Cone,Obj,Symmat,Barvar,findvars,findcons,findcones
+export
+    Var,
+    Barvar,
+    Con,
+    Cone,
+    Obj,
+    Symmat,
+    Barvar,
+    Sol,
+    findvars,
+    findcons,
+    findcones
 
 end
