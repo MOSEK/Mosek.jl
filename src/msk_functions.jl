@@ -1195,7 +1195,7 @@ The triplets corresponding to nonzero entries are stored in the arrays `subi`, `
 function getarowslicetrip end
 getarowslicetrip(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getarowslicetrip(task,Int32(first),Int32(last))
 function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
-  maxnumnz_ = getaslicenumnz(task_,MSK_ACC_VAR,(first_),(last_))
+  maxnumnz_ = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   subi_ = __tmp_var_1
