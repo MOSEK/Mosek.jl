@@ -1,4 +1,4 @@
-module Ext 
+module Ext
 using ..Mosek
 
 immutable VarByIndex index :: Int32 end
@@ -33,6 +33,11 @@ immutable BarvarSolution
     t::Mosek.Task
     which :: Mosek.Soltype
     index :: Int64
+end
+
+immutable ObjSolution
+    t::Mosek.Task
+    which :: Mosek.Soltype
 end
 
 immutable Variable
@@ -127,11 +132,12 @@ end
 Base.getindex(s::Solution, index :: VarByIndex) = VariableSolution(s.t,s.which,index.index)
 Base.getindex(s::Solution, index :: ConByIndex) = ConstraintSolution(s.t,s.which,index.index)
 Base.getindex(s::Solution, index :: BarvarByIndex) = BarvarSolution(s.t,s.which,index.index)
+Base.getindex(s::Solution, index :: Obj) = ObjSolution(s.t,s.which)
 
 function Base.show(f::IO, var :: Variable)
     bk,bl,bu = getvarbound(var.t,var.index)
     name = getvarname(var.t,var.index)
-    
+
     if bk == MSK_BK_FX
         print(f,"Variable('$name' = $bl)")
     else
@@ -139,7 +145,7 @@ function Base.show(f::IO, var :: Variable)
             if     bk == MSK_BK_LO || bk == MSK_BK_RA "[$bl"
             else   "]-Inf"
             end
-        bustr = 
+        bustr =
             if     bk == MSK_BK_UP || bk == MSK_BK_RA "$bu]"
             else   "+Inf["
             end
@@ -152,7 +158,7 @@ function Base.show(f::IO, var :: SemidefiniteVariable)
     if var.index > 0 && var.index <= getnumbarvar(var.t)
         dim,ns,tp = getsymmatinfo(var.t,var.index)
         name = mkbarvarname(var.t,var.index)
-        
+
         print(f,"SemidefiniteVariable('$name' ∈ 𝒞_S($dim))")
     else
         error("Invalid reference")
@@ -168,7 +174,7 @@ function Base.show(f::IO, cone :: ConeConstraint)
         elseif ct == MSK_CT_RQUAD "𝒞_qr"
         else "?"
         end
-    
+
     varnames = join(map(
         j -> let varname = getvarname(cone.t,j)
                if length(varname) == 0
@@ -178,7 +184,7 @@ function Base.show(f::IO, cone :: ConeConstraint)
                end
              end,
         submem),",")
-    
+
     print(f,"ConeByIndex('$name': ($varnames) ∈ $dom($nummem))")
 end
 
@@ -219,7 +225,7 @@ function Base.show(f::IO, con :: Objective, limit :: Int)
 
     termslimit = if limit > 0 limit else typemax(Int) end
     termsomitted = 0
-    nterms = 0    
+    nterms = 0
     for j in 1:getnumvar(t)
         cj = getcj(t,j)
         if cj < 0 || cj > 0
@@ -238,7 +244,7 @@ function Base.show(f::IO, con :: Objective, limit :: Int)
 
     if getnumbarvar(t) > 0
         _,barcidx = getbarcsparsity(t)
-        
+
         for idx in barcidx
             if nterms < termslimit
                 (barcj,num,sub,w) = getbarcidx(t,idx)
@@ -258,7 +264,7 @@ function Base.show(f::IO, con :: Objective, limit :: Int)
             end
         end
     end
-    
+
     numqobjnz = getnumqobjnz(t)
     if numqobjnz > 0
         (nnz,qcsubi,qcsubj,qcval) = getqobj(t)
@@ -301,7 +307,7 @@ function Base.show(f::IO, con :: Constraint)
             if     bk == MSK_BK_LO || bk == MSK_BK_RA "[$bl"
             else   "]-Inf"
             end
-        bustr = 
+        bustr =
             if     bk == MSK_BK_UP || bk == MSK_BK_RA "$bu]"
             else   "+Inf["
             end
@@ -310,7 +316,7 @@ function Base.show(f::IO, con :: Constraint)
     end
 
     (nzi,subi,vali) = getarow(t,Int32(i))
-    
+
     for k in 1:nzi
         varname = Mosek.escapename(getvarname(t,subi[k]))
         if length(varname) == 0
@@ -319,7 +325,7 @@ function Base.show(f::IO, con :: Constraint)
         print(f,"$(Mosek.fmtcof(vali[k])) $varname ")
     end
 
-    numqconnz = getnumqconknz(t,i)        
+    numqconnz = getnumqconknz(t,i)
     if numqconnz > 0
         (nnz,qcsubi,qcsubj,qcval) = getqconk(t,i)
         for k in 1:nnz
@@ -349,16 +355,16 @@ function Base.show(f::IO, con :: Constraint)
                 idxs[k] = idx
             end
         end
-        
+
         for idx in idxs
             (barai,baraj,num,sub,w) = getbaraidx(t,idx)
             barvarname = mkbarvarname(t,baraj)
-            
+
             if num == 1
                 print(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1]) ⋅ $barvarname ")
             elseif num > 1
                 print(f,"(")
-                printf(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1])")                    
+                printf(f,"$(Mosek.fmtcof(w[1])) #MX$(sub[1])")
                 print(f,") ⋅ $barvarname ")
             end
         end
@@ -373,7 +379,7 @@ end
 Base.showall(f::IO, sol :: Solution) = Base.show(f,sol,0)
 Base.show(f::IO, sol :: Solution) = Base.show(f,sol,20)
 
-solstainfo(solsta) = 
+solstainfo(solsta) =
     if     solsta == MSK_SOL_STA_DUAL_FEAS                "DualFeasible",false,true
     elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER        "DualIllposedCertificate",true,false
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER          "DualInfeasibilityCertificate",true,false
@@ -426,7 +432,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
         else
             println(f,"    Objective: - | -")
         end
-        
+
         if numvar > 0
             println(f,"    Variable solution")
 
@@ -438,7 +444,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                 end
             elseif pdef
                 @printf(f,"        %-20s  %13s  -  -  -\n","name","level")
-                
+
                 for j in 1:limitnumvar
                     name = mkvarname(t,j)
                     @printf(f,"        %-20s: %13.4e  -  -  -\n",name,xx[j])
@@ -456,18 +462,17 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
         end
 
         if numbarvar > 0
-            println(f,"    PSD Variable solution")            
-            if pdef && ddef
-                for k in 1:numbarvar
-                    dim = getdimbarvarj(t,k)
-                    markatrow = dim >> 1
-                    barx = getbarxj(t,sol.which,k)
-                    bars = getbarsj(t,sol.which,k)
-                    name = mkbarvarname(t,k)
+            println(f,"    PSD Variable solution")
+            for k in 1:numbarvar
+                dim = getdimbarvarj(t,k)
+                markatrow = dim >> 1
+                barx = getbarxj(t,sol.which,k)
+                bars = getbarsj(t,sol.which,k)
+                name = mkbarvarname(t,k)
 
-                    println(f,"        $name: Symmetric $dim × $dim")
+                println(f,"        $name: Symmetric $dim × $dim")
+                if pdef
                     px = 1
-                    ps = 1
                     for i in 1:dim
                         if i == markatrow print(f,"            X̄ = |")
                         else              print(f,"                |")
@@ -479,9 +484,17 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                             @printf(f," %10.2e",barx[px])
                             px += 1
                         end
+                        println(f," |")
+                    end
+                end
+                if ddef
+                    if pdef println(f) end
 
-                        if i == markatrow print(f," |    S̄ = |")
-                        else              print(f," |        |")
+                    ps = 1
+
+                    for i in 1:dim
+                        if i == markatrow print(f,"            S̄ = |")
+                        else              print(f,"                |")
                         end
 
                         if i > 1
@@ -495,57 +508,7 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                         println(f," |")
                     end
                 end
-            elseif pdef
-                for k in 1:numbarvar
-                    dim = getdimbarvarj(t,k)
-                    markatrow = dim >> 1
-                    barx = getbarxj(t,sol.which,k)
-                    name = mkbarvarname(t,k)
-
-                    println(f,"        $name: Symmetric $dim × $dim")
-                    p = 1
-                    for i in 1:dim
-                        if i == markatrow print(f,"            X̄ = |")
-                        else              print(f,"                |")
-                        end
-                        if i > 1
-                            for k in 1:i-1 print(f,"           ") end
-                        end
-                        for j in i:dim
-                            @printf(f," %10.2e",barx[p])
-                            p += 1
-                        end
-
-                        println(f," |")
-                    end
-                end
-            elseif ddef
-                for k in 1:numbarvar
-                    dim = getdimbarvarj(t,k)
-                    markatrow = dim >> 1
-                    bars = getbarsj(t,sol.which,k)
-                    name = mkbarvarname(t,k)
-
-                    println(f,"        $name: Symmetric $dim × $dim")
-                    p = 1
-                    for i in 1:dim
-                        if i == markatrow print(f,"            S̄ = |")
-                        else              print(f,"                |")
-                        end
-                        if i > 1
-                            for k in 1:i-1 print(f,"           ") end
-                        end
-                        for j in i:dim
-                            @printf(f," %10.2e",bars[p])
-                            p += 1
-                        end
-
-                        println(f," |")
-                    end
-                end
-                    
             end
-            
         end
 
         if numcon > 0
@@ -573,15 +536,14 @@ function Base.show(f::IO, sol :: Solution, limit :: Int)
                 println(f,"        ... ($(numcon-limitnumcon) constraints omitted)")
             end
         end
-        
+
     else
         error("Solution not defined")
     end
 end
 
-function Base.show(f::IO,sol::VariableSolution)
+function Base.values(sol::VariableSolution)
     t = sol.t
-    name = mkvarname(t,sol.index)
     xx =
         try
             getxxslice(t,sol.which,sol.index,sol.index+1)[1]
@@ -607,7 +569,99 @@ function Base.show(f::IO,sol::VariableSolution)
             NaN
         end
 
-    println(f,"$name: $xx, dual lower: $slx, dual upper: $sux, dual conic: $snx")
+    xx,slx,sux,snx
+end
+
+function Base.show(f::IO,sol::VariableSolution)
+    name = mkvarname(sol.t,sol.index)
+    xx,slx,sux,snx = Base.values(sol)
+    print(f,"$name: $xx, dual lower: $slx, dual upper: $sux, dual conic: $snx")
+end
+
+
+function Base.values(sol::ObjSolution)
+    pdef,pobj =
+        try
+            true,getprimalobj(sol.t,sol.which)
+        catch
+            false,NaN
+        end
+
+    ddef,dobj =
+        try
+            true,getdualobj(sol.t,sol.which)
+        catch
+            false,NaN
+        end
+    pobj,dobj
+end
+
+function Base.show(f::IO,sol::ObjSolution)
+    pdef,pobj =
+        try
+            true,getprimalobj(sol.t,sol.which)
+        catch
+            false,NaN
+        end
+
+    ddef,dobj =
+        try
+            true,getdualobj(sol.t,sol.which)
+        catch
+            false,NaN
+        end
+    if pdef && ddef
+        print(f,"Objective($pobj,$dobj)")
+    elseif pdef
+        print(f,"Objective($pobj,-)")
+    elseif ddef
+        print(f,"Objective(-,$dobj)")
+    else
+        print(f,"Objective(-,-)")
+    end
+end
+
+
+function Base.values(sol::BarvarSolution)
+    t = sol.t
+    dim = getdimbarvarj(t,sol.index)
+    barx =
+        try
+            v = getbarxj(t,sol.which,sol.index)
+            res = Array{Float64,2}(dim,dim)
+            k = 0
+            for i in 1:dim
+                k += 1
+                res[i,i] = v[k]
+                for j in i+1:dim
+                    k += 1
+                    res[i,j] = v[k]
+                    res[j,i] = v[k]
+                end
+            end
+            res
+        catch
+            fill(NaN,(dim,dim))
+        end
+    bars =
+        try
+            v = getbarsj(t,sol.which,sol.index)
+            res = Array{Float64,2}(dim,dim)
+            k = 0
+            for i in 1:dim
+                k += 1
+                res[i,i] = v[k]
+                for j in i+1:dim
+                    k += 1
+                    res[i,j] = v[k]
+                    res[j,i] = v[k]
+                end
+            end
+            res
+        catch
+            fill(NaN,(dim,dim))
+        end
+    barx,bars
 end
 
 function Base.show(f::IO,sol::BarvarSolution)
@@ -627,7 +681,7 @@ function Base.show(f::IO,sol::BarvarSolution)
         catch
             fill(NaN,dim*(dim+1) >> 1)
         end
-    
+
 
     println(f,"$name: Symmetric $dim × $dim")
     px = 1
@@ -644,10 +698,14 @@ function Base.show(f::IO,sol::BarvarSolution)
             px += 1
         end
 
-        if i == markatrow print(f," |    S̄ = |")
-        else              print(f," |        |")
-        end
+        println(f," |")
+    end
+    println(f)
 
+    for i in 1:dim
+        if i == markatrow print(f,"  S̄ = |")
+        else              print(f,"      |")
+        end
         if i > 1
             for k in 1:i-1 print(f,"           ") end
         end
@@ -658,12 +716,12 @@ function Base.show(f::IO,sol::BarvarSolution)
 
         println(f," |")
     end
+
 end
 
 
-function Base.show(f::IO,sol::ConstraintSolution)
+function Base.values(sol::ConstraintSolution)
     t = sol.t
-    name = mkconname(t,sol.index)
     xc =
         try
             getxcslice(t,sol.which,sol.index,sol.index+1)[1]
@@ -688,9 +746,18 @@ function Base.show(f::IO,sol::ConstraintSolution)
         catch
             NaN
         end
-
-    println(f,"$name: $xc, dual lower: $slc, dual upper: $suc, dual conic: $y")
+    xc,slc,suc,y
 end
+
+function Base.show(f::IO,sol::ConstraintSolution)
+    name = mkconname(sol.t,sol.index)
+    xc,slc,suc,y = Base.values(sol)
+    print(f,"$name: $xc, dual lower: $slc, dual upper: $suc, dual conic: $y")
+end
+
+
+
+
 
 
 function findvars(t::Mosek.Task, name::String)
@@ -755,8 +822,6 @@ function findcones(t::Mosek.Task, regex::Regex)
     res
 end
 
-
-
 Var{I <: Integer}(index::I) = VarByIndex(convert(Int32,index))
 Var(name::String) = VarByName(name)
 
@@ -768,6 +833,54 @@ Con(name::String) = ConByName(name)
 
 Cone{I <: Integer}(index::I) = ConeByIndex(convert(Int32,index))
 Cone(name::String) = ConeByName(name)
+
+###########
+
+function Base.getindex(t::Mosek.Task, ri :: UnitRange{T}, rj :: Colon) where { T <: Integer }
+    first = Int32(ri.start)
+    last  = Int32(ri.stop+1)
+    m = last-first
+    n = getnumvar(t)
+
+    subi,subj,valij = getarowslicetrip(t,first,last)
+    sparse(subi-(first-1),subj,valij,m,n)
+end
+
+function Base.getindex(t::Mosek.Task, ri :: T, rj :: Colon) where { T <: Integer }
+    i  = Int32(ri)
+    n = getnumvar(t)
+
+    subj,valij = getarow(t,i)
+    sparsevec(subj,valij,n)
+end
+
+function Base.getindex(t::Mosek.Task, ri :: Colon, rj :: UnitRange{T}) where { T <: Integer }
+    first = Int32(ri.start)
+    last  = Int32(ri.stop+1)
+    m = getnumcon(t)
+    n = last-first
+
+    subi,subj,valij = getacolslicetrip(t,first,last)
+    sparse(subi,subj,valij,m,n)
+end
+
+function Base.getindex(t::Mosek.Task, ri :: Colon, rj :: T) where { T <: Integer }
+    j = Int32(rj)
+    m = getnumcon(t)
+
+    subi,valij = getacol(t,j)
+    sparsevector(subi,valij,m)
+end
+
+function Base.getindex(t::Mosek.Task, ri :: Colon, rj :: Colon)
+    subi,subj,valij = getarowslicetrip(t,1,getnumcon(t)+1)
+    sparse(subi,subj,valij,getnumcon(t),getnumvar(t))
+end
+
+Base.getindex(t::Mosek.Task, ri :: UnitRange{T}, rj :: UnitRange{T}) where { T <: Integer } = getindex(t,ri,Colon())[:,rj]
+
+###########
+
 
 export
     Var,
