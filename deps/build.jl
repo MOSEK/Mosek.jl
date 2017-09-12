@@ -30,7 +30,7 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
             end
         elseif Sys.ARCH == :x86_64
             if     is_linux()   "libmosek64.so.$(mskvmajor).$(mskvminor)",   "libmosekscopt$(mskvmajor)_$(mskvminor).so"
-            elseif is_apple()   "mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"
+            elseif is_apple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib", "mosekscopt$(mskvmajor)_$(mskvminor).dylib"
             elseif is_windows() "mosek64_$(mskvmajor)_$(mskvminor).dll",     "mosekscopt$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
