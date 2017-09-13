@@ -44,7 +44,7 @@ function recmkdir(path :: String)
         if ! isdir(pname)
             error("Failed to recursively create directory")
         end
-        mkdir(dirname)
+        mkdir(path)
     end        
 end
 
