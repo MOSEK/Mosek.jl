@@ -37,6 +37,17 @@ function mk_download_cmd()
     end
 end
 
+function recmkdir(path :: String)    
+    if ! isdir(path)
+        pname = dirname(path)
+        recmkdir(pname)
+        if ! isdir(pname)
+            error("Failed to recursively create directory")
+        end
+        mkdir(dirname)
+    end        
+end
+
 function download_cmd(url::AbstractString, filename::AbstractString)
     if downloadcmd === nothing mk_download_cmd() end
     if downloadcmd == :wget
@@ -46,6 +57,7 @@ function download_cmd(url::AbstractString, filename::AbstractString)
     elseif downloadcmd == :fetch
         return `fetch -f $filename $url`
     elseif downloadcmd == :powershell
+        recmkdir(dirname(filename))
         return `powershell -file $(joinpath(Pkg.dir("Mosek"),"deps","winget.ps1")) $url $filename`
     else
         error("No download agent available; install curl, wget, fetch, or powershell.")
@@ -73,7 +85,7 @@ end
 
 @static if is_windows()
     has_7z  = nothing
-    has_zip = nothing
+    has_zip = nothing    
     function unpack_cmd(file,directory,extension,secondary_extension)
         global has_7z
         global has_zip
