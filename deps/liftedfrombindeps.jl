@@ -20,7 +20,7 @@ else
 end
 
 downloadcmd = nothing
-function download_cmd(url::AbstractString, filename::AbstractString)
+function mk_download_cmd()
     global downloadcmd
     whichcmd = @static if is_windows() "where" else "which" end
     if downloadcmd === nothing
@@ -35,6 +35,10 @@ function download_cmd(url::AbstractString, filename::AbstractString)
             end
         end
     end
+end
+
+function download_cmd(url::AbstractString, filename::AbstractString)
+    if downloadcmd === nothing mk_download_cmd() end
     if downloadcmd == :wget
         return `wget -O $filename $url`
     elseif downloadcmd == :curl
@@ -42,9 +46,9 @@ function download_cmd(url::AbstractString, filename::AbstractString)
     elseif downloadcmd == :fetch
         return `fetch -f $filename $url`
     elseif downloadcmd == :powershell
-        return `powershell -Command "(new-object net.webclient).DownloadFile(\"$url\", \"$filename\")"`
+        return `powershell -file $(joinpath(Pkg.dir("Mosek"),"deps","winget.ps1")) $url $filename`
     else
-        error("No download agent available; install curl, wget, or fetch.")
+        error("No download agent available; install curl, wget, fetch, or powershell.")
     end
 end
 
@@ -96,7 +100,7 @@ end
             end
         elseif extension == ".zip"
             rm(directory,recursive=true)
-            return (`powershell -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory(\"$file\",\"$directory\")"`)
+            return (`powershell -file $(joinpath(Pkg.dir("Mosek"),"deps","winunzip.ps1")) $file $directory`)
         else
             error("I don't know how to unpack $file")
         end
