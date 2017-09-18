@@ -150,8 +150,7 @@ mskbindir =
         hosturl  = "https://www.mosek.com/downloads/default_dns.txt"
 
         mkpath(dldir)
-        # run(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) && exit(1)
-        success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK version")
+        success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK download host")
         downloadhost =
             open(joinpath(dldir,"downloadhostname"),"r") do f
                 strip(readstring(f))
