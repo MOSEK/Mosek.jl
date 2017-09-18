@@ -249,7 +249,7 @@ function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
     Mosek.putvarboundslice(m.task,1,n+1,m.bkx,m.blx,m.bux)
     if any(m.binvarflags)
         idxs = convert(Array{Int32,1},find(v->v, m.binvarflags))
-        bkx = Int32[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
+        bkx = Mosek.Boundkey[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
         blx = Float64[ max(m.blx[i],0.0) for i in idxs ]
         bux = Float64[ min(m.bux[i],1.0) for i in idxs ]
 
@@ -291,7 +291,7 @@ function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
     Mosek.putvarboundslice(m.task,1,n+1,m.bkx,m.blx,m.bux)
     if any(m.binvarflags)
         idxs = convert(Array{Int32,1},find(v->v, m.binvarflags))
-        bkx = Int32[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
+        bkx = Mosek.Boundkey[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
         blx = Float64[ max(m.blx[i],0.0) for i in idxs ]
         bux = Float64[ min(m.bux[i],1.0) for i in idxs ]
 
@@ -633,7 +633,7 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     nanidxs = find(isnan,vals)
     vals[nanidxs] = 0.0
 
-    skx = Int32[ if isnan(vals[i]) Mosek.MSK_SK_UNK else Mosek.MSK_SK_BAS end for i in 1:n ]
+    skx = Mosek.Stakey[ if isnan(vals[i]) Mosek.MSK_SK_UNK else Mosek.MSK_SK_BAS end for i in 1:n ]
 
     Mosek.putxxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,vals);
     Mosek.putskxslice(m.task,Mosek.MSK_SOL_BAS,1,n+1,skx);
