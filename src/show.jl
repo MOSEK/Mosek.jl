@@ -32,7 +32,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     numqconnz = if numcon > 0 sum(i -> getnumqconknz(t,i),1:numcon) else 0 end
 
     limitnumcon = if limit > 0 min(limit,numcon) else numcon end
-    limitnumvar = if limit > 0 min(limit,numcon) else numvar end
+    limitnumvar = if limit > 0 min(limit,numvar) else numvar end
     limitnumcone = if limit > 0 min(limit,numcone) else numcone end
     limitnumbarvar = if limit > 0 min(limit,numbarvar) else numbarvar end
 
