@@ -2,7 +2,7 @@ include("liftedfrombindeps.jl")
 
 # define current version:
 mskvmajor = "8"
-mskvminor = "0"
+mskvminor_minimum = 1
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
@@ -37,10 +37,8 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
         else
             error("Platform not supported")
         end
-
     let moseklibpath = joinpath(path,moseklib),
         scoptlibpath = joinpath(path,scoptlib)
-
         if ! isfile(moseklibpath)
             error("Library '$moseklib' not found ($path)")
         elseif ! isfile(scoptlibpath)
@@ -50,8 +48,6 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
         end
     end
 end
-
-
 
 function versionFromBindir(bindir ::String)
     try
@@ -73,7 +69,7 @@ function bindirIsCurrentVersion(bindir)
     if ver != nothing
         ver = split(ver,".")
         
-        return ver[1] == mskvmajor && ver[2] == mskvminor
+        return ver[1] == mskvmajor && parse(Int,ver[2]) >= mskvminor_minimum
     else
         return false
     end
@@ -150,15 +146,15 @@ mskbindir =
         archname = "mosektools$(mskplatform)$(distroext)"
         hosturl  = "https://www.mosek.com/downloads/default_dns.txt"
 
-        success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK version")
+        mkpath(dldir)
+        success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK download host")
         downloadhost =
             open(joinpath(dldir,"downloadhostname"),"r") do f
                 strip(readstring(f))
             end
         
-        verurl = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
+        verurl = "https://$downloadhost/stable/$mskvmajor/version"
 
-        mkpath(dldir)
 
         cur_version =
             if isfile(joinpath(bindepsdir,"version"))
@@ -219,7 +215,6 @@ else
 end
 
 verarr = split(version,'.')
-
 libmosekpath,libscoptpath = findlibs(mskbindir,verarr[1],verarr[2])
 
 if instmethod == "external"
@@ -250,6 +245,5 @@ end
 @checked_lib libmosek      "$libmosekpath"
 @checked_lib libmosekscopt "$libscoptpath"
 """)
-
 
 end # open
