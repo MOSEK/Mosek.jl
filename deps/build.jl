@@ -2,7 +2,7 @@ include("liftedfrombindeps.jl")
 
 # define current version:
 mskvmajor = "8"
-mskvminor_minimum = 1
+mskvminor = "0"
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
@@ -73,8 +73,7 @@ function bindirIsCurrentVersion(bindir)
     if ver != nothing
         ver = split(ver,".")
         
-        return ver[1] == mskvmajor && parse(Int,ver[2]) >= mskvminor_minimum
-        #return ver[1] == mskvmajor && ver[2] == mskvminor
+        return ver[1] == mskvmajor && ver[2] == mskvminor
     else
         return false
     end
@@ -157,7 +156,7 @@ mskbindir =
                 strip(readstring(f))
             end
         
-        verurl   = "https://$downloadhost/stable/$mskvmajor/version"
+        verurl = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
 
         mkpath(dldir)
 
