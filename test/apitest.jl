@@ -149,7 +149,7 @@ function test_qcqo1()
 end
 
 function test_milo1()
-    printstream(msg::String) = nothing #print(msg)
+    printstream(msg::String) = print(msg)  #print(msg)
     task = maketask()
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
     bkc = [ MSK_BK_UP, MSK_BK_LO  ]
