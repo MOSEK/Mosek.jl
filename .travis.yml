@@ -2,8 +2,9 @@
 language: julia
 os:
   - linux
+  - osx
 julia:
-  - 0.6
+  - 0.5
 notifications:
   email: false
 git:
@@ -13,4 +14,3 @@ before-install:
 script:
   - julia -e 'Pkg.clone(pwd());'
   - julia -e 'Pkg.build("Mosek");'
-
