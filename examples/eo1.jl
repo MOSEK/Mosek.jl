@@ -1,5 +1,5 @@
 #
-# Solves the expontial-cone problem
+# Solves the exponential-cone problem
 #
 #    minimize    x1+x2
 #    subject to  x1 + x2 + x3 = 1
@@ -29,8 +29,7 @@ numcon = length(bkc)
 
 # Create a task
 maketask() do task
-    putstreamfunc(task,MSK_STREAM_LOG,printstream)
-    putcallbackfunc(task,callback)
+    putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     appendcons(task,numcon)
     appendvars(task,numvar)
