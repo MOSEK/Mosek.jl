@@ -6,14 +6,14 @@ CurrentModule = Mosek
 ```@docs
 Solveform
 Problemitem
-Accmode
+Boundkey
 Sensitivitytype
 Uplo
 Intpnthotstart
 Solsta
 Objsense
 Solitem
-Boundkey
+Simseltype
 Basindtype
 Branchdir
 Liinfitem
@@ -25,7 +25,6 @@ Mark
 Conetype
 Streamtype
 Iomode
-Simseltype
 Xmlwriteroutputtype
 Miomode
 Dinfitem
@@ -48,9 +47,9 @@ Nametype
 Mpsformat
 Variabletype
 Checkconvexitytype
-Language
 Startpointtype
 Soltype
+Purify
 Scalingmethod
 Value
 Simreform

@@ -40,7 +40,6 @@ checkinall
 checkinlicense
 checkmem
 checkoutlicense
-chgbound
 chgconbound
 chgvarbound
 commitchanges
@@ -50,14 +49,17 @@ dualsensitivity
 echointro
 getacol
 getacolnumnz
+getacolslice
+getacolslicenumnz
 getacolslicetrip
 getaij
 getapiecenumnz
 getarow
 getarownumnz
+getarowslice
+getarowslicenumnz
 getarowslicetrip
-getaslice
-getaslicenumnz
+getatruncatetol
 getbarablocktriplet
 getbaraidx
 getbaraidxij
@@ -69,15 +71,16 @@ getbarcidxinfo
 getbarcidxj
 getbarcsparsity
 getbarsj
+getbarsslice
 getbarvarname
 getbarvarnameindex
 getbarvarnamelen
 getbarxj
-getbound
-getboundslice
+getbarxslice
 getc
 getcfix
 getcj
+getclist
 getcodedesc
 getconbound
 getconboundslice
@@ -161,7 +164,6 @@ getsnx
 getsnxslice
 getsolsta
 getsolution
-getsolutioni
 getsolutioninfo
 getsolutionslice
 getsparsesymmat
@@ -210,6 +212,7 @@ putaijlist
 putarow
 putarowlist
 putarowslice
+putatruncatetol
 putbarablocktriplet
 putbaraij
 putbarcblocktriplet
@@ -217,9 +220,6 @@ putbarcj
 putbarsj
 putbarvarname
 putbarxj
-putbound
-putboundlist
-putboundslice
 putcfix
 putcj
 putclist
@@ -229,6 +229,7 @@ putconboundslice
 putcone
 putconename
 putconname
+putconsolutioni
 putcslice
 putdouparam
 putintparam
@@ -263,7 +264,6 @@ putslxslice
 putsnx
 putsnxslice
 putsolution
-putsolutioni
 putsolutionyi
 putstrparam
 putsuc
@@ -275,6 +275,7 @@ putvarbound
 putvarboundlist
 putvarboundslice
 putvarname
+putvarsolutionj
 putvartype
 putvartypelist
 putxc
