@@ -71,7 +71,7 @@ function bindirIsCurrentVersion(bindir)
     if ver != nothing
         ver = split(ver,".")
 
-        return ver[1] == mskvmajor && parse(Int,ver[2]) >= mskvminor_minimum
+        return ver[1] == mskvmajor && ver[2] == mskvminor
         #return ver[1] == mskvmajor && ver[2] == mskvminor
     else
         return false
