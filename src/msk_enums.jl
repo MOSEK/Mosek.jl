@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.0.0.59
+# MOSEK 8.0.0.93
 
 export
   MSK_SOLVE_DUAL,
@@ -2689,7 +2689,7 @@ MSK_SCALING_METHOD_POW2 = Int32(0)
   MSK_SCALING_METHOD_END   = Int32(2)
 
 # enum value
-MSK_LICENSE_BUFFER_LENGTH = Int32(20)
+MSK_LICENSE_BUFFER_LENGTH = Int32(21)
 MSK_MAX_STR_LEN = Int32(1024)
 
 # enum stakey
