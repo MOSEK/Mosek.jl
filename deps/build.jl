@@ -2,7 +2,7 @@ include("liftedfrombindeps.jl")
 
 # define current version:
 mskvmajor = "8"
-mskvminor = "0"
+mskvminor = "1"
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
