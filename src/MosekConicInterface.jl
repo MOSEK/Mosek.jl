@@ -287,19 +287,11 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         # Add bounds and slacks
         conbk = Vector{Mosek.Boundkey}(M)
         let bk = conbk
-            local conptr = 1
-
             for (sym,idxs_) in constr_cones
                 idxs = coneidxstoarray(idxs_)
-
-                local n = length(idxs)
+                n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
-                    firstcon = conptr
-                    lastcon  = conptr+n-1
-                    conptr += n
-
                     conslack[idxs] = 0 # no slack
-
                     bk[idxs] =
                       if     sym == :Free   Mosek.MSK_BK_FR
                       elseif sym == :Zero   Mosek.MSK_BK_FX
@@ -310,32 +302,26 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 elseif sym in [ :SOC, :SOCRotated, :ExpPrimal ]
                     firstslack = linvarptr
                     lastslack  = linvarptr+n-1
-                    conptr += n
                     linvarptr += n
 
-                    conslack[idxs] = firstslack:lastslack # no slack
+                    conslack[idxs] = firstslack:lastslack
                     bk[idxs] = Mosek.MSK_BK_FX
 
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
-                    local bx = zeros(Float64,n)
+                    bx = zeros(Float64,n)
                     Mosek.putvarboundslice(m.task,Int32(firstslack),Int32(lastslack+1),Mosek.Boundkey[Mosek.MSK_BK_FR for i in 1:n],bx,bx)
-                    Mosek.putaijlist(m.task,
-                                     convert(Array{Int32,1},idxs),
-                                     Int32[firstslack:lastslack...],
-                                     -ones(Float64,n))
+                    Mosek.putaijlist(m.task,convert(Array{Int32,1},idxs),Int32[firstslack:lastslack...],-ones(Float64,n))
                     if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
                     elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
                     elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP,  0.0, Int32[lastslack:-1:firstslack;])
                     end
 
                 elseif sym == :SDP
-                    #firstcon   = conptr
-                    #lastcon    = conptr+n-1
                     barslackj  = barvarptr
                     d = floor(Int32,sqrt(.25+2*length(idxs))-0.5)
 
-                    bk[firstcon:lastcon] = Mosek.MSK_BK_FX
+                    bk[idxs] = Mosek.MSK_BK_FX
 
                     barvardim[barvarptr] = d
                     Mosek.appendbarvars(m.task, Int32[d])
@@ -345,7 +331,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                             for vi in vj:d
                                 i = idxs[k]
                                 cof = (vj == vi) ? 1.0 : 1/sqrt(2)
-                                const matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
+                                matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
                                 Mosek.putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
                                 barconij[i] = k
                                 k += 1
@@ -354,7 +340,6 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     end
                     conslack[idxs] = -barvarptr
 
-                    conptr += n
                     barvarptr += 1
                 end
             end
@@ -414,18 +399,13 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     pe = barptr[j+1]
                     d = barvardim[j]
 
-                    const matidx = Mosek.appendsparsesymmat(m.task,
-                                                            d,
-                                                            barcsubi[pb:pe],
-                                                            barcsubj[pb:pe],
-                                                            barcval[pb:pe])
+                    matidx = Mosek.appendsparsesymmat(m.task,d,barcsubi[pb:pe],barcsubj[pb:pe],barcval[pb:pe])
                     Mosek.putbarcj(m.task,j,Int64[matidx],Float64[1.0])
                 end
             end
         end
         setsense!(m.task, sense)
     end
-
 
     m.varbk      = varbk
     m.numvar     = totnumvar # elements used in varmap
