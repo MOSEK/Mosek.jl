@@ -179,7 +179,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 bk[first:last] = Mosek.MSK_BK_FR
                 if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, [first:last;])
                 elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, [first:last;])
-                elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP, 0.0, [first:last;])
+                elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP, 0.0, [last:-1:first;])
                 end
 
                 varbk[idxs] = Mosek.MSK_BK_FR
@@ -291,6 +291,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
 
             for (sym,idxs_) in constr_cones
                 idxs = coneidxstoarray(idxs_)
+
                 local n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
                     firstcon = conptr
@@ -305,7 +306,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                       elseif sym == :NonNeg Mosek.MSK_BK_LO
                       elseif sym == :NonPos Mosek.MSK_BK_UP
                       end
-                elseif sym in [ :SOC, :SOCRotated, :ExprPrimal ]
+                elseif sym in [ :SOC, :SOCRotated, :ExpPrimal ]
                     firstcon   = conptr
                     lastcon    = conptr+n-1
                     firstslack = linvarptr
@@ -323,7 +324,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     Mosek.putaijlist(m.task,Int32[firstcon:lastcon;],Int32[firstslack:lastslack;],-ones(Float64,n))
                     if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
                     elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
-                    elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP,  0.0, Int32[firstslack:lastslack;])
+                    elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP,  0.0, Int32[lastslack:-1:firstslack;])
                     end
                 elseif sym == :SDP
                     firstcon   = conptr
@@ -579,6 +580,7 @@ MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
 
 function MathProgBase.optimize!(m::MosekMathProgConicModel)
     try
+        # show(m.task)
         m.lasttrm = Mosek.optimize(m.task)
         Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
     catch err
