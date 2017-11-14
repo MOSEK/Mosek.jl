@@ -306,8 +306,6 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                       elseif sym == :NonPos Mosek.MSK_BK_UP
                       end
                 elseif sym in [ :SOC, :SOCRotated, :ExprPrimal ]
-                    firstcon   = conptr
-                    lastcon    = conptr+n-1
                     firstslack = linvarptr
                     lastslack  = linvarptr+n-1
                     conptr += n
@@ -329,8 +327,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP,  0.0, Int32[firstslack:lastslack;])
                     end
                 elseif sym == :SDP
-                    firstcon   = conptr
-                    lastcon    = conptr+n-1
+                    #firstcon   = conptr
+                    #lastcon    = conptr+n-1
                     barslackj  = barvarptr
                     d = floor(Int32,sqrt(.25+2*length(idxs))-0.5)
 
@@ -339,18 +337,19 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     barvardim[barvarptr] = d
                     Mosek.appendbarvars(m.task, Int32[d])
 
-                    let i = firstcon
+                    let k = 1
                         for vj in 1:d
                             for vi in vj:d
+                                i = idxs[k]
                                 cof = (vj == vi) ? 1.0 : 1/sqrt(2)
                                 const matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
                                 Mosek.putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
-                                barconij[i] = i-firstcon+1
-                                i += 1
+                                barconij[i] = k
+                                k += 1
                             end
                         end
                     end
-                    conslack[firstcon:lastcon] = -barvarptr
+                    conslack[idxs] = -barvarptr
 
                     conptr += n
                     barvarptr += 1
