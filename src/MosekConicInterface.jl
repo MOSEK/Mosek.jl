@@ -320,7 +320,10 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
                     local bx = zeros(Float64,n)
                     Mosek.putvarboundslice(m.task,Int32(firstslack),Int32(lastslack+1),Mosek.Boundkey[Mosek.MSK_BK_FR for i in 1:n],bx,bx)
-                    Mosek.putaijlist(m.task,Int32[firstcon:lastcon;],Int32[firstslack:lastslack;],-ones(Float64,n))
+                    Mosek.putaijlist(m.task,
+                                     convert(Array{Int32,1},idxs),
+                                     Int32[firstslack:lastslack...],
+                                     -ones(Float64,n))
                     if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, Int32[firstslack:lastslack;])
                     elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, Int32[firstslack:lastslack;])
                     elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP,  0.0, Int32[firstslack:lastslack;])
