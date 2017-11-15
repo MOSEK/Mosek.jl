@@ -23,8 +23,7 @@ function test_mathprogbase(solver)
     @testset "mip" begin
         mixintprogtest(solver)
     end
-
-
+    
     @testset "qp" begin
         #quadprogtest(solver)
         #qpdualtest(solver)
@@ -40,17 +39,17 @@ function test_mathprogbase(solver)
 
     @testset "conic" begin
         coniclineartest(solver, duals=true)
-        # Test conic fallback for LPs
-        #coniclineartest(solver, duals=true)
+        conicSOCtest(solver, duals=true)
+        conicSOCRotatedtest(solver, duals=true)
+        conicSOCINTtest(solver)
+        conicEXPtest(solver, duals=true)
+        conicSDPtest(solver, duals=true)
     end
 
     @testset "linproginterface" begin
         linprogsolvertest(solver)
         linprogsolvertestextra(solver)
-        # Test LP fallback for conics
-        linprogsolvertest(solver)
     end
-
 end
 
 test_mathprogbase(Mosek.MosekSolver(QUIET = true))
