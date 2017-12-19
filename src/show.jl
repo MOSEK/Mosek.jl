@@ -240,6 +240,8 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                     println(f,"< $bu")
                 elseif bk == MSK_BK_FX
                     println(f,"= $bu")
+                else
+                    println(f,"")
                 end
             end
             if limitnumcon < numcon
@@ -255,9 +257,14 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                         else "?"
                         end
 
-                    print(f,"        $(conenames[k]): ($(varnames[submem[1]])")
-                    for i in 2:nummem
-                        print(f,",$(varnames[submem[i]])")
+                    
+                    print(f,"        $(conenames[k]): (")
+
+                    if nummem > 0
+                        print(f,"$(varnames[submem[1]])")
+                        for i in 2:nummem
+                            print(f,",$(varnames[submem[i]])")
+                        end
                     end
                     println(f,") ∈ $dom($nummem)")
                 end
