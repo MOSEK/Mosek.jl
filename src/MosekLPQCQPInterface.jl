@@ -977,7 +977,6 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
                                   hessubj     :: Ptr{Int32},
                                   hesval      :: Ptr{Float64})
     cb_tmp = unsafe_pointer_to_objref(nlhandle)
-    println("type of nlhandle: $(typeof(cb_tmp))")
     cb = cb_tmp::CallbackData
 
     numi = convert(Int,numi_)
