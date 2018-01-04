@@ -24,8 +24,25 @@ type MosekLinearQuadraticModel <: MathProgBase.AbstractLinearQuadraticModel
     options
 end
 
+type CallbackData
+    d::MathProgBase.AbstractNLPEvaluator
+    numVar::Int
+    numConstr::Int
+    Ihess::Vector{Int32}
+    Jhess::Vector{Int32}
+    jac_colval::Vector{Int32} # Compressed sparse row form of Jacobian sparsity
+    jac_rowstarts::Vector{Int32}
+    jac_nzval::Vector{Float64} # storage for full jacobian (mosek may ask for a subset)
+    jac_nnz_original::Int # nnz in NLP evaluator jacobian == length(Ijac)
+    jac_idxmap::Vector{Int} # map from indices in NLP evaluator jacobian to mosek jacobian
+    J_tmp::Vector{Float64} # storage for NLP evaluator jacobian
+    g_tmp::Vector{Float64} # storage for constraint values
+end
+
 type MosekNonlinearModel <: MathProgBase.AbstractLinearQuadraticModel
     m :: MosekLinearQuadraticModel
+
+    nlhandle :: Union{Void,CallbackData}
 end
 
 function MathProgBase.LinearQuadraticModel(s::MosekSolver) 
@@ -877,22 +894,8 @@ end
 ## Nonlinear
 #############################################################
 
-MathProgBase.NonlinearModel(s::MosekSolver) = MosekNonlinearModel(MathProgBase.LinearQuadraticModel(s))
+MathProgBase.NonlinearModel(s::Mosek.MosekSolver) = MosekNonlinearModel(MathProgBase.LinearQuadraticModel(s),nothing)
 
-type CallbackData
-    d::MathProgBase.AbstractNLPEvaluator
-    numVar::Int
-    numConstr::Int
-    Ihess::Vector{Int32}
-    Jhess::Vector{Int32}
-    jac_colval::Vector{Int32} # Compressed sparse row form of Jacobian sparsity
-    jac_rowstarts::Vector{Int32}
-    jac_nzval::Vector{Float64} # storage for full jacobian (mosek may ask for a subset)
-    jac_nnz_original::Int # nnz in NLP evaluator jacobian == length(Ijac)
-    jac_idxmap::Vector{Int} # map from indices in NLP evaluator jacobian to mosek jacobian
-    J_tmp::Vector{Float64} # storage for NLP evaluator jacobian
-    g_tmp::Vector{Float64} # storage for constraint values
-end
 
 function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
                                   numgrdobjnz:: Ptr{Int32}, # number of nonzeros in gradient of objective
@@ -986,7 +989,9 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
                                   hessubi     :: Ptr{Int32},
                                   hessubj     :: Ptr{Int32},
                                   hesval      :: Ptr{Float64})
-    cb = unsafe_pointer_to_objref(nlhandle)::CallbackData
+    cb_tmp = unsafe_pointer_to_objref(nlhandle)
+    println("type of nlhandle: $(typeof(cb_tmp))")
+    cb = cb_tmp::CallbackData
 
     numi = convert(Int,numi_)
     xx = unsafe_wrap(Array{Float64,1},xx_,(cb.numVar,))
@@ -1112,6 +1117,7 @@ function MathProgBase.loadproblem!(m::MosekNonlinearModel,
                                    rowub::Array{Float64,1},
                                    sense::Symbol,
                                    d::MathProgBase.AbstractNLPEvaluator)
+    nlm = m
     m = m.m
 
     if !(numVar == length(collb) == length(colub)) ||
@@ -1193,7 +1199,8 @@ function MathProgBase.loadproblem!(m::MosekNonlinearModel,
     end
 
     cb = CallbackData(d, numVar, numConstr, Ihess, Jhess, J.rowval, J.colptr, zeros(J.colptr[numConstr+1]-1),
-          jac_nnz_original, idxmap, zeros(jac_nnz_original), zeros(numConstr))
+                      jac_nnz_original, idxmap, zeros(jac_nnz_original), zeros(numConstr))
+    nlm.nlhandle = cb
 
     nlgetsp = cfunction(msk_nl_getsp_wrapper_mpb,
                       Int32,
