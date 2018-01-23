@@ -12,10 +12,8 @@ Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite), 
 QP (quadratic objective, quadratic constraints), GECO (general
 convex) and MIP (mixed-integer problems). These can be mixed as follows:
-- LP+SOCP+SDP
-- LP+SOCP+MIP
-- LP+QP+MIP
-- LP+QP+GECO
+- LP+CONIC+SDP
+- LP+CONIC+MIP
 
 MOSEK is commercial software, but free licenses are available for
 academic use. See [here](http://mosek.com/resources/academic-license/)

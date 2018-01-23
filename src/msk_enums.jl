@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.0.27
+# MOSEK 9.0.0.31
 
 export
   Basindtype,
@@ -129,14 +129,15 @@ export
   MSK_CT_QUAD,
   MSK_CT_RQUAD,
   MSK_CT_PEXP,
+  MSK_CT_DEXP,
   MSK_CT_PPOW,
+  MSK_CT_DPOW,
   MSK_CT_ZERO,
   Dataformat,
   MSK_DATA_FORMAT_EXTENSION,
   MSK_DATA_FORMAT_MPS,
   MSK_DATA_FORMAT_LP,
   MSK_DATA_FORMAT_OP,
-  MSK_DATA_FORMAT_XML,
   MSK_DATA_FORMAT_FREE_MPS,
   MSK_DATA_FORMAT_TASK,
   MSK_DATA_FORMAT_CB,
@@ -658,7 +659,6 @@ export
   MSK_PROBTYPE_LO,
   MSK_PROBTYPE_QO,
   MSK_PROBTYPE_QCQO,
-  MSK_PROBTYPE_GECO,
   MSK_PROBTYPE_CONIC,
   MSK_PROBTYPE_MIXED,
   Prosta,
@@ -793,6 +793,7 @@ export
   MSK_RES_ERR_LIVING_TASKS,
   MSK_RES_ERR_BLANK_NAME,
   MSK_RES_ERR_DUP_NAME,
+  MSK_RES_ERR_FORMAT_STRING,
   MSK_RES_ERR_INVALID_OBJ_NAME,
   MSK_RES_ERR_INVALID_CON_NAME,
   MSK_RES_ERR_INVALID_VAR_NAME,
@@ -860,6 +861,7 @@ export
   MSK_RES_ERR_NUM_ARGUMENTS,
   MSK_RES_ERR_IN_ARGUMENT,
   MSK_RES_ERR_ARGUMENT_DIMENSION,
+  MSK_RES_ERR_SHAPE_IS_TOO_LARGE,
   MSK_RES_ERR_INDEX_IS_TOO_SMALL,
   MSK_RES_ERR_INDEX_IS_TOO_LARGE,
   MSK_RES_ERR_PARAM_NAME,
@@ -1112,6 +1114,17 @@ export
   MSK_RES_ERR_CBF_DUPLICATE_PSDVAR,
   MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION,
   MSK_RES_ERR_CBF_TOO_FEW_PSDVAR,
+  MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION,
+  MSK_RES_ERR_CBF_DUPLICATE_POW_CONES,
+  MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES,
+  MSK_RES_ERR_CBF_INVALID_POWER,
+  MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG,
+  MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX,
+  MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX,
+  MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE,
+  MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE,
+  MSK_RES_ERR_CBF_POWER_CONE_MISMATCH,
+  MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH,
   MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER,
   MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER,
   MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD,
@@ -1151,6 +1164,12 @@ export
   MSK_SCALING_NONE,
   MSK_SCALING_MODERATE,
   MSK_SCALING_AGGRESSIVE,
+  Scopr,
+  MSK_OPR_ENT,
+  MSK_OPR_EXP,
+  MSK_OPR_LOG,
+  MSK_OPR_POW,
+  MSK_OPR_SQRT,
   Sensitivitytype,
   MSK_SENSITIVITY_TYPE_BASIS,
   MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION,
@@ -1470,7 +1489,7 @@ Progress callback codes
 * `MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI`. The callback function is called from within the basis identification procedure when the primal clean-up phase is terminated.
 * `MSK_CALLBACK_END_QCQO_REFORMULATE`. End QCQO reformulation.
 * `MSK_CALLBACK_END_READ`. MOSEK has finished reading a problem file.
-* `MSK_CALLBACK_END_ROOT_CUTGEN`. The callback function is called when root cut generation is is terminated.
+* `MSK_CALLBACK_END_ROOT_CUTGEN`. The callback function is called when root cut generation is terminated.
 * `MSK_CALLBACK_END_SIMPLEX`. The callback function is called when the simplex optimizer is terminated.
 * `MSK_CALLBACK_END_SIMPLEX_BI`. The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated.
 * `MSK_CALLBACK_END_TO_CONIC`. End conic reformulation.
@@ -1670,7 +1689,7 @@ const MSK_CALLBACK_END_QCQO_REFORMULATE = Callbackcode(49)
 "MOSEK has finished reading a problem file."
 const MSK_CALLBACK_END_READ = Callbackcode(50)
 
-"The callback function is called when root cut generation is is terminated."
+"The callback function is called when root cut generation is terminated."
 const MSK_CALLBACK_END_ROOT_CUTGEN = Callbackcode(51)
 
 "The callback function is called when the simplex optimizer is terminated."
@@ -1958,8 +1977,10 @@ Cone types
 
 * `MSK_CT_QUAD`. The cone is a quadratic cone.
 * `MSK_CT_RQUAD`. The cone is a rotated quadratic cone.
-* `MSK_CT_PEXP`. The cone is a primal exponential cone.
-* `MSK_CT_PPOW`. The cone is a primal power cone.
+* `MSK_CT_PEXP`. A primal exponential cone.
+* `MSK_CT_DEXP`. A dual exponential cone.
+* `MSK_CT_PPOW`. A primal power cone.
+* `MSK_CT_DPOW`. A dual power cone.
 * `MSK_CT_ZERO`. The zero cone.
 """
 struct Conetype <: MosekEnum
@@ -1972,24 +1993,32 @@ const MSK_CT_QUAD = Conetype(0)
 "The cone is a rotated quadratic cone."
 const MSK_CT_RQUAD = Conetype(1)
 
-"The cone is a primal exponential cone."
+"A primal exponential cone."
 const MSK_CT_PEXP = Conetype(2)
 
-"The cone is a primal power cone."
-const MSK_CT_PPOW = Conetype(3)
+"A dual exponential cone."
+const MSK_CT_DEXP = Conetype(3)
+
+"A primal power cone."
+const MSK_CT_PPOW = Conetype(4)
+
+"A dual power cone."
+const MSK_CT_DPOW = Conetype(5)
 
 "The zero cone."
-const MSK_CT_ZERO = Conetype(4)
+const MSK_CT_ZERO = Conetype(6)
 tostr(v::Conetype) = if v.value == 0 "Mosek.MSK_CT_QUAD"
   elseif v.value == 1 "Mosek.MSK_CT_RQUAD"
   elseif v.value == 2 "Mosek.MSK_CT_PEXP"
-  elseif v.value == 3 "Mosek.MSK_CT_PPOW"
-  elseif v.value == 4 "Mosek.MSK_CT_ZERO"
+  elseif v.value == 3 "Mosek.MSK_CT_DEXP"
+  elseif v.value == 4 "Mosek.MSK_CT_PPOW"
+  elseif v.value == 5 "Mosek.MSK_CT_DPOW"
+  elseif v.value == 6 "Mosek.MSK_CT_ZERO"
   else "Mosek.Conetype(?)"
   end
-const Conetype_members = Conetype[ MSK_CT_QUAD,MSK_CT_RQUAD,MSK_CT_PEXP,MSK_CT_PPOW,MSK_CT_ZERO ]
+const Conetype_members = Conetype[ MSK_CT_QUAD,MSK_CT_RQUAD,MSK_CT_PEXP,MSK_CT_DEXP,MSK_CT_PPOW,MSK_CT_DPOW,MSK_CT_ZERO ]
 members(::Type{Conetype}) = Conetype_members
-Base.length(::Type{Conetype}) = 5
+Base.length(::Type{Conetype}) = 7
 """
     Dataformat
 
@@ -1999,7 +2028,6 @@ Data format types
 * `MSK_DATA_FORMAT_MPS`. The data file is MPS formatted.
 * `MSK_DATA_FORMAT_LP`. The data file is LP formatted.
 * `MSK_DATA_FORMAT_OP`. The data file is an optimization problem formatted file.
-* `MSK_DATA_FORMAT_XML`. The data file is an XML formatted file.
 * `MSK_DATA_FORMAT_FREE_MPS`. The data a free MPS formatted file.
 * `MSK_DATA_FORMAT_TASK`. Generic task dump file.
 * `MSK_DATA_FORMAT_CB`. Conic benchmark format,
@@ -2021,34 +2049,30 @@ const MSK_DATA_FORMAT_LP = Dataformat(2)
 "The data file is an optimization problem formatted file."
 const MSK_DATA_FORMAT_OP = Dataformat(3)
 
-"The data file is an XML formatted file."
-const MSK_DATA_FORMAT_XML = Dataformat(4)
-
 "The data a free MPS formatted file."
-const MSK_DATA_FORMAT_FREE_MPS = Dataformat(5)
+const MSK_DATA_FORMAT_FREE_MPS = Dataformat(4)
 
 "Generic task dump file."
-const MSK_DATA_FORMAT_TASK = Dataformat(6)
+const MSK_DATA_FORMAT_TASK = Dataformat(5)
 
 "Conic benchmark format,"
-const MSK_DATA_FORMAT_CB = Dataformat(7)
+const MSK_DATA_FORMAT_CB = Dataformat(6)
 
 "JSON based task format."
-const MSK_DATA_FORMAT_JSON_TASK = Dataformat(8)
+const MSK_DATA_FORMAT_JSON_TASK = Dataformat(7)
 tostr(v::Dataformat) = if v.value == 0 "Mosek.MSK_DATA_FORMAT_EXTENSION"
   elseif v.value == 1 "Mosek.MSK_DATA_FORMAT_MPS"
   elseif v.value == 2 "Mosek.MSK_DATA_FORMAT_LP"
   elseif v.value == 3 "Mosek.MSK_DATA_FORMAT_OP"
-  elseif v.value == 4 "Mosek.MSK_DATA_FORMAT_XML"
-  elseif v.value == 5 "Mosek.MSK_DATA_FORMAT_FREE_MPS"
-  elseif v.value == 6 "Mosek.MSK_DATA_FORMAT_TASK"
-  elseif v.value == 7 "Mosek.MSK_DATA_FORMAT_CB"
-  elseif v.value == 8 "Mosek.MSK_DATA_FORMAT_JSON_TASK"
+  elseif v.value == 4 "Mosek.MSK_DATA_FORMAT_FREE_MPS"
+  elseif v.value == 5 "Mosek.MSK_DATA_FORMAT_TASK"
+  elseif v.value == 6 "Mosek.MSK_DATA_FORMAT_CB"
+  elseif v.value == 7 "Mosek.MSK_DATA_FORMAT_JSON_TASK"
   else "Mosek.Dataformat(?)"
   end
-const Dataformat_members = Dataformat[ MSK_DATA_FORMAT_EXTENSION,MSK_DATA_FORMAT_MPS,MSK_DATA_FORMAT_LP,MSK_DATA_FORMAT_OP,MSK_DATA_FORMAT_XML,MSK_DATA_FORMAT_FREE_MPS,MSK_DATA_FORMAT_TASK,MSK_DATA_FORMAT_CB,MSK_DATA_FORMAT_JSON_TASK ]
+const Dataformat_members = Dataformat[ MSK_DATA_FORMAT_EXTENSION,MSK_DATA_FORMAT_MPS,MSK_DATA_FORMAT_LP,MSK_DATA_FORMAT_OP,MSK_DATA_FORMAT_FREE_MPS,MSK_DATA_FORMAT_TASK,MSK_DATA_FORMAT_CB,MSK_DATA_FORMAT_JSON_TASK ]
 members(::Type{Dataformat}) = Dataformat_members
-Base.length(::Type{Dataformat}) = 9
+Base.length(::Type{Dataformat}) = 8
 """
     Dinfitem
 
@@ -2068,14 +2092,14 @@ Double information items
 * `MSK_DINF_INTPNT_PRIMAL_FEAS`. Primal feasibility measure reported by the interior-point optimizer.
 * `MSK_DINF_INTPNT_PRIMAL_OBJ`. Primal objective value reported by the interior-point optimizer.
 * `MSK_DINF_INTPNT_TIME`. Time spent within the interior-point optimizer since its invocation.
-* `MSK_DINF_MIO_CLIQUE_SEPARATION_TIME`. Seperation time for clique cuts.
-* `MSK_DINF_MIO_CMIR_SEPARATION_TIME`. Seperation time for CMIR cuts.
+* `MSK_DINF_MIO_CLIQUE_SEPARATION_TIME`. Separation time for clique cuts.
+* `MSK_DINF_MIO_CMIR_SEPARATION_TIME`. Separation time for CMIR cuts.
 * `MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ`. Optimal objective value corresponding to the feasible solution.
 * `MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE`. Value of the dual bound after presolve but before cut generation.
-* `MSK_DINF_MIO_GMI_SEPARATION_TIME`. Seperation time for GMI cuts.
-* `MSK_DINF_MIO_HEURISTIC_TIME`. Total time spent in the optimizer.
-* `MSK_DINF_MIO_IMPLIED_BOUND_TIME`. Seperation time for implied bound cuts.
-* `MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME`. Seperation time for knapsack cover.
+* `MSK_DINF_MIO_GMI_SEPARATION_TIME`. Separation time for GMI cuts.
+* `MSK_DINF_MIO_HEURISTIC_TIME`. Total time spent on heuristics.
+* `MSK_DINF_MIO_IMPLIED_BOUND_TIME`. Separation time for implied bound cuts.
+* `MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME`. Separation time for knapsack cover.
 * `MSK_DINF_MIO_OBJ_ABS_GAP`. If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap.
 * `MSK_DINF_MIO_OBJ_BOUND`. The best bound on the objective value known.
 * `MSK_DINF_MIO_OBJ_INT`. The primal objective value corresponding to the best integer feasible solution.
@@ -2084,7 +2108,7 @@ Double information items
 * `MSK_DINF_MIO_PROBING_TIME`. Total time for probing.
 * `MSK_DINF_MIO_ROOT_CUTGEN_TIME`. Total time for cut generation.
 * `MSK_DINF_MIO_ROOT_OPTIMIZER_TIME`. Time spent in the optimizer while solving the root relaxation.
-* `MSK_DINF_MIO_ROOT_PRESOLVE_TIME`. Time spent in while presolving the root relaxation.
+* `MSK_DINF_MIO_ROOT_PRESOLVE_TIME`. Time spent presolving the root relaxation.
 * `MSK_DINF_MIO_TIME`. Time spent in the mixed-integer optimizer.
 * `MSK_DINF_MIO_USER_OBJ_CUT`. If the objective cut is used, then this information item has the value of the cut.
 * `MSK_DINF_OPTIMIZER_TIME`. Total time spent in the optimizer since it was invoked.
@@ -2092,7 +2116,7 @@ Double information items
 * `MSK_DINF_PRESOLVE_LINDEP_TIME`. Total time spent  in the linear dependency checker since the presolve was invoked.
 * `MSK_DINF_PRESOLVE_TIME`. Total time (in seconds) spent in the presolve since it was invoked.
 * `MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ`. The optimal objective value of the penalty function.
-* `MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION`. Maximum absolute diagonal perturbation occuring during the QCQO reformulation.
+* `MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION`. Maximum absolute diagonal perturbation occurring during the QCQO reformulation.
 * `MSK_DINF_QCQO_REFORMULATE_TIME`. Time spent with conic quadratic reformulation.
 * `MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING`. Worst Cholesky column scaling.
 * `MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING`. Worst Cholesky diagonal scaling.
@@ -2114,20 +2138,20 @@ Double information items
 * `MSK_DINF_SOL_BAS_NRM_XX`. Infinity norm of xx in the basic solution.
 * `MSK_DINF_SOL_BAS_NRM_Y`. Infinity norm of Y in the basic solution.
 * `MSK_DINF_SOL_BAS_PRIMAL_OBJ`. Primal objective value of the basic solution. Updated by the function updatesolutioninfo.
-* `MSK_DINF_SOL_BAS_PVIOLCON`. Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
+* `MSK_DINF_SOL_BAS_PVIOLCON`. Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_BAS_PVIOLVAR`. Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITG_NRM_BARX`. Infinity norm of barx in the integer solution.
 * `MSK_DINF_SOL_ITG_NRM_XC`. Infinity norm of xc in the integer solution.
 * `MSK_DINF_SOL_ITG_NRM_XX`. Infinity norm of xx in the integer solution.
 * `MSK_DINF_SOL_ITG_PRIMAL_OBJ`. Primal objective value of the integer solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITG_PVIOLBARVAR`. Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo.
-* `MSK_DINF_SOL_ITG_PVIOLCON`. Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
+* `MSK_DINF_SOL_ITG_PVIOLCON`. Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITG_PVIOLCONES`. Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITG_PVIOLITG`. Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITG_PVIOLVAR`. Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_DUAL_OBJ`. Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_DVIOLBARVAR`. Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-* `MSK_DINF_SOL_ITR_DVIOLCON`. Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
+* `MSK_DINF_SOL_ITR_DVIOLCON`. Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_DVIOLCONES`. Maximal dual violation for dual conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_DVIOLVAR`. Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_NRM_BARS`. Infinity norm of bars in the interior-point solution.
@@ -2140,9 +2164,9 @@ Double information items
 * `MSK_DINF_SOL_ITR_NRM_XC`. Infinity norm of xc in the interior-point solution.
 * `MSK_DINF_SOL_ITR_NRM_XX`. Infinity norm of xx in the interior-point solution.
 * `MSK_DINF_SOL_ITR_NRM_Y`. Infinity norm of Y in the interior-point solution.
-* `MSK_DINF_SOL_ITR_PRIMAL_OBJ`. Primal objective value of the interior-point solution. Updated by the function updatesolutioninfo.
+* `MSK_DINF_SOL_ITR_PRIMAL_OBJ`. Primal objective value of the interior-point solution.
 * `MSK_DINF_SOL_ITR_PVIOLBARVAR`. Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo.
-* `MSK_DINF_SOL_ITR_PVIOLCON`. Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
+* `MSK_DINF_SOL_ITR_PVIOLCON`. Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_PVIOLCONES`. Maximal primal violation for primal conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_PVIOLVAR`. Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_TO_CONIC_TIME`. Time spent in the last to conic reformulation.
@@ -2193,10 +2217,10 @@ const MSK_DINF_INTPNT_PRIMAL_OBJ = Dinfitem(12)
 "Time spent within the interior-point optimizer since its invocation."
 const MSK_DINF_INTPNT_TIME = Dinfitem(13)
 
-"Seperation time for clique cuts."
+"Separation time for clique cuts."
 const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME = Dinfitem(14)
 
-"Seperation time for CMIR cuts."
+"Separation time for CMIR cuts."
 const MSK_DINF_MIO_CMIR_SEPARATION_TIME = Dinfitem(15)
 
 "Optimal objective value corresponding to the feasible solution."
@@ -2205,16 +2229,16 @@ const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ = Dinfitem(16)
 "Value of the dual bound after presolve but before cut generation."
 const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE = Dinfitem(17)
 
-"Seperation time for GMI cuts."
+"Separation time for GMI cuts."
 const MSK_DINF_MIO_GMI_SEPARATION_TIME = Dinfitem(18)
 
-"Total time spent in the optimizer."
+"Total time spent on heuristics."
 const MSK_DINF_MIO_HEURISTIC_TIME = Dinfitem(19)
 
-"Seperation time for implied bound cuts."
+"Separation time for implied bound cuts."
 const MSK_DINF_MIO_IMPLIED_BOUND_TIME = Dinfitem(20)
 
-"Seperation time for knapsack cover."
+"Separation time for knapsack cover."
 const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME = Dinfitem(21)
 
 "If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap."
@@ -2241,7 +2265,7 @@ const MSK_DINF_MIO_ROOT_CUTGEN_TIME = Dinfitem(28)
 "Time spent in the optimizer while solving the root relaxation."
 const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME = Dinfitem(29)
 
-"Time spent in while presolving the root relaxation."
+"Time spent presolving the root relaxation."
 const MSK_DINF_MIO_ROOT_PRESOLVE_TIME = Dinfitem(30)
 
 "Time spent in the mixed-integer optimizer."
@@ -2265,7 +2289,7 @@ const MSK_DINF_PRESOLVE_TIME = Dinfitem(36)
 "The optimal objective value of the penalty function."
 const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ = Dinfitem(37)
 
-"Maximum absolute diagonal perturbation occuring during the QCQO reformulation."
+"Maximum absolute diagonal perturbation occurring during the QCQO reformulation."
 const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION = Dinfitem(38)
 
 "Time spent with conic quadratic reformulation."
@@ -2331,7 +2355,7 @@ const MSK_DINF_SOL_BAS_NRM_Y = Dinfitem(58)
 "Primal objective value of the basic solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_BAS_PRIMAL_OBJ = Dinfitem(59)
 
-"Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo."
+"Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_BAS_PVIOLCON = Dinfitem(60)
 
 "Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo."
@@ -2352,7 +2376,7 @@ const MSK_DINF_SOL_ITG_PRIMAL_OBJ = Dinfitem(65)
 "Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_ITG_PVIOLBARVAR = Dinfitem(66)
 
-"Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo."
+"Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_ITG_PVIOLCON = Dinfitem(67)
 
 "Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo."
@@ -2370,7 +2394,7 @@ const MSK_DINF_SOL_ITR_DUAL_OBJ = Dinfitem(71)
 "Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_ITR_DVIOLBARVAR = Dinfitem(72)
 
-"Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo."
+"Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_ITR_DVIOLCON = Dinfitem(73)
 
 "Maximal dual violation for dual conic constraints in the interior-point solution. Updated by the function updatesolutioninfo."
@@ -2409,13 +2433,13 @@ const MSK_DINF_SOL_ITR_NRM_XX = Dinfitem(84)
 "Infinity norm of Y in the interior-point solution."
 const MSK_DINF_SOL_ITR_NRM_Y = Dinfitem(85)
 
-"Primal objective value of the interior-point solution. Updated by the function updatesolutioninfo."
+"Primal objective value of the interior-point solution."
 const MSK_DINF_SOL_ITR_PRIMAL_OBJ = Dinfitem(86)
 
 "Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_ITR_PVIOLBARVAR = Dinfitem(87)
 
-"Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo."
+"Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo."
 const MSK_DINF_SOL_ITR_PVIOLCON = Dinfitem(88)
 
 "Maximal primal violation for primal conic constraints in the interior-point solution. Updated by the function updatesolutioninfo."
@@ -2533,7 +2557,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_BASIS_TOL_S`. Maximum absolute dual bound violation in an optimal basic solution.
 * `MSK_DPAR_BASIS_TOL_X`. Maximum absolute primal bound violation allowed in an optimal basic solution.
 * `MSK_DPAR_CHECK_CONVEXITY_REL_TOL`. Convexity check tolerance.
-* `MSK_DPAR_DATA_SYM_MAT_TOL`. Zero tolerance threshold for symmetric matrixes.
+* `MSK_DPAR_DATA_SYM_MAT_TOL`. Zero tolerance threshold for symmetric matrices.
 * `MSK_DPAR_DATA_SYM_MAT_TOL_HUGE`. Data tolerance threshold.
 * `MSK_DPAR_DATA_SYM_MAT_TOL_LARGE`. Data tolerance threshold.
 * `MSK_DPAR_DATA_TOL_AIJ_HUGE`. Data tolerance threshold.
@@ -2575,7 +2599,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_INTPNT_TOL_STEP_SIZE`. Minimal step size tolerance for the interior-point optimizer.
 * `MSK_DPAR_LOWER_OBJ_CUT`. Objective bound.
 * `MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH`. Objective bound.
-* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 * `MSK_DPAR_MIO_MAX_TIME`. Time limit for the mixed-integer optimizer.
 * `MSK_DPAR_MIO_NEAR_TOL_ABS_GAP`. Relaxed absolute optimality tolerance employed by the mixed-integer optimizer.
 * `MSK_DPAR_MIO_NEAR_TOL_REL_GAP`. The mixed-integer optimizer is terminated when this tolerance is satisfied.
@@ -2648,7 +2672,7 @@ Possible Values: Any number between 0 and +inf.
 const MSK_DPAR_CHECK_CONVEXITY_REL_TOL = Dparam(4)
 
 """
-Zero tolerance threshold for symmetric matrixes.
+Zero tolerance threshold for symmetric matrices.
 
 Default value: `1.0e-12`
 
@@ -3047,7 +3071,7 @@ Possible Values: Any number between -inf and +inf.
 const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH = Dparam(46)
 
 """
-Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 
 Default value: `-1.0`
 
@@ -3078,7 +3102,7 @@ Default value: `0.0`
 Possible Values: Any number between 0.0 and +inf.
 
 See also:
-* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 """
 const MSK_DPAR_MIO_NEAR_TOL_ABS_GAP = Dparam(49)
 
@@ -3090,7 +3114,7 @@ Default value: `1.0e-3`
 Possible Values: Any number between 0.0 and +inf.
 
 See also:
-* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 """
 const MSK_DPAR_MIO_NEAR_TOL_REL_GAP = Dparam(50)
 
@@ -3382,19 +3406,19 @@ Integer information items.
 * `MSK_IINF_INTPNT_SOLVE_DUAL`. Non-zero if the interior-point optimizer is solving the dual problem.
 * `MSK_IINF_MIO_ABSGAP_SATISFIED`. Non-zero if absolute gap is within tolerances.
 * `MSK_IINF_MIO_CLIQUE_TABLE_SIZE`. Size of the clique table.
-* `MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS`. Number of values in the integer solution that is rounded to an integer value.
+* `MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS`. Number of values in the integer solution that are rounded to an integer value.
 * `MSK_IINF_MIO_CONSTRUCT_SOLUTION`. If this item is positive, then MOSEK successfully constructed an initial integer feasible solution.
 * `MSK_IINF_MIO_INITIAL_SOLUTION`. Is non-zero if an initial integer solution is specified.
 * `MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED`. Non-zero if absolute gap is within relaxed tolerances.
 * `MSK_IINF_MIO_NEAR_RELGAP_SATISFIED`. Non-zero if relative gap is within relaxed tolerances.
 * `MSK_IINF_MIO_NODE_DEPTH`. Depth of the last node solved.
-* `MSK_IINF_MIO_NUM_ACTIVE_NODES`. Number of active branch bound nodes.
+* `MSK_IINF_MIO_NUM_ACTIVE_NODES`. Number of active branch and bound nodes.
 * `MSK_IINF_MIO_NUM_BRANCH`. Number of branches performed during the optimization.
 * `MSK_IINF_MIO_NUM_CLIQUE_CUTS`. Number of clique cuts.
 * `MSK_IINF_MIO_NUM_CMIR_CUTS`. Number of Complemented Mixed Integer Rounding (CMIR) cuts.
 * `MSK_IINF_MIO_NUM_GOMORY_CUTS`. Number of Gomory cuts.
 * `MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS`. Number of implied bound cuts.
-* `MSK_IINF_MIO_NUM_INT_SOLUTIONS`. Number of integer feasible solutions that has been found.
+* `MSK_IINF_MIO_NUM_INT_SOLUTIONS`. Number of integer feasible solutions that have been found.
 * `MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS`. Number of clique cuts.
 * `MSK_IINF_MIO_NUM_RELAX`. Number of relaxations solved during the optimization.
 * `MSK_IINF_MIO_NUM_REPEATED_PRESOLVE`. Number of times presolve was repeated at root.
@@ -3415,7 +3439,7 @@ Integer information items.
 * `MSK_IINF_OPTIMIZE_RESPONSE`. The response code returned by optimize.
 * `MSK_IINF_PURIFY_DUAL_SUCCESS`. Is nonzero if the dual solution is purified.
 * `MSK_IINF_PURIFY_PRIMAL_SUCCESS`. Is nonzero if the primal solution is purified.
-* `MSK_IINF_RD_NUMBARVAR`. Number of variables read.
+* `MSK_IINF_RD_NUMBARVAR`. Number of symmetric variables read.
 * `MSK_IINF_RD_NUMCON`. Number of constraints read.
 * `MSK_IINF_RD_NUMCONE`. Number of conic constraints read.
 * `MSK_IINF_RD_NUMINTVAR`. Number of integer-constrained variables read.
@@ -3510,7 +3534,7 @@ const MSK_IINF_MIO_ABSGAP_SATISFIED = Iinfitem(19)
 "Size of the clique table."
 const MSK_IINF_MIO_CLIQUE_TABLE_SIZE = Iinfitem(20)
 
-"Number of values in the integer solution that is rounded to an integer value."
+"Number of values in the integer solution that are rounded to an integer value."
 const MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS = Iinfitem(21)
 
 "If this item is positive, then MOSEK successfully constructed an initial integer feasible solution."
@@ -3528,7 +3552,7 @@ const MSK_IINF_MIO_NEAR_RELGAP_SATISFIED = Iinfitem(25)
 "Depth of the last node solved."
 const MSK_IINF_MIO_NODE_DEPTH = Iinfitem(26)
 
-"Number of active branch bound nodes."
+"Number of active branch and bound nodes."
 const MSK_IINF_MIO_NUM_ACTIVE_NODES = Iinfitem(27)
 
 "Number of branches performed during the optimization."
@@ -3546,7 +3570,7 @@ const MSK_IINF_MIO_NUM_GOMORY_CUTS = Iinfitem(31)
 "Number of implied bound cuts."
 const MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS = Iinfitem(32)
 
-"Number of integer feasible solutions that has been found."
+"Number of integer feasible solutions that have been found."
 const MSK_IINF_MIO_NUM_INT_SOLUTIONS = Iinfitem(33)
 
 "Number of clique cuts."
@@ -3609,7 +3633,7 @@ const MSK_IINF_PURIFY_DUAL_SUCCESS = Iinfitem(52)
 "Is nonzero if the primal solution is purified."
 const MSK_IINF_PURIFY_PRIMAL_SUCCESS = Iinfitem(53)
 
-"Number of variables read."
+"Number of symmetric variables read."
 const MSK_IINF_RD_NUMBARVAR = Iinfitem(54)
 
 "Number of constraints read."
@@ -3845,7 +3869,7 @@ Input/output modes
 
 * `MSK_IOMODE_READ`. The file is read-only.
 * `MSK_IOMODE_WRITE`. The file is write-only. If the file exists then it is truncated when it is opened. Otherwise it is created when it is opened.
-* `MSK_IOMODE_READWRITE`. The file is to read and written.
+* `MSK_IOMODE_READWRITE`. The file is to read and write.
 """
 struct Iomode <: MosekEnum
   value :: Int32
@@ -3857,7 +3881,7 @@ const MSK_IOMODE_READ = Iomode(0)
 "The file is write-only. If the file exists then it is truncated when it is opened. Otherwise it is created when it is opened."
 const MSK_IOMODE_WRITE = Iomode(1)
 
-"The file is to read and written."
+"The file is to read and write."
 const MSK_IOMODE_READWRITE = Iomode(2)
 tostr(v::Iomode) = if v.value == 0 "Mosek.MSK_IOMODE_READ"
   elseif v.value == 1 "Mosek.MSK_IOMODE_WRITE"
@@ -3929,7 +3953,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_LOG_SIM_FREQ`. Controls simplex logging frequency.
 * `MSK_IPAR_LOG_SIM_MINOR`. Currently not in use.
 * `MSK_IPAR_LOG_STORAGE`. Controls the memory related log information.
-* `MSK_IPAR_MAX_NUM_WARNINGS`. Each warning is shown a limit number times controlled by this parameter. A negative value is identical to infinite number of times.
+* `MSK_IPAR_MAX_NUM_WARNINGS`. Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times.
 * `MSK_IPAR_MIO_BRANCH_DIR`. Controls whether the mixed-integer optimizer is branching up or down by default.
 * `MSK_IPAR_MIO_CONSTRUCT_SOL`. Controls if an initial mixed integer solution should be constructed from the values of the integer variables.
 * `MSK_IPAR_MIO_CUT_CLIQUE`. Controls whether clique cuts should be generated.
@@ -3937,7 +3961,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_MIO_CUT_GMI`. Controls whether GMI cuts should be generated.
 * `MSK_IPAR_MIO_CUT_IMPLIED_BOUND`. Controls whether implied bound cuts should be generated.
 * `MSK_IPAR_MIO_CUT_KNAPSACK_COVER`. Controls whether knapsack cover cuts should be generated.
-* `MSK_IPAR_MIO_CUT_SELECTION_LEVEL`. Controlls how aggresively generated cuts are selected to be inluded in the relaxation.
+* `MSK_IPAR_MIO_CUT_SELECTION_LEVEL`. Controls how aggressively generated cuts are selected to be included in the relaxation.
 * `MSK_IPAR_MIO_HEURISTIC_LEVEL`. Controls the heuristic employed by the mixed-integer optimizer to locate an initial integer feasible solution.
 * `MSK_IPAR_MIO_MAX_NUM_BRANCHES`. Maximum number of branches allowed during the branch and bound search.
 * `MSK_IPAR_MIO_MAX_NUM_RELAXS`. Maximum number of relaxations in branch and bound search.
@@ -3986,7 +4010,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_READ_MPS_FORMAT`. Controls how strictly the MPS file reader interprets the MPS format.
 * `MSK_IPAR_READ_MPS_WIDTH`. Controls the maximal number of characters allowed in one line of the MPS file.
 * `MSK_IPAR_READ_TASK_IGNORE_PARAM`. Controls what information is used from the task files.
-* `MSK_IPAR_REMOVE_UNUSED_SOLUTIONS`. Removes unsued solutions before the optimization is performed.
+* `MSK_IPAR_REMOVE_UNUSED_SOLUTIONS`. Removes unused solutions before the optimization is performed.
 * `MSK_IPAR_SENSITIVITY_ALL`. Controls sensitivity report behavior.
 * `MSK_IPAR_SENSITIVITY_OPTIMIZER`. Controls which optimizer is used for optimal partition sensitivity analysis.
 * `MSK_IPAR_SENSITIVITY_TYPE`. Controls which type of sensitivity analysis is to be performed.
@@ -4046,7 +4070,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_WRITE_SOL_HEAD`. Controls solution file format.
 * `MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES`. Controls whether the user specified names are employed even if they are invalid names.
 * `MSK_IPAR_WRITE_SOL_VARIABLES`. Controls the solution file format.
-* `MSK_IPAR_WRITE_TASK_INC_SOL`. Controls whether the solutions are  stored in the task file too.
+* `MSK_IPAR_WRITE_TASK_INC_SOL`. Controls whether the solutions are stored in the task file too.
 * `MSK_IPAR_WRITE_XML_MODE`. Controls if linear coefficients should be written by row or column when writing in the XML file format.
 """
 struct Iparam <: MosekEnum
@@ -4363,7 +4387,7 @@ Default value: `none`
 
 Possible values:
 
-* `MSK_PURIFY_NONE`. The optimizer performs no solution purfication.
+* `MSK_PURIFY_NONE`. The optimizer performs no solution purification.
 * `MSK_PURIFY_PRIMAL`. The optimizer purifies the primal solution.
 * `MSK_PURIFY_DUAL`. The optimizer purifies the dual solution.
 * `MSK_PURIFY_PRIMAL_DUAL`. The optimizer purifies both the primal and dual solution.
@@ -4686,7 +4710,7 @@ Possible Values: Any number between 0 and +inf.
 const MSK_IPAR_LOG_STORAGE = Iparam(56)
 
 """
-Each warning is shown a limit number times controlled by this parameter. A negative value is identical to infinite number of times.
+Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times.
 
 Default value: `10`
 
@@ -4785,7 +4809,7 @@ Possible values:
 const MSK_IPAR_MIO_CUT_KNAPSACK_COVER = Iparam(64)
 
 """
-Controlls how aggresively generated cuts are selected to be inluded in the relaxation.
+Controls how aggressively generated cuts are selected to be included in the relaxation.
 
 Default value: `-1`
 
@@ -4810,7 +4834,7 @@ Default value: `-1`
 Possible Values: Any number between -inf and +inf.
 
 See also:
-* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 """
 const MSK_IPAR_MIO_MAX_NUM_BRANCHES = Iparam(67)
 
@@ -4822,7 +4846,7 @@ Default value: `-1`
 Possible Values: Any number between -inf and +inf.
 
 See also:
-* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 """
 const MSK_IPAR_MIO_MAX_NUM_RELAXS = Iparam(68)
 
@@ -4834,7 +4858,7 @@ Default value: `-1`
 Possible Values: Any number between -inf and +inf.
 
 See also:
-* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria is disabled within the mixed-integer optimizer for period time specified by the parameter.
+* `MSK_DPAR_MIO_DISABLE_TERM_TIME`. Certain termination criteria are disabled within the mixed-integer optimizer for period time specified by the parameter.
 """
 const MSK_IPAR_MIO_MAX_NUM_SOLUTIONS = Iparam(69)
 
@@ -5265,7 +5289,6 @@ Possible values:
 * `MSK_DATA_FORMAT_MPS`. The data file is MPS formatted.
 * `MSK_DATA_FORMAT_LP`. The data file is LP formatted.
 * `MSK_DATA_FORMAT_OP`. The data file is an optimization problem formatted file.
-* `MSK_DATA_FORMAT_XML`. The data file is an XML formatted file.
 * `MSK_DATA_FORMAT_FREE_MPS`. The data a free MPS formatted file.
 * `MSK_DATA_FORMAT_TASK`. Generic task dump file.
 * `MSK_DATA_FORMAT_CB`. Conic benchmark format,
@@ -5357,7 +5380,7 @@ Possible values:
 const MSK_IPAR_READ_TASK_IGNORE_PARAM = Iparam(113)
 
 """
-Removes unsued solutions before the optimization is performed.
+Removes unused solutions before the optimization is performed.
 
 Default value: `off`
 
@@ -5804,7 +5827,6 @@ Possible values:
 * `MSK_DATA_FORMAT_MPS`. The data file is MPS formatted.
 * `MSK_DATA_FORMAT_LP`. The data file is LP formatted.
 * `MSK_DATA_FORMAT_OP`. The data file is an optimization problem formatted file.
-* `MSK_DATA_FORMAT_XML`. The data file is an XML formatted file.
 * `MSK_DATA_FORMAT_FREE_MPS`. The data a free MPS formatted file.
 * `MSK_DATA_FORMAT_TASK`. Generic task dump file.
 * `MSK_DATA_FORMAT_CB`. Conic benchmark format,
@@ -6055,7 +6077,7 @@ Possible values:
 const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(173)
 
 """
-Controls whether the solutions are  stored in the task file too.
+Controls whether the solutions are stored in the task file too.
 
 Default value: `ON`
 
@@ -6272,7 +6294,7 @@ Long integer information items.
 * `MSK_LIINF_INTPNT_FACTOR_NUM_NZ`. Number of non-zeros in factorization.
 * `MSK_LIINF_MIO_INTPNT_ITER`. Number of interior-point iterations performed by the mixed-integer optimizer.
 * `MSK_LIINF_MIO_PRESOLVED_ANZ`. Number of  non-zero entries in the constraint matrix of presolved problem.
-* `MSK_LIINF_MIO_SIM_MAXITER_SETBACKS`. Number of times the the simplex optimizer has hit the maximum iteration limit when re-optimizing.
+* `MSK_LIINF_MIO_SIM_MAXITER_SETBACKS`. Number of times the simplex optimizer has hit the maximum iteration limit when re-optimizing.
 * `MSK_LIINF_MIO_SIMPLEX_ITER`. Number of simplex iterations performed by the mixed-integer optimizer.
 * `MSK_LIINF_RD_NUMANZ`. Number of non-zeros in A that is read.
 * `MSK_LIINF_RD_NUMQNZ`. Number of Q non-zeros.
@@ -6308,7 +6330,7 @@ const MSK_LIINF_MIO_INTPNT_ITER = Liinfitem(7)
 "Number of  non-zero entries in the constraint matrix of presolved problem."
 const MSK_LIINF_MIO_PRESOLVED_ANZ = Liinfitem(8)
 
-"Number of times the the simplex optimizer has hit the maximum iteration limit when re-optimizing."
+"Number of times the simplex optimizer has hit the maximum iteration limit when re-optimizing."
 const MSK_LIINF_MIO_SIM_MAXITER_SETBACKS = Liinfitem(9)
 
 "Number of simplex iterations performed by the mixed-integer optimizer."
@@ -6767,7 +6789,6 @@ Problem types
 * `MSK_PROBTYPE_LO`. The problem is a linear optimization problem.
 * `MSK_PROBTYPE_QO`. The problem is a quadratic optimization problem.
 * `MSK_PROBTYPE_QCQO`. The problem is a quadratically constrained optimization problem.
-* `MSK_PROBTYPE_GECO`. General convex optimization.
 * `MSK_PROBTYPE_CONIC`. A conic optimization.
 * `MSK_PROBTYPE_MIXED`. General nonlinear constraints and conic constraints. This combination can not be solved by MOSEK.
 """
@@ -6784,25 +6805,21 @@ const MSK_PROBTYPE_QO = Problemtype(1)
 "The problem is a quadratically constrained optimization problem."
 const MSK_PROBTYPE_QCQO = Problemtype(2)
 
-"General convex optimization."
-const MSK_PROBTYPE_GECO = Problemtype(3)
-
 "A conic optimization."
-const MSK_PROBTYPE_CONIC = Problemtype(4)
+const MSK_PROBTYPE_CONIC = Problemtype(3)
 
 "General nonlinear constraints and conic constraints. This combination can not be solved by MOSEK."
-const MSK_PROBTYPE_MIXED = Problemtype(5)
+const MSK_PROBTYPE_MIXED = Problemtype(4)
 tostr(v::Problemtype) = if v.value == 0 "Mosek.MSK_PROBTYPE_LO"
   elseif v.value == 1 "Mosek.MSK_PROBTYPE_QO"
   elseif v.value == 2 "Mosek.MSK_PROBTYPE_QCQO"
-  elseif v.value == 3 "Mosek.MSK_PROBTYPE_GECO"
-  elseif v.value == 4 "Mosek.MSK_PROBTYPE_CONIC"
-  elseif v.value == 5 "Mosek.MSK_PROBTYPE_MIXED"
+  elseif v.value == 3 "Mosek.MSK_PROBTYPE_CONIC"
+  elseif v.value == 4 "Mosek.MSK_PROBTYPE_MIXED"
   else "Mosek.Problemtype(?)"
   end
-const Problemtype_members = Problemtype[ MSK_PROBTYPE_LO,MSK_PROBTYPE_QO,MSK_PROBTYPE_QCQO,MSK_PROBTYPE_GECO,MSK_PROBTYPE_CONIC,MSK_PROBTYPE_MIXED ]
+const Problemtype_members = Problemtype[ MSK_PROBTYPE_LO,MSK_PROBTYPE_QO,MSK_PROBTYPE_QCQO,MSK_PROBTYPE_CONIC,MSK_PROBTYPE_MIXED ]
 members(::Type{Problemtype}) = Problemtype_members
-Base.length(::Type{Problemtype}) = 6
+Base.length(::Type{Problemtype}) = 5
 """
     Prosta
 
@@ -6882,7 +6899,7 @@ Base.length(::Type{Prosta}) = 12
 
 Solution purification employed optimizer.
 
-* `MSK_PURIFY_NONE`. The optimizer performs no solution purfication.
+* `MSK_PURIFY_NONE`. The optimizer performs no solution purification.
 * `MSK_PURIFY_PRIMAL`. The optimizer purifies the primal solution.
 * `MSK_PURIFY_DUAL`. The optimizer purifies the dual solution.
 * `MSK_PURIFY_PRIMAL_DUAL`. The optimizer purifies both the primal and dual solution.
@@ -6892,7 +6909,7 @@ struct Purify <: MosekEnum
   value :: Int32
 end # purify
 
-"The optimizer performs no solution purfication."
+"The optimizer performs no solution purification."
 const MSK_PURIFY_NONE = Purify(0)
 
 "The optimizer purifies the primal solution."
@@ -6927,7 +6944,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_WRN_LARGE_LO_BOUND`. A numerically large lower bound value is specified.
 * `MSK_RES_WRN_LARGE_UP_BOUND`. A numerically large upper bound value is specified.
 * `MSK_RES_WRN_LARGE_CON_FX`. A equality constraint is fixed to numerically large value.
-* `MSK_RES_WRN_LARGE_CJ`. A numerically large value is specified for one element in A.
+* `MSK_RES_WRN_LARGE_CJ`. A numerically large value is specified for one element in c.
 * `MSK_RES_WRN_LARGE_AIJ`. A numerically large value is specified for an element in A.
 * `MSK_RES_WRN_ZERO_AIJ`. One or more zero elements are specified in A.
 * `MSK_RES_WRN_NAME_MAX_LEN`. A name is longer than the buffer that is supposed to hold it.
@@ -7033,6 +7050,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_LIVING_TASKS`. Not all tasks associated with the environment have been deleted.
 * `MSK_RES_ERR_BLANK_NAME`. An all blank name has been specified.
 * `MSK_RES_ERR_DUP_NAME`. Duplicate names specified.
+* `MSK_RES_ERR_FORMAT_STRING`. The name format string is invalid.
 * `MSK_RES_ERR_INVALID_OBJ_NAME`. An invalid objective name is specified.
 * `MSK_RES_ERR_INVALID_CON_NAME`. An invalid constraint name is used.
 * `MSK_RES_ERR_INVALID_VAR_NAME`. An invalid variable name is used.
@@ -7100,6 +7118,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_NUM_ARGUMENTS`. Incorrect number of function arguments.
 * `MSK_RES_ERR_IN_ARGUMENT`. A function argument is incorrect.
 * `MSK_RES_ERR_ARGUMENT_DIMENSION`. A function argument is of incorrect dimension.
+* `MSK_RES_ERR_SHAPE_IS_TOO_LARGE`. The size of the n-dimensional shape is too large.
 * `MSK_RES_ERR_INDEX_IS_TOO_SMALL`. An index in an argument is too small.
 * `MSK_RES_ERR_INDEX_IS_TOO_LARGE`. An index in an argument is too large.
 * `MSK_RES_ERR_PARAM_NAME`. A parameter name is not correct.
@@ -7350,8 +7369,19 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_CBF_INVALID_INT_INDEX`. Invalid INT index.
 * `MSK_RES_ERR_CBF_UNSUPPORTED`. Unsupported feature is present.
 * `MSK_RES_ERR_CBF_DUPLICATE_PSDVAR`. Duplicate PSDVAR keyword.
-* `MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION`. Invalid PSDVAR dimmension.
+* `MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION`. Invalid PSDVAR dimension.
 * `MSK_RES_ERR_CBF_TOO_FEW_PSDVAR`. Too few variables defined.
+* `MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION`. Invalid dimension of a exponential cone.
+* `MSK_RES_ERR_CBF_DUPLICATE_POW_CONES`. Multiple POWCONES specified.
+* `MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES`. Multiple POW*CONES specified.
+* `MSK_RES_ERR_CBF_INVALID_POWER`. Invalid power specified.
+* `MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG`. Power cone is too long.
+* `MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX`. Invalid power cone index.
+* `MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX`. Invalid power star cone index.
+* `MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE`. An unhandled power cone type.
+* `MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE`. An unhandled power star cone type.
+* `MSK_RES_ERR_CBF_POWER_CONE_MISMATCH`. The power cone does not match with it definition.
+* `MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH`. The power star cone does not match with it definition.
 * `MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER`. An invalid root optimizer was selected for the problem type.
 * `MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER`. An invalid node optimizer was selected for the problem type.
 * `MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD`. The matrix defining the quadratric part of constraint is not positive semidefinite.
@@ -7400,7 +7430,7 @@ const MSK_RES_WRN_LARGE_UP_BOUND = Rescode(53)
 "A equality constraint is fixed to numerically large value."
 const MSK_RES_WRN_LARGE_CON_FX = Rescode(54)
 
-"A numerically large value is specified for one element in A."
+"A numerically large value is specified for one element in c."
 const MSK_RES_WRN_LARGE_CJ = Rescode(57)
 
 "A numerically large value is specified for an element in A."
@@ -7718,6 +7748,9 @@ const MSK_RES_ERR_BLANK_NAME = Rescode(1070)
 "Duplicate names specified."
 const MSK_RES_ERR_DUP_NAME = Rescode(1071)
 
+"The name format string is invalid."
+const MSK_RES_ERR_FORMAT_STRING = Rescode(1072)
+
 "An invalid objective name is specified."
 const MSK_RES_ERR_INVALID_OBJ_NAME = Rescode(1075)
 
@@ -7918,6 +7951,9 @@ const MSK_RES_ERR_IN_ARGUMENT = Rescode(1200)
 
 "A function argument is of incorrect dimension."
 const MSK_RES_ERR_ARGUMENT_DIMENSION = Rescode(1201)
+
+"The size of the n-dimensional shape is too large."
+const MSK_RES_ERR_SHAPE_IS_TOO_LARGE = Rescode(1202)
 
 "An index in an argument is too small."
 const MSK_RES_ERR_INDEX_IS_TOO_SMALL = Rescode(1203)
@@ -8669,17 +8705,50 @@ const MSK_RES_ERR_CBF_UNSUPPORTED = Rescode(7122)
 "Duplicate PSDVAR keyword."
 const MSK_RES_ERR_CBF_DUPLICATE_PSDVAR = Rescode(7123)
 
-"Invalid PSDVAR dimmension."
+"Invalid PSDVAR dimension."
 const MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION = Rescode(7124)
 
 "Too few variables defined."
 const MSK_RES_ERR_CBF_TOO_FEW_PSDVAR = Rescode(7125)
 
+"Invalid dimension of a exponential cone."
+const MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION = Rescode(7126)
+
+"Multiple POWCONES specified."
+const MSK_RES_ERR_CBF_DUPLICATE_POW_CONES = Rescode(7130)
+
+"Multiple POW*CONES specified."
+const MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES = Rescode(7131)
+
+"Invalid power specified."
+const MSK_RES_ERR_CBF_INVALID_POWER = Rescode(7132)
+
+"Power cone is too long."
+const MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG = Rescode(7133)
+
+"Invalid power cone index."
+const MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX = Rescode(7134)
+
+"Invalid power star cone index."
+const MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX = Rescode(7135)
+
+"An unhandled power cone type."
+const MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE = Rescode(7136)
+
+"An unhandled power star cone type."
+const MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE = Rescode(7137)
+
+"The power cone does not match with it definition."
+const MSK_RES_ERR_CBF_POWER_CONE_MISMATCH = Rescode(7138)
+
+"The power star cone does not match with it definition."
+const MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH = Rescode(7139)
+
 "An invalid root optimizer was selected for the problem type."
-const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER = Rescode(7130)
+const MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER = Rescode(7140)
 
 "An invalid node optimizer was selected for the problem type."
-const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER = Rescode(7131)
+const MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER = Rescode(7141)
 
 "The matrix defining the quadratric part of constraint is not positive semidefinite."
 const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD = Rescode(7150)
@@ -8861,6 +8930,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1066 "Mosek.MSK_RES_ERR_LIVING_TASKS"
   elseif v.value == 1070 "Mosek.MSK_RES_ERR_BLANK_NAME"
   elseif v.value == 1071 "Mosek.MSK_RES_ERR_DUP_NAME"
+  elseif v.value == 1072 "Mosek.MSK_RES_ERR_FORMAT_STRING"
   elseif v.value == 1075 "Mosek.MSK_RES_ERR_INVALID_OBJ_NAME"
   elseif v.value == 1076 "Mosek.MSK_RES_ERR_INVALID_CON_NAME"
   elseif v.value == 1077 "Mosek.MSK_RES_ERR_INVALID_VAR_NAME"
@@ -8928,6 +8998,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1199 "Mosek.MSK_RES_ERR_NUM_ARGUMENTS"
   elseif v.value == 1200 "Mosek.MSK_RES_ERR_IN_ARGUMENT"
   elseif v.value == 1201 "Mosek.MSK_RES_ERR_ARGUMENT_DIMENSION"
+  elseif v.value == 1202 "Mosek.MSK_RES_ERR_SHAPE_IS_TOO_LARGE"
   elseif v.value == 1203 "Mosek.MSK_RES_ERR_INDEX_IS_TOO_SMALL"
   elseif v.value == 1204 "Mosek.MSK_RES_ERR_INDEX_IS_TOO_LARGE"
   elseif v.value == 1205 "Mosek.MSK_RES_ERR_PARAM_NAME"
@@ -9180,8 +9251,19 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 7123 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_PSDVAR"
   elseif v.value == 7124 "Mosek.MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION"
   elseif v.value == 7125 "Mosek.MSK_RES_ERR_CBF_TOO_FEW_PSDVAR"
-  elseif v.value == 7130 "Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"
-  elseif v.value == 7131 "Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"
+  elseif v.value == 7126 "Mosek.MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION"
+  elseif v.value == 7130 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_POW_CONES"
+  elseif v.value == 7131 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES"
+  elseif v.value == 7132 "Mosek.MSK_RES_ERR_CBF_INVALID_POWER"
+  elseif v.value == 7133 "Mosek.MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG"
+  elseif v.value == 7134 "Mosek.MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX"
+  elseif v.value == 7135 "Mosek.MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX"
+  elseif v.value == 7136 "Mosek.MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE"
+  elseif v.value == 7137 "Mosek.MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE"
+  elseif v.value == 7138 "Mosek.MSK_RES_ERR_CBF_POWER_CONE_MISMATCH"
+  elseif v.value == 7139 "Mosek.MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH"
+  elseif v.value == 7140 "Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"
+  elseif v.value == 7141 "Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"
   elseif v.value == 7150 "Mosek.MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD"
   elseif v.value == 7151 "Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_FX"
   elseif v.value == 7152 "Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_RA"
@@ -9207,9 +9289,9 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 10031 "Mosek.MSK_RES_TRM_INTERNAL_STOP"
   else "Mosek.Rescode(?)"
   end
-const Rescode_members = Rescode[ MSK_RES_OK,MSK_RES_WRN_OPEN_PARAM_FILE,MSK_RES_WRN_LARGE_BOUND,MSK_RES_WRN_LARGE_LO_BOUND,MSK_RES_WRN_LARGE_UP_BOUND,MSK_RES_WRN_LARGE_CON_FX,MSK_RES_WRN_LARGE_CJ,MSK_RES_WRN_LARGE_AIJ,MSK_RES_WRN_ZERO_AIJ,MSK_RES_WRN_NAME_MAX_LEN,MSK_RES_WRN_SPAR_MAX_LEN,MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR,MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR,MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR,MSK_RES_WRN_LP_OLD_QUAD_FORMAT,MSK_RES_WRN_LP_DROP_VARIABLE,MSK_RES_WRN_NZ_IN_UPR_TRI,MSK_RES_WRN_DROPPED_NZ_QOBJ,MSK_RES_WRN_IGNORE_INTEGER,MSK_RES_WRN_NO_GLOBAL_OPTIMIZER,MSK_RES_WRN_MIO_INFEASIBLE_FINAL,MSK_RES_WRN_SOL_FILTER,MSK_RES_WRN_UNDEF_SOL_FILE_NAME,MSK_RES_WRN_SOL_FILE_IGNORED_CON,MSK_RES_WRN_SOL_FILE_IGNORED_VAR,MSK_RES_WRN_TOO_FEW_BASIS_VARS,MSK_RES_WRN_TOO_MANY_BASIS_VARS,MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE,MSK_RES_WRN_LICENSE_EXPIRE,MSK_RES_WRN_LICENSE_SERVER,MSK_RES_WRN_EMPTY_NAME,MSK_RES_WRN_USING_GENERIC_NAMES,MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,MSK_RES_WRN_PARAM_NAME_DOU,MSK_RES_WRN_PARAM_NAME_INT,MSK_RES_WRN_PARAM_NAME_STR,MSK_RES_WRN_PARAM_STR_VALUE,MSK_RES_WRN_PARAM_IGNORED_CMIO,MSK_RES_WRN_ZEROS_IN_SPARSE_ROW,MSK_RES_WRN_ZEROS_IN_SPARSE_COL,MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK,MSK_RES_WRN_ELIMINATOR_SPACE,MSK_RES_WRN_PRESOLVE_OUTOFSPACE,MSK_RES_WRN_WRITE_CHANGED_NAMES,MSK_RES_WRN_WRITE_DISCARDED_CFIX,MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS,MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG,MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG,MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES,MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES,MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES,MSK_RES_WRN_DUPLICATE_CONE_NAMES,MSK_RES_WRN_ANA_LARGE_BOUNDS,MSK_RES_WRN_ANA_C_ZERO,MSK_RES_WRN_ANA_EMPTY_COLS,MSK_RES_WRN_ANA_CLOSE_BOUNDS,MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS,MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO,MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO,MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO,MSK_RES_WRN_NO_DUALIZER,MSK_RES_WRN_SYM_MAT_LARGE,MSK_RES_ERR_LICENSE,MSK_RES_ERR_LICENSE_EXPIRED,MSK_RES_ERR_LICENSE_VERSION,MSK_RES_ERR_SIZE_LICENSE,MSK_RES_ERR_PROB_LICENSE,MSK_RES_ERR_FILE_LICENSE,MSK_RES_ERR_MISSING_LICENSE_FILE,MSK_RES_ERR_SIZE_LICENSE_CON,MSK_RES_ERR_SIZE_LICENSE_VAR,MSK_RES_ERR_SIZE_LICENSE_INTVAR,MSK_RES_ERR_OPTIMIZER_LICENSE,MSK_RES_ERR_FLEXLM,MSK_RES_ERR_LICENSE_SERVER,MSK_RES_ERR_LICENSE_MAX,MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON,MSK_RES_ERR_LICENSE_FEATURE,MSK_RES_ERR_PLATFORM_NOT_LICENSED,MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE,MSK_RES_ERR_LICENSE_CANNOT_CONNECT,MSK_RES_ERR_LICENSE_INVALID_HOSTID,MSK_RES_ERR_LICENSE_SERVER_VERSION,MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT,MSK_RES_ERR_LICENSE_NO_SERVER_LINE,MSK_RES_ERR_OPEN_DL,MSK_RES_ERR_OLDER_DLL,MSK_RES_ERR_NEWER_DLL,MSK_RES_ERR_LINK_FILE_DLL,MSK_RES_ERR_THREAD_MUTEX_INIT,MSK_RES_ERR_THREAD_MUTEX_LOCK,MSK_RES_ERR_THREAD_MUTEX_UNLOCK,MSK_RES_ERR_THREAD_CREATE,MSK_RES_ERR_THREAD_COND_INIT,MSK_RES_ERR_UNKNOWN,MSK_RES_ERR_SPACE,MSK_RES_ERR_FILE_OPEN,MSK_RES_ERR_FILE_READ,MSK_RES_ERR_FILE_WRITE,MSK_RES_ERR_DATA_FILE_EXT,MSK_RES_ERR_INVALID_FILE_NAME,MSK_RES_ERR_INVALID_SOL_FILE_NAME,MSK_RES_ERR_END_OF_FILE,MSK_RES_ERR_NULL_ENV,MSK_RES_ERR_NULL_TASK,MSK_RES_ERR_INVALID_STREAM,MSK_RES_ERR_NO_INIT_ENV,MSK_RES_ERR_INVALID_TASK,MSK_RES_ERR_NULL_POINTER,MSK_RES_ERR_LIVING_TASKS,MSK_RES_ERR_BLANK_NAME,MSK_RES_ERR_DUP_NAME,MSK_RES_ERR_INVALID_OBJ_NAME,MSK_RES_ERR_INVALID_CON_NAME,MSK_RES_ERR_INVALID_VAR_NAME,MSK_RES_ERR_INVALID_CONE_NAME,MSK_RES_ERR_INVALID_BARVAR_NAME,MSK_RES_ERR_SPACE_LEAKING,MSK_RES_ERR_SPACE_NO_INFO,MSK_RES_ERR_READ_FORMAT,MSK_RES_ERR_MPS_FILE,MSK_RES_ERR_MPS_INV_FIELD,MSK_RES_ERR_MPS_INV_MARKER,MSK_RES_ERR_MPS_NULL_CON_NAME,MSK_RES_ERR_MPS_NULL_VAR_NAME,MSK_RES_ERR_MPS_UNDEF_CON_NAME,MSK_RES_ERR_MPS_UNDEF_VAR_NAME,MSK_RES_ERR_MPS_INV_CON_KEY,MSK_RES_ERR_MPS_INV_BOUND_KEY,MSK_RES_ERR_MPS_INV_SEC_NAME,MSK_RES_ERR_MPS_NO_OBJECTIVE,MSK_RES_ERR_MPS_SPLITTED_VAR,MSK_RES_ERR_MPS_MUL_CON_NAME,MSK_RES_ERR_MPS_MUL_QSEC,MSK_RES_ERR_MPS_MUL_QOBJ,MSK_RES_ERR_MPS_INV_SEC_ORDER,MSK_RES_ERR_MPS_MUL_CSEC,MSK_RES_ERR_MPS_CONE_TYPE,MSK_RES_ERR_MPS_CONE_OVERLAP,MSK_RES_ERR_MPS_CONE_REPEAT,MSK_RES_ERR_MPS_NON_SYMMETRIC_Q,MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT,MSK_RES_ERR_MPS_INVALID_OBJSENSE,MSK_RES_ERR_MPS_TAB_IN_FIELD2,MSK_RES_ERR_MPS_TAB_IN_FIELD3,MSK_RES_ERR_MPS_TAB_IN_FIELD5,MSK_RES_ERR_MPS_INVALID_OBJ_NAME,MSK_RES_ERR_LP_INCOMPATIBLE,MSK_RES_ERR_LP_EMPTY,MSK_RES_ERR_LP_DUP_SLACK_NAME,MSK_RES_ERR_WRITE_MPS_INVALID_NAME,MSK_RES_ERR_LP_INVALID_VAR_NAME,MSK_RES_ERR_LP_FREE_CONSTRAINT,MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME,MSK_RES_ERR_LP_FILE_FORMAT,MSK_RES_ERR_WRITE_LP_FORMAT,MSK_RES_ERR_READ_LP_MISSING_END_TAG,MSK_RES_ERR_LP_FORMAT,MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME,MSK_RES_ERR_READ_LP_NONEXISTING_NAME,MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,MSK_RES_ERR_WRITING_FILE,MSK_RES_ERR_OPF_FORMAT,MSK_RES_ERR_OPF_NEW_VARIABLE,MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,MSK_RES_ERR_LP_INVALID_CON_NAME,MSK_RES_ERR_OPF_PREMATURE_EOF,MSK_RES_ERR_JSON_SYNTAX,MSK_RES_ERR_JSON_STRING,MSK_RES_ERR_JSON_NUMBER_OVERFLOW,MSK_RES_ERR_JSON_FORMAT,MSK_RES_ERR_JSON_DATA,MSK_RES_ERR_JSON_MISSING_DATA,MSK_RES_ERR_ARGUMENT_LENNEQ,MSK_RES_ERR_ARGUMENT_TYPE,MSK_RES_ERR_NUM_ARGUMENTS,MSK_RES_ERR_IN_ARGUMENT,MSK_RES_ERR_ARGUMENT_DIMENSION,MSK_RES_ERR_INDEX_IS_TOO_SMALL,MSK_RES_ERR_INDEX_IS_TOO_LARGE,MSK_RES_ERR_PARAM_NAME,MSK_RES_ERR_PARAM_NAME_DOU,MSK_RES_ERR_PARAM_NAME_INT,MSK_RES_ERR_PARAM_NAME_STR,MSK_RES_ERR_PARAM_INDEX,MSK_RES_ERR_PARAM_IS_TOO_LARGE,MSK_RES_ERR_PARAM_IS_TOO_SMALL,MSK_RES_ERR_PARAM_VALUE_STR,MSK_RES_ERR_PARAM_TYPE,MSK_RES_ERR_INF_DOU_INDEX,MSK_RES_ERR_INF_INT_INDEX,MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL,MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE,MSK_RES_ERR_INF_LINT_INDEX,MSK_RES_ERR_ARG_IS_TOO_SMALL,MSK_RES_ERR_ARG_IS_TOO_LARGE,MSK_RES_ERR_INVALID_WHICHSOL,MSK_RES_ERR_INF_DOU_NAME,MSK_RES_ERR_INF_INT_NAME,MSK_RES_ERR_INF_TYPE,MSK_RES_ERR_INF_LINT_NAME,MSK_RES_ERR_INDEX,MSK_RES_ERR_WHICHSOL,MSK_RES_ERR_SOLITEM,MSK_RES_ERR_WHICHITEM_NOT_ALLOWED,MSK_RES_ERR_MAXNUMCON,MSK_RES_ERR_MAXNUMVAR,MSK_RES_ERR_MAXNUMBARVAR,MSK_RES_ERR_MAXNUMQNZ,MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ,MSK_RES_ERR_INVALID_IDX,MSK_RES_ERR_INVALID_MAX_NUM,MSK_RES_ERR_NUMCONLIM,MSK_RES_ERR_NUMVARLIM,MSK_RES_ERR_TOO_SMALL_MAXNUMANZ,MSK_RES_ERR_INV_APTRE,MSK_RES_ERR_MUL_A_ELEMENT,MSK_RES_ERR_INV_BK,MSK_RES_ERR_INV_BKC,MSK_RES_ERR_INV_BKX,MSK_RES_ERR_INV_VAR_TYPE,MSK_RES_ERR_SOLVER_PROBTYPE,MSK_RES_ERR_OBJECTIVE_RANGE,MSK_RES_ERR_UNDEF_SOLUTION,MSK_RES_ERR_BASIS,MSK_RES_ERR_INV_SKC,MSK_RES_ERR_INV_SKX,MSK_RES_ERR_INV_SK_STR,MSK_RES_ERR_INV_SK,MSK_RES_ERR_INV_CONE_TYPE_STR,MSK_RES_ERR_INV_CONE_TYPE,MSK_RES_ERR_INV_SKN,MSK_RES_ERR_INVALID_SURPLUS,MSK_RES_ERR_INV_NAME_ITEM,MSK_RES_ERR_PRO_ITEM,MSK_RES_ERR_INVALID_FORMAT_TYPE,MSK_RES_ERR_FIRSTI,MSK_RES_ERR_LASTI,MSK_RES_ERR_FIRSTJ,MSK_RES_ERR_LASTJ,MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL,MSK_RES_ERR_NONLINEAR_EQUALITY,MSK_RES_ERR_NONCONVEX,MSK_RES_ERR_NONLINEAR_RANGED,MSK_RES_ERR_CON_Q_NOT_PSD,MSK_RES_ERR_CON_Q_NOT_NSD,MSK_RES_ERR_OBJ_Q_NOT_PSD,MSK_RES_ERR_OBJ_Q_NOT_NSD,MSK_RES_ERR_ARGUMENT_PERM_ARRAY,MSK_RES_ERR_CONE_INDEX,MSK_RES_ERR_CONE_SIZE,MSK_RES_ERR_CONE_OVERLAP,MSK_RES_ERR_CONE_REP_VAR,MSK_RES_ERR_MAXNUMCONE,MSK_RES_ERR_CONE_TYPE,MSK_RES_ERR_CONE_TYPE_STR,MSK_RES_ERR_CONE_OVERLAP_APPEND,MSK_RES_ERR_REMOVE_CONE_VARIABLE,MSK_RES_ERR_CONE_PARAMETER,MSK_RES_ERR_SOL_FILE_INVALID_NUMBER,MSK_RES_ERR_HUGE_C,MSK_RES_ERR_HUGE_AIJ,MSK_RES_ERR_DUPLICATE_AIJ,MSK_RES_ERR_LOWER_BOUND_IS_A_NAN,MSK_RES_ERR_UPPER_BOUND_IS_A_NAN,MSK_RES_ERR_INFINITE_BOUND,MSK_RES_ERR_INV_QOBJ_SUBI,MSK_RES_ERR_INV_QOBJ_SUBJ,MSK_RES_ERR_INV_QOBJ_VAL,MSK_RES_ERR_INV_QCON_SUBK,MSK_RES_ERR_INV_QCON_SUBI,MSK_RES_ERR_INV_QCON_SUBJ,MSK_RES_ERR_INV_QCON_VAL,MSK_RES_ERR_QCON_SUBI_TOO_SMALL,MSK_RES_ERR_QCON_SUBI_TOO_LARGE,MSK_RES_ERR_QOBJ_UPPER_TRIANGLE,MSK_RES_ERR_QCON_UPPER_TRIANGLE,MSK_RES_ERR_FIXED_BOUND_VALUES,MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE,MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED,MSK_RES_ERR_USER_FUNC_RET,MSK_RES_ERR_USER_FUNC_RET_DATA,MSK_RES_ERR_USER_NLO_FUNC,MSK_RES_ERR_USER_NLO_EVAL,MSK_RES_ERR_USER_NLO_EVAL_HESSUBI,MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ,MSK_RES_ERR_INVALID_OBJECTIVE_SENSE,MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE,MSK_RES_ERR_Y_IS_UNDEFINED,MSK_RES_ERR_NAN_IN_DOUBLE_DATA,MSK_RES_ERR_NAN_IN_BLC,MSK_RES_ERR_NAN_IN_BUC,MSK_RES_ERR_NAN_IN_C,MSK_RES_ERR_NAN_IN_BLX,MSK_RES_ERR_NAN_IN_BUX,MSK_RES_ERR_INVALID_AIJ,MSK_RES_ERR_SYM_MAT_INVALID,MSK_RES_ERR_SYM_MAT_HUGE,MSK_RES_ERR_INV_PROBLEM,MSK_RES_ERR_MIXED_CONIC_AND_NL,MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM,MSK_RES_ERR_INV_OPTIMIZER,MSK_RES_ERR_MIO_NO_OPTIMIZER,MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE,MSK_RES_ERR_FINAL_SOLUTION,MSK_RES_ERR_FIRST,MSK_RES_ERR_LAST,MSK_RES_ERR_SLICE_SIZE,MSK_RES_ERR_NEGATIVE_SURPLUS,MSK_RES_ERR_NEGATIVE_APPEND,MSK_RES_ERR_POSTSOLVE,MSK_RES_ERR_OVERFLOW,MSK_RES_ERR_NO_BASIS_SOL,MSK_RES_ERR_BASIS_FACTOR,MSK_RES_ERR_BASIS_SINGULAR,MSK_RES_ERR_FACTOR,MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX,MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED,MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND,MSK_RES_ERR_REPAIR_INVALID_PROBLEM,MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED,MSK_RES_ERR_NAME_MAX_LEN,MSK_RES_ERR_NAME_IS_NULL,MSK_RES_ERR_INVALID_COMPRESSION,MSK_RES_ERR_INVALID_IOMODE,MSK_RES_ERR_NO_PRIMAL_INFEAS_CER,MSK_RES_ERR_NO_DUAL_INFEAS_CER,MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK,MSK_RES_ERR_INV_MARKI,MSK_RES_ERR_INV_MARKJ,MSK_RES_ERR_INV_NUMI,MSK_RES_ERR_INV_NUMJ,MSK_RES_ERR_CANNOT_CLONE_NL,MSK_RES_ERR_CANNOT_HANDLE_NL,MSK_RES_ERR_INVALID_ACCMODE,MSK_RES_ERR_TASK_INCOMPATIBLE,MSK_RES_ERR_TASK_INVALID,MSK_RES_ERR_TASK_WRITE,MSK_RES_ERR_LU_MAX_NUM_TRIES,MSK_RES_ERR_INVALID_UTF8,MSK_RES_ERR_INVALID_WCHAR,MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL,MSK_RES_ERR_NO_SNX_FOR_BAS_SOL,MSK_RES_ERR_INTERNAL,MSK_RES_ERR_API_ARRAY_TOO_SMALL,MSK_RES_ERR_API_CB_CONNECT,MSK_RES_ERR_API_FATAL_ERROR,MSK_RES_ERR_SEN_FORMAT,MSK_RES_ERR_SEN_UNDEF_NAME,MSK_RES_ERR_SEN_INDEX_RANGE,MSK_RES_ERR_SEN_BOUND_INVALID_UP,MSK_RES_ERR_SEN_BOUND_INVALID_LO,MSK_RES_ERR_SEN_INDEX_INVALID,MSK_RES_ERR_SEN_INVALID_REGEXP,MSK_RES_ERR_SEN_SOLUTION_STATUS,MSK_RES_ERR_SEN_NUMERICAL,MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE,MSK_RES_ERR_UNB_STEP_SIZE,MSK_RES_ERR_IDENTICAL_TASKS,MSK_RES_ERR_AD_INVALID_CODELIST,MSK_RES_ERR_INTERNAL_TEST_FAILED,MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE,MSK_RES_ERR_INVALID_AMPL_STUB,MSK_RES_ERR_INT64_TO_INT32_CAST,MSK_RES_ERR_SIZE_LICENSE_NUMCORES,MSK_RES_ERR_INFEAS_UNDEFINED,MSK_RES_ERR_NO_BARX_FOR_SOLUTION,MSK_RES_ERR_NO_BARS_FOR_SOLUTION,MSK_RES_ERR_BAR_VAR_DIM,MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX,MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX,MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR,MSK_RES_ERR_SYM_MAT_INVALID_VALUE,MSK_RES_ERR_SYM_MAT_DUPLICATE,MSK_RES_ERR_INVALID_SYM_MAT_DIM,MSK_RES_ERR_API_INTERNAL,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR,MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES,MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES,MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES,MSK_RES_ERR_DUPLICATE_CONE_NAMES,MSK_RES_ERR_NON_UNIQUE_ARRAY,MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE,MSK_RES_ERR_MIO_INTERNAL,MSK_RES_ERR_INVALID_PROBLEM_TYPE,MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS,MSK_RES_ERR_UPPER_TRIANGLE,MSK_RES_ERR_LAU_SINGULAR_MATRIX,MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE,MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX,MSK_RES_ERR_LAU_UNKNOWN,MSK_RES_ERR_LAU_ARG_M,MSK_RES_ERR_LAU_ARG_N,MSK_RES_ERR_LAU_ARG_K,MSK_RES_ERR_LAU_ARG_TRANSA,MSK_RES_ERR_LAU_ARG_TRANSB,MSK_RES_ERR_LAU_ARG_UPLO,MSK_RES_ERR_LAU_ARG_TRANS,MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX,MSK_RES_ERR_CBF_PARSE,MSK_RES_ERR_CBF_OBJ_SENSE,MSK_RES_ERR_CBF_NO_VARIABLES,MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS,MSK_RES_ERR_CBF_TOO_MANY_VARIABLES,MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED,MSK_RES_ERR_CBF_SYNTAX,MSK_RES_ERR_CBF_DUPLICATE_OBJ,MSK_RES_ERR_CBF_DUPLICATE_CON,MSK_RES_ERR_CBF_DUPLICATE_VAR,MSK_RES_ERR_CBF_DUPLICATE_INT,MSK_RES_ERR_CBF_INVALID_VAR_TYPE,MSK_RES_ERR_CBF_INVALID_CON_TYPE,MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION,MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD,MSK_RES_ERR_CBF_DUPLICATE_BCOORD,MSK_RES_ERR_CBF_DUPLICATE_ACOORD,MSK_RES_ERR_CBF_TOO_FEW_VARIABLES,MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS,MSK_RES_ERR_CBF_TOO_FEW_INTS,MSK_RES_ERR_CBF_TOO_MANY_INTS,MSK_RES_ERR_CBF_INVALID_INT_INDEX,MSK_RES_ERR_CBF_UNSUPPORTED,MSK_RES_ERR_CBF_DUPLICATE_PSDVAR,MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION,MSK_RES_ERR_CBF_TOO_FEW_PSDVAR,MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER,MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER,MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD,MSK_RES_ERR_TOCONIC_CONSTRAINT_FX,MSK_RES_ERR_TOCONIC_CONSTRAINT_RA,MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC,MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD,MSK_RES_ERR_SERVER_CONNECT,MSK_RES_ERR_SERVER_PROTOCOL,MSK_RES_ERR_SERVER_STATUS,MSK_RES_ERR_SERVER_TOKEN,MSK_RES_TRM_MAX_ITERATIONS,MSK_RES_TRM_MAX_TIME,MSK_RES_TRM_OBJECTIVE_RANGE,MSK_RES_TRM_MIO_NEAR_REL_GAP,MSK_RES_TRM_MIO_NEAR_ABS_GAP,MSK_RES_TRM_STALL,MSK_RES_TRM_USER_CALLBACK,MSK_RES_TRM_MIO_NUM_RELAXS,MSK_RES_TRM_MIO_NUM_BRANCHES,MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS,MSK_RES_TRM_MAX_NUM_SETBACKS,MSK_RES_TRM_NUMERICAL_PROBLEM,MSK_RES_TRM_INTERNAL,MSK_RES_TRM_INTERNAL_STOP ]
+const Rescode_members = Rescode[ MSK_RES_OK,MSK_RES_WRN_OPEN_PARAM_FILE,MSK_RES_WRN_LARGE_BOUND,MSK_RES_WRN_LARGE_LO_BOUND,MSK_RES_WRN_LARGE_UP_BOUND,MSK_RES_WRN_LARGE_CON_FX,MSK_RES_WRN_LARGE_CJ,MSK_RES_WRN_LARGE_AIJ,MSK_RES_WRN_ZERO_AIJ,MSK_RES_WRN_NAME_MAX_LEN,MSK_RES_WRN_SPAR_MAX_LEN,MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR,MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR,MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR,MSK_RES_WRN_LP_OLD_QUAD_FORMAT,MSK_RES_WRN_LP_DROP_VARIABLE,MSK_RES_WRN_NZ_IN_UPR_TRI,MSK_RES_WRN_DROPPED_NZ_QOBJ,MSK_RES_WRN_IGNORE_INTEGER,MSK_RES_WRN_NO_GLOBAL_OPTIMIZER,MSK_RES_WRN_MIO_INFEASIBLE_FINAL,MSK_RES_WRN_SOL_FILTER,MSK_RES_WRN_UNDEF_SOL_FILE_NAME,MSK_RES_WRN_SOL_FILE_IGNORED_CON,MSK_RES_WRN_SOL_FILE_IGNORED_VAR,MSK_RES_WRN_TOO_FEW_BASIS_VARS,MSK_RES_WRN_TOO_MANY_BASIS_VARS,MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE,MSK_RES_WRN_LICENSE_EXPIRE,MSK_RES_WRN_LICENSE_SERVER,MSK_RES_WRN_EMPTY_NAME,MSK_RES_WRN_USING_GENERIC_NAMES,MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,MSK_RES_WRN_PARAM_NAME_DOU,MSK_RES_WRN_PARAM_NAME_INT,MSK_RES_WRN_PARAM_NAME_STR,MSK_RES_WRN_PARAM_STR_VALUE,MSK_RES_WRN_PARAM_IGNORED_CMIO,MSK_RES_WRN_ZEROS_IN_SPARSE_ROW,MSK_RES_WRN_ZEROS_IN_SPARSE_COL,MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK,MSK_RES_WRN_ELIMINATOR_SPACE,MSK_RES_WRN_PRESOLVE_OUTOFSPACE,MSK_RES_WRN_WRITE_CHANGED_NAMES,MSK_RES_WRN_WRITE_DISCARDED_CFIX,MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS,MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG,MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG,MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES,MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES,MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES,MSK_RES_WRN_DUPLICATE_CONE_NAMES,MSK_RES_WRN_ANA_LARGE_BOUNDS,MSK_RES_WRN_ANA_C_ZERO,MSK_RES_WRN_ANA_EMPTY_COLS,MSK_RES_WRN_ANA_CLOSE_BOUNDS,MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS,MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO,MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO,MSK_RES_WRN_EXP_CONES_WITH_VARIABLES_FIXED_AT_ZERO,MSK_RES_WRN_NO_DUALIZER,MSK_RES_WRN_SYM_MAT_LARGE,MSK_RES_ERR_LICENSE,MSK_RES_ERR_LICENSE_EXPIRED,MSK_RES_ERR_LICENSE_VERSION,MSK_RES_ERR_SIZE_LICENSE,MSK_RES_ERR_PROB_LICENSE,MSK_RES_ERR_FILE_LICENSE,MSK_RES_ERR_MISSING_LICENSE_FILE,MSK_RES_ERR_SIZE_LICENSE_CON,MSK_RES_ERR_SIZE_LICENSE_VAR,MSK_RES_ERR_SIZE_LICENSE_INTVAR,MSK_RES_ERR_OPTIMIZER_LICENSE,MSK_RES_ERR_FLEXLM,MSK_RES_ERR_LICENSE_SERVER,MSK_RES_ERR_LICENSE_MAX,MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON,MSK_RES_ERR_LICENSE_FEATURE,MSK_RES_ERR_PLATFORM_NOT_LICENSED,MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE,MSK_RES_ERR_LICENSE_CANNOT_CONNECT,MSK_RES_ERR_LICENSE_INVALID_HOSTID,MSK_RES_ERR_LICENSE_SERVER_VERSION,MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT,MSK_RES_ERR_LICENSE_NO_SERVER_LINE,MSK_RES_ERR_OPEN_DL,MSK_RES_ERR_OLDER_DLL,MSK_RES_ERR_NEWER_DLL,MSK_RES_ERR_LINK_FILE_DLL,MSK_RES_ERR_THREAD_MUTEX_INIT,MSK_RES_ERR_THREAD_MUTEX_LOCK,MSK_RES_ERR_THREAD_MUTEX_UNLOCK,MSK_RES_ERR_THREAD_CREATE,MSK_RES_ERR_THREAD_COND_INIT,MSK_RES_ERR_UNKNOWN,MSK_RES_ERR_SPACE,MSK_RES_ERR_FILE_OPEN,MSK_RES_ERR_FILE_READ,MSK_RES_ERR_FILE_WRITE,MSK_RES_ERR_DATA_FILE_EXT,MSK_RES_ERR_INVALID_FILE_NAME,MSK_RES_ERR_INVALID_SOL_FILE_NAME,MSK_RES_ERR_END_OF_FILE,MSK_RES_ERR_NULL_ENV,MSK_RES_ERR_NULL_TASK,MSK_RES_ERR_INVALID_STREAM,MSK_RES_ERR_NO_INIT_ENV,MSK_RES_ERR_INVALID_TASK,MSK_RES_ERR_NULL_POINTER,MSK_RES_ERR_LIVING_TASKS,MSK_RES_ERR_BLANK_NAME,MSK_RES_ERR_DUP_NAME,MSK_RES_ERR_FORMAT_STRING,MSK_RES_ERR_INVALID_OBJ_NAME,MSK_RES_ERR_INVALID_CON_NAME,MSK_RES_ERR_INVALID_VAR_NAME,MSK_RES_ERR_INVALID_CONE_NAME,MSK_RES_ERR_INVALID_BARVAR_NAME,MSK_RES_ERR_SPACE_LEAKING,MSK_RES_ERR_SPACE_NO_INFO,MSK_RES_ERR_READ_FORMAT,MSK_RES_ERR_MPS_FILE,MSK_RES_ERR_MPS_INV_FIELD,MSK_RES_ERR_MPS_INV_MARKER,MSK_RES_ERR_MPS_NULL_CON_NAME,MSK_RES_ERR_MPS_NULL_VAR_NAME,MSK_RES_ERR_MPS_UNDEF_CON_NAME,MSK_RES_ERR_MPS_UNDEF_VAR_NAME,MSK_RES_ERR_MPS_INV_CON_KEY,MSK_RES_ERR_MPS_INV_BOUND_KEY,MSK_RES_ERR_MPS_INV_SEC_NAME,MSK_RES_ERR_MPS_NO_OBJECTIVE,MSK_RES_ERR_MPS_SPLITTED_VAR,MSK_RES_ERR_MPS_MUL_CON_NAME,MSK_RES_ERR_MPS_MUL_QSEC,MSK_RES_ERR_MPS_MUL_QOBJ,MSK_RES_ERR_MPS_INV_SEC_ORDER,MSK_RES_ERR_MPS_MUL_CSEC,MSK_RES_ERR_MPS_CONE_TYPE,MSK_RES_ERR_MPS_CONE_OVERLAP,MSK_RES_ERR_MPS_CONE_REPEAT,MSK_RES_ERR_MPS_NON_SYMMETRIC_Q,MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT,MSK_RES_ERR_MPS_INVALID_OBJSENSE,MSK_RES_ERR_MPS_TAB_IN_FIELD2,MSK_RES_ERR_MPS_TAB_IN_FIELD3,MSK_RES_ERR_MPS_TAB_IN_FIELD5,MSK_RES_ERR_MPS_INVALID_OBJ_NAME,MSK_RES_ERR_LP_INCOMPATIBLE,MSK_RES_ERR_LP_EMPTY,MSK_RES_ERR_LP_DUP_SLACK_NAME,MSK_RES_ERR_WRITE_MPS_INVALID_NAME,MSK_RES_ERR_LP_INVALID_VAR_NAME,MSK_RES_ERR_LP_FREE_CONSTRAINT,MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME,MSK_RES_ERR_LP_FILE_FORMAT,MSK_RES_ERR_WRITE_LP_FORMAT,MSK_RES_ERR_READ_LP_MISSING_END_TAG,MSK_RES_ERR_LP_FORMAT,MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME,MSK_RES_ERR_READ_LP_NONEXISTING_NAME,MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,MSK_RES_ERR_WRITING_FILE,MSK_RES_ERR_OPF_FORMAT,MSK_RES_ERR_OPF_NEW_VARIABLE,MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,MSK_RES_ERR_LP_INVALID_CON_NAME,MSK_RES_ERR_OPF_PREMATURE_EOF,MSK_RES_ERR_JSON_SYNTAX,MSK_RES_ERR_JSON_STRING,MSK_RES_ERR_JSON_NUMBER_OVERFLOW,MSK_RES_ERR_JSON_FORMAT,MSK_RES_ERR_JSON_DATA,MSK_RES_ERR_JSON_MISSING_DATA,MSK_RES_ERR_ARGUMENT_LENNEQ,MSK_RES_ERR_ARGUMENT_TYPE,MSK_RES_ERR_NUM_ARGUMENTS,MSK_RES_ERR_IN_ARGUMENT,MSK_RES_ERR_ARGUMENT_DIMENSION,MSK_RES_ERR_SHAPE_IS_TOO_LARGE,MSK_RES_ERR_INDEX_IS_TOO_SMALL,MSK_RES_ERR_INDEX_IS_TOO_LARGE,MSK_RES_ERR_PARAM_NAME,MSK_RES_ERR_PARAM_NAME_DOU,MSK_RES_ERR_PARAM_NAME_INT,MSK_RES_ERR_PARAM_NAME_STR,MSK_RES_ERR_PARAM_INDEX,MSK_RES_ERR_PARAM_IS_TOO_LARGE,MSK_RES_ERR_PARAM_IS_TOO_SMALL,MSK_RES_ERR_PARAM_VALUE_STR,MSK_RES_ERR_PARAM_TYPE,MSK_RES_ERR_INF_DOU_INDEX,MSK_RES_ERR_INF_INT_INDEX,MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL,MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE,MSK_RES_ERR_INF_LINT_INDEX,MSK_RES_ERR_ARG_IS_TOO_SMALL,MSK_RES_ERR_ARG_IS_TOO_LARGE,MSK_RES_ERR_INVALID_WHICHSOL,MSK_RES_ERR_INF_DOU_NAME,MSK_RES_ERR_INF_INT_NAME,MSK_RES_ERR_INF_TYPE,MSK_RES_ERR_INF_LINT_NAME,MSK_RES_ERR_INDEX,MSK_RES_ERR_WHICHSOL,MSK_RES_ERR_SOLITEM,MSK_RES_ERR_WHICHITEM_NOT_ALLOWED,MSK_RES_ERR_MAXNUMCON,MSK_RES_ERR_MAXNUMVAR,MSK_RES_ERR_MAXNUMBARVAR,MSK_RES_ERR_MAXNUMQNZ,MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ,MSK_RES_ERR_INVALID_IDX,MSK_RES_ERR_INVALID_MAX_NUM,MSK_RES_ERR_NUMCONLIM,MSK_RES_ERR_NUMVARLIM,MSK_RES_ERR_TOO_SMALL_MAXNUMANZ,MSK_RES_ERR_INV_APTRE,MSK_RES_ERR_MUL_A_ELEMENT,MSK_RES_ERR_INV_BK,MSK_RES_ERR_INV_BKC,MSK_RES_ERR_INV_BKX,MSK_RES_ERR_INV_VAR_TYPE,MSK_RES_ERR_SOLVER_PROBTYPE,MSK_RES_ERR_OBJECTIVE_RANGE,MSK_RES_ERR_UNDEF_SOLUTION,MSK_RES_ERR_BASIS,MSK_RES_ERR_INV_SKC,MSK_RES_ERR_INV_SKX,MSK_RES_ERR_INV_SK_STR,MSK_RES_ERR_INV_SK,MSK_RES_ERR_INV_CONE_TYPE_STR,MSK_RES_ERR_INV_CONE_TYPE,MSK_RES_ERR_INV_SKN,MSK_RES_ERR_INVALID_SURPLUS,MSK_RES_ERR_INV_NAME_ITEM,MSK_RES_ERR_PRO_ITEM,MSK_RES_ERR_INVALID_FORMAT_TYPE,MSK_RES_ERR_FIRSTI,MSK_RES_ERR_LASTI,MSK_RES_ERR_FIRSTJ,MSK_RES_ERR_LASTJ,MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL,MSK_RES_ERR_NONLINEAR_EQUALITY,MSK_RES_ERR_NONCONVEX,MSK_RES_ERR_NONLINEAR_RANGED,MSK_RES_ERR_CON_Q_NOT_PSD,MSK_RES_ERR_CON_Q_NOT_NSD,MSK_RES_ERR_OBJ_Q_NOT_PSD,MSK_RES_ERR_OBJ_Q_NOT_NSD,MSK_RES_ERR_ARGUMENT_PERM_ARRAY,MSK_RES_ERR_CONE_INDEX,MSK_RES_ERR_CONE_SIZE,MSK_RES_ERR_CONE_OVERLAP,MSK_RES_ERR_CONE_REP_VAR,MSK_RES_ERR_MAXNUMCONE,MSK_RES_ERR_CONE_TYPE,MSK_RES_ERR_CONE_TYPE_STR,MSK_RES_ERR_CONE_OVERLAP_APPEND,MSK_RES_ERR_REMOVE_CONE_VARIABLE,MSK_RES_ERR_CONE_PARAMETER,MSK_RES_ERR_SOL_FILE_INVALID_NUMBER,MSK_RES_ERR_HUGE_C,MSK_RES_ERR_HUGE_AIJ,MSK_RES_ERR_DUPLICATE_AIJ,MSK_RES_ERR_LOWER_BOUND_IS_A_NAN,MSK_RES_ERR_UPPER_BOUND_IS_A_NAN,MSK_RES_ERR_INFINITE_BOUND,MSK_RES_ERR_INV_QOBJ_SUBI,MSK_RES_ERR_INV_QOBJ_SUBJ,MSK_RES_ERR_INV_QOBJ_VAL,MSK_RES_ERR_INV_QCON_SUBK,MSK_RES_ERR_INV_QCON_SUBI,MSK_RES_ERR_INV_QCON_SUBJ,MSK_RES_ERR_INV_QCON_VAL,MSK_RES_ERR_QCON_SUBI_TOO_SMALL,MSK_RES_ERR_QCON_SUBI_TOO_LARGE,MSK_RES_ERR_QOBJ_UPPER_TRIANGLE,MSK_RES_ERR_QCON_UPPER_TRIANGLE,MSK_RES_ERR_FIXED_BOUND_VALUES,MSK_RES_ERR_TOO_SMALL_A_TRUNCATION_VALUE,MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED,MSK_RES_ERR_USER_FUNC_RET,MSK_RES_ERR_USER_FUNC_RET_DATA,MSK_RES_ERR_USER_NLO_FUNC,MSK_RES_ERR_USER_NLO_EVAL,MSK_RES_ERR_USER_NLO_EVAL_HESSUBI,MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ,MSK_RES_ERR_INVALID_OBJECTIVE_SENSE,MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE,MSK_RES_ERR_Y_IS_UNDEFINED,MSK_RES_ERR_NAN_IN_DOUBLE_DATA,MSK_RES_ERR_NAN_IN_BLC,MSK_RES_ERR_NAN_IN_BUC,MSK_RES_ERR_NAN_IN_C,MSK_RES_ERR_NAN_IN_BLX,MSK_RES_ERR_NAN_IN_BUX,MSK_RES_ERR_INVALID_AIJ,MSK_RES_ERR_SYM_MAT_INVALID,MSK_RES_ERR_SYM_MAT_HUGE,MSK_RES_ERR_INV_PROBLEM,MSK_RES_ERR_MIXED_CONIC_AND_NL,MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM,MSK_RES_ERR_INV_OPTIMIZER,MSK_RES_ERR_MIO_NO_OPTIMIZER,MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE,MSK_RES_ERR_FINAL_SOLUTION,MSK_RES_ERR_FIRST,MSK_RES_ERR_LAST,MSK_RES_ERR_SLICE_SIZE,MSK_RES_ERR_NEGATIVE_SURPLUS,MSK_RES_ERR_NEGATIVE_APPEND,MSK_RES_ERR_POSTSOLVE,MSK_RES_ERR_OVERFLOW,MSK_RES_ERR_NO_BASIS_SOL,MSK_RES_ERR_BASIS_FACTOR,MSK_RES_ERR_BASIS_SINGULAR,MSK_RES_ERR_FACTOR,MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX,MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED,MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND,MSK_RES_ERR_REPAIR_INVALID_PROBLEM,MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED,MSK_RES_ERR_NAME_MAX_LEN,MSK_RES_ERR_NAME_IS_NULL,MSK_RES_ERR_INVALID_COMPRESSION,MSK_RES_ERR_INVALID_IOMODE,MSK_RES_ERR_NO_PRIMAL_INFEAS_CER,MSK_RES_ERR_NO_DUAL_INFEAS_CER,MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK,MSK_RES_ERR_INV_MARKI,MSK_RES_ERR_INV_MARKJ,MSK_RES_ERR_INV_NUMI,MSK_RES_ERR_INV_NUMJ,MSK_RES_ERR_CANNOT_CLONE_NL,MSK_RES_ERR_CANNOT_HANDLE_NL,MSK_RES_ERR_INVALID_ACCMODE,MSK_RES_ERR_TASK_INCOMPATIBLE,MSK_RES_ERR_TASK_INVALID,MSK_RES_ERR_TASK_WRITE,MSK_RES_ERR_LU_MAX_NUM_TRIES,MSK_RES_ERR_INVALID_UTF8,MSK_RES_ERR_INVALID_WCHAR,MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL,MSK_RES_ERR_NO_SNX_FOR_BAS_SOL,MSK_RES_ERR_INTERNAL,MSK_RES_ERR_API_ARRAY_TOO_SMALL,MSK_RES_ERR_API_CB_CONNECT,MSK_RES_ERR_API_FATAL_ERROR,MSK_RES_ERR_SEN_FORMAT,MSK_RES_ERR_SEN_UNDEF_NAME,MSK_RES_ERR_SEN_INDEX_RANGE,MSK_RES_ERR_SEN_BOUND_INVALID_UP,MSK_RES_ERR_SEN_BOUND_INVALID_LO,MSK_RES_ERR_SEN_INDEX_INVALID,MSK_RES_ERR_SEN_INVALID_REGEXP,MSK_RES_ERR_SEN_SOLUTION_STATUS,MSK_RES_ERR_SEN_NUMERICAL,MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE,MSK_RES_ERR_UNB_STEP_SIZE,MSK_RES_ERR_IDENTICAL_TASKS,MSK_RES_ERR_AD_INVALID_CODELIST,MSK_RES_ERR_INTERNAL_TEST_FAILED,MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE,MSK_RES_ERR_INVALID_AMPL_STUB,MSK_RES_ERR_INT64_TO_INT32_CAST,MSK_RES_ERR_SIZE_LICENSE_NUMCORES,MSK_RES_ERR_INFEAS_UNDEFINED,MSK_RES_ERR_NO_BARX_FOR_SOLUTION,MSK_RES_ERR_NO_BARS_FOR_SOLUTION,MSK_RES_ERR_BAR_VAR_DIM,MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX,MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX,MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR,MSK_RES_ERR_SYM_MAT_INVALID_VALUE,MSK_RES_ERR_SYM_MAT_DUPLICATE,MSK_RES_ERR_INVALID_SYM_MAT_DIM,MSK_RES_ERR_API_INTERNAL,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_FREE_CONSTRAINTS,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_NONLINEAR,MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES,MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES,MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES,MSK_RES_ERR_DUPLICATE_CONE_NAMES,MSK_RES_ERR_NON_UNIQUE_ARRAY,MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE,MSK_RES_ERR_MIO_INTERNAL,MSK_RES_ERR_INVALID_PROBLEM_TYPE,MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS,MSK_RES_ERR_UPPER_TRIANGLE,MSK_RES_ERR_LAU_SINGULAR_MATRIX,MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE,MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX,MSK_RES_ERR_LAU_UNKNOWN,MSK_RES_ERR_LAU_ARG_M,MSK_RES_ERR_LAU_ARG_N,MSK_RES_ERR_LAU_ARG_K,MSK_RES_ERR_LAU_ARG_TRANSA,MSK_RES_ERR_LAU_ARG_TRANSB,MSK_RES_ERR_LAU_ARG_UPLO,MSK_RES_ERR_LAU_ARG_TRANS,MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX,MSK_RES_ERR_CBF_PARSE,MSK_RES_ERR_CBF_OBJ_SENSE,MSK_RES_ERR_CBF_NO_VARIABLES,MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS,MSK_RES_ERR_CBF_TOO_MANY_VARIABLES,MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED,MSK_RES_ERR_CBF_SYNTAX,MSK_RES_ERR_CBF_DUPLICATE_OBJ,MSK_RES_ERR_CBF_DUPLICATE_CON,MSK_RES_ERR_CBF_DUPLICATE_VAR,MSK_RES_ERR_CBF_DUPLICATE_INT,MSK_RES_ERR_CBF_INVALID_VAR_TYPE,MSK_RES_ERR_CBF_INVALID_CON_TYPE,MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION,MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD,MSK_RES_ERR_CBF_DUPLICATE_BCOORD,MSK_RES_ERR_CBF_DUPLICATE_ACOORD,MSK_RES_ERR_CBF_TOO_FEW_VARIABLES,MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS,MSK_RES_ERR_CBF_TOO_FEW_INTS,MSK_RES_ERR_CBF_TOO_MANY_INTS,MSK_RES_ERR_CBF_INVALID_INT_INDEX,MSK_RES_ERR_CBF_UNSUPPORTED,MSK_RES_ERR_CBF_DUPLICATE_PSDVAR,MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION,MSK_RES_ERR_CBF_TOO_FEW_PSDVAR,MSK_RES_ERR_CBF_INVALID_EXP_DIMENSION,MSK_RES_ERR_CBF_DUPLICATE_POW_CONES,MSK_RES_ERR_CBF_DUPLICATE_POW_STAR_CONES,MSK_RES_ERR_CBF_INVALID_POWER,MSK_RES_ERR_CBF_POWER_CONE_IS_TOO_LONG,MSK_RES_ERR_CBF_INVALID_POWER_CONE_INDEX,MSK_RES_ERR_CBF_INVALID_POWER_STAR_CONE_INDEX,MSK_RES_ERR_CBF_UNHANDLED_POWER_CONE_TYPE,MSK_RES_ERR_CBF_UNHANDLED_POWER_STAR_CONE_TYPE,MSK_RES_ERR_CBF_POWER_CONE_MISMATCH,MSK_RES_ERR_CBF_POWER_STAR_CONE_MISMATCH,MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER,MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER,MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD,MSK_RES_ERR_TOCONIC_CONSTRAINT_FX,MSK_RES_ERR_TOCONIC_CONSTRAINT_RA,MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC,MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD,MSK_RES_ERR_SERVER_CONNECT,MSK_RES_ERR_SERVER_PROTOCOL,MSK_RES_ERR_SERVER_STATUS,MSK_RES_ERR_SERVER_TOKEN,MSK_RES_TRM_MAX_ITERATIONS,MSK_RES_TRM_MAX_TIME,MSK_RES_TRM_OBJECTIVE_RANGE,MSK_RES_TRM_MIO_NEAR_REL_GAP,MSK_RES_TRM_MIO_NEAR_ABS_GAP,MSK_RES_TRM_STALL,MSK_RES_TRM_USER_CALLBACK,MSK_RES_TRM_MIO_NUM_RELAXS,MSK_RES_TRM_MIO_NUM_BRANCHES,MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS,MSK_RES_TRM_MAX_NUM_SETBACKS,MSK_RES_TRM_NUMERICAL_PROBLEM,MSK_RES_TRM_INTERNAL,MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 456
+Base.length(::Type{Rescode}) = 469
 """
     Rescodetype
 
@@ -9307,6 +9389,45 @@ tostr(v::Scalingtype) = if v.value == 0 "Mosek.MSK_SCALING_FREE"
 const Scalingtype_members = Scalingtype[ MSK_SCALING_FREE,MSK_SCALING_NONE,MSK_SCALING_MODERATE,MSK_SCALING_AGGRESSIVE ]
 members(::Type{Scalingtype}) = Scalingtype_members
 Base.length(::Type{Scalingtype}) = 4
+"""
+    Scopr
+
+SCopt operator types
+
+* `MSK_OPR_ENT`. Entropy
+* `MSK_OPR_EXP`. Exponential
+* `MSK_OPR_LOG`. Logarithm
+* `MSK_OPR_POW`. Power
+* `MSK_OPR_SQRT`. Square root
+"""
+struct Scopr <: MosekEnum
+  value :: Int32
+end # scopr
+
+"Entropy"
+const MSK_OPR_ENT = Scopr(0)
+
+"Exponential"
+const MSK_OPR_EXP = Scopr(1)
+
+"Logarithm"
+const MSK_OPR_LOG = Scopr(2)
+
+"Power"
+const MSK_OPR_POW = Scopr(3)
+
+"Square root"
+const MSK_OPR_SQRT = Scopr(4)
+tostr(v::Scopr) = if v.value == 0 "Mosek.MSK_OPR_ENT"
+  elseif v.value == 1 "Mosek.MSK_OPR_EXP"
+  elseif v.value == 2 "Mosek.MSK_OPR_LOG"
+  elseif v.value == 3 "Mosek.MSK_OPR_POW"
+  elseif v.value == 4 "Mosek.MSK_OPR_SQRT"
+  else "Mosek.Scopr(?)"
+  end
+const Scopr_members = Scopr[ MSK_OPR_ENT,MSK_OPR_EXP,MSK_OPR_LOG,MSK_OPR_POW,MSK_OPR_SQRT ]
+members(::Type{Scopr}) = Scopr_members
+Base.length(::Type{Scopr}) = 5
 """
     Sensitivitytype
 
@@ -10185,7 +10306,7 @@ Base.length(::Type{Transpose}) = 2
 Triangular part of a symmetric matrix.
 
 * `MSK_UPLO_LO`. Lower part.
-* `MSK_UPLO_UP`. Upper part
+* `MSK_UPLO_UP`. Upper part.
 """
 struct Uplo <: MosekEnum
   value :: Int32
@@ -10194,7 +10315,7 @@ end # uplo
 "Lower part."
 const MSK_UPLO_LO = Uplo(0)
 
-"Upper part"
+"Upper part."
 const MSK_UPLO_UP = Uplo(1)
 tostr(v::Uplo) = if v.value == 0 "Mosek.MSK_UPLO_LO"
   elseif v.value == 1 "Mosek.MSK_UPLO_UP"

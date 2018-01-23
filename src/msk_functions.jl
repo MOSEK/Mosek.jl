@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.0.27
+# MOSEK 9.0.0.31
 
 export
   analyzenames,
@@ -27,6 +27,9 @@ export
   deletesolution,
   dualsensitivity,
   echointro,
+  generateconenames,
+  generateconnames,
+  generatevarnames,
   getacol,
   getacolnumnz,
   getacolslice,
@@ -699,7 +702,7 @@ Depending on the value of `ct` this function appends one of the constraints:
 ```
 Please note that the sets of variables appearing in different conic constraints must be disjoint.
 
-For an explained code example see :numref:`doc.tutorial_cqo` or :numref:`doc.tutorial_ceo`.
+For an explained code example see :numref:`doc.tutorial_cqo`, :numref:`doc.tutorial_ceo` or :numref:`doc.tutorial_pow`.
 """
 function appendcone end
 appendcone(task:: MSKtask,ct:: Conetype,conepar:: T2,submem:: Vector{T3}) where {T2,T3} = appendcone(task,ct,Float64(conepar),convert(Vector{Int32},submem))
@@ -1189,6 +1192,99 @@ function dualsensitivity(task_:: MSKtask,subj_:: Vector{Int32})
 end
 
 """
+    generateconenames{T1,T3,T4}(task:: MSKtask,subk:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4})
+    generateconenames(task_:: MSKtask,subk_:: Vector{Int32},fmt_:: AbstractString,dims_:: Vector{Int32},sp_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `subk :: Vector{Int32}`. Indexes of the cone.
+* `fmt :: String`. The cone name formatting string.
+* `dims :: Vector{Int32}`. Dimensions in the shape.
+* `sp :: Vector{Int64}`. Items that should be named.
+
+Generates systematic names for cone.
+"""
+function generateconenames end
+generateconenames(task:: MSKtask,subk:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4}) where {T1,T3,T4} = generateconenames(task,convert(Vector{Int32},subk),fmt,convert(Vector{Int32},dims),convert(Vector{Int64},sp))
+function generateconenames(task_:: MSKtask,subk_:: Vector{Int32},fmt_:: AbstractString,dims_:: Vector{Int32},sp_:: Vector{Int64})
+  ndims_ = minimum([ length(dims_) ])
+  num_ = minimum([ length(subk_) ])
+  __tmp_var_0 = (num_)
+  if length(sp_) < __tmp_var_0
+    println("Array argument sp is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @msk_ccall( "generateconenames",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subk_ .- Int32(1),string(fmt_),ndims_,dims_ .- Int32(1),sp_ .- Int32(1))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    generateconnames{T1,T3,T4}(task:: MSKtask,subi:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4})
+    generateconnames(task_:: MSKtask,subi_:: Vector{Int32},fmt_:: AbstractString,dims_:: Vector{Int32},sp_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `subi :: Vector{Int32}`. Indexes of the constraints.
+* `fmt :: String`. The constraint name formatting string.
+* `dims :: Vector{Int32}`. Dimensions in the shape.
+* `sp :: Vector{Int64}`. Items that should be named.
+
+Generates systematic names for constraints.
+"""
+function generateconnames end
+generateconnames(task:: MSKtask,subi:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4}) where {T1,T3,T4} = generateconnames(task,convert(Vector{Int32},subi),fmt,convert(Vector{Int32},dims),convert(Vector{Int64},sp))
+function generateconnames(task_:: MSKtask,subi_:: Vector{Int32},fmt_:: AbstractString,dims_:: Vector{Int32},sp_:: Vector{Int64})
+  ndims_ = minimum([ length(dims_) ])
+  num_ = minimum([ length(subi_) ])
+  __tmp_var_0 = (num_)
+  if length(sp_) < __tmp_var_0
+    println("Array argument sp is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @msk_ccall( "generateconnames",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subi_ .- Int32(1),string(fmt_),ndims_,dims_ .- Int32(1),sp_ .- Int32(1))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    generatevarnames{T1,T3,T4}(task:: MSKtask,subj:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4})
+    generatevarnames(task_:: MSKtask,subj_:: Vector{Int32},fmt_:: AbstractString,dims_:: Vector{Int32},sp_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `subj :: Vector{Int32}`. Indexes of the variables.
+* `fmt :: String`. The variable name formatting string.
+* `dims :: Vector{Int32}`. Dimensions in the shape.
+* `sp :: Vector{Int64}`. Items that should be named.
+
+Generates systematic names for variables.
+"""
+function generatevarnames end
+generatevarnames(task:: MSKtask,subj:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4}) where {T1,T3,T4} = generatevarnames(task,convert(Vector{Int32},subj),fmt,convert(Vector{Int32},dims),convert(Vector{Int64},sp))
+function generatevarnames(task_:: MSKtask,subj_:: Vector{Int32},fmt_:: AbstractString,dims_:: Vector{Int32},sp_:: Vector{Int64})
+  ndims_ = minimum([ length(dims_) ])
+  num_ = minimum([ length(subj_) ])
+  __tmp_var_0 = (num_)
+  if length(sp_) < __tmp_var_0
+    println("Array argument sp is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @msk_ccall( "generatevarnames",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subj_ .- Int32(1),string(fmt_),ndims_,dims_ .- Int32(1),sp_ .- Int32(1))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
     (nzj,subj,valj) = getacol{T1}(task:: MSKtask,j:: T1)
     (nzj,subj,valj) = getacol(task_:: MSKtask,j_:: Int32)
 
@@ -1584,12 +1680,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `tolzero :: Vector{Float64}`. Truncation tolerance.
 
-Truncates all elements in ``A``  that satisfies
-
-```math
- a_{i,j} \\leq \\mathtt{tolzero}.
-```
-
+Obtains the tolerance value set with `Mosek.putatruncatetol`.
 """
 function getatruncatetol end
 function getatruncatetol(task_:: MSKtask)
@@ -1983,12 +2074,12 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
-* `first :: Int32`. Index of the semidefinite variable in slice.
+* `first :: Int32`. Index of the first semidefinite variable in the slice.
 * `last :: Int32`. Index of the last semidefinite variable in the slice plus one.
 * `slicesize :: Int64`. Denotes the length of the array barsslice.
-* `barsslice :: Vector{Float64}`. The solution of symmetric matrix variables in slice are stored sequentially.
+* `barsslice :: Vector{Float64}`. Dual solution values of symmetric matrix variables in the slice, stored sequentially.
 
-Obtains the dual solution for a sequence of semidefinite variables. The format is that the columns are stored sequentially in the natural order.
+Obtains the dual solution for a sequence of semidefinite variables. The format is that matrices are stored sequentially, and in each matrix the columns are stored as in `Mosek.getbarsj`.
 """
 function getbarsslice end
 getbarsslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slicesize:: T4) where {T2,T3,T4} = getbarsslice(task,whichsol,Int32(first),Int32(last),Int64(slicesize))
@@ -2108,24 +2199,24 @@ function getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
 end
 
 """
-    barxjslice = getbarxslice{T2,T3,T4}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slicesize:: T4)
-    barxjslice = getbarxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,slicesize_:: Int64)
+    barxslice = getbarxslice{T2,T3,T4}(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slicesize:: T4)
+    barxslice = getbarxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,slicesize_:: Int64)
 
 * `task :: MSKtask`. An optimization task.
 * `whichsol :: Soltype`. Selects a solution.
-* `first :: Int32`. Index of the semidefinite variable in slice.
+* `first :: Int32`. Index of the first semidefinite variable in the slice.
 * `last :: Int32`. Index of the last semidefinite variable in the slice plus one.
 * `slicesize :: Int64`. Denotes the length of the array barxslice.
-* `barxjslice :: Vector{Float64}`. The solution of symmetric matrix variables in slice are stored sequentially.
+* `barxslice :: Vector{Float64}`. Solution values of symmetric matrix variables in the slice, stored sequentially.
 
-Obtains the primal solution for a sequence of semidefinite variables. The format is that the columns are stored sequentially in the natural order.
+Obtains the primal solution for a sequence of semidefinite variables. The format is that matrices are stored sequentially, and in each matrix the columns are stored as in `Mosek.getbarxj`.
 """
 function getbarxslice end
 getbarxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slicesize:: T4) where {T2,T3,T4} = getbarxslice(task,whichsol,Int32(first),Int32(last),Int64(slicesize))
 function getbarxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,slicesize_:: Int64)
   __tmp_var_0 = (slicesize_)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
-  barxjslice_ = __tmp_var_1
+  barxslice_ = __tmp_var_1
   res = disable_sigint() do
     @msk_ccall( "getbarxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Int64,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slicesize_,__tmp_var_1)
   end
@@ -5816,10 +5907,10 @@ end
 * `task :: MSKtask`. An optimization task.
 * `tolzero :: Float64`. Truncation tolerance.
 
-Truncates all elements in ``A``  that satisfies
+Truncates (sets to zero) all elements in ``A``  that satisfy
 
 ```math
- a_{i,j} \\leq \\mathtt{tolzero}.
+ |a_{i,j}| \\leq \\mathtt{tolzero}.
 ```
 
 """
@@ -7667,7 +7758,7 @@ end
 * `last :: Int32`. Last index plus 1 in the sequence.
 * `xx :: Vector{Float64}`. Primal variable solution.
 
-Obtains a slice of the ``x^x`` vector for a solution.
+Sets a slice of the ``x^x`` vector for a solution.
 """
 function putxxslice end
 putxxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,xx:: Vector{T4}) where {T2,T3,T4} = putxxslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},xx))
