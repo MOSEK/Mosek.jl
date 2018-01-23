@@ -170,8 +170,11 @@ function Base.show(f::IO, cone :: ConeConstraint)
     ct,cp,nummem,submem = getcone(cone.t,cone.index)
 
     dom =
-        if ct == MSK_CT_QUAD "𝒞_q"
+        if     ct == MSK_CT_ZERO "𝒞_0"
+        elseif ct == MSK_CT_QUAD "𝒞_q"
         elseif ct == MSK_CT_RQUAD "𝒞_qr"
+        elseif ct == MSK_CT_PPOW "𝒞_pow{$cp}"
+        elseif ct == MSK_CT_PEXP "𝒞_exp"
         else "?"
         end
 

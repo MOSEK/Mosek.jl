@@ -252,9 +252,12 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 for k in 1:limitnumcone
                     (ct,conepar,nummem,submem) = getcone(t,k)
                     dom =
-                        if ct == MSK_CT_QUAD "𝒞_q"
+                        if     ct == MSK_CT_ZERO "𝒞_0"
+                        elseif ct == MSK_CT_QUAD "𝒞_q"
                         elseif ct == MSK_CT_RQUAD "𝒞_qr"
-                        else "?"
+                        elseif ct == MSK_CT_PPOW "𝒞_pow{$conepar}"
+                        elseif ct == MSK_CT_PEXP "𝒞_exp"
+                        else "?{$ct}"
                         end
 
                     
