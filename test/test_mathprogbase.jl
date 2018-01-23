@@ -30,13 +30,6 @@ function test_mathprogbase(solver)
         #socptest(solver)
     end
 
-    @testset "nlp" begin
-        #nlptest(solver)
-        #nlptest_nohessian(solver)
-        #convexnlptest(solver)
-        #rosenbrocktest(solver)
-    end
-
     @testset "conic" begin
         coniclineartest(solver, duals=true)
         conicSOCtest(solver, duals=true)

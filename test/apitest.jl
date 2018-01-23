@@ -298,83 +298,6 @@ function test_sdo1()
     end
 end
 
-function test_nlo1()
-    t = maketask()
-    putstreamfunc(t,MSK_STREAM_LOG,m -> nothing)
-    appendvars(t,3)
-    appendcons(t,1)
-    putvarbound(t,1,MSK_BK_LO,0.0, +Inf)  # x0
-    putvarbound(t,2,MSK_BK_LO,0.0, +Inf)  # x1
-    putvarbound(t,3,MSK_BK_LO,0.0, +Inf)  # x2
-    putarow(t,1,[1,2,3],[1.0,1.0,1.0])   # x0 + x1 + x2
-    putconbound(t,1,MSK_BK_FX,1.0, 1.0)  # = 1.0
-    putclist(t,[1], [-1.0])
-
-    function indexof(v,a)
-        for i in 1:length(a)
-            if a[i] == v return i
-            end
-        end
-        return 0
-    end
-    evalobj(x :: Vector{Float64}) = log(x[2]+x[3])
-    evalconi(x:: Vector{Float64},i:: Int32) = 0.0
-    function grdobj(x :: Vector{Float64},sub:: Vector{Int32}, val:: Vector{Float64})
-        for j in 1:length(sub)
-            if sub[j] == 2 || sub[j] == 3
-                val[j] = -1.0 / (x[2]+x[3])
-            end
-        end
-    end
-    function grdconi(x  :: Vector{Float64},
-                     i  :: Int32,
-                     sub:: Vector{Int32},
-                     val:: Vector{Float64})
-        none
-    end
-    function grdlag(x ::   Vector{Float64},
-                    yo::   Float64,
-                    yc::   Vector{Float64},
-                    subi:: Vector{Int32},
-                    val::  Vector{Float64})
-        val[2] = - yo * 1.0 / (x[2]+x[3])
-        val[3] = - yo * 1.0 / (x[2]+x[3])
-    end 
-    function heslag(x ::      Vector{Float64},
-                    yo::      Float64,
-                    yc::      Vector{Float64},
-                    subi::    Vector{Int32},
-                    hessubi:: Vector{Int32},
-                    hessubj:: Vector{Int32},
-                    hesval::  Vector{Float64})
-
-        hessubi[1] = 2; hessubj[1] = 2; hesval[1] = (x[2]+x[3])^(-2)
-        hessubi[2] = 3; hessubj[2] = 2; hesval[2] = (x[2]+x[3])^(-2)
-        hessubi[3] = 3; hessubj[3] = 3; hesval[3] = (x[2]+x[3])^(-2)
-    end
-
-    putnlcallbacks(t,
-                   [2,3], # subscripts of non-zeros in the gradient of the objective
-                   Int[], # subscripts of non-zeros in the gradient of the constraints
-                   [1,1], # rowptr for subscripts of non-zeros in the gradient of the constraints
-                   [2,3,3], # hessubi
-                   [2,2,3], # hessubj
-                   evalobj,
-                   evalconi,
-                   grdlag,
-                   grdobj,
-                   grdconi,
-                   heslag)
-
-    optimize(t)
-
-    solsta = getsolsta(t,MSK_SOL_ITR)
-    prosta = getprosta(t,MSK_SOL_ITR)
-
-    @test solsta in (MSK_SOL_STA_OPTIMAL, MSK_SOL_STA_NEAR_OPTIMAL)
-    @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS)
-end
-
 @testset "[apitest]" begin
     @testset "lo1" begin
         test_lo1()
@@ -400,8 +323,5 @@ end
         test_sdo1()
     end
 
-    @testset "nlo1" begin
-        test_nlo1()
-    end
 end
 

@@ -262,7 +262,9 @@ end
 include("msk_enums.jl")
 include("msk_functions.jl")
 include("msk_callback.jl")
-include("msk_geco.jl")
+
+## General Convex optimizer has been discontinued
+#include("msk_geco.jl")
 
 include("show.jl")
 include("ext_functions.jl")
