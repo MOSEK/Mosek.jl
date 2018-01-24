@@ -78,7 +78,7 @@ mutable struct Task
             throw(MosekError(res,""))
         end
 
-        task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
+        task = new(t.env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
         task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
         task.usercallbackfunc = nothing
 
