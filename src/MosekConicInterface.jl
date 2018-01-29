@@ -1,3 +1,6 @@
+
+
+
 const msk_accepted_cones = [:Free,
                             :Zero,
                             :NonNeg,
@@ -323,6 +326,9 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 elseif sym == :SDP
                     barslackj  = barvarptr
                     d = floor(Int32,sqrt(.25+2*length(idxs))-0.5)
+
+                    firstcon = conptr
+                    lastcon  = conptr+n-1
 
                     bk[firstcon:lastcon] = Mosek.MSK_BK_FX
 
