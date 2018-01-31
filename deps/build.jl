@@ -1,4 +1,4 @@
-include("liftedfrombindeps.jl")
+nclude("liftedfrombindeps.jl")
 
 # define current version:
 mskvmajor = "9"
@@ -23,30 +23,27 @@ mskplatform,distroext =
 bindepsdir = dirname(@__FILE__)
 
 function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::AbstractString)
-    moseklib,scoptlib =
+    moseklib =
         if Sys.ARCH == :i386 || Sys.ARCH == :i686
-            if     is_windows() "mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"
+            if     is_windows() "mosek$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
         elseif Sys.ARCH == :x86_64
-            if     is_linux()   "libmosek64.so.$(mskvmajor).$(mskvminor)",    "libmosekscopt$(mskvmajor)_$(mskvminor).so"
-            elseif is_apple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib", "libmosekscopt$(mskvmajor)_$(mskvminor).dylib"
-            elseif is_windows() "mosek64_$(mskvmajor)_$(mskvminor).dll",      "mosekscopt$(mskvmajor)_$(mskvminor).dll"
+            if     is_linux()   "libmosek64.so.$(mskvmajor).$(mskvminor)"
+            elseif is_apple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib"
+            elseif is_windows() "mosek64_$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
         else
             error("Platform not supported")
         end
 
-    let moseklibpath = joinpath(path,moseklib),
-        scoptlibpath = joinpath(path,scoptlib)
+    let moseklibpath = joinpath(path,moseklib)
 
         if ! isfile(moseklibpath)
             error("Library '$moseklib' not found ($path)")
-        elseif ! isfile(scoptlibpath)
-            error("Library '$scoptlib' not found ($path)")
         else
-            moseklibpath,scoptlibpath
+            moseklibpath
         end
     end
 end
@@ -222,7 +219,7 @@ end
 
 verarr = split(version,'.')
 
-libmosekpath,libscoptpath = findlibs(mskbindir,verarr[1],verarr[2])
+libmosekpath= findlibs(mskbindir,verarr[1],verarr[2])
 
 if instmethod == "external"
     info("""Found MOSEK $version at $mskbindir""")
@@ -236,7 +233,6 @@ open(joinpath(bindepsdir,"mosekbindir"),"w") do f
 end
 
 libmosekpath = escape_string(normpath(libmosekpath))
-libscoptpath = escape_string(normpath(libscoptpath))
 
 open(joinpath(bindepsdir,"deps.jl"),"w") do f
     write(f,"""
@@ -250,7 +246,6 @@ end
 
 # Load dependencies
 @checked_lib libmosek      "$libmosekpath"
-@checked_lib libmosekscopt "$libscoptpath"
 """)
 
 
