@@ -1,4 +1,4 @@
-nclude("liftedfrombindeps.jl")
+include("liftedfrombindeps.jl")
 
 # define current version:
 mskvmajor = "9"
