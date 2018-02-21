@@ -568,7 +568,11 @@ function MathProgBase.optimize!(m::MosekMathProgConicModel)
         m.lasttrm = Mosek.optimize(m.task)
         Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
     catch err
-        m.lasttrm = err.rcode
+        if isa(err,Mosek.MosekError)
+            m.lasttrm = Rescode(err.rcode)
+        else
+            rethrow()
+        end
     end
 end
 
