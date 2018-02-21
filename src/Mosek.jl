@@ -122,7 +122,7 @@ Create a MOSEK environment.
 function makeenv()
     temp = Array{Ptr{Void}}(1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
-    if res != 0
+    if res != MSK_RES_OK
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
@@ -137,7 +137,7 @@ Create a MOSEK environment for use with `do`-syntax.
 function makeenv(func::Function)
     temp = Array{Ptr{Void}}(1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
-    if res != 0
+    if res != MSK_RES_OK
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
