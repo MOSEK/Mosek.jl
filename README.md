@@ -33,7 +33,7 @@ installation it will attempt to either local an installed MOSEK or download and
 install from the MOSEK website (www.mosek.com):
 
 1. If the environment variable `MOSEKBINDIR` is defined, the installer will assume that this directory contains the necessary libraries. If it does not, the installer will fail.
-2. If the current `MOSEK.lj` installation uses a user-defined MOSEK and this is a valid version, this will be used.
+2. If the current `MOSEK.jl` installation uses a user-defined MOSEK and this is a valid version, this will be used.
 3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used. 
 4. If no usable MOSEK installation is found here, the installer will
   attempt to download and unpack the latest distro. In this case doing
