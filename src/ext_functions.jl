@@ -387,13 +387,6 @@ solstainfo(solsta) =
     elseif solsta == MSK_SOL_STA_DUAL_ILLPOSED_CER        "DualIllposedCertificate",true,false
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER          "DualInfeasibilityCertificate",true,false
     elseif solsta == MSK_SOL_STA_INTEGER_OPTIMAL          "IntegerOptimal",true,false
-    elseif solsta == MSK_SOL_STA_NEAR_DUAL_FEAS           "NearDualFeasible",true,false
-    elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER     "NearDualInfeasibleCertificate",true,false
-    elseif solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL     "NearIntegerOptimal",true,false
-    elseif solsta == MSK_SOL_STA_NEAR_OPTIMAL             "NearOptimal",true,true
-    elseif solsta == MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS  "NearPrimalAndDualFeasible",true,true
-    elseif solsta == MSK_SOL_STA_NEAR_PRIM_FEAS           "NearPrimalFeasible",true,false
-    elseif solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER     "NearPrimalInfeasibilityCertificate",false,true
     elseif solsta == MSK_SOL_STA_OPTIMAL                  "Optimal",true,true
     elseif solsta == MSK_SOL_STA_PRIM_AND_DUAL_FEAS       "PrimalAndDualFeasible",true,true
     elseif solsta == MSK_SOL_STA_PRIM_FEAS                "PrimalFeasible",true,false

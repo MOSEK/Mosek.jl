@@ -44,9 +44,9 @@ function test_lo1()
     solsta = getsolsta(task,MSK_SOL_BAS)
     prosta = getprosta(task,MSK_SOL_BAS)
 
-    @test getsolsta(task,MSK_SOL_ITR) in [ MSK_SOL_STA_OPTIMAL ]
-    @test solsta in [ MSK_SOL_STA_OPTIMAL ]
-    @test prosta in [MSK_PRO_STA_PRIM_AND_DUAL_FEAS]
+    @test getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL 
+    @test solsta == MSK_SOL_STA_OPTIMAL 
+    @test prosta == MSK_PRO_STA_PRIM_AND_DUAL_FEAS
 
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
         xx = getxx(task,MSK_SOL_BAS)
@@ -89,8 +89,8 @@ function test_qo1()
     prosta = getprosta(task,MSK_SOL_ITR)
     solsta = getsolsta(task,MSK_SOL_ITR)
 
-    @test solsta in (MSK_SOL_STA_OPTIMAL )
-    @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS)
+    @test solsta == MSK_SOL_STA_OPTIMAL 
+    @test prosta == MSK_PRO_STA_PRIM_AND_DUAL_FEAS
 
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITR)
@@ -136,8 +136,8 @@ function test_qcqo1()
     solsta = getsolsta(task,MSK_SOL_ITR)
 
 
-    @test solsta in (MSK_SOL_STA_OPTIMAL )
-    @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS)
+    @test solsta in [MSK_SOL_STA_OPTIMAL ]
+    @test prosta in [MSK_PRO_STA_PRIM_AND_DUAL_FEAS]
 
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITR)
@@ -174,8 +174,8 @@ function test_milo1()
     prosta = getprosta(task,MSK_SOL_ITG)
     solsta = getsolsta(task,MSK_SOL_ITG)
 
-    @test solsta in (MSK_SOL_STA_INTEGER_OPTIMAL)
-    @test prosta in (MSK_PRO_STA_PRIM_FEAS)
+    @test solsta in [MSK_SOL_STA_INTEGER_OPTIMAL]
+    @test prosta in [MSK_PRO_STA_PRIM_FEAS]
 
     if solsta in     [ MSK_SOL_STA_INTEGER_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITG)
@@ -217,8 +217,8 @@ function test_cqo()
     prosta = getprosta(task,MSK_SOL_ITR)
     solsta = getsolsta(task,MSK_SOL_ITR)
 
-    @test solsta in (MSK_SOL_STA_OPTIMAL)
-    @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS)
+    @test solsta in [MSK_SOL_STA_OPTIMAL]
+    @test prosta in [MSK_PRO_STA_PRIM_AND_DUAL_FEAS]
 
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITR)
@@ -283,8 +283,8 @@ function test_sdo1()
     prosta = getprosta(task,MSK_SOL_ITR)
     solsta = getsolsta(task,MSK_SOL_ITR)
 
-    @test solsta in (MSK_SOL_STA_OPTIMAL)
-    @test prosta in (MSK_PRO_STA_PRIM_AND_DUAL_FEAS)
+    @test solsta in [MSK_SOL_STA_OPTIMAL]
+    @test prosta in [MSK_PRO_STA_PRIM_AND_DUAL_FEAS]
     
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITR)
