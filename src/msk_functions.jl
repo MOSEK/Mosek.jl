@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.0.31
+# MOSEK 9.0.37
 
 export
   analyzenames,
@@ -282,6 +282,7 @@ export
   resizetask,
   sensitivityreport,
   setdefaults,
+  setupthreads,
   solutiondef,
   solutionsummary,
   solvewithbasis,
@@ -293,268 +294,6 @@ export
   writeparamfile,
   writesolution,
   writetask
-
-"""
-    checkinall(env_:: MSKenv)
-
-* `env :: MSKenv`. The MOSEK environment.
-
-Check in all unused license features to the license token server.
-"""
-function checkinall end
-function checkinall(env_:: MSKenv)
-  res = disable_sigint() do
-    @msk_ccall( "checkinall",Int32,(Ptr{Void},),env_.env)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    checkinlicense(env_:: MSKenv,feature_:: Feature)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `feature :: Feature`. Feature to check in to the license system.
-
-Check in a license feature to the license server. By default all licenses
-consumed by functions using a single environment are kept checked out for the
-lifetime of the MOSEK environment. This function checks in a given license
-feature back to the license server immediately.
-
-If the given license feature is not checked out at all, or it is in use by a call to
-`Mosek.optimize`, calling this function has no effect.
-
-Please note that returning a license to the license server incurs a small
-overhead, so frequent calls to this function should be avoided.
-"""
-function checkinlicense end
-function checkinlicense(env_:: MSKenv,feature_:: Feature)
-  res = disable_sigint() do
-    @msk_ccall( "checkinlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_.value)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    checkoutlicense(env_:: MSKenv,feature_:: Feature)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `feature :: Feature`. Feature to check out from the license system.
-
-Checks out a license feature from the license server. Normally the required
-license features will be automatically checked out the first time they are needed
-by the function `Mosek.optimize`. This function can be used to check out one
-or more features ahead of time.
-
-The feature will remain checked out until the environment is deleted or the function
-`Mosek.checkinlicense` is called.
-
-If a given feature is already checked out when this function is called, the call has no effect.
-"""
-function checkoutlicense end
-function checkoutlicense(env_:: MSKenv,feature_:: Feature)
-  res = disable_sigint() do
-    @msk_ccall( "checkoutlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_.value)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    echointro{T1}(env:: MSKenv,longver:: T1)
-    echointro(env_:: MSKenv,longver_:: Int32)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `longver :: Int32`. If non-zero, then the intro is slightly longer.
-
-Prints an intro to message stream.
-"""
-function echointro end
-echointro(env:: MSKenv,longver:: T1) where {T1} = echointro(env,Int32(longver))
-function echointro(env_:: MSKenv,longver_:: Int32)
-  res = disable_sigint() do
-    @msk_ccall( "echointro",Int32,(Ptr{Void},Int32,),env_.env,longver_)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    (symname,str) = getcodedesc(code_:: Rescode)
-
-* `code :: Rescode`. A valid response code.
-* `symname :: AbstractString`. Symbolic name corresponding to the code.
-* `str :: AbstractString`. Obtains a short description of a response code.
-
-Obtains a short description of the meaning of the response code given by `code`.
-"""
-function getcodedesc end
-function getcodedesc(code_:: Rescode)
-  str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
-  symname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
-  res = disable_sigint() do
-    @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{UInt8},Ptr{UInt8},),code_.value,symname_,str_)
-  end
-  symname_str = convert(String,symname_)
-  str_str = convert(String,str_)
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-  (symname_str[1:searchindex(symname_str,'\0')-1],str_str[1:searchindex(str_str,'\0')-1])
-end
-
-"""
-    (major,minor,build,revision) = getversion()
-
-* `major :: Int32`. Major version number.
-* `minor :: Int32`. Minor version number.
-* `build :: Int32`. Build number.
-* `revision :: Int32`. Revision number.
-
-Obtains MOSEK version information.
-"""
-function getversion end
-function getversion()
-  build_ = Vector{Int32}(1)
-  major_ = Vector{Int32}(1)
-  minor_ = Vector{Int32}(1)
-  revision_ = Vector{Int32}(1)
-  res = disable_sigint() do
-    @msk_ccall( "getversion",Int32,(Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},),major_,minor_,build_,revision_)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-  (convert(Int32,major_[1]),convert(Int32,minor_[1]),convert(Int32,build_[1]),convert(Int32,revision_[1]))
-end
-
-"""
-    licensecleanup()
-
-
-Stops all threads and deletes all handles used by the license system. If this
-function is called, it must be called as the last MOSEK API call. No other
-MOSEK API calls are valid after this.
-"""
-function licensecleanup end
-function licensecleanup()
-  res = disable_sigint() do
-    @msk_ccall( "licensecleanup",Int32,())
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    linkfiletostream{T3}(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3)
-    linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `whichstream :: Streamtype`. Index of the stream.
-* `filename :: String`. A valid file name.
-* `append :: Int32`. If this argument is 0 the file will be overwritten, otherwise it will be appended to.
-
-Sends all output from the stream defined by `whichstream` to the file given by `filename`.
-"""
-function linkfiletostream end
-linkfiletostream(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(env,whichstream,filename,Int32(append))
-function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
-  res = disable_sigint() do
-    @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_.value,string(filename_),append_)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    putlicensecode{T1}(env:: MSKenv,code:: Vector{T1})
-    putlicensecode(env_:: MSKenv,code_:: Vector{Int32})
-
-* `env :: MSKenv`. The MOSEK environment.
-* `code :: Vector{Int32}`. A license key string.
-
-Input a runtime license code.
-"""
-function putlicensecode end
-putlicensecode(env:: MSKenv,code:: Vector{T1}) where {T1} = putlicensecode(env,convert(Vector{Int32},code))
-function putlicensecode(env_:: MSKenv,code_:: Vector{Int32})
-  __tmp_var_0 = MSK_LICENSE_BUFFER_LENGTH
-  if length(code_) < __tmp_var_0
-    println("Array argument code is not long enough")
-    throw(BoundsError())
-  end
-  res = disable_sigint() do
-    @msk_ccall( "putlicensecode",Int32,(Ptr{Void},Ptr{Int32},),env_.env,code_)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    putlicensedebug{T1}(env:: MSKenv,licdebug:: T1)
-    putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `licdebug :: Int32`. Enable output of license check-out debug information.
-
-Enables debug information for the license system. If `licdebug` is non-zero, then MOSEK will print debug info regarding the license checkout.
-"""
-function putlicensedebug end
-putlicensedebug(env:: MSKenv,licdebug:: T1) where {T1} = putlicensedebug(env,Int32(licdebug))
-function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
-  res = disable_sigint() do
-    @msk_ccall( "putlicensedebug",Int32,(Ptr{Void},Int32,),env_.env,licdebug_)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `licensepath :: String`. A path specifying where to search for the license.
-
-Set the path to the license file.
-"""
-function putlicensepath end
-function putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
-  res = disable_sigint() do
-    @msk_ccall( "putlicensepath",Int32,(Ptr{Void},Ptr{UInt8},),env_.env,string(licensepath_))
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
-
-"""
-    putlicensewait{T1}(env:: MSKenv,licwait:: T1)
-    putlicensewait(env_:: MSKenv,licwait_:: Int32)
-
-* `env :: MSKenv`. The MOSEK environment.
-* `licwait :: Int32`. Enable waiting for a license.
-
-Control whether MOSEK should wait for an available license if no license is available. If `licwait` is non-zero, then MOSEK will wait for `licwait-1` milliseconds between each check for an available license.
-"""
-function putlicensewait end
-putlicensewait(env:: MSKenv,licwait:: T1) where {T1} = putlicensewait(env,Int32(licwait))
-function putlicensewait(env_:: MSKenv,licwait_:: Int32)
-  res = disable_sigint() do
-    @msk_ccall( "putlicensewait",Int32,(Ptr{Void},Int32,),env_.env,licwait_)
-  end
-  if res != MSK_RES_OK.value
-    throw(MosekError(res,""))
-  end
-end
 
 """
     analyzenames(task_:: MSKtask,whichstream_:: Streamtype,nametype_:: Nametype)
@@ -692,6 +431,18 @@ Depending on the value of `ct` this function appends one of the constraints:
 
 ```math
  \\hat{x}_0^\\alpha \\hat{x}_1^{1-\\alpha} \\geq \\sqrt{\\sum_{i=2}^{i<\\mathtt{nummem}} \\hat{x}^2_i}, \\mathcal{C}_q \\hat{x}_{0}, \\hat{x}_1 \\geq 0
+```
+  where ``\\alpha`` is the cone parameter specified by `conepar`.
+
+* Dual exponential cone (`MSK_CT_DEXP`, requires ``\\mathtt{nummem}=3``):
+
+```math
+ \\hat{x}_0 \\geq -\\hat{x}_2 e^{-1}\\exp(\\hat{x}_1/\\hat{x}_2), \\mathcal{C}_q \\hat{x}_2\\leq 0,\\hat{x}_0 \\geq 0
+```
+* Dual power cone (`MSK_CT_DPOW`, requires ``\\mathtt{nummem}\\geq 2``):
+
+```math
+ \\left(\\frac{\\hat{x}_0}{\\alpha}\\right)^\\alpha \\left(\\frac{\\hat{x}_1}{1-\\alpha}\\right)^{1-\\alpha} \\geq \\sqrt{\\sum_{i=2}^{i<\\mathtt{nummem}} \\hat{x}^2_i}, \\mathcal{C}_q \\hat{x}_{0}, \\hat{x}_1 \\geq 0
 ```
   where ``\\alpha`` is the cone parameter specified by `conepar`.
 
@@ -5384,6 +5135,7 @@ end
 
 Directs all output from a task stream `whichstream` to a file `filename`.
 """
+function linkfiletostream end
 linkfiletostream(task:: MSKtask,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(task,whichstream,filename,Int32(append))
 function linkfiletostream(task_:: MSKtask,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
@@ -8375,9 +8127,7 @@ end
 Writes problem data associated with the optimization task to a file in one of
 the supported formats. See Section :ref:`doc.shared.file_formats` for the complete list.
 
-By default the data file format is determined by the file name extension. This
-behaviour can be overridden by setting the `MSK_IPAR_WRITE_DATA_FORMAT``
-parameter. To write
+The data file format is determined by the file name extension. To write
 in compressed format append the extension `.gz`.  E.g to write a gzip
 compressed MPS file use the extension `mps.gz`.
 
@@ -8389,9 +8139,6 @@ automatically generated anonymous names by setting the
 Data is written to the file `filename`
 if it is a nonempty string. Otherwise data is written
 to the file specified by :msk:sparam:`data_file_name`.
-
-Please note that if a general nonlinear function appears in the problem then
-such function *cannot* be written to file and MOSEK will issue a warning.
 """
 function writedata end
 function writedata(task_:: MSKtask,filename_:: AbstractString)
@@ -8468,10 +8215,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `filename :: String`. A valid file name.
 
-Write a binary dump of the task data. This format saves all problem data, coefficients and parameter settings but
-does not save callback functions and general non-linear terms.
-
-See section :ref:`doc.shared.taskformat` for a description of the Task format.
+Write a binary dump of the task data. This format saves all problem data, coefficients and parameter settings. See section :ref:`doc.shared.taskformat` for a description of the Task format.
 """
 function writetask end
 function writetask(task_:: MSKtask,filename_:: AbstractString)
@@ -8481,6 +8225,285 @@ function writetask(task_:: MSKtask,filename_:: AbstractString)
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
+  end
+end
+
+"""
+    checkinall(env_:: MSKenv)
+
+* `env :: MSKenv`. The MOSEK environment.
+
+Check in all unused license features to the license token server.
+"""
+function checkinall end
+function checkinall(env_:: MSKenv)
+  res = disable_sigint() do
+    @msk_ccall( "checkinall",Int32,(Ptr{Void},),env_.env)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    checkinlicense(env_:: MSKenv,feature_:: Feature)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `feature :: Feature`. Feature to check in to the license system.
+
+Check in a license feature to the license server. By default all licenses
+consumed by functions using a single environment are kept checked out for the
+lifetime of the MOSEK environment. This function checks in a given license
+feature back to the license server immediately.
+
+If the given license feature is not checked out at all, or it is in use by a call to
+`Mosek.optimize`, calling this function has no effect.
+
+Please note that returning a license to the license server incurs a small
+overhead, so frequent calls to this function should be avoided.
+"""
+function checkinlicense end
+function checkinlicense(env_:: MSKenv,feature_:: Feature)
+  res = disable_sigint() do
+    @msk_ccall( "checkinlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_.value)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    checkoutlicense(env_:: MSKenv,feature_:: Feature)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `feature :: Feature`. Feature to check out from the license system.
+
+Checks out a license feature from the license server. Normally the required
+license features will be automatically checked out the first time they are needed
+by the function `Mosek.optimize`. This function can be used to check out one
+or more features ahead of time.
+
+The feature will remain checked out until the environment is deleted or the function
+`Mosek.checkinlicense` is called.
+
+If a given feature is already checked out when this function is called, the call has no effect.
+"""
+function checkoutlicense end
+function checkoutlicense(env_:: MSKenv,feature_:: Feature)
+  res = disable_sigint() do
+    @msk_ccall( "checkoutlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_.value)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    echointro{T1}(env:: MSKenv,longver:: T1)
+    echointro(env_:: MSKenv,longver_:: Int32)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `longver :: Int32`. If non-zero, then the intro is slightly longer.
+
+Prints an intro to message stream.
+"""
+function echointro end
+echointro(env:: MSKenv,longver:: T1) where {T1} = echointro(env,Int32(longver))
+function echointro(env_:: MSKenv,longver_:: Int32)
+  res = disable_sigint() do
+    @msk_ccall( "echointro",Int32,(Ptr{Void},Int32,),env_.env,longver_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    (symname,str) = getcodedesc(code_:: Rescode)
+
+* `code :: Rescode`. A valid response code.
+* `symname :: AbstractString`. Symbolic name corresponding to the code.
+* `str :: AbstractString`. Obtains a short description of a response code.
+
+Obtains a short description of the meaning of the response code given by `code`.
+"""
+function getcodedesc end
+function getcodedesc(code_:: Rescode)
+  str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
+  symname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
+  res = disable_sigint() do
+    @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{UInt8},Ptr{UInt8},),code_.value,symname_,str_)
+  end
+  symname_str = convert(String,symname_)
+  str_str = convert(String,str_)
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+  (symname_str[1:searchindex(symname_str,'\0')-1],str_str[1:searchindex(str_str,'\0')-1])
+end
+
+"""
+    (major,minor,revision) = getversion()
+
+* `major :: Int32`. Major version number.
+* `minor :: Int32`. Minor version number.
+* `revision :: Int32`. Revision number.
+
+Obtains MOSEK version information.
+"""
+function getversion end
+function getversion()
+  major_ = Vector{Int32}(1)
+  minor_ = Vector{Int32}(1)
+  revision_ = Vector{Int32}(1)
+  res = disable_sigint() do
+    @msk_ccall( "getversion",Int32,(Ptr{Int32},Ptr{Int32},Ptr{Int32},),major_,minor_,revision_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+  (convert(Int32,major_[1]),convert(Int32,minor_[1]),convert(Int32,revision_[1]))
+end
+
+"""
+    licensecleanup()
+
+
+Stops all threads and deletes all handles used by the license system. If this
+function is called, it must be called as the last MOSEK API call. No other
+MOSEK API calls are valid after this.
+"""
+function licensecleanup end
+function licensecleanup()
+  res = disable_sigint() do
+    @msk_ccall( "licensecleanup",Int32,())
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    linkfiletostream{T3}(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3)
+    linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `whichstream :: Streamtype`. Index of the stream.
+* `filename :: String`. A valid file name.
+* `append :: Int32`. If this argument is 0 the file will be overwritten, otherwise it will be appended to.
+
+Sends all output from the stream defined by `whichstream` to the file given by `filename`.
+"""
+linkfiletostream(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(env,whichstream,filename,Int32(append))
+function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
+  res = disable_sigint() do
+    @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_.value,string(filename_),append_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    putlicensecode{T1}(env:: MSKenv,code:: Vector{T1})
+    putlicensecode(env_:: MSKenv,code_:: Vector{Int32})
+
+* `env :: MSKenv`. The MOSEK environment.
+* `code :: Vector{Int32}`. A license key string.
+
+Input a runtime license code.
+"""
+function putlicensecode end
+putlicensecode(env:: MSKenv,code:: Vector{T1}) where {T1} = putlicensecode(env,convert(Vector{Int32},code))
+function putlicensecode(env_:: MSKenv,code_:: Vector{Int32})
+  __tmp_var_0 = MSK_LICENSE_BUFFER_LENGTH
+  if length(code_) < __tmp_var_0
+    println("Array argument code is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @msk_ccall( "putlicensecode",Int32,(Ptr{Void},Ptr{Int32},),env_.env,code_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    putlicensedebug{T1}(env:: MSKenv,licdebug:: T1)
+    putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `licdebug :: Int32`. Enable output of license check-out debug information.
+
+Enables debug information for the license system. If `licdebug` is non-zero, then MOSEK will print debug info regarding the license checkout.
+"""
+function putlicensedebug end
+putlicensedebug(env:: MSKenv,licdebug:: T1) where {T1} = putlicensedebug(env,Int32(licdebug))
+function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
+  res = disable_sigint() do
+    @msk_ccall( "putlicensedebug",Int32,(Ptr{Void},Int32,),env_.env,licdebug_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `licensepath :: String`. A path specifying where to search for the license.
+
+Set the path to the license file.
+"""
+function putlicensepath end
+function putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
+  res = disable_sigint() do
+    @msk_ccall( "putlicensepath",Int32,(Ptr{Void},Ptr{UInt8},),env_.env,string(licensepath_))
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    putlicensewait{T1}(env:: MSKenv,licwait:: T1)
+    putlicensewait(env_:: MSKenv,licwait_:: Int32)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `licwait :: Int32`. Enable waiting for a license.
+
+Control whether MOSEK should wait for an available license if no license is available. If `licwait` is non-zero, then MOSEK will wait for `licwait-1` milliseconds between each check for an available license.
+"""
+function putlicensewait end
+putlicensewait(env:: MSKenv,licwait:: T1) where {T1} = putlicensewait(env,Int32(licwait))
+function putlicensewait(env_:: MSKenv,licwait_:: Int32)
+  res = disable_sigint() do
+    @msk_ccall( "putlicensewait",Int32,(Ptr{Void},Int32,),env_.env,licwait_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
+  end
+end
+
+"""
+    setupthreads{T1}(env:: MSKenv,numthreads:: T1)
+    setupthreads(env_:: MSKenv,numthreads_:: Int32)
+
+* `env :: MSKenv`. The MOSEK environment.
+* `numthreads :: Int32`. Number of threads.
+
+Preallocates a thread pool for the interior-point and conic optimizers in the current process. This function should only be called once per process, before first optimization. Future settings of the parameter `MSK_IPAR_NUM_THREADS`` will be irrelevant for the conic optimizer.
+"""
+function setupthreads end
+setupthreads(env:: MSKenv,numthreads:: T1) where {T1} = setupthreads(env,Int32(numthreads))
+function setupthreads(env_:: MSKenv,numthreads_:: Int32)
+  res = disable_sigint() do
+    @msk_ccall( "setupthreads",Int32,(Ptr{Void},Int32,),env_.env,numthreads_)
+  end
+  if res != MSK_RES_OK.value
+    throw(MosekError(res,""))
   end
 end
 

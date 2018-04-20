@@ -89,15 +89,12 @@ maketask() do task
     # Get status information about the solution
     solsta = getsolsta(task,MSK_SOL_BAS)
 
-    if solsta in     [ MSK_SOL_STA_OPTIMAL, 
-                      MSK_SOL_STA_NEAR_OPTIMAL ]
+    if solsta == MSK_SOL_STA_OPTIMAL
         xx = getxx(task,MSK_SOL_BAS)
         print("Optimal solution:")
         println(xx)
     elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
-                      MSK_SOL_STA_PRIM_INFEAS_CER,
-                      MSK_SOL_STA_NEAR_DUAL_INFEAS_CER,
-                      MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+                       MSK_SOL_STA_PRIM_INFEAS_CER ]
         println("Primal or dual infeasibility certificate found.\n")
     elseif solsta == MSK_SOL_STA_UNKNOWN
         println("Unknown solution status")

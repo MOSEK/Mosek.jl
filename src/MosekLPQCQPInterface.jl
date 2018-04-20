@@ -516,11 +516,7 @@ function MathProgBase.getsolution(m::MosekLinearQuadraticModel)
     if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
                   Mosek.MSK_SOL_STA_PRIM_FEAS,
                   Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
-                  Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_INTEGER_OPTIMAL,
-                  Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
+                  Mosek.MSK_SOL_STA_INTEGER_OPTIMAL ]
         Mosek.getxx(m.task,sol)
   else
     throw(MosekMathProgModelError("No solution available"))
@@ -539,10 +535,7 @@ function MathProgBase.getreducedcosts(m::MosekLinearQuadraticModel)
 
     if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
                   Mosek.MSK_SOL_STA_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
-                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ]
         Mosek.getslx(m.task,sol) - Mosek.getsux(m.task,sol)
     else
         throw(MosekMathProgModelError("No solution available"))
@@ -558,10 +551,7 @@ function MathProgBase.getconstrduals(m::MosekLinearQuadraticModel)
 
     if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
                   Mosek.MSK_SOL_STA_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
-                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ]
         Mosek.gety(m.task,sol)[m.lincon]
     else
         throw(MosekMathProgModelError("Solution not available"))
@@ -599,7 +589,7 @@ function MathProgBase.getunboundedray(m::MosekLinearQuadraticModel)
     soldef = getsoldef(m.task)
 
     solsta = Mosek.getsolsta(m.task,soldef)
-    if solsta in [ Mosek.MSK_SOL_STA_DUAL_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER ]
+    if solsta in [ Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ]
         Mosek.getxx(m.task,soldef)
     else
         throw(MosekMathProgModelError("No ray available"))
@@ -610,7 +600,7 @@ function MathProgBase.getinfeasibilityray(m::MosekLinearQuadraticModel)
     sol = getsoldef(m.task)
 
     solsta = Mosek.getsolsta(m.task,sol)
-    if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+    if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ]
         Mosek.getslc(m.task,sol) - Mosek.getsuc(m.task,sol)
     else
         throw(MosekMathProgModelError("No ray available"))
@@ -824,10 +814,7 @@ function MathProgBase.getquadconstrduals(m::MosekLinearQuadraticModel)
 
     if solsta in [Mosek.MSK_SOL_STA_OPTIMAL,
                   Mosek.MSK_SOL_STA_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_OPTIMAL,
-                  Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS,
-                  Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS ]
+                  Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS ]
         Mosek.gety(m.task)[m.quadcon]
     else
         throw(MosekMathProgModelError("Solution not available"))
@@ -839,7 +826,7 @@ function MathProgBase.getquadinfeasibilityray(m::MosekLinearQuadraticModel)
     solsta = getsolsta(m.task,sol)
 
     s = Mosek.getsux(m.task,sol) - Mosek.getslx(m.task,sol)
-    if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+    if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ]
         -s[m.quadcon]
     else
         throw(MosekMathProgModelError("No solution available"))

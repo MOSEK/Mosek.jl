@@ -85,17 +85,13 @@ maketask() do task
     prosta = getprosta(task,MSK_SOL_ITR)
     solsta = getsolsta(task,MSK_SOL_ITR)
 
-    if solsta == MSK_SOL_STA_OPTIMAL || solsta == MSK_SOL_STA_NEAR_OPTIMAL
+    if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         @printf("Optimal solution: %s\n", xx')
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
-        println("Primal or dual infeasibility.\n")
-    elseif solsta == MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
-        println("Primal or dual infeasibility.\n")
-    elseif  solsta == MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
         println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_UNKNOWN
         println("Unknown solution status")

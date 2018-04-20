@@ -179,7 +179,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 bk[first:last] = Mosek.MSK_BK_FR
                 if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, [first:last;])
                 elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, [first:last;])
-                elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP, 0.0, [last:-1:first;])
+                elseif sym == :ExpPrimal  Mosek.appendcone(m.task, Mosek.MSK_CT_PEXP,  0.0, [last:-1:first;])
                 end
 
                 varbk[idxs] = Mosek.MSK_BK_FR

@@ -64,21 +64,14 @@ function status(t::Mosek.Task, r::Mosek.Rescode)
         elseif solsta == Mosek.MSK_SOL_STA_DUAL_ILLPOSED_CER ||
             solsta == Mosek.MSK_SOL_STA_PRIM_ILLPOSED_CER
             :DualityFailure
-        elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS ||
-            solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS ||
-            solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS ||
-            solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS
+        elseif solsta == Mosek.MSK_SOL_STA_DUAL_FEAS
             :Unknown
-        elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER ||
-            solsta == Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER
+        elseif solsta == Mosek.MSK_SOL_STA_DUAL_INFEAS_CER
             :Unbounded
-        elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER ||
-               solsta == Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER
+        elseif solsta == Mosek.MSK_SOL_STA_PRIM_INFEAS_CER
             :Infeasible
         elseif solsta == Mosek.MSK_SOL_STA_OPTIMAL ||
-            solsta == Mosek.MSK_SOL_STA_NEAR_OPTIMAL ||
-            solsta == Mosek.MSK_SOL_STA_INTEGER_OPTIMAL ||
-            solsta == Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
+            solsta == Mosek.MSK_SOL_STA_INTEGER_OPTIMAL
             :Optimal
         else
             :Unknown

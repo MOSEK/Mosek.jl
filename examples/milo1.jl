@@ -72,7 +72,7 @@ maketask() do task
     prosta = getprosta(task,MSK_SOL_ITG)
     solsta = getsolsta(task,MSK_SOL_ITG)
 
-    if solsta == MSK_SOL_STA_INTEGER_OPTIMAL || solsta == MSK_SOL_STA_NEAR_INTEGER_OPTIMAL
+    if solsta == MSK_SOL_STA_INTEGER_OPTIMAL
         # Output a solution
         xx = getxx(task,MSK_SOL_ITG)
         @printf("Optimal solution: %s\n", xx')
