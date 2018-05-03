@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.17
+# MOSEK 8.1.0.51
 
 export
   Solveform,
@@ -1263,10 +1263,10 @@ export
   MSK_MIO_CONT_SOL_ROOT
 
 abstract type MosekEnum end
-Base.convert{T <: MosekEnum}(::Type{Int32},c::T) = c.value
-Base.start{T <: MosekEnum}(c::T) = 1
-Base.next{T <: MosekEnum}(c::T,state::Int) = members(T)[state],state+1
-Base.done{T <: MosekEnum}(c::T,state::Int) = state > Base.length(T)
+Base.convert(::Type{Int32},c::T) where {T <: MosekEnum} = c.value
+Base.start(::Type{T}) where {T <: MosekEnum} = 1
+Base.next(::Type{T},state::Int) where {T <: MosekEnum} = members(T)[state],state+1
+Base.done(::Type{T},state::Int) where {T <: MosekEnum} = state > Base.length(T)
 
 """
     Solveform
@@ -1289,6 +1289,11 @@ const MSK_SOLVE_FREE = Solveform(0)
 
 "The optimizer should solve the primal problem."
 const MSK_SOLVE_PRIMAL = Solveform(1)
+tostr(v::Solveform) = if v.value == 2 "Mosek.MSK_SOLVE_DUAL"
+  elseif v.value == 0 "Mosek.MSK_SOLVE_FREE"
+  elseif v.value == 1 "Mosek.MSK_SOLVE_PRIMAL"
+  else "Mosek.Solveform(?)"
+  end
 const Solveform_members = Solveform[ MSK_SOLVE_DUAL,MSK_SOLVE_FREE,MSK_SOLVE_PRIMAL ]
 members(::Type{Solveform}) = Solveform_members
 Base.length(::Type{Solveform}) = 3
@@ -1313,13 +1318,18 @@ const MSK_PI_CONE = Problemitem(2)
 
 "Item is a variable."
 const MSK_PI_VAR = Problemitem(0)
+tostr(v::Problemitem) = if v.value == 1 "Mosek.MSK_PI_CON"
+  elseif v.value == 2 "Mosek.MSK_PI_CONE"
+  elseif v.value == 0 "Mosek.MSK_PI_VAR"
+  else "Mosek.Problemitem(?)"
+  end
 const Problemitem_members = Problemitem[ MSK_PI_CON,MSK_PI_CONE,MSK_PI_VAR ]
 members(::Type{Problemitem}) = Problemitem_members
 Base.length(::Type{Problemitem}) = 3
 """
     Accmode
 
-Constraint or variable access modes
+Constraint or variable access modes. All functions using this enum are deprecated. Use separate functions for rows/columns instead.
 
 * `MSK_ACC_CON`. Access data by rows (constraint oriented)
 * `MSK_ACC_VAR`. Access data by columns (variable oriented)
@@ -1333,6 +1343,10 @@ const MSK_ACC_CON = Accmode(1)
 
 "Access data by columns (variable oriented)"
 const MSK_ACC_VAR = Accmode(0)
+tostr(v::Accmode) = if v.value == 1 "Mosek.MSK_ACC_CON"
+  elseif v.value == 0 "Mosek.MSK_ACC_VAR"
+  else "Mosek.Accmode(?)"
+  end
 const Accmode_members = Accmode[ MSK_ACC_CON,MSK_ACC_VAR ]
 members(::Type{Accmode}) = Accmode_members
 Base.length(::Type{Accmode}) = 2
@@ -1353,6 +1367,10 @@ const MSK_SENSITIVITY_TYPE_BASIS = Sensitivitytype(0)
 
 "Optimal partition sensitivity analysis is performed."
 const MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION = Sensitivitytype(1)
+tostr(v::Sensitivitytype) = if v.value == 0 "Mosek.MSK_SENSITIVITY_TYPE_BASIS"
+  elseif v.value == 1 "Mosek.MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION"
+  else "Mosek.Sensitivitytype(?)"
+  end
 const Sensitivitytype_members = Sensitivitytype[ MSK_SENSITIVITY_TYPE_BASIS,MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION ]
 members(::Type{Sensitivitytype}) = Sensitivitytype_members
 Base.length(::Type{Sensitivitytype}) = 2
@@ -1373,6 +1391,10 @@ const MSK_UPLO_LO = Uplo(0)
 
 "Upper part"
 const MSK_UPLO_UP = Uplo(1)
+tostr(v::Uplo) = if v.value == 0 "Mosek.MSK_UPLO_LO"
+  elseif v.value == 1 "Mosek.MSK_UPLO_UP"
+  else "Mosek.Uplo(?)"
+  end
 const Uplo_members = Uplo[ MSK_UPLO_LO,MSK_UPLO_UP ]
 members(::Type{Uplo}) = Uplo_members
 Base.length(::Type{Uplo}) = 2
@@ -1401,6 +1423,12 @@ const MSK_INTPNT_HOTSTART_PRIMAL = Intpnthotstart(1)
 
 "The interior-point optimizer exploits both the primal and dual solution."
 const MSK_INTPNT_HOTSTART_PRIMAL_DUAL = Intpnthotstart(3)
+tostr(v::Intpnthotstart) = if v.value == 2 "Mosek.MSK_INTPNT_HOTSTART_DUAL"
+  elseif v.value == 0 "Mosek.MSK_INTPNT_HOTSTART_NONE"
+  elseif v.value == 1 "Mosek.MSK_INTPNT_HOTSTART_PRIMAL"
+  elseif v.value == 3 "Mosek.MSK_INTPNT_HOTSTART_PRIMAL_DUAL"
+  else "Mosek.Intpnthotstart(?)"
+  end
 const Intpnthotstart_members = Intpnthotstart[ MSK_INTPNT_HOTSTART_DUAL,MSK_INTPNT_HOTSTART_NONE,MSK_INTPNT_HOTSTART_PRIMAL,MSK_INTPNT_HOTSTART_PRIMAL_DUAL ]
 members(::Type{Intpnthotstart}) = Intpnthotstart_members
 Base.length(::Type{Intpnthotstart}) = 4
@@ -1677,6 +1705,32 @@ Possible Values: Any valid string.
 
 """
 const MSK_SPAR_WRITE_LP_GEN_VAR_NAME = Sparam(23)
+tostr(v::Sparam) = if v.value == 0 "Mosek.MSK_SPAR_BAS_SOL_FILE_NAME"
+  elseif v.value == 1 "Mosek.MSK_SPAR_DATA_FILE_NAME"
+  elseif v.value == 2 "Mosek.MSK_SPAR_DEBUG_FILE_NAME"
+  elseif v.value == 3 "Mosek.MSK_SPAR_INT_SOL_FILE_NAME"
+  elseif v.value == 4 "Mosek.MSK_SPAR_ITR_SOL_FILE_NAME"
+  elseif v.value == 5 "Mosek.MSK_SPAR_MIO_DEBUG_STRING"
+  elseif v.value == 6 "Mosek.MSK_SPAR_PARAM_COMMENT_SIGN"
+  elseif v.value == 7 "Mosek.MSK_SPAR_PARAM_READ_FILE_NAME"
+  elseif v.value == 8 "Mosek.MSK_SPAR_PARAM_WRITE_FILE_NAME"
+  elseif v.value == 9 "Mosek.MSK_SPAR_READ_MPS_BOU_NAME"
+  elseif v.value == 10 "Mosek.MSK_SPAR_READ_MPS_OBJ_NAME"
+  elseif v.value == 11 "Mosek.MSK_SPAR_READ_MPS_RAN_NAME"
+  elseif v.value == 12 "Mosek.MSK_SPAR_READ_MPS_RHS_NAME"
+  elseif v.value == 13 "Mosek.MSK_SPAR_REMOTE_ACCESS_TOKEN"
+  elseif v.value == 14 "Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME"
+  elseif v.value == 15 "Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME"
+  elseif v.value == 16 "Mosek.MSK_SPAR_SOL_FILTER_XC_LOW"
+  elseif v.value == 17 "Mosek.MSK_SPAR_SOL_FILTER_XC_UPR"
+  elseif v.value == 18 "Mosek.MSK_SPAR_SOL_FILTER_XX_LOW"
+  elseif v.value == 19 "Mosek.MSK_SPAR_SOL_FILTER_XX_UPR"
+  elseif v.value == 20 "Mosek.MSK_SPAR_STAT_FILE_NAME"
+  elseif v.value == 21 "Mosek.MSK_SPAR_STAT_KEY"
+  elseif v.value == 22 "Mosek.MSK_SPAR_STAT_NAME"
+  elseif v.value == 23 "Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME"
+  else "Mosek.Sparam(?)"
+  end
 const Sparam_members = Sparam[ MSK_SPAR_BAS_SOL_FILE_NAME,MSK_SPAR_DATA_FILE_NAME,MSK_SPAR_DEBUG_FILE_NAME,MSK_SPAR_INT_SOL_FILE_NAME,MSK_SPAR_ITR_SOL_FILE_NAME,MSK_SPAR_MIO_DEBUG_STRING,MSK_SPAR_PARAM_COMMENT_SIGN,MSK_SPAR_PARAM_READ_FILE_NAME,MSK_SPAR_PARAM_WRITE_FILE_NAME,MSK_SPAR_READ_MPS_BOU_NAME,MSK_SPAR_READ_MPS_OBJ_NAME,MSK_SPAR_READ_MPS_RAN_NAME,MSK_SPAR_READ_MPS_RHS_NAME,MSK_SPAR_REMOTE_ACCESS_TOKEN,MSK_SPAR_SENSITIVITY_FILE_NAME,MSK_SPAR_SENSITIVITY_RES_FILE_NAME,MSK_SPAR_SOL_FILTER_XC_LOW,MSK_SPAR_SOL_FILTER_XC_UPR,MSK_SPAR_SOL_FILTER_XX_LOW,MSK_SPAR_SOL_FILTER_XX_UPR,MSK_SPAR_STAT_FILE_NAME,MSK_SPAR_STAT_KEY,MSK_SPAR_STAT_NAME,MSK_SPAR_WRITE_LP_GEN_VAR_NAME ]
 members(::Type{Sparam}) = Sparam_members
 Base.length(::Type{Sparam}) = 24
@@ -3851,6 +3905,181 @@ Possible values:
 * `MSK_WRITE_XML_MODE_COL`. Write in column order.
 """
 const MSK_IPAR_WRITE_XML_MODE = Iparam(172)
+tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
+  elseif v.value == 1 "Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED"
+  elseif v.value == 2 "Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"
+  elseif v.value == 3 "Mosek.MSK_IPAR_AUTO_UPDATE_SOL_INFO"
+  elseif v.value == 4 "Mosek.MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE"
+  elseif v.value == 5 "Mosek.MSK_IPAR_BI_CLEAN_OPTIMIZER"
+  elseif v.value == 6 "Mosek.MSK_IPAR_BI_IGNORE_MAX_ITER"
+  elseif v.value == 7 "Mosek.MSK_IPAR_BI_IGNORE_NUM_ERROR"
+  elseif v.value == 8 "Mosek.MSK_IPAR_BI_MAX_ITERATIONS"
+  elseif v.value == 9 "Mosek.MSK_IPAR_CACHE_LICENSE"
+  elseif v.value == 10 "Mosek.MSK_IPAR_CHECK_CONVEXITY"
+  elseif v.value == 11 "Mosek.MSK_IPAR_COMPRESS_STATFILE"
+  elseif v.value == 12 "Mosek.MSK_IPAR_INFEAS_GENERIC_NAMES"
+  elseif v.value == 13 "Mosek.MSK_IPAR_INFEAS_PREFER_PRIMAL"
+  elseif v.value == 14 "Mosek.MSK_IPAR_INFEAS_REPORT_AUTO"
+  elseif v.value == 15 "Mosek.MSK_IPAR_INFEAS_REPORT_LEVEL"
+  elseif v.value == 16 "Mosek.MSK_IPAR_INTPNT_BASIS"
+  elseif v.value == 17 "Mosek.MSK_IPAR_INTPNT_DIFF_STEP"
+  elseif v.value == 18 "Mosek.MSK_IPAR_INTPNT_HOTSTART"
+  elseif v.value == 19 "Mosek.MSK_IPAR_INTPNT_MAX_ITERATIONS"
+  elseif v.value == 20 "Mosek.MSK_IPAR_INTPNT_MAX_NUM_COR"
+  elseif v.value == 21 "Mosek.MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS"
+  elseif v.value == 22 "Mosek.MSK_IPAR_INTPNT_MULTI_THREAD"
+  elseif v.value == 23 "Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH"
+  elseif v.value == 24 "Mosek.MSK_IPAR_INTPNT_ORDER_METHOD"
+  elseif v.value == 25 "Mosek.MSK_IPAR_INTPNT_REGULARIZATION_USE"
+  elseif v.value == 26 "Mosek.MSK_IPAR_INTPNT_SCALING"
+  elseif v.value == 27 "Mosek.MSK_IPAR_INTPNT_SOLVE_FORM"
+  elseif v.value == 28 "Mosek.MSK_IPAR_INTPNT_STARTING_POINT"
+  elseif v.value == 29 "Mosek.MSK_IPAR_LICENSE_DEBUG"
+  elseif v.value == 30 "Mosek.MSK_IPAR_LICENSE_PAUSE_TIME"
+  elseif v.value == 31 "Mosek.MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS"
+  elseif v.value == 32 "Mosek.MSK_IPAR_LICENSE_TRH_EXPIRY_WRN"
+  elseif v.value == 33 "Mosek.MSK_IPAR_LICENSE_WAIT"
+  elseif v.value == 34 "Mosek.MSK_IPAR_LOG"
+  elseif v.value == 35 "Mosek.MSK_IPAR_LOG_ANA_PRO"
+  elseif v.value == 36 "Mosek.MSK_IPAR_LOG_BI"
+  elseif v.value == 37 "Mosek.MSK_IPAR_LOG_BI_FREQ"
+  elseif v.value == 38 "Mosek.MSK_IPAR_LOG_CHECK_CONVEXITY"
+  elseif v.value == 39 "Mosek.MSK_IPAR_LOG_CUT_SECOND_OPT"
+  elseif v.value == 40 "Mosek.MSK_IPAR_LOG_EXPAND"
+  elseif v.value == 41 "Mosek.MSK_IPAR_LOG_FEAS_REPAIR"
+  elseif v.value == 42 "Mosek.MSK_IPAR_LOG_FILE"
+  elseif v.value == 43 "Mosek.MSK_IPAR_LOG_INFEAS_ANA"
+  elseif v.value == 44 "Mosek.MSK_IPAR_LOG_INTPNT"
+  elseif v.value == 45 "Mosek.MSK_IPAR_LOG_MIO"
+  elseif v.value == 46 "Mosek.MSK_IPAR_LOG_MIO_FREQ"
+  elseif v.value == 47 "Mosek.MSK_IPAR_LOG_ORDER"
+  elseif v.value == 48 "Mosek.MSK_IPAR_LOG_PRESOLVE"
+  elseif v.value == 49 "Mosek.MSK_IPAR_LOG_RESPONSE"
+  elseif v.value == 50 "Mosek.MSK_IPAR_LOG_SENSITIVITY"
+  elseif v.value == 51 "Mosek.MSK_IPAR_LOG_SENSITIVITY_OPT"
+  elseif v.value == 52 "Mosek.MSK_IPAR_LOG_SIM"
+  elseif v.value == 53 "Mosek.MSK_IPAR_LOG_SIM_FREQ"
+  elseif v.value == 54 "Mosek.MSK_IPAR_LOG_SIM_MINOR"
+  elseif v.value == 55 "Mosek.MSK_IPAR_LOG_STORAGE"
+  elseif v.value == 56 "Mosek.MSK_IPAR_MAX_NUM_WARNINGS"
+  elseif v.value == 57 "Mosek.MSK_IPAR_MIO_BRANCH_DIR"
+  elseif v.value == 58 "Mosek.MSK_IPAR_MIO_CONSTRUCT_SOL"
+  elseif v.value == 59 "Mosek.MSK_IPAR_MIO_CUT_CLIQUE"
+  elseif v.value == 60 "Mosek.MSK_IPAR_MIO_CUT_CMIR"
+  elseif v.value == 61 "Mosek.MSK_IPAR_MIO_CUT_GMI"
+  elseif v.value == 62 "Mosek.MSK_IPAR_MIO_CUT_IMPLIED_BOUND"
+  elseif v.value == 63 "Mosek.MSK_IPAR_MIO_CUT_KNAPSACK_COVER"
+  elseif v.value == 64 "Mosek.MSK_IPAR_MIO_CUT_SELECTION_LEVEL"
+  elseif v.value == 65 "Mosek.MSK_IPAR_MIO_HEURISTIC_LEVEL"
+  elseif v.value == 66 "Mosek.MSK_IPAR_MIO_MAX_NUM_BRANCHES"
+  elseif v.value == 67 "Mosek.MSK_IPAR_MIO_MAX_NUM_RELAXS"
+  elseif v.value == 68 "Mosek.MSK_IPAR_MIO_MAX_NUM_SOLUTIONS"
+  elseif v.value == 69 "Mosek.MSK_IPAR_MIO_MODE"
+  elseif v.value == 70 "Mosek.MSK_IPAR_MIO_MT_USER_CB"
+  elseif v.value == 71 "Mosek.MSK_IPAR_MIO_NODE_OPTIMIZER"
+  elseif v.value == 72 "Mosek.MSK_IPAR_MIO_NODE_SELECTION"
+  elseif v.value == 73 "Mosek.MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE"
+  elseif v.value == 74 "Mosek.MSK_IPAR_MIO_PROBING_LEVEL"
+  elseif v.value == 75 "Mosek.MSK_IPAR_MIO_RINS_MAX_NODES"
+  elseif v.value == 76 "Mosek.MSK_IPAR_MIO_ROOT_OPTIMIZER"
+  elseif v.value == 77 "Mosek.MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL"
+  elseif v.value == 78 "Mosek.MSK_IPAR_MIO_VB_DETECTION_LEVEL"
+  elseif v.value == 79 "Mosek.MSK_IPAR_MT_SPINCOUNT"
+  elseif v.value == 80 "Mosek.MSK_IPAR_NUM_THREADS"
+  elseif v.value == 81 "Mosek.MSK_IPAR_OPF_MAX_TERMS_PER_LINE"
+  elseif v.value == 82 "Mosek.MSK_IPAR_OPF_WRITE_HEADER"
+  elseif v.value == 83 "Mosek.MSK_IPAR_OPF_WRITE_HINTS"
+  elseif v.value == 84 "Mosek.MSK_IPAR_OPF_WRITE_PARAMETERS"
+  elseif v.value == 85 "Mosek.MSK_IPAR_OPF_WRITE_PROBLEM"
+  elseif v.value == 86 "Mosek.MSK_IPAR_OPF_WRITE_SOL_BAS"
+  elseif v.value == 87 "Mosek.MSK_IPAR_OPF_WRITE_SOL_ITG"
+  elseif v.value == 88 "Mosek.MSK_IPAR_OPF_WRITE_SOL_ITR"
+  elseif v.value == 89 "Mosek.MSK_IPAR_OPF_WRITE_SOLUTIONS"
+  elseif v.value == 90 "Mosek.MSK_IPAR_OPTIMIZER"
+  elseif v.value == 91 "Mosek.MSK_IPAR_PARAM_READ_CASE_NAME"
+  elseif v.value == 92 "Mosek.MSK_IPAR_PARAM_READ_IGN_ERROR"
+  elseif v.value == 93 "Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL"
+  elseif v.value == 94 "Mosek.MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES"
+  elseif v.value == 95 "Mosek.MSK_IPAR_PRESOLVE_LEVEL"
+  elseif v.value == 96 "Mosek.MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH"
+  elseif v.value == 97 "Mosek.MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH"
+  elseif v.value == 98 "Mosek.MSK_IPAR_PRESOLVE_LINDEP_USE"
+  elseif v.value == 99 "Mosek.MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS"
+  elseif v.value == 100 "Mosek.MSK_IPAR_PRESOLVE_USE"
+  elseif v.value == 101 "Mosek.MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER"
+  elseif v.value == 102 "Mosek.MSK_IPAR_READ_DATA_COMPRESSED"
+  elseif v.value == 103 "Mosek.MSK_IPAR_READ_DATA_FORMAT"
+  elseif v.value == 104 "Mosek.MSK_IPAR_READ_DEBUG"
+  elseif v.value == 105 "Mosek.MSK_IPAR_READ_KEEP_FREE_CON"
+  elseif v.value == 106 "Mosek.MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU"
+  elseif v.value == 107 "Mosek.MSK_IPAR_READ_LP_QUOTED_NAMES"
+  elseif v.value == 108 "Mosek.MSK_IPAR_READ_MPS_FORMAT"
+  elseif v.value == 109 "Mosek.MSK_IPAR_READ_MPS_WIDTH"
+  elseif v.value == 110 "Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM"
+  elseif v.value == 111 "Mosek.MSK_IPAR_REMOVE_UNUSED_SOLUTIONS"
+  elseif v.value == 112 "Mosek.MSK_IPAR_SENSITIVITY_ALL"
+  elseif v.value == 113 "Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER"
+  elseif v.value == 114 "Mosek.MSK_IPAR_SENSITIVITY_TYPE"
+  elseif v.value == 115 "Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE"
+  elseif v.value == 116 "Mosek.MSK_IPAR_SIM_DEGEN"
+  elseif v.value == 117 "Mosek.MSK_IPAR_SIM_DUAL_CRASH"
+  elseif v.value == 118 "Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"
+  elseif v.value == 119 "Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"
+  elseif v.value == 120 "Mosek.MSK_IPAR_SIM_DUAL_SELECTION"
+  elseif v.value == 121 "Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC"
+  elseif v.value == 122 "Mosek.MSK_IPAR_SIM_HOTSTART"
+  elseif v.value == 123 "Mosek.MSK_IPAR_SIM_HOTSTART_LU"
+  elseif v.value == 124 "Mosek.MSK_IPAR_SIM_MAX_ITERATIONS"
+  elseif v.value == 125 "Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS"
+  elseif v.value == 126 "Mosek.MSK_IPAR_SIM_NON_SINGULAR"
+  elseif v.value == 127 "Mosek.MSK_IPAR_SIM_PRIMAL_CRASH"
+  elseif v.value == 128 "Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"
+  elseif v.value == 129 "Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"
+  elseif v.value == 130 "Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION"
+  elseif v.value == 131 "Mosek.MSK_IPAR_SIM_REFACTOR_FREQ"
+  elseif v.value == 132 "Mosek.MSK_IPAR_SIM_REFORMULATION"
+  elseif v.value == 133 "Mosek.MSK_IPAR_SIM_SAVE_LU"
+  elseif v.value == 134 "Mosek.MSK_IPAR_SIM_SCALING"
+  elseif v.value == 135 "Mosek.MSK_IPAR_SIM_SCALING_METHOD"
+  elseif v.value == 136 "Mosek.MSK_IPAR_SIM_SOLVE_FORM"
+  elseif v.value == 137 "Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY"
+  elseif v.value == 138 "Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER"
+  elseif v.value == 139 "Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC"
+  elseif v.value == 140 "Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED"
+  elseif v.value == 141 "Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH"
+  elseif v.value == 142 "Mosek.MSK_IPAR_SOL_READ_WIDTH"
+  elseif v.value == 143 "Mosek.MSK_IPAR_SOLUTION_CALLBACK"
+  elseif v.value == 144 "Mosek.MSK_IPAR_TIMING_LEVEL"
+  elseif v.value == 145 "Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS"
+  elseif v.value == 146 "Mosek.MSK_IPAR_WRITE_BAS_HEAD"
+  elseif v.value == 147 "Mosek.MSK_IPAR_WRITE_BAS_VARIABLES"
+  elseif v.value == 148 "Mosek.MSK_IPAR_WRITE_DATA_COMPRESSED"
+  elseif v.value == 149 "Mosek.MSK_IPAR_WRITE_DATA_FORMAT"
+  elseif v.value == 150 "Mosek.MSK_IPAR_WRITE_DATA_PARAM"
+  elseif v.value == 151 "Mosek.MSK_IPAR_WRITE_FREE_CON"
+  elseif v.value == 152 "Mosek.MSK_IPAR_WRITE_GENERIC_NAMES"
+  elseif v.value == 153 "Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO"
+  elseif v.value == 154 "Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"
+  elseif v.value == 155 "Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS"
+  elseif v.value == 156 "Mosek.MSK_IPAR_WRITE_INT_HEAD"
+  elseif v.value == 157 "Mosek.MSK_IPAR_WRITE_INT_VARIABLES"
+  elseif v.value == 158 "Mosek.MSK_IPAR_WRITE_LP_FULL_OBJ"
+  elseif v.value == 159 "Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH"
+  elseif v.value == 160 "Mosek.MSK_IPAR_WRITE_LP_QUOTED_NAMES"
+  elseif v.value == 161 "Mosek.MSK_IPAR_WRITE_LP_STRICT_FORMAT"
+  elseif v.value == 162 "Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE"
+  elseif v.value == 163 "Mosek.MSK_IPAR_WRITE_MPS_FORMAT"
+  elseif v.value == 164 "Mosek.MSK_IPAR_WRITE_MPS_INT"
+  elseif v.value == 165 "Mosek.MSK_IPAR_WRITE_PRECISION"
+  elseif v.value == 166 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
+  elseif v.value == 167 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
+  elseif v.value == 168 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
+  elseif v.value == 169 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
+  elseif v.value == 170 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
+  elseif v.value == 171 "Mosek.MSK_IPAR_WRITE_TASK_INC_SOL"
+  elseif v.value == 172 "Mosek.MSK_IPAR_WRITE_XML_MODE"
+  else "Mosek.Iparam(?)"
+  end
 const Iparam_members = Iparam[ MSK_IPAR_ANA_SOL_BASIS,MSK_IPAR_ANA_SOL_PRINT_VIOLATED,MSK_IPAR_AUTO_SORT_A_BEFORE_OPT,MSK_IPAR_AUTO_UPDATE_SOL_INFO,MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE,MSK_IPAR_BI_CLEAN_OPTIMIZER,MSK_IPAR_BI_IGNORE_MAX_ITER,MSK_IPAR_BI_IGNORE_NUM_ERROR,MSK_IPAR_BI_MAX_ITERATIONS,MSK_IPAR_CACHE_LICENSE,MSK_IPAR_CHECK_CONVEXITY,MSK_IPAR_COMPRESS_STATFILE,MSK_IPAR_INFEAS_GENERIC_NAMES,MSK_IPAR_INFEAS_PREFER_PRIMAL,MSK_IPAR_INFEAS_REPORT_AUTO,MSK_IPAR_INFEAS_REPORT_LEVEL,MSK_IPAR_INTPNT_BASIS,MSK_IPAR_INTPNT_DIFF_STEP,MSK_IPAR_INTPNT_HOTSTART,MSK_IPAR_INTPNT_MAX_ITERATIONS,MSK_IPAR_INTPNT_MAX_NUM_COR,MSK_IPAR_INTPNT_MAX_NUM_REFINEMENT_STEPS,MSK_IPAR_INTPNT_MULTI_THREAD,MSK_IPAR_INTPNT_OFF_COL_TRH,MSK_IPAR_INTPNT_ORDER_METHOD,MSK_IPAR_INTPNT_REGULARIZATION_USE,MSK_IPAR_INTPNT_SCALING,MSK_IPAR_INTPNT_SOLVE_FORM,MSK_IPAR_INTPNT_STARTING_POINT,MSK_IPAR_LICENSE_DEBUG,MSK_IPAR_LICENSE_PAUSE_TIME,MSK_IPAR_LICENSE_SUPPRESS_EXPIRE_WRNS,MSK_IPAR_LICENSE_TRH_EXPIRY_WRN,MSK_IPAR_LICENSE_WAIT,MSK_IPAR_LOG,MSK_IPAR_LOG_ANA_PRO,MSK_IPAR_LOG_BI,MSK_IPAR_LOG_BI_FREQ,MSK_IPAR_LOG_CHECK_CONVEXITY,MSK_IPAR_LOG_CUT_SECOND_OPT,MSK_IPAR_LOG_EXPAND,MSK_IPAR_LOG_FEAS_REPAIR,MSK_IPAR_LOG_FILE,MSK_IPAR_LOG_INFEAS_ANA,MSK_IPAR_LOG_INTPNT,MSK_IPAR_LOG_MIO,MSK_IPAR_LOG_MIO_FREQ,MSK_IPAR_LOG_ORDER,MSK_IPAR_LOG_PRESOLVE,MSK_IPAR_LOG_RESPONSE,MSK_IPAR_LOG_SENSITIVITY,MSK_IPAR_LOG_SENSITIVITY_OPT,MSK_IPAR_LOG_SIM,MSK_IPAR_LOG_SIM_FREQ,MSK_IPAR_LOG_SIM_MINOR,MSK_IPAR_LOG_STORAGE,MSK_IPAR_MAX_NUM_WARNINGS,MSK_IPAR_MIO_BRANCH_DIR,MSK_IPAR_MIO_CONSTRUCT_SOL,MSK_IPAR_MIO_CUT_CLIQUE,MSK_IPAR_MIO_CUT_CMIR,MSK_IPAR_MIO_CUT_GMI,MSK_IPAR_MIO_CUT_IMPLIED_BOUND,MSK_IPAR_MIO_CUT_KNAPSACK_COVER,MSK_IPAR_MIO_CUT_SELECTION_LEVEL,MSK_IPAR_MIO_HEURISTIC_LEVEL,MSK_IPAR_MIO_MAX_NUM_BRANCHES,MSK_IPAR_MIO_MAX_NUM_RELAXS,MSK_IPAR_MIO_MAX_NUM_SOLUTIONS,MSK_IPAR_MIO_MODE,MSK_IPAR_MIO_MT_USER_CB,MSK_IPAR_MIO_NODE_OPTIMIZER,MSK_IPAR_MIO_NODE_SELECTION,MSK_IPAR_MIO_PERSPECTIVE_REFORMULATE,MSK_IPAR_MIO_PROBING_LEVEL,MSK_IPAR_MIO_RINS_MAX_NODES,MSK_IPAR_MIO_ROOT_OPTIMIZER,MSK_IPAR_MIO_ROOT_REPEAT_PRESOLVE_LEVEL,MSK_IPAR_MIO_VB_DETECTION_LEVEL,MSK_IPAR_MT_SPINCOUNT,MSK_IPAR_NUM_THREADS,MSK_IPAR_OPF_MAX_TERMS_PER_LINE,MSK_IPAR_OPF_WRITE_HEADER,MSK_IPAR_OPF_WRITE_HINTS,MSK_IPAR_OPF_WRITE_PARAMETERS,MSK_IPAR_OPF_WRITE_PROBLEM,MSK_IPAR_OPF_WRITE_SOL_BAS,MSK_IPAR_OPF_WRITE_SOL_ITG,MSK_IPAR_OPF_WRITE_SOL_ITR,MSK_IPAR_OPF_WRITE_SOLUTIONS,MSK_IPAR_OPTIMIZER,MSK_IPAR_PARAM_READ_CASE_NAME,MSK_IPAR_PARAM_READ_IGN_ERROR,MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_FILL,MSK_IPAR_PRESOLVE_ELIMINATOR_MAX_NUM_TRIES,MSK_IPAR_PRESOLVE_LEVEL,MSK_IPAR_PRESOLVE_LINDEP_ABS_WORK_TRH,MSK_IPAR_PRESOLVE_LINDEP_REL_WORK_TRH,MSK_IPAR_PRESOLVE_LINDEP_USE,MSK_IPAR_PRESOLVE_MAX_NUM_REDUCTIONS,MSK_IPAR_PRESOLVE_USE,MSK_IPAR_PRIMAL_REPAIR_OPTIMIZER,MSK_IPAR_READ_DATA_COMPRESSED,MSK_IPAR_READ_DATA_FORMAT,MSK_IPAR_READ_DEBUG,MSK_IPAR_READ_KEEP_FREE_CON,MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU,MSK_IPAR_READ_LP_QUOTED_NAMES,MSK_IPAR_READ_MPS_FORMAT,MSK_IPAR_READ_MPS_WIDTH,MSK_IPAR_READ_TASK_IGNORE_PARAM,MSK_IPAR_REMOVE_UNUSED_SOLUTIONS,MSK_IPAR_SENSITIVITY_ALL,MSK_IPAR_SENSITIVITY_OPTIMIZER,MSK_IPAR_SENSITIVITY_TYPE,MSK_IPAR_SIM_BASIS_FACTOR_USE,MSK_IPAR_SIM_DEGEN,MSK_IPAR_SIM_DUAL_CRASH,MSK_IPAR_SIM_DUAL_PHASEONE_METHOD,MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION,MSK_IPAR_SIM_DUAL_SELECTION,MSK_IPAR_SIM_EXPLOIT_DUPVEC,MSK_IPAR_SIM_HOTSTART,MSK_IPAR_SIM_HOTSTART_LU,MSK_IPAR_SIM_MAX_ITERATIONS,MSK_IPAR_SIM_MAX_NUM_SETBACKS,MSK_IPAR_SIM_NON_SINGULAR,MSK_IPAR_SIM_PRIMAL_CRASH,MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD,MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION,MSK_IPAR_SIM_PRIMAL_SELECTION,MSK_IPAR_SIM_REFACTOR_FREQ,MSK_IPAR_SIM_REFORMULATION,MSK_IPAR_SIM_SAVE_LU,MSK_IPAR_SIM_SCALING,MSK_IPAR_SIM_SCALING_METHOD,MSK_IPAR_SIM_SOLVE_FORM,MSK_IPAR_SIM_STABILITY_PRIORITY,MSK_IPAR_SIM_SWITCH_OPTIMIZER,MSK_IPAR_SOL_FILTER_KEEP_BASIC,MSK_IPAR_SOL_FILTER_KEEP_RANGED,MSK_IPAR_SOL_READ_NAME_WIDTH,MSK_IPAR_SOL_READ_WIDTH,MSK_IPAR_SOLUTION_CALLBACK,MSK_IPAR_TIMING_LEVEL,MSK_IPAR_WRITE_BAS_CONSTRAINTS,MSK_IPAR_WRITE_BAS_HEAD,MSK_IPAR_WRITE_BAS_VARIABLES,MSK_IPAR_WRITE_DATA_COMPRESSED,MSK_IPAR_WRITE_DATA_FORMAT,MSK_IPAR_WRITE_DATA_PARAM,MSK_IPAR_WRITE_FREE_CON,MSK_IPAR_WRITE_GENERIC_NAMES,MSK_IPAR_WRITE_GENERIC_NAMES_IO,MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS,MSK_IPAR_WRITE_INT_CONSTRAINTS,MSK_IPAR_WRITE_INT_HEAD,MSK_IPAR_WRITE_INT_VARIABLES,MSK_IPAR_WRITE_LP_FULL_OBJ,MSK_IPAR_WRITE_LP_LINE_WIDTH,MSK_IPAR_WRITE_LP_QUOTED_NAMES,MSK_IPAR_WRITE_LP_STRICT_FORMAT,MSK_IPAR_WRITE_LP_TERMS_PER_LINE,MSK_IPAR_WRITE_MPS_FORMAT,MSK_IPAR_WRITE_MPS_INT,MSK_IPAR_WRITE_PRECISION,MSK_IPAR_WRITE_SOL_BARVARIABLES,MSK_IPAR_WRITE_SOL_CONSTRAINTS,MSK_IPAR_WRITE_SOL_HEAD,MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES,MSK_IPAR_WRITE_SOL_VARIABLES,MSK_IPAR_WRITE_TASK_INC_SOL,MSK_IPAR_WRITE_XML_MODE ]
 members(::Type{Iparam}) = Iparam_members
 Base.length(::Type{Iparam}) = 173
@@ -3931,6 +4160,25 @@ const MSK_SOL_STA_PRIM_INFEAS_CER = Solsta(5)
 
 "Status of the solution is unknown."
 const MSK_SOL_STA_UNKNOWN = Solsta(0)
+tostr(v::Solsta) = if v.value == 3 "Mosek.MSK_SOL_STA_DUAL_FEAS"
+  elseif v.value == 14 "Mosek.MSK_SOL_STA_DUAL_ILLPOSED_CER"
+  elseif v.value == 6 "Mosek.MSK_SOL_STA_DUAL_INFEAS_CER"
+  elseif v.value == 15 "Mosek.MSK_SOL_STA_INTEGER_OPTIMAL"
+  elseif v.value == 9 "Mosek.MSK_SOL_STA_NEAR_DUAL_FEAS"
+  elseif v.value == 12 "Mosek.MSK_SOL_STA_NEAR_DUAL_INFEAS_CER"
+  elseif v.value == 16 "Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL"
+  elseif v.value == 7 "Mosek.MSK_SOL_STA_NEAR_OPTIMAL"
+  elseif v.value == 10 "Mosek.MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS"
+  elseif v.value == 8 "Mosek.MSK_SOL_STA_NEAR_PRIM_FEAS"
+  elseif v.value == 11 "Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER"
+  elseif v.value == 1 "Mosek.MSK_SOL_STA_OPTIMAL"
+  elseif v.value == 4 "Mosek.MSK_SOL_STA_PRIM_AND_DUAL_FEAS"
+  elseif v.value == 2 "Mosek.MSK_SOL_STA_PRIM_FEAS"
+  elseif v.value == 13 "Mosek.MSK_SOL_STA_PRIM_ILLPOSED_CER"
+  elseif v.value == 5 "Mosek.MSK_SOL_STA_PRIM_INFEAS_CER"
+  elseif v.value == 0 "Mosek.MSK_SOL_STA_UNKNOWN"
+  else "Mosek.Solsta(?)"
+  end
 const Solsta_members = Solsta[ MSK_SOL_STA_DUAL_FEAS,MSK_SOL_STA_DUAL_ILLPOSED_CER,MSK_SOL_STA_DUAL_INFEAS_CER,MSK_SOL_STA_INTEGER_OPTIMAL,MSK_SOL_STA_NEAR_DUAL_FEAS,MSK_SOL_STA_NEAR_DUAL_INFEAS_CER,MSK_SOL_STA_NEAR_INTEGER_OPTIMAL,MSK_SOL_STA_NEAR_OPTIMAL,MSK_SOL_STA_NEAR_PRIM_AND_DUAL_FEAS,MSK_SOL_STA_NEAR_PRIM_FEAS,MSK_SOL_STA_NEAR_PRIM_INFEAS_CER,MSK_SOL_STA_OPTIMAL,MSK_SOL_STA_PRIM_AND_DUAL_FEAS,MSK_SOL_STA_PRIM_FEAS,MSK_SOL_STA_PRIM_ILLPOSED_CER,MSK_SOL_STA_PRIM_INFEAS_CER,MSK_SOL_STA_UNKNOWN ]
 members(::Type{Solsta}) = Solsta_members
 Base.length(::Type{Solsta}) = 17
@@ -3951,6 +4199,10 @@ const MSK_OBJECTIVE_SENSE_MAXIMIZE = Objsense(1)
 
 "The problem should be minimized."
 const MSK_OBJECTIVE_SENSE_MINIMIZE = Objsense(0)
+tostr(v::Objsense) = if v.value == 1 "Mosek.MSK_OBJECTIVE_SENSE_MAXIMIZE"
+  elseif v.value == 0 "Mosek.MSK_OBJECTIVE_SENSE_MINIMIZE"
+  else "Mosek.Objsense(?)"
+  end
 const Objsense_members = Objsense[ MSK_OBJECTIVE_SENSE_MAXIMIZE,MSK_OBJECTIVE_SENSE_MINIMIZE ]
 members(::Type{Objsense}) = Objsense_members
 Base.length(::Type{Objsense}) = 2
@@ -3995,6 +4247,16 @@ const MSK_SOL_ITEM_XX = Solitem(1)
 
 "Lagrange multipliers for equations."
 const MSK_SOL_ITEM_Y = Solitem(2)
+tostr(v::Solitem) = if v.value == 3 "Mosek.MSK_SOL_ITEM_SLC"
+  elseif v.value == 5 "Mosek.MSK_SOL_ITEM_SLX"
+  elseif v.value == 7 "Mosek.MSK_SOL_ITEM_SNX"
+  elseif v.value == 4 "Mosek.MSK_SOL_ITEM_SUC"
+  elseif v.value == 6 "Mosek.MSK_SOL_ITEM_SUX"
+  elseif v.value == 0 "Mosek.MSK_SOL_ITEM_XC"
+  elseif v.value == 1 "Mosek.MSK_SOL_ITEM_XX"
+  elseif v.value == 2 "Mosek.MSK_SOL_ITEM_Y"
+  else "Mosek.Solitem(?)"
+  end
 const Solitem_members = Solitem[ MSK_SOL_ITEM_SLC,MSK_SOL_ITEM_SLX,MSK_SOL_ITEM_SNX,MSK_SOL_ITEM_SUC,MSK_SOL_ITEM_SUX,MSK_SOL_ITEM_XC,MSK_SOL_ITEM_XX,MSK_SOL_ITEM_Y ]
 members(::Type{Solitem}) = Solitem_members
 Base.length(::Type{Solitem}) = 8
@@ -4027,6 +4289,13 @@ const MSK_BK_RA = Boundkey(4)
 
 "The constraint or variable has an infinite lower bound and an finite upper bound."
 const MSK_BK_UP = Boundkey(1)
+tostr(v::Boundkey) = if v.value == 3 "Mosek.MSK_BK_FR"
+  elseif v.value == 2 "Mosek.MSK_BK_FX"
+  elseif v.value == 0 "Mosek.MSK_BK_LO"
+  elseif v.value == 4 "Mosek.MSK_BK_RA"
+  elseif v.value == 1 "Mosek.MSK_BK_UP"
+  else "Mosek.Boundkey(?)"
+  end
 const Boundkey_members = Boundkey[ MSK_BK_FR,MSK_BK_FX,MSK_BK_LO,MSK_BK_RA,MSK_BK_UP ]
 members(::Type{Boundkey}) = Boundkey_members
 Base.length(::Type{Boundkey}) = 5
@@ -4059,6 +4328,13 @@ const MSK_BI_NO_ERROR = Basindtype(2)
 
 "Not currently in use."
 const MSK_BI_RESERVERED = Basindtype(4)
+tostr(v::Basindtype) = if v.value == 1 "Mosek.MSK_BI_ALWAYS"
+  elseif v.value == 3 "Mosek.MSK_BI_IF_FEASIBLE"
+  elseif v.value == 0 "Mosek.MSK_BI_NEVER"
+  elseif v.value == 2 "Mosek.MSK_BI_NO_ERROR"
+  elseif v.value == 4 "Mosek.MSK_BI_RESERVERED"
+  else "Mosek.Basindtype(?)"
+  end
 const Basindtype_members = Basindtype[ MSK_BI_ALWAYS,MSK_BI_IF_FEASIBLE,MSK_BI_NEVER,MSK_BI_NO_ERROR,MSK_BI_RESERVERED ]
 members(::Type{Basindtype}) = Basindtype_members
 Base.length(::Type{Basindtype}) = 5
@@ -4103,6 +4379,16 @@ const MSK_BRANCH_DIR_ROOT_LP = Branchdir(5)
 
 "The mixed-integer optimizer always chooses the up branch first."
 const MSK_BRANCH_DIR_UP = Branchdir(1)
+tostr(v::Branchdir) = if v.value == 2 "Mosek.MSK_BRANCH_DIR_DOWN"
+  elseif v.value == 4 "Mosek.MSK_BRANCH_DIR_FAR"
+  elseif v.value == 0 "Mosek.MSK_BRANCH_DIR_FREE"
+  elseif v.value == 6 "Mosek.MSK_BRANCH_DIR_GUIDED"
+  elseif v.value == 3 "Mosek.MSK_BRANCH_DIR_NEAR"
+  elseif v.value == 7 "Mosek.MSK_BRANCH_DIR_PSEUDOCOST"
+  elseif v.value == 5 "Mosek.MSK_BRANCH_DIR_ROOT_LP"
+  elseif v.value == 1 "Mosek.MSK_BRANCH_DIR_UP"
+  else "Mosek.Branchdir(?)"
+  end
 const Branchdir_members = Branchdir[ MSK_BRANCH_DIR_DOWN,MSK_BRANCH_DIR_FAR,MSK_BRANCH_DIR_FREE,MSK_BRANCH_DIR_GUIDED,MSK_BRANCH_DIR_NEAR,MSK_BRANCH_DIR_PSEUDOCOST,MSK_BRANCH_DIR_ROOT_LP,MSK_BRANCH_DIR_UP ]
 members(::Type{Branchdir}) = Branchdir_members
 Base.length(::Type{Branchdir}) = 8
@@ -4167,6 +4453,21 @@ const MSK_LIINF_RD_NUMANZ = Liinfitem(11)
 
 "Number of Q non-zeros."
 const MSK_LIINF_RD_NUMQNZ = Liinfitem(12)
+tostr(v::Liinfitem) = if v.value == 0 "Mosek.MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER"
+  elseif v.value == 1 "Mosek.MSK_LIINF_BI_CLEAN_DUAL_ITER"
+  elseif v.value == 2 "Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER"
+  elseif v.value == 3 "Mosek.MSK_LIINF_BI_CLEAN_PRIMAL_ITER"
+  elseif v.value == 4 "Mosek.MSK_LIINF_BI_DUAL_ITER"
+  elseif v.value == 5 "Mosek.MSK_LIINF_BI_PRIMAL_ITER"
+  elseif v.value == 6 "Mosek.MSK_LIINF_INTPNT_FACTOR_NUM_NZ"
+  elseif v.value == 7 "Mosek.MSK_LIINF_MIO_INTPNT_ITER"
+  elseif v.value == 8 "Mosek.MSK_LIINF_MIO_PRESOLVED_ANZ"
+  elseif v.value == 9 "Mosek.MSK_LIINF_MIO_SIM_MAXITER_SETBACKS"
+  elseif v.value == 10 "Mosek.MSK_LIINF_MIO_SIMPLEX_ITER"
+  elseif v.value == 11 "Mosek.MSK_LIINF_RD_NUMANZ"
+  elseif v.value == 12 "Mosek.MSK_LIINF_RD_NUMQNZ"
+  else "Mosek.Liinfitem(?)"
+  end
 const Liinfitem_members = Liinfitem[ MSK_LIINF_BI_CLEAN_DUAL_DEG_ITER,MSK_LIINF_BI_CLEAN_DUAL_ITER,MSK_LIINF_BI_CLEAN_PRIMAL_DEG_ITER,MSK_LIINF_BI_CLEAN_PRIMAL_ITER,MSK_LIINF_BI_DUAL_ITER,MSK_LIINF_BI_PRIMAL_ITER,MSK_LIINF_INTPNT_FACTOR_NUM_NZ,MSK_LIINF_MIO_INTPNT_ITER,MSK_LIINF_MIO_PRESOLVED_ANZ,MSK_LIINF_MIO_SIM_MAXITER_SETBACKS,MSK_LIINF_MIO_SIMPLEX_ITER,MSK_LIINF_RD_NUMANZ,MSK_LIINF_RD_NUMQNZ ]
 members(::Type{Liinfitem}) = Liinfitem_members
 Base.length(::Type{Liinfitem}) = 13
@@ -4191,6 +4492,11 @@ const MSK_SIM_HOTSTART_NONE = Simhotstart(0)
 
 "Only the status keys of the constraints and variables are used to choose the type of hot-start."
 const MSK_SIM_HOTSTART_STATUS_KEYS = Simhotstart(2)
+tostr(v::Simhotstart) = if v.value == 1 "Mosek.MSK_SIM_HOTSTART_FREE"
+  elseif v.value == 0 "Mosek.MSK_SIM_HOTSTART_NONE"
+  elseif v.value == 2 "Mosek.MSK_SIM_HOTSTART_STATUS_KEYS"
+  else "Mosek.Simhotstart(?)"
+  end
 const Simhotstart_members = Simhotstart[ MSK_SIM_HOTSTART_FREE,MSK_SIM_HOTSTART_NONE,MSK_SIM_HOTSTART_STATUS_KEYS ]
 members(::Type{Simhotstart}) = Simhotstart_members
 Base.length(::Type{Simhotstart}) = 3
@@ -4575,6 +4881,101 @@ const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI = Callbackcode(91)
 
 "The callback function is called from the OPF writer."
 const MSK_CALLBACK_WRITE_OPF = Callbackcode(92)
+tostr(v::Callbackcode) = if v.value == 0 "Mosek.MSK_CALLBACK_BEGIN_BI"
+  elseif v.value == 1 "Mosek.MSK_CALLBACK_BEGIN_CONIC"
+  elseif v.value == 2 "Mosek.MSK_CALLBACK_BEGIN_DUAL_BI"
+  elseif v.value == 3 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY"
+  elseif v.value == 4 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SETUP_BI"
+  elseif v.value == 5 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX"
+  elseif v.value == 6 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI"
+  elseif v.value == 7 "Mosek.MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK"
+  elseif v.value == 8 "Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA"
+  elseif v.value == 9 "Mosek.MSK_CALLBACK_BEGIN_INTPNT"
+  elseif v.value == 10 "Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT"
+  elseif v.value == 11 "Mosek.MSK_CALLBACK_BEGIN_MIO"
+  elseif v.value == 12 "Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER"
+  elseif v.value == 13 "Mosek.MSK_CALLBACK_BEGIN_PRESOLVE"
+  elseif v.value == 14 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI"
+  elseif v.value == 15 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"
+  elseif v.value == 16 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"
+  elseif v.value == 17 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"
+  elseif v.value == 18 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"
+  elseif v.value == 19 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"
+  elseif v.value == 20 "Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"
+  elseif v.value == 21 "Mosek.MSK_CALLBACK_BEGIN_READ"
+  elseif v.value == 22 "Mosek.MSK_CALLBACK_BEGIN_ROOT_CUTGEN"
+  elseif v.value == 23 "Mosek.MSK_CALLBACK_BEGIN_SIMPLEX"
+  elseif v.value == 24 "Mosek.MSK_CALLBACK_BEGIN_SIMPLEX_BI"
+  elseif v.value == 25 "Mosek.MSK_CALLBACK_BEGIN_TO_CONIC"
+  elseif v.value == 26 "Mosek.MSK_CALLBACK_BEGIN_WRITE"
+  elseif v.value == 27 "Mosek.MSK_CALLBACK_CONIC"
+  elseif v.value == 28 "Mosek.MSK_CALLBACK_DUAL_SIMPLEX"
+  elseif v.value == 29 "Mosek.MSK_CALLBACK_END_BI"
+  elseif v.value == 30 "Mosek.MSK_CALLBACK_END_CONIC"
+  elseif v.value == 31 "Mosek.MSK_CALLBACK_END_DUAL_BI"
+  elseif v.value == 32 "Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY"
+  elseif v.value == 33 "Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI"
+  elseif v.value == 34 "Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX"
+  elseif v.value == 35 "Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI"
+  elseif v.value == 36 "Mosek.MSK_CALLBACK_END_FULL_CONVEXITY_CHECK"
+  elseif v.value == 37 "Mosek.MSK_CALLBACK_END_INFEAS_ANA"
+  elseif v.value == 38 "Mosek.MSK_CALLBACK_END_INTPNT"
+  elseif v.value == 39 "Mosek.MSK_CALLBACK_END_LICENSE_WAIT"
+  elseif v.value == 40 "Mosek.MSK_CALLBACK_END_MIO"
+  elseif v.value == 41 "Mosek.MSK_CALLBACK_END_OPTIMIZER"
+  elseif v.value == 42 "Mosek.MSK_CALLBACK_END_PRESOLVE"
+  elseif v.value == 43 "Mosek.MSK_CALLBACK_END_PRIMAL_BI"
+  elseif v.value == 44 "Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR"
+  elseif v.value == 45 "Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY"
+  elseif v.value == 46 "Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI"
+  elseif v.value == 47 "Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX"
+  elseif v.value == 48 "Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"
+  elseif v.value == 49 "Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE"
+  elseif v.value == 50 "Mosek.MSK_CALLBACK_END_READ"
+  elseif v.value == 51 "Mosek.MSK_CALLBACK_END_ROOT_CUTGEN"
+  elseif v.value == 52 "Mosek.MSK_CALLBACK_END_SIMPLEX"
+  elseif v.value == 53 "Mosek.MSK_CALLBACK_END_SIMPLEX_BI"
+  elseif v.value == 54 "Mosek.MSK_CALLBACK_END_TO_CONIC"
+  elseif v.value == 55 "Mosek.MSK_CALLBACK_END_WRITE"
+  elseif v.value == 56 "Mosek.MSK_CALLBACK_IM_BI"
+  elseif v.value == 57 "Mosek.MSK_CALLBACK_IM_CONIC"
+  elseif v.value == 58 "Mosek.MSK_CALLBACK_IM_DUAL_BI"
+  elseif v.value == 59 "Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY"
+  elseif v.value == 60 "Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX"
+  elseif v.value == 61 "Mosek.MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK"
+  elseif v.value == 62 "Mosek.MSK_CALLBACK_IM_INTPNT"
+  elseif v.value == 63 "Mosek.MSK_CALLBACK_IM_LICENSE_WAIT"
+  elseif v.value == 64 "Mosek.MSK_CALLBACK_IM_LU"
+  elseif v.value == 65 "Mosek.MSK_CALLBACK_IM_MIO"
+  elseif v.value == 66 "Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"
+  elseif v.value == 67 "Mosek.MSK_CALLBACK_IM_MIO_INTPNT"
+  elseif v.value == 68 "Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"
+  elseif v.value == 69 "Mosek.MSK_CALLBACK_IM_ORDER"
+  elseif v.value == 70 "Mosek.MSK_CALLBACK_IM_PRESOLVE"
+  elseif v.value == 71 "Mosek.MSK_CALLBACK_IM_PRIMAL_BI"
+  elseif v.value == 72 "Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY"
+  elseif v.value == 73 "Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX"
+  elseif v.value == 74 "Mosek.MSK_CALLBACK_IM_QO_REFORMULATE"
+  elseif v.value == 75 "Mosek.MSK_CALLBACK_IM_READ"
+  elseif v.value == 76 "Mosek.MSK_CALLBACK_IM_ROOT_CUTGEN"
+  elseif v.value == 77 "Mosek.MSK_CALLBACK_IM_SIMPLEX"
+  elseif v.value == 78 "Mosek.MSK_CALLBACK_IM_SIMPLEX_BI"
+  elseif v.value == 79 "Mosek.MSK_CALLBACK_INTPNT"
+  elseif v.value == 80 "Mosek.MSK_CALLBACK_NEW_INT_MIO"
+  elseif v.value == 81 "Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX"
+  elseif v.value == 82 "Mosek.MSK_CALLBACK_READ_OPF"
+  elseif v.value == 83 "Mosek.MSK_CALLBACK_READ_OPF_SECTION"
+  elseif v.value == 84 "Mosek.MSK_CALLBACK_SOLVING_REMOTE"
+  elseif v.value == 85 "Mosek.MSK_CALLBACK_UPDATE_DUAL_BI"
+  elseif v.value == 86 "Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"
+  elseif v.value == 87 "Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"
+  elseif v.value == 88 "Mosek.MSK_CALLBACK_UPDATE_PRESOLVE"
+  elseif v.value == 89 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI"
+  elseif v.value == 90 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"
+  elseif v.value == 91 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"
+  elseif v.value == 92 "Mosek.MSK_CALLBACK_WRITE_OPF"
+  else "Mosek.Callbackcode(?)"
+  end
 const Callbackcode_members = Callbackcode[ MSK_CALLBACK_BEGIN_BI,MSK_CALLBACK_BEGIN_CONIC,MSK_CALLBACK_BEGIN_DUAL_BI,MSK_CALLBACK_BEGIN_DUAL_SENSITIVITY,MSK_CALLBACK_BEGIN_DUAL_SETUP_BI,MSK_CALLBACK_BEGIN_DUAL_SIMPLEX,MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI,MSK_CALLBACK_BEGIN_FULL_CONVEXITY_CHECK,MSK_CALLBACK_BEGIN_INFEAS_ANA,MSK_CALLBACK_BEGIN_INTPNT,MSK_CALLBACK_BEGIN_LICENSE_WAIT,MSK_CALLBACK_BEGIN_MIO,MSK_CALLBACK_BEGIN_OPTIMIZER,MSK_CALLBACK_BEGIN_PRESOLVE,MSK_CALLBACK_BEGIN_PRIMAL_BI,MSK_CALLBACK_BEGIN_PRIMAL_REPAIR,MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY,MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI,MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX,MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI,MSK_CALLBACK_BEGIN_QCQO_REFORMULATE,MSK_CALLBACK_BEGIN_READ,MSK_CALLBACK_BEGIN_ROOT_CUTGEN,MSK_CALLBACK_BEGIN_SIMPLEX,MSK_CALLBACK_BEGIN_SIMPLEX_BI,MSK_CALLBACK_BEGIN_TO_CONIC,MSK_CALLBACK_BEGIN_WRITE,MSK_CALLBACK_CONIC,MSK_CALLBACK_DUAL_SIMPLEX,MSK_CALLBACK_END_BI,MSK_CALLBACK_END_CONIC,MSK_CALLBACK_END_DUAL_BI,MSK_CALLBACK_END_DUAL_SENSITIVITY,MSK_CALLBACK_END_DUAL_SETUP_BI,MSK_CALLBACK_END_DUAL_SIMPLEX,MSK_CALLBACK_END_DUAL_SIMPLEX_BI,MSK_CALLBACK_END_FULL_CONVEXITY_CHECK,MSK_CALLBACK_END_INFEAS_ANA,MSK_CALLBACK_END_INTPNT,MSK_CALLBACK_END_LICENSE_WAIT,MSK_CALLBACK_END_MIO,MSK_CALLBACK_END_OPTIMIZER,MSK_CALLBACK_END_PRESOLVE,MSK_CALLBACK_END_PRIMAL_BI,MSK_CALLBACK_END_PRIMAL_REPAIR,MSK_CALLBACK_END_PRIMAL_SENSITIVITY,MSK_CALLBACK_END_PRIMAL_SETUP_BI,MSK_CALLBACK_END_PRIMAL_SIMPLEX,MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI,MSK_CALLBACK_END_QCQO_REFORMULATE,MSK_CALLBACK_END_READ,MSK_CALLBACK_END_ROOT_CUTGEN,MSK_CALLBACK_END_SIMPLEX,MSK_CALLBACK_END_SIMPLEX_BI,MSK_CALLBACK_END_TO_CONIC,MSK_CALLBACK_END_WRITE,MSK_CALLBACK_IM_BI,MSK_CALLBACK_IM_CONIC,MSK_CALLBACK_IM_DUAL_BI,MSK_CALLBACK_IM_DUAL_SENSIVITY,MSK_CALLBACK_IM_DUAL_SIMPLEX,MSK_CALLBACK_IM_FULL_CONVEXITY_CHECK,MSK_CALLBACK_IM_INTPNT,MSK_CALLBACK_IM_LICENSE_WAIT,MSK_CALLBACK_IM_LU,MSK_CALLBACK_IM_MIO,MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX,MSK_CALLBACK_IM_MIO_INTPNT,MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX,MSK_CALLBACK_IM_ORDER,MSK_CALLBACK_IM_PRESOLVE,MSK_CALLBACK_IM_PRIMAL_BI,MSK_CALLBACK_IM_PRIMAL_SENSIVITY,MSK_CALLBACK_IM_PRIMAL_SIMPLEX,MSK_CALLBACK_IM_QO_REFORMULATE,MSK_CALLBACK_IM_READ,MSK_CALLBACK_IM_ROOT_CUTGEN,MSK_CALLBACK_IM_SIMPLEX,MSK_CALLBACK_IM_SIMPLEX_BI,MSK_CALLBACK_INTPNT,MSK_CALLBACK_NEW_INT_MIO,MSK_CALLBACK_PRIMAL_SIMPLEX,MSK_CALLBACK_READ_OPF,MSK_CALLBACK_READ_OPF_SECTION,MSK_CALLBACK_SOLVING_REMOTE,MSK_CALLBACK_UPDATE_DUAL_BI,MSK_CALLBACK_UPDATE_DUAL_SIMPLEX,MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI,MSK_CALLBACK_UPDATE_PRESOLVE,MSK_CALLBACK_UPDATE_PRIMAL_BI,MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX,MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI,MSK_CALLBACK_WRITE_OPF ]
 members(::Type{Callbackcode}) = Callbackcode_members
 Base.length(::Type{Callbackcode}) = 93
@@ -4591,6 +4992,9 @@ end # symmattype
 
 "Sparse symmetric matrix."
 const MSK_SYMMAT_TYPE_SPARSE = Symmattype(0)
+tostr(v::Symmattype) = if v.value == 0 "Mosek.MSK_SYMMAT_TYPE_SPARSE"
+  else "Mosek.Symmattype(?)"
+  end
 const Symmattype_members = Symmattype[ MSK_SYMMAT_TYPE_SPARSE ]
 members(::Type{Symmattype}) = Symmattype_members
 Base.length(::Type{Symmattype}) = 1
@@ -4611,6 +5015,10 @@ const MSK_FEATURE_PTON = Feature(1)
 
 "Base system."
 const MSK_FEATURE_PTS = Feature(0)
+tostr(v::Feature) = if v.value == 1 "Mosek.MSK_FEATURE_PTON"
+  elseif v.value == 0 "Mosek.MSK_FEATURE_PTS"
+  else "Mosek.Feature(?)"
+  end
 const Feature_members = Feature[ MSK_FEATURE_PTON,MSK_FEATURE_PTS ]
 members(::Type{Feature}) = Feature_members
 Base.length(::Type{Feature}) = 2
@@ -4631,6 +5039,10 @@ const MSK_MARK_LO = Mark(0)
 
 "The upper bound is selected for sensitivity analysis."
 const MSK_MARK_UP = Mark(1)
+tostr(v::Mark) = if v.value == 0 "Mosek.MSK_MARK_LO"
+  elseif v.value == 1 "Mosek.MSK_MARK_UP"
+  else "Mosek.Mark(?)"
+  end
 const Mark_members = Mark[ MSK_MARK_LO,MSK_MARK_UP ]
 members(::Type{Mark}) = Mark_members
 Base.length(::Type{Mark}) = 2
@@ -4651,6 +5063,10 @@ const MSK_CT_QUAD = Conetype(0)
 
 "The cone is a rotated quadratic cone."
 const MSK_CT_RQUAD = Conetype(1)
+tostr(v::Conetype) = if v.value == 0 "Mosek.MSK_CT_QUAD"
+  elseif v.value == 1 "Mosek.MSK_CT_RQUAD"
+  else "Mosek.Conetype(?)"
+  end
 const Conetype_members = Conetype[ MSK_CT_QUAD,MSK_CT_RQUAD ]
 members(::Type{Conetype}) = Conetype_members
 Base.length(::Type{Conetype}) = 2
@@ -4679,6 +5095,12 @@ const MSK_STREAM_MSG = Streamtype(1)
 
 "Warning stream. Warning messages are written to this stream."
 const MSK_STREAM_WRN = Streamtype(3)
+tostr(v::Streamtype) = if v.value == 2 "Mosek.MSK_STREAM_ERR"
+  elseif v.value == 0 "Mosek.MSK_STREAM_LOG"
+  elseif v.value == 1 "Mosek.MSK_STREAM_MSG"
+  elseif v.value == 3 "Mosek.MSK_STREAM_WRN"
+  else "Mosek.Streamtype(?)"
+  end
 const Streamtype_members = Streamtype[ MSK_STREAM_ERR,MSK_STREAM_LOG,MSK_STREAM_MSG,MSK_STREAM_WRN ]
 members(::Type{Streamtype}) = Streamtype_members
 Base.length(::Type{Streamtype}) = 4
@@ -4703,6 +5125,11 @@ const MSK_IOMODE_READWRITE = Iomode(2)
 
 "The file is write-only. If the file exists then it is truncated when it is opened. Otherwise it is created when it is opened."
 const MSK_IOMODE_WRITE = Iomode(1)
+tostr(v::Iomode) = if v.value == 0 "Mosek.MSK_IOMODE_READ"
+  elseif v.value == 2 "Mosek.MSK_IOMODE_READWRITE"
+  elseif v.value == 1 "Mosek.MSK_IOMODE_WRITE"
+  else "Mosek.Iomode(?)"
+  end
 const Iomode_members = Iomode[ MSK_IOMODE_READ,MSK_IOMODE_READWRITE,MSK_IOMODE_WRITE ]
 members(::Type{Iomode}) = Iomode_members
 Base.length(::Type{Iomode}) = 3
@@ -4739,6 +5166,14 @@ const MSK_SIM_SELECTION_PARTIAL = Simseltype(5)
 
 "The optimizer uses steepest-edge selection."
 const MSK_SIM_SELECTION_SE = Simseltype(4)
+tostr(v::Simseltype) = if v.value == 2 "Mosek.MSK_SIM_SELECTION_ASE"
+  elseif v.value == 3 "Mosek.MSK_SIM_SELECTION_DEVEX"
+  elseif v.value == 0 "Mosek.MSK_SIM_SELECTION_FREE"
+  elseif v.value == 1 "Mosek.MSK_SIM_SELECTION_FULL"
+  elseif v.value == 5 "Mosek.MSK_SIM_SELECTION_PARTIAL"
+  elseif v.value == 4 "Mosek.MSK_SIM_SELECTION_SE"
+  else "Mosek.Simseltype(?)"
+  end
 const Simseltype_members = Simseltype[ MSK_SIM_SELECTION_ASE,MSK_SIM_SELECTION_DEVEX,MSK_SIM_SELECTION_FREE,MSK_SIM_SELECTION_FULL,MSK_SIM_SELECTION_PARTIAL,MSK_SIM_SELECTION_SE ]
 members(::Type{Simseltype}) = Simseltype_members
 Base.length(::Type{Simseltype}) = 6
@@ -4759,6 +5194,10 @@ const MSK_WRITE_XML_MODE_COL = Xmlwriteroutputtype(1)
 
 "Write in row order."
 const MSK_WRITE_XML_MODE_ROW = Xmlwriteroutputtype(0)
+tostr(v::Xmlwriteroutputtype) = if v.value == 1 "Mosek.MSK_WRITE_XML_MODE_COL"
+  elseif v.value == 0 "Mosek.MSK_WRITE_XML_MODE_ROW"
+  else "Mosek.Xmlwriteroutputtype(?)"
+  end
 const Xmlwriteroutputtype_members = Xmlwriteroutputtype[ MSK_WRITE_XML_MODE_COL,MSK_WRITE_XML_MODE_ROW ]
 members(::Type{Xmlwriteroutputtype}) = Xmlwriteroutputtype_members
 Base.length(::Type{Xmlwriteroutputtype}) = 2
@@ -4779,6 +5218,10 @@ const MSK_MIO_MODE_IGNORED = Miomode(0)
 
 "Integer restrictions should be satisfied."
 const MSK_MIO_MODE_SATISFIED = Miomode(1)
+tostr(v::Miomode) = if v.value == 0 "Mosek.MSK_MIO_MODE_IGNORED"
+  elseif v.value == 1 "Mosek.MSK_MIO_MODE_SATISFIED"
+  else "Mosek.Miomode(?)"
+  end
 const Miomode_members = Miomode[ MSK_MIO_MODE_IGNORED,MSK_MIO_MODE_SATISFIED ]
 members(::Type{Miomode}) = Miomode_members
 Base.length(::Type{Miomode}) = 2
@@ -5159,6 +5602,100 @@ const MSK_DINF_SOL_ITR_PVIOLVAR = Dinfitem(90)
 
 "Time spent in the last to conic reformulation."
 const MSK_DINF_TO_CONIC_TIME = Dinfitem(91)
+tostr(v::Dinfitem) = if v.value == 0 "Mosek.MSK_DINF_BI_CLEAN_DUAL_TIME"
+  elseif v.value == 1 "Mosek.MSK_DINF_BI_CLEAN_PRIMAL_TIME"
+  elseif v.value == 2 "Mosek.MSK_DINF_BI_CLEAN_TIME"
+  elseif v.value == 3 "Mosek.MSK_DINF_BI_DUAL_TIME"
+  elseif v.value == 4 "Mosek.MSK_DINF_BI_PRIMAL_TIME"
+  elseif v.value == 5 "Mosek.MSK_DINF_BI_TIME"
+  elseif v.value == 6 "Mosek.MSK_DINF_INTPNT_DUAL_FEAS"
+  elseif v.value == 7 "Mosek.MSK_DINF_INTPNT_DUAL_OBJ"
+  elseif v.value == 8 "Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"
+  elseif v.value == 9 "Mosek.MSK_DINF_INTPNT_OPT_STATUS"
+  elseif v.value == 10 "Mosek.MSK_DINF_INTPNT_ORDER_TIME"
+  elseif v.value == 11 "Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS"
+  elseif v.value == 12 "Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ"
+  elseif v.value == 13 "Mosek.MSK_DINF_INTPNT_TIME"
+  elseif v.value == 14 "Mosek.MSK_DINF_MIO_CLIQUE_SEPARATION_TIME"
+  elseif v.value == 15 "Mosek.MSK_DINF_MIO_CMIR_SEPARATION_TIME"
+  elseif v.value == 16 "Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"
+  elseif v.value == 17 "Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"
+  elseif v.value == 18 "Mosek.MSK_DINF_MIO_GMI_SEPARATION_TIME"
+  elseif v.value == 19 "Mosek.MSK_DINF_MIO_HEURISTIC_TIME"
+  elseif v.value == 20 "Mosek.MSK_DINF_MIO_IMPLIED_BOUND_TIME"
+  elseif v.value == 21 "Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME"
+  elseif v.value == 22 "Mosek.MSK_DINF_MIO_OBJ_ABS_GAP"
+  elseif v.value == 23 "Mosek.MSK_DINF_MIO_OBJ_BOUND"
+  elseif v.value == 24 "Mosek.MSK_DINF_MIO_OBJ_INT"
+  elseif v.value == 25 "Mosek.MSK_DINF_MIO_OBJ_REL_GAP"
+  elseif v.value == 26 "Mosek.MSK_DINF_MIO_OPTIMIZER_TIME"
+  elseif v.value == 27 "Mosek.MSK_DINF_MIO_PROBING_TIME"
+  elseif v.value == 28 "Mosek.MSK_DINF_MIO_ROOT_CUTGEN_TIME"
+  elseif v.value == 29 "Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"
+  elseif v.value == 30 "Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME"
+  elseif v.value == 31 "Mosek.MSK_DINF_MIO_TIME"
+  elseif v.value == 32 "Mosek.MSK_DINF_MIO_USER_OBJ_CUT"
+  elseif v.value == 33 "Mosek.MSK_DINF_OPTIMIZER_TIME"
+  elseif v.value == 34 "Mosek.MSK_DINF_PRESOLVE_ELI_TIME"
+  elseif v.value == 35 "Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME"
+  elseif v.value == 36 "Mosek.MSK_DINF_PRESOLVE_TIME"
+  elseif v.value == 37 "Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"
+  elseif v.value == 38 "Mosek.MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION"
+  elseif v.value == 39 "Mosek.MSK_DINF_QCQO_REFORMULATE_TIME"
+  elseif v.value == 40 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"
+  elseif v.value == 41 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"
+  elseif v.value == 42 "Mosek.MSK_DINF_RD_TIME"
+  elseif v.value == 43 "Mosek.MSK_DINF_SIM_DUAL_TIME"
+  elseif v.value == 44 "Mosek.MSK_DINF_SIM_FEAS"
+  elseif v.value == 45 "Mosek.MSK_DINF_SIM_OBJ"
+  elseif v.value == 46 "Mosek.MSK_DINF_SIM_PRIMAL_TIME"
+  elseif v.value == 47 "Mosek.MSK_DINF_SIM_TIME"
+  elseif v.value == 48 "Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ"
+  elseif v.value == 49 "Mosek.MSK_DINF_SOL_BAS_DVIOLCON"
+  elseif v.value == 50 "Mosek.MSK_DINF_SOL_BAS_DVIOLVAR"
+  elseif v.value == 51 "Mosek.MSK_DINF_SOL_BAS_NRM_BARX"
+  elseif v.value == 52 "Mosek.MSK_DINF_SOL_BAS_NRM_SLC"
+  elseif v.value == 53 "Mosek.MSK_DINF_SOL_BAS_NRM_SLX"
+  elseif v.value == 54 "Mosek.MSK_DINF_SOL_BAS_NRM_SUC"
+  elseif v.value == 55 "Mosek.MSK_DINF_SOL_BAS_NRM_SUX"
+  elseif v.value == 56 "Mosek.MSK_DINF_SOL_BAS_NRM_XC"
+  elseif v.value == 57 "Mosek.MSK_DINF_SOL_BAS_NRM_XX"
+  elseif v.value == 58 "Mosek.MSK_DINF_SOL_BAS_NRM_Y"
+  elseif v.value == 59 "Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ"
+  elseif v.value == 60 "Mosek.MSK_DINF_SOL_BAS_PVIOLCON"
+  elseif v.value == 61 "Mosek.MSK_DINF_SOL_BAS_PVIOLVAR"
+  elseif v.value == 62 "Mosek.MSK_DINF_SOL_ITG_NRM_BARX"
+  elseif v.value == 63 "Mosek.MSK_DINF_SOL_ITG_NRM_XC"
+  elseif v.value == 64 "Mosek.MSK_DINF_SOL_ITG_NRM_XX"
+  elseif v.value == 65 "Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ"
+  elseif v.value == 66 "Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR"
+  elseif v.value == 67 "Mosek.MSK_DINF_SOL_ITG_PVIOLCON"
+  elseif v.value == 68 "Mosek.MSK_DINF_SOL_ITG_PVIOLCONES"
+  elseif v.value == 69 "Mosek.MSK_DINF_SOL_ITG_PVIOLITG"
+  elseif v.value == 70 "Mosek.MSK_DINF_SOL_ITG_PVIOLVAR"
+  elseif v.value == 71 "Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ"
+  elseif v.value == 72 "Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR"
+  elseif v.value == 73 "Mosek.MSK_DINF_SOL_ITR_DVIOLCON"
+  elseif v.value == 74 "Mosek.MSK_DINF_SOL_ITR_DVIOLCONES"
+  elseif v.value == 75 "Mosek.MSK_DINF_SOL_ITR_DVIOLVAR"
+  elseif v.value == 76 "Mosek.MSK_DINF_SOL_ITR_NRM_BARS"
+  elseif v.value == 77 "Mosek.MSK_DINF_SOL_ITR_NRM_BARX"
+  elseif v.value == 78 "Mosek.MSK_DINF_SOL_ITR_NRM_SLC"
+  elseif v.value == 79 "Mosek.MSK_DINF_SOL_ITR_NRM_SLX"
+  elseif v.value == 80 "Mosek.MSK_DINF_SOL_ITR_NRM_SNX"
+  elseif v.value == 81 "Mosek.MSK_DINF_SOL_ITR_NRM_SUC"
+  elseif v.value == 82 "Mosek.MSK_DINF_SOL_ITR_NRM_SUX"
+  elseif v.value == 83 "Mosek.MSK_DINF_SOL_ITR_NRM_XC"
+  elseif v.value == 84 "Mosek.MSK_DINF_SOL_ITR_NRM_XX"
+  elseif v.value == 85 "Mosek.MSK_DINF_SOL_ITR_NRM_Y"
+  elseif v.value == 86 "Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ"
+  elseif v.value == 87 "Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR"
+  elseif v.value == 88 "Mosek.MSK_DINF_SOL_ITR_PVIOLCON"
+  elseif v.value == 89 "Mosek.MSK_DINF_SOL_ITR_PVIOLCONES"
+  elseif v.value == 90 "Mosek.MSK_DINF_SOL_ITR_PVIOLVAR"
+  elseif v.value == 91 "Mosek.MSK_DINF_TO_CONIC_TIME"
+  else "Mosek.Dinfitem(?)"
+  end
 const Dinfitem_members = Dinfitem[ MSK_DINF_BI_CLEAN_DUAL_TIME,MSK_DINF_BI_CLEAN_PRIMAL_TIME,MSK_DINF_BI_CLEAN_TIME,MSK_DINF_BI_DUAL_TIME,MSK_DINF_BI_PRIMAL_TIME,MSK_DINF_BI_TIME,MSK_DINF_INTPNT_DUAL_FEAS,MSK_DINF_INTPNT_DUAL_OBJ,MSK_DINF_INTPNT_FACTOR_NUM_FLOPS,MSK_DINF_INTPNT_OPT_STATUS,MSK_DINF_INTPNT_ORDER_TIME,MSK_DINF_INTPNT_PRIMAL_FEAS,MSK_DINF_INTPNT_PRIMAL_OBJ,MSK_DINF_INTPNT_TIME,MSK_DINF_MIO_CLIQUE_SEPARATION_TIME,MSK_DINF_MIO_CMIR_SEPARATION_TIME,MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ,MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE,MSK_DINF_MIO_GMI_SEPARATION_TIME,MSK_DINF_MIO_HEURISTIC_TIME,MSK_DINF_MIO_IMPLIED_BOUND_TIME,MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME,MSK_DINF_MIO_OBJ_ABS_GAP,MSK_DINF_MIO_OBJ_BOUND,MSK_DINF_MIO_OBJ_INT,MSK_DINF_MIO_OBJ_REL_GAP,MSK_DINF_MIO_OPTIMIZER_TIME,MSK_DINF_MIO_PROBING_TIME,MSK_DINF_MIO_ROOT_CUTGEN_TIME,MSK_DINF_MIO_ROOT_OPTIMIZER_TIME,MSK_DINF_MIO_ROOT_PRESOLVE_TIME,MSK_DINF_MIO_TIME,MSK_DINF_MIO_USER_OBJ_CUT,MSK_DINF_OPTIMIZER_TIME,MSK_DINF_PRESOLVE_ELI_TIME,MSK_DINF_PRESOLVE_LINDEP_TIME,MSK_DINF_PRESOLVE_TIME,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ,MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION,MSK_DINF_QCQO_REFORMULATE_TIME,MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING,MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING,MSK_DINF_RD_TIME,MSK_DINF_SIM_DUAL_TIME,MSK_DINF_SIM_FEAS,MSK_DINF_SIM_OBJ,MSK_DINF_SIM_PRIMAL_TIME,MSK_DINF_SIM_TIME,MSK_DINF_SOL_BAS_DUAL_OBJ,MSK_DINF_SOL_BAS_DVIOLCON,MSK_DINF_SOL_BAS_DVIOLVAR,MSK_DINF_SOL_BAS_NRM_BARX,MSK_DINF_SOL_BAS_NRM_SLC,MSK_DINF_SOL_BAS_NRM_SLX,MSK_DINF_SOL_BAS_NRM_SUC,MSK_DINF_SOL_BAS_NRM_SUX,MSK_DINF_SOL_BAS_NRM_XC,MSK_DINF_SOL_BAS_NRM_XX,MSK_DINF_SOL_BAS_NRM_Y,MSK_DINF_SOL_BAS_PRIMAL_OBJ,MSK_DINF_SOL_BAS_PVIOLCON,MSK_DINF_SOL_BAS_PVIOLVAR,MSK_DINF_SOL_ITG_NRM_BARX,MSK_DINF_SOL_ITG_NRM_XC,MSK_DINF_SOL_ITG_NRM_XX,MSK_DINF_SOL_ITG_PRIMAL_OBJ,MSK_DINF_SOL_ITG_PVIOLBARVAR,MSK_DINF_SOL_ITG_PVIOLCON,MSK_DINF_SOL_ITG_PVIOLCONES,MSK_DINF_SOL_ITG_PVIOLITG,MSK_DINF_SOL_ITG_PVIOLVAR,MSK_DINF_SOL_ITR_DUAL_OBJ,MSK_DINF_SOL_ITR_DVIOLBARVAR,MSK_DINF_SOL_ITR_DVIOLCON,MSK_DINF_SOL_ITR_DVIOLCONES,MSK_DINF_SOL_ITR_DVIOLVAR,MSK_DINF_SOL_ITR_NRM_BARS,MSK_DINF_SOL_ITR_NRM_BARX,MSK_DINF_SOL_ITR_NRM_SLC,MSK_DINF_SOL_ITR_NRM_SLX,MSK_DINF_SOL_ITR_NRM_SNX,MSK_DINF_SOL_ITR_NRM_SUC,MSK_DINF_SOL_ITR_NRM_SUX,MSK_DINF_SOL_ITR_NRM_XC,MSK_DINF_SOL_ITR_NRM_XX,MSK_DINF_SOL_ITR_NRM_Y,MSK_DINF_SOL_ITR_PRIMAL_OBJ,MSK_DINF_SOL_ITR_PVIOLBARVAR,MSK_DINF_SOL_ITR_PVIOLCON,MSK_DINF_SOL_ITR_PVIOLCONES,MSK_DINF_SOL_ITR_PVIOLVAR,MSK_DINF_TO_CONIC_TIME ]
 members(::Type{Dinfitem}) = Dinfitem_members
 Base.length(::Type{Dinfitem}) = 92
@@ -5187,6 +5724,12 @@ const MSK_PAR_INVALID_TYPE = Parametertype(0)
 
 "Is a string parameter."
 const MSK_PAR_STR_TYPE = Parametertype(3)
+tostr(v::Parametertype) = if v.value == 1 "Mosek.MSK_PAR_DOU_TYPE"
+  elseif v.value == 2 "Mosek.MSK_PAR_INT_TYPE"
+  elseif v.value == 0 "Mosek.MSK_PAR_INVALID_TYPE"
+  elseif v.value == 3 "Mosek.MSK_PAR_STR_TYPE"
+  else "Mosek.Parametertype(?)"
+  end
 const Parametertype_members = Parametertype[ MSK_PAR_DOU_TYPE,MSK_PAR_INT_TYPE,MSK_PAR_INVALID_TYPE,MSK_PAR_STR_TYPE ]
 members(::Type{Parametertype}) = Parametertype_members
 Base.length(::Type{Parametertype}) = 4
@@ -5219,6 +5762,13 @@ const MSK_RESPONSE_UNK = Rescodetype(4)
 
 "The response code is a warning."
 const MSK_RESPONSE_WRN = Rescodetype(1)
+tostr(v::Rescodetype) = if v.value == 3 "Mosek.MSK_RESPONSE_ERR"
+  elseif v.value == 0 "Mosek.MSK_RESPONSE_OK"
+  elseif v.value == 2 "Mosek.MSK_RESPONSE_TRM"
+  elseif v.value == 4 "Mosek.MSK_RESPONSE_UNK"
+  elseif v.value == 1 "Mosek.MSK_RESPONSE_WRN"
+  else "Mosek.Rescodetype(?)"
+  end
 const Rescodetype_members = Rescodetype[ MSK_RESPONSE_ERR,MSK_RESPONSE_OK,MSK_RESPONSE_TRM,MSK_RESPONSE_UNK,MSK_RESPONSE_WRN ]
 members(::Type{Rescodetype}) = Rescodetype_members
 Base.length(::Type{Rescodetype}) = 5
@@ -5279,6 +5829,20 @@ const MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED = Prosta(11)
 
 "Unknown problem status."
 const MSK_PRO_STA_UNKNOWN = Prosta(0)
+tostr(v::Prosta) = if v.value == 3 "Mosek.MSK_PRO_STA_DUAL_FEAS"
+  elseif v.value == 5 "Mosek.MSK_PRO_STA_DUAL_INFEAS"
+  elseif v.value == 7 "Mosek.MSK_PRO_STA_ILL_POSED"
+  elseif v.value == 10 "Mosek.MSK_PRO_STA_NEAR_DUAL_FEAS"
+  elseif v.value == 8 "Mosek.MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS"
+  elseif v.value == 9 "Mosek.MSK_PRO_STA_NEAR_PRIM_FEAS"
+  elseif v.value == 1 "Mosek.MSK_PRO_STA_PRIM_AND_DUAL_FEAS"
+  elseif v.value == 6 "Mosek.MSK_PRO_STA_PRIM_AND_DUAL_INFEAS"
+  elseif v.value == 2 "Mosek.MSK_PRO_STA_PRIM_FEAS"
+  elseif v.value == 4 "Mosek.MSK_PRO_STA_PRIM_INFEAS"
+  elseif v.value == 11 "Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"
+  elseif v.value == 0 "Mosek.MSK_PRO_STA_UNKNOWN"
+  else "Mosek.Prosta(?)"
+  end
 const Prosta_members = Prosta[ MSK_PRO_STA_DUAL_FEAS,MSK_PRO_STA_DUAL_INFEAS,MSK_PRO_STA_ILL_POSED,MSK_PRO_STA_NEAR_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_NEAR_PRIM_FEAS,MSK_PRO_STA_PRIM_AND_DUAL_FEAS,MSK_PRO_STA_PRIM_AND_DUAL_INFEAS,MSK_PRO_STA_PRIM_FEAS,MSK_PRO_STA_PRIM_INFEAS,MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED,MSK_PRO_STA_UNKNOWN ]
 members(::Type{Prosta}) = Prosta_members
 Base.length(::Type{Prosta}) = 12
@@ -5307,6 +5871,12 @@ const MSK_SCALING_MODERATE = Scalingtype(2)
 
 "No scaling is performed."
 const MSK_SCALING_NONE = Scalingtype(1)
+tostr(v::Scalingtype) = if v.value == 3 "Mosek.MSK_SCALING_AGGRESSIVE"
+  elseif v.value == 0 "Mosek.MSK_SCALING_FREE"
+  elseif v.value == 2 "Mosek.MSK_SCALING_MODERATE"
+  elseif v.value == 1 "Mosek.MSK_SCALING_NONE"
+  else "Mosek.Scalingtype(?)"
+  end
 const Scalingtype_members = Scalingtype[ MSK_SCALING_AGGRESSIVE,MSK_SCALING_FREE,MSK_SCALING_MODERATE,MSK_SCALING_NONE ]
 members(::Type{Scalingtype}) = Scalingtype_members
 Base.length(::Type{Scalingtype}) = 4
@@ -7115,6 +7685,457 @@ const MSK_RES_WRN_ZEROS_IN_SPARSE_COL = Rescode(710)
 
 "One or more (near) zero elements are specified in a sparse row of a matrix."
 const MSK_RES_WRN_ZEROS_IN_SPARSE_ROW = Rescode(705)
+tostr(v::Rescode) = if v.value == 3102 "Mosek.MSK_RES_ERR_AD_INVALID_CODELIST"
+  elseif v.value == 3001 "Mosek.MSK_RES_ERR_API_ARRAY_TOO_SMALL"
+  elseif v.value == 3002 "Mosek.MSK_RES_ERR_API_CB_CONNECT"
+  elseif v.value == 3005 "Mosek.MSK_RES_ERR_API_FATAL_ERROR"
+  elseif v.value == 3999 "Mosek.MSK_RES_ERR_API_INTERNAL"
+  elseif v.value == 1227 "Mosek.MSK_RES_ERR_ARG_IS_TOO_LARGE"
+  elseif v.value == 1226 "Mosek.MSK_RES_ERR_ARG_IS_TOO_SMALL"
+  elseif v.value == 1201 "Mosek.MSK_RES_ERR_ARGUMENT_DIMENSION"
+  elseif v.value == 5005 "Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE"
+  elseif v.value == 1197 "Mosek.MSK_RES_ERR_ARGUMENT_LENNEQ"
+  elseif v.value == 1299 "Mosek.MSK_RES_ERR_ARGUMENT_PERM_ARRAY"
+  elseif v.value == 1198 "Mosek.MSK_RES_ERR_ARGUMENT_TYPE"
+  elseif v.value == 3920 "Mosek.MSK_RES_ERR_BAR_VAR_DIM"
+  elseif v.value == 1266 "Mosek.MSK_RES_ERR_BASIS"
+  elseif v.value == 1610 "Mosek.MSK_RES_ERR_BASIS_FACTOR"
+  elseif v.value == 1615 "Mosek.MSK_RES_ERR_BASIS_SINGULAR"
+  elseif v.value == 1070 "Mosek.MSK_RES_ERR_BLANK_NAME"
+  elseif v.value == 2505 "Mosek.MSK_RES_ERR_CANNOT_CLONE_NL"
+  elseif v.value == 2506 "Mosek.MSK_RES_ERR_CANNOT_HANDLE_NL"
+  elseif v.value == 7116 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_ACOORD"
+  elseif v.value == 7115 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_BCOORD"
+  elseif v.value == 7108 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_CON"
+  elseif v.value == 7110 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_INT"
+  elseif v.value == 7107 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJ"
+  elseif v.value == 7114 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD"
+  elseif v.value == 7123 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_PSDVAR"
+  elseif v.value == 7109 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_VAR"
+  elseif v.value == 7112 "Mosek.MSK_RES_ERR_CBF_INVALID_CON_TYPE"
+  elseif v.value == 7113 "Mosek.MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION"
+  elseif v.value == 7121 "Mosek.MSK_RES_ERR_CBF_INVALID_INT_INDEX"
+  elseif v.value == 7124 "Mosek.MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION"
+  elseif v.value == 7111 "Mosek.MSK_RES_ERR_CBF_INVALID_VAR_TYPE"
+  elseif v.value == 7102 "Mosek.MSK_RES_ERR_CBF_NO_VARIABLES"
+  elseif v.value == 7105 "Mosek.MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED"
+  elseif v.value == 7101 "Mosek.MSK_RES_ERR_CBF_OBJ_SENSE"
+  elseif v.value == 7100 "Mosek.MSK_RES_ERR_CBF_PARSE"
+  elseif v.value == 7106 "Mosek.MSK_RES_ERR_CBF_SYNTAX"
+  elseif v.value == 7118 "Mosek.MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS"
+  elseif v.value == 7119 "Mosek.MSK_RES_ERR_CBF_TOO_FEW_INTS"
+  elseif v.value == 7125 "Mosek.MSK_RES_ERR_CBF_TOO_FEW_PSDVAR"
+  elseif v.value == 7117 "Mosek.MSK_RES_ERR_CBF_TOO_FEW_VARIABLES"
+  elseif v.value == 7103 "Mosek.MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS"
+  elseif v.value == 7120 "Mosek.MSK_RES_ERR_CBF_TOO_MANY_INTS"
+  elseif v.value == 7104 "Mosek.MSK_RES_ERR_CBF_TOO_MANY_VARIABLES"
+  elseif v.value == 7122 "Mosek.MSK_RES_ERR_CBF_UNSUPPORTED"
+  elseif v.value == 1294 "Mosek.MSK_RES_ERR_CON_Q_NOT_NSD"
+  elseif v.value == 1293 "Mosek.MSK_RES_ERR_CON_Q_NOT_PSD"
+  elseif v.value == 1300 "Mosek.MSK_RES_ERR_CONE_INDEX"
+  elseif v.value == 1302 "Mosek.MSK_RES_ERR_CONE_OVERLAP"
+  elseif v.value == 1307 "Mosek.MSK_RES_ERR_CONE_OVERLAP_APPEND"
+  elseif v.value == 1303 "Mosek.MSK_RES_ERR_CONE_REP_VAR"
+  elseif v.value == 1301 "Mosek.MSK_RES_ERR_CONE_SIZE"
+  elseif v.value == 1305 "Mosek.MSK_RES_ERR_CONE_TYPE"
+  elseif v.value == 1306 "Mosek.MSK_RES_ERR_CONE_TYPE_STR"
+  elseif v.value == 1055 "Mosek.MSK_RES_ERR_DATA_FILE_EXT"
+  elseif v.value == 1071 "Mosek.MSK_RES_ERR_DUP_NAME"
+  elseif v.value == 1385 "Mosek.MSK_RES_ERR_DUPLICATE_AIJ"
+  elseif v.value == 4502 "Mosek.MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES"
+  elseif v.value == 4503 "Mosek.MSK_RES_ERR_DUPLICATE_CONE_NAMES"
+  elseif v.value == 4500 "Mosek.MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES"
+  elseif v.value == 4501 "Mosek.MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES"
+  elseif v.value == 1059 "Mosek.MSK_RES_ERR_END_OF_FILE"
+  elseif v.value == 1650 "Mosek.MSK_RES_ERR_FACTOR"
+  elseif v.value == 1700 "Mosek.MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX"
+  elseif v.value == 1702 "Mosek.MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND"
+  elseif v.value == 1701 "Mosek.MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED"
+  elseif v.value == 1007 "Mosek.MSK_RES_ERR_FILE_LICENSE"
+  elseif v.value == 1052 "Mosek.MSK_RES_ERR_FILE_OPEN"
+  elseif v.value == 1053 "Mosek.MSK_RES_ERR_FILE_READ"
+  elseif v.value == 1054 "Mosek.MSK_RES_ERR_FILE_WRITE"
+  elseif v.value == 1560 "Mosek.MSK_RES_ERR_FINAL_SOLUTION"
+  elseif v.value == 1261 "Mosek.MSK_RES_ERR_FIRST"
+  elseif v.value == 1285 "Mosek.MSK_RES_ERR_FIRSTI"
+  elseif v.value == 1287 "Mosek.MSK_RES_ERR_FIRSTJ"
+  elseif v.value == 1425 "Mosek.MSK_RES_ERR_FIXED_BOUND_VALUES"
+  elseif v.value == 1014 "Mosek.MSK_RES_ERR_FLEXLM"
+  elseif v.value == 1503 "Mosek.MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM"
+  elseif v.value == 1380 "Mosek.MSK_RES_ERR_HUGE_AIJ"
+  elseif v.value == 1375 "Mosek.MSK_RES_ERR_HUGE_C"
+  elseif v.value == 3101 "Mosek.MSK_RES_ERR_IDENTICAL_TASKS"
+  elseif v.value == 1200 "Mosek.MSK_RES_ERR_IN_ARGUMENT"
+  elseif v.value == 1235 "Mosek.MSK_RES_ERR_INDEX"
+  elseif v.value == 1222 "Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE"
+  elseif v.value == 1221 "Mosek.MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL"
+  elseif v.value == 1204 "Mosek.MSK_RES_ERR_INDEX_IS_TOO_LARGE"
+  elseif v.value == 1203 "Mosek.MSK_RES_ERR_INDEX_IS_TOO_SMALL"
+  elseif v.value == 1219 "Mosek.MSK_RES_ERR_INF_DOU_INDEX"
+  elseif v.value == 1230 "Mosek.MSK_RES_ERR_INF_DOU_NAME"
+  elseif v.value == 1220 "Mosek.MSK_RES_ERR_INF_INT_INDEX"
+  elseif v.value == 1231 "Mosek.MSK_RES_ERR_INF_INT_NAME"
+  elseif v.value == 1225 "Mosek.MSK_RES_ERR_INF_LINT_INDEX"
+  elseif v.value == 1234 "Mosek.MSK_RES_ERR_INF_LINT_NAME"
+  elseif v.value == 1232 "Mosek.MSK_RES_ERR_INF_TYPE"
+  elseif v.value == 3910 "Mosek.MSK_RES_ERR_INFEAS_UNDEFINED"
+  elseif v.value == 1400 "Mosek.MSK_RES_ERR_INFINITE_BOUND"
+  elseif v.value == 3800 "Mosek.MSK_RES_ERR_INT64_TO_INT32_CAST"
+  elseif v.value == 3000 "Mosek.MSK_RES_ERR_INTERNAL"
+  elseif v.value == 3500 "Mosek.MSK_RES_ERR_INTERNAL_TEST_FAILED"
+  elseif v.value == 1253 "Mosek.MSK_RES_ERR_INV_APTRE"
+  elseif v.value == 1255 "Mosek.MSK_RES_ERR_INV_BK"
+  elseif v.value == 1256 "Mosek.MSK_RES_ERR_INV_BKC"
+  elseif v.value == 1257 "Mosek.MSK_RES_ERR_INV_BKX"
+  elseif v.value == 1272 "Mosek.MSK_RES_ERR_INV_CONE_TYPE"
+  elseif v.value == 1271 "Mosek.MSK_RES_ERR_INV_CONE_TYPE_STR"
+  elseif v.value == 2501 "Mosek.MSK_RES_ERR_INV_MARKI"
+  elseif v.value == 2502 "Mosek.MSK_RES_ERR_INV_MARKJ"
+  elseif v.value == 1280 "Mosek.MSK_RES_ERR_INV_NAME_ITEM"
+  elseif v.value == 2503 "Mosek.MSK_RES_ERR_INV_NUMI"
+  elseif v.value == 2504 "Mosek.MSK_RES_ERR_INV_NUMJ"
+  elseif v.value == 1550 "Mosek.MSK_RES_ERR_INV_OPTIMIZER"
+  elseif v.value == 1500 "Mosek.MSK_RES_ERR_INV_PROBLEM"
+  elseif v.value == 1405 "Mosek.MSK_RES_ERR_INV_QCON_SUBI"
+  elseif v.value == 1406 "Mosek.MSK_RES_ERR_INV_QCON_SUBJ"
+  elseif v.value == 1404 "Mosek.MSK_RES_ERR_INV_QCON_SUBK"
+  elseif v.value == 1407 "Mosek.MSK_RES_ERR_INV_QCON_VAL"
+  elseif v.value == 1401 "Mosek.MSK_RES_ERR_INV_QOBJ_SUBI"
+  elseif v.value == 1402 "Mosek.MSK_RES_ERR_INV_QOBJ_SUBJ"
+  elseif v.value == 1403 "Mosek.MSK_RES_ERR_INV_QOBJ_VAL"
+  elseif v.value == 1270 "Mosek.MSK_RES_ERR_INV_SK"
+  elseif v.value == 1269 "Mosek.MSK_RES_ERR_INV_SK_STR"
+  elseif v.value == 1267 "Mosek.MSK_RES_ERR_INV_SKC"
+  elseif v.value == 1274 "Mosek.MSK_RES_ERR_INV_SKN"
+  elseif v.value == 1268 "Mosek.MSK_RES_ERR_INV_SKX"
+  elseif v.value == 1258 "Mosek.MSK_RES_ERR_INV_VAR_TYPE"
+  elseif v.value == 2520 "Mosek.MSK_RES_ERR_INVALID_ACCMODE"
+  elseif v.value == 1473 "Mosek.MSK_RES_ERR_INVALID_AIJ"
+  elseif v.value == 3700 "Mosek.MSK_RES_ERR_INVALID_AMPL_STUB"
+  elseif v.value == 1079 "Mosek.MSK_RES_ERR_INVALID_BARVAR_NAME"
+  elseif v.value == 1800 "Mosek.MSK_RES_ERR_INVALID_COMPRESSION"
+  elseif v.value == 1076 "Mosek.MSK_RES_ERR_INVALID_CON_NAME"
+  elseif v.value == 1078 "Mosek.MSK_RES_ERR_INVALID_CONE_NAME"
+  elseif v.value == 4005 "Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES"
+  elseif v.value == 4010 "Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL"
+  elseif v.value == 4000 "Mosek.MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT"
+  elseif v.value == 1056 "Mosek.MSK_RES_ERR_INVALID_FILE_NAME"
+  elseif v.value == 1283 "Mosek.MSK_RES_ERR_INVALID_FORMAT_TYPE"
+  elseif v.value == 1246 "Mosek.MSK_RES_ERR_INVALID_IDX"
+  elseif v.value == 1801 "Mosek.MSK_RES_ERR_INVALID_IOMODE"
+  elseif v.value == 1247 "Mosek.MSK_RES_ERR_INVALID_MAX_NUM"
+  elseif v.value == 1170 "Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"
+  elseif v.value == 1075 "Mosek.MSK_RES_ERR_INVALID_OBJ_NAME"
+  elseif v.value == 1445 "Mosek.MSK_RES_ERR_INVALID_OBJECTIVE_SENSE"
+  elseif v.value == 6000 "Mosek.MSK_RES_ERR_INVALID_PROBLEM_TYPE"
+  elseif v.value == 1057 "Mosek.MSK_RES_ERR_INVALID_SOL_FILE_NAME"
+  elseif v.value == 1062 "Mosek.MSK_RES_ERR_INVALID_STREAM"
+  elseif v.value == 1275 "Mosek.MSK_RES_ERR_INVALID_SURPLUS"
+  elseif v.value == 3950 "Mosek.MSK_RES_ERR_INVALID_SYM_MAT_DIM"
+  elseif v.value == 1064 "Mosek.MSK_RES_ERR_INVALID_TASK"
+  elseif v.value == 2900 "Mosek.MSK_RES_ERR_INVALID_UTF8"
+  elseif v.value == 1077 "Mosek.MSK_RES_ERR_INVALID_VAR_NAME"
+  elseif v.value == 2901 "Mosek.MSK_RES_ERR_INVALID_WCHAR"
+  elseif v.value == 1228 "Mosek.MSK_RES_ERR_INVALID_WHICHSOL"
+  elseif v.value == 1179 "Mosek.MSK_RES_ERR_JSON_DATA"
+  elseif v.value == 1178 "Mosek.MSK_RES_ERR_JSON_FORMAT"
+  elseif v.value == 1180 "Mosek.MSK_RES_ERR_JSON_MISSING_DATA"
+  elseif v.value == 1177 "Mosek.MSK_RES_ERR_JSON_NUMBER_OVERFLOW"
+  elseif v.value == 1176 "Mosek.MSK_RES_ERR_JSON_STRING"
+  elseif v.value == 1175 "Mosek.MSK_RES_ERR_JSON_SYNTAX"
+  elseif v.value == 1262 "Mosek.MSK_RES_ERR_LAST"
+  elseif v.value == 1286 "Mosek.MSK_RES_ERR_LASTI"
+  elseif v.value == 1288 "Mosek.MSK_RES_ERR_LASTJ"
+  elseif v.value == 7012 "Mosek.MSK_RES_ERR_LAU_ARG_K"
+  elseif v.value == 7010 "Mosek.MSK_RES_ERR_LAU_ARG_M"
+  elseif v.value == 7011 "Mosek.MSK_RES_ERR_LAU_ARG_N"
+  elseif v.value == 7018 "Mosek.MSK_RES_ERR_LAU_ARG_TRANS"
+  elseif v.value == 7015 "Mosek.MSK_RES_ERR_LAU_ARG_TRANSA"
+  elseif v.value == 7016 "Mosek.MSK_RES_ERR_LAU_ARG_TRANSB"
+  elseif v.value == 7017 "Mosek.MSK_RES_ERR_LAU_ARG_UPLO"
+  elseif v.value == 7002 "Mosek.MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX"
+  elseif v.value == 7019 "Mosek.MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX"
+  elseif v.value == 7001 "Mosek.MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE"
+  elseif v.value == 7000 "Mosek.MSK_RES_ERR_LAU_SINGULAR_MATRIX"
+  elseif v.value == 7005 "Mosek.MSK_RES_ERR_LAU_UNKNOWN"
+  elseif v.value == 1000 "Mosek.MSK_RES_ERR_LICENSE"
+  elseif v.value == 1020 "Mosek.MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE"
+  elseif v.value == 1021 "Mosek.MSK_RES_ERR_LICENSE_CANNOT_CONNECT"
+  elseif v.value == 1001 "Mosek.MSK_RES_ERR_LICENSE_EXPIRED"
+  elseif v.value == 1018 "Mosek.MSK_RES_ERR_LICENSE_FEATURE"
+  elseif v.value == 1025 "Mosek.MSK_RES_ERR_LICENSE_INVALID_HOSTID"
+  elseif v.value == 1016 "Mosek.MSK_RES_ERR_LICENSE_MAX"
+  elseif v.value == 1017 "Mosek.MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON"
+  elseif v.value == 1028 "Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_LINE"
+  elseif v.value == 1027 "Mosek.MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT"
+  elseif v.value == 1015 "Mosek.MSK_RES_ERR_LICENSE_SERVER"
+  elseif v.value == 1026 "Mosek.MSK_RES_ERR_LICENSE_SERVER_VERSION"
+  elseif v.value == 1002 "Mosek.MSK_RES_ERR_LICENSE_VERSION"
+  elseif v.value == 1040 "Mosek.MSK_RES_ERR_LINK_FILE_DLL"
+  elseif v.value == 1066 "Mosek.MSK_RES_ERR_LIVING_TASKS"
+  elseif v.value == 1390 "Mosek.MSK_RES_ERR_LOWER_BOUND_IS_A_NAN"
+  elseif v.value == 1152 "Mosek.MSK_RES_ERR_LP_DUP_SLACK_NAME"
+  elseif v.value == 1151 "Mosek.MSK_RES_ERR_LP_EMPTY"
+  elseif v.value == 1157 "Mosek.MSK_RES_ERR_LP_FILE_FORMAT"
+  elseif v.value == 1160 "Mosek.MSK_RES_ERR_LP_FORMAT"
+  elseif v.value == 1155 "Mosek.MSK_RES_ERR_LP_FREE_CONSTRAINT"
+  elseif v.value == 1150 "Mosek.MSK_RES_ERR_LP_INCOMPATIBLE"
+  elseif v.value == 1171 "Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME"
+  elseif v.value == 1154 "Mosek.MSK_RES_ERR_LP_INVALID_VAR_NAME"
+  elseif v.value == 1163 "Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"
+  elseif v.value == 1164 "Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"
+  elseif v.value == 2800 "Mosek.MSK_RES_ERR_LU_MAX_NUM_TRIES"
+  elseif v.value == 1289 "Mosek.MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL"
+  elseif v.value == 1242 "Mosek.MSK_RES_ERR_MAXNUMBARVAR"
+  elseif v.value == 1240 "Mosek.MSK_RES_ERR_MAXNUMCON"
+  elseif v.value == 1304 "Mosek.MSK_RES_ERR_MAXNUMCONE"
+  elseif v.value == 1243 "Mosek.MSK_RES_ERR_MAXNUMQNZ"
+  elseif v.value == 1241 "Mosek.MSK_RES_ERR_MAXNUMVAR"
+  elseif v.value == 5010 "Mosek.MSK_RES_ERR_MIO_INTERNAL"
+  elseif v.value == 7131 "Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"
+  elseif v.value == 7130 "Mosek.MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER"
+  elseif v.value == 1551 "Mosek.MSK_RES_ERR_MIO_NO_OPTIMIZER"
+  elseif v.value == 1008 "Mosek.MSK_RES_ERR_MISSING_LICENSE_FILE"
+  elseif v.value == 1501 "Mosek.MSK_RES_ERR_MIXED_CONIC_AND_NL"
+  elseif v.value == 1118 "Mosek.MSK_RES_ERR_MPS_CONE_OVERLAP"
+  elseif v.value == 1119 "Mosek.MSK_RES_ERR_MPS_CONE_REPEAT"
+  elseif v.value == 1117 "Mosek.MSK_RES_ERR_MPS_CONE_TYPE"
+  elseif v.value == 1121 "Mosek.MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT"
+  elseif v.value == 1100 "Mosek.MSK_RES_ERR_MPS_FILE"
+  elseif v.value == 1108 "Mosek.MSK_RES_ERR_MPS_INV_BOUND_KEY"
+  elseif v.value == 1107 "Mosek.MSK_RES_ERR_MPS_INV_CON_KEY"
+  elseif v.value == 1101 "Mosek.MSK_RES_ERR_MPS_INV_FIELD"
+  elseif v.value == 1102 "Mosek.MSK_RES_ERR_MPS_INV_MARKER"
+  elseif v.value == 1109 "Mosek.MSK_RES_ERR_MPS_INV_SEC_NAME"
+  elseif v.value == 1115 "Mosek.MSK_RES_ERR_MPS_INV_SEC_ORDER"
+  elseif v.value == 1128 "Mosek.MSK_RES_ERR_MPS_INVALID_OBJ_NAME"
+  elseif v.value == 1122 "Mosek.MSK_RES_ERR_MPS_INVALID_OBJSENSE"
+  elseif v.value == 1112 "Mosek.MSK_RES_ERR_MPS_MUL_CON_NAME"
+  elseif v.value == 1116 "Mosek.MSK_RES_ERR_MPS_MUL_CSEC"
+  elseif v.value == 1114 "Mosek.MSK_RES_ERR_MPS_MUL_QOBJ"
+  elseif v.value == 1113 "Mosek.MSK_RES_ERR_MPS_MUL_QSEC"
+  elseif v.value == 1110 "Mosek.MSK_RES_ERR_MPS_NO_OBJECTIVE"
+  elseif v.value == 1120 "Mosek.MSK_RES_ERR_MPS_NON_SYMMETRIC_Q"
+  elseif v.value == 1103 "Mosek.MSK_RES_ERR_MPS_NULL_CON_NAME"
+  elseif v.value == 1104 "Mosek.MSK_RES_ERR_MPS_NULL_VAR_NAME"
+  elseif v.value == 1111 "Mosek.MSK_RES_ERR_MPS_SPLITTED_VAR"
+  elseif v.value == 1125 "Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD2"
+  elseif v.value == 1126 "Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD3"
+  elseif v.value == 1127 "Mosek.MSK_RES_ERR_MPS_TAB_IN_FIELD5"
+  elseif v.value == 1105 "Mosek.MSK_RES_ERR_MPS_UNDEF_CON_NAME"
+  elseif v.value == 1106 "Mosek.MSK_RES_ERR_MPS_UNDEF_VAR_NAME"
+  elseif v.value == 1254 "Mosek.MSK_RES_ERR_MUL_A_ELEMENT"
+  elseif v.value == 1760 "Mosek.MSK_RES_ERR_NAME_IS_NULL"
+  elseif v.value == 1750 "Mosek.MSK_RES_ERR_NAME_MAX_LEN"
+  elseif v.value == 1461 "Mosek.MSK_RES_ERR_NAN_IN_BLC"
+  elseif v.value == 1471 "Mosek.MSK_RES_ERR_NAN_IN_BLX"
+  elseif v.value == 1462 "Mosek.MSK_RES_ERR_NAN_IN_BUC"
+  elseif v.value == 1472 "Mosek.MSK_RES_ERR_NAN_IN_BUX"
+  elseif v.value == 1470 "Mosek.MSK_RES_ERR_NAN_IN_C"
+  elseif v.value == 1450 "Mosek.MSK_RES_ERR_NAN_IN_DOUBLE_DATA"
+  elseif v.value == 1264 "Mosek.MSK_RES_ERR_NEGATIVE_APPEND"
+  elseif v.value == 1263 "Mosek.MSK_RES_ERR_NEGATIVE_SURPLUS"
+  elseif v.value == 1036 "Mosek.MSK_RES_ERR_NEWER_DLL"
+  elseif v.value == 3916 "Mosek.MSK_RES_ERR_NO_BARS_FOR_SOLUTION"
+  elseif v.value == 3915 "Mosek.MSK_RES_ERR_NO_BARX_FOR_SOLUTION"
+  elseif v.value == 1600 "Mosek.MSK_RES_ERR_NO_BASIS_SOL"
+  elseif v.value == 2950 "Mosek.MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL"
+  elseif v.value == 2001 "Mosek.MSK_RES_ERR_NO_DUAL_INFEAS_CER"
+  elseif v.value == 1063 "Mosek.MSK_RES_ERR_NO_INIT_ENV"
+  elseif v.value == 1552 "Mosek.MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE"
+  elseif v.value == 2000 "Mosek.MSK_RES_ERR_NO_PRIMAL_INFEAS_CER"
+  elseif v.value == 2953 "Mosek.MSK_RES_ERR_NO_SNX_FOR_BAS_SOL"
+  elseif v.value == 2500 "Mosek.MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK"
+  elseif v.value == 5000 "Mosek.MSK_RES_ERR_NON_UNIQUE_ARRAY"
+  elseif v.value == 1291 "Mosek.MSK_RES_ERR_NONCONVEX"
+  elseif v.value == 1290 "Mosek.MSK_RES_ERR_NONLINEAR_EQUALITY"
+  elseif v.value == 1428 "Mosek.MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED"
+  elseif v.value == 1292 "Mosek.MSK_RES_ERR_NONLINEAR_RANGED"
+  elseif v.value == 1199 "Mosek.MSK_RES_ERR_NR_ARGUMENTS"
+  elseif v.value == 1060 "Mosek.MSK_RES_ERR_NULL_ENV"
+  elseif v.value == 1065 "Mosek.MSK_RES_ERR_NULL_POINTER"
+  elseif v.value == 1061 "Mosek.MSK_RES_ERR_NULL_TASK"
+  elseif v.value == 1250 "Mosek.MSK_RES_ERR_NUMCONLIM"
+  elseif v.value == 1251 "Mosek.MSK_RES_ERR_NUMVARLIM"
+  elseif v.value == 1296 "Mosek.MSK_RES_ERR_OBJ_Q_NOT_NSD"
+  elseif v.value == 1295 "Mosek.MSK_RES_ERR_OBJ_Q_NOT_PSD"
+  elseif v.value == 1260 "Mosek.MSK_RES_ERR_OBJECTIVE_RANGE"
+  elseif v.value == 1035 "Mosek.MSK_RES_ERR_OLDER_DLL"
+  elseif v.value == 1030 "Mosek.MSK_RES_ERR_OPEN_DL"
+  elseif v.value == 1168 "Mosek.MSK_RES_ERR_OPF_FORMAT"
+  elseif v.value == 1169 "Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE"
+  elseif v.value == 1172 "Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF"
+  elseif v.value == 1013 "Mosek.MSK_RES_ERR_OPTIMIZER_LICENSE"
+  elseif v.value == 1590 "Mosek.MSK_RES_ERR_OVERFLOW"
+  elseif v.value == 1210 "Mosek.MSK_RES_ERR_PARAM_INDEX"
+  elseif v.value == 1215 "Mosek.MSK_RES_ERR_PARAM_IS_TOO_LARGE"
+  elseif v.value == 1216 "Mosek.MSK_RES_ERR_PARAM_IS_TOO_SMALL"
+  elseif v.value == 1205 "Mosek.MSK_RES_ERR_PARAM_NAME"
+  elseif v.value == 1206 "Mosek.MSK_RES_ERR_PARAM_NAME_DOU"
+  elseif v.value == 1207 "Mosek.MSK_RES_ERR_PARAM_NAME_INT"
+  elseif v.value == 1208 "Mosek.MSK_RES_ERR_PARAM_NAME_STR"
+  elseif v.value == 1218 "Mosek.MSK_RES_ERR_PARAM_TYPE"
+  elseif v.value == 1217 "Mosek.MSK_RES_ERR_PARAM_VALUE_STR"
+  elseif v.value == 1019 "Mosek.MSK_RES_ERR_PLATFORM_NOT_LICENSED"
+  elseif v.value == 1580 "Mosek.MSK_RES_ERR_POSTSOLVE"
+  elseif v.value == 1281 "Mosek.MSK_RES_ERR_PRO_ITEM"
+  elseif v.value == 1006 "Mosek.MSK_RES_ERR_PROB_LICENSE"
+  elseif v.value == 1409 "Mosek.MSK_RES_ERR_QCON_SUBI_TOO_LARGE"
+  elseif v.value == 1408 "Mosek.MSK_RES_ERR_QCON_SUBI_TOO_SMALL"
+  elseif v.value == 1417 "Mosek.MSK_RES_ERR_QCON_UPPER_TRIANGLE"
+  elseif v.value == 1415 "Mosek.MSK_RES_ERR_QOBJ_UPPER_TRIANGLE"
+  elseif v.value == 1090 "Mosek.MSK_RES_ERR_READ_FORMAT"
+  elseif v.value == 1159 "Mosek.MSK_RES_ERR_READ_LP_MISSING_END_TAG"
+  elseif v.value == 1162 "Mosek.MSK_RES_ERR_READ_LP_NONEXISTING_NAME"
+  elseif v.value == 1310 "Mosek.MSK_RES_ERR_REMOVE_CONE_VARIABLE"
+  elseif v.value == 1710 "Mosek.MSK_RES_ERR_REPAIR_INVALID_PROBLEM"
+  elseif v.value == 1711 "Mosek.MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED"
+  elseif v.value == 3054 "Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_LO"
+  elseif v.value == 3053 "Mosek.MSK_RES_ERR_SEN_BOUND_INVALID_UP"
+  elseif v.value == 3050 "Mosek.MSK_RES_ERR_SEN_FORMAT"
+  elseif v.value == 3055 "Mosek.MSK_RES_ERR_SEN_INDEX_INVALID"
+  elseif v.value == 3052 "Mosek.MSK_RES_ERR_SEN_INDEX_RANGE"
+  elseif v.value == 3056 "Mosek.MSK_RES_ERR_SEN_INVALID_REGEXP"
+  elseif v.value == 3058 "Mosek.MSK_RES_ERR_SEN_NUMERICAL"
+  elseif v.value == 3057 "Mosek.MSK_RES_ERR_SEN_SOLUTION_STATUS"
+  elseif v.value == 3051 "Mosek.MSK_RES_ERR_SEN_UNDEF_NAME"
+  elseif v.value == 3080 "Mosek.MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE"
+  elseif v.value == 8000 "Mosek.MSK_RES_ERR_SERVER_CONNECT"
+  elseif v.value == 8001 "Mosek.MSK_RES_ERR_SERVER_PROTOCOL"
+  elseif v.value == 8002 "Mosek.MSK_RES_ERR_SERVER_STATUS"
+  elseif v.value == 8003 "Mosek.MSK_RES_ERR_SERVER_TOKEN"
+  elseif v.value == 1005 "Mosek.MSK_RES_ERR_SIZE_LICENSE"
+  elseif v.value == 1010 "Mosek.MSK_RES_ERR_SIZE_LICENSE_CON"
+  elseif v.value == 1012 "Mosek.MSK_RES_ERR_SIZE_LICENSE_INTVAR"
+  elseif v.value == 3900 "Mosek.MSK_RES_ERR_SIZE_LICENSE_NUMCORES"
+  elseif v.value == 1011 "Mosek.MSK_RES_ERR_SIZE_LICENSE_VAR"
+  elseif v.value == 1350 "Mosek.MSK_RES_ERR_SOL_FILE_INVALID_NUMBER"
+  elseif v.value == 1237 "Mosek.MSK_RES_ERR_SOLITEM"
+  elseif v.value == 1259 "Mosek.MSK_RES_ERR_SOLVER_PROBTYPE"
+  elseif v.value == 1051 "Mosek.MSK_RES_ERR_SPACE"
+  elseif v.value == 1080 "Mosek.MSK_RES_ERR_SPACE_LEAKING"
+  elseif v.value == 1081 "Mosek.MSK_RES_ERR_SPACE_NO_INFO"
+  elseif v.value == 3944 "Mosek.MSK_RES_ERR_SYM_MAT_DUPLICATE"
+  elseif v.value == 1482 "Mosek.MSK_RES_ERR_SYM_MAT_HUGE"
+  elseif v.value == 1480 "Mosek.MSK_RES_ERR_SYM_MAT_INVALID"
+  elseif v.value == 3941 "Mosek.MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX"
+  elseif v.value == 3940 "Mosek.MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX"
+  elseif v.value == 3943 "Mosek.MSK_RES_ERR_SYM_MAT_INVALID_VALUE"
+  elseif v.value == 3942 "Mosek.MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR"
+  elseif v.value == 2560 "Mosek.MSK_RES_ERR_TASK_INCOMPATIBLE"
+  elseif v.value == 2561 "Mosek.MSK_RES_ERR_TASK_INVALID"
+  elseif v.value == 2562 "Mosek.MSK_RES_ERR_TASK_WRITE"
+  elseif v.value == 1049 "Mosek.MSK_RES_ERR_THREAD_COND_INIT"
+  elseif v.value == 1048 "Mosek.MSK_RES_ERR_THREAD_CREATE"
+  elseif v.value == 1045 "Mosek.MSK_RES_ERR_THREAD_MUTEX_INIT"
+  elseif v.value == 1046 "Mosek.MSK_RES_ERR_THREAD_MUTEX_LOCK"
+  elseif v.value == 1047 "Mosek.MSK_RES_ERR_THREAD_MUTEX_UNLOCK"
+  elseif v.value == 7153 "Mosek.MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC"
+  elseif v.value == 7150 "Mosek.MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD"
+  elseif v.value == 7151 "Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_FX"
+  elseif v.value == 7152 "Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_RA"
+  elseif v.value == 7155 "Mosek.MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD"
+  elseif v.value == 1245 "Mosek.MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ"
+  elseif v.value == 1252 "Mosek.MSK_RES_ERR_TOO_SMALL_MAXNUMANZ"
+  elseif v.value == 3100 "Mosek.MSK_RES_ERR_UNB_STEP_SIZE"
+  elseif v.value == 1265 "Mosek.MSK_RES_ERR_UNDEF_SOLUTION"
+  elseif v.value == 1446 "Mosek.MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE"
+  elseif v.value == 6010 "Mosek.MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS"
+  elseif v.value == 1050 "Mosek.MSK_RES_ERR_UNKNOWN"
+  elseif v.value == 1391 "Mosek.MSK_RES_ERR_UPPER_BOUND_IS_A_NAN"
+  elseif v.value == 6020 "Mosek.MSK_RES_ERR_UPPER_TRIANGLE"
+  elseif v.value == 1430 "Mosek.MSK_RES_ERR_USER_FUNC_RET"
+  elseif v.value == 1431 "Mosek.MSK_RES_ERR_USER_FUNC_RET_DATA"
+  elseif v.value == 1433 "Mosek.MSK_RES_ERR_USER_NLO_EVAL"
+  elseif v.value == 1440 "Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBI"
+  elseif v.value == 1441 "Mosek.MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ"
+  elseif v.value == 1432 "Mosek.MSK_RES_ERR_USER_NLO_FUNC"
+  elseif v.value == 1238 "Mosek.MSK_RES_ERR_WHICHITEM_NOT_ALLOWED"
+  elseif v.value == 1236 "Mosek.MSK_RES_ERR_WHICHSOL"
+  elseif v.value == 1158 "Mosek.MSK_RES_ERR_WRITE_LP_FORMAT"
+  elseif v.value == 1161 "Mosek.MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME"
+  elseif v.value == 1153 "Mosek.MSK_RES_ERR_WRITE_MPS_INVALID_NAME"
+  elseif v.value == 1156 "Mosek.MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME"
+  elseif v.value == 1166 "Mosek.MSK_RES_ERR_WRITING_FILE"
+  elseif v.value == 3600 "Mosek.MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE"
+  elseif v.value == 1449 "Mosek.MSK_RES_ERR_Y_IS_UNDEFINED"
+  elseif v.value == 0 "Mosek.MSK_RES_OK"
+  elseif v.value == 10030 "Mosek.MSK_RES_TRM_INTERNAL"
+  elseif v.value == 10031 "Mosek.MSK_RES_TRM_INTERNAL_STOP"
+  elseif v.value == 10000 "Mosek.MSK_RES_TRM_MAX_ITERATIONS"
+  elseif v.value == 10020 "Mosek.MSK_RES_TRM_MAX_NUM_SETBACKS"
+  elseif v.value == 10001 "Mosek.MSK_RES_TRM_MAX_TIME"
+  elseif v.value == 10004 "Mosek.MSK_RES_TRM_MIO_NEAR_ABS_GAP"
+  elseif v.value == 10003 "Mosek.MSK_RES_TRM_MIO_NEAR_REL_GAP"
+  elseif v.value == 10009 "Mosek.MSK_RES_TRM_MIO_NUM_BRANCHES"
+  elseif v.value == 10008 "Mosek.MSK_RES_TRM_MIO_NUM_RELAXS"
+  elseif v.value == 10015 "Mosek.MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS"
+  elseif v.value == 10025 "Mosek.MSK_RES_TRM_NUMERICAL_PROBLEM"
+  elseif v.value == 10002 "Mosek.MSK_RES_TRM_OBJECTIVE_RANGE"
+  elseif v.value == 10006 "Mosek.MSK_RES_TRM_STALL"
+  elseif v.value == 10007 "Mosek.MSK_RES_TRM_USER_CALLBACK"
+  elseif v.value == 904 "Mosek.MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS"
+  elseif v.value == 901 "Mosek.MSK_RES_WRN_ANA_C_ZERO"
+  elseif v.value == 903 "Mosek.MSK_RES_WRN_ANA_CLOSE_BOUNDS"
+  elseif v.value == 902 "Mosek.MSK_RES_WRN_ANA_EMPTY_COLS"
+  elseif v.value == 900 "Mosek.MSK_RES_WRN_ANA_LARGE_BOUNDS"
+  elseif v.value == 807 "Mosek.MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG"
+  elseif v.value == 810 "Mosek.MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG"
+  elseif v.value == 805 "Mosek.MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS"
+  elseif v.value == 201 "Mosek.MSK_RES_WRN_DROPPED_NZ_QOBJ"
+  elseif v.value == 852 "Mosek.MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES"
+  elseif v.value == 853 "Mosek.MSK_RES_WRN_DUPLICATE_CONE_NAMES"
+  elseif v.value == 850 "Mosek.MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES"
+  elseif v.value == 851 "Mosek.MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES"
+  elseif v.value == 801 "Mosek.MSK_RES_WRN_ELIMINATOR_SPACE"
+  elseif v.value == 502 "Mosek.MSK_RES_WRN_EMPTY_NAME"
+  elseif v.value == 250 "Mosek.MSK_RES_WRN_IGNORE_INTEGER"
+  elseif v.value == 800 "Mosek.MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"
+  elseif v.value == 62 "Mosek.MSK_RES_WRN_LARGE_AIJ"
+  elseif v.value == 51 "Mosek.MSK_RES_WRN_LARGE_BOUND"
+  elseif v.value == 57 "Mosek.MSK_RES_WRN_LARGE_CJ"
+  elseif v.value == 54 "Mosek.MSK_RES_WRN_LARGE_CON_FX"
+  elseif v.value == 52 "Mosek.MSK_RES_WRN_LARGE_LO_BOUND"
+  elseif v.value == 53 "Mosek.MSK_RES_WRN_LARGE_UP_BOUND"
+  elseif v.value == 500 "Mosek.MSK_RES_WRN_LICENSE_EXPIRE"
+  elseif v.value == 505 "Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"
+  elseif v.value == 501 "Mosek.MSK_RES_WRN_LICENSE_SERVER"
+  elseif v.value == 85 "Mosek.MSK_RES_WRN_LP_DROP_VARIABLE"
+  elseif v.value == 80 "Mosek.MSK_RES_WRN_LP_OLD_QUAD_FORMAT"
+  elseif v.value == 270 "Mosek.MSK_RES_WRN_MIO_INFEASIBLE_FINAL"
+  elseif v.value == 72 "Mosek.MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR"
+  elseif v.value == 71 "Mosek.MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR"
+  elseif v.value == 70 "Mosek.MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR"
+  elseif v.value == 65 "Mosek.MSK_RES_WRN_NAME_MAX_LEN"
+  elseif v.value == 950 "Mosek.MSK_RES_WRN_NO_DUALIZER"
+  elseif v.value == 251 "Mosek.MSK_RES_WRN_NO_GLOBAL_OPTIMIZER"
+  elseif v.value == 450 "Mosek.MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE"
+  elseif v.value == 200 "Mosek.MSK_RES_WRN_NZ_IN_UPR_TRI"
+  elseif v.value == 50 "Mosek.MSK_RES_WRN_OPEN_PARAM_FILE"
+  elseif v.value == 516 "Mosek.MSK_RES_WRN_PARAM_IGNORED_CMIO"
+  elseif v.value == 510 "Mosek.MSK_RES_WRN_PARAM_NAME_DOU"
+  elseif v.value == 511 "Mosek.MSK_RES_WRN_PARAM_NAME_INT"
+  elseif v.value == 512 "Mosek.MSK_RES_WRN_PARAM_NAME_STR"
+  elseif v.value == 515 "Mosek.MSK_RES_WRN_PARAM_STR_VALUE"
+  elseif v.value == 802 "Mosek.MSK_RES_WRN_PRESOLVE_OUTOFSPACE"
+  elseif v.value == 930 "Mosek.MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"
+  elseif v.value == 931 "Mosek.MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO"
+  elseif v.value == 351 "Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_CON"
+  elseif v.value == 352 "Mosek.MSK_RES_WRN_SOL_FILE_IGNORED_VAR"
+  elseif v.value == 300 "Mosek.MSK_RES_WRN_SOL_FILTER"
+  elseif v.value == 66 "Mosek.MSK_RES_WRN_SPAR_MAX_LEN"
+  elseif v.value == 960 "Mosek.MSK_RES_WRN_SYM_MAT_LARGE"
+  elseif v.value == 400 "Mosek.MSK_RES_WRN_TOO_FEW_BASIS_VARS"
+  elseif v.value == 405 "Mosek.MSK_RES_WRN_TOO_MANY_BASIS_VARS"
+  elseif v.value == 350 "Mosek.MSK_RES_WRN_UNDEF_SOL_FILE_NAME"
+  elseif v.value == 503 "Mosek.MSK_RES_WRN_USING_GENERIC_NAMES"
+  elseif v.value == 803 "Mosek.MSK_RES_WRN_WRITE_CHANGED_NAMES"
+  elseif v.value == 804 "Mosek.MSK_RES_WRN_WRITE_DISCARDED_CFIX"
+  elseif v.value == 63 "Mosek.MSK_RES_WRN_ZERO_AIJ"
+  elseif v.value == 710 "Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_COL"
+  elseif v.value == 705 "Mosek.MSK_RES_WRN_ZEROS_IN_SPARSE_ROW"
+  else "Mosek.Rescode(?)"
+  end
 const Rescode_members = Rescode[ MSK_RES_ERR_AD_INVALID_CODELIST,MSK_RES_ERR_API_ARRAY_TOO_SMALL,MSK_RES_ERR_API_CB_CONNECT,MSK_RES_ERR_API_FATAL_ERROR,MSK_RES_ERR_API_INTERNAL,MSK_RES_ERR_ARG_IS_TOO_LARGE,MSK_RES_ERR_ARG_IS_TOO_SMALL,MSK_RES_ERR_ARGUMENT_DIMENSION,MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE,MSK_RES_ERR_ARGUMENT_LENNEQ,MSK_RES_ERR_ARGUMENT_PERM_ARRAY,MSK_RES_ERR_ARGUMENT_TYPE,MSK_RES_ERR_BAR_VAR_DIM,MSK_RES_ERR_BASIS,MSK_RES_ERR_BASIS_FACTOR,MSK_RES_ERR_BASIS_SINGULAR,MSK_RES_ERR_BLANK_NAME,MSK_RES_ERR_CANNOT_CLONE_NL,MSK_RES_ERR_CANNOT_HANDLE_NL,MSK_RES_ERR_CBF_DUPLICATE_ACOORD,MSK_RES_ERR_CBF_DUPLICATE_BCOORD,MSK_RES_ERR_CBF_DUPLICATE_CON,MSK_RES_ERR_CBF_DUPLICATE_INT,MSK_RES_ERR_CBF_DUPLICATE_OBJ,MSK_RES_ERR_CBF_DUPLICATE_OBJACOORD,MSK_RES_ERR_CBF_DUPLICATE_PSDVAR,MSK_RES_ERR_CBF_DUPLICATE_VAR,MSK_RES_ERR_CBF_INVALID_CON_TYPE,MSK_RES_ERR_CBF_INVALID_DOMAIN_DIMENSION,MSK_RES_ERR_CBF_INVALID_INT_INDEX,MSK_RES_ERR_CBF_INVALID_PSDVAR_DIMENSION,MSK_RES_ERR_CBF_INVALID_VAR_TYPE,MSK_RES_ERR_CBF_NO_VARIABLES,MSK_RES_ERR_CBF_NO_VERSION_SPECIFIED,MSK_RES_ERR_CBF_OBJ_SENSE,MSK_RES_ERR_CBF_PARSE,MSK_RES_ERR_CBF_SYNTAX,MSK_RES_ERR_CBF_TOO_FEW_CONSTRAINTS,MSK_RES_ERR_CBF_TOO_FEW_INTS,MSK_RES_ERR_CBF_TOO_FEW_PSDVAR,MSK_RES_ERR_CBF_TOO_FEW_VARIABLES,MSK_RES_ERR_CBF_TOO_MANY_CONSTRAINTS,MSK_RES_ERR_CBF_TOO_MANY_INTS,MSK_RES_ERR_CBF_TOO_MANY_VARIABLES,MSK_RES_ERR_CBF_UNSUPPORTED,MSK_RES_ERR_CON_Q_NOT_NSD,MSK_RES_ERR_CON_Q_NOT_PSD,MSK_RES_ERR_CONE_INDEX,MSK_RES_ERR_CONE_OVERLAP,MSK_RES_ERR_CONE_OVERLAP_APPEND,MSK_RES_ERR_CONE_REP_VAR,MSK_RES_ERR_CONE_SIZE,MSK_RES_ERR_CONE_TYPE,MSK_RES_ERR_CONE_TYPE_STR,MSK_RES_ERR_DATA_FILE_EXT,MSK_RES_ERR_DUP_NAME,MSK_RES_ERR_DUPLICATE_AIJ,MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES,MSK_RES_ERR_DUPLICATE_CONE_NAMES,MSK_RES_ERR_DUPLICATE_CONSTRAINT_NAMES,MSK_RES_ERR_DUPLICATE_VARIABLE_NAMES,MSK_RES_ERR_END_OF_FILE,MSK_RES_ERR_FACTOR,MSK_RES_ERR_FEASREPAIR_CANNOT_RELAX,MSK_RES_ERR_FEASREPAIR_INCONSISTENT_BOUND,MSK_RES_ERR_FEASREPAIR_SOLVING_RELAXED,MSK_RES_ERR_FILE_LICENSE,MSK_RES_ERR_FILE_OPEN,MSK_RES_ERR_FILE_READ,MSK_RES_ERR_FILE_WRITE,MSK_RES_ERR_FINAL_SOLUTION,MSK_RES_ERR_FIRST,MSK_RES_ERR_FIRSTI,MSK_RES_ERR_FIRSTJ,MSK_RES_ERR_FIXED_BOUND_VALUES,MSK_RES_ERR_FLEXLM,MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM,MSK_RES_ERR_HUGE_AIJ,MSK_RES_ERR_HUGE_C,MSK_RES_ERR_IDENTICAL_TASKS,MSK_RES_ERR_IN_ARGUMENT,MSK_RES_ERR_INDEX,MSK_RES_ERR_INDEX_ARR_IS_TOO_LARGE,MSK_RES_ERR_INDEX_ARR_IS_TOO_SMALL,MSK_RES_ERR_INDEX_IS_TOO_LARGE,MSK_RES_ERR_INDEX_IS_TOO_SMALL,MSK_RES_ERR_INF_DOU_INDEX,MSK_RES_ERR_INF_DOU_NAME,MSK_RES_ERR_INF_INT_INDEX,MSK_RES_ERR_INF_INT_NAME,MSK_RES_ERR_INF_LINT_INDEX,MSK_RES_ERR_INF_LINT_NAME,MSK_RES_ERR_INF_TYPE,MSK_RES_ERR_INFEAS_UNDEFINED,MSK_RES_ERR_INFINITE_BOUND,MSK_RES_ERR_INT64_TO_INT32_CAST,MSK_RES_ERR_INTERNAL,MSK_RES_ERR_INTERNAL_TEST_FAILED,MSK_RES_ERR_INV_APTRE,MSK_RES_ERR_INV_BK,MSK_RES_ERR_INV_BKC,MSK_RES_ERR_INV_BKX,MSK_RES_ERR_INV_CONE_TYPE,MSK_RES_ERR_INV_CONE_TYPE_STR,MSK_RES_ERR_INV_MARKI,MSK_RES_ERR_INV_MARKJ,MSK_RES_ERR_INV_NAME_ITEM,MSK_RES_ERR_INV_NUMI,MSK_RES_ERR_INV_NUMJ,MSK_RES_ERR_INV_OPTIMIZER,MSK_RES_ERR_INV_PROBLEM,MSK_RES_ERR_INV_QCON_SUBI,MSK_RES_ERR_INV_QCON_SUBJ,MSK_RES_ERR_INV_QCON_SUBK,MSK_RES_ERR_INV_QCON_VAL,MSK_RES_ERR_INV_QOBJ_SUBI,MSK_RES_ERR_INV_QOBJ_SUBJ,MSK_RES_ERR_INV_QOBJ_VAL,MSK_RES_ERR_INV_SK,MSK_RES_ERR_INV_SK_STR,MSK_RES_ERR_INV_SKC,MSK_RES_ERR_INV_SKN,MSK_RES_ERR_INV_SKX,MSK_RES_ERR_INV_VAR_TYPE,MSK_RES_ERR_INVALID_ACCMODE,MSK_RES_ERR_INVALID_AIJ,MSK_RES_ERR_INVALID_AMPL_STUB,MSK_RES_ERR_INVALID_BARVAR_NAME,MSK_RES_ERR_INVALID_COMPRESSION,MSK_RES_ERR_INVALID_CON_NAME,MSK_RES_ERR_INVALID_CONE_NAME,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CONES,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_GENERAL_NL,MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT,MSK_RES_ERR_INVALID_FILE_NAME,MSK_RES_ERR_INVALID_FORMAT_TYPE,MSK_RES_ERR_INVALID_IDX,MSK_RES_ERR_INVALID_IOMODE,MSK_RES_ERR_INVALID_MAX_NUM,MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,MSK_RES_ERR_INVALID_OBJ_NAME,MSK_RES_ERR_INVALID_OBJECTIVE_SENSE,MSK_RES_ERR_INVALID_PROBLEM_TYPE,MSK_RES_ERR_INVALID_SOL_FILE_NAME,MSK_RES_ERR_INVALID_STREAM,MSK_RES_ERR_INVALID_SURPLUS,MSK_RES_ERR_INVALID_SYM_MAT_DIM,MSK_RES_ERR_INVALID_TASK,MSK_RES_ERR_INVALID_UTF8,MSK_RES_ERR_INVALID_VAR_NAME,MSK_RES_ERR_INVALID_WCHAR,MSK_RES_ERR_INVALID_WHICHSOL,MSK_RES_ERR_JSON_DATA,MSK_RES_ERR_JSON_FORMAT,MSK_RES_ERR_JSON_MISSING_DATA,MSK_RES_ERR_JSON_NUMBER_OVERFLOW,MSK_RES_ERR_JSON_STRING,MSK_RES_ERR_JSON_SYNTAX,MSK_RES_ERR_LAST,MSK_RES_ERR_LASTI,MSK_RES_ERR_LASTJ,MSK_RES_ERR_LAU_ARG_K,MSK_RES_ERR_LAU_ARG_M,MSK_RES_ERR_LAU_ARG_N,MSK_RES_ERR_LAU_ARG_TRANS,MSK_RES_ERR_LAU_ARG_TRANSA,MSK_RES_ERR_LAU_ARG_TRANSB,MSK_RES_ERR_LAU_ARG_UPLO,MSK_RES_ERR_LAU_INVALID_LOWER_TRIANGULAR_MATRIX,MSK_RES_ERR_LAU_INVALID_SPARSE_SYMMETRIC_MATRIX,MSK_RES_ERR_LAU_NOT_POSITIVE_DEFINITE,MSK_RES_ERR_LAU_SINGULAR_MATRIX,MSK_RES_ERR_LAU_UNKNOWN,MSK_RES_ERR_LICENSE,MSK_RES_ERR_LICENSE_CANNOT_ALLOCATE,MSK_RES_ERR_LICENSE_CANNOT_CONNECT,MSK_RES_ERR_LICENSE_EXPIRED,MSK_RES_ERR_LICENSE_FEATURE,MSK_RES_ERR_LICENSE_INVALID_HOSTID,MSK_RES_ERR_LICENSE_MAX,MSK_RES_ERR_LICENSE_MOSEKLM_DAEMON,MSK_RES_ERR_LICENSE_NO_SERVER_LINE,MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT,MSK_RES_ERR_LICENSE_SERVER,MSK_RES_ERR_LICENSE_SERVER_VERSION,MSK_RES_ERR_LICENSE_VERSION,MSK_RES_ERR_LINK_FILE_DLL,MSK_RES_ERR_LIVING_TASKS,MSK_RES_ERR_LOWER_BOUND_IS_A_NAN,MSK_RES_ERR_LP_DUP_SLACK_NAME,MSK_RES_ERR_LP_EMPTY,MSK_RES_ERR_LP_FILE_FORMAT,MSK_RES_ERR_LP_FORMAT,MSK_RES_ERR_LP_FREE_CONSTRAINT,MSK_RES_ERR_LP_INCOMPATIBLE,MSK_RES_ERR_LP_INVALID_CON_NAME,MSK_RES_ERR_LP_INVALID_VAR_NAME,MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,MSK_RES_ERR_LU_MAX_NUM_TRIES,MSK_RES_ERR_MAX_LEN_IS_TOO_SMALL,MSK_RES_ERR_MAXNUMBARVAR,MSK_RES_ERR_MAXNUMCON,MSK_RES_ERR_MAXNUMCONE,MSK_RES_ERR_MAXNUMQNZ,MSK_RES_ERR_MAXNUMVAR,MSK_RES_ERR_MIO_INTERNAL,MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER,MSK_RES_ERR_MIO_INVALID_ROOT_OPTIMIZER,MSK_RES_ERR_MIO_NO_OPTIMIZER,MSK_RES_ERR_MISSING_LICENSE_FILE,MSK_RES_ERR_MIXED_CONIC_AND_NL,MSK_RES_ERR_MPS_CONE_OVERLAP,MSK_RES_ERR_MPS_CONE_REPEAT,MSK_RES_ERR_MPS_CONE_TYPE,MSK_RES_ERR_MPS_DUPLICATE_Q_ELEMENT,MSK_RES_ERR_MPS_FILE,MSK_RES_ERR_MPS_INV_BOUND_KEY,MSK_RES_ERR_MPS_INV_CON_KEY,MSK_RES_ERR_MPS_INV_FIELD,MSK_RES_ERR_MPS_INV_MARKER,MSK_RES_ERR_MPS_INV_SEC_NAME,MSK_RES_ERR_MPS_INV_SEC_ORDER,MSK_RES_ERR_MPS_INVALID_OBJ_NAME,MSK_RES_ERR_MPS_INVALID_OBJSENSE,MSK_RES_ERR_MPS_MUL_CON_NAME,MSK_RES_ERR_MPS_MUL_CSEC,MSK_RES_ERR_MPS_MUL_QOBJ,MSK_RES_ERR_MPS_MUL_QSEC,MSK_RES_ERR_MPS_NO_OBJECTIVE,MSK_RES_ERR_MPS_NON_SYMMETRIC_Q,MSK_RES_ERR_MPS_NULL_CON_NAME,MSK_RES_ERR_MPS_NULL_VAR_NAME,MSK_RES_ERR_MPS_SPLITTED_VAR,MSK_RES_ERR_MPS_TAB_IN_FIELD2,MSK_RES_ERR_MPS_TAB_IN_FIELD3,MSK_RES_ERR_MPS_TAB_IN_FIELD5,MSK_RES_ERR_MPS_UNDEF_CON_NAME,MSK_RES_ERR_MPS_UNDEF_VAR_NAME,MSK_RES_ERR_MUL_A_ELEMENT,MSK_RES_ERR_NAME_IS_NULL,MSK_RES_ERR_NAME_MAX_LEN,MSK_RES_ERR_NAN_IN_BLC,MSK_RES_ERR_NAN_IN_BLX,MSK_RES_ERR_NAN_IN_BUC,MSK_RES_ERR_NAN_IN_BUX,MSK_RES_ERR_NAN_IN_C,MSK_RES_ERR_NAN_IN_DOUBLE_DATA,MSK_RES_ERR_NEGATIVE_APPEND,MSK_RES_ERR_NEGATIVE_SURPLUS,MSK_RES_ERR_NEWER_DLL,MSK_RES_ERR_NO_BARS_FOR_SOLUTION,MSK_RES_ERR_NO_BARX_FOR_SOLUTION,MSK_RES_ERR_NO_BASIS_SOL,MSK_RES_ERR_NO_DUAL_FOR_ITG_SOL,MSK_RES_ERR_NO_DUAL_INFEAS_CER,MSK_RES_ERR_NO_INIT_ENV,MSK_RES_ERR_NO_OPTIMIZER_VAR_TYPE,MSK_RES_ERR_NO_PRIMAL_INFEAS_CER,MSK_RES_ERR_NO_SNX_FOR_BAS_SOL,MSK_RES_ERR_NO_SOLUTION_IN_CALLBACK,MSK_RES_ERR_NON_UNIQUE_ARRAY,MSK_RES_ERR_NONCONVEX,MSK_RES_ERR_NONLINEAR_EQUALITY,MSK_RES_ERR_NONLINEAR_FUNCTIONS_NOT_ALLOWED,MSK_RES_ERR_NONLINEAR_RANGED,MSK_RES_ERR_NR_ARGUMENTS,MSK_RES_ERR_NULL_ENV,MSK_RES_ERR_NULL_POINTER,MSK_RES_ERR_NULL_TASK,MSK_RES_ERR_NUMCONLIM,MSK_RES_ERR_NUMVARLIM,MSK_RES_ERR_OBJ_Q_NOT_NSD,MSK_RES_ERR_OBJ_Q_NOT_PSD,MSK_RES_ERR_OBJECTIVE_RANGE,MSK_RES_ERR_OLDER_DLL,MSK_RES_ERR_OPEN_DL,MSK_RES_ERR_OPF_FORMAT,MSK_RES_ERR_OPF_NEW_VARIABLE,MSK_RES_ERR_OPF_PREMATURE_EOF,MSK_RES_ERR_OPTIMIZER_LICENSE,MSK_RES_ERR_OVERFLOW,MSK_RES_ERR_PARAM_INDEX,MSK_RES_ERR_PARAM_IS_TOO_LARGE,MSK_RES_ERR_PARAM_IS_TOO_SMALL,MSK_RES_ERR_PARAM_NAME,MSK_RES_ERR_PARAM_NAME_DOU,MSK_RES_ERR_PARAM_NAME_INT,MSK_RES_ERR_PARAM_NAME_STR,MSK_RES_ERR_PARAM_TYPE,MSK_RES_ERR_PARAM_VALUE_STR,MSK_RES_ERR_PLATFORM_NOT_LICENSED,MSK_RES_ERR_POSTSOLVE,MSK_RES_ERR_PRO_ITEM,MSK_RES_ERR_PROB_LICENSE,MSK_RES_ERR_QCON_SUBI_TOO_LARGE,MSK_RES_ERR_QCON_SUBI_TOO_SMALL,MSK_RES_ERR_QCON_UPPER_TRIANGLE,MSK_RES_ERR_QOBJ_UPPER_TRIANGLE,MSK_RES_ERR_READ_FORMAT,MSK_RES_ERR_READ_LP_MISSING_END_TAG,MSK_RES_ERR_READ_LP_NONEXISTING_NAME,MSK_RES_ERR_REMOVE_CONE_VARIABLE,MSK_RES_ERR_REPAIR_INVALID_PROBLEM,MSK_RES_ERR_REPAIR_OPTIMIZATION_FAILED,MSK_RES_ERR_SEN_BOUND_INVALID_LO,MSK_RES_ERR_SEN_BOUND_INVALID_UP,MSK_RES_ERR_SEN_FORMAT,MSK_RES_ERR_SEN_INDEX_INVALID,MSK_RES_ERR_SEN_INDEX_RANGE,MSK_RES_ERR_SEN_INVALID_REGEXP,MSK_RES_ERR_SEN_NUMERICAL,MSK_RES_ERR_SEN_SOLUTION_STATUS,MSK_RES_ERR_SEN_UNDEF_NAME,MSK_RES_ERR_SEN_UNHANDLED_PROBLEM_TYPE,MSK_RES_ERR_SERVER_CONNECT,MSK_RES_ERR_SERVER_PROTOCOL,MSK_RES_ERR_SERVER_STATUS,MSK_RES_ERR_SERVER_TOKEN,MSK_RES_ERR_SIZE_LICENSE,MSK_RES_ERR_SIZE_LICENSE_CON,MSK_RES_ERR_SIZE_LICENSE_INTVAR,MSK_RES_ERR_SIZE_LICENSE_NUMCORES,MSK_RES_ERR_SIZE_LICENSE_VAR,MSK_RES_ERR_SOL_FILE_INVALID_NUMBER,MSK_RES_ERR_SOLITEM,MSK_RES_ERR_SOLVER_PROBTYPE,MSK_RES_ERR_SPACE,MSK_RES_ERR_SPACE_LEAKING,MSK_RES_ERR_SPACE_NO_INFO,MSK_RES_ERR_SYM_MAT_DUPLICATE,MSK_RES_ERR_SYM_MAT_HUGE,MSK_RES_ERR_SYM_MAT_INVALID,MSK_RES_ERR_SYM_MAT_INVALID_COL_INDEX,MSK_RES_ERR_SYM_MAT_INVALID_ROW_INDEX,MSK_RES_ERR_SYM_MAT_INVALID_VALUE,MSK_RES_ERR_SYM_MAT_NOT_LOWER_TRINGULAR,MSK_RES_ERR_TASK_INCOMPATIBLE,MSK_RES_ERR_TASK_INVALID,MSK_RES_ERR_TASK_WRITE,MSK_RES_ERR_THREAD_COND_INIT,MSK_RES_ERR_THREAD_CREATE,MSK_RES_ERR_THREAD_MUTEX_INIT,MSK_RES_ERR_THREAD_MUTEX_LOCK,MSK_RES_ERR_THREAD_MUTEX_UNLOCK,MSK_RES_ERR_TOCONIC_CONSTR_NOT_CONIC,MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD,MSK_RES_ERR_TOCONIC_CONSTRAINT_FX,MSK_RES_ERR_TOCONIC_CONSTRAINT_RA,MSK_RES_ERR_TOCONIC_OBJECTIVE_NOT_PSD,MSK_RES_ERR_TOO_SMALL_MAX_NUM_NZ,MSK_RES_ERR_TOO_SMALL_MAXNUMANZ,MSK_RES_ERR_UNB_STEP_SIZE,MSK_RES_ERR_UNDEF_SOLUTION,MSK_RES_ERR_UNDEFINED_OBJECTIVE_SENSE,MSK_RES_ERR_UNHANDLED_SOLUTION_STATUS,MSK_RES_ERR_UNKNOWN,MSK_RES_ERR_UPPER_BOUND_IS_A_NAN,MSK_RES_ERR_UPPER_TRIANGLE,MSK_RES_ERR_USER_FUNC_RET,MSK_RES_ERR_USER_FUNC_RET_DATA,MSK_RES_ERR_USER_NLO_EVAL,MSK_RES_ERR_USER_NLO_EVAL_HESSUBI,MSK_RES_ERR_USER_NLO_EVAL_HESSUBJ,MSK_RES_ERR_USER_NLO_FUNC,MSK_RES_ERR_WHICHITEM_NOT_ALLOWED,MSK_RES_ERR_WHICHSOL,MSK_RES_ERR_WRITE_LP_FORMAT,MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME,MSK_RES_ERR_WRITE_MPS_INVALID_NAME,MSK_RES_ERR_WRITE_OPF_INVALID_VAR_NAME,MSK_RES_ERR_WRITING_FILE,MSK_RES_ERR_XML_INVALID_PROBLEM_TYPE,MSK_RES_ERR_Y_IS_UNDEFINED,MSK_RES_OK,MSK_RES_TRM_INTERNAL,MSK_RES_TRM_INTERNAL_STOP,MSK_RES_TRM_MAX_ITERATIONS,MSK_RES_TRM_MAX_NUM_SETBACKS,MSK_RES_TRM_MAX_TIME,MSK_RES_TRM_MIO_NEAR_ABS_GAP,MSK_RES_TRM_MIO_NEAR_REL_GAP,MSK_RES_TRM_MIO_NUM_BRANCHES,MSK_RES_TRM_MIO_NUM_RELAXS,MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS,MSK_RES_TRM_NUMERICAL_PROBLEM,MSK_RES_TRM_OBJECTIVE_RANGE,MSK_RES_TRM_STALL,MSK_RES_TRM_USER_CALLBACK,MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS,MSK_RES_WRN_ANA_C_ZERO,MSK_RES_WRN_ANA_CLOSE_BOUNDS,MSK_RES_WRN_ANA_EMPTY_COLS,MSK_RES_WRN_ANA_LARGE_BOUNDS,MSK_RES_WRN_CONSTRUCT_INVALID_SOL_ITG,MSK_RES_WRN_CONSTRUCT_NO_SOL_ITG,MSK_RES_WRN_CONSTRUCT_SOLUTION_INFEAS,MSK_RES_WRN_DROPPED_NZ_QOBJ,MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES,MSK_RES_WRN_DUPLICATE_CONE_NAMES,MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES,MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES,MSK_RES_WRN_ELIMINATOR_SPACE,MSK_RES_WRN_EMPTY_NAME,MSK_RES_WRN_IGNORE_INTEGER,MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK,MSK_RES_WRN_LARGE_AIJ,MSK_RES_WRN_LARGE_BOUND,MSK_RES_WRN_LARGE_CJ,MSK_RES_WRN_LARGE_CON_FX,MSK_RES_WRN_LARGE_LO_BOUND,MSK_RES_WRN_LARGE_UP_BOUND,MSK_RES_WRN_LICENSE_EXPIRE,MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,MSK_RES_WRN_LICENSE_SERVER,MSK_RES_WRN_LP_DROP_VARIABLE,MSK_RES_WRN_LP_OLD_QUAD_FORMAT,MSK_RES_WRN_MIO_INFEASIBLE_FINAL,MSK_RES_WRN_MPS_SPLIT_BOU_VECTOR,MSK_RES_WRN_MPS_SPLIT_RAN_VECTOR,MSK_RES_WRN_MPS_SPLIT_RHS_VECTOR,MSK_RES_WRN_NAME_MAX_LEN,MSK_RES_WRN_NO_DUALIZER,MSK_RES_WRN_NO_GLOBAL_OPTIMIZER,MSK_RES_WRN_NO_NONLINEAR_FUNCTION_WRITE,MSK_RES_WRN_NZ_IN_UPR_TRI,MSK_RES_WRN_OPEN_PARAM_FILE,MSK_RES_WRN_PARAM_IGNORED_CMIO,MSK_RES_WRN_PARAM_NAME_DOU,MSK_RES_WRN_PARAM_NAME_INT,MSK_RES_WRN_PARAM_NAME_STR,MSK_RES_WRN_PARAM_STR_VALUE,MSK_RES_WRN_PRESOLVE_OUTOFSPACE,MSK_RES_WRN_QUAD_CONES_WITH_ROOT_FIXED_AT_ZERO,MSK_RES_WRN_RQUAD_CONES_WITH_ROOT_FIXED_AT_ZERO,MSK_RES_WRN_SOL_FILE_IGNORED_CON,MSK_RES_WRN_SOL_FILE_IGNORED_VAR,MSK_RES_WRN_SOL_FILTER,MSK_RES_WRN_SPAR_MAX_LEN,MSK_RES_WRN_SYM_MAT_LARGE,MSK_RES_WRN_TOO_FEW_BASIS_VARS,MSK_RES_WRN_TOO_MANY_BASIS_VARS,MSK_RES_WRN_UNDEF_SOL_FILE_NAME,MSK_RES_WRN_USING_GENERIC_NAMES,MSK_RES_WRN_WRITE_CHANGED_NAMES,MSK_RES_WRN_WRITE_DISCARDED_CFIX,MSK_RES_WRN_ZERO_AIJ,MSK_RES_WRN_ZEROS_IN_SPARSE_COL,MSK_RES_WRN_ZEROS_IN_SPARSE_ROW ]
 members(::Type{Rescode}) = Rescode_members
 Base.length(::Type{Rescode}) = 449
@@ -7151,6 +8172,14 @@ const MSK_MIO_NODE_SELECTION_PSEUDO = Mionodeseltype(5)
 
 "The optimizer employs a worst bound node selection strategy."
 const MSK_MIO_NODE_SELECTION_WORST = Mionodeseltype(3)
+tostr(v::Mionodeseltype) = if v.value == 2 "Mosek.MSK_MIO_NODE_SELECTION_BEST"
+  elseif v.value == 1 "Mosek.MSK_MIO_NODE_SELECTION_FIRST"
+  elseif v.value == 0 "Mosek.MSK_MIO_NODE_SELECTION_FREE"
+  elseif v.value == 4 "Mosek.MSK_MIO_NODE_SELECTION_HYBRID"
+  elseif v.value == 5 "Mosek.MSK_MIO_NODE_SELECTION_PSEUDO"
+  elseif v.value == 3 "Mosek.MSK_MIO_NODE_SELECTION_WORST"
+  else "Mosek.Mionodeseltype(?)"
+  end
 const Mionodeseltype_members = Mionodeseltype[ MSK_MIO_NODE_SELECTION_BEST,MSK_MIO_NODE_SELECTION_FIRST,MSK_MIO_NODE_SELECTION_FREE,MSK_MIO_NODE_SELECTION_HYBRID,MSK_MIO_NODE_SELECTION_PSEUDO,MSK_MIO_NODE_SELECTION_WORST ]
 members(::Type{Mionodeseltype}) = Mionodeseltype_members
 Base.length(::Type{Mionodeseltype}) = 6
@@ -7171,6 +8200,10 @@ const MSK_TRANSPOSE_NO = Transpose(0)
 
 "A transpose is applied."
 const MSK_TRANSPOSE_YES = Transpose(1)
+tostr(v::Transpose) = if v.value == 0 "Mosek.MSK_TRANSPOSE_NO"
+  elseif v.value == 1 "Mosek.MSK_TRANSPOSE_YES"
+  else "Mosek.Transpose(?)"
+  end
 const Transpose_members = Transpose[ MSK_TRANSPOSE_NO,MSK_TRANSPOSE_YES ]
 members(::Type{Transpose}) = Transpose_members
 Base.length(::Type{Transpose}) = 2
@@ -7191,6 +8224,10 @@ const MSK_OFF = Onoffkey(0)
 
 "Switch the option on."
 const MSK_ON = Onoffkey(1)
+tostr(v::Onoffkey) = if v.value == 0 "Mosek.MSK_OFF"
+  elseif v.value == 1 "Mosek.MSK_ON"
+  else "Mosek.Onoffkey(?)"
+  end
 const Onoffkey_members = Onoffkey[ MSK_OFF,MSK_ON ]
 members(::Type{Onoffkey}) = Onoffkey_members
 Base.length(::Type{Onoffkey}) = 2
@@ -7223,6 +8260,13 @@ const MSK_SIM_DEGEN_MODERATE = Simdegen(3)
 
 "The simplex optimizer should use no degeneration strategy."
 const MSK_SIM_DEGEN_NONE = Simdegen(0)
+tostr(v::Simdegen) = if v.value == 2 "Mosek.MSK_SIM_DEGEN_AGGRESSIVE"
+  elseif v.value == 1 "Mosek.MSK_SIM_DEGEN_FREE"
+  elseif v.value == 4 "Mosek.MSK_SIM_DEGEN_MINIMUM"
+  elseif v.value == 3 "Mosek.MSK_SIM_DEGEN_MODERATE"
+  elseif v.value == 0 "Mosek.MSK_SIM_DEGEN_NONE"
+  else "Mosek.Simdegen(?)"
+  end
 const Simdegen_members = Simdegen[ MSK_SIM_DEGEN_AGGRESSIVE,MSK_SIM_DEGEN_FREE,MSK_SIM_DEGEN_MINIMUM,MSK_SIM_DEGEN_MODERATE,MSK_SIM_DEGEN_NONE ]
 members(::Type{Simdegen}) = Simdegen_members
 Base.length(::Type{Simdegen}) = 5
@@ -7271,6 +8315,17 @@ const MSK_DATA_FORMAT_TASK = Dataformat(6)
 
 "The data file is an XML formatted file."
 const MSK_DATA_FORMAT_XML = Dataformat(4)
+tostr(v::Dataformat) = if v.value == 7 "Mosek.MSK_DATA_FORMAT_CB"
+  elseif v.value == 0 "Mosek.MSK_DATA_FORMAT_EXTENSION"
+  elseif v.value == 5 "Mosek.MSK_DATA_FORMAT_FREE_MPS"
+  elseif v.value == 8 "Mosek.MSK_DATA_FORMAT_JSON_TASK"
+  elseif v.value == 2 "Mosek.MSK_DATA_FORMAT_LP"
+  elseif v.value == 1 "Mosek.MSK_DATA_FORMAT_MPS"
+  elseif v.value == 3 "Mosek.MSK_DATA_FORMAT_OP"
+  elseif v.value == 6 "Mosek.MSK_DATA_FORMAT_TASK"
+  elseif v.value == 4 "Mosek.MSK_DATA_FORMAT_XML"
+  else "Mosek.Dataformat(?)"
+  end
 const Dataformat_members = Dataformat[ MSK_DATA_FORMAT_CB,MSK_DATA_FORMAT_EXTENSION,MSK_DATA_FORMAT_FREE_MPS,MSK_DATA_FORMAT_JSON_TASK,MSK_DATA_FORMAT_LP,MSK_DATA_FORMAT_MPS,MSK_DATA_FORMAT_OP,MSK_DATA_FORMAT_TASK,MSK_DATA_FORMAT_XML ]
 members(::Type{Dataformat}) = Dataformat_members
 Base.length(::Type{Dataformat}) = 9
@@ -7307,6 +8362,14 @@ const MSK_ORDER_METHOD_NONE = Orderingtype(5)
 
 "Always try the graph partitioning based ordering."
 const MSK_ORDER_METHOD_TRY_GRAPHPAR = Orderingtype(3)
+tostr(v::Orderingtype) = if v.value == 1 "Mosek.MSK_ORDER_METHOD_APPMINLOC"
+  elseif v.value == 2 "Mosek.MSK_ORDER_METHOD_EXPERIMENTAL"
+  elseif v.value == 4 "Mosek.MSK_ORDER_METHOD_FORCE_GRAPHPAR"
+  elseif v.value == 0 "Mosek.MSK_ORDER_METHOD_FREE"
+  elseif v.value == 5 "Mosek.MSK_ORDER_METHOD_NONE"
+  elseif v.value == 3 "Mosek.MSK_ORDER_METHOD_TRY_GRAPHPAR"
+  else "Mosek.Orderingtype(?)"
+  end
 const Orderingtype_members = Orderingtype[ MSK_ORDER_METHOD_APPMINLOC,MSK_ORDER_METHOD_EXPERIMENTAL,MSK_ORDER_METHOD_FORCE_GRAPHPAR,MSK_ORDER_METHOD_FREE,MSK_ORDER_METHOD_NONE,MSK_ORDER_METHOD_TRY_GRAPHPAR ]
 members(::Type{Orderingtype}) = Orderingtype_members
 Base.length(::Type{Orderingtype}) = 6
@@ -7343,6 +8406,14 @@ const MSK_PROBTYPE_QCQO = Problemtype(2)
 
 "The problem is a quadratic optimization problem."
 const MSK_PROBTYPE_QO = Problemtype(1)
+tostr(v::Problemtype) = if v.value == 4 "Mosek.MSK_PROBTYPE_CONIC"
+  elseif v.value == 3 "Mosek.MSK_PROBTYPE_GECO"
+  elseif v.value == 0 "Mosek.MSK_PROBTYPE_LO"
+  elseif v.value == 5 "Mosek.MSK_PROBTYPE_MIXED"
+  elseif v.value == 2 "Mosek.MSK_PROBTYPE_QCQO"
+  elseif v.value == 1 "Mosek.MSK_PROBTYPE_QO"
+  else "Mosek.Problemtype(?)"
+  end
 const Problemtype_members = Problemtype[ MSK_PROBTYPE_CONIC,MSK_PROBTYPE_GECO,MSK_PROBTYPE_LO,MSK_PROBTYPE_MIXED,MSK_PROBTYPE_QCQO,MSK_PROBTYPE_QO ]
 members(::Type{Problemtype}) = Problemtype_members
 Base.length(::Type{Problemtype}) = 6
@@ -7367,6 +8438,11 @@ const MSK_INF_INT_TYPE = Inftype(1)
 
 "Is a long integer."
 const MSK_INF_LINT_TYPE = Inftype(2)
+tostr(v::Inftype) = if v.value == 0 "Mosek.MSK_INF_DOU_TYPE"
+  elseif v.value == 1 "Mosek.MSK_INF_INT_TYPE"
+  elseif v.value == 2 "Mosek.MSK_INF_LINT_TYPE"
+  else "Mosek.Inftype(?)"
+  end
 const Inftype_members = Inftype[ MSK_INF_DOU_TYPE,MSK_INF_INT_TYPE,MSK_INF_LINT_TYPE ]
 members(::Type{Inftype}) = Inftype_members
 Base.length(::Type{Inftype}) = 3
@@ -8115,6 +9191,78 @@ Default value: `0.5e30`
 Possible Values: Any number between -inf and +inf.
 """
 const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH = Dparam(69)
+tostr(v::Dparam) = if v.value == 0 "Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL"
+  elseif v.value == 1 "Mosek.MSK_DPAR_BASIS_REL_TOL_S"
+  elseif v.value == 2 "Mosek.MSK_DPAR_BASIS_TOL_S"
+  elseif v.value == 3 "Mosek.MSK_DPAR_BASIS_TOL_X"
+  elseif v.value == 4 "Mosek.MSK_DPAR_CHECK_CONVEXITY_REL_TOL"
+  elseif v.value == 5 "Mosek.MSK_DPAR_DATA_SYM_MAT_TOL"
+  elseif v.value == 6 "Mosek.MSK_DPAR_DATA_SYM_MAT_TOL_HUGE"
+  elseif v.value == 7 "Mosek.MSK_DPAR_DATA_SYM_MAT_TOL_LARGE"
+  elseif v.value == 8 "Mosek.MSK_DPAR_DATA_TOL_AIJ"
+  elseif v.value == 9 "Mosek.MSK_DPAR_DATA_TOL_AIJ_HUGE"
+  elseif v.value == 10 "Mosek.MSK_DPAR_DATA_TOL_AIJ_LARGE"
+  elseif v.value == 11 "Mosek.MSK_DPAR_DATA_TOL_BOUND_INF"
+  elseif v.value == 12 "Mosek.MSK_DPAR_DATA_TOL_BOUND_WRN"
+  elseif v.value == 13 "Mosek.MSK_DPAR_DATA_TOL_C_HUGE"
+  elseif v.value == 14 "Mosek.MSK_DPAR_DATA_TOL_CJ_LARGE"
+  elseif v.value == 15 "Mosek.MSK_DPAR_DATA_TOL_QIJ"
+  elseif v.value == 16 "Mosek.MSK_DPAR_DATA_TOL_X"
+  elseif v.value == 17 "Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS"
+  elseif v.value == 18 "Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS"
+  elseif v.value == 19 "Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED"
+  elseif v.value == 20 "Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"
+  elseif v.value == 21 "Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS"
+  elseif v.value == 22 "Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP"
+  elseif v.value == 23 "Mosek.MSK_DPAR_INTPNT_NL_MERIT_BAL"
+  elseif v.value == 24 "Mosek.MSK_DPAR_INTPNT_NL_TOL_DFEAS"
+  elseif v.value == 25 "Mosek.MSK_DPAR_INTPNT_NL_TOL_MU_RED"
+  elseif v.value == 26 "Mosek.MSK_DPAR_INTPNT_NL_TOL_NEAR_REL"
+  elseif v.value == 27 "Mosek.MSK_DPAR_INTPNT_NL_TOL_PFEAS"
+  elseif v.value == 28 "Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_GAP"
+  elseif v.value == 29 "Mosek.MSK_DPAR_INTPNT_NL_TOL_REL_STEP"
+  elseif v.value == 30 "Mosek.MSK_DPAR_INTPNT_QO_TOL_DFEAS"
+  elseif v.value == 31 "Mosek.MSK_DPAR_INTPNT_QO_TOL_INFEAS"
+  elseif v.value == 32 "Mosek.MSK_DPAR_INTPNT_QO_TOL_MU_RED"
+  elseif v.value == 33 "Mosek.MSK_DPAR_INTPNT_QO_TOL_NEAR_REL"
+  elseif v.value == 34 "Mosek.MSK_DPAR_INTPNT_QO_TOL_PFEAS"
+  elseif v.value == 35 "Mosek.MSK_DPAR_INTPNT_QO_TOL_REL_GAP"
+  elseif v.value == 36 "Mosek.MSK_DPAR_INTPNT_TOL_DFEAS"
+  elseif v.value == 37 "Mosek.MSK_DPAR_INTPNT_TOL_DSAFE"
+  elseif v.value == 38 "Mosek.MSK_DPAR_INTPNT_TOL_INFEAS"
+  elseif v.value == 39 "Mosek.MSK_DPAR_INTPNT_TOL_MU_RED"
+  elseif v.value == 40 "Mosek.MSK_DPAR_INTPNT_TOL_PATH"
+  elseif v.value == 41 "Mosek.MSK_DPAR_INTPNT_TOL_PFEAS"
+  elseif v.value == 42 "Mosek.MSK_DPAR_INTPNT_TOL_PSAFE"
+  elseif v.value == 43 "Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP"
+  elseif v.value == 44 "Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP"
+  elseif v.value == 45 "Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE"
+  elseif v.value == 46 "Mosek.MSK_DPAR_LOWER_OBJ_CUT"
+  elseif v.value == 47 "Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"
+  elseif v.value == 48 "Mosek.MSK_DPAR_MIO_DISABLE_TERM_TIME"
+  elseif v.value == 49 "Mosek.MSK_DPAR_MIO_MAX_TIME"
+  elseif v.value == 50 "Mosek.MSK_DPAR_MIO_NEAR_TOL_ABS_GAP"
+  elseif v.value == 51 "Mosek.MSK_DPAR_MIO_NEAR_TOL_REL_GAP"
+  elseif v.value == 52 "Mosek.MSK_DPAR_MIO_REL_GAP_CONST"
+  elseif v.value == 53 "Mosek.MSK_DPAR_MIO_TOL_ABS_GAP"
+  elseif v.value == 54 "Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT"
+  elseif v.value == 55 "Mosek.MSK_DPAR_MIO_TOL_FEAS"
+  elseif v.value == 56 "Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"
+  elseif v.value == 57 "Mosek.MSK_DPAR_MIO_TOL_REL_GAP"
+  elseif v.value == 58 "Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME"
+  elseif v.value == 59 "Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"
+  elseif v.value == 60 "Mosek.MSK_DPAR_PRESOLVE_TOL_AIJ"
+  elseif v.value == 61 "Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"
+  elseif v.value == 62 "Mosek.MSK_DPAR_PRESOLVE_TOL_S"
+  elseif v.value == 63 "Mosek.MSK_DPAR_PRESOLVE_TOL_X"
+  elseif v.value == 64 "Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"
+  elseif v.value == 65 "Mosek.MSK_DPAR_SEMIDEFINITE_TOL_APPROX"
+  elseif v.value == 66 "Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV"
+  elseif v.value == 67 "Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV"
+  elseif v.value == 68 "Mosek.MSK_DPAR_UPPER_OBJ_CUT"
+  elseif v.value == 69 "Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"
+  else "Mosek.Dparam(?)"
+  end
 const Dparam_members = Dparam[ MSK_DPAR_ANA_SOL_INFEAS_TOL,MSK_DPAR_BASIS_REL_TOL_S,MSK_DPAR_BASIS_TOL_S,MSK_DPAR_BASIS_TOL_X,MSK_DPAR_CHECK_CONVEXITY_REL_TOL,MSK_DPAR_DATA_SYM_MAT_TOL,MSK_DPAR_DATA_SYM_MAT_TOL_HUGE,MSK_DPAR_DATA_SYM_MAT_TOL_LARGE,MSK_DPAR_DATA_TOL_AIJ,MSK_DPAR_DATA_TOL_AIJ_HUGE,MSK_DPAR_DATA_TOL_AIJ_LARGE,MSK_DPAR_DATA_TOL_BOUND_INF,MSK_DPAR_DATA_TOL_BOUND_WRN,MSK_DPAR_DATA_TOL_C_HUGE,MSK_DPAR_DATA_TOL_CJ_LARGE,MSK_DPAR_DATA_TOL_QIJ,MSK_DPAR_DATA_TOL_X,MSK_DPAR_INTPNT_CO_TOL_DFEAS,MSK_DPAR_INTPNT_CO_TOL_INFEAS,MSK_DPAR_INTPNT_CO_TOL_MU_RED,MSK_DPAR_INTPNT_CO_TOL_NEAR_REL,MSK_DPAR_INTPNT_CO_TOL_PFEAS,MSK_DPAR_INTPNT_CO_TOL_REL_GAP,MSK_DPAR_INTPNT_NL_MERIT_BAL,MSK_DPAR_INTPNT_NL_TOL_DFEAS,MSK_DPAR_INTPNT_NL_TOL_MU_RED,MSK_DPAR_INTPNT_NL_TOL_NEAR_REL,MSK_DPAR_INTPNT_NL_TOL_PFEAS,MSK_DPAR_INTPNT_NL_TOL_REL_GAP,MSK_DPAR_INTPNT_NL_TOL_REL_STEP,MSK_DPAR_INTPNT_QO_TOL_DFEAS,MSK_DPAR_INTPNT_QO_TOL_INFEAS,MSK_DPAR_INTPNT_QO_TOL_MU_RED,MSK_DPAR_INTPNT_QO_TOL_NEAR_REL,MSK_DPAR_INTPNT_QO_TOL_PFEAS,MSK_DPAR_INTPNT_QO_TOL_REL_GAP,MSK_DPAR_INTPNT_TOL_DFEAS,MSK_DPAR_INTPNT_TOL_DSAFE,MSK_DPAR_INTPNT_TOL_INFEAS,MSK_DPAR_INTPNT_TOL_MU_RED,MSK_DPAR_INTPNT_TOL_PATH,MSK_DPAR_INTPNT_TOL_PFEAS,MSK_DPAR_INTPNT_TOL_PSAFE,MSK_DPAR_INTPNT_TOL_REL_GAP,MSK_DPAR_INTPNT_TOL_REL_STEP,MSK_DPAR_INTPNT_TOL_STEP_SIZE,MSK_DPAR_LOWER_OBJ_CUT,MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH,MSK_DPAR_MIO_DISABLE_TERM_TIME,MSK_DPAR_MIO_MAX_TIME,MSK_DPAR_MIO_NEAR_TOL_ABS_GAP,MSK_DPAR_MIO_NEAR_TOL_REL_GAP,MSK_DPAR_MIO_REL_GAP_CONST,MSK_DPAR_MIO_TOL_ABS_GAP,MSK_DPAR_MIO_TOL_ABS_RELAX_INT,MSK_DPAR_MIO_TOL_FEAS,MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT,MSK_DPAR_MIO_TOL_REL_GAP,MSK_DPAR_OPTIMIZER_MAX_TIME,MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP,MSK_DPAR_PRESOLVE_TOL_AIJ,MSK_DPAR_PRESOLVE_TOL_REL_LINDEP,MSK_DPAR_PRESOLVE_TOL_S,MSK_DPAR_PRESOLVE_TOL_X,MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL,MSK_DPAR_SEMIDEFINITE_TOL_APPROX,MSK_DPAR_SIM_LU_TOL_REL_PIV,MSK_DPAR_SIMPLEX_ABS_TOL_PIV,MSK_DPAR_UPPER_OBJ_CUT,MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH ]
 members(::Type{Dparam}) = Dparam_members
 Base.length(::Type{Dparam}) = 70
@@ -8139,6 +9287,11 @@ const MSK_SIM_EXPLOIT_DUPVEC_OFF = Simdupvec(0)
 
 "Allow the simplex optimizer to exploit duplicated columns."
 const MSK_SIM_EXPLOIT_DUPVEC_ON = Simdupvec(1)
+tostr(v::Simdupvec) = if v.value == 2 "Mosek.MSK_SIM_EXPLOIT_DUPVEC_FREE"
+  elseif v.value == 0 "Mosek.MSK_SIM_EXPLOIT_DUPVEC_OFF"
+  elseif v.value == 1 "Mosek.MSK_SIM_EXPLOIT_DUPVEC_ON"
+  else "Mosek.Simdupvec(?)"
+  end
 const Simdupvec_members = Simdupvec[ MSK_SIM_EXPLOIT_DUPVEC_FREE,MSK_SIM_EXPLOIT_DUPVEC_OFF,MSK_SIM_EXPLOIT_DUPVEC_ON ]
 members(::Type{Simdupvec}) = Simdupvec_members
 Base.length(::Type{Simdupvec}) = 3
@@ -8163,6 +9316,11 @@ const MSK_COMPRESS_GZIP = Compresstype(2)
 
 "No compression is used."
 const MSK_COMPRESS_NONE = Compresstype(0)
+tostr(v::Compresstype) = if v.value == 1 "Mosek.MSK_COMPRESS_FREE"
+  elseif v.value == 2 "Mosek.MSK_COMPRESS_GZIP"
+  elseif v.value == 0 "Mosek.MSK_COMPRESS_NONE"
+  else "Mosek.Compresstype(?)"
+  end
 const Compresstype_members = Compresstype[ MSK_COMPRESS_FREE,MSK_COMPRESS_GZIP,MSK_COMPRESS_NONE ]
 members(::Type{Compresstype}) = Compresstype_members
 Base.length(::Type{Compresstype}) = 3
@@ -8187,6 +9345,11 @@ const MSK_NAME_TYPE_LP = Nametype(2)
 
 "MPS type names."
 const MSK_NAME_TYPE_MPS = Nametype(1)
+tostr(v::Nametype) = if v.value == 0 "Mosek.MSK_NAME_TYPE_GEN"
+  elseif v.value == 2 "Mosek.MSK_NAME_TYPE_LP"
+  elseif v.value == 1 "Mosek.MSK_NAME_TYPE_MPS"
+  else "Mosek.Nametype(?)"
+  end
 const Nametype_members = Nametype[ MSK_NAME_TYPE_GEN,MSK_NAME_TYPE_LP,MSK_NAME_TYPE_MPS ]
 members(::Type{Nametype}) = Nametype_members
 Base.length(::Type{Nametype}) = 3
@@ -8215,6 +9378,12 @@ const MSK_MPS_FORMAT_RELAXED = Mpsformat(1)
 
 "It is assumed that the input file satisfies the MPS format strictly."
 const MSK_MPS_FORMAT_STRICT = Mpsformat(0)
+tostr(v::Mpsformat) = if v.value == 3 "Mosek.MSK_MPS_FORMAT_CPLEX"
+  elseif v.value == 2 "Mosek.MSK_MPS_FORMAT_FREE"
+  elseif v.value == 1 "Mosek.MSK_MPS_FORMAT_RELAXED"
+  elseif v.value == 0 "Mosek.MSK_MPS_FORMAT_STRICT"
+  else "Mosek.Mpsformat(?)"
+  end
 const Mpsformat_members = Mpsformat[ MSK_MPS_FORMAT_CPLEX,MSK_MPS_FORMAT_FREE,MSK_MPS_FORMAT_RELAXED,MSK_MPS_FORMAT_STRICT ]
 members(::Type{Mpsformat}) = Mpsformat_members
 Base.length(::Type{Mpsformat}) = 4
@@ -8235,6 +9404,10 @@ const MSK_VAR_TYPE_CONT = Variabletype(0)
 
 "Is an integer variable."
 const MSK_VAR_TYPE_INT = Variabletype(1)
+tostr(v::Variabletype) = if v.value == 0 "Mosek.MSK_VAR_TYPE_CONT"
+  elseif v.value == 1 "Mosek.MSK_VAR_TYPE_INT"
+  else "Mosek.Variabletype(?)"
+  end
 const Variabletype_members = Variabletype[ MSK_VAR_TYPE_CONT,MSK_VAR_TYPE_INT ]
 members(::Type{Variabletype}) = Variabletype_members
 Base.length(::Type{Variabletype}) = 2
@@ -8259,6 +9432,11 @@ const MSK_CHECK_CONVEXITY_NONE = Checkconvexitytype(0)
 
 "Perform simple and fast convexity check."
 const MSK_CHECK_CONVEXITY_SIMPLE = Checkconvexitytype(1)
+tostr(v::Checkconvexitytype) = if v.value == 2 "Mosek.MSK_CHECK_CONVEXITY_FULL"
+  elseif v.value == 0 "Mosek.MSK_CHECK_CONVEXITY_NONE"
+  elseif v.value == 1 "Mosek.MSK_CHECK_CONVEXITY_SIMPLE"
+  else "Mosek.Checkconvexitytype(?)"
+  end
 const Checkconvexitytype_members = Checkconvexitytype[ MSK_CHECK_CONVEXITY_FULL,MSK_CHECK_CONVEXITY_NONE,MSK_CHECK_CONVEXITY_SIMPLE ]
 members(::Type{Checkconvexitytype}) = Checkconvexitytype_members
 Base.length(::Type{Checkconvexitytype}) = 3
@@ -8279,6 +9457,10 @@ const MSK_LANG_DAN = Language(1)
 
 "English language selection"
 const MSK_LANG_ENG = Language(0)
+tostr(v::Language) = if v.value == 1 "Mosek.MSK_LANG_DAN"
+  elseif v.value == 0 "Mosek.MSK_LANG_ENG"
+  else "Mosek.Language(?)"
+  end
 const Language_members = Language[ MSK_LANG_DAN,MSK_LANG_ENG ]
 members(::Type{Language}) = Language_members
 Base.length(::Type{Language}) = 2
@@ -8307,6 +9489,12 @@ const MSK_STARTING_POINT_GUESS = Startpointtype(1)
 
 "The starting point satisfies all the simple bounds on nonlinear variables."
 const MSK_STARTING_POINT_SATISFY_BOUNDS = Startpointtype(3)
+tostr(v::Startpointtype) = if v.value == 2 "Mosek.MSK_STARTING_POINT_CONSTANT"
+  elseif v.value == 0 "Mosek.MSK_STARTING_POINT_FREE"
+  elseif v.value == 1 "Mosek.MSK_STARTING_POINT_GUESS"
+  elseif v.value == 3 "Mosek.MSK_STARTING_POINT_SATISFY_BOUNDS"
+  else "Mosek.Startpointtype(?)"
+  end
 const Startpointtype_members = Startpointtype[ MSK_STARTING_POINT_CONSTANT,MSK_STARTING_POINT_FREE,MSK_STARTING_POINT_GUESS,MSK_STARTING_POINT_SATISFY_BOUNDS ]
 members(::Type{Startpointtype}) = Startpointtype_members
 Base.length(::Type{Startpointtype}) = 4
@@ -8331,6 +9519,11 @@ const MSK_SOL_ITG = Soltype(2)
 
 "The interior solution."
 const MSK_SOL_ITR = Soltype(0)
+tostr(v::Soltype) = if v.value == 1 "Mosek.MSK_SOL_BAS"
+  elseif v.value == 2 "Mosek.MSK_SOL_ITG"
+  elseif v.value == 0 "Mosek.MSK_SOL_ITR"
+  else "Mosek.Soltype(?)"
+  end
 const Soltype_members = Soltype[ MSK_SOL_BAS,MSK_SOL_ITG,MSK_SOL_ITR ]
 members(::Type{Soltype}) = Soltype_members
 Base.length(::Type{Soltype}) = 3
@@ -8351,6 +9544,10 @@ const MSK_SCALING_METHOD_FREE = Scalingmethod(1)
 
 "Scales only with power of 2 leaving the mantissa untouched."
 const MSK_SCALING_METHOD_POW2 = Scalingmethod(0)
+tostr(v::Scalingmethod) = if v.value == 1 "Mosek.MSK_SCALING_METHOD_FREE"
+  elseif v.value == 0 "Mosek.MSK_SCALING_METHOD_POW2"
+  else "Mosek.Scalingmethod(?)"
+  end
 const Scalingmethod_members = Scalingmethod[ MSK_SCALING_METHOD_FREE,MSK_SCALING_METHOD_POW2 ]
 members(::Type{Scalingmethod}) = Scalingmethod_members
 Base.length(::Type{Scalingmethod}) = 2
@@ -8371,6 +9568,10 @@ const MSK_LICENSE_BUFFER_LENGTH = Value(21)
 
 "Maximum string length allowed in MOSEK."
 const MSK_MAX_STR_LEN = Value(1024)
+tostr(v::Value) = if v.value == 21 "Mosek.MSK_LICENSE_BUFFER_LENGTH"
+  elseif v.value == 1024 "Mosek.MSK_MAX_STR_LEN"
+  else "Mosek.Value(?)"
+  end
 const Value_members = Value[ MSK_LICENSE_BUFFER_LENGTH,MSK_MAX_STR_LEN ]
 members(::Type{Value}) = Value_members
 Base.length(::Type{Value}) = 2
@@ -8399,6 +9600,12 @@ const MSK_SIM_REFORMULATION_OFF = Simreform(0)
 
 "Allow the simplex optimizer to reformulate the problem."
 const MSK_SIM_REFORMULATION_ON = Simreform(1)
+tostr(v::Simreform) = if v.value == 3 "Mosek.MSK_SIM_REFORMULATION_AGGRESSIVE"
+  elseif v.value == 2 "Mosek.MSK_SIM_REFORMULATION_FREE"
+  elseif v.value == 0 "Mosek.MSK_SIM_REFORMULATION_OFF"
+  elseif v.value == 1 "Mosek.MSK_SIM_REFORMULATION_ON"
+  else "Mosek.Simreform(?)"
+  end
 const Simreform_members = Simreform[ MSK_SIM_REFORMULATION_AGGRESSIVE,MSK_SIM_REFORMULATION_FREE,MSK_SIM_REFORMULATION_OFF,MSK_SIM_REFORMULATION_ON ]
 members(::Type{Simreform}) = Simreform_members
 Base.length(::Type{Simreform}) = 4
@@ -8727,6 +9934,87 @@ const MSK_IINF_SOL_ITR_SOLSTA = Iinfitem(77)
 
 "Number of times the storage for storing the linear coefficient matrix has been changed."
 const MSK_IINF_STO_NUM_A_REALLOC = Iinfitem(78)
+tostr(v::Iinfitem) = if v.value == 0 "Mosek.MSK_IINF_ANA_PRO_NUM_CON"
+  elseif v.value == 1 "Mosek.MSK_IINF_ANA_PRO_NUM_CON_EQ"
+  elseif v.value == 2 "Mosek.MSK_IINF_ANA_PRO_NUM_CON_FR"
+  elseif v.value == 3 "Mosek.MSK_IINF_ANA_PRO_NUM_CON_LO"
+  elseif v.value == 4 "Mosek.MSK_IINF_ANA_PRO_NUM_CON_RA"
+  elseif v.value == 5 "Mosek.MSK_IINF_ANA_PRO_NUM_CON_UP"
+  elseif v.value == 6 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR"
+  elseif v.value == 7 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_BIN"
+  elseif v.value == 8 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_CONT"
+  elseif v.value == 9 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_EQ"
+  elseif v.value == 10 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_FR"
+  elseif v.value == 11 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_INT"
+  elseif v.value == 12 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_LO"
+  elseif v.value == 13 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_RA"
+  elseif v.value == 14 "Mosek.MSK_IINF_ANA_PRO_NUM_VAR_UP"
+  elseif v.value == 15 "Mosek.MSK_IINF_INTPNT_FACTOR_DIM_DENSE"
+  elseif v.value == 16 "Mosek.MSK_IINF_INTPNT_ITER"
+  elseif v.value == 17 "Mosek.MSK_IINF_INTPNT_NUM_THREADS"
+  elseif v.value == 18 "Mosek.MSK_IINF_INTPNT_SOLVE_DUAL"
+  elseif v.value == 19 "Mosek.MSK_IINF_MIO_ABSGAP_SATISFIED"
+  elseif v.value == 20 "Mosek.MSK_IINF_MIO_CLIQUE_TABLE_SIZE"
+  elseif v.value == 21 "Mosek.MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS"
+  elseif v.value == 22 "Mosek.MSK_IINF_MIO_CONSTRUCT_SOLUTION"
+  elseif v.value == 23 "Mosek.MSK_IINF_MIO_INITIAL_SOLUTION"
+  elseif v.value == 24 "Mosek.MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED"
+  elseif v.value == 25 "Mosek.MSK_IINF_MIO_NEAR_RELGAP_SATISFIED"
+  elseif v.value == 26 "Mosek.MSK_IINF_MIO_NODE_DEPTH"
+  elseif v.value == 27 "Mosek.MSK_IINF_MIO_NUM_ACTIVE_NODES"
+  elseif v.value == 28 "Mosek.MSK_IINF_MIO_NUM_BRANCH"
+  elseif v.value == 29 "Mosek.MSK_IINF_MIO_NUM_CLIQUE_CUTS"
+  elseif v.value == 30 "Mosek.MSK_IINF_MIO_NUM_CMIR_CUTS"
+  elseif v.value == 31 "Mosek.MSK_IINF_MIO_NUM_GOMORY_CUTS"
+  elseif v.value == 32 "Mosek.MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS"
+  elseif v.value == 33 "Mosek.MSK_IINF_MIO_NUM_INT_SOLUTIONS"
+  elseif v.value == 34 "Mosek.MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS"
+  elseif v.value == 35 "Mosek.MSK_IINF_MIO_NUM_RELAX"
+  elseif v.value == 36 "Mosek.MSK_IINF_MIO_NUM_REPEATED_PRESOLVE"
+  elseif v.value == 37 "Mosek.MSK_IINF_MIO_NUMCON"
+  elseif v.value == 38 "Mosek.MSK_IINF_MIO_NUMINT"
+  elseif v.value == 39 "Mosek.MSK_IINF_MIO_NUMVAR"
+  elseif v.value == 40 "Mosek.MSK_IINF_MIO_OBJ_BOUND_DEFINED"
+  elseif v.value == 41 "Mosek.MSK_IINF_MIO_PRESOLVED_NUMBIN"
+  elseif v.value == 42 "Mosek.MSK_IINF_MIO_PRESOLVED_NUMCON"
+  elseif v.value == 43 "Mosek.MSK_IINF_MIO_PRESOLVED_NUMCONT"
+  elseif v.value == 44 "Mosek.MSK_IINF_MIO_PRESOLVED_NUMINT"
+  elseif v.value == 45 "Mosek.MSK_IINF_MIO_PRESOLVED_NUMVAR"
+  elseif v.value == 46 "Mosek.MSK_IINF_MIO_RELGAP_SATISFIED"
+  elseif v.value == 47 "Mosek.MSK_IINF_MIO_TOTAL_NUM_CUTS"
+  elseif v.value == 48 "Mosek.MSK_IINF_MIO_USER_OBJ_CUT"
+  elseif v.value == 49 "Mosek.MSK_IINF_OPT_NUMCON"
+  elseif v.value == 50 "Mosek.MSK_IINF_OPT_NUMVAR"
+  elseif v.value == 51 "Mosek.MSK_IINF_OPTIMIZE_RESPONSE"
+  elseif v.value == 52 "Mosek.MSK_IINF_RD_NUMBARVAR"
+  elseif v.value == 53 "Mosek.MSK_IINF_RD_NUMCON"
+  elseif v.value == 54 "Mosek.MSK_IINF_RD_NUMCONE"
+  elseif v.value == 55 "Mosek.MSK_IINF_RD_NUMINTVAR"
+  elseif v.value == 56 "Mosek.MSK_IINF_RD_NUMQ"
+  elseif v.value == 57 "Mosek.MSK_IINF_RD_NUMVAR"
+  elseif v.value == 58 "Mosek.MSK_IINF_RD_PROTYPE"
+  elseif v.value == 59 "Mosek.MSK_IINF_SIM_DUAL_DEG_ITER"
+  elseif v.value == 60 "Mosek.MSK_IINF_SIM_DUAL_HOTSTART"
+  elseif v.value == 61 "Mosek.MSK_IINF_SIM_DUAL_HOTSTART_LU"
+  elseif v.value == 62 "Mosek.MSK_IINF_SIM_DUAL_INF_ITER"
+  elseif v.value == 63 "Mosek.MSK_IINF_SIM_DUAL_ITER"
+  elseif v.value == 64 "Mosek.MSK_IINF_SIM_NUMCON"
+  elseif v.value == 65 "Mosek.MSK_IINF_SIM_NUMVAR"
+  elseif v.value == 66 "Mosek.MSK_IINF_SIM_PRIMAL_DEG_ITER"
+  elseif v.value == 67 "Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART"
+  elseif v.value == 68 "Mosek.MSK_IINF_SIM_PRIMAL_HOTSTART_LU"
+  elseif v.value == 69 "Mosek.MSK_IINF_SIM_PRIMAL_INF_ITER"
+  elseif v.value == 70 "Mosek.MSK_IINF_SIM_PRIMAL_ITER"
+  elseif v.value == 71 "Mosek.MSK_IINF_SIM_SOLVE_DUAL"
+  elseif v.value == 72 "Mosek.MSK_IINF_SOL_BAS_PROSTA"
+  elseif v.value == 73 "Mosek.MSK_IINF_SOL_BAS_SOLSTA"
+  elseif v.value == 74 "Mosek.MSK_IINF_SOL_ITG_PROSTA"
+  elseif v.value == 75 "Mosek.MSK_IINF_SOL_ITG_SOLSTA"
+  elseif v.value == 76 "Mosek.MSK_IINF_SOL_ITR_PROSTA"
+  elseif v.value == 77 "Mosek.MSK_IINF_SOL_ITR_SOLSTA"
+  elseif v.value == 78 "Mosek.MSK_IINF_STO_NUM_A_REALLOC"
+  else "Mosek.Iinfitem(?)"
+  end
 const Iinfitem_members = Iinfitem[ MSK_IINF_ANA_PRO_NUM_CON,MSK_IINF_ANA_PRO_NUM_CON_EQ,MSK_IINF_ANA_PRO_NUM_CON_FR,MSK_IINF_ANA_PRO_NUM_CON_LO,MSK_IINF_ANA_PRO_NUM_CON_RA,MSK_IINF_ANA_PRO_NUM_CON_UP,MSK_IINF_ANA_PRO_NUM_VAR,MSK_IINF_ANA_PRO_NUM_VAR_BIN,MSK_IINF_ANA_PRO_NUM_VAR_CONT,MSK_IINF_ANA_PRO_NUM_VAR_EQ,MSK_IINF_ANA_PRO_NUM_VAR_FR,MSK_IINF_ANA_PRO_NUM_VAR_INT,MSK_IINF_ANA_PRO_NUM_VAR_LO,MSK_IINF_ANA_PRO_NUM_VAR_RA,MSK_IINF_ANA_PRO_NUM_VAR_UP,MSK_IINF_INTPNT_FACTOR_DIM_DENSE,MSK_IINF_INTPNT_ITER,MSK_IINF_INTPNT_NUM_THREADS,MSK_IINF_INTPNT_SOLVE_DUAL,MSK_IINF_MIO_ABSGAP_SATISFIED,MSK_IINF_MIO_CLIQUE_TABLE_SIZE,MSK_IINF_MIO_CONSTRUCT_NUM_ROUNDINGS,MSK_IINF_MIO_CONSTRUCT_SOLUTION,MSK_IINF_MIO_INITIAL_SOLUTION,MSK_IINF_MIO_NEAR_ABSGAP_SATISFIED,MSK_IINF_MIO_NEAR_RELGAP_SATISFIED,MSK_IINF_MIO_NODE_DEPTH,MSK_IINF_MIO_NUM_ACTIVE_NODES,MSK_IINF_MIO_NUM_BRANCH,MSK_IINF_MIO_NUM_CLIQUE_CUTS,MSK_IINF_MIO_NUM_CMIR_CUTS,MSK_IINF_MIO_NUM_GOMORY_CUTS,MSK_IINF_MIO_NUM_IMPLIED_BOUND_CUTS,MSK_IINF_MIO_NUM_INT_SOLUTIONS,MSK_IINF_MIO_NUM_KNAPSACK_COVER_CUTS,MSK_IINF_MIO_NUM_RELAX,MSK_IINF_MIO_NUM_REPEATED_PRESOLVE,MSK_IINF_MIO_NUMCON,MSK_IINF_MIO_NUMINT,MSK_IINF_MIO_NUMVAR,MSK_IINF_MIO_OBJ_BOUND_DEFINED,MSK_IINF_MIO_PRESOLVED_NUMBIN,MSK_IINF_MIO_PRESOLVED_NUMCON,MSK_IINF_MIO_PRESOLVED_NUMCONT,MSK_IINF_MIO_PRESOLVED_NUMINT,MSK_IINF_MIO_PRESOLVED_NUMVAR,MSK_IINF_MIO_RELGAP_SATISFIED,MSK_IINF_MIO_TOTAL_NUM_CUTS,MSK_IINF_MIO_USER_OBJ_CUT,MSK_IINF_OPT_NUMCON,MSK_IINF_OPT_NUMVAR,MSK_IINF_OPTIMIZE_RESPONSE,MSK_IINF_RD_NUMBARVAR,MSK_IINF_RD_NUMCON,MSK_IINF_RD_NUMCONE,MSK_IINF_RD_NUMINTVAR,MSK_IINF_RD_NUMQ,MSK_IINF_RD_NUMVAR,MSK_IINF_RD_PROTYPE,MSK_IINF_SIM_DUAL_DEG_ITER,MSK_IINF_SIM_DUAL_HOTSTART,MSK_IINF_SIM_DUAL_HOTSTART_LU,MSK_IINF_SIM_DUAL_INF_ITER,MSK_IINF_SIM_DUAL_ITER,MSK_IINF_SIM_NUMCON,MSK_IINF_SIM_NUMVAR,MSK_IINF_SIM_PRIMAL_DEG_ITER,MSK_IINF_SIM_PRIMAL_HOTSTART,MSK_IINF_SIM_PRIMAL_HOTSTART_LU,MSK_IINF_SIM_PRIMAL_INF_ITER,MSK_IINF_SIM_PRIMAL_ITER,MSK_IINF_SIM_SOLVE_DUAL,MSK_IINF_SOL_BAS_PROSTA,MSK_IINF_SOL_BAS_SOLSTA,MSK_IINF_SOL_ITG_PROSTA,MSK_IINF_SOL_ITG_SOLSTA,MSK_IINF_SOL_ITR_PROSTA,MSK_IINF_SOL_ITR_SOLSTA,MSK_IINF_STO_NUM_A_REALLOC ]
 members(::Type{Iinfitem}) = Iinfitem_members
 Base.length(::Type{Iinfitem}) = 79
@@ -8767,6 +10055,15 @@ const MSK_SK_UNK = Stakey(0)
 
 "The constraint or variable is at its upper bound."
 const MSK_SK_UPR = Stakey(4)
+tostr(v::Stakey) = if v.value == 1 "Mosek.MSK_SK_BAS"
+  elseif v.value == 5 "Mosek.MSK_SK_FIX"
+  elseif v.value == 6 "Mosek.MSK_SK_INF"
+  elseif v.value == 3 "Mosek.MSK_SK_LOW"
+  elseif v.value == 2 "Mosek.MSK_SK_SUPBAS"
+  elseif v.value == 0 "Mosek.MSK_SK_UNK"
+  elseif v.value == 4 "Mosek.MSK_SK_UPR"
+  else "Mosek.Stakey(?)"
+  end
 const Stakey_members = Stakey[ MSK_SK_BAS,MSK_SK_FIX,MSK_SK_INF,MSK_SK_LOW,MSK_SK_SUPBAS,MSK_SK_UNK,MSK_SK_UPR ]
 members(::Type{Stakey}) = Stakey_members
 Base.length(::Type{Stakey}) = 7
@@ -8807,6 +10104,15 @@ const MSK_OPTIMIZER_MIXED_INT = Optimizertype(5)
 
 "The primal simplex optimizer is used."
 const MSK_OPTIMIZER_PRIMAL_SIMPLEX = Optimizertype(6)
+tostr(v::Optimizertype) = if v.value == 0 "Mosek.MSK_OPTIMIZER_CONIC"
+  elseif v.value == 1 "Mosek.MSK_OPTIMIZER_DUAL_SIMPLEX"
+  elseif v.value == 2 "Mosek.MSK_OPTIMIZER_FREE"
+  elseif v.value == 3 "Mosek.MSK_OPTIMIZER_FREE_SIMPLEX"
+  elseif v.value == 4 "Mosek.MSK_OPTIMIZER_INTPNT"
+  elseif v.value == 5 "Mosek.MSK_OPTIMIZER_MIXED_INT"
+  elseif v.value == 6 "Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX"
+  else "Mosek.Optimizertype(?)"
+  end
 const Optimizertype_members = Optimizertype[ MSK_OPTIMIZER_CONIC,MSK_OPTIMIZER_DUAL_SIMPLEX,MSK_OPTIMIZER_FREE,MSK_OPTIMIZER_FREE_SIMPLEX,MSK_OPTIMIZER_INTPNT,MSK_OPTIMIZER_MIXED_INT,MSK_OPTIMIZER_PRIMAL_SIMPLEX ]
 members(::Type{Optimizertype}) = Optimizertype_members
 Base.length(::Type{Optimizertype}) = 7
@@ -8831,6 +10137,11 @@ const MSK_PRESOLVE_MODE_OFF = Presolvemode(0)
 
 "The problem is presolved before it is optimized."
 const MSK_PRESOLVE_MODE_ON = Presolvemode(1)
+tostr(v::Presolvemode) = if v.value == 2 "Mosek.MSK_PRESOLVE_MODE_FREE"
+  elseif v.value == 0 "Mosek.MSK_PRESOLVE_MODE_OFF"
+  elseif v.value == 1 "Mosek.MSK_PRESOLVE_MODE_ON"
+  else "Mosek.Presolvemode(?)"
+  end
 const Presolvemode_members = Presolvemode[ MSK_PRESOLVE_MODE_FREE,MSK_PRESOLVE_MODE_OFF,MSK_PRESOLVE_MODE_ON ]
 members(::Type{Presolvemode}) = Presolvemode_members
 Base.length(::Type{Presolvemode}) = 3
@@ -8859,6 +10170,13 @@ const MSK_MIO_CONT_SOL_NONE = Miocontsoltype(0)
 
 "Solutions to the root node problem."
 const MSK_MIO_CONT_SOL_ROOT = Miocontsoltype(1)
+tostr(v::Miocontsoltype) = if v.value == 2 "Mosek.MSK_MIO_CONT_SOL_ITG"
+  elseif v.value == 3 "Mosek.MSK_MIO_CONT_SOL_ITG_REL"
+  elseif v.value == 0 "Mosek.MSK_MIO_CONT_SOL_NONE"
+  elseif v.value == 1 "Mosek.MSK_MIO_CONT_SOL_ROOT"
+  else "Mosek.Miocontsoltype(?)"
+  end
 const Miocontsoltype_members = Miocontsoltype[ MSK_MIO_CONT_SOL_ITG,MSK_MIO_CONT_SOL_ITG_REL,MSK_MIO_CONT_SOL_NONE,MSK_MIO_CONT_SOL_ROOT ]
 members(::Type{Miocontsoltype}) = Miocontsoltype_members
 Base.length(::Type{Miocontsoltype}) = 4
+Base.show(io::IO,v::T) where { T <: Mosek.MosekEnum } = print(io,tostr(v))
