@@ -52,7 +52,7 @@ function versionFromBindir(bindir ::String)
     try
         mosekbin = if is_windows() "mosek.exe" else "mosek" end
         txt = readstring(`$bindir/$mosekbin`)
-        m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)",txt)
+        m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9])",txt)
         if m == nothing
             return nothing
         else
