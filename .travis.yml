@@ -2,7 +2,6 @@
 language: julia
 os:
   - linux
-  - osx
 julia:
   - 0.6
 notifications:
@@ -15,7 +14,6 @@ script:
   - julia -e 'Pkg.clone(pwd());'
   - julia -e 'Pkg.build("Mosek");'
 
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("Mosek"); Pkg.test("Mosek"; coverage=true)'
 after_success:
   - julia -e 'Pkg.add("Documenter")'
   - julia -e 'cd(Pkg.dir("Mosek")); include(joinpath("docs", "make.jl"))'
