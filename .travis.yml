@@ -13,6 +13,7 @@ before-install:
 script:
   - julia -e 'Pkg.clone(pwd());'
   - julia -e 'Pkg.build("Mosek");'
+  - julia -e 'Pkg.test("Mosek");'
 
 after_success:
   - julia -e 'Pkg.add("Documenter")'
