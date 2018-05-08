@@ -628,7 +628,7 @@ function MathProgBase.getinfeasibilityray(m::MosekLinearQuadraticModel)
 
     solsta = Mosek.getsolsta(m.task,sol)
     if solsta in [ Mosek.MSK_SOL_STA_PRIM_INFEAS_CER, Mosek.MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
-        Mosek.getsux(m.task,sol) - Mosek.getslx(m.task,sol)
+        Mosek.getslc(m.task,sol) - Mosek.getsuc(m.task,sol)
     else
         throw(MosekMathProgModelError("No ray available"))
     end
