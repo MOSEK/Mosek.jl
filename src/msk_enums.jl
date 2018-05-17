@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.37
+# MOSEK 9.0.39
 
 export
   Basindtype,
@@ -659,9 +659,6 @@ export
   MSK_PRO_STA_DUAL_INFEAS,
   MSK_PRO_STA_PRIM_AND_DUAL_INFEAS,
   MSK_PRO_STA_ILL_POSED,
-  MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS,
-  MSK_PRO_STA_NEAR_PRIM_FEAS,
-  MSK_PRO_STA_NEAR_DUAL_FEAS,
   MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED,
   Purify,
   MSK_PURIFY_NONE,
@@ -1153,7 +1150,6 @@ export
   MSK_OPR_SQRT,
   Sensitivitytype,
   MSK_SENSITIVITY_TYPE_BASIS,
-  MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION,
   Simdegen,
   MSK_SIM_DEGEN_NONE,
   MSK_SIM_DEGEN_FREE,
@@ -1200,7 +1196,6 @@ export
   MSK_SOL_STA_PRIM_ILLPOSED_CER,
   MSK_SOL_STA_DUAL_ILLPOSED_CER,
   MSK_SOL_STA_INTEGER_OPTIMAL,
-  MSK_SOL_STA_NEAR_INTEGER_OPTIMAL,
   Soltype,
   MSK_SOL_ITR,
   MSK_SOL_BAS,
@@ -5658,7 +5653,6 @@ Default value: `BASIS`
 Possible values:
 
 * `MSK_SENSITIVITY_TYPE_BASIS`. Basis sensitivity analysis is performed.
-* `MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION`. Optimal partition sensitivity analysis is performed.
 """
 const MSK_IPAR_SENSITIVITY_TYPE = Iparam(114)
 
@@ -7279,9 +7273,6 @@ Problem status keys
 * `MSK_PRO_STA_DUAL_INFEAS`. The problem is dual infeasible.
 * `MSK_PRO_STA_PRIM_AND_DUAL_INFEAS`. The problem is primal and dual infeasible.
 * `MSK_PRO_STA_ILL_POSED`. The problem is ill-posed. For example, it may be primal and dual feasible but have a positive duality gap.
-* `MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS`. The problem is at least nearly primal and dual feasible.
-* `MSK_PRO_STA_NEAR_PRIM_FEAS`. The problem is at least nearly primal feasible.
-* `MSK_PRO_STA_NEAR_DUAL_FEAS`. The problem is at least nearly dual feasible.
 * `MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED`. The problem is either primal infeasible or unbounded. This may occur for mixed-integer problems.
 """
 struct Prosta <: MosekEnum
@@ -7312,17 +7303,8 @@ const MSK_PRO_STA_PRIM_AND_DUAL_INFEAS = Prosta(6)
 "The problem is ill-posed. For example, it may be primal and dual feasible but have a positive duality gap."
 const MSK_PRO_STA_ILL_POSED = Prosta(7)
 
-"The problem is at least nearly primal and dual feasible."
-const MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS = Prosta(8)
-
-"The problem is at least nearly primal feasible."
-const MSK_PRO_STA_NEAR_PRIM_FEAS = Prosta(9)
-
-"The problem is at least nearly dual feasible."
-const MSK_PRO_STA_NEAR_DUAL_FEAS = Prosta(10)
-
 "The problem is either primal infeasible or unbounded. This may occur for mixed-integer problems."
-const MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED = Prosta(11)
+const MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED = Prosta(8)
 tostr(v::Prosta) = if v.value == 0 "Mosek.MSK_PRO_STA_UNKNOWN"
   elseif v.value == 1 "Mosek.MSK_PRO_STA_PRIM_AND_DUAL_FEAS"
   elseif v.value == 2 "Mosek.MSK_PRO_STA_PRIM_FEAS"
@@ -7331,10 +7313,7 @@ tostr(v::Prosta) = if v.value == 0 "Mosek.MSK_PRO_STA_UNKNOWN"
   elseif v.value == 5 "Mosek.MSK_PRO_STA_DUAL_INFEAS"
   elseif v.value == 6 "Mosek.MSK_PRO_STA_PRIM_AND_DUAL_INFEAS"
   elseif v.value == 7 "Mosek.MSK_PRO_STA_ILL_POSED"
-  elseif v.value == 8 "Mosek.MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS"
-  elseif v.value == 9 "Mosek.MSK_PRO_STA_NEAR_PRIM_FEAS"
-  elseif v.value == 10 "Mosek.MSK_PRO_STA_NEAR_DUAL_FEAS"
-  elseif v.value == 11 "Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"
+  elseif v.value == 8 "Mosek.MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED"
   else "Mosek.Prosta(?)"
   end
 const Prosta_members = Prosta[
@@ -7346,12 +7325,9 @@ const Prosta_members = Prosta[
     MSK_PRO_STA_DUAL_INFEAS,
     MSK_PRO_STA_PRIM_AND_DUAL_INFEAS,
     MSK_PRO_STA_ILL_POSED,
-    MSK_PRO_STA_NEAR_PRIM_AND_DUAL_FEAS,
-    MSK_PRO_STA_NEAR_PRIM_FEAS,
-    MSK_PRO_STA_NEAR_DUAL_FEAS,
     MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED ]
 members(::Type{Prosta}) = Prosta_members
-Base.length(::Type{Prosta}) = 12
+Base.length(::Type{Prosta}) = 9
 """
     Purify
 
@@ -10334,7 +10310,6 @@ Base.length(::Type{Scopr}) = 5
 Sensitivity types
 
 * `MSK_SENSITIVITY_TYPE_BASIS`. Basis sensitivity analysis is performed.
-* `MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION`. Optimal partition sensitivity analysis is performed.
 """
 struct Sensitivitytype <: MosekEnum
   value :: Int32
@@ -10342,18 +10317,13 @@ end # sensitivitytype
 
 "Basis sensitivity analysis is performed."
 const MSK_SENSITIVITY_TYPE_BASIS = Sensitivitytype(0)
-
-"Optimal partition sensitivity analysis is performed."
-const MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION = Sensitivitytype(1)
 tostr(v::Sensitivitytype) = if v.value == 0 "Mosek.MSK_SENSITIVITY_TYPE_BASIS"
-  elseif v.value == 1 "Mosek.MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION"
   else "Mosek.Sensitivitytype(?)"
   end
 const Sensitivitytype_members = Sensitivitytype[
-    MSK_SENSITIVITY_TYPE_BASIS,
-    MSK_SENSITIVITY_TYPE_OPTIMAL_PARTITION ]
+    MSK_SENSITIVITY_TYPE_BASIS ]
 members(::Type{Sensitivitytype}) = Sensitivitytype_members
-Base.length(::Type{Sensitivitytype}) = 2
+Base.length(::Type{Sensitivitytype}) = 1
 """
     Simdegen
 
@@ -10627,7 +10597,6 @@ Solution status keys
 * `MSK_SOL_STA_PRIM_ILLPOSED_CER`. The solution is a certificate that the primal problem is illposed.
 * `MSK_SOL_STA_DUAL_ILLPOSED_CER`. The solution is a certificate that the dual problem is illposed.
 * `MSK_SOL_STA_INTEGER_OPTIMAL`. The primal solution is integer optimal.
-* `MSK_SOL_STA_NEAR_INTEGER_OPTIMAL`. The primal solution is near integer optimal.
 """
 struct Solsta <: MosekEnum
   value :: Int32
@@ -10662,9 +10631,6 @@ const MSK_SOL_STA_DUAL_ILLPOSED_CER = Solsta(8)
 
 "The primal solution is integer optimal."
 const MSK_SOL_STA_INTEGER_OPTIMAL = Solsta(9)
-
-"The primal solution is near integer optimal."
-const MSK_SOL_STA_NEAR_INTEGER_OPTIMAL = Solsta(10)
 tostr(v::Solsta) = if v.value == 0 "Mosek.MSK_SOL_STA_UNKNOWN"
   elseif v.value == 1 "Mosek.MSK_SOL_STA_OPTIMAL"
   elseif v.value == 2 "Mosek.MSK_SOL_STA_PRIM_FEAS"
@@ -10675,7 +10641,6 @@ tostr(v::Solsta) = if v.value == 0 "Mosek.MSK_SOL_STA_UNKNOWN"
   elseif v.value == 7 "Mosek.MSK_SOL_STA_PRIM_ILLPOSED_CER"
   elseif v.value == 8 "Mosek.MSK_SOL_STA_DUAL_ILLPOSED_CER"
   elseif v.value == 9 "Mosek.MSK_SOL_STA_INTEGER_OPTIMAL"
-  elseif v.value == 10 "Mosek.MSK_SOL_STA_NEAR_INTEGER_OPTIMAL"
   else "Mosek.Solsta(?)"
   end
 const Solsta_members = Solsta[
@@ -10688,10 +10653,9 @@ const Solsta_members = Solsta[
     MSK_SOL_STA_DUAL_INFEAS_CER,
     MSK_SOL_STA_PRIM_ILLPOSED_CER,
     MSK_SOL_STA_DUAL_ILLPOSED_CER,
-    MSK_SOL_STA_INTEGER_OPTIMAL,
-    MSK_SOL_STA_NEAR_INTEGER_OPTIMAL ]
+    MSK_SOL_STA_INTEGER_OPTIMAL ]
 members(::Type{Solsta}) = Solsta_members
-Base.length(::Type{Solsta}) = 11
+Base.length(::Type{Solsta}) = 10
 """
     Soltype
 
