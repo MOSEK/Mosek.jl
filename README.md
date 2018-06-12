@@ -91,7 +91,7 @@ Documentation
 All functions and constants in the Mosek.jl are briefly documented in docs strings, and an HTML reference can be built using `Documenter.jl`.
 
 For a more complete description of functions, please refer to 
-[the MOSEK C API documentation](http://docs.mosek.com/7.0/capi/index.html).
+[the MOSEK C API documentation](https://www.mosek.com/documentation/).
 
 `MathProgBase` interface
 ------------------------
