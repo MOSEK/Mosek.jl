@@ -10,8 +10,7 @@ Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Implementation of the `LinprogSolver` interface and other interfaces for `JuMP` (https://github.com/JuliaOpt/JuMP.jl)
 
 MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite), 
-QP (quadratic objective, quadratic constraints), GECO (general
-convex) and MIP (mixed-integer problems). These can be mixed as follows:
+QP (quadratic objective, quadratic constraints), and MIP (mixed-integer problems). These can be mixed as follows:
 - LP+CONIC+SDP
 - LP+CONIC+MIP
 
@@ -89,13 +88,10 @@ If this also fails, please post an issue in Github.
 Documentation
 -------------
 
-All functions and constants in the Mosek.jl are briefly documented [here](doc/Mosek-Functions.rst).
+All functions and constants in the Mosek.jl are briefly documented in docs strings, and an HTML reference can be built using `Documenter.jl`.
 
 For a more complete description of functions, please refer to 
 [the MOSEK C API documentation](http://docs.mosek.com/7.0/capi/index.html).
-
-The General Convex interface is not documented at all, but the example 
-`nlo1.jl` show the general idea.
 
 `MathProgBase` interface
 ------------------------
