@@ -37,10 +37,10 @@ function write(t::Mosek.Task, f::IO)
     numcone   = getnumcone(t)
     numanz    = getnumanz(t)
 
-    varnames = String[ escapename(getvarname(t,i)) for i in 1:numvar] 
+    varnames    = String[ escapename(getvarname(t,i)) for i in 1:numvar] 
     barvarnames = String[ escapename(getbarvarname(t,i)) for i in 1:numbarvar] 
-    connames = String[ escapename(getconname(t,i)) for i in 1:numcon]
-    conenames = String[ escapename(getconename(t,i)) for i in 1:numcone]
+    connames    = String[ escapename(getconname(t,i)) for i in 1:numcon]
+    conenames   = String[ escapename(getconename(t,i)) for i in 1:numcone]
 
     for i in 1:numvar
         if length(varnames[i]) == 0
