@@ -271,7 +271,7 @@ include("ext_functions.jl")
 
 
 import MathProgBase
-immutable MosekSolver <: MathProgBase.AbstractMathProgSolver
+struct MosekSolver <: MathProgBase.AbstractMathProgSolver
     options
 end
 MosekSolver(;kwargs...) = MosekSolver(kwargs)
