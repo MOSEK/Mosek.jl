@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.41
+# MOSEK 9.0.44
 
 export
   analyzenames,
@@ -1077,7 +1077,7 @@ end
 * `j :: Int32`. Index of the first variable in the first cone to be appended.
 
 Appends a number of conic constraints to the problem, as in `Mosek.appendcone`.
-The ``k``th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
+The ``k` th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
 that the first variable of the first cone has index ``j`` and starting from there the
 sequentially following variables belong to the first cone, then to the second cone and so on.
 """
@@ -2367,7 +2367,7 @@ function generatevarnames(task_:: MSKtask,subj_:: Vector{Int32},fmt_:: AbstractS
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "generatevarnames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subj_ .- Int32(1),string(fmt_),ndims_,dims_ .- Int32(1),sp_ .- Int32(1))
+    @msk_ccall( "generatevarnames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subj_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2398,7 +2398,7 @@ function generateconnames(task_:: MSKtask,subi_:: Vector{Int32},fmt_:: AbstractS
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "generateconnames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subi_ .- Int32(1),string(fmt_),ndims_,dims_ .- Int32(1),sp_ .- Int32(1))
+    @msk_ccall( "generateconnames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subi_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2429,7 +2429,7 @@ function generateconenames(task_:: MSKtask,subk_:: Vector{Int32},fmt_:: Abstract
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "generateconenames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subk_ .- Int32(1),string(fmt_),ndims_,dims_ .- Int32(1),sp_ .- Int32(1))
+    @msk_ccall( "generateconenames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subk_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
