@@ -1077,7 +1077,7 @@ end
 * `j :: Int32`. Index of the first variable in the first cone to be appended.
 
 Appends a number of conic constraints to the problem, as in `Mosek.appendcone`.
-The ``k` th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
+The ``k`` th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
 that the first variable of the first cone has index ``j`` and starting from there the
 sequentially following variables belong to the first cone, then to the second cone and so on.
 """
