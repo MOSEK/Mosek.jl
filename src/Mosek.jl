@@ -6,6 +6,7 @@ module Mosek
     error("Mosek not properly installed. Please run Pkg.build(\"Mosek\")")
   end
 
+  import MathProgBase
 
 
   export
@@ -24,7 +25,7 @@ module Mosek
   # -----
   # Types
   # -----
-  struct MosekError <: Exception
+  type MosekError <: Exception
     rcode :: Int32
     msg   :: String
   end
@@ -32,16 +33,16 @@ module Mosek
 
 
   # Environment: typedef void * MSKenv_t;
-  mutable struct MSKenv
-    env::Ptr{Nothing}
+  type MSKenv
+    env::Ptr{Void}
     streamcallbackfunc::Any
   end
 
 
   # Task: typedef void * MSKtask_t;
-  mutable struct MSKtask
+  type MSKtask
     env::MSKenv
-    task::Ptr{Nothing}
+    task::Ptr{Void}
     borrowed::Bool
     # need to keep a reference to callback funcs for GC
     streamcallbackfunc:: Any
@@ -51,19 +52,19 @@ module Mosek
     nlinfo:: Any
 
     function MSKtask(env::MSKenv)
-      temp = Array{Ptr{Nothing}}(1)
-      res = @msk_ccall(maketask, Int32, (Ptr{Nothing}, Int32, Int32, Ptr{Nothing}), env.env, 0, 0, temp)
+      temp = Array{Ptr{Void}}(1)
+      res = @msk_ccall(maketask, Int32, (Ptr{Void}, Int32, Int32, Ptr{Void}), env.env, 0, 0, temp)
 
       if res != MSK_RES_OK
         throw(MosekError(res,""))
       end
 
       task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
-      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
       task.usercallbackfunc = nothing
       finalizer(task,deletetask)
 
-      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
+      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
       if r != MSK_RES_OK
           throw(MosekError(r,getlasterror(t)))
       end
@@ -72,20 +73,20 @@ module Mosek
     end
 
     function MSKtask(t::MSKtask)
-      temp = Array{Ptr{Nothing}}(1)
-      res = @msk_ccall(clonetask, Int32, (Ptr{Nothing}, Ptr{Nothing}), t.task, temp)
+      temp = Array{Ptr{Void}}(1)
+      res = @msk_ccall(clonetask, Int32, (Ptr{Void}, Ptr{Void}), t.task, temp)
 
       if res != MSK_RES_OK
         throw(MosekError(res,""))
       end
 
       task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
-      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
       task.usercallbackfunc = nothing
 
       finalizer(task,deletetask)
 
-      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
+      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
       if r != MSK_RES_OK
           throw(MosekError(r,getlasterror(t)))
       end
@@ -93,14 +94,14 @@ module Mosek
       task
     end
 
-    function MSKtask(t::Ptr{Nothing},borrowed::Bool)
+    function MSKtask(t::Ptr{Void},borrowed::Bool)
       task = new(msk_global_env,t,borrowed,nothing,nothing,nothing,nothing,nothing)
-      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+      task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Void}, Ptr{Void}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
       task.usercallbackfunc = nothing
 
       finalizer(task,deletetask)
 
-      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
+      r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Void}, Ptr{Void}, Any), task.task, task.callbackfunc, task)
       if r != MSK_RES_OK
           throw(MosekError(r,getlasterror(t)))
       end
@@ -115,8 +116,8 @@ module Mosek
   # ------------
   # TODO: Support other argument
   function makeenv()
-    temp = Array{Ptr{Nothing}}(undef,1)
-    res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
+    temp = Array{Ptr{Void}}(1)
+    res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
     if res != 0
       # TODO: Actually use result code
       error("MOSEK: Error creating environment")
@@ -125,8 +126,8 @@ module Mosek
   end
 
   function makeenv(func::Function)
-      temp = Array{Ptr{Nothing}}(1)
-      res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
+      temp = Array{Ptr{Void}}(1)
+      res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Void}}, Ptr{UInt8}), temp, C_NULL)
       if res != 0
           # TODO: Actually use result code
           error("MOSEK: Error creating environment")
@@ -163,7 +164,7 @@ module Mosek
     MSKtask(msk_global_env)
   end
 
-  function maketask_ptr(t::Ptr{Nothing},borrowed::Bool)
+  function maketask_ptr(t::Ptr{Void},borrowed::Bool)
     MSKtask(t,borrowed)
   end
 
@@ -190,9 +191,9 @@ module Mosek
   function deletetask(t::MSKtask)
     if t.task != C_NULL
         if ! t.borrowed
-            temp = Array{Ptr{Nothing}}(1)
+            temp = Array{Ptr{Void}}(1)
             temp[1] = t.task
-            @msk_ccall(deletetask,Int32,(Ptr{Ptr{Nothing}},), temp)
+            @msk_ccall(deletetask,Int32,(Ptr{Ptr{Void}},), temp)
         end
         t.task = C_NULL
     end
@@ -200,9 +201,9 @@ module Mosek
 
   function deleteenv(e::MSKenv)
     if e.env != C_NULL
-      temp = Array{Ptr{Nothing}}(1)
+      temp = Array{Ptr{Void}}(1)
       temp[1] = t.env
-      @msk_ccall(deleteenv,Int32,(Ptr{Ptr{Nothing}},), temp)
+      @msk_ccall(deleteenv,Int32,(Ptr{Ptr{Void}},), temp)
       e.env = C_NULL
     end
   end
@@ -211,23 +212,20 @@ module Mosek
     lasterrcode = Array{Cint}(1)
     lastmsglen = Array{Cint}(1)
 
-    @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, 0, lastmsglen, C_NULL)
     lastmsg = Array{UInt8}(lastmsglen[1])
-    @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
+    @msk_ccall(getlasterror,Cint,(Ptr{Void},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
     convert(String,lastmsg[1:lastmsglen[1]-1])
   end
-
-  using SparseArrays
 
   include("msk_enums.jl")
   include("msk_functions.jl")
   include("msk_callback.jl")
   include("msk_geco.jl")
 
-  #import MathProgBase
-  #include("MosekSolverInterface.jl")
-  #using Mosek.MosekMathProgSolverInterface
-  #export MosekSolver
+  include("MosekSolverInterface.jl")
+  using Mosek.MosekMathProgSolverInterface
+  export MosekSolver
 end
