@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.51
+# MOSEK 8.1.0.55
 
 export
   analyzenames,
@@ -300,7 +300,7 @@ The function analyzes the names and issues an error if a name is invalid.
 function analyzenames end
 function analyzenames(task_:: MSKtask,whichstream_:: Streamtype,nametype_:: Nametype)
   res = disable_sigint() do
-    @msk_ccall( "analyzenames",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_.value,nametype_.value)
+    @msk_ccall( "analyzenames",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,whichstream_.value,nametype_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -319,7 +319,7 @@ The function analyzes the data of a task and writes out a report.
 function analyzeproblem end
 function analyzeproblem(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "analyzeproblem",Int32,(Ptr{Void},Int32,),task_.task,whichstream_.value)
+    @msk_ccall( "analyzeproblem",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -350,7 +350,7 @@ Following parameters can be used to configure the printed statistics:
 function analyzesolution end
 function analyzesolution(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "analyzesolution",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_.value,whichsol_.value)
+    @msk_ccall( "analyzesolution",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,whichstream_.value,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -372,7 +372,7 @@ appendbarvars(task:: MSKtask,dim:: Vector{T1}) where {T1} = appendbarvars(task,c
 function appendbarvars(task_:: MSKtask,dim_:: Vector{Int32})
   num_ = minimum([ length(dim_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendbarvars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,dim_)
+    @msk_ccall( "appendbarvars",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,dim_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -429,7 +429,7 @@ appendcone(task:: MSKtask,ct:: Conetype,conepar:: T2,submem:: Vector{T3}) where 
 function appendcone(task_:: MSKtask,ct_:: Conetype,conepar_:: Float64,submem_:: Vector{Int32})
   nummem_ = minimum([ length(submem_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendcone",Int32,(Ptr{Void},Int32,Float64,Int32,Ptr{Int32},),task_.task,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
+    @msk_ccall( "appendcone",Int32,(Ptr{Nothing},Int32,Float64,Int32,Ptr{Int32},),task_.task,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -456,7 +456,7 @@ function appendconeseq end
 appendconeseq(task:: MSKtask,ct:: Conetype,conepar:: T2,nummem:: T3,j:: T4) where {T2,T3,T4} = appendconeseq(task,ct,Float64(conepar),Int32(nummem),Int32(j))
 function appendconeseq(task_:: MSKtask,ct_:: Conetype,conepar_:: Float64,nummem_:: Int32,j_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "appendconeseq",Int32,(Ptr{Void},Int32,Float64,Int32,Int32,),task_.task,ct_.value,conepar_,nummem_,j_-1)
+    @msk_ccall( "appendconeseq",Int32,(Ptr{Nothing},Int32,Float64,Int32,Int32,),task_.task,ct_.value,conepar_,nummem_,j_-1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -475,7 +475,7 @@ end
 * `j :: Int32`. Index of the first variable in the first cone to be appended.
 
 Appends a number of conic constraints to the problem, as in `Mosek.appendcone`.
-The ``k``\ th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
+The ``k`` th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
 that the first variable of the first cone has index ``j`` and starting from there the
 sequentially following variables belong to the first cone, then to the second cone and so on.
 """
@@ -485,7 +485,7 @@ function appendconesseq(task_:: MSKtask,ct_:: Vector{Conetype},conepar_:: Vector
   ct_i32 = Int32[item.value for item in ct_]
   num_ = minimum([ length(ct_),length(conepar_),length(nummem_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendconesseq",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Int32,),task_.task,num_,ct_,conepar_,nummem_,j_-1)
+    @msk_ccall( "appendconesseq",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Int32,),task_.task,num_,ct_,conepar_,nummem_,j_-1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -510,7 +510,7 @@ function appendcons end
 appendcons(task:: MSKtask,num:: T1) where {T1} = appendcons(task,Int32(num))
 function appendcons(task_:: MSKtask,num_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "appendcons",Int32,(Ptr{Void},Int32,),task_.task,num_)
+    @msk_ccall( "appendcons",Int32,(Ptr{Nothing},Int32,),task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -550,7 +550,7 @@ function appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Vector{Int32},s
   idx_ = Vector{Int64}(1)
   nz_ = minimum([ length(subi_),length(subj_),length(valij_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendsparsesymmat",Int32,(Ptr{Void},Int32,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Int64},),task_.task,dim_,nz_,subi_ .- Int32(1),subj_ .- Int32(1),valij_,idx_)
+    @msk_ccall( "appendsparsesymmat",Int32,(Ptr{Nothing},Int32,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Int64},),task_.task,dim_,nz_,subi_ .- Int32(1),subj_ .- Int32(1),valij_,idx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -575,7 +575,7 @@ function appendvars end
 appendvars(task:: MSKtask,num:: T1) where {T1} = appendvars(task,Int32(num))
 function appendvars(task_:: MSKtask,num_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "appendvars",Int32,(Ptr{Void},Int32,),task_.task,num_)
+    @msk_ccall( "appendvars",Int32,(Ptr{Nothing},Int32,),task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -610,7 +610,7 @@ function basiscond(task_:: MSKtask)
   nrmbasis_ = Vector{Float64}(1)
   nrminvbasis_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "basiscond",Int32,(Ptr{Void},Ptr{Float64},Ptr{Float64},),task_.task,nrmbasis_,nrminvbasis_)
+    @msk_ccall( "basiscond",Int32,(Ptr{Nothing},Ptr{Float64},Ptr{Float64},),task_.task,nrmbasis_,nrminvbasis_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -632,7 +632,7 @@ function bktostr end
 function bktostr(task_:: MSKtask,bk_:: Boundkey)
   str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "bktostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,bk_.value,str_)
+    @msk_ccall( "bktostr",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,bk_.value,str_)
   end
   str_str = convert(String,str_)
   if res != MSK_RES_OK.value
@@ -675,7 +675,7 @@ The function reports an error if the problem is not convex.
 function checkconvexity end
 function checkconvexity(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "checkconvexity",Int32,(Ptr{Void},),task_.task)
+    @msk_ccall( "checkconvexity",Int32,(Ptr{Nothing},),task_.task)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -697,7 +697,7 @@ function checkmem end
 checkmem(task:: MSKtask,file:: AbstractString,line:: T2) where {T2} = checkmem(task,file,Int32(line))
 function checkmem(task_:: MSKtask,file_:: AbstractString,line_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "checkmemtask",Int32,(Ptr{Void},Ptr{UInt8},Int32,),task_.task,string(file_),line_)
+    @msk_ccall( "checkmemtask",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),task_.task,string(file_),line_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -752,7 +752,7 @@ function chgbound end
 chgbound(task:: MSKtask,accmode:: Accmode,i:: T2,lower:: T3,finite:: T4,value:: T5) where {T2,T3,T4,T5} = chgbound(task,accmode,Int32(i),Int32(lower),Int32(finite),Float64(value))
 function chgbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "chgbound",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Float64,),task_.task,accmode_.value,i_-1,lower_,finite_,value_)
+    @msk_ccall( "chgbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Float64,),task_.task,accmode_.value,i_-1,lower_,finite_,value_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -802,7 +802,7 @@ function chgconbound end
 chgconbound(task:: MSKtask,i:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgconbound(task,Int32(i),Int32(lower),Int32(finite),Float64(value))
 function chgconbound(task_:: MSKtask,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "chgconbound",Int32,(Ptr{Void},Int32,Int32,Int32,Float64,),task_.task,i_-1,lower_,finite_,value_)
+    @msk_ccall( "chgconbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),task_.task,i_-1,lower_,finite_,value_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -852,7 +852,7 @@ function chgvarbound end
 chgvarbound(task:: MSKtask,j:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgvarbound(task,Int32(j),Int32(lower),Int32(finite),Float64(value))
 function chgvarbound(task_:: MSKtask,j_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "chgvarbound",Int32,(Ptr{Void},Int32,Int32,Int32,Float64,),task_.task,j_-1,lower_,finite_,value_)
+    @msk_ccall( "chgvarbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),task_.task,j_-1,lower_,finite_,value_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -870,7 +870,7 @@ Commits all cached problem changes to the task. It is usually not necessary to c
 function commitchanges end
 function commitchanges(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "commitchanges",Int32,(Ptr{Void},),task_.task)
+    @msk_ccall( "commitchanges",Int32,(Ptr{Nothing},),task_.task)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -891,7 +891,7 @@ function conetypetostr end
 function conetypetostr(task_:: MSKtask,ct_:: Conetype)
   str_ = zeros(UInt8,1024+1)
   res = disable_sigint() do
-    @msk_ccall( "conetypetostr",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,ct_.value,str_)
+    @msk_ccall( "conetypetostr",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,ct_.value,str_)
   end
   str_str = convert(String,str_)
   if res != MSK_RES_OK.value
@@ -912,7 +912,7 @@ Undefine a solution and free the memory it uses.
 function deletesolution end
 function deletesolution(task_:: MSKtask,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "deletesolution",Int32,(Ptr{Void},Int32,),task_.task,whichsol_.value)
+    @msk_ccall( "deletesolution",Int32,(Ptr{Nothing},Int32,),task_.task,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -957,7 +957,7 @@ function dualsensitivity(task_:: MSKtask,subj_:: Vector{Int32})
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   rightrangej_ = __tmp_var_7
   res = disable_sigint() do
-    @msk_ccall( "dualsensitivity",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numj_,subj_ .- Int32(1),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @msk_ccall( "dualsensitivity",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numj_,subj_ .- Int32(1),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -989,7 +989,7 @@ function getacol(task_:: MSKtask,j_:: Int32)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   valj_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getacol",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
+    @msk_ccall( "getacol",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -1014,7 +1014,7 @@ getacolnumnz(task:: MSKtask,i:: T1) where {T1} = getacolnumnz(task,Int32(i))
 function getacolnumnz(task_:: MSKtask,i_:: Int32)
   nzj_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getacolnumnz",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,i_-1,nzj_)
+    @msk_ccall( "getacolnumnz",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,nzj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1051,7 +1051,7 @@ function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   val_ = __tmp_var_5
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
-    @msk_ccall( "getacolslicetrip",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @msk_ccall( "getacolslicetrip",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -1078,7 +1078,7 @@ getaij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getaij(task,Int32(i),Int32(
 function getaij(task_:: MSKtask,i_:: Int32,j_:: Int32)
   aij_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getaij",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,i_-1,j_-1,aij_)
+    @msk_ccall( "getaij",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,i_-1,j_-1,aij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1111,7 +1111,7 @@ getapiecenumnz(task:: MSKtask,firsti:: T1,lasti:: T2,firstj:: T3,lastj:: T4) whe
 function getapiecenumnz(task_:: MSKtask,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32)
   numnz_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getapiecenumnz",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Ptr{Int32},),task_.task,firsti_-1,lasti_-1,firstj_-1,lastj_-1,numnz_)
+    @msk_ccall( "getapiecenumnz",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Int32},),task_.task,firsti_-1,lasti_-1,firstj_-1,lastj_-1,numnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1143,7 +1143,7 @@ function getarow(task_:: MSKtask,i_:: Int32)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   vali_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getarow",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
+    @msk_ccall( "getarow",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -1168,7 +1168,7 @@ getarownumnz(task:: MSKtask,i:: T1) where {T1} = getarownumnz(task,Int32(i))
 function getarownumnz(task_:: MSKtask,i_:: Int32)
   nzi_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getarownumnz",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,i_-1,nzi_)
+    @msk_ccall( "getarownumnz",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,nzi_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1207,7 +1207,7 @@ function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   val_ = __tmp_var_5
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
-    @msk_ccall( "getarowslicetrip",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @msk_ccall( "getarowslicetrip",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -1251,7 +1251,7 @@ function getaslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int
   val_ = __tmp_var_7
   surp_ = convert(Int64,length(sub_))
   res = disable_sigint() do
-    @msk_ccall( "getaslice64",Int32,(Ptr{Void},Int32,Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,accmode_.value,first_-1,last_-1,maxnumnz_,&surp_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @msk_ccall( "getaslice64",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,accmode_.value,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -1280,7 +1280,7 @@ getaslicenumnz(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,
 function getaslicenumnz(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
   numnz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getaslicenumnz64",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int64},),task_.task,accmode_.value,first_-1,last_-1,numnz_)
+    @msk_ccall( "getaslicenumnz64",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int64},),task_.task,accmode_.value,first_-1,last_-1,numnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1322,7 +1322,7 @@ function getbarablocktriplet(task_:: MSKtask)
   __tmp_var_9 = zeros(Float64,__tmp_var_8)
   valijkl_ = __tmp_var_9
   res = disable_sigint() do
-    @msk_ccall( "getbarablocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+    @msk_ccall( "getbarablocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -1372,7 +1372,7 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   weights_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getbaraidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
+    @msk_ccall( "getbaraidx",Int32,(Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -1408,7 +1408,7 @@ function getbaraidxij(task_:: MSKtask,idx_:: Int64)
   i_ = Vector{Int32}(1)
   j_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbaraidxij",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},),task_.task,idx_-1,i_,j_)
+    @msk_ccall( "getbaraidxij",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},),task_.task,idx_-1,i_,j_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1435,7 +1435,7 @@ getbaraidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbaraidxinfo(task,Int64(i
 function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
   num_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbaraidxinfo",Int32,(Ptr{Void},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
+    @msk_ccall( "getbaraidxinfo",Int32,(Ptr{Nothing},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1467,7 +1467,7 @@ function getbarasparsity(task_:: MSKtask)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   idxij_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarasparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
+    @msk_ccall( "getbarasparsity",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -1506,7 +1506,7 @@ function getbarcblocktriplet(task_:: MSKtask)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   valjkl_ = __tmp_var_7
   res = disable_sigint() do
-    @msk_ccall( "getbarcblocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @msk_ccall( "getbarcblocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -1544,7 +1544,7 @@ function getbarcidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   weights_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getbarcidx",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
+    @msk_ccall( "getbarcidx",Int32,(Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -1569,7 +1569,7 @@ getbarcidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbarcidxinfo(task,Int64(i
 function getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
   num_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbarcidxinfo",Int32,(Ptr{Void},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
+    @msk_ccall( "getbarcidxinfo",Int32,(Ptr{Nothing},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1593,7 +1593,7 @@ getbarcidxj(task:: MSKtask,idx:: T1) where {T1} = getbarcidxj(task,Int64(idx))
 function getbarcidxj(task_:: MSKtask,idx_:: Int64)
   j_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbarcidxj",Int32,(Ptr{Void},Int64,Ptr{Int32},),task_.task,idx_-1,j_)
+    @msk_ccall( "getbarcidxj",Int32,(Ptr{Nothing},Int64,Ptr{Int32},),task_.task,idx_-1,j_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1623,7 +1623,7 @@ function getbarcsparsity(task_:: MSKtask)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   idxj_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarcsparsity",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
+    @msk_ccall( "getbarcsparsity",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -1651,7 +1651,7 @@ function getbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   barsj_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarsj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,__tmp_var_1)
+    @msk_ccall( "getbarsj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1676,7 +1676,7 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getbarvarnamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getbarvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
+    @msk_ccall( "getbarvarname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK.value
@@ -1701,7 +1701,7 @@ function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Vector{Int32}(1)
   index_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbarvarnameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @msk_ccall( "getbarvarnameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1725,7 +1725,7 @@ getbarvarnamelen(task:: MSKtask,i:: T1) where {T1} = getbarvarnamelen(task,Int32
 function getbarvarnamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbarvarnamelen",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @msk_ccall( "getbarvarnamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1752,7 +1752,7 @@ function getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   barxj_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarxj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,__tmp_var_1)
+    @msk_ccall( "getbarxj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1781,7 +1781,7 @@ function getbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32)
   bl_ = Vector{Float64}(1)
   bu_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getbound",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,i_-1,bk_,bl_,bu_)
+    @msk_ccall( "getbound",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,i_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1816,7 +1816,7 @@ function getboundslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_::
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
   bu_ = __tmp_var_4
   res = disable_sigint() do
-    @msk_ccall( "getboundslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
+    @msk_ccall( "getboundslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1839,7 +1839,7 @@ function getc(task_:: MSKtask)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   c_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getc",Int32,(Ptr{Void},Ptr{Float64},),task_.task,__tmp_var_1)
+    @msk_ccall( "getc",Int32,(Ptr{Nothing},Ptr{Float64},),task_.task,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1860,7 +1860,7 @@ function getcfix end
 function getcfix(task_:: MSKtask)
   cfix_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getcfix",Int32,(Ptr{Void},Ptr{Float64},),task_.task,cfix_)
+    @msk_ccall( "getcfix",Int32,(Ptr{Nothing},Ptr{Float64},),task_.task,cfix_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1884,7 +1884,7 @@ getcj(task:: MSKtask,j:: T1) where {T1} = getcj(task,Int32(j))
 function getcj(task_:: MSKtask,j_:: Int32)
   cj_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getcj",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,j_-1,cj_)
+    @msk_ccall( "getcj",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,j_-1,cj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1912,7 +1912,7 @@ function getconbound(task_:: MSKtask,i_:: Int32)
   bl_ = Vector{Float64}(1)
   bu_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getconbound",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,i_-1,bk_,bl_,bu_)
+    @msk_ccall( "getconbound",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,i_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1946,7 +1946,7 @@ function getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
   bu_ = __tmp_var_4
   res = disable_sigint() do
-    @msk_ccall( "getconboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
+    @msk_ccall( "getconboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1978,7 +1978,7 @@ function getcone(task_:: MSKtask,k_:: Int32)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   submem_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getcone",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_,__tmp_var_1)
+    @msk_ccall( "getcone",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_,__tmp_var_1)
   end
   __tmp_var_1 += 1
   if res != MSK_RES_OK.value
@@ -2007,7 +2007,7 @@ function getconeinfo(task_:: MSKtask,k_:: Int32)
   ct_ = Vector{Int32}(1)
   nummem_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getconeinfo",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_)
+    @msk_ccall( "getconeinfo",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2032,7 +2032,7 @@ function getconename(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getconenamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getconename",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
+    @msk_ccall( "getconename",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK.value
@@ -2057,7 +2057,7 @@ function getconenameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Vector{Int32}(1)
   index_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getconenameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @msk_ccall( "getconenameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2081,7 +2081,7 @@ getconenamelen(task:: MSKtask,i:: T1) where {T1} = getconenamelen(task,Int32(i))
 function getconenamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getconenamelen",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @msk_ccall( "getconenamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2106,7 +2106,7 @@ function getconname(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getconnamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getconname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
+    @msk_ccall( "getconname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK.value
@@ -2131,7 +2131,7 @@ function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Vector{Int32}(1)
   index_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getconnameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @msk_ccall( "getconnameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2155,7 +2155,7 @@ getconnamelen(task:: MSKtask,i:: T1) where {T1} = getconnamelen(task,Int32(i))
 function getconnamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getconnamelen",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @msk_ccall( "getconnamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2182,7 +2182,7 @@ function getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   c_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getcslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getcslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2206,7 +2206,7 @@ getdimbarvarj(task:: MSKtask,j:: T1) where {T1} = getdimbarvarj(task,Int32(j))
 function getdimbarvarj(task_:: MSKtask,j_:: Int32)
   dimbarvarj_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getdimbarvarj",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,j_-1,dimbarvarj_)
+    @msk_ccall( "getdimbarvarj",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,j_-1,dimbarvarj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2228,7 +2228,7 @@ function getdouinf end
 function getdouinf(task_:: MSKtask,whichdinf_:: Dinfitem)
   dvalue_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getdouinf",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichdinf_.value,dvalue_)
+    @msk_ccall( "getdouinf",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichdinf_.value,dvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2250,7 +2250,7 @@ function getdouparam end
 function getdouparam(task_:: MSKtask,param_:: Dparam)
   parvalue_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getdouparam",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,param_.value,parvalue_)
+    @msk_ccall( "getdouparam",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2274,7 +2274,7 @@ function getdualobj end
 function getdualobj(task_:: MSKtask,whichsol_:: Soltype)
   dualobj_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getdualobj",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,dualobj_)
+    @msk_ccall( "getdualobj",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,dualobj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2308,7 +2308,7 @@ function getdualsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
   nrmsux_ = Vector{Float64}(1)
   nrmy_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getdualsolutionnorms",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_)
+    @msk_ccall( "getdualsolutionnorms",Int32,(Ptr{Nothing},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2344,7 +2344,7 @@ function getdviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32}
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolbarvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getdviolbarvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2389,7 +2389,7 @@ function getdviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolcon",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getdviolcon",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2430,7 +2430,7 @@ function getdviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolcones",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getdviolcones",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2476,7 +2476,7 @@ function getdviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getdviolvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2508,9 +2508,9 @@ For more information see Section :ref:`doc.shared.feas_repair`.
 """
 function getinfeasiblesubproblem end
 function getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Soltype)
-  inftask_ = Vector{Ptr{Void}}(1)
+  inftask_ = Vector{Ptr{Nothing}}(1)
   res = disable_sigint() do
-    @msk_ccall( "getinfeasiblesubproblem",Int32,(Ptr{Void},Int32,Ptr{Ptr{Void}},),task_.task,whichsol_.value,inftask_)
+    @msk_ccall( "getinfeasiblesubproblem",Int32,(Ptr{Nothing},Int32,Ptr{Ptr{Nothing}},),task_.task,whichsol_.value,inftask_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2535,7 +2535,7 @@ getinfname(task:: MSKtask,inftype:: Inftype,whichinf:: T2) where {T2} = getinfna
 function getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
   infname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "getinfname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,inftype_.value,whichinf_,infname_)
+    @msk_ccall( "getinfname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,inftype_.value,whichinf_,infname_)
   end
   infname_str = convert(String,infname_)
   if res != MSK_RES_OK.value
@@ -2558,7 +2558,7 @@ function getintinf end
 function getintinf(task_:: MSKtask,whichiinf_:: Iinfitem)
   ivalue_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getintinf",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichiinf_.value,ivalue_)
+    @msk_ccall( "getintinf",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichiinf_.value,ivalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2580,7 +2580,7 @@ function getintparam end
 function getintparam(task_:: MSKtask,param_:: Iparam)
   parvalue_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getintparam",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,param_.value,parvalue_)
+    @msk_ccall( "getintparam",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2604,7 +2604,7 @@ getlenbarvarj(task:: MSKtask,j:: T1) where {T1} = getlenbarvarj(task,Int32(j))
 function getlenbarvarj(task_:: MSKtask,j_:: Int32)
   lenbarvarj_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getlenbarvarj",Int32,(Ptr{Void},Int32,Ptr{Int64},),task_.task,j_-1,lenbarvarj_)
+    @msk_ccall( "getlenbarvarj",Int32,(Ptr{Nothing},Int32,Ptr{Int64},),task_.task,j_-1,lenbarvarj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2626,7 +2626,7 @@ function getlintinf end
 function getlintinf(task_:: MSKtask,whichliinf_:: Liinfitem)
   ivalue_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getlintinf",Int32,(Ptr{Void},Int32,Ptr{Int64},),task_.task,whichliinf_.value,ivalue_)
+    @msk_ccall( "getlintinf",Int32,(Ptr{Nothing},Int32,Ptr{Int64},),task_.task,whichliinf_.value,ivalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2647,7 +2647,7 @@ function getmaxnumanz end
 function getmaxnumanz(task_:: MSKtask)
   maxnumanz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumanz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,maxnumanz_)
+    @msk_ccall( "getmaxnumanz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,maxnumanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2668,7 +2668,7 @@ function getmaxnumbarvar end
 function getmaxnumbarvar(task_:: MSKtask)
   maxnumbarvar_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumbarvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumbarvar_)
+    @msk_ccall( "getmaxnumbarvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumbarvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2689,7 +2689,7 @@ function getmaxnumcon end
 function getmaxnumcon(task_:: MSKtask)
   maxnumcon_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumcon",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumcon_)
+    @msk_ccall( "getmaxnumcon",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumcon_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2712,7 +2712,7 @@ function getmaxnumcone end
 function getmaxnumcone(task_:: MSKtask)
   maxnumcone_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumcone",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumcone_)
+    @msk_ccall( "getmaxnumcone",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2735,7 +2735,7 @@ function getmaxnumqnz end
 function getmaxnumqnz(task_:: MSKtask)
   maxnumqnz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumqnz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,maxnumqnz_)
+    @msk_ccall( "getmaxnumqnz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,maxnumqnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2756,7 +2756,7 @@ function getmaxnumvar end
 function getmaxnumvar(task_:: MSKtask)
   maxnumvar_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,maxnumvar_)
+    @msk_ccall( "getmaxnumvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2779,7 +2779,7 @@ function getmemusage(task_:: MSKtask)
   maxmemuse_ = Vector{Int64}(1)
   meminuse_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getmemusagetask",Int32,(Ptr{Void},Ptr{Int64},Ptr{Int64},),task_.task,meminuse_,maxmemuse_)
+    @msk_ccall( "getmemusagetask",Int32,(Ptr{Nothing},Ptr{Int64},Ptr{Int64},),task_.task,meminuse_,maxmemuse_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2801,7 +2801,7 @@ function getnadouinf end
 function getnadouinf(task_:: MSKtask,infitemname_:: AbstractString)
   dvalue_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnadouinf",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Float64},),task_.task,string(infitemname_),dvalue_)
+    @msk_ccall( "getnadouinf",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Float64},),task_.task,string(infitemname_),dvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2823,7 +2823,7 @@ function getnadouparam end
 function getnadouparam(task_:: MSKtask,paramname_:: AbstractString)
   parvalue_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnadouparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Float64},),task_.task,string(paramname_),parvalue_)
+    @msk_ccall( "getnadouparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Float64},),task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2845,7 +2845,7 @@ function getnaintinf end
 function getnaintinf(task_:: MSKtask,infitemname_:: AbstractString)
   ivalue_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnaintinf",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(infitemname_),ivalue_)
+    @msk_ccall( "getnaintinf",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(infitemname_),ivalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2867,7 +2867,7 @@ function getnaintparam end
 function getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
   parvalue_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnaintparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(paramname_),parvalue_)
+    @msk_ccall( "getnaintparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2894,7 +2894,7 @@ function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname
   len_ = Vector{Int32}(1)
   parvalue_ = zeros(UInt8,(sizeparamname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
+    @msk_ccall( "getnastrparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
   end
   parvalue_str = convert(String,parvalue_)
   if res != MSK_RES_OK.value
@@ -2916,7 +2916,7 @@ function getnumanz end
 function getnumanz(task_:: MSKtask)
   numanz_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumanz",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numanz_)
+    @msk_ccall( "getnumanz",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2937,7 +2937,7 @@ function getnumanz64 end
 function getnumanz64(task_:: MSKtask)
   numanz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumanz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,numanz_)
+    @msk_ccall( "getnumanz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,numanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2958,7 +2958,7 @@ function getnumbarablocktriplets end
 function getnumbarablocktriplets(task_:: MSKtask)
   num_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumbarablocktriplets",Int32,(Ptr{Void},Ptr{Int64},),task_.task,num_)
+    @msk_ccall( "getnumbarablocktriplets",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2979,7 +2979,7 @@ function getnumbaranz end
 function getnumbaranz(task_:: MSKtask)
   nz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumbaranz",Int32,(Ptr{Void},Ptr{Int64},),task_.task,nz_)
+    @msk_ccall( "getnumbaranz",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,nz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3000,7 +3000,7 @@ function getnumbarcblocktriplets end
 function getnumbarcblocktriplets(task_:: MSKtask)
   num_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumbarcblocktriplets",Int32,(Ptr{Void},Ptr{Int64},),task_.task,num_)
+    @msk_ccall( "getnumbarcblocktriplets",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3021,7 +3021,7 @@ function getnumbarcnz end
 function getnumbarcnz(task_:: MSKtask)
   nz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumbarcnz",Int32,(Ptr{Void},Ptr{Int64},),task_.task,nz_)
+    @msk_ccall( "getnumbarcnz",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,nz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3042,7 +3042,7 @@ function getnumbarvar end
 function getnumbarvar(task_:: MSKtask)
   numbarvar_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumbarvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numbarvar_)
+    @msk_ccall( "getnumbarvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numbarvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3063,7 +3063,7 @@ function getnumcon end
 function getnumcon(task_:: MSKtask)
   numcon_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumcon",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numcon_)
+    @msk_ccall( "getnumcon",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numcon_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3084,7 +3084,7 @@ function getnumcone end
 function getnumcone(task_:: MSKtask)
   numcone_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumcone",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numcone_)
+    @msk_ccall( "getnumcone",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3108,7 +3108,7 @@ getnumconemem(task:: MSKtask,k:: T1) where {T1} = getnumconemem(task,Int32(k))
 function getnumconemem(task_:: MSKtask,k_:: Int32)
   nummem_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumconemem",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,k_-1,nummem_)
+    @msk_ccall( "getnumconemem",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,k_-1,nummem_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3129,7 +3129,7 @@ function getnumintvar end
 function getnumintvar(task_:: MSKtask)
   numintvar_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumintvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numintvar_)
+    @msk_ccall( "getnumintvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numintvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3151,7 +3151,7 @@ function getnumparam end
 function getnumparam(task_:: MSKtask,partype_:: Parametertype)
   numparam_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumparam",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,partype_.value,numparam_)
+    @msk_ccall( "getnumparam",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,partype_.value,numparam_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3175,7 +3175,7 @@ getnumqconknz(task:: MSKtask,k:: T1) where {T1} = getnumqconknz(task,Int32(k))
 function getnumqconknz(task_:: MSKtask,k_:: Int32)
   numqcnz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumqconknz64",Int32,(Ptr{Void},Int32,Ptr{Int64},),task_.task,k_-1,numqcnz_)
+    @msk_ccall( "getnumqconknz64",Int32,(Ptr{Nothing},Int32,Ptr{Int64},),task_.task,k_-1,numqcnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3196,7 +3196,7 @@ function getnumqobjnz end
 function getnumqobjnz(task_:: MSKtask)
   numqonz_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumqobjnz64",Int32,(Ptr{Void},Ptr{Int64},),task_.task,numqonz_)
+    @msk_ccall( "getnumqobjnz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,numqonz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3217,7 +3217,7 @@ function getnumsymmat end
 function getnumsymmat(task_:: MSKtask)
   num_ = Vector{Int64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumsymmat",Int32,(Ptr{Void},Ptr{Int64},),task_.task,num_)
+    @msk_ccall( "getnumsymmat",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3238,7 +3238,7 @@ function getnumvar end
 function getnumvar(task_:: MSKtask)
   numvar_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getnumvar",Int32,(Ptr{Void},Ptr{Int32},),task_.task,numvar_)
+    @msk_ccall( "getnumvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3260,7 +3260,7 @@ function getobjname(task_:: MSKtask)
   sizeobjname_ = (1 + getobjnamelen(task_))
   objname_ = zeros(UInt8,(sizeobjname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getobjname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,sizeobjname_,objname_)
+    @msk_ccall( "getobjname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,sizeobjname_,objname_)
   end
   objname_str = convert(String,objname_)
   if res != MSK_RES_OK.value
@@ -3282,7 +3282,7 @@ function getobjnamelen end
 function getobjnamelen(task_:: MSKtask)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getobjnamelen",Int32,(Ptr{Void},Ptr{Int32},),task_.task,len_)
+    @msk_ccall( "getobjnamelen",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3303,7 +3303,7 @@ function getobjsense end
 function getobjsense(task_:: MSKtask)
   sense_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getobjsense",Int32,(Ptr{Void},Ptr{Int32},),task_.task,sense_)
+    @msk_ccall( "getobjsense",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,sense_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3328,7 +3328,7 @@ getparamname(task:: MSKtask,partype:: Parametertype,param:: T2) where {T2} = get
 function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
   parname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "getparamname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,partype_.value,param_,parname_)
+    @msk_ccall( "getparamname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,partype_.value,param_,parname_)
   end
   parname_str = convert(String,parname_)
   if res != MSK_RES_OK.value
@@ -3351,7 +3351,7 @@ function getprimalobj end
 function getprimalobj(task_:: MSKtask,whichsol_:: Soltype)
   primalobj_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getprimalobj",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,primalobj_)
+    @msk_ccall( "getprimalobj",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,primalobj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3377,7 +3377,7 @@ function getprimalsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
   nrmxc_ = Vector{Float64}(1)
   nrmxx_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getprimalsolutionnorms",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,nrmxc_,nrmxx_,nrmbarx_)
+    @msk_ccall( "getprimalsolutionnorms",Int32,(Ptr{Nothing},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,nrmxc_,nrmxx_,nrmbarx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3398,7 +3398,7 @@ function getprobtype end
 function getprobtype(task_:: MSKtask)
   probtype_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getprobtype",Int32,(Ptr{Void},Ptr{Int32},),task_.task,probtype_)
+    @msk_ccall( "getprobtype",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,probtype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3420,7 +3420,7 @@ function getprosta end
 function getprosta(task_:: MSKtask,whichsol_:: Soltype)
   prosta_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getprosta",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,prosta_)
+    @msk_ccall( "getprosta",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,prosta_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3456,7 +3456,7 @@ function getpviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32}
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolbarvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getpviolbarvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3494,7 +3494,7 @@ function getpviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolcon",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getpviolcon",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3535,7 +3535,7 @@ function getpviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolcones",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getpviolcones",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3574,7 +3574,7 @@ function getpviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolvar",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @msk_ccall( "getpviolvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3613,7 +3613,7 @@ function getqconk(task_:: MSKtask,k_:: Int32)
   qcval_ = __tmp_var_5
   qcsurp_ = convert(Int64,length(qcsubi_))
   res = disable_sigint() do
-    @msk_ccall( "getqconk64",Int32,(Ptr{Void},Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,maxnumqcnz_,&qcsurp_,numqcnz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @msk_ccall( "getqconk64",Int32,(Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,maxnumqcnz_,Ref(qcsurp_),numqcnz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -3651,7 +3651,7 @@ function getqobj(task_:: MSKtask)
   qoval_ = __tmp_var_5
   qosurp_ = convert(Int64,length(qosubi_))
   res = disable_sigint() do
-    @msk_ccall( "getqobj64",Int32,(Ptr{Void},Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnumqonz_,&qosurp_,numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @msk_ccall( "getqobj64",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnumqonz_,Ref(qosurp_),numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -3678,7 +3678,7 @@ getqobjij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getqobjij(task,Int32(i),
 function getqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32)
   qoij_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getqobjij",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,i_-1,j_-1,qoij_)
+    @msk_ccall( "getqobjij",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,i_-1,j_-1,qoij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3713,7 +3713,7 @@ function getreducedcosts(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   redcosts_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getreducedcosts",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getreducedcosts",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3736,7 +3736,7 @@ function getskc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumcon(task_)
   skc_ = Vector{Int32}(__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskc",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
+    @msk_ccall( "getskc",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3763,7 +3763,7 @@ function getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_0 = ((last_) - (first_))
   skc_ = Vector{Int32}(__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
+    @msk_ccall( "getskcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3786,7 +3786,7 @@ function getskx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumvar(task_)
   skx_ = Vector{Int32}(__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskx",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
+    @msk_ccall( "getskx",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3813,7 +3813,7 @@ function getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_0 = ((last_) - (first_))
   skx_ = Vector{Int32}(__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
+    @msk_ccall( "getskxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3837,7 +3837,7 @@ function getslc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getslc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3865,7 +3865,7 @@ function getslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getslcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3889,7 +3889,7 @@ function getslx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getslx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3917,7 +3917,7 @@ function getslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getslxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3941,7 +3941,7 @@ function getsnx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   snx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsnx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getsnx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3969,7 +3969,7 @@ function getsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   snx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsnxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getsnxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3991,7 +3991,7 @@ function getsolsta end
 function getsolsta(task_:: MSKtask,whichsol_:: Soltype)
   solsta_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getsolsta",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,solsta_)
+    @msk_ccall( "getsolsta",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,solsta_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4113,7 +4113,7 @@ function getsolution(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_8 = zeros(Float64,__tmp_var_7)
   y_ = __tmp_var_8
   res = disable_sigint() do
-    @msk_ccall( "getsolution",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,prosta_,solsta_,skc_,skx_,skn_,__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
+    @msk_ccall( "getsolution",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,prosta_,solsta_,skc_,skx_,skn_,__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4147,7 +4147,7 @@ function getsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: 
   su_ = Vector{Float64}(1)
   x_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getsolutioni",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,i_-1,whichsol_.value,sk_,x_,sl_,su_,sn_)
+    @msk_ccall( "getsolutioni",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,i_-1,whichsol_.value,sk_,x_,sl_,su_,sn_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4189,7 +4189,7 @@ function getsolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
   pviolitg_ = Vector{Float64}(1)
   pviolvar_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getsolutioninfo",Int32,(Ptr{Void},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_)
+    @msk_ccall( "getsolutioninfo",Int32,(Ptr{Nothing},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4218,7 +4218,7 @@ function getsolutionslice(task_:: MSKtask,whichsol_:: Soltype,solitem_:: Solitem
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   values_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsolutionslice",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,solitem_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getsolutionslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,solitem_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4253,7 +4253,7 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   valij_ = __tmp_var_5
   res = disable_sigint() do
-    @msk_ccall( "getsparsesymmat",Int32,(Ptr{Void},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @msk_ccall( "getsparsesymmat",Int32,(Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 += 1
   __tmp_var_3 += 1
@@ -4280,7 +4280,7 @@ function getstrparam(task_:: MSKtask,param_:: Sparam)
   maxlen_ = (1 + getstrparamlen(task_,(param_)))
   parvalue_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getstrparam",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_.value,maxlen_,len_,parvalue_)
+    @msk_ccall( "getstrparam",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_.value,maxlen_,len_,parvalue_)
   end
   parvalue_str = convert(String,parvalue_)
   if res != MSK_RES_OK.value
@@ -4303,7 +4303,7 @@ function getstrparamlen end
 function getstrparamlen(task_:: MSKtask,param_:: Sparam)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getstrparamlen",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,param_.value,len_)
+    @msk_ccall( "getstrparamlen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,param_.value,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4327,7 +4327,7 @@ function getsuc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   suc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsuc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getsuc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4355,7 +4355,7 @@ function getsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   suc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsucslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getsucslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4379,7 +4379,7 @@ function getsux(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   sux_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsux",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getsux",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4407,7 +4407,7 @@ function getsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   sux_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsuxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getsuxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4435,7 +4435,7 @@ function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
   nz_ = Vector{Int64}(1)
   type_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getsymmatinfo",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int64},Ptr{Int32},),task_.task,idx_-1,dim_,nz_,type_)
+    @msk_ccall( "getsymmatinfo",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int64},Ptr{Int32},),task_.task,idx_-1,dim_,nz_,type_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4457,7 +4457,7 @@ function gettaskname(task_:: MSKtask)
   sizetaskname_ = (1 + gettasknamelen(task_))
   taskname_ = zeros(UInt8,(sizetaskname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "gettaskname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,sizetaskname_,taskname_)
+    @msk_ccall( "gettaskname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,sizetaskname_,taskname_)
   end
   taskname_str = convert(String,taskname_)
   if res != MSK_RES_OK.value
@@ -4479,7 +4479,7 @@ function gettasknamelen end
 function gettasknamelen(task_:: MSKtask)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "gettasknamelen",Int32,(Ptr{Void},Ptr{Int32},),task_.task,len_)
+    @msk_ccall( "gettasknamelen",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4507,7 +4507,7 @@ function getvarbound(task_:: MSKtask,i_:: Int32)
   bl_ = Vector{Float64}(1)
   bu_ = Vector{Float64}(1)
   res = disable_sigint() do
-    @msk_ccall( "getvarbound",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,i_-1,bk_,bl_,bu_)
+    @msk_ccall( "getvarbound",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,i_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4541,7 +4541,7 @@ function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
   bu_ = __tmp_var_4
   res = disable_sigint() do
-    @msk_ccall( "getvarboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
+    @msk_ccall( "getvarboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4566,7 +4566,7 @@ function getvarname(task_:: MSKtask,j_:: Int32)
   sizename_ = (1 + getvarnamelen(task_,(j_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getvarname",Int32,(Ptr{Void},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,sizename_,name_)
+    @msk_ccall( "getvarname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,sizename_,name_)
   end
   name_str = convert(String,name_)
   if res != MSK_RES_OK.value
@@ -4591,7 +4591,7 @@ function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
   asgn_ = Vector{Int32}(1)
   index_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getvarnameindex",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @msk_ccall( "getvarnameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4615,7 +4615,7 @@ getvarnamelen(task:: MSKtask,i:: T1) where {T1} = getvarnamelen(task,Int32(i))
 function getvarnamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getvarnamelen",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @msk_ccall( "getvarnamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4639,7 +4639,7 @@ getvartype(task:: MSKtask,j:: T1) where {T1} = getvartype(task,Int32(j))
 function getvartype(task_:: MSKtask,j_:: Int32)
   vartype_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "getvartype",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,j_-1,vartype_)
+    @msk_ccall( "getvartype",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,j_-1,vartype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4665,7 +4665,7 @@ function getvartypelist(task_:: MSKtask,subj_:: Vector{Int32})
   __tmp_var_0 = (num_)
   vartype_ = Vector{Int32}(__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getvartypelist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
+    @msk_ccall( "getvartypelist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4689,7 +4689,7 @@ function getxc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getxc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4717,7 +4717,7 @@ function getxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getxcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4741,7 +4741,7 @@ function getxx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "getxx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4769,7 +4769,7 @@ function getxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getxxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4793,7 +4793,7 @@ function gety(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   y_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "gety",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "gety",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4821,7 +4821,7 @@ function getyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: In
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   y_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getyslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @msk_ccall( "getyslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4851,7 +4851,7 @@ function initbasissolve(task_:: MSKtask)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   basis_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "initbasissolve",Int32,(Ptr{Void},Ptr{Int32},),task_.task,__tmp_var_1)
+    @msk_ccall( "initbasissolve",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4904,7 +4904,7 @@ function inputdata(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,c_:: Ve
   numcon_ = minimum([ length(buc_),length(blc_),length(bkc_) ])
   numvar_ = minimum([ length(c_),length(bux_),length(blx_),length(bkx_),length(aptrb_),length(aptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "inputdata64",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Ptr{Float64},Float64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,maxnumcon_,maxnumvar_,numcon_,numvar_,c_,cfix_,aptrb_ .- Int32(1),aptre_ .- Int32(1),asub_ .- Int32(1),aval_,bkc_,blc_,buc_,bkx_,blx_,bux_)
+    @msk_ccall( "inputdata64",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Float64},Float64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,maxnumcon_,maxnumvar_,numcon_,numvar_,c_,cfix_,aptrb_ .- Int32(1),aptre_ .- Int32(1),asub_ .- Int32(1),aval_,bkc_,blc_,buc_,bkx_,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4925,7 +4925,7 @@ function isdouparname end
 function isdouparname(task_:: MSKtask,parname_:: AbstractString)
   param_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "isdouparname",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
+    @msk_ccall( "isdouparname",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4947,7 +4947,7 @@ function isintparname end
 function isintparname(task_:: MSKtask,parname_:: AbstractString)
   param_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "isintparname",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
+    @msk_ccall( "isintparname",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4969,7 +4969,7 @@ function isstrparname end
 function isstrparname(task_:: MSKtask,parname_:: AbstractString)
   param_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "isstrparname",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
+    @msk_ccall( "isstrparname",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4993,7 +4993,7 @@ function linkfiletostream end
 linkfiletostream(task:: MSKtask,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(task,whichstream,filename,Int32(append))
 function linkfiletostream(task_:: MSKtask,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "linkfiletotaskstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),task_.task,whichstream_.value,string(filename_),append_)
+    @msk_ccall( "linkfiletotaskstream",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},Int32,),task_.task,whichstream_.value,string(filename_),append_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5013,7 +5013,7 @@ Prints a short summary of a specified solution.
 function onesolutionsummary end
 function onesolutionsummary(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "onesolutionsummary",Int32,(Ptr{Void},Int32,Int32,),task_.task,whichstream_.value,whichsol_.value)
+    @msk_ccall( "onesolutionsummary",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,whichstream_.value,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5032,7 +5032,7 @@ Prints a short summary with optimizer statistics from last optimization.
 function optimizersummary end
 function optimizersummary(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "optimizersummary",Int32,(Ptr{Void},Int32,),task_.task,whichstream_.value)
+    @msk_ccall( "optimizersummary",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5063,7 +5063,7 @@ function optimize end
 function optimize(task_:: MSKtask)
   trmcode_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "optimizetrm",Int32,(Ptr{Void},Ptr{Int32},),task_.task,trmcode_)
+    @msk_ccall( "optimizetrm",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,trmcode_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5118,7 +5118,7 @@ function primalrepair(task_:: MSKtask,wlc_:: Vector{Float64},wuc_:: Vector{Float
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "primalrepair",Int32,(Ptr{Void},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,wlc_,wuc_,wlx_,wux_)
+    @msk_ccall( "primalrepair",Int32,(Ptr{Nothing},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,wlc_,wuc_,wlx_,wux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5182,7 +5182,7 @@ function primalsensitivity(task_:: MSKtask,subi_:: Vector{Int32},marki_:: Vector
   __tmp_var_15 = zeros(Float64,__tmp_var_14)
   rightrangej_ = __tmp_var_15
   res = disable_sigint() do
-    @msk_ccall( "primalsensitivity",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numi_,subi_ .- Int32(1),marki_,numj_,subj_ .- Int32(1),markj_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9,__tmp_var_11,__tmp_var_13,__tmp_var_15)
+    @msk_ccall( "primalsensitivity",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numi_,subi_ .- Int32(1),marki_,numj_,subj_ .- Int32(1),markj_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9,__tmp_var_11,__tmp_var_13,__tmp_var_15)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5220,7 +5220,7 @@ function printdata end
 printdata(task:: MSKtask,whichstream:: Streamtype,firsti:: T2,lasti:: T3,firstj:: T4,lastj:: T5,firstk:: T6,lastk:: T7,c:: T8,qo:: T9,a:: T10,qc:: T11,bc:: T12,bx:: T13,vartype:: T14,cones:: T15) where {T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15} = printdata(task,whichstream,Int32(firsti),Int32(lasti),Int32(firstj),Int32(lastj),Int32(firstk),Int32(lastk),Int32(c),Int32(qo),Int32(a),Int32(qc),Int32(bc),Int32(bx),Int32(vartype),Int32(cones))
 function printdata(task_:: MSKtask,whichstream_:: Streamtype,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32,firstk_:: Int32,lastk_:: Int32,c_:: Int32,qo_:: Int32,a_:: Int32,qc_:: Int32,bc_:: Int32,bx_:: Int32,vartype_:: Int32,cones_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "printdata",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,),task_.task,whichstream_.value,firsti_-1,lasti_-1,firstj_-1,lastj_-1,firstk_-1,lastk_-1,c_,qo_,a_,qc_,bc_,bx_,vartype_,cones_)
+    @msk_ccall( "printdata",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,),task_.task,whichstream_.value,firsti_-1,lasti_-1,firstj_-1,lastj_-1,firstk_-1,lastk_-1,c_,qo_,a_,qc_,bc_,bx_,vartype_,cones_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5238,7 +5238,7 @@ Prints the current parameter settings to the message stream.
 function printparam end
 function printparam(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "printparam",Int32,(Ptr{Void},),task_.task)
+    @msk_ccall( "printparam",Int32,(Ptr{Nothing},),task_.task)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5267,7 +5267,7 @@ putacol(task:: MSKtask,j:: T1,subj:: Vector{T2},valj:: Vector{T3}) where {T1,T2,
 function putacol(task_:: MSKtask,j_:: Int32,subj_:: Vector{Int32},valj_:: Vector{Float64})
   nzj_ = minimum([ length(subj_),length(valj_) ])
   res = disable_sigint() do
-    @msk_ccall( "putacol",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,subj_ .- Int32(1),valj_)
+    @msk_ccall( "putacol",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,subj_ .- Int32(1),valj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5310,7 +5310,7 @@ end
 function putacollist(task_:: MSKtask,sub_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},asub_:: Vector{Int32},aval_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(ptrb_),length(ptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "putacollist64",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @msk_ccall( "putacollist64",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5353,7 +5353,7 @@ function putacolslice(task:: MSKtask,first:: T1,last:: T2,A:: SparseMatrixCSC{Fl
 end
 function putacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Vector{Int64},ptre_:: Vector{Int64},asub_:: Vector{Int32},aval_:: Vector{Float64})
   res = disable_sigint() do
-    @msk_ccall( "putacolslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @msk_ccall( "putacolslice64",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5381,7 +5381,7 @@ function putaij end
 putaij(task:: MSKtask,i:: T1,j:: T2,aij:: T3) where {T1,T2,T3} = putaij(task,Int32(i),Int32(j),Float64(aij))
 function putaij(task_:: MSKtask,i_:: Int32,j_:: Int32,aij_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putaij",Int32,(Ptr{Void},Int32,Int32,Float64,),task_.task,i_-1,j_-1,aij_)
+    @msk_ccall( "putaij",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,j_-1,aij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5410,7 +5410,7 @@ putaijlist(task:: MSKtask,subi:: Vector{T1},subj:: Vector{T2},valij:: Vector{T3}
 function putaijlist(task_:: MSKtask,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
   num_ = minimum([ length(subi_),length(subj_),length(valij_) ])
   res = disable_sigint() do
-    @msk_ccall( "putaijlist64",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),valij_)
+    @msk_ccall( "putaijlist64",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),valij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5439,7 +5439,7 @@ putarow(task:: MSKtask,i:: T1,subi:: Vector{T2},vali:: Vector{T3}) where {T1,T2,
 function putarow(task_:: MSKtask,i_:: Int32,subi_:: Vector{Int32},vali_:: Vector{Float64})
   nzi_ = minimum([ length(subi_),length(vali_) ])
   res = disable_sigint() do
-    @msk_ccall( "putarow",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,subi_ .- Int32(1),vali_)
+    @msk_ccall( "putarow",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,subi_ .- Int32(1),vali_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5482,7 +5482,7 @@ end
 function putarowlist(task_:: MSKtask,sub_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},asub_:: Vector{Int32},aval_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(ptrb_),length(ptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "putarowlist64",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @msk_ccall( "putarowlist64",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5535,7 +5535,7 @@ function putarowslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Vecto
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putarowslice64",Int32,(Ptr{Void},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @msk_ccall( "putarowslice64",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5586,7 +5586,7 @@ function putbarablocktriplet(task_:: MSKtask,num_:: Int64,subi_:: Vector{Int32},
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarablocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valijkl_)
+    @msk_ccall( "putbarablocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valijkl_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5620,7 +5620,7 @@ putbaraij(task:: MSKtask,i:: T1,j:: T2,sub:: Vector{T3},weights:: Vector{T4}) wh
 function putbaraij(task_:: MSKtask,i_:: Int32,j_:: Int32,sub_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(weights_) ])
   res = disable_sigint() do
-    @msk_ccall( "putbaraij",Int32,(Ptr{Void},Int32,Int32,Int64,Ptr{Int64},Ptr{Float64},),task_.task,i_-1,j_-1,num_,sub_ .- Int32(1),weights_)
+    @msk_ccall( "putbaraij",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Float64},),task_.task,i_-1,j_-1,num_,sub_ .- Int32(1),weights_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5665,7 +5665,7 @@ function putbarcblocktriplet(task_:: MSKtask,num_:: Int64,subj_:: Vector{Int32},
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarcblocktriplet",Int32,(Ptr{Void},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valjkl_)
+    @msk_ccall( "putbarcblocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valjkl_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5698,7 +5698,7 @@ putbarcj(task:: MSKtask,j:: T1,sub:: Vector{T2},weights:: Vector{T3}) where {T1,
 function putbarcj(task_:: MSKtask,j_:: Int32,sub_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(weights_) ])
   res = disable_sigint() do
-    @msk_ccall( "putbarcj",Int32,(Ptr{Void},Int32,Int64,Ptr{Int64},Ptr{Float64},),task_.task,j_-1,num_,sub_ .- Int32(1),weights_)
+    @msk_ccall( "putbarcj",Int32,(Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Float64},),task_.task,j_-1,num_,sub_ .- Int32(1),weights_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5726,7 +5726,7 @@ function putbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32,barsj_:: Vector
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarsj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,barsj_)
+    @msk_ccall( "putbarsj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,barsj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5748,7 +5748,7 @@ function putbarvarname end
 putbarvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putbarvarname(task,Int32(j),name)
 function putbarvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putbarvarname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
+    @msk_ccall( "putbarvarname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5776,7 +5776,7 @@ function putbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32,barxj_:: Vector
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarxj",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,barxj_)
+    @msk_ccall( "putbarxj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,barxj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5801,7 +5801,7 @@ function putbound end
 putbound(task:: MSKtask,accmode:: Accmode,i:: T2,bk:: Boundkey,bl:: T4,bu:: T5) where {T2,T4,T5} = putbound(task,accmode,Int32(i),bk,Float64(bl),Float64(bu))
 function putbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putbound",Int32,(Ptr{Void},Int32,Int32,Int32,Float64,Float64,),task_.task,accmode_.value,i_-1,bk_.value,bl_,bu_)
+    @msk_ccall( "putbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,),task_.task,accmode_.value,i_-1,bk_.value,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5828,7 +5828,7 @@ function putboundlist(task_:: MSKtask,accmode_:: Accmode,sub_:: Vector{Int32},bk
   bk_i32 = Int32[item.value for item in bk_]
   num_ = minimum([ length(sub_),length(bk_),length(bl_),length(bu_) ])
   res = disable_sigint() do
-    @msk_ccall( "putboundlist",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,num_,sub_ .- Int32(1),bk_,bl_,bu_)
+    @msk_ccall( "putboundlist",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,accmode_.value,num_,sub_ .- Int32(1),bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5870,7 +5870,7 @@ function putboundslice(task_:: MSKtask,con_:: Accmode,first_:: Int32,last_:: Int
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putboundslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,con_.value,first_-1,last_-1,bk_,bl_,bu_)
+    @msk_ccall( "putboundslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,con_.value,first_-1,last_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5891,7 +5891,7 @@ function putcfix end
 putcfix(task:: MSKtask,cfix:: T1) where {T1} = putcfix(task,Float64(cfix))
 function putcfix(task_:: MSKtask,cfix_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putcfix",Int32,(Ptr{Void},Float64,),task_.task,cfix_)
+    @msk_ccall( "putcfix",Int32,(Ptr{Nothing},Float64,),task_.task,cfix_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5918,7 +5918,7 @@ function putcj end
 putcj(task:: MSKtask,j:: T1,cj:: T2) where {T1,T2} = putcj(task,Int32(j),Float64(cj))
 function putcj(task_:: MSKtask,j_:: Int32,cj_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putcj",Int32,(Ptr{Void},Int32,Float64,),task_.task,j_-1,cj_)
+    @msk_ccall( "putcj",Int32,(Ptr{Nothing},Int32,Float64,),task_.task,j_-1,cj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5946,7 +5946,7 @@ putclist(task:: MSKtask,subj:: Vector{T1},val:: Vector{T2}) where {T1,T2} = putc
 function putclist(task_:: MSKtask,subj_:: Vector{Int32},val_:: Vector{Float64})
   num_ = minimum([ length(subj_),length(val_) ])
   res = disable_sigint() do
-    @msk_ccall( "putclist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),val_)
+    @msk_ccall( "putclist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),val_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5973,7 +5973,7 @@ function putconbound end
 putconbound(task:: MSKtask,i:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putconbound(task,Int32(i),bk,Float64(bl),Float64(bu))
 function putconbound(task_:: MSKtask,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putconbound",Int32,(Ptr{Void},Int32,Int32,Float64,Float64,),task_.task,i_-1,bk_.value,bl_,bu_)
+    @msk_ccall( "putconbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,i_-1,bk_.value,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5999,7 +5999,7 @@ function putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bk_:: Vector{Bound
   bk_i32 = Int32[item.value for item in bk_]
   num_ = minimum([ length(sub_),length(bk_),length(bl_),length(bu_) ])
   res = disable_sigint() do
-    @msk_ccall( "putconboundlist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bk_,bl_,bu_)
+    @msk_ccall( "putconboundlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6040,7 +6040,7 @@ function putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vec
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putconboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
+    @msk_ccall( "putconboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6065,7 +6065,7 @@ putcone(task:: MSKtask,k:: T1,ct:: Conetype,conepar:: T3,submem:: Vector{T4}) wh
 function putcone(task_:: MSKtask,k_:: Int32,ct_:: Conetype,conepar_:: Float64,submem_:: Vector{Int32})
   nummem_ = minimum([ length(submem_) ])
   res = disable_sigint() do
-    @msk_ccall( "putcone",Int32,(Ptr{Void},Int32,Int32,Float64,Int32,Ptr{Int32},),task_.task,k_-1,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
+    @msk_ccall( "putcone",Int32,(Ptr{Nothing},Int32,Int32,Float64,Int32,Ptr{Int32},),task_.task,k_-1,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6087,7 +6087,7 @@ function putconename end
 putconename(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putconename(task,Int32(j),name)
 function putconename(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putconename",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
+    @msk_ccall( "putconename",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6109,7 +6109,7 @@ function putconname end
 putconname(task:: MSKtask,i:: T1,name:: AbstractString) where {T1} = putconname(task,Int32(i),name)
 function putconname(task_:: MSKtask,i_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putconname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,i_-1,string(name_))
+    @msk_ccall( "putconname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,i_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6142,7 +6142,7 @@ function putcslice(task_:: MSKtask,first_:: Int32,last_:: Int32,slice_:: Vector{
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putcslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,slice_)
+    @msk_ccall( "putcslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,slice_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6164,7 +6164,7 @@ function putdouparam end
 putdouparam(task:: MSKtask,param:: Dparam,parvalue:: T2) where {T2} = putdouparam(task,param,Float64(parvalue))
 function putdouparam(task_:: MSKtask,param_:: Dparam,parvalue_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putdouparam",Int32,(Ptr{Void},Int32,Float64,),task_.task,param_.value,parvalue_)
+    @msk_ccall( "putdouparam",Int32,(Ptr{Nothing},Int32,Float64,),task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6194,7 +6194,7 @@ function putintparam end
 putintparam(task:: MSKtask,param:: Iparam,parvalue:: T2) where {T2} = putintparam(task,param,Int32(parvalue))
 function putintparam(task_:: MSKtask,param_:: Iparam,parvalue_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putintparam",Int32,(Ptr{Void},Int32,Int32,),task_.task,param_.value,parvalue_)
+    @msk_ccall( "putintparam",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6230,7 +6230,7 @@ function putmaxnumanz end
 putmaxnumanz(task:: MSKtask,maxnumanz:: T1) where {T1} = putmaxnumanz(task,Int64(maxnumanz))
 function putmaxnumanz(task_:: MSKtask,maxnumanz_:: Int64)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumanz",Int32,(Ptr{Void},Int64,),task_.task,maxnumanz_)
+    @msk_ccall( "putmaxnumanz",Int32,(Ptr{Nothing},Int64,),task_.task,maxnumanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6259,7 +6259,7 @@ function putmaxnumbarvar end
 putmaxnumbarvar(task:: MSKtask,maxnumbarvar:: T1) where {T1} = putmaxnumbarvar(task,Int32(maxnumbarvar))
 function putmaxnumbarvar(task_:: MSKtask,maxnumbarvar_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumbarvar",Int32,(Ptr{Void},Int32,),task_.task,maxnumbarvar_)
+    @msk_ccall( "putmaxnumbarvar",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumbarvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6288,7 +6288,7 @@ function putmaxnumcon end
 putmaxnumcon(task:: MSKtask,maxnumcon:: T1) where {T1} = putmaxnumcon(task,Int32(maxnumcon))
 function putmaxnumcon(task_:: MSKtask,maxnumcon_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumcon",Int32,(Ptr{Void},Int32,),task_.task,maxnumcon_)
+    @msk_ccall( "putmaxnumcon",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumcon_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6317,7 +6317,7 @@ function putmaxnumcone end
 putmaxnumcone(task:: MSKtask,maxnumcone:: T1) where {T1} = putmaxnumcone(task,Int32(maxnumcone))
 function putmaxnumcone(task_:: MSKtask,maxnumcone_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumcone",Int32,(Ptr{Void},Int32,),task_.task,maxnumcone_)
+    @msk_ccall( "putmaxnumcone",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6351,7 +6351,7 @@ function putmaxnumqnz end
 putmaxnumqnz(task:: MSKtask,maxnumqnz:: T1) where {T1} = putmaxnumqnz(task,Int64(maxnumqnz))
 function putmaxnumqnz(task_:: MSKtask,maxnumqnz_:: Int64)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumqnz",Int32,(Ptr{Void},Int64,),task_.task,maxnumqnz_)
+    @msk_ccall( "putmaxnumqnz",Int32,(Ptr{Nothing},Int64,),task_.task,maxnumqnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6380,7 +6380,7 @@ function putmaxnumvar end
 putmaxnumvar(task:: MSKtask,maxnumvar:: T1) where {T1} = putmaxnumvar(task,Int32(maxnumvar))
 function putmaxnumvar(task_:: MSKtask,maxnumvar_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumvar",Int32,(Ptr{Void},Int32,),task_.task,maxnumvar_)
+    @msk_ccall( "putmaxnumvar",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6402,7 +6402,7 @@ function putnadouparam end
 putnadouparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnadouparam(task,paramname,Float64(parvalue))
 function putnadouparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putnadouparam",Int32,(Ptr{Void},Ptr{UInt8},Float64,),task_.task,string(paramname_),parvalue_)
+    @msk_ccall( "putnadouparam",Int32,(Ptr{Nothing},Ptr{UInt8},Float64,),task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6424,7 +6424,7 @@ function putnaintparam end
 putnaintparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnaintparam(task,paramname,Int32(parvalue))
 function putnaintparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putnaintparam",Int32,(Ptr{Void},Ptr{UInt8},Int32,),task_.task,string(paramname_),parvalue_)
+    @msk_ccall( "putnaintparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6444,7 +6444,7 @@ Sets the value of a named string parameter.
 function putnastrparam end
 function putnastrparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putnastrparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{UInt8},),task_.task,string(paramname_),string(parvalue_))
+    @msk_ccall( "putnastrparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},),task_.task,string(paramname_),string(parvalue_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6463,7 +6463,7 @@ Assigns a new name to the objective.
 function putobjname end
 function putobjname(task_:: MSKtask,objname_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putobjname",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(objname_))
+    @msk_ccall( "putobjname",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(objname_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6482,7 +6482,7 @@ Sets the objective sense of the task.
 function putobjsense end
 function putobjsense(task_:: MSKtask,sense_:: Objsense)
   res = disable_sigint() do
-    @msk_ccall( "putobjsense",Int32,(Ptr{Void},Int32,),task_.task,sense_.value)
+    @msk_ccall( "putobjsense",Int32,(Ptr{Nothing},Int32,),task_.task,sense_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6503,7 +6503,7 @@ assigned the value specified by `parvalue`.
 function putparam end
 function putparam(task_:: MSKtask,parname_:: AbstractString,parvalue_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putparam",Int32,(Ptr{Void},Ptr{UInt8},Ptr{UInt8},),task_.task,string(parname_),string(parvalue_))
+    @msk_ccall( "putparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},),task_.task,string(parname_),string(parvalue_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6548,7 +6548,7 @@ putqcon(task:: MSKtask,qcsubk:: Vector{T1},qcsubi:: Vector{T2},qcsubj:: Vector{T
 function putqcon(task_:: MSKtask,qcsubk_:: Vector{Int32},qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
   numqcnz_ = minimum([ length(qcsubi_),length(qcsubj_),length(qcval_) ])
   res = disable_sigint() do
-    @msk_ccall( "putqcon",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,numqcnz_,qcsubk_ .- Int32(1),qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
+    @msk_ccall( "putqcon",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,numqcnz_,qcsubk_ .- Int32(1),qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6583,7 +6583,7 @@ end
 function putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
   numqcnz_ = minimum([ length(qcsubi_),length(qcsubj_),length(qcval_) ])
   res = disable_sigint() do
-    @msk_ccall( "putqconk",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,numqcnz_,qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
+    @msk_ccall( "putqconk",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,numqcnz_,qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6629,7 +6629,7 @@ end
 function putqobj(task_:: MSKtask,qosubi_:: Vector{Int32},qosubj_:: Vector{Int32},qoval_:: Vector{Float64})
   numqonz_ = minimum([ length(qosubi_),length(qosubj_),length(qoval_) ])
   res = disable_sigint() do
-    @msk_ccall( "putqobj",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,numqonz_,qosubi_ .- Int32(1),qosubj_ .- Int32(1),qoval_)
+    @msk_ccall( "putqobj",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,numqonz_,qosubi_ .- Int32(1),qosubj_ .- Int32(1),qoval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6663,7 +6663,7 @@ function putqobjij end
 putqobjij(task:: MSKtask,i:: T1,j:: T2,qoij:: T3) where {T1,T2,T3} = putqobjij(task,Int32(i),Int32(j),Float64(qoij))
 function putqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32,qoij_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putqobjij",Int32,(Ptr{Void},Int32,Int32,Float64,),task_.task,i_-1,j_-1,qoij_)
+    @msk_ccall( "putqobjij",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,j_-1,qoij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6689,7 +6689,7 @@ function putskc(task_:: MSKtask,whichsol_:: Soltype,skc_:: Vector{Stakey})
   end
   skc_i32 = Int32[item.value for item in skc_]
   res = disable_sigint() do
-    @msk_ccall( "putskc",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
+    @msk_ccall( "putskc",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6719,7 +6719,7 @@ function putskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   end
   skc_i32 = Int32[item.value for item in skc_]
   res = disable_sigint() do
-    @msk_ccall( "putskcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
+    @msk_ccall( "putskcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6745,7 +6745,7 @@ function putskx(task_:: MSKtask,whichsol_:: Soltype,skx_:: Vector{Stakey})
   end
   skx_i32 = Int32[item.value for item in skx_]
   res = disable_sigint() do
-    @msk_ccall( "putskx",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
+    @msk_ccall( "putskx",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6775,7 +6775,7 @@ function putskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   end
   skx_i32 = Int32[item.value for item in skx_]
   res = disable_sigint() do
-    @msk_ccall( "putskxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
+    @msk_ccall( "putskxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6802,7 +6802,7 @@ function putslc(task_:: MSKtask,whichsol_:: Soltype,slc_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,slc_)
+    @msk_ccall( "putslc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,slc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6831,7 +6831,7 @@ function putslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slc_)
+    @msk_ccall( "putslcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6858,7 +6858,7 @@ function putslx(task_:: MSKtask,whichsol_:: Soltype,slx_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,slx_)
+    @msk_ccall( "putslx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,slx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6887,7 +6887,7 @@ function putslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slx_)
+    @msk_ccall( "putslxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6914,7 +6914,7 @@ function putsnx(task_:: MSKtask,whichsol_:: Soltype,sux_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsnx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,sux_)
+    @msk_ccall( "putsnx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,sux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6943,7 +6943,7 @@ function putsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsnxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,snx_)
+    @msk_ccall( "putsnxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,snx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6978,7 +6978,7 @@ function putsolution(task_:: MSKtask,whichsol_:: Soltype,skc_:: Vector{Stakey},s
   skn_i32 = Int32[item.value for item in skn_]
   skx_i32 = Int32[item.value for item in skx_]
   res = disable_sigint() do
-    @msk_ccall( "putsolution",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
+    @msk_ccall( "putsolution",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7007,7 +7007,7 @@ function putsolutioni end
 putsolutioni(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype,sk:: Stakey,x:: T5,sl:: T6,su:: T7,sn:: T8) where {T2,T5,T6,T7,T8} = putsolutioni(task,accmode,Int32(i),whichsol,sk,Float64(x),Float64(sl),Float64(su),Float64(sn))
 function putsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: Soltype,sk_:: Stakey,x_:: Float64,sl_:: Float64,su_:: Float64,sn_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putsolutioni",Int32,(Ptr{Void},Int32,Int32,Int32,Int32,Float64,Float64,Float64,Float64,),task_.task,accmode_.value,i_-1,whichsol_.value,sk_.value,x_,sl_,su_,sn_)
+    @msk_ccall( "putsolutioni",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Float64,Float64,Float64,Float64,),task_.task,accmode_.value,i_-1,whichsol_.value,sk_.value,x_,sl_,su_,sn_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7030,7 +7030,7 @@ function putsolutionyi end
 putsolutionyi(task:: MSKtask,i:: T1,whichsol:: Soltype,y:: T3) where {T1,T3} = putsolutionyi(task,Int32(i),whichsol,Float64(y))
 function putsolutionyi(task_:: MSKtask,i_:: Int32,whichsol_:: Soltype,y_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putsolutionyi",Int32,(Ptr{Void},Int32,Int32,Float64,),task_.task,i_-1,whichsol_.value,y_)
+    @msk_ccall( "putsolutionyi",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,whichsol_.value,y_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7050,7 +7050,7 @@ Sets the value of a string parameter.
 function putstrparam end
 function putstrparam(task_:: MSKtask,param_:: Sparam,parvalue_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putstrparam",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,param_.value,string(parvalue_))
+    @msk_ccall( "putstrparam",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,param_.value,string(parvalue_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7077,7 +7077,7 @@ function putsuc(task_:: MSKtask,whichsol_:: Soltype,suc_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsuc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,suc_)
+    @msk_ccall( "putsuc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,suc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7106,7 +7106,7 @@ function putsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsucslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,suc_)
+    @msk_ccall( "putsucslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,suc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7133,7 +7133,7 @@ function putsux(task_:: MSKtask,whichsol_:: Soltype,sux_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsux",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,sux_)
+    @msk_ccall( "putsux",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,sux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7162,7 +7162,7 @@ function putsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsuxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,sux_)
+    @msk_ccall( "putsuxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,sux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7181,7 +7181,7 @@ Assigns a new name to the task.
 function puttaskname end
 function puttaskname(task_:: MSKtask,taskname_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "puttaskname",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(taskname_))
+    @msk_ccall( "puttaskname",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(taskname_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7211,7 +7211,7 @@ function putvarbound end
 putvarbound(task:: MSKtask,j:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putvarbound(task,Int32(j),bk,Float64(bl),Float64(bu))
 function putvarbound(task_:: MSKtask,j_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putvarbound",Int32,(Ptr{Void},Int32,Int32,Float64,Float64,),task_.task,j_-1,bk_.value,bl_,bu_)
+    @msk_ccall( "putvarbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,j_-1,bk_.value,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7237,7 +7237,7 @@ function putvarboundlist(task_:: MSKtask,sub_:: Vector{Int32},bkx_:: Vector{Boun
   bkx_i32 = Int32[item.value for item in bkx_]
   num_ = minimum([ length(sub_),length(bkx_),length(blx_),length(bux_) ])
   res = disable_sigint() do
-    @msk_ccall( "putvarboundlist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bkx_,blx_,bux_)
+    @msk_ccall( "putvarboundlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bkx_,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7278,7 +7278,7 @@ function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vec
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putvarboundslice",Int32,(Ptr{Void},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
+    @msk_ccall( "putvarboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7300,7 +7300,7 @@ function putvarname end
 putvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putvarname(task,Int32(j),name)
 function putvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putvarname",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
+    @msk_ccall( "putvarname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7322,7 +7322,7 @@ function putvartype end
 putvartype(task:: MSKtask,j:: T1,vartype:: Variabletype) where {T1} = putvartype(task,Int32(j),vartype)
 function putvartype(task_:: MSKtask,j_:: Int32,vartype_:: Variabletype)
   res = disable_sigint() do
-    @msk_ccall( "putvartype",Int32,(Ptr{Void},Int32,Int32,),task_.task,j_-1,vartype_.value)
+    @msk_ccall( "putvartype",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,j_-1,vartype_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7347,7 +7347,7 @@ function putvartypelist(task_:: MSKtask,subj_:: Vector{Int32},vartype_:: Vector{
   vartype_i32 = Int32[item.value for item in vartype_]
   num_ = minimum([ length(subj_),length(vartype_) ])
   res = disable_sigint() do
-    @msk_ccall( "putvartypelist",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
+    @msk_ccall( "putvartypelist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7370,7 +7370,7 @@ function putxc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "putxc",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @msk_ccall( "putxc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7400,7 +7400,7 @@ function putxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putxcslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,xc_)
+    @msk_ccall( "putxcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,xc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7427,7 +7427,7 @@ function putxx(task_:: MSKtask,whichsol_:: Soltype,xx_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putxx",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,xx_)
+    @msk_ccall( "putxx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,xx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7456,7 +7456,7 @@ function putxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putxxslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,xx_)
+    @msk_ccall( "putxxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,xx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7483,7 +7483,7 @@ function puty(task_:: MSKtask,whichsol_:: Soltype,y_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "puty",Int32,(Ptr{Void},Int32,Ptr{Float64},),task_.task,whichsol_.value,y_)
+    @msk_ccall( "puty",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,y_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7512,7 +7512,7 @@ function putyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: In
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putyslice",Int32,(Ptr{Void},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,y_)
+    @msk_ccall( "putyslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,y_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7531,7 +7531,7 @@ Reads an optimization problem and associated data from a file.
 function readdata end
 function readdata(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readdataautoformat",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "readdataautoformat",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7552,7 +7552,7 @@ Reads an optimization problem and associated data from a file.
 function readdataformat end
 function readdataformat(task_:: MSKtask,filename_:: AbstractString,format_:: Dataformat,compress_:: Compresstype)
   res = disable_sigint() do
-    @msk_ccall( "readdataformat",Int32,(Ptr{Void},Ptr{UInt8},Int32,Int32,),task_.task,string(filename_),format_.value,compress_.value)
+    @msk_ccall( "readdataformat",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,Int32,),task_.task,string(filename_),format_.value,compress_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7571,7 +7571,7 @@ Reads MOSEK parameters from a file. Data is read from the file `filename` if it 
 function readparamfile end
 function readparamfile(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readparamfile",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "readparamfile",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7591,7 +7591,7 @@ Reads a solution file and inserts it as a specified solution in the task. Data i
 function readsolution end
 function readsolution(task_:: MSKtask,whichsol_:: Soltype,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readsolution",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,whichsol_.value,string(filename_))
+    @msk_ccall( "readsolution",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,whichsol_.value,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7610,7 +7610,7 @@ Prints a short summary of last file that was read.
 function readsummary end
 function readsummary(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "readsummary",Int32,(Ptr{Void},Int32,),task_.task,whichstream_.value)
+    @msk_ccall( "readsummary",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7634,7 +7634,7 @@ See section :ref:`doc.shared.taskformat` for a description of the Task format.
 function readtask end
 function readtask(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readtask",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "readtask",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7658,7 +7658,7 @@ removebarvars(task:: MSKtask,subset:: Vector{T1}) where {T1} = removebarvars(tas
 function removebarvars(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removebarvars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @msk_ccall( "removebarvars",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7681,7 +7681,7 @@ removecones(task:: MSKtask,subset:: Vector{T1}) where {T1} = removecones(task,co
 function removecones(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removecones",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @msk_ccall( "removecones",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7705,7 +7705,7 @@ removecons(task:: MSKtask,subset:: Vector{T1}) where {T1} = removecons(task,conv
 function removecons(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removecons",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @msk_ccall( "removecons",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7729,7 +7729,7 @@ removevars(task:: MSKtask,subset:: Vector{T1}) where {T1} = removevars(task,conv
 function removevars(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removevars",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @msk_ccall( "removevars",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7761,7 +7761,7 @@ function resizetask end
 resizetask(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,maxnumcone:: T3,maxnumanz:: T4,maxnumqnz:: T5) where {T1,T2,T3,T4,T5} = resizetask(task,Int32(maxnumcon),Int32(maxnumvar),Int32(maxnumcone),Int64(maxnumanz),Int64(maxnumqnz))
 function resizetask(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,maxnumcone_:: Int32,maxnumanz_:: Int64,maxnumqnz_:: Int64)
   res = disable_sigint() do
-    @msk_ccall( "resizetask",Int32,(Ptr{Void},Int32,Int32,Int32,Int64,Int64,),task_.task,maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_)
+    @msk_ccall( "resizetask",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int64,Int64,),task_.task,maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7783,7 +7783,7 @@ string, then the sensitivity report is also written to a file of this name.
 function sensitivityreport end
 function sensitivityreport(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "sensitivityreport",Int32,(Ptr{Void},Int32,),task_.task,whichstream_.value)
+    @msk_ccall( "sensitivityreport",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7801,7 +7801,7 @@ Resets all the parameters to their default values.
 function setdefaults end
 function setdefaults(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "setdefaults",Int32,(Ptr{Void},),task_.task)
+    @msk_ccall( "setdefaults",Int32,(Ptr{Nothing},),task_.task)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7822,7 +7822,7 @@ function solutiondef end
 function solutiondef(task_:: MSKtask,whichsol_:: Soltype)
   isdef_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "solutiondef",Int32,(Ptr{Void},Int32,Ptr{Int32},),task_.task,whichsol_.value,isdef_)
+    @msk_ccall( "solutiondef",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,isdef_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7842,7 +7842,7 @@ Prints a short summary of the current solutions.
 function solutionsummary end
 function solutionsummary(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "solutionsummary",Int32,(Ptr{Void},Int32,),task_.task,whichstream_.value)
+    @msk_ccall( "solutionsummary",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7919,7 +7919,7 @@ function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Ve
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "solvewithbasis",Int32,(Ptr{Void},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,transp_,__tmp_var_0,sub_ .- Int32(1),val_)
+    @msk_ccall( "solvewithbasis",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,transp_,__tmp_var_0,sub_ .- Int32(1),val_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7941,7 +7941,7 @@ function strtoconetype end
 function strtoconetype(task_:: MSKtask,str_:: AbstractString)
   conetype_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "strtoconetype",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(str_),conetype_)
+    @msk_ccall( "strtoconetype",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(str_),conetype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7963,7 +7963,7 @@ function strtosk end
 function strtosk(task_:: MSKtask,str_:: AbstractString)
   sk_ = Vector{Int32}(1)
   res = disable_sigint() do
-    @msk_ccall( "strtosk",Int32,(Ptr{Void},Ptr{UInt8},Ptr{Int32},),task_.task,string(str_),sk_)
+    @msk_ccall( "strtosk",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(str_),sk_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7983,7 +7983,7 @@ Update the information items related to the solution.
 function updatesolutioninfo end
 function updatesolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "updatesolutioninfo",Int32,(Ptr{Void},Int32,),task_.task,whichsol_.value)
+    @msk_ccall( "updatesolutioninfo",Int32,(Ptr{Nothing},Int32,),task_.task,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8021,7 +8021,7 @@ such function *cannot* be written to file and MOSEK will issue a warning.
 function writedata end
 function writedata(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writedata",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "writedata",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8040,7 +8040,7 @@ Saves the current solutions and solver information items in a JSON file.
 function writejsonsol end
 function writejsonsol(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writejsonsol",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "writejsonsol",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8059,7 +8059,7 @@ Writes all the parameters to a parameter file.
 function writeparamfile end
 function writeparamfile(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writeparamfile",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "writeparamfile",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8079,7 +8079,7 @@ Saves the current basic, interior-point, or integer solution to a file.
 function writesolution end
 function writesolution(task_:: MSKtask,whichsol_:: Soltype,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writesolution",Int32,(Ptr{Void},Int32,Ptr{UInt8},),task_.task,whichsol_.value,string(filename_))
+    @msk_ccall( "writesolution",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,whichsol_.value,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8101,7 +8101,7 @@ See section :ref:`doc.shared.taskformat` for a description of the Task format.
 function writetask end
 function writetask(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writetask",Int32,(Ptr{Void},Ptr{UInt8},),task_.task,string(filename_))
+    @msk_ccall( "writetask",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8119,7 +8119,7 @@ Check in all unused license features to the license token server.
 function checkinall end
 function checkinall(env_:: MSKenv)
   res = disable_sigint() do
-    @msk_ccall( "checkinall",Int32,(Ptr{Void},),env_.env)
+    @msk_ccall( "checkinall",Int32,(Ptr{Nothing},),env_.env)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8146,7 +8146,7 @@ overhead, so frequent calls to this function should be avoided.
 function checkinlicense end
 function checkinlicense(env_:: MSKenv,feature_:: Feature)
   res = disable_sigint() do
-    @msk_ccall( "checkinlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_.value)
+    @msk_ccall( "checkinlicense",Int32,(Ptr{Nothing},Int32,),env_.env,feature_.value)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8172,7 +8172,7 @@ If a given feature is already checked out when this function is called, the call
 function checkoutlicense end
 function checkoutlicense(env_:: MSKenv,feature_:: Feature)
   res = disable_sigint() do
-    @msk_ccall( "checkoutlicense",Int32,(Ptr{Void},Int32,),env_.env,feature_.value)
+    @msk_ccall( "checkoutlicense",Int32,(Ptr{Nothing},Int32,),env_.env,feature_.value)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8192,7 +8192,7 @@ function echointro end
 echointro(env:: MSKenv,longver:: T1) where {T1} = echointro(env,Int32(longver))
 function echointro(env_:: MSKenv,longver_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "echointro",Int32,(Ptr{Void},Int32,),env_.env,longver_)
+    @msk_ccall( "echointro",Int32,(Ptr{Nothing},Int32,),env_.env,longver_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8280,7 +8280,7 @@ Sends all output from the stream defined by `whichstream` to the file given by `
 linkfiletostream(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(env,whichstream,filename,Int32(append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Void},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_.value,string(filename_),append_)
+    @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_.value,string(filename_),append_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8305,7 +8305,7 @@ function putlicensecode(env_:: MSKenv,code_:: Vector{Int32})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putlicensecode",Int32,(Ptr{Void},Ptr{Int32},),env_.env,code_)
+    @msk_ccall( "putlicensecode",Int32,(Ptr{Nothing},Ptr{Int32},),env_.env,code_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8325,7 +8325,7 @@ function putlicensedebug end
 putlicensedebug(env:: MSKenv,licdebug:: T1) where {T1} = putlicensedebug(env,Int32(licdebug))
 function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putlicensedebug",Int32,(Ptr{Void},Int32,),env_.env,licdebug_)
+    @msk_ccall( "putlicensedebug",Int32,(Ptr{Nothing},Int32,),env_.env,licdebug_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8343,7 +8343,7 @@ Set the path to the license file.
 function putlicensepath end
 function putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putlicensepath",Int32,(Ptr{Void},Ptr{UInt8},),env_.env,string(licensepath_))
+    @msk_ccall( "putlicensepath",Int32,(Ptr{Nothing},Ptr{UInt8},),env_.env,string(licensepath_))
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8363,7 +8363,7 @@ function putlicensewait end
 putlicensewait(env:: MSKenv,licwait:: T1) where {T1} = putlicensewait(env,Int32(licwait))
 function putlicensewait(env_:: MSKenv,licwait_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putlicensewait",Int32,(Ptr{Void},Int32,),env_.env,licwait_)
+    @msk_ccall( "putlicensewait",Int32,(Ptr{Nothing},Int32,),env_.env,licwait_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))

@@ -4,12 +4,12 @@ export
   putnlcallbacks,
   clearnlcallbacks
 
-type MSKnlinfo
+mutable struct MSKnlinfo
   numvar :: Int
   numcon :: Int
 
-  nlgetva :: Ptr{Void}
-  nlgetsp :: Ptr{Void}
+  nlgetva :: Ptr{Nothing}
+  nlgetsp :: Ptr{Nothing}
 
   # these are stored with 0-base indexes
   grdobjsub  :: Array{Int32,1}
@@ -35,7 +35,7 @@ end
 #       and always return the whole thing. It doesn't really matter since the sizes are only
 #       used for pre-allocating space in MOSEK - only a reasonable upper bound is really needed.
 # NOTE: The 'hessian' here is the second derivative of the lagrangian
-function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
+function msk_nl_getsp_wrapper(nlhandle::    Ptr{Nothing},
                               numgrdobjnz:: Ptr{Int32}, # number of nonzeros in gradient of objective
                               grdobjsub::   Ptr{Int32}, # subscripts of nonzeros in gradient of objective
                               i_::          Int32,      # constraint index
@@ -105,7 +105,7 @@ function msk_nl_getsp_wrapper(nlhandle::    Ptr{Void},
   return Int32(0) :: Int32
 end
 
-function msk_nl_getva_wrapper(nlhandle    :: Ptr{Void},
+function msk_nl_getva_wrapper(nlhandle    :: Ptr{Nothing},
                               xx_         :: Ptr{Float64}, # input
                               yo          :: Float64,
                               yc_         :: Ptr{Float64}, # input, length = numcon
@@ -374,10 +374,10 @@ function putnlcallbacks(task::MSKtask,
 
   nlgetsp = cfunction(msk_nl_getsp_wrapper,
                       Int32,
-                      (Ptr{Void},Ptr{Int32},Ptr{Int32},Int32,Ptr{Bool},Ptr{Int32},Ptr{Int32},Int32,Int32,Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32}))
+                      (Ptr{Nothing},Ptr{Int32},Ptr{Int32},Int32,Ptr{Bool},Ptr{Int32},Ptr{Int32},Int32,Int32,Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32}))
   nlgetva = cfunction(msk_nl_getva_wrapper,
                       Int32,
-                      ( Ptr{Void}, # nlhandle
+                      ( Ptr{Nothing}, # nlhandle
                         Ptr{Float64},Float64,Ptr{Float64}, # xx,yo,yc
                         Ptr{Float64},Ptr{Int32},Ptr{Int32},Ptr{Float64}, # objval,numgrdobjnz,grdobjsub,grdobjval
                         Int32,Ptr{Int32},Ptr{Float64}, # numi,subi,conval
@@ -394,7 +394,7 @@ function putnlcallbacks(task::MSKtask,
                      evalobj,evalconi, grdlag,heslag,grdobj,grdconi)
 
   @msk_ccall("putnlfunc",
-             Int32, (Ptr{Void},Any,Ptr{Void},Ptr{Void}),
+             Int32, (Ptr{Nothing},Any,Ptr{Nothing},Ptr{Nothing}),
              task.task, nlinfo, nlgetsp, nlgetva)
   task.nlinfo = nlinfo
 end
@@ -406,7 +406,7 @@ Remove all non-linear callbacks from the problem.
 """
 function clearnlcallbacks(task::MSKtask)
   @msk_ccall("putnlfunc",
-             Int32, (Ptr{Void},Ptr{Void},Ptr{Void},Ptr{Void}),
-             task.task, C_NULL,C_NULL,C_NULL,C_NULL)
+             Int32, (Ptr{Nothing},Ptr{Nothing},Ptr{Nothing},Ptr{Nothing}),
+             task.task, C_NULL,C_NULL,C_NULL)
   task.nlinfo = nothing
 end
