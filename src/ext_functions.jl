@@ -1,74 +1,75 @@
 module Ext
 using ..Mosek
+using Printf
 
-immutable VarByIndex index :: Int32 end
-immutable VarByName name :: String end
-immutable BarvarByIndex index :: Int64 end
-immutable BarvarByName name :: String end
-immutable ConByIndex index :: Int32 end
-immutable ConByName  name  :: String end
-immutable ConeByIndex index :: Int32 end
-immutable ConeByName  name  :: String end
+struct VarByIndex index :: Int32 end
+struct VarByName name :: String end
+struct BarvarByIndex index :: Int64 end
+struct BarvarByName name :: String end
+struct ConByIndex index :: Int32 end
+struct ConByName  name  :: String end
+struct ConeByIndex index :: Int32 end
+struct ConeByName  name  :: String end
 
-immutable Sol which :: Mosek.Soltype end
+struct Sol which :: Mosek.Soltype end
 
-immutable Solution
+struct Solution
     t::Mosek.Task
     which :: Mosek.Soltype
 end
 
-immutable VariableSolution
-    t::Mosek.Task
-    which :: Mosek.Soltype
-    index :: Int32
-end
-
-immutable ConstraintSolution
+struct VariableSolution
     t::Mosek.Task
     which :: Mosek.Soltype
     index :: Int32
 end
 
-immutable BarvarSolution
+struct ConstraintSolution
+    t::Mosek.Task
+    which :: Mosek.Soltype
+    index :: Int32
+end
+
+struct BarvarSolution
     t::Mosek.Task
     which :: Mosek.Soltype
     index :: Int64
 end
 
-immutable ObjSolution
+struct ObjSolution
     t::Mosek.Task
     which :: Mosek.Soltype
 end
 
-immutable Variable
+struct Variable
     t::Mosek.Task
     index :: Int32
 end
 
-immutable SemidefiniteVariable
+struct SemidefiniteVariable
     t::Mosek.Task
     index :: Int32
 end
 
-immutable Constraint
+struct Constraint
     t::Mosek.Task
     index :: Int32
 end
 
 
-immutable ConeConstraint
+struct ConeConstraint
     t::Mosek.Task
     index :: Int32
 end
 
-immutable Obj
+struct Obj
 end
 
-immutable Objective
+struct Objective
     t::Mosek.Task
 end
 
-immutable Symmat
+struct Symmat
     index :: Int
 end
 
@@ -669,13 +670,13 @@ function Base.show(f::IO,sol::BarvarSolution)
         try
             getbarxj(t,sol.which,sol.index)
         catch
-            fill(NaN,dim*(dim+1) >> 1)
+            fill(NaN,(dim*(dim+1)) >> 1)
         end
     bars =
         try
             getbarsj(t,sol.which,sol.index)
         catch
-            fill(NaN,dim*(dim+1) >> 1)
+            fill(NaN,(dim*(dim+1)) >> 1)
         end
 
 
@@ -818,16 +819,16 @@ function findcones(t::Mosek.Task, regex::Regex)
     res
 end
 
-Var{I <: Integer}(index::I) = VarByIndex(convert(Int32,index))
+Var(index::I) where {I <: Integer} = VarByIndex(convert(Int32,index))
 Var(name::String) = VarByName(name)
 
-Barvar{I <: Integer}(index::I) = BarvarByIndex(convert(Int32,index))
+Barvar(index::I) where {I <: Integer} = BarvarByIndex(convert(Int32,index))
 Barvar(name::String) = BarvarByName(name)
 
-Con{I <: Integer}(index::I) = ConByIndex(convert(Int32,index))
+Con(index::I) where {I <: Integer} = ConByIndex(convert(Int32,index))
 Con(name::String) = ConByName(name)
 
-Cone{I <: Integer}(index::I) = ConeByIndex(convert(Int32,index))
+Cone(index::I) where {I <: Integer} = ConeByIndex(convert(Int32,index))
 Cone(name::String) = ConeByName(name)
 
 ###########
