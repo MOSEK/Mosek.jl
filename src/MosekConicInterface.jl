@@ -113,8 +113,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                                    var_cones   ::Array{Tuple{Symbol,Any},1},
                                    sense :: Symbol)
     # check data
-    const N = length(c)
-    const M = length(b)
+    N = length(c)
+    M = length(b)
 
     if M != A.m || N != A.n
         throw(MosekMathProgSolverInterface.MosekMathProgModelError("Invalid data dimensions"))
@@ -657,7 +657,7 @@ coneidxstoarray(idxs :: Int64) = Int[ convert(Int,idxs) ]
 coneidxstoarray(idxs :: Array{Int,1}) = idxs
 coneidxstoarray(idxs) = collect(Int,idxs)
 
-function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
+function countcones(cones :: Array{Tuple{Symbol,Tis},1}) where Tis
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
     numsdpconeelm = 0 # total number of elements in all sdp cones
@@ -703,7 +703,7 @@ function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
 end
 
 
-function arepeat{Tv}(a :: Array{Tv,1}, n :: Int)
+function arepeat(a :: Array{Tv,1}, n :: Int) where Tv
     res = Array{Tv}(length(a)*n)
     m   = length(a)
     for i in 1:length(res):m
@@ -712,7 +712,7 @@ function arepeat{Tv}(a :: Array{Tv,1}, n :: Int)
     return res
 end
 
-function erepeat{Tv}(a :: Array{Tv,1}, n :: Int)
+function erepeat(a :: Array{Tv,1}, n :: Int) where Tv
     res = Array{Tv}(length(a)*n)
     m   = length(a)
     for i in 0:length(a)-1
