@@ -1808,7 +1808,7 @@ function getboundslice end
 getboundslice(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getboundslice(task,accmode,Int32(first),Int32(last))
 function getboundslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
-  bk_ = Vector{Int32}(__tmp_var_0)
+  bk_ = Vector{Int32}(undef,__tmp_var_0)
   __tmp_var_1 = ((last_) - (first_))
   __tmp_var_2 = zeros(Float64,__tmp_var_1)
   bl_ = __tmp_var_2
@@ -1938,7 +1938,7 @@ function getconboundslice end
 getconboundslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getconboundslice(task,Int32(first),Int32(last))
 function getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
-  bk_ = Vector{Int32}(__tmp_var_0)
+  bk_ = Vector{Int32}(undef,__tmp_var_0)
   __tmp_var_1 = ((last_) - (first_))
   __tmp_var_2 = zeros(Float64,__tmp_var_1)
   bl_ = __tmp_var_2
@@ -3734,7 +3734,7 @@ Obtains the status keys for the constraints.
 function getskc end
 function getskc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumcon(task_)
-  skc_ = Vector{Int32}(__tmp_var_0)
+  skc_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
     @msk_ccall( "getskc",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
   end
@@ -3761,7 +3761,7 @@ function getskcslice end
 getskcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getskcslice(task,whichsol,Int32(first),Int32(last))
 function getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
-  skc_ = Vector{Int32}(__tmp_var_0)
+  skc_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
     @msk_ccall( "getskcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
   end
@@ -3784,7 +3784,7 @@ Obtains the status keys for the scalar variables.
 function getskx end
 function getskx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumvar(task_)
-  skx_ = Vector{Int32}(__tmp_var_0)
+  skx_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
     @msk_ccall( "getskx",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
   end
@@ -3811,7 +3811,7 @@ function getskxslice end
 getskxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getskxslice(task,whichsol,Int32(first),Int32(last))
 function getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
-  skx_ = Vector{Int32}(__tmp_var_0)
+  skx_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
     @msk_ccall( "getskxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
   end
@@ -4082,11 +4082,11 @@ function getsolution end
 function getsolution(task_:: MSKtask,whichsol_:: Soltype)
   prosta_ = Vector{Int32}(undef,1)
   __tmp_var_0 = getnumcon(task_)
-  skc_ = Vector{Int32}(__tmp_var_0)
+  skc_ = Vector{Int32}(undef,__tmp_var_0)
   __tmp_var_2 = getnumcone(task_)
-  skn_ = Vector{Int32}(__tmp_var_2)
+  skn_ = Vector{Int32}(undef,__tmp_var_2)
   __tmp_var_1 = getnumvar(task_)
-  skx_ = Vector{Int32}(__tmp_var_1)
+  skx_ = Vector{Int32}(undef,__tmp_var_1)
   __tmp_var_9 = getnumcon(task_)
   __tmp_var_10 = zeros(Float64,__tmp_var_9)
   slc_ = __tmp_var_10
@@ -4533,7 +4533,7 @@ function getvarboundslice end
 getvarboundslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getvarboundslice(task,Int32(first),Int32(last))
 function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
-  bk_ = Vector{Int32}(__tmp_var_0)
+  bk_ = Vector{Int32}(undef,__tmp_var_0)
   __tmp_var_1 = ((last_) - (first_))
   __tmp_var_2 = zeros(Float64,__tmp_var_1)
   bl_ = __tmp_var_2
@@ -4663,7 +4663,7 @@ getvartypelist(task:: MSKtask,subj:: Vector{T1}) where {T1} = getvartypelist(tas
 function getvartypelist(task_:: MSKtask,subj_:: Vector{Int32})
   num_ = minimum([ length(subj_) ])
   __tmp_var_0 = (num_)
-  vartype_ = Vector{Int32}(__tmp_var_0)
+  vartype_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
     @msk_ccall( "getvartypelist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
   end
