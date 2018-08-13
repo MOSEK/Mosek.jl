@@ -6,14 +6,14 @@ mskvminor = "1"
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
-    if     Sys.islinux()   "linux32x86",  ".tar.bz2"
-    elseif Sys.iswindows() "win32x86",  ".zip"
+    if     is_linux()   "linux32x86",  ".tar.bz2"
+    elseif is_windows() "win32x86",  ".zip"
     else   error("Platform not supported")
     end
   elseif Sys.ARCH == :x86_64
-    if     Sys.islinux()   "linux64x86",".tar.bz2"
-    elseif Sys.isapple()   "osx64x86",  ".tar.bz2"
-    elseif Sys.iswindows() "win64x86",  ".zip"
+    if     is_linux()   "linux64x86",".tar.bz2"
+    elseif is_apple()   "osx64x86",  ".tar.bz2"
+    elseif is_windows() "win64x86",  ".zip"
     else   error("Platform not supported")
     end
   else
@@ -25,13 +25,13 @@ bindepsdir = dirname(@__FILE__)
 function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::AbstractString) 
     moseklib,scoptlib =
         if Sys.ARCH == :i386 || Sys.ARCH == :i686
-            if     Sys.iswindows() "mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"
+            if     is_windows() "mosek$(mskvmajor)_$(mskvminor).dll",        "mosekscopt$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
         elseif Sys.ARCH == :x86_64
-            if     Sys.islinux()   "libmosek64.so.$(mskvmajor).$(mskvminor)",   "libmosekscopt$(mskvmajor)_$(mskvminor).so"
-            elseif Sys.isapple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib", "libmosekscopt$(mskvmajor)_$(mskvminor).dylib"
-            elseif Sys.iswindows() "mosek64_$(mskvmajor)_$(mskvminor).dll",     "mosekscopt$(mskvmajor)_$(mskvminor).dll"
+            if     is_linux()   "libmosek64.so.$(mskvmajor).$(mskvminor)",   "libmosekscopt$(mskvmajor)_$(mskvminor).so"
+            elseif is_apple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib", "libmosekscopt$(mskvmajor)_$(mskvminor).dylib"
+            elseif is_windows() "mosek64_$(mskvmajor)_$(mskvminor).dll",     "mosekscopt$(mskvmajor)_$(mskvminor).dll"
             else   error("Platform not supported")
             end
         else
@@ -51,9 +51,9 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
     end
 end
 
-function versionFromBindir(bindir ::AbstractString)
+function versionFromBindir(bindir ::String)
     try
-        mosekbin = if Sys.iswindows() "mosek.exe" else "mosek" end
+        mosekbin = if is_windows() "mosek.exe" else "mosek" end
         txt = readstring(`$bindir/$mosekbin`)
         m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)",txt)
         if m == nothing
@@ -88,7 +88,7 @@ end
 instmethod =
     try
         open(joinpath(bindepsdir,"inst_method"),"r") do f
-            strip(read(f,String))
+            strip(readstring(f))
         end
     catch
         nothing
@@ -97,7 +97,7 @@ instmethod =
 curmosekbindir = 
     try
         open(joinpath(bindepsdir,"mosekbindir"),"r") do f
-            strip(read(f,String))
+            strip(readstring(f))
         end
     catch
         nothing
@@ -152,7 +152,7 @@ mskbindir =
         success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK download host")
         downloadhost =
             open(joinpath(dldir,"downloadhostname"),"r") do f
-                strip(read(f,String))
+                strip(readstring(f))
             end
         
         verurl = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
@@ -161,7 +161,7 @@ mskbindir =
         cur_version =
             if isfile(joinpath(bindepsdir,"version"))
                 open(joinpath(bindepsdir,"version"),"r") do f
-                    cur_version = strip(read(f,String))
+                    cur_version = strip(readstring(f))
                 end
             else
                 nothing
@@ -172,7 +172,7 @@ mskbindir =
 
         new_version =
             open(joinpath(dldir,"new_version"),"r") do f
-                strip(read(f,String))
+                strip(readstring(f))
             end
         info("Latest MOSEK version = $new_version, currently installed = $cur_version")
 
@@ -242,7 +242,6 @@ open(joinpath(bindepsdir,"deps.jl"),"w") do f
     write(f,"""
 # This is an auto-generated file; do not edit
 # Macro to load a library
-import Libdl
 macro checked_lib(libname, path)
     (Libdl.dlopen_e(path) == C_NULL) && error("Unable to load \\n\\n\$libname (\$path)\\n\\nPlease re-run Pkg.build(package), and restart Julia.")
     quote const \$(esc(libname)) = \$path end
