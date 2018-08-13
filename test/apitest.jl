@@ -1,4 +1,7 @@
-using Mosek, Base.Test
+using Mosek, Test
+using Printf
+using SparseArrays
+
 
 function test_lo1()
     printstream(msg::String) = nothing # print(msg)

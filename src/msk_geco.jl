@@ -372,10 +372,10 @@ function putnlcallbacks(task::MSKtask,
     error("Length of grdconptr should match number of constraints")
   end
 
-  nlgetsp = cfunction(msk_nl_getsp_wrapper,
+  nlgetsp = @cfunction(msk_nl_getsp_wrapper,
                       Int32,
                       (Ptr{Nothing},Ptr{Int32},Ptr{Int32},Int32,Ptr{Bool},Ptr{Int32},Ptr{Int32},Int32,Int32,Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32}))
-  nlgetva = cfunction(msk_nl_getva_wrapper,
+  nlgetva = @cfunction(msk_nl_getva_wrapper,
                       Int32,
                       ( Ptr{Nothing}, # nlhandle
                         Ptr{Float64},Float64,Ptr{Float64}, # xx,yo,yc

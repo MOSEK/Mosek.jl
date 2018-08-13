@@ -1,4 +1,4 @@
-using Base.Test
+using Test
 
 # To ensure that tests can run on travis we have to do a little
 # hackadoodle here. The tests require a license file. We include
@@ -22,11 +22,11 @@ include("apitest.jl")
 include("testexamples.jl")
 #include("mathprogtestextra.jl")
 
-
-if (try Pkg.installed("Convex") != nothing catch false end)
+import Pkg
+if (try Pkg.installed("Convex") != nothing catch; false; end)
     include("testconvex.jl")
 end
 
-if (try Pkg.installed("MathProgBase") != nothing catch false end)
+if (try Pkg.installed("MathProgBase") != nothing catch; false; end)
     include("test_mathprogbase.jl")
 end
