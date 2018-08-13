@@ -17,7 +17,7 @@ Attach a log printing callback function to a task stream.
 - `f` is a function `function(msg::String)`
 """
 function putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)  
-  cbfunc = cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Nothing},Ptr{UInt8}))
+  cbfunc = @cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Nothing},Ptr{UInt8}))
   r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Nothing},Int32, Any, Ptr{Nothing}),t.task,whichstream.value,f,cbfunc)
   if r != MSK_RES_OK.value
     throw(MosekError(r,getlasterror(t)))
@@ -42,9 +42,9 @@ function msk_info_callback_wrapper(t::Ptr{Nothing}, userdata::Ptr{Nothing}, wher
             if task.usercallbackfunc == nothing
                 0
             else
-                dinfa  = unsafe_wrap(Vector{Float64},douinf,(length(Dinfitem),),false)
-                iinfa  = unsafe_wrap(Vector{Int32},intinf,(length(Iinfitem),),false)
-                liinfa = unsafe_wrap(Vector{Int64},lintinf,(length(Liinfitem),),false)
+                dinfa  = unsafe_wrap(Vector{Float64},douinf,(length(Dinfitem),),own=false)
+                iinfa  = unsafe_wrap(Vector{Int32},intinf,(length(Iinfitem),),own=false)
+                liinfa = unsafe_wrap(Vector{Int64},lintinf,(length(Liinfitem),),own=false)
 
                 task.usercallbackfunc(Callbackcode(where), dinfa, iinfa, liinfa)
             end

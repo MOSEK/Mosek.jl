@@ -27,7 +27,7 @@ maketask() do task
     primalrepair(task,ones(ncons),ones(ncons),ones(nvars),ones(nvars))
 
     sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
-    @printf("Minimized sum of violations = %e\n", sum_viol)
+    println("Minimized sum of violations = $sum_viol\n")
 
     optimize(task)
 

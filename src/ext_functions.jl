@@ -350,7 +350,7 @@ function Base.show(f::IO, con :: Constraint)
     if length(baraidx) > 0
         # count
         numbarnzi = count(idx -> getbaraidxij(t,idx)[1] == i, baraidx)
-        idxs = Vector{Int}(numbarnzi)
+        idxs = Vector{Int}(undef,numbarnzi)
         k = 0
         for idx in baraidx
             (barai,baraj) = getbaraidxij(t,idx)
@@ -625,7 +625,7 @@ function Base.values(sol::BarvarSolution)
     barx =
         try
             v = getbarxj(t,sol.which,sol.index)
-            res = Array{Float64,2}(dim,dim)
+            res = Array{Float64,2}(undef,(dim,dim))
             k = 0
             for i in 1:dim
                 k += 1
@@ -643,7 +643,7 @@ function Base.values(sol::BarvarSolution)
     bars =
         try
             v = getbarsj(t,sol.which,sol.index)
-            res = Array{Float64,2}(dim,dim)
+            res = Array{Float64,2}(undef,(dim,dim))
             k = 0
             for i in 1:dim
                 k += 1

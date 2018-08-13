@@ -1,5 +1,7 @@
 __precompile__()
 module Mosek
+using SparseArrays
+
 
 if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
@@ -36,6 +38,7 @@ mutable struct Env
     streamcallbackfunc::Any
 end
 
+function msk_info_callback_wrapper end
 
 # Task: typedef void * Task_t;
 mutable struct Task
@@ -50,7 +53,7 @@ mutable struct Task
     nlinfo:: Any
 
     function Task(env::Env)
-        temp = Array{Ptr{Nothing}}(1)
+        temp = Array{Ptr{Nothing}}(undef,1)
         res = @msk_ccall(maketask, Int32, (Ptr{Nothing}, Int32, Int32, Ptr{Nothing}), env.env, 0, 0, temp)
 
         if res != MSK_RES_OK.value
@@ -58,9 +61,9 @@ mutable struct Task
         end
 
         task = new(env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
-        task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+        task.callbackfunc = @cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
         task.usercallbackfunc = nothing
-        finalizer(task,deletetask)
+        finalizer(deletetask,task)
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
@@ -71,7 +74,7 @@ mutable struct Task
     end
 
     function Task(t::Task)
-        temp = Array{Ptr{Nothing}}(1)
+        temp = Array{Ptr{Nothing}}(undef,1)
         res = @msk_ccall(clonetask, Int32, (Ptr{Nothing}, Ptr{Nothing}), t.task, temp)
 
         if res != MSK_RES_OK.value
@@ -79,10 +82,10 @@ mutable struct Task
         end
 
         task = new(t.env,temp[1],false,nothing,nothing,nothing,nothing,nothing)
-        task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+        task.callbackfunc = @cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
         task.usercallbackfunc = nothing
 
-        finalizer(task,deletetask)
+        finalizer(deletetask,task)
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
@@ -94,10 +97,10 @@ mutable struct Task
 
     function Task(t::Ptr{Nothing},borrowed::Bool)
         task = new(msk_global_env,t,borrowed,nothing,nothing,nothing,nothing,nothing)
-        task.callbackfunc = cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
+        task.callbackfunc = @cfunction(msk_info_callback_wrapper, Cint, (Ptr{Nothing}, Ptr{Nothing}, Int32, Ptr{Float64}, Ptr{Int32}, Ptr{Int64}))
         task.usercallbackfunc = nothing
 
-        finalizer(task,deletetask)
+        finalizer(deletetask,task)
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
@@ -135,7 +138,7 @@ end
 Create a MOSEK environment for use with `do`-syntax.
 """
 function makeenv(func::Function)
-    temp = Array{Ptr{Nothing}}(1)
+    temp = Array{Ptr{Nothing}}(undef,1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
     if res != 0
         # TODO: Actually use result code
@@ -225,7 +228,7 @@ Destroy the task object.
 function deletetask(t::Task)
     if t.task != C_NULL
         if ! t.borrowed
-            temp = Array{Ptr{Nothing}}(1)
+            temp = Array{Ptr{Nothing}}(undef,1)
             temp[1] = t.task
             @msk_ccall(deletetask,Int32,(Ptr{Ptr{Nothing}},), temp)
         end
@@ -240,7 +243,7 @@ Destroy the task object.
 """
 function deleteenv(e::Env)
     if e.env != C_NULL
-        temp = Array{Ptr{Nothing}}(1)
+        temp = Array{Ptr{Nothing}}(undef,1)
         temp[1] = t.env
         @msk_ccall(deleteenv,Int32,(Ptr{Ptr{Nothing}},), temp)
         e.env = C_NULL
@@ -248,15 +251,15 @@ function deleteenv(e::Env)
 end
 
 function getlasterror(t::Task)
-    lasterrcode = Array{Cint}(1)
-    lastmsglen = Array{Cint}(1)
+    lasterrcode = Array{Cint}(undef,1)
+    lastmsglen = Array{Cint}(undef,1)
 
     @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, 0, lastmsglen, C_NULL)
-    lastmsg = Array{UInt8}(lastmsglen[1])
+    lastmsg = Array{UInt8}(undef,lastmsglen[1])
     @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
-    convert(String,lastmsg[1:lastmsglen[1]-1])
+    String(lastmsg[1:lastmsglen[1]-1])
 end
 
 using SparseArrays

@@ -1,6 +1,6 @@
 
 escapename(n::String) =
-    replace(n,r"(^#)","_#")
+    replace(n,r"(^#)" => "_#")
 
 fmtcof(c::Float64) =
     if     c < 0.0
@@ -89,10 +89,10 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
         for i in 1:numcon
             baraptrb[i+1] += baraptrb[i]
         end
-        baraptrb += 1
+        baraptrb .+= 1
 
         baraptre = copy(baraptrb)
-        baraidx_idx = Vector{Int}(length(baraidx))
+        baraidx_idx = Vector{Int}(undef,length(baraidx))
         for idx in baraidx
             (barai,baraj) = getbaraidxij(t,idx)
             baraidx_idx[baraptre[barai]] = idx

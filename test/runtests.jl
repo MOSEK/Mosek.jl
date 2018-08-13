@@ -16,9 +16,9 @@ elseif haskey(ENV,"HOME")
 end
 
 
-using Base.Test
+using Test
 
 include("apitest.jl")
 include("testexamples.jl")
 include("testshow.jl")
-include("test_mathprogbase.jl")
+#include("test_mathprogbase.jl")

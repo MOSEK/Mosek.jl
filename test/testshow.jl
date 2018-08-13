@@ -1,4 +1,5 @@
-using Mosek, Mosek.Ext, Base.Test
+using Mosek, Mosek.Ext, Test
+import Pkg
 
 @testset "[show]" begin
     for fname in [ "25fv47.task", "lj-inner.task"]
