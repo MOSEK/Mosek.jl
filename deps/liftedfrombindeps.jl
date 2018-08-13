@@ -1,6 +1,8 @@
+
 # Blatantly lifted from BinDeps.jl because for some reason the build
 # script sometimes cannot find BinDeps.
 # @windows_only unpack_cmd has been modified to use zip in addition to 7z.
+import Pkg
 
 function splittarpath(path)
     path,extension = splitext(path)
@@ -13,7 +15,7 @@ function splittarpath(path)
 end
 
 
-downloadcmd_candidates = @static if is_windows() 
+downloadcmd_candidates = @static if Sys.iswindows() 
   (:powershell, :curl, :wget, :fetch) 
 else 
   (:curl, :wget, :fetch) 
@@ -22,7 +24,7 @@ end
 downloadcmd = nothing
 function mk_download_cmd()
     global downloadcmd
-    whichcmd = @static if is_windows() "where" else "which" end
+    whichcmd = @static if Sys.iswindows() "where" else "which" end
     if downloadcmd === nothing
         for checkcmd in downloadcmd_candidates
             try
@@ -64,7 +66,7 @@ function download_cmd(url::AbstractString, filename::AbstractString)
     end
 end
 
-@static if is_unix()
+@static if Sys.isunix()
     function unpack_cmd(file,directory,extension,secondary_extension)
         if (extension == ".gz" && secondary_extension == ".tar") || extension == ".tgz"
             return (`tar xzf $file --directory=$directory`)
@@ -83,7 +85,7 @@ end
     end
 end
 
-@static if is_windows()
+@static if Sys.iswindows()
     has_7z  = nothing
     has_zip = nothing    
     function unpack_cmd(file,directory,extension,secondary_extension)

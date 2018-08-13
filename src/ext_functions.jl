@@ -1,5 +1,6 @@
 module Ext
 using ..Mosek
+using Printf
 
 struct VarByIndex index :: Int32 end
 struct VarByName name :: String end
@@ -669,13 +670,13 @@ function Base.show(f::IO,sol::BarvarSolution)
         try
             getbarxj(t,sol.which,sol.index)
         catch
-            fill(NaN,dim*(dim+1) >> 1)
+            fill(NaN,(dim*(dim+1)) >> 1)
         end
     bars =
         try
             getbarsj(t,sol.which,sol.index)
         catch
-            fill(NaN,dim*(dim+1) >> 1)
+            fill(NaN,(dim*(dim+1)) >> 1)
         end
 
 
