@@ -5,8 +5,6 @@ import Mosek
 using MathProgBase
 using Base.Test
 
-
-#const MPB = MathProgBase
 include(joinpath(Pkg.dir("MathProgBase","test","linprog.jl")))
 include(joinpath(Pkg.dir("MathProgBase","test","mixintprog.jl")))
 include(joinpath(Pkg.dir("MathProgBase","test","quadprog.jl")))

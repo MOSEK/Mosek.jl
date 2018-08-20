@@ -115,8 +115,8 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                                    var_cones   ::Array{Tuple{Symbol,Any},1},
                                    sense :: Symbol)
     # check data
-    const N = length(c)
-    const M = length(b)
+    N = length(c)
+    M = length(b)
 
     if M != A.m || N != A.n
         throw(MosekMathProgSolverInterface.MosekMathProgModelError("Invalid data dimensions"))
@@ -340,7 +340,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                             for vi in vj:d
                                 i = idxs[k]
                                 cof = (vj == vi) ? 1.0 : 1/sqrt(2)
-                                const matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
+                                matidx = Mosek.appendsparsesymmat(m.task,d,Int32[vi],Int32[vj],Float64[cof])
                                 Mosek.putbaraij(m.task,i,barslackj,Int64[matidx],Float64[-1.0])
                                 barconij[i] = i-firstcon+1
                                 k += 1
@@ -409,11 +409,11 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     pe = barptr[j+1]
                     d = barvardim[j]
 
-                    const matidx = Mosek.appendsparsesymmat(m.task,
-                                                            d,
-                                                            barcsubi[pb:pe],
-                                                            barcsubj[pb:pe],
-                                                            barcval[pb:pe])
+                    matidx = Mosek.appendsparsesymmat(m.task,
+                                                      d,
+                                                      barcsubi[pb:pe],
+                                                      barcsubj[pb:pe],
+                                                      barcval[pb:pe])
                     Mosek.putbarcj(m.task,j,Int64[matidx],Float64[1.0])
                 end
             end
@@ -671,7 +671,7 @@ coneidxstoarray(idxs :: Int64) = Int[ convert(Int,idxs) ]
 coneidxstoarray(idxs :: Array{Int,1}) = idxs
 coneidxstoarray(idxs) = collect(Int,idxs)
 
-function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
+function countcones(cones :: Array{Tuple{Symbol,Tis},1}) where {Tis}
     numlin        = 0 # linear and conic quadratic elements
     numsdpcone    = 0 # number of sdp cones
     numsdpconeelm = 0 # total number of elements in all sdp cones
@@ -717,7 +717,7 @@ function countcones{Tis}(cones :: Array{Tuple{Symbol,Tis},1})
 end
 
 
-function arepeat{Tv}(a :: Array{Tv,1}, n :: Int)
+function arepeat(a :: Array{Tv,1}, n :: Int) where {Tv}
     res = Array{Tv}(length(a)*n)
     m   = length(a)
     for i in 1:length(res):m
@@ -726,7 +726,7 @@ function arepeat{Tv}(a :: Array{Tv,1}, n :: Int)
     return res
 end
 
-function erepeat{Tv}(a :: Array{Tv,1}, n :: Int)
+function erepeat(a :: Array{Tv,1}, n :: Int) where {Tv}
     res = Array{Tv}(length(a)*n)
     m   = length(a)
     for i in 0:length(a)-1
@@ -770,9 +770,9 @@ ijtolintril(i::Int32, j::Int32, d::Int32) =
     let i = int64(i-1),
         j = int64(j-1)
         if (i < j)
-            (i*(2*d-i-1) >> 1)+j+1
+            ((i*(2*d-i-1)) >> 1)+j+1
         else
-            (j*(2*d-j-1) >> 1)+i+1
+            ((j*(2*d-j-1)) >> 1)+i+1
         end
     end
 #internal

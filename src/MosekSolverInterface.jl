@@ -171,7 +171,7 @@ end
 
 
 #mutable struct MosekMathProgModel <: MathProgBase.SolverInterface.AbstractMathProgModel
-type MosekMathProgModel <: MathProgBase.AbstractMathProgModel
+mutable struct MosekMathProgModel <: MathProgBase.AbstractMathProgModel
   task :: Mosek.Task
   probtype :: Int
 
@@ -237,7 +237,7 @@ type MosekMathProgModel <: MathProgBase.AbstractMathProgModel
 end
 
 
-type MosekMathProgModelError <: Exception
+struct MosekMathProgModelError <: Exception
   msg :: AbstractString
 end
 
