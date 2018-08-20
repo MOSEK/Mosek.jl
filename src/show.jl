@@ -19,8 +19,15 @@ fmtcof(c::Float64) =
         "0"
     end
 
-Base.showall(f::IO, t::Task) = showlimited(f,t,0)
+#Base.showall(f::IO, t::Task) = showlimited(f,t,0)
 Base.show(f::IO, t::Task) = showlimited(f,t,20)
+
+Base.show(io::IOContext, t::Task) =
+    if get(io, :short, false)
+        showlimited(io,t,20)
+    else
+        showlimited(io,t,0)
+    end
 
 function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     numvar    = getnumvar(t)

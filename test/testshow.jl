@@ -1,10 +1,12 @@
 using Mosek, Mosek.Ext, Test
 import Pkg
 
+mosekbase = dirname(dirname(pathof(Mosek)))
+
 @testset "[show]" begin
     for fname in [ "25fv47.task", "lj-inner.task"]
-        maketask(filename=joinpath(Pkg.dir("Mosek"),"test",fname)) do t
-            open(joinpath(Pkg.dir("Mosek"),"test",join("show-",fname)),"w") do f
+        maketask(filename=joinpath(mosekbase,"test",fname)) do t
+            open(joinpath(mosekbase,"test",join("show-",fname)),"w") do f
                 println(f,t)
 
                 n = getnumvar(t)

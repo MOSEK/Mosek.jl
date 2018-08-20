@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.44
+# MOSEK 9.0.45
 
 export
   analyzenames,
@@ -1102,14 +1102,14 @@ end
     (ptrb,ptre,sub,val) = getacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
-* `first :: Int32`. Index of the first col in the sequence.
-* `last :: Int32`. Index of the last col in the sequence plus one.
-* `ptrb :: Vector{Int64}`. col or column start pointers.
-* `ptre :: Vector{Int64}`. col or column end pointers.
-* `sub :: Vector{Int32}`. Contains the col or column subscripts.
+* `first :: Int32`. Index of the first column in the sequence.
+* `last :: Int32`. Index of the last column in the sequence plus one.
+* `ptrb :: Vector{Int64}`. Column start pointers.
+* `ptre :: Vector{Int64}`. Column end pointers.
+* `sub :: Vector{Int32}`. Contains the row subscripts.
 * `val :: Vector{Float64}`. Contains the coefficient values.
 
-Obtains a sequence of cols from ``A`` in sparse format.
+Obtains a sequence of columns from ``A`` in sparse format.
 """
 function getacolslice end
 getacolslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getacolslice(task,convert(Int32,first),convert(Int32,last))
@@ -1203,11 +1203,11 @@ end
     numnz = getacolslicenumnz(task_:: MSKtask,first_:: Int32,last_:: Int32)
 
 * `task :: MSKtask`. An optimization task.
-* `first :: Int32`. Index of the first col in the sequence.
-* `last :: Int32`. Index of the last col plus one in the sequence.
+* `first :: Int32`. Index of the first column in the sequence.
+* `last :: Int32`. Index of the last column plus one in the sequence.
 * `numnz :: Int64`. Number of non-zeros in the slice.
 
-Obtains the number of non-zeros in a slice of cols of ``A``.
+Obtains the number of non-zeros in a slice of columns of ``A``.
 """
 function getacolslicenumnz end
 getacolslicenumnz(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getacolslicenumnz(task,convert(Int32,first),convert(Int32,last))
@@ -1255,9 +1255,9 @@ end
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. Index of the first row in the sequence.
 * `last :: Int32`. Index of the last row in the sequence plus one.
-* `ptrb :: Vector{Int64}`. Row or column start pointers.
-* `ptre :: Vector{Int64}`. Row or column end pointers.
-* `sub :: Vector{Int32}`. Contains the row or column subscripts.
+* `ptrb :: Vector{Int64}`. Row start pointers.
+* `ptre :: Vector{Int64}`. Row end pointers.
+* `sub :: Vector{Int32}`. Contains the column subscripts.
 * `val :: Vector{Float64}`. Contains the coefficient values.
 
 Obtains a sequence of rows from ``A`` in sparse format.
@@ -7493,10 +7493,10 @@ end
     putconsolutioni(task_:: MSKtask,i_:: Int32,whichsol_:: Soltype,sk_:: Stakey,x_:: Float64,sl_:: Float64,su_:: Float64)
 
 * `task :: MSKtask`. An optimization task.
-* `i :: Int32`. Index of the constraint or variable.
+* `i :: Int32`. Index of the constraint.
 * `whichsol :: Soltype`. Selects a solution.
-* `sk :: Stakey`. Status key of the constraint or variable.
-* `x :: Float64`. Solution value of the primal constraint or variable.
+* `sk :: Stakey`. Status key of the constraint.
+* `x :: Float64`. Primal solution value of the constraint.
 * `sl :: Float64`. Solution value of the dual variable associated with the lower bound.
 * `su :: Float64`. Solution value of the dual variable associated with the upper bound.
 
@@ -7519,15 +7519,15 @@ end
     putvarsolutionj(task_:: MSKtask,j_:: Int32,whichsol_:: Soltype,sk_:: Stakey,x_:: Float64,sl_:: Float64,su_:: Float64,sn_:: Float64)
 
 * `task :: MSKtask`. An optimization task.
-* `j :: Int32`. Index of the constraint or variable.
+* `j :: Int32`. Index of the variable.
 * `whichsol :: Soltype`. Selects a solution.
-* `sk :: Stakey`. Status key of the constraint or variable.
-* `x :: Float64`. Solution value of the primal constraint or variable.
+* `sk :: Stakey`. Status key of the variable.
+* `x :: Float64`. Primal solution value of the variable.
 * `sl :: Float64`. Solution value of the dual variable associated with the lower bound.
 * `su :: Float64`. Solution value of the dual variable associated with the upper bound.
 * `sn :: Float64`. Solution value of the dual variable associated with the conic constraint.
 
-Sets the primal and dual solution information for a single scalar variable.
+Sets the primal and dual solution information for a single variable.
 """
 function putvarsolutionj end
 putvarsolutionj(task:: MSKtask,j:: T1,whichsol:: Soltype,sk:: Stakey,x:: T4,sl:: T5,su:: T6,sn:: T7) where {T1,T4,T5,T6,T7} = putvarsolutionj(task,convert(Int32,j),whichsol,sk,convert(Float64,x),convert(Float64,sl),convert(Float64,su),convert(Float64,sn))

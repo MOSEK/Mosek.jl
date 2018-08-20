@@ -164,14 +164,14 @@ mskbindir =
                 nothing
             end
 
-        info("Get latest MOSEK version ($verurl)")
+        @info("Get latest MOSEK version ($verurl)")
         success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
 
         new_version =
             open(joinpath(dldir,"new_version"),"r") do f
                 strip(read(f,String))
             end
-        info("Latest MOSEK version = $new_version, currently installed = $cur_version")
+        @info("Latest MOSEK version = $new_version, currently installed = $cur_version")
 
         instmethod = "internal"
 
@@ -186,20 +186,20 @@ mskbindir =
             verarr = split(new_version,'.')
 
             archurl = "https://$downloadhost/stable/$(new_version)/$archname"
-            info("Download MOSEK distro ($archurl)")
+            @info("Download MOSEK distro ($archurl)")
 
             basename,ext,sndext = splittarpath(archname)
 
             success(download_cmd(archurl, joinpath(dldir,archname))) || error("Failed to download MOSEK distro")
 
             mkpath(srcdir)
-            info("Unpack MOSEK distro ($dldir/$archname -> $srcdir)")
+            @info("Unpack MOSEK distro ($dldir/$archname -> $srcdir)")
             success(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
 
-            info("MOSEK installation complete.")
+            @info("MOSEK installation complete.")
             joinpath(srcdir,"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
         else
-            info("Update not necessary")
+            @info("Update not necessary")
             joinpath(srcdir,"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
         end
     end
@@ -208,7 +208,7 @@ mskbindir = replace(mskbindir,"\\" => "/")
 
 
 version = versionFromBindir(mskbindir)
-info("mskbindir = $mskbindir")
+@info("mskbindir = $mskbindir")
 
 if version == nothing
     error("MOSEK package is broken")
@@ -223,7 +223,7 @@ verarr = split(version,'.')
 libmosekpath= findlibs(mskbindir,verarr[1],verarr[2])
 
 if instmethod == "external"
-    info("""Found MOSEK $version at $mskbindir""")
+    @info("""Found MOSEK $version at $mskbindir""")
 end
 
 open(joinpath(bindepsdir,"inst_method"),"w") do f

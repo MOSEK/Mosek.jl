@@ -220,7 +220,8 @@ mkbarvarname(t,j) =
     end
 
 Base.show(f::IO,con :: Objective) = Base.show(f,con,20)
-Base.showall(f::IO,con :: Objective) = Base.show(f,con,0)
+#Base.showall(f::IO,con :: Objective) = Base.show(f,con,0)
+
 function Base.show(f::IO, con :: Objective, limit :: Int)
     t = con.t
     name = getobjname(t)
@@ -380,7 +381,7 @@ end
 
 
 
-Base.showall(f::IO, sol :: Solution) = Base.show(f,sol,0)
+#Base.showall(f::IO, sol :: Solution) = Base.show(f,sol,0)
 Base.show(f::IO, sol :: Solution) = Base.show(f,sol,20)
 
 solstainfo(solsta) =
