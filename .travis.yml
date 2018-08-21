@@ -11,10 +11,10 @@ git:
 before-install:
   - sudo apt-get install curl
 script:
-  - julia -e 'import Pkg; Pkg.add(PackageSpec(url=pwd()));'
-  - julia -e 'import Pkg; Pkg.build("Mosek");'
-  - julia -e 'import Pkg; Pkg.test("Mosek");'
+  - julia -e 'using Pkg; add(PackageSpec(url=pwd()));'
+  - julia -e 'using Pkg; build("Mosek");'
+  - julia -e 'using Pkg; test("Mosek");'
 
 after_success:
-  - julia -e 'import Pkg; Pkg.add("Documenter")'
+  - julia -e 'using Pkg; add("Documenter")'
   - julia -e 'import Mosek; cd(dirname(dirname(pathof(Mosek)))); include(joinpath("docs", "make.jl"))'
