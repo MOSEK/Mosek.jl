@@ -59,16 +59,16 @@ function MathProgBase.ConicModel(s::Mosek.MosekSolver)
                                 0,   # numvar
                                 0,   # numcon
 
-                                Vector{Int32}(0),  # varmap
-                                Vector{Int64}(0),  # barvarij
+                                Int32[],  # varmap
+                                Int64[],  # barvarij
 
-                                Vector{Int32}(0),  # varbk
+                                Int32[],  # varbk
 
-                                Vector{Bool}(0),   # binvarflag
+                                Bool[],   # binvarflag
 
-                                Vector{Int32}(0),  # conslack
-                                Vector{Int64}(0),  # barconij
-                                Vector{Int32}(0),  # conbk
+                                Int32[],  # conslack
+                                Int64[],  # barconij
+                                Int32[],  # conbk
                                 Mosek.MSK_RES_OK,
                                 s.options)
     loadoptions!(m)
@@ -135,19 +135,19 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
     Mosek.putmaxnumcone(m.task,numqcvar+numqccon)
     Mosek.putmaxnumbarvar(m.task,numbarvar+numbarcon)
 
-    varmap     = Vector{Int32}(totnumvar) # nonnegative refer to linear vars, negative to barvars
+    varmap     = Vector{Int32}(undef,totnumvar) # nonnegative refer to linear vars, negative to barvars
 
     barvarij   = zeros(Int64,totnumvar)
     barvardim  = zeros(Int32,numbarvar+numbarcon)
 
-    varbk      = Vector{Mosek.Boundkey}(totnumvar)
+    varbk      = Vector{Mosek.Boundkey}(undef,totnumvar)
 
     linvarptr = 1
     barvarptr = 1
 
     let nvar = numlinvarelm+numqcvarelm
         varbkidx = 1
-        bk = Vector{Mosek.Boundkey}(nvar)
+        bk = Vector{Mosek.Boundkey}(undef,nvar)
         for (sym,idxs_) in var_cones
             idxs = coneidxstoarray(idxs_)
 
@@ -286,7 +286,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         end
 
         # Add bounds and slacks
-        conbk = Vector{Mosek.Boundkey}(M)
+        conbk = Vector{Mosek.Boundkey}(undef,M)
         let bk = conbk
             local conptr = 1
 
@@ -370,7 +370,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
         end
 
         if numbarcnz > 0
-            barvardim = Array{Int32}(numbarvar+numbarcon)
+            barvardim = Array{Int32}(undef,numbarvar+numbarcon)
             n = numbarvar+numbarcon
             barptr = zeros(Int,n+1)
             for i in barcidxs
@@ -380,9 +380,9 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 barptr[i+1] += barptr[i]
             end
 
-            barcsubi = Array{Int32}(numbarcnz)
-            barcsubj = Array{Int32}(numbarcnz)
-            barcval  = Array{Float64}(numbarcnz)
+            barcsubi = Array{Int32}(undef,numbarcnz)
+            barcsubj = Array{Int32}(undef,numbarcnz)
+            barcval  = Array{Float64}(undef,numbarcnz)
             for i in barcidxs
                 j = -varmap[i]
                 L = Mosek.getdimbarvarj(m.task,j)
@@ -718,7 +718,7 @@ end
 
 
 function arepeat(a :: Array{Tv,1}, n :: Int) where {Tv}
-    res = Array{Tv}(length(a)*n)
+    res = Vector{Tv}(undef,length(a)*n)
     m   = length(a)
     for i in 1:length(res):m
         res[i:i+m-1] = a
@@ -727,7 +727,7 @@ function arepeat(a :: Array{Tv,1}, n :: Int) where {Tv}
 end
 
 function erepeat(a :: Array{Tv,1}, n :: Int) where {Tv}
-    res = Array{Tv}(length(a)*n)
+    res = Vector{Tv}(undef,length(a)*n)
     m   = length(a)
     for i in 0:length(a)-1
         res[i*n+1:(i+1)*n] = a[i]
@@ -755,8 +755,8 @@ end
 #internal
 function lintriltoij(Ls::Array{Int64,1}, d::Int32)
     n = length(Ls)
-    ii = Array{Int32}(length(Ls))
-    jj = Array{Int32}(length(Ls))
+    ii = Vector{Int32}(undef,length(Ls))
+    jj = Vector{Int32}(undef,length(Ls))
     for (k,L) in enumerate(Ls)
         i,j = lintriltoij(L,d)
         ii[k] = i
@@ -793,7 +793,7 @@ ijtolintril(ii::Array{Int32,1}, jj::Array{Int32,1}, n::Int32) =
 #
 function lintriltoijv(Ls::Array{Int64,1}, vs::Array{Float64,1}, d::Int32)
     if length(Ls) == 0
-        Array{Int32}(0),Array{Int32}(0),Array{Float64}(0)
+        Int32[],Int32[],Float64[]
     else
         perm = sortperm(Ls)
         # count unique
