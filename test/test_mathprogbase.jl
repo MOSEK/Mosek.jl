@@ -3,14 +3,17 @@ module TestMathProgBase
 import Mosek.MosekMathProgSolverInterface
 import Mosek
 using MathProgBase
-using Base.Test
+using Test
 
-include(joinpath(Pkg.dir("MathProgBase","test","linprog.jl")))
-include(joinpath(Pkg.dir("MathProgBase","test","mixintprog.jl")))
-include(joinpath(Pkg.dir("MathProgBase","test","quadprog.jl")))
-include(joinpath(Pkg.dir("MathProgBase","test","nlp.jl")))
-include(joinpath(Pkg.dir("MathProgBase","test","conicinterface.jl")))
-include(joinpath(Pkg.dir("MathProgBase","test","linproginterface.jl")))
+
+mpbdir = dirname(dirname(pathof(MathProgBase)))
+
+include(joinpath(mpbdir,"test","linprog.jl"))
+include(joinpath(mpbdir,"test","mixintprog.jl"))
+include(joinpath(mpbdir,"test","quadprog.jl"))
+include(joinpath(mpbdir,"test","nlp.jl"))
+include(joinpath(mpbdir,"test","conicinterface.jl"))
+include(joinpath(mpbdir,"test","linproginterface.jl"))
 
 
 function test_mathprogbase(solver)
