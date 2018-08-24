@@ -15,7 +15,7 @@ QP (quadratic objective, quadratic constraints), and MIP (mixed-integer problems
 - LP+CONIC+MIP
 
 MOSEK is commercial software, but free licenses are available for
-academic use. See [here](http://mosek.com/resources/academic-license/)
+academic use. See [here](http://mosek.com/products/academic-licenses/)
 for details.
 
 Installation
