@@ -256,7 +256,7 @@ function getlasterror(t::Task)
     lastmsg = Array{UInt8}(undef,lastmsglen[1])
     @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
-    convert(String,lastmsg[1:lastmsglen[1]-1])
+    String(lastmsg[1:lastmsglen[1]-1])
 end
 
 using SparseArrays
