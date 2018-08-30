@@ -171,7 +171,11 @@ mskbindir =
             open(joinpath(dldir,"new_version"),"r") do f
                 strip(read(f,String))
             end
-        @info("Latest MOSEK version = $new_version, currently installed = $cur_version")
+        if cur_version === nothing
+            @info("Latest MOSEK version = $new_version, nothing currently installed")
+        else
+            @info("Latest MOSEK version = $new_version, currently installed = $cur_version")
+        end
 
         instmethod = "internal"
 
