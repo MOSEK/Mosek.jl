@@ -45,7 +45,7 @@ type MosekNonlinearModel <: MathProgBase.AbstractLinearQuadraticModel
     nlhandle :: Union{Void,CallbackData}
 end
 
-function MathProgBase.LinearQuadraticModel(s::Mosek.MosekSolver) 
+function MathProgBase.LinearQuadraticModel(s::Mosek.MosekSolver)
   r = MosekLinearQuadraticModel(Mosek.maketask(),
                             Array{Bool}(0),
                             0,
@@ -594,18 +594,28 @@ function MathProgBase.getbasis(m::MosekLinearQuadraticModel)
     skx = Mosek.getskx(m.task,sol)
     skc = Mosek.getskc(m.task,sol)
 
-    cbasis = [if     skx[i] == Mosek.MSK_SK_BAS :Basic
-              elseif skx[i] == Mosek.MSK_SK_LO  :NonBasicAtLower
-              elseif skx[i] == Mosek.MSK_SK_UP  :NonBasicAtUpper
-              elseif skx[i] == Mosek.MSK_SK_FX  :NonBasicAtLower # or upper. Doesn't matter.
-              else                        :SuperBasic
+    cbasis = [if     skx[i] == Mosek.MSK_SK_BAS
+		      :Basic
+              elseif skx[i] == Mosek.MSK_SK_LOW
+		      :NonBasicAtLower
+              elseif skx[i] == Mosek.MSK_SK_UPR
+		      :NonBasicAtUpper
+              elseif skx[i] == Mosek.MSK_SK_FIX
+		      :NonBasicAtLower # or upper. Doesn't matter.
+              else
+		      :SuperBasic
               end
               for i in 1:m.numvar ]
-    rbasis = [if     skc[i] == Mosek.MSK_SK_BAS :Basic
-              elseif skc[i] == Mosek.MSK_SK_LO  :NonBasicAtLower
-              elseif skc[i] == Mosek.MSK_SK_UP  :NonBasicAtUpper
-              elseif skc[i] == Mosek.MSK_SK_FX  :NonBasicAtLower # or upper. Doesn't matter.
-              else                        :SuperBasic
+    rbasis = [if     skc[i] == Mosek.MSK_SK_BAS
+		      :Basic
+              elseif skc[i] == Mosek.MSK_SK_LOW
+		      :NonBasicAtLower
+              elseif skc[i] == Mosek.MSK_SK_UPR
+		      :NonBasicAtUpper
+              elseif skc[i] == Mosek.MSK_SK_FIX
+		      :NonBasicAtLower # or upper. Doesn't matter.
+              else
+		      :SuperBasic
               end
               for i in m.lincon]
 
@@ -930,7 +940,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Void},
 
         if grdconisub != C_NULL
             if con_nnz > 0
-                grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,(con_nnz,))        
+                grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,(con_nnz,))
                 grdconisub_a[1:con_nnz] = cb.jac_colval[cb.jac_rowstarts[i]:(cb.jac_rowstarts[i+1]-1)] - 1
             end
         end
@@ -997,8 +1007,8 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Void},
         grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(cb.numVar,))
 
         MathProgBase.eval_grad_f(cb.d, grdobjval_a, xx)
-        
-        for i in 1:cb.numVar      
+
+        for i in 1:cb.numVar
             grdobjsub_a[i] = i-1
         end
     end
@@ -1138,7 +1148,7 @@ function MathProgBase.loadproblem!(m::MosekNonlinearModel,
     Ijac, Jjac = MathProgBase.jac_structure(d)
     Ihess, Jhess = MathProgBase.hesslag_structure(d)
 
-    # Mosek needs jacobian sparsity in compressed sparse row format, which means that we need to 
+    # Mosek needs jacobian sparsity in compressed sparse row format, which means that we need to
     # reformat the indices while maintaining a map
     jac_nnz_original = length(Ijac)
     mergedindices = zeros(Int, jac_nnz_original)
