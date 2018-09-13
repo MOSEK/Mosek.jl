@@ -407,8 +407,7 @@ function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
 
     let ptr = 1
         for i in 1:m.numcon
-            subj,valj = Mosek.getarow(m.task,i)
-            n = length(subj)
+            n, subj, valj = Mosek.getarow(m.task, i)
             asubi[ptr:ptr+n-1] = i
             asubj[ptr:ptr+n-1] = subj
             aval[ptr:ptr+n-1]  = valj
@@ -416,7 +415,7 @@ function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
         end
     end
 
-    sparse(asubi,asubj,aval,length(m.lincon),m.numvar)
+    sparse(asubi, asubj, aval, length(m.lincon), m.numvar)
 end
 
 MathProgBase.addvar!(m::MosekLinearQuadraticModel, bl, bu, c) = MathProgBase.addvar!(m,convert(Float64,bl),convert(Float64,bu),convert(Float64,c))
