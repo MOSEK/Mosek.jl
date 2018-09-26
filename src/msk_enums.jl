@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.58
+# MOSEK 8.1.0.63
 
 export
   Solveform,
@@ -1264,8 +1264,9 @@ export
 
 abstract type MosekEnum end
 Base.convert(::Type{Int32},c::T) where {T <: MosekEnum} = c.value
-Base.iterate(e::Type{T}) where {T <: MosekEnum} = (members(T)[1],2)
-Base.iterate(e::Type{T},state::Int) where {T <: MosekEnum} = if state <= Base.length(T); (members(T)[state],state+1,state+1) else nothing end
+Base.start(::Type{T}) where {T <: MosekEnum} = 1
+Base.next(::Type{T},state::Int) where {T <: MosekEnum} = members(T)[state],state+1
+Base.done(::Type{T},state::Int) where {T <: MosekEnum} = state > Base.length(T)
 
 """
     Solveform
