@@ -610,7 +610,7 @@ end
 
 MathProgBase.getrawsolver(m::MosekLinearQuadraticModel) = m.task
 
-MathProgBase.getsimplexiter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINF_SIM_PRIMAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINF_SIM_DUAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINF_SIM_PRIMAL_DUAL_ITER)
+MathProgBase.getsimplexiter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINF_SIM_PRIMAL_ITER)+Mosek.getintinf(m.task,Mosek.MSK_IINF_SIM_DUAL_ITER)
 MathProgBase.getbarrieriter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINF_INTPNT_ITER)
 
 MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{T,1}) where {T} = MathProgBase.setwarmstart!(m,convert(Array{Float64,1},v))
