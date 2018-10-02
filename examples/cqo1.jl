@@ -6,6 +6,8 @@
 ##
 
 using Mosek
+using SparseArrays
+using Printf
 
 printstream(msg::AbstractString) = print(msg)
 callback(where,dinf,iinf,liinf) = 0 

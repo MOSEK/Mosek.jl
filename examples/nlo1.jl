@@ -15,6 +15,8 @@
 
 
 using Mosek
+using SparseArrays
+using Printf
 
 maketask() do t
     putstreamfunc(t,MSK_STREAM_LOG,msg -> print(msg))

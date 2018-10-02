@@ -8,7 +8,8 @@
 
 
 using Mosek
-
+using SparseArrays
+using Printf
 
 printstream(msg::String) = print(msg)
 

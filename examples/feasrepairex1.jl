@@ -8,6 +8,8 @@
 #           julia-basic feasrepairex1.jl feasrepair.lp
 
 using Mosek
+using SparseArrays
+using Printf
 
 printstream(msg::String) = print(msg)
 

@@ -7,6 +7,8 @@
 
 
 using Mosek
+using SparseArrays
+using Printf
 
 # Define a stream printer to grab output from MOSEK
 printstream(msg::String) = print(msg)
