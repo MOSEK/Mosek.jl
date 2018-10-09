@@ -112,9 +112,9 @@ getobjval(t::Mosek.Task) = Mosek.getprimalobj(t,getsoldef(t))
 
 function makebounds(bl_ :: Vector{Float64},
                     bu_ :: Vector{Float64}) :: Tuple{Vector{Mosek.Boundkey},Vector{Float64},Vector{Float64}}
-    bk = Vector{Mosek.Boundkey}(length(bl_))
-    bl = Vector{Float64}(length(bl_))
-    bu = Vector{Float64}(length(bl_))
+    bk = Vector{Mosek.Boundkey}(undef, length(bl_))
+    bl = Vector{Float64}(undef, length(bl_))
+    bu = Vector{Float64}(undef, length(bl_))
 
     for i in 1:length(bl_)
         if bl_[i] > -Inf
