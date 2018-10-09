@@ -3,7 +3,7 @@ module TestMathProgBase
 import Mosek.MosekMathProgSolverInterface
 import Mosek
 using MathProgBase
-using Base.Test
+using Test
 
 
 #const MPB = MathProgBase
@@ -11,12 +11,12 @@ import MathProgBase
 
 mpbdir = dirname(dirname(pathof(MathProgBase)))
 
-include(joinpath(mpbdir,"test","linprog.jl")))
-include(joinpath(mpbdir,"test","mixintprog.jl")))
-include(joinpath(mpbdir,"test","quadprog.jl")))
-include(joinpath(mpbdir,"test","nlp.jl")))
-include(joinpath(mpbdir,"test","conicinterface.jl")))
-include(joinpath(mpbdir,"test","linproginterface.jl")))
+include(joinpath(mpbdir,"test","linprog.jl"))
+include(joinpath(mpbdir,"test","mixintprog.jl"))
+include(joinpath(mpbdir,"test","quadprog.jl"))
+include(joinpath(mpbdir,"test","nlp.jl"))
+include(joinpath(mpbdir,"test","conicinterface.jl"))
+include(joinpath(mpbdir,"test","linproginterface.jl"))
 
 
 function test_mathprogbase(solver)

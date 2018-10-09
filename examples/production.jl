@@ -1,4 +1,5 @@
 using Mosek
+using Printf
 
 # Demonstrates how to solve a linear optimization problem using the
 # MOSEK API and modify and re-optimize the problem.
