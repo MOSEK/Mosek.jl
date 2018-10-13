@@ -4273,6 +4273,7 @@ Bound keys
 struct Boundkey <: MosekEnum
   value :: Int32
 end # boundkey
+Base.broadcastable(bk::Boundkey) = Ref(bk)
 
 "The constraint or variable is free."
 const MSK_BK_FR = Boundkey(3)

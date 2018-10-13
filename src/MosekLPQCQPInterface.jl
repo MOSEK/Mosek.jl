@@ -47,25 +47,25 @@ mutable struct MosekNonlinearModel <: MathProgBase.AbstractLinearQuadraticModel
     nlhandle :: Union{Nothing,CallbackData}
 end
 
-function MathProgBase.LinearQuadraticModel(s::Mosek.MosekSolver) 
+function MathProgBase.LinearQuadraticModel(s::Mosek.MosekSolver)
   r = MosekLinearQuadraticModel(Mosek.maketask(),
-                            Array{Bool}(0),
-                            0,
-                            0,
-                            Array{Int32}(0),
-                            Array{Float64}(0),
-                            Array{Float64}(0),
+                                Bool[],
+                                0,
+                                0,
+                                Int32[],
+                                Float64[],
+                                Float64[],
 
-                            Array{Int32}(0),
-                            Array{Float64}(0),
-                            Array{Float64}(0),
+                                Int32[],
+                                Float64[],
+                                Float64[],
 
-                            Array{Int32}(0),
-                            Array{Int32}(0),
+                                Int32[],
+                                Int32[],
 
-                            Mosek.MSK_RES_OK,
+                                Mosek.MSK_RES_OK,
 
-                            s.options)
+                                s.options)
     loadoptions!(r)
     r
 end
@@ -123,7 +123,7 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
     m.numvar = length(m.bkx)
     m.numcon = length(m.bkc)
     m.lincon = Int32[1:nrows;]
-    m.quadcon = Array{Int32}(0)
+    m.quadcon = Int32[]
     m.binvarflags = fill(false,m.numvar)
 
     # input coefficients
@@ -162,8 +162,8 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
                           abs(bux[i]-1.0) < 1e-8)
                         for i in 1:numvar ]
 
-        lincon = find(i -> Mosek.getnumqconknz(m.task,i) == 0, 1:numcon)
-        quadcon = find(i -> Mosek.getnumqconknz(m.task,i) > 0, 1:numcon)
+        lincon = findall(i -> Mosek.getnumqconknz(m.task,i) == 0, 1:numcon)
+        quadcon = findall(i -> Mosek.getnumqconknz(m.task,i) > 0, 1:numcon)
 
         Mosek.deletetask(m.task)
 
@@ -267,7 +267,7 @@ function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
 
     Mosek.putvarboundslice(m.task,1,n+1,m.bkx,m.blx,m.bux)
     if any(m.binvarflags)
-        idxs = convert(Array{Int32,1},find(v->v, m.binvarflags))
+        idxs = convert(Array{Int32,1},findall(v->v, m.binvarflags))
         bkx = Mosek.Boundkey[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
         blx = Float64[ max(m.blx[i],0.0) for i in idxs ]
         bux = Float64[ min(m.bux[i],1.0) for i in idxs ]
@@ -309,7 +309,7 @@ function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
 
     Mosek.putvarboundslice(m.task,1,n+1,m.bkx,m.blx,m.bux)
     if any(m.binvarflags)
-        idxs = convert(Array{Int32,1},find(v->v, m.binvarflags))
+        idxs = convert(Array{Int32,1},findall(v->v, m.binvarflags))
         bkx = Mosek.Boundkey[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
         blx = Float64[ max(m.blx[i],0.0) for i in idxs ]
         bux = Float64[ min(m.bux[i],1.0) for i in idxs ]
@@ -651,7 +651,7 @@ function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float
     vals = Array{Float64}( n)
     vals[:] = v[1:n]
 
-    nanidxs = find(isnan,vals)
+    nanidxs = findall(isnan,vals)
     vals[nanidxs] = 0.0
 
     skx = Mosek.Stakey[ if isnan(vals[i]) Mosek.MSK_SK_UNK else Mosek.MSK_SK_BAS end for i in 1:n ]
@@ -703,14 +703,14 @@ function MathProgBase.setvartype!(m::MosekLinearQuadraticModel,vtvec::Vector{Sym
                                  end
                     for vt in vtvec[1:n]]
         Mosek.putvartypelist(m.task,Int32[1:n;],vts)
-        for i in find(vt -> vt == :Bin, vtvec[1:n])
+        for i in findall(vt -> vt == :Bin, vtvec[1:n])
             bl = max(m.blx[i],0.0)
             bu = min(m.bux[i],1.0)
             Mosek.putvarbound(m.task,i,Mosek.MSK_BK_RA,bl,bu)
         end
 
         # for all :Bin vars being changed to :Int or :Cont, restore original bounds
-        for i in find(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflags[i], 1:n)
+        for i in findall(i -> (vtvec[i] == :Cont || vtvec[i] == :Int) && m.binvarflags[i], 1:n)
             Mosek.putvarbound(m.task,i,m.bkx[i],m.blx[i],m.bux[i])
         end
 
@@ -934,7 +934,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Nothing},
 
         if grdconisub != C_NULL
             if con_nnz > 0
-                grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,(con_nnz,))        
+                grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,(con_nnz,))
                 grdconisub_a[1:con_nnz] = cb.jac_colval[cb.jac_rowstarts[i]:(cb.jac_rowstarts[i+1]-1)] - 1
             end
         end
@@ -1001,8 +1001,8 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
         grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(cb.numVar,))
 
         MathProgBase.eval_grad_f(cb.d, grdobjval_a, xx)
-        
-        for i in 1:cb.numVar      
+
+        for i in 1:cb.numVar
             grdobjsub_a[i] = i-1
         end
     end
@@ -1142,7 +1142,7 @@ function MathProgBase.loadproblem!(m::MosekNonlinearModel,
     Ijac, Jjac = MathProgBase.jac_structure(d)
     Ihess, Jhess = MathProgBase.hesslag_structure(d)
 
-    # Mosek needs jacobian sparsity in compressed sparse row format, which means that we need to 
+    # Mosek needs jacobian sparsity in compressed sparse row format, which means that we need to
     # reformat the indices while maintaining a map
     jac_nnz_original = length(Ijac)
     mergedindices = zeros(Int, jac_nnz_original)
