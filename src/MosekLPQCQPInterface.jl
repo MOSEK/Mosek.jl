@@ -403,7 +403,7 @@ end
 
 function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
     #numnz = Mosek.getaslicenumnz(m.task, MSK_ACC_VAR, 1,m.numcon+1)
-    (ptrb,ptre,asubj,aval) = Mosek.getaslice(m.task, Mosek.MSK_ACC_VAR,1,m.numcon+1)
+    (ptrb,ptre,asubj,aval) = Mosek.getaslice(m.task, Mosek.MSK_ACC_CON,1,m.numcon+1)
 
     numnz = length(asubj)
     asubi = Vector{Int32}(undef,numnz)
