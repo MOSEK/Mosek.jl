@@ -75,29 +75,29 @@ end
 
 function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
                                                    A,
-                                                   collb :: Array{T1,1},
-                                                   colub :: Array{T2,1},
-                                                   obj   :: Array{T3,1},
-                                                   rowlb :: Array{T4,1},
-                                                   rowub :: Array{T5,1},
+                                                   collb :: Vector{T1},
+                                                   colub :: Vector{T2},
+                                                   obj   :: Vector{T3},
+                                                   rowlb :: Vector{T4},
+                                                   rowub :: Vector{T5},
                                                    sense:: Symbol) where {T1,T2,T3,T4,T5}
     MathProgBase.loadproblem!(m,
                               convert(SparseMatrixCSC{Float64,Int},A),
-                              convert(Array{Float64,1},collb),
-                              convert(Array{Float64,1},colub),
-                              convert(Array{Float64,1},obj),
-                              convert(Array{Float64,1},rowlb),
-                              convert(Array{Float64,1},rowub),
+                              convert(Vector{Float64},collb),
+                              convert(Vector{Float64},colub),
+                              convert(Vector{Float64},obj),
+                              convert(Vector{Float64},rowlb),
+                              convert(Vector{Float64},rowub),
                               sense)
 end
 
 function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
                                    A::     SparseMatrixCSC{Float64,Int},
-                                   collb:: Array{Float64,1},
-                                   colub:: Array{Float64,1},
-                                   obj::   Array{Float64,1},
-                                   rowlb:: Array{Float64,1},
-                                   rowub:: Array{Float64,1},
+                                   collb:: Vector{Float64},
+                                   colub:: Vector{Float64},
+                                   obj::   Vector{Float64},
+                                   rowlb:: Vector{Float64},
+                                   rowub:: Vector{Float64},
                                    sense:: Symbol)
     Mosek.resizetask(m.task,0,0,0,0,0);
 
@@ -236,8 +236,8 @@ function MathProgBase.getconstrUB(m::MosekLinearQuadraticModel)
     bu
 end
 
-MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{T,1}) where T = MathProgBase.setvarLB!(m,convert(Array{Float64,1},bnd))
-function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Vector{T}) where T = MathProgBase.setvarLB!(m,convert(Vector{Float64},bnd))
+function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Vector{Float64})
     n = min(length(bnd),m.numvar)
 
     for i in 1:n
@@ -267,7 +267,7 @@ function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
 
     Mosek.putvarboundslice(m.task,1,n+1,m.bkx,m.blx,m.bux)
     if any(m.binvarflags)
-        idxs = convert(Array{Int32,1},findall(v->v, m.binvarflags))
+        idxs = convert(Vector{Int32},findall(v->v, m.binvarflags))
         bkx = Mosek.Boundkey[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
         blx = Float64[ max(m.blx[i],0.0) for i in idxs ]
         bux = Float64[ min(m.bux[i],1.0) for i in idxs ]
@@ -278,8 +278,8 @@ function MathProgBase.setvarLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
     nothing
 end
 
-MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{T,1}) where T = MathProgBase.setvarUB!(m,convert(Array{Float64,1},bnd))
-function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Vector{T}) where T = MathProgBase.setvarUB!(m,convert(Vector{Float64},bnd))
+function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Vector{Float64})
     n = min(length(bnd),m.numvar)
 
     for i in 1:n
@@ -309,7 +309,7 @@ function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
 
     Mosek.putvarboundslice(m.task,1,n+1,m.bkx,m.blx,m.bux)
     if any(m.binvarflags)
-        idxs = convert(Array{Int32,1},findall(v->v, m.binvarflags))
+        idxs = convert(Vector{Int32},findall(v->v, m.binvarflags))
         bkx = Mosek.Boundkey[ Mosek.MSK_BK_RA for i in 1:length(idxs)]
         blx = Float64[ max(m.blx[i],0.0) for i in idxs ]
         bux = Float64[ min(m.bux[i],1.0) for i in idxs ]
@@ -321,8 +321,8 @@ function MathProgBase.setvarUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64
 end
 
 
-MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{T,1}) where T = MathProgBase.setconstrLB!(m,convert(Array{Float64,1},bnd))
-function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Vector{T}) where T = MathProgBase.setconstrLB!(m,convert(Vector{Float64},bnd))
+function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Vector{Float64})
     n = min(length(bnd),length(m.lincon))
 
     for i in 1:n
@@ -356,8 +356,8 @@ function MathProgBase.setconstrLB!(m::MosekLinearQuadraticModel, bnd::Array{Floa
     nothing
 end
 
-MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{T,1}) where T = MathProgBase.setconstrUB!(m,convert(Array{Float64,1},bnd))
-function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Vector{T}) where T = MathProgBase.setconstrUB!(m,convert(Vector{Float64},bnd))
+function MathProgBase.setconstrUB!(m::MosekLinearQuadraticModel, bnd::Vector{Float64})
     n = min(length(bnd),m.numcon)
 
     for i in 1:n
@@ -394,31 +394,25 @@ function MathProgBase.getobj(m::MosekLinearQuadraticModel)
     Mosek.getcslice(m.task,1,m.numvar+1)
 end
 
-MathProgBase.setobj!(m::MosekLinearQuadraticModel, c::Array{T,1}) where T = MathProgBase.setobj!(m,convert(Array{Float64,1},c))
-function MathProgBase.setobj!(m::MosekLinearQuadraticModel, c :: Array{Float64,1})
+MathProgBase.setobj!(m::MosekLinearQuadraticModel, c::Vector{T}) where T = MathProgBase.setobj!(m,convert(Vector{Float64},c))
+function MathProgBase.setobj!(m::MosekLinearQuadraticModel, c :: Vector{Float64})
     n = min(length(c),m.numvar)
     Mosek.putclist(m.task,Int32[1:n;],c[1:n])
 end
 
 
 function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
-    numnz = sum(Int[ Mosek.getarownumnz(m.task,i) for i in 1:m.numcon ])
-    asubi = Array{Int32}(numnz)
-    asubj = Array{Int32}(numnz)
-    aval  = Array{Float64}(numnz)
+    #numnz = Mosek.getaslicenumnz(m.task, MSK_ACC_VAR, 1,m.numcon+1)
+    (ptrb,ptre,asubj,aval) = Mosek.getaslice(m.task, Mosek.MSK_ACC_VAR,1,m.numcon+1)
 
-    let ptr = 1
-        for i in 1:m.numcon
-            subj,valj = Mosek.getarow(m.task,i)
-            n = length(subj)
-            asubi[ptr:ptr+n-1] = i
-            asubj[ptr:ptr+n-1] = subj
-            aval[ptr:ptr+n-1]  = valj
-            ptr += n
-        end
+    numnz = length(asubj)
+    asubi = Vector{Int32}(undef,numnz)
+
+    for i in 1:m.numcon
+        asubi[ptrb[i]:ptre[i]-1] .= Int32(i)
     end
 
-    sparse(asubi,asubj,aval,length(m.lincon),m.numvar)
+    sparse(asubi,asubj,aval,m.numcon,m.numvar)
 end
 
 MathProgBase.addvar!(m::MosekLinearQuadraticModel, bl, bu, c) = MathProgBase.addvar!(m,convert(Float64,bl),convert(Float64,bu),convert(Float64,c))
@@ -463,15 +457,15 @@ function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
 end
 
 MathProgBase.addvar!(m::MosekLinearQuadraticModel,
-                     subi::Array{T1,1},
-                     val ::Array{T2,1},
+                     subi::Vector{T1},
+                     val ::Vector{T2},
                      bl  ::T3,
                      bu  ::T4,
                      c   ::T5)  where {T1,T2,T3,T4,T5} =
-                         MathProgBase.addvar!(m,convert(Array{Int32,1},subi),convert(Array{Float64,1},val),convert(Float64,bl),convert(Float64,bu),convert(Float64,c))
+                         MathProgBase.addvar!(m,convert(Vector{Int32},subi),convert(Vector{Float64},val),convert(Float64,bl),convert(Float64,bu),convert(Float64,c))
 function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
-                              subi::Array{Int32,1},
-                              val ::Array{Float64,1},
+                              subi::Vector{Int32},
+                              val ::Vector{Float64},
                               bl  ::Float64,
                               bu  ::Float64,
                               c   ::Float64)
@@ -480,15 +474,15 @@ function MathProgBase.addvar!(m::MosekLinearQuadraticModel,
 end
 
 MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
-                        subj::Array{T1,1},
-                        val ::Array{T2,1},
+                        subj::Vector{T1},
+                        val ::Vector{T2},
                         bl  ::T3,
                         bu  ::T4) where {T1,T2,T3,T4} =
-                            MathProgBase.addconstr!(m,convert(Array{Int32,1},subj),convert(Array{Float64,1},val),convert(Float64,bl),convert(Float64,bu))
+                            MathProgBase.addconstr!(m,convert(Vector{Int32},subj),convert(Vector{Float64},val),convert(Float64,bl),convert(Float64,bu))
 
 function MathProgBase.addconstr!(m::MosekLinearQuadraticModel,
-                                 subj::Array{Int32,1},
-                                 val ::Array{Float64,1},
+                                 subj::Vector{Int32},
+                                 val ::Vector{Float64},
                                  bl  ::Float64,
                                  bu  ::Float64)
     m.numcon += 1
@@ -645,14 +639,14 @@ MathProgBase.getsimplexiter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.ta
 
 MathProgBase.getbarrieriter(m::MosekLinearQuadraticModel) = Mosek.getintinf(m.task,Mosek.MSK_IINFITEM_SIM_INTPNT_ITER)
 
-MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{T,1}) where T = MathProgBase.setwarmstart!(m,convert(Array{Float64,1},v))
-function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Array{Float64,1})
+MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Vector{T}) where T = MathProgBase.setwarmstart!(m,convert(Vector{Float64},v))
+function MathProgBase.setwarmstart!(m::MosekLinearQuadraticModel, v::Vector{Float64})
     n = min(m.numvar,length(v))
-    vals = Array{Float64}( n)
+    vals = Vector{Float64}(undef,n)
     vals[:] = v[1:n]
 
     nanidxs = findall(isnan,vals)
-    vals[nanidxs] = 0.0
+    vals[nanidxs] .= 0.0
 
     skx = Mosek.Stakey[ if isnan(vals[i]) Mosek.MSK_SK_UNK else Mosek.MSK_SK_BAS end for i in 1:n ]
 
@@ -748,15 +742,15 @@ MathProgBase.getnodecount(m::MosekLinearQuadraticModel) = 0
 MathProgBase.numquadconstr(m::MosekLinearQuadraticModel) = length(m.quadcon)
 
 
-MathProgBase.setquadobj!(m::MosekLinearQuadraticModel,subi,subj,valij) = MathProgBase.setquadobj!(m,convert(Array{Int32,1},subi),convert(Array{Int32,1},subj),convert(Array{Float64,1},valij))
+MathProgBase.setquadobj!(m::MosekLinearQuadraticModel,subi,subj,valij) = MathProgBase.setquadobj!(m,convert(Vector{Int32},subi),convert(Vector{Int32},subj),convert(Vector{Float64},valij))
 
 # NOTE on data format: The matrix is specified by inputting only lower
 # or upper triangular part. This means that whenever element (i,j) is
 # added, (j,i) is implicitly added. Duplicates are added together
 function MathProgBase.setquadobj!(m::MosekLinearQuadraticModel,
-                                  subi  :: Array{Int32,1},
-                                  subj  :: Array{Int32,1},
-                                  valij :: Array{Float64,1})
+                                  subi  :: Vector{Int32},
+                                  subj  :: Vector{Int32},
+                                  valij :: Vector{Float64})
     n = length(subi)
     let qsubi = subi[:],
         qsubj = subj[:]
@@ -781,21 +775,21 @@ function MathProgBase.addquadconstr!(m :: MosekLinearQuadraticModel,
                                      sense  :: Char,
                                      bnd)
     MathProgBase.addquadconstr!(m,
-                                convert(Array{Int32,1},subj),
-                                convert(Array{Float64,1},valj),
-                                convert(Array{Int32,1},qsubi),
-                                convert(Array{Int32,1},qsubj),
-                                convert(Array{Float64,1},qvalij),
+                                convert(Vector{Int32},subj),
+                                convert(Vector{Float64},valj),
+                                convert(Vector{Int32},qsubi),
+                                convert(Vector{Int32},qsubj),
+                                convert(Vector{Float64},qvalij),
                                 sense,
                                 convert(Float64,bnd))
 end
 
 function MathProgBase.addquadconstr!(m      :: MosekLinearQuadraticModel,
-                                     subj   :: Array{Int32,1},
-                                     valj   :: Array{Float64,1},
-                                     qsubi  :: Array{Int32,1},
-                                     qsubj  :: Array{Int32,1},
-                                     qvalij :: Array{Float64,1},
+                                     subj   :: Vector{Int32},
+                                     valj   :: Vector{Float64},
+                                     qsubi  :: Vector{Int32},
+                                     qsubj  :: Vector{Int32},
+                                     qvalij :: Vector{Float64},
                                      sense  :: Char,
                                      bnd    :: Float64)
 
@@ -871,8 +865,8 @@ function MathProgBase.getquadconstrRHS(m::MosekLinearQuadraticModel)
     m.blc[m.quadcon]
 end
 
-MathProgBase.setquadconstrRHS!(m::MosekLinearQuadraticModel, bnd) = MathProgBase.setquadconstrRHS!(m,convert(Array{Float64,1},bnd))
-function MathProgBase.setquadconstrRHS!(m::MosekLinearQuadraticModel, bnd::Array{Float64,1})
+MathProgBase.setquadconstrRHS!(m::MosekLinearQuadraticModel, bnd) = MathProgBase.setquadconstrRHS!(m,convert(Vector{Float64},bnd))
+function MathProgBase.setquadconstrRHS!(m::MosekLinearQuadraticModel, bnd::Vector{Float64})
     n = min(length(bnd),length(m.quadcon))
     m.blc[m.quadcon[1:n]] = bnd[1:n]
 
@@ -911,7 +905,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Nothing},
     end
 
     if grdobjsub != C_NULL
-        grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(cb.numVar,))
+        grdobjsub_a = unsafe_wrap(Vector{Int32},grdobjsub,(cb.numVar,))
         for ii in 1:cb.numVar
             grdobjsub_a[i] = ii-1
         end
@@ -934,7 +928,7 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Nothing},
 
         if grdconisub != C_NULL
             if con_nnz > 0
-                grdconisub_a = unsafe_wrap(Array{Int32,1},grdconisub,(con_nnz,))
+                grdconisub_a = unsafe_wrap(Vector{Int32},grdconisub,(con_nnz,))
                 grdconisub_a[1:con_nnz] = cb.jac_colval[cb.jac_rowstarts[i]:(cb.jac_rowstarts[i+1]-1)] - 1
             end
         end
@@ -947,8 +941,8 @@ function msk_nl_getsp_wrapper_mpb(nlhandle::    Ptr{Nothing},
     end
 
     if hessubi != C_NULL && hessubj != C_NULL && maxnumhesnz >= hess_nnz
-        hessubi_a = unsafe_wrap(Array{Int32,1},hessubi,(hess_nnz,))
-        hessubj_a = unsafe_wrap(Array{Int32,1},hessubj,(hess_nnz,))
+        hessubi_a = unsafe_wrap(Vector{Int32},hessubi,(hess_nnz,))
+        hessubj_a = unsafe_wrap(Vector{Int32},hessubj,(hess_nnz,))
 
         for i in 1:hess_nnz
             hessubi_a[i] = cb.Ihess[i] - 1
@@ -984,9 +978,9 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
     cb = cb_tmp::CallbackData
 
     numi = convert(Int,numi_)
-    xx = unsafe_wrap(Array{Float64,1},xx_,(cb.numVar,))
-    yc = unsafe_wrap(Array{Float64,1},yc_,(cb.numConstr,))
-    subi = unsafe_wrap(Array{Int32,1},subi_,(numi,))
+    xx = unsafe_wrap(Vector{Float64},xx_,(cb.numVar,))
+    yc = unsafe_wrap(Vector{Float64},yc_,(cb.numConstr,))
+    subi = unsafe_wrap(Vector{Int32},subi_,(numi,))
 
     if objval != C_NULL
         unsafe_store!(objval, MathProgBase.eval_f(cb.d, xx))
@@ -997,8 +991,8 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
     end
 
     if grdobjsub != C_NULL && grdobjval != C_NULL
-        grdobjval_a = unsafe_wrap(Array{Float64,1},grdobjval,(cb.numVar,))
-        grdobjsub_a = unsafe_wrap(Array{Int32,1},grdobjsub,(cb.numVar,))
+        grdobjval_a = unsafe_wrap(Vector{Float64},grdobjval,(cb.numVar,))
+        grdobjsub_a = unsafe_wrap(Vector{Int32},grdobjsub,(cb.numVar,))
 
         MathProgBase.eval_grad_f(cb.d, grdobjval_a, xx)
 
@@ -1008,7 +1002,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
     end
 
     if numi > 0 && conval != C_NULL
-        conv   = unsafe_wrap(Array{Float64,1},conval,(numi,))
+        conv   = unsafe_wrap(Vector{Float64},conval,(numi,))
         MathProgBase.eval_g(cb.d, cb.g_tmp, xx)
         for i=1:numi
             conv[i] = cb.g_tmp[subi[i]+1]
@@ -1025,10 +1019,10 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
     end
 
     if grdconval_ != C_NULL
-        grdconptrb = unsafe_wrap(Array{Int32,1},grdconptrb_,(numi,))
-        grdconptre = unsafe_wrap(Array{Int32,1},grdconptre_,(numi,))
-        grdconsub = unsafe_wrap(Array{Int32,1},grdconsub_,(grdconptre[numi],))
-        grdconval = unsafe_wrap(Array{Float64,1},grdconval_,(grdconptre[numi],))
+        grdconptrb = unsafe_wrap(Vector{Int32},grdconptrb_,(numi,))
+        grdconptre = unsafe_wrap(Vector{Int32},grdconptre_,(numi,))
+        grdconsub = unsafe_wrap(Vector{Int32},grdconsub_,(grdconptre[numi],))
+        grdconval = unsafe_wrap(Vector{Float64},grdconval_,(grdconptre[numi],))
         nz = 1
         for i=1:numi
             ptrb = grdconptrb[i]
@@ -1050,7 +1044,7 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
 
     if grdlag != C_NULL
         # could use eval_jac_prod_t here, but just do a sparse matvec instead
-        grdlag_a = unsafe_wrap(Array{Float64,1},grdlag,(cb.numVar,))
+        grdlag_a = unsafe_wrap(Vector{Float64},grdlag,(cb.numVar,))
         MathProgBase.eval_grad_f(cb.d, grdlag_a, xx)
         scale!(grdlag_a, yo)
         Jmat = SparseMatrixCSC(cb.numVar,cb.numConstr,cb.jac_rowstarts,cb.jac_colval,cb.jac_nzval)
@@ -1064,11 +1058,11 @@ function msk_nl_getva_wrapper_mpb(nlhandle    :: Ptr{Nothing},
     end
 
     if maxnumhesnz > 0 && hessubi != C_NULL && hessubj != C_NULL && hesval != C_NULL
-        hessubi_a = unsafe_wrap(Array{Int32,1},hessubi,(nhesnz,))
-        hessubj_a = unsafe_wrap(Array{Int32,1},hessubj,(nhesnz,))
+        hessubi_a = unsafe_wrap(Vector{Int32},hessubi,(nhesnz,))
+        hessubj_a = unsafe_wrap(Vector{Int32},hessubj,(nhesnz,))
 
         scale!(yc,-1)
-        MathProgBase.eval_hesslag(cb.d,unsafe_wrap(Array{Float64,1},hesval,(nhesnz,)),xx,yo,yc)
+        MathProgBase.eval_hesslag(cb.d,unsafe_wrap(Vector{Float64},hesval,(nhesnz,)),xx,yo,yc)
         scale!(yc,-1)
 
         for i=1:length(hessubi_a)
@@ -1091,20 +1085,20 @@ function MathProgBase.loadproblem!(m::MosekNonlinearModel,
     MathProgBase.loadproblem!(m,
                               convert(Int32,numVar),
                               convert(Int32,numConstr),
-                              convert(Array{Float64,1},collb),
-                              convert(Array{Float64,1},colub),
-                              convert(Array{Float64,1},rowlb),
-                              convert(Array{Float64,1},rowub),
+                              convert(Vector{Float64},collb),
+                              convert(Vector{Float64},colub),
+                              convert(Vector{Float64},rowlb),
+                              convert(Vector{Float64},rowub),
                               sense,d)
 end
 
 function MathProgBase.loadproblem!(m::MosekNonlinearModel,
                                    numVar::Int32,
                                    numConstr::Int32,
-                                   collb::Array{Float64,1},
-                                   colub::Array{Float64,1},
-                                   rowlb::Array{Float64,1},
-                                   rowub::Array{Float64,1},
+                                   collb::Vector{Float64},
+                                   colub::Vector{Float64},
+                                   rowlb::Vector{Float64},
+                                   rowub::Vector{Float64},
                                    sense::Symbol,
                                    d::MathProgBase.AbstractNLPEvaluator)
     nlm = m
@@ -1221,16 +1215,16 @@ MathProgBase.getvarLB(m::MosekNonlinearModel)                            = MathP
 MathProgBase.getvarUB(m::MosekNonlinearModel)                            = MathProgBase.getvarUB(m.m)
 MathProgBase.getconstrLB(m::MosekNonlinearModel)                         = MathProgBase.getconstrLB(m.m)
 MathProgBase.getconstrUB(m::MosekNonlinearModel)                         = MathProgBase.getconstrUB(m.m)
-MathProgBase.setvarLB!(m::MosekNonlinearModel, bnd::Array{Float64,1})    = MathProgBase.setvarLB!(m.m,bnd)
-MathProgBase.setvarUB!(m::MosekNonlinearModel, bnd::Array{Float64,1})    = MathProgBase.setvarUB!(m.m,bnd)
-MathProgBase.setconstrLB!(m::MosekNonlinearModel, bnd::Array{Float64,1}) = MathProgBase.setconstrLB!(m.m,bnd)
-MathProgBase.setconstrUB!(m::MosekNonlinearModel, bnd::Array{Float64,1}) = MathProgBase.setconstrUB!(m.m,bnd)
+MathProgBase.setvarLB!(m::MosekNonlinearModel, bnd::Vector{Float64})    = MathProgBase.setvarLB!(m.m,bnd)
+MathProgBase.setvarUB!(m::MosekNonlinearModel, bnd::Vector{Float64})    = MathProgBase.setvarUB!(m.m,bnd)
+MathProgBase.setconstrLB!(m::MosekNonlinearModel, bnd::Vector{Float64}) = MathProgBase.setconstrLB!(m.m,bnd)
+MathProgBase.setconstrUB!(m::MosekNonlinearModel, bnd::Vector{Float64}) = MathProgBase.setconstrUB!(m.m,bnd)
 #MathProgBase.getobj(m::MosekNonlinearModel)                              = MathProgBase.getobj(m.m)
-#MathProgBase.setobj!(m::MosekNonlinearModel, c :: Array{Float64,1})      = MathProgBase.setobj!(m,c)
+#MathProgBase.setobj!(m::MosekNonlinearModel, c :: Vector{Float64})      = MathProgBase.setobj!(m,c)
 #MathProgBase.getconstrmatrix(m::MosekNonlinearModel)                     = MathProgBase.getconstrmatrix(m.m)
 #MathProgBase.addvar!(m::MosekNonlinearModel,bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
-#MathProgBase.addvar!(m::MosekNonlinearModel,subi::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
-#MathProgBase.addconstr!(m::MosekNonlinearModel,subj::Array{Int32,1},val::Array{Float64,1},bl::Float64,bu::Float64) = MathProgBase.addconstr!(m.m)
+#MathProgBase.addvar!(m::MosekNonlinearModel,subi::Vector{Int32},val::Vector{Float64},bl::Float64,bu::Float64,c::Float64) = MathProgBase.addvar!(m.m)
+#MathProgBase.addconstr!(m::MosekNonlinearModel,subj::Vector{Int32},val::Vector{Float64},bl::Float64,bu::Float64) = MathProgBase.addconstr!(m.m)
 #MathProgBase.numlinconstr(m::MosekNonlinearModel) = MathProgBase.numlinconstr(m.m)
 MathProgBase.getobjval(m::MosekNonlinearModel)                           = MathProgBase.getobjval(m.m)
 MathProgBase.getsolution(m::MosekNonlinearModel)                         = MathProgBase.getsolution(m.m)
@@ -1243,7 +1237,7 @@ MathProgBase.getinfeasibilityray(m::MosekNonlinearModel)                 = MathP
 MathProgBase.getrawsolver(m::MosekNonlinearModel)                        = MathProgBase.getrawsolver(m.m)
 #MathProgBase.getsimplexiter(m::MosekNonlinearModel)                      = MathProgBase.getsimplexiter(m.m)
 MathProgBase.getbarrieriter(m::MosekNonlinearModel)                      = MathProgBase.getbarrieriter(m.m)
-MathProgBase.setwarmstart!(m::MosekNonlinearModel, v::Array{Float64,1})  = MathProgBase.setwarmstart!(m.m, v)
+MathProgBase.setwarmstart!(m::MosekNonlinearModel, v::Vector{Float64})  = MathProgBase.setwarmstart!(m.m, v)
 MathProgBase.optimize!(m::MosekNonlinearModel)                           = MathProgBase.optimize!(m.m)
 MathProgBase.status(m::MosekNonlinearModel)                              = MathProgBase.status(m.m)
 #MathProgBase.getobjbound(m::MosekNonlinearModel) = MathProgBase.getobjbound(m.m)
