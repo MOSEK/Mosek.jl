@@ -383,23 +383,16 @@ end
 
 
 function MathProgBase.getconstrmatrix(m::MosekLinearQuadraticModel)
-    numnz = sum(Int[ Mosek.getarownumnz(m.task,i) for i in 1:m.numcon ])
-    asubi = Vector{Int32}(undef,numnz)
-    asubj = Vector{Int32}(undef,numnz)
-    aval  = Vector{Float64}(undef,numnz)
+    (ptrb,ptre,asubj,aval) = Mosek.getaslice(m.task, Mosek.MSK_ACC_CON,1,m.numcon+1)
 
-    let ptr = 1
-        for i in 1:m.numcon
-            subj,valj = Mosek.getarow(m.task,i)
-            n = length(subj)
-            asubi[ptr:ptr+n-1] = i
-            asubj[ptr:ptr+n-1] = subj
-            aval[ptr:ptr+n-1]  = valj
-            ptr += n
-        end
+    numnz = length(asubj)
+    asubi = Vector{Int32}(undef,numnz)
+
+    for i in 1:m.numcon
+        asubi[ptrb[i]:ptre[i]-1] .= Int32(i)
     end
 
-    sparse(asubi,asubj,aval,length(m.lincon),m.numvar)
+    sparse(asubi,asubj,aval,m.numcon,m.numvar)
 end
 
 MathProgBase.addvar!(m::MosekLinearQuadraticModel, bl, bu, c) = MathProgBase.addvar!(m,convert(Float64,bl),convert(Float64,bu),convert(Float64,c))
