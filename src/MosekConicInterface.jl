@@ -313,7 +313,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     linvarptr += n
 
                     conslack[idxs] = firstslack:lastslack # no slack
-                    bk[idxs] = Mosek.MSK_BK_FX
+                    bk[idxs] .= Mosek.MSK_BK_FX
 
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C
