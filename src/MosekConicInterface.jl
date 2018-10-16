@@ -178,12 +178,12 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
 
                 varmap[idxs] = Int32[first:last;]
 
-                bk[first:last] = Mosek.MSK_BK_FR
+                bk[first:last] .= Mosek.MSK_BK_FR
                 if     sym == :SOC        Mosek.appendcone(m.task, Mosek.MSK_CT_QUAD,  0.0, [first:last;])
                 elseif sym == :SOCRotated Mosek.appendcone(m.task, Mosek.MSK_CT_RQUAD, 0.0, [first:last;])
                 end
 
-                varbk[idxs] = Mosek.MSK_BK_FR
+                varbk[idxs] .= Mosek.MSK_BK_FR
                 varbkidx += n
             elseif sym == :SDP
                 d = round(Int32,sqrt(.25+2*length(idxs))-0.5)
@@ -194,7 +194,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 barvarij[idxs] = Int64[1:trilsz;]
                 barvarptr += 1
 
-                varbk[idxs] = Mosek.MSK_BK_FR
+                varbk[idxs] .= Mosek.MSK_BK_FR
                 varbkidx += trilsz
             end
         end
@@ -313,7 +313,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     linvarptr += n
 
                     conslack[idxs] = firstslack:lastslack # no slack
-                    bk[idxs] = Mosek.MSK_BK_FX
+                    bk[idxs] .= Mosek.MSK_BK_FX
 
                     # Append a variable vector s and make it conic
                     # Then add slacks to the rows: b-Ax - s = 0, s in C

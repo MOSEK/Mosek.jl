@@ -660,7 +660,7 @@ function MathProgBase.optimize!(m::MosekLinearQuadraticModel)
         Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
     catch err
         if isa(err,Mosek.MosekError)
-            m.lasttrm = err.rcode
+            m.lasttrm = Mosek.Rescode(err.rcode)
         else
             rethrow()
         end

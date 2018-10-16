@@ -27,7 +27,7 @@ function test_mathprogbase(solver)
 
 
     @testset "qp" begin
-        #quadprogtest(solver)
+        quadprogtest(solver)
         #qpdualtest(solver)
         #socptest(solver)
     end
