@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.63
+# MOSEK 8.1.0.65
 
 export
   analyzenames,
@@ -425,7 +425,7 @@ Please note that the sets of variables appearing in different conic constraints 
 For an explained code example see Section :ref:`doc.tutorial_cqo`.
 """
 function appendcone end
-appendcone(task:: MSKtask,ct:: Conetype,conepar:: T2,submem:: Vector{T3}) where {T2,T3} = appendcone(task,ct,Float64(conepar),convert(Vector{Int32},submem))
+appendcone(task:: MSKtask,ct:: Conetype,conepar:: T2,submem:: Vector{T3}) where {T2,T3} = appendcone(task,ct,convert(Float64,conepar),convert(Vector{Int32},submem))
 function appendcone(task_:: MSKtask,ct_:: Conetype,conepar_:: Float64,submem_:: Vector{Int32})
   nummem_ = minimum([ length(submem_) ])
   res = disable_sigint() do
@@ -453,7 +453,7 @@ where the first member has index `j` and the last
 `j+nummem-1`.
 """
 function appendconeseq end
-appendconeseq(task:: MSKtask,ct:: Conetype,conepar:: T2,nummem:: T3,j:: T4) where {T2,T3,T4} = appendconeseq(task,ct,Float64(conepar),Int32(nummem),Int32(j))
+appendconeseq(task:: MSKtask,ct:: Conetype,conepar:: T2,nummem:: T3,j:: T4) where {T2,T3,T4} = appendconeseq(task,ct,convert(Float64,conepar),convert(Int32,nummem),convert(Int32,j))
 function appendconeseq(task_:: MSKtask,ct_:: Conetype,conepar_:: Float64,nummem_:: Int32,j_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "appendconeseq",Int32,(Ptr{Nothing},Int32,Float64,Int32,Int32,),task_.task,ct_.value,conepar_,nummem_,j_-1)
@@ -480,7 +480,7 @@ that the first variable of the first cone has index ``j`` and starting from ther
 sequentially following variables belong to the first cone, then to the second cone and so on.
 """
 function appendconesseq end
-appendconesseq(task:: MSKtask,ct:: Vector{Conetype},conepar:: Vector{T2},nummem:: Vector{T3},j:: T4) where {T2,T3,T4} = appendconesseq(task,ct,convert(Vector{Float64},conepar),convert(Vector{Int32},nummem),Int32(j))
+appendconesseq(task:: MSKtask,ct:: Vector{Conetype},conepar:: Vector{T2},nummem:: Vector{T3},j:: T4) where {T2,T3,T4} = appendconesseq(task,ct,convert(Vector{Float64},conepar),convert(Vector{Int32},nummem),convert(Int32,j))
 function appendconesseq(task_:: MSKtask,ct_:: Vector{Conetype},conepar_:: Vector{Float64},nummem_:: Vector{Int32},j_:: Int32)
   ct_i32 = Int32[item.value for item in ct_]
   num_ = minimum([ length(ct_),length(conepar_),length(nummem_) ])
@@ -507,7 +507,7 @@ expand the problem dimension to accommodate the
 additional constraints.
 """
 function appendcons end
-appendcons(task:: MSKtask,num:: T1) where {T1} = appendcons(task,Int32(num))
+appendcons(task:: MSKtask,num:: T1) where {T1} = appendcons(task,convert(Int32,num))
 function appendcons(task_:: MSKtask,num_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "appendcons",Int32,(Ptr{Nothing},Int32,),task_.task,num_)
@@ -545,7 +545,7 @@ Observe the function reports the index (position) of the appended matrix in
 ``E``. This index should be used for later references to the appended matrix.
 """
 function appendsparsesymmat end
-appendsparsesymmat(task:: MSKtask,dim:: T1,subi:: Vector{T2},subj:: Vector{T3},valij:: Vector{T4}) where {T1,T2,T3,T4} = appendsparsesymmat(task,Int32(dim),convert(Vector{Int32},subi),convert(Vector{Int32},subj),convert(Vector{Float64},valij))
+appendsparsesymmat(task:: MSKtask,dim:: T1,subi:: Vector{T2},subj:: Vector{T3},valij:: Vector{T4}) where {T1,T2,T3,T4} = appendsparsesymmat(task,convert(Int32,dim),convert(Vector{Int32},subi),convert(Vector{Int32},subj),convert(Vector{Float64},valij))
 function appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
   idx_ = Vector{Int64}(undef,1)
   nz_ = minimum([ length(subi_),length(subj_),length(valij_) ])
@@ -572,7 +572,7 @@ MOSEK will automatically expand the problem
 dimension to accommodate the additional variables.
 """
 function appendvars end
-appendvars(task:: MSKtask,num:: T1) where {T1} = appendvars(task,Int32(num))
+appendvars(task:: MSKtask,num:: T1) where {T1} = appendvars(task,convert(Int32,num))
 function appendvars(task_:: MSKtask,num_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "appendvars",Int32,(Ptr{Nothing},Int32,),task_.task,num_)
@@ -694,7 +694,7 @@ end
 Checks the memory allocated by the task.
 """
 function checkmem end
-checkmem(task:: MSKtask,file:: AbstractString,line:: T2) where {T2} = checkmem(task,file,Int32(line))
+checkmem(task:: MSKtask,file:: AbstractString,line:: T2) where {T2} = checkmem(task,file,convert(Int32,line))
 function checkmem(task_:: MSKtask,file_:: AbstractString,line_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "checkmemtask",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),task_.task,string(file_),line_)
@@ -749,7 +749,7 @@ the lower and upper bounds are identical, the
 bound key is changed to `fixed`.
 """
 function chgbound end
-chgbound(task:: MSKtask,accmode:: Accmode,i:: T2,lower:: T3,finite:: T4,value:: T5) where {T2,T3,T4,T5} = chgbound(task,accmode,Int32(i),Int32(lower),Int32(finite),Float64(value))
+chgbound(task:: MSKtask,accmode:: Accmode,i:: T2,lower:: T3,finite:: T4,value:: T5) where {T2,T3,T4,T5} = chgbound(task,accmode,convert(Int32,i),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
 function chgbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "chgbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Float64,),task_.task,accmode_.value,i_-1,lower_,finite_,value_)
@@ -799,7 +799,7 @@ bound, in particular, if the lower and upper bounds are identical, the
 bound key is changed to `fixed`.
 """
 function chgconbound end
-chgconbound(task:: MSKtask,i:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgconbound(task,Int32(i),Int32(lower),Int32(finite),Float64(value))
+chgconbound(task:: MSKtask,i:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgconbound(task,convert(Int32,i),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
 function chgconbound(task_:: MSKtask,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "chgconbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),task_.task,i_-1,lower_,finite_,value_)
@@ -849,7 +849,7 @@ in particular, if the lower and upper bounds are identical, the bound key is
 changed to `fixed`.
 """
 function chgvarbound end
-chgvarbound(task:: MSKtask,j:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgvarbound(task,Int32(j),Int32(lower),Int32(finite),Float64(value))
+chgvarbound(task:: MSKtask,j:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgvarbound(task,convert(Int32,j),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
 function chgvarbound(task_:: MSKtask,j_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "chgvarbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),task_.task,j_-1,lower_,finite_,value_)
@@ -979,7 +979,7 @@ end
 Obtains one column of ``A`` in a sparse format.
 """
 function getacol end
-getacol(task:: MSKtask,j:: T1) where {T1} = getacol(task,Int32(j))
+getacol(task:: MSKtask,j:: T1) where {T1} = getacol(task,convert(Int32,j))
 function getacol(task_:: MSKtask,j_:: Int32)
   nzj_ = Vector{Int32}(undef,1)
   __tmp_var_0 = getacolnumnz(task_,(j_))
@@ -1010,7 +1010,7 @@ end
 Obtains the number of non-zero elements in one column of ``A``.
 """
 function getacolnumnz end
-getacolnumnz(task:: MSKtask,i:: T1) where {T1} = getacolnumnz(task,Int32(i))
+getacolnumnz(task:: MSKtask,i:: T1) where {T1} = getacolnumnz(task,convert(Int32,i))
 function getacolnumnz(task_:: MSKtask,i_:: Int32)
   nzj_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -1037,7 +1037,7 @@ end
 Obtains a sequence of columns from ``A`` in sparse triplet format. The function returns the content of all columns whose index `j` satisfies `first <= j < last`. The triplets corresponding to nonzero entries are stored in the arrays `subi`, `subj` and `val`.
 """
 function getacolslicetrip end
-getacolslicetrip(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getacolslicetrip(task,Int32(first),Int32(last))
+getacolslicetrip(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getacolslicetrip(task,convert(Int32,first),convert(Int32,last))
 function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   maxnumnz_ = getaslicenumnz(task_,MSK_ACC_VAR,(first_),(last_))
   __tmp_var_0 = (maxnumnz_)
@@ -1074,7 +1074,7 @@ end
 Obtains a single coefficient in ``A``.
 """
 function getaij end
-getaij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getaij(task,Int32(i),Int32(j))
+getaij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getaij(task,convert(Int32,i),convert(Int32,j))
 function getaij(task_:: MSKtask,i_:: Int32,j_:: Int32)
   aij_ = Vector{Float64}(undef,1)
   res = disable_sigint() do
@@ -1107,7 +1107,7 @@ This function is not an efficient way to obtain the number of non-zeros in one
 row or column. In that case use the function `Mosek.getarownumnz` or `Mosek.getacolnumnz`.
 """
 function getapiecenumnz end
-getapiecenumnz(task:: MSKtask,firsti:: T1,lasti:: T2,firstj:: T3,lastj:: T4) where {T1,T2,T3,T4} = getapiecenumnz(task,Int32(firsti),Int32(lasti),Int32(firstj),Int32(lastj))
+getapiecenumnz(task:: MSKtask,firsti:: T1,lasti:: T2,firstj:: T3,lastj:: T4) where {T1,T2,T3,T4} = getapiecenumnz(task,convert(Int32,firsti),convert(Int32,lasti),convert(Int32,firstj),convert(Int32,lastj))
 function getapiecenumnz(task_:: MSKtask,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32)
   numnz_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -1133,7 +1133,7 @@ end
 Obtains one row of ``A`` in a sparse format.
 """
 function getarow end
-getarow(task:: MSKtask,i:: T1) where {T1} = getarow(task,Int32(i))
+getarow(task:: MSKtask,i:: T1) where {T1} = getarow(task,convert(Int32,i))
 function getarow(task_:: MSKtask,i_:: Int32)
   nzi_ = Vector{Int32}(undef,1)
   __tmp_var_0 = getarownumnz(task_,(i_))
@@ -1164,7 +1164,7 @@ end
 Obtains the number of non-zero elements in one row of ``A``.
 """
 function getarownumnz end
-getarownumnz(task:: MSKtask,i:: T1) where {T1} = getarownumnz(task,Int32(i))
+getarownumnz(task:: MSKtask,i:: T1) where {T1} = getarownumnz(task,convert(Int32,i))
 function getarownumnz(task_:: MSKtask,i_:: Int32)
   nzi_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -1193,7 +1193,7 @@ content of all rows whose index `i` satisfies `first <= i < last`.
 The triplets corresponding to nonzero entries are stored in the arrays `subi`, `subj` and `val`.
 """
 function getarowslicetrip end
-getarowslicetrip(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getarowslicetrip(task,Int32(first),Int32(last))
+getarowslicetrip(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getarowslicetrip(task,convert(Int32,first),convert(Int32,last))
 function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   maxnumnz_ = getaslicenumnz(task_,MSK_ACC_CON,(first_),(last_))
   __tmp_var_0 = (maxnumnz_)
@@ -1234,7 +1234,7 @@ end
 Obtains a sequence of rows or columns from ``A`` in sparse format.
 """
 function getaslice end
-getaslice(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getaslice(task,accmode,Int32(first),Int32(last))
+getaslice(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getaslice(task,accmode,convert(Int32,first),convert(Int32,last))
 function getaslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
   maxnumnz_ = getaslicenumnz(task_,(accmode_),(first_),(last_))
   __tmp_var_0 = ((last_) - (first_))
@@ -1276,7 +1276,7 @@ end
 Obtains the number of non-zeros in a slice of rows or columns of ``A``.
 """
 function getaslicenumnz end
-getaslicenumnz(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getaslicenumnz(task,accmode,Int32(first),Int32(last))
+getaslicenumnz(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getaslicenumnz(task,accmode,convert(Int32,first),convert(Int32,last))
 function getaslicenumnz(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
   numnz_ = Vector{Int64}(undef,1)
   res = disable_sigint() do
@@ -1359,7 +1359,7 @@ then it may be stored several times in vectorized form. In that case the
 element with the highest index is the one that is used.
 """
 function getbaraidx end
-getbaraidx(task:: MSKtask,idx:: T1) where {T1} = getbaraidx(task,Int64(idx))
+getbaraidx(task:: MSKtask,idx:: T1) where {T1} = getbaraidx(task,convert(Int64,idx))
 function getbaraidx(task_:: MSKtask,idx_:: Int64)
   i_ = Vector{Int32}(undef,1)
   j_ = Vector{Int32}(undef,1)
@@ -1403,7 +1403,7 @@ then it may be stored several times in vectorized form. In that case the
 element with the highest index is the one that is used.
 """
 function getbaraidxij end
-getbaraidxij(task:: MSKtask,idx:: T1) where {T1} = getbaraidxij(task,Int64(idx))
+getbaraidxij(task:: MSKtask,idx:: T1) where {T1} = getbaraidxij(task,convert(Int64,idx))
 function getbaraidxij(task_:: MSKtask,idx_:: Int64)
   i_ = Vector{Int32}(undef,1)
   j_ = Vector{Int32}(undef,1)
@@ -1431,7 +1431,7 @@ can be obtained. See description of `Mosek.appendsparsesymmat` for details
 about the weighted sum.
 """
 function getbaraidxinfo end
-getbaraidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbaraidxinfo(task,Int64(idx))
+getbaraidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbaraidxinfo(task,convert(Int64,idx))
 function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
   num_ = Vector{Int64}(undef,1)
   res = disable_sigint() do
@@ -1532,7 +1532,7 @@ end
 Obtains information about an element in ``\\bar C``.
 """
 function getbarcidx end
-getbarcidx(task:: MSKtask,idx:: T1) where {T1} = getbarcidx(task,Int64(idx))
+getbarcidx(task:: MSKtask,idx:: T1) where {T1} = getbarcidx(task,convert(Int64,idx))
 function getbarcidx(task_:: MSKtask,idx_:: Int64)
   j_ = Vector{Int32}(undef,1)
   num_ = Vector{Int64}(undef,1)
@@ -1565,7 +1565,7 @@ end
 Obtains the number of terms in the weighted sum that forms a particular element in ``\\bar C``.
 """
 function getbarcidxinfo end
-getbarcidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbarcidxinfo(task,Int64(idx))
+getbarcidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbarcidxinfo(task,convert(Int64,idx))
 function getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
   num_ = Vector{Int64}(undef,1)
   res = disable_sigint() do
@@ -1589,7 +1589,7 @@ end
 Obtains the row index of an element in ``\\bar C``.
 """
 function getbarcidxj end
-getbarcidxj(task:: MSKtask,idx:: T1) where {T1} = getbarcidxj(task,Int64(idx))
+getbarcidxj(task:: MSKtask,idx:: T1) where {T1} = getbarcidxj(task,convert(Int64,idx))
 function getbarcidxj(task_:: MSKtask,idx_:: Int64)
   j_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -1645,7 +1645,7 @@ end
 Obtains the dual solution for a semidefinite variable. Only the lower triangular part of ``\\bar S_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
 """
 function getbarsj end
-getbarsj(task:: MSKtask,whichsol:: Soltype,j:: T2) where {T2} = getbarsj(task,whichsol,Int32(j))
+getbarsj(task:: MSKtask,whichsol:: Soltype,j:: T2) where {T2} = getbarsj(task,whichsol,convert(Int32,j))
 function getbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -1671,7 +1671,7 @@ end
 Obtains the name of a semidefinite variable.
 """
 function getbarvarname end
-getbarvarname(task:: MSKtask,i:: T1) where {T1} = getbarvarname(task,Int32(i))
+getbarvarname(task:: MSKtask,i:: T1) where {T1} = getbarvarname(task,convert(Int32,i))
 function getbarvarname(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getbarvarnamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
@@ -1721,7 +1721,7 @@ end
 Obtains the length of the name of a semidefinite variable.
 """
 function getbarvarnamelen end
-getbarvarnamelen(task:: MSKtask,i:: T1) where {T1} = getbarvarnamelen(task,Int32(i))
+getbarvarnamelen(task:: MSKtask,i:: T1) where {T1} = getbarvarnamelen(task,convert(Int32,i))
 function getbarvarnamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -1746,7 +1746,7 @@ end
 Obtains the primal solution for a semidefinite variable. Only the lower triangular part of ``\\bar X_j`` is returned because the matrix by construction is symmetric. The format is that the columns are stored sequentially in the natural order.
 """
 function getbarxj end
-getbarxj(task:: MSKtask,whichsol:: Soltype,j:: T2) where {T2} = getbarxj(task,whichsol,Int32(j))
+getbarxj(task:: MSKtask,whichsol:: Soltype,j:: T2) where {T2} = getbarxj(task,whichsol,convert(Int32,j))
 function getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -1775,7 +1775,7 @@ end
 Obtains bound information for one constraint or variable.
 """
 function getbound end
-getbound(task:: MSKtask,accmode:: Accmode,i:: T2) where {T2} = getbound(task,accmode,Int32(i))
+getbound(task:: MSKtask,accmode:: Accmode,i:: T2) where {T2} = getbound(task,accmode,convert(Int32,i))
 function getbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32)
   bk_ = Vector{Int32}(undef,1)
   bl_ = Vector{Float64}(undef,1)
@@ -1805,7 +1805,7 @@ end
 Obtains bounds information for a slice of variables or constraints.
 """
 function getboundslice end
-getboundslice(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getboundslice(task,accmode,Int32(first),Int32(last))
+getboundslice(task:: MSKtask,accmode:: Accmode,first:: T2,last:: T3) where {T2,T3} = getboundslice(task,accmode,convert(Int32,first),convert(Int32,last))
 function getboundslice(task_:: MSKtask,accmode_:: Accmode,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   bk_ = Vector{Int32}(undef,__tmp_var_0)
@@ -1880,7 +1880,7 @@ end
 Obtains one coefficient of ``c``.
 """
 function getcj end
-getcj(task:: MSKtask,j:: T1) where {T1} = getcj(task,Int32(j))
+getcj(task:: MSKtask,j:: T1) where {T1} = getcj(task,convert(Int32,j))
 function getcj(task_:: MSKtask,j_:: Int32)
   cj_ = Vector{Float64}(undef,1)
   res = disable_sigint() do
@@ -1906,7 +1906,7 @@ end
 Obtains bound information for one constraint.
 """
 function getconbound end
-getconbound(task:: MSKtask,i:: T1) where {T1} = getconbound(task,Int32(i))
+getconbound(task:: MSKtask,i:: T1) where {T1} = getconbound(task,convert(Int32,i))
 function getconbound(task_:: MSKtask,i_:: Int32)
   bk_ = Vector{Int32}(undef,1)
   bl_ = Vector{Float64}(undef,1)
@@ -1935,7 +1935,7 @@ end
 Obtains bounds information for a slice of the constraints.
 """
 function getconboundslice end
-getconboundslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getconboundslice(task,Int32(first),Int32(last))
+getconboundslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getconboundslice(task,convert(Int32,first),convert(Int32,last))
 function getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   bk_ = Vector{Int32}(undef,__tmp_var_0)
@@ -1969,7 +1969,7 @@ end
 Obtains a cone.
 """
 function getcone end
-getcone(task:: MSKtask,k:: T1) where {T1} = getcone(task,Int32(k))
+getcone(task:: MSKtask,k:: T1) where {T1} = getcone(task,convert(Int32,k))
 function getcone(task_:: MSKtask,k_:: Int32)
   conepar_ = Vector{Float64}(undef,1)
   ct_ = Vector{Int32}(undef,1)
@@ -2001,7 +2001,7 @@ end
 Obtains information about a cone.
 """
 function getconeinfo end
-getconeinfo(task:: MSKtask,k:: T1) where {T1} = getconeinfo(task,Int32(k))
+getconeinfo(task:: MSKtask,k:: T1) where {T1} = getconeinfo(task,convert(Int32,k))
 function getconeinfo(task_:: MSKtask,k_:: Int32)
   conepar_ = Vector{Float64}(undef,1)
   ct_ = Vector{Int32}(undef,1)
@@ -2027,7 +2027,7 @@ end
 Obtains the name of a cone.
 """
 function getconename end
-getconename(task:: MSKtask,i:: T1) where {T1} = getconename(task,Int32(i))
+getconename(task:: MSKtask,i:: T1) where {T1} = getconename(task,convert(Int32,i))
 function getconename(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getconenamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
@@ -2077,7 +2077,7 @@ end
 Obtains the length of the name of a cone.
 """
 function getconenamelen end
-getconenamelen(task:: MSKtask,i:: T1) where {T1} = getconenamelen(task,Int32(i))
+getconenamelen(task:: MSKtask,i:: T1) where {T1} = getconenamelen(task,convert(Int32,i))
 function getconenamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -2101,7 +2101,7 @@ end
 Obtains the name of a constraint.
 """
 function getconname end
-getconname(task:: MSKtask,i:: T1) where {T1} = getconname(task,Int32(i))
+getconname(task:: MSKtask,i:: T1) where {T1} = getconname(task,convert(Int32,i))
 function getconname(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getconnamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
@@ -2151,7 +2151,7 @@ end
 Obtains the length of the name of a constraint.
 """
 function getconnamelen end
-getconnamelen(task:: MSKtask,i:: T1) where {T1} = getconnamelen(task,Int32(i))
+getconnamelen(task:: MSKtask,i:: T1) where {T1} = getconnamelen(task,convert(Int32,i))
 function getconnamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -2176,7 +2176,7 @@ end
 Obtains a sequence of elements in ``c``.
 """
 function getcslice end
-getcslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getcslice(task,Int32(first),Int32(last))
+getcslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getcslice(task,convert(Int32,first),convert(Int32,last))
 function getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -2202,7 +2202,7 @@ end
 Obtains the dimension of a symmetric matrix variable.
 """
 function getdimbarvarj end
-getdimbarvarj(task:: MSKtask,j:: T1) where {T1} = getdimbarvarj(task,Int32(j))
+getdimbarvarj(task:: MSKtask,j:: T1) where {T1} = getdimbarvarj(task,convert(Int32,j))
 function getdimbarvarj(task_:: MSKtask,j_:: Int32)
   dimbarvarj_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -2531,7 +2531,7 @@ end
 Obtains the name of an information item.
 """
 function getinfname end
-getinfname(task:: MSKtask,inftype:: Inftype,whichinf:: T2) where {T2} = getinfname(task,inftype,Int32(whichinf))
+getinfname(task:: MSKtask,inftype:: Inftype,whichinf:: T2) where {T2} = getinfname(task,inftype,convert(Int32,whichinf))
 function getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
   infname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
@@ -2600,7 +2600,7 @@ end
 Obtains the length of the ``j``-th semidefinite variable i.e. the number of elements in the lower triangular part.
 """
 function getlenbarvarj end
-getlenbarvarj(task:: MSKtask,j:: T1) where {T1} = getlenbarvarj(task,Int32(j))
+getlenbarvarj(task:: MSKtask,j:: T1) where {T1} = getlenbarvarj(task,convert(Int32,j))
 function getlenbarvarj(task_:: MSKtask,j_:: Int32)
   lenbarvarj_ = Vector{Int64}(undef,1)
   res = disable_sigint() do
@@ -2889,7 +2889,7 @@ end
 Obtains the value of a named string parameter.
 """
 function getnastrparam end
-getnastrparam(task:: MSKtask,paramname:: AbstractString,sizeparamname:: T2) where {T2} = getnastrparam(task,paramname,Int32(sizeparamname))
+getnastrparam(task:: MSKtask,paramname:: AbstractString,sizeparamname:: T2) where {T2} = getnastrparam(task,paramname,convert(Int32,sizeparamname))
 function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname_:: Int32)
   len_ = Vector{Int32}(undef,1)
   parvalue_ = zeros(UInt8,(sizeparamname_)+1)
@@ -3104,7 +3104,7 @@ end
 Obtains the number of members in a cone.
 """
 function getnumconemem end
-getnumconemem(task:: MSKtask,k:: T1) where {T1} = getnumconemem(task,Int32(k))
+getnumconemem(task:: MSKtask,k:: T1) where {T1} = getnumconemem(task,convert(Int32,k))
 function getnumconemem(task_:: MSKtask,k_:: Int32)
   nummem_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -3171,7 +3171,7 @@ end
 Obtains the number of non-zero quadratic terms in a constraint.
 """
 function getnumqconknz end
-getnumqconknz(task:: MSKtask,k:: T1) where {T1} = getnumqconknz(task,Int32(k))
+getnumqconknz(task:: MSKtask,k:: T1) where {T1} = getnumqconknz(task,convert(Int32,k))
 function getnumqconknz(task_:: MSKtask,k_:: Int32)
   numqcnz_ = Vector{Int64}(undef,1)
   res = disable_sigint() do
@@ -3324,7 +3324,7 @@ end
 Obtains the name for a parameter `param` of type `partype`.
 """
 function getparamname end
-getparamname(task:: MSKtask,partype:: Parametertype,param:: T2) where {T2} = getparamname(task,partype,Int32(param))
+getparamname(task:: MSKtask,partype:: Parametertype,param:: T2) where {T2} = getparamname(task,partype,convert(Int32,param))
 function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
   parname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
@@ -3598,7 +3598,7 @@ Obtains all the quadratic terms in a constraint. The quadratic
 terms are stored sequentially in `qcsubi`, `qcsubj`, and `qcval`.
 """
 function getqconk end
-getqconk(task:: MSKtask,k:: T1) where {T1} = getqconk(task,Int32(k))
+getqconk(task:: MSKtask,k:: T1) where {T1} = getqconk(task,convert(Int32,k))
 function getqconk(task_:: MSKtask,k_:: Int32)
   numqcnz_ = Vector{Int64}(undef,1)
   maxnumqcnz_ = getnumqconknz(task_,(k_))
@@ -3674,7 +3674,7 @@ end
 Obtains one coefficient ``q_{ij}^o`` in the quadratic term of the objective.
 """
 function getqobjij end
-getqobjij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getqobjij(task,Int32(i),Int32(j))
+getqobjij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getqobjij(task,convert(Int32,i),convert(Int32,j))
 function getqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32)
   qoij_ = Vector{Float64}(undef,1)
   res = disable_sigint() do
@@ -3707,7 +3707,7 @@ Computes the reduced costs for a slice of variables and returns them in the arra
 
 """
 function getreducedcosts end
-getreducedcosts(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getreducedcosts(task,whichsol,Int32(first),Int32(last))
+getreducedcosts(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getreducedcosts(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getreducedcosts(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -3758,7 +3758,7 @@ end
 Obtains the status keys for a slice of the constraints.
 """
 function getskcslice end
-getskcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getskcslice(task,whichsol,Int32(first),Int32(last))
+getskcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getskcslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   skc_ = Vector{Int32}(undef,__tmp_var_0)
@@ -3808,7 +3808,7 @@ end
 Obtains the status keys for a slice of the scalar variables.
 """
 function getskxslice end
-getskxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getskxslice(task,whichsol,Int32(first),Int32(last))
+getskxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getskxslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   skx_ = Vector{Int32}(undef,__tmp_var_0)
@@ -3859,7 +3859,7 @@ end
 Obtains a slice of the ``s_l^c`` vector for a solution.
 """
 function getslcslice end
-getslcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getslcslice(task,whichsol,Int32(first),Int32(last))
+getslcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getslcslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -3911,7 +3911,7 @@ end
 Obtains a slice of the ``s_l^x`` vector for a solution.
 """
 function getslxslice end
-getslxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getslxslice(task,whichsol,Int32(first),Int32(last))
+getslxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getslxslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -3963,7 +3963,7 @@ end
 Obtains a slice of the ``s_n^x`` vector for a solution.
 """
 function getsnxslice end
-getsnxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getsnxslice(task,whichsol,Int32(first),Int32(last))
+getsnxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getsnxslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4139,7 +4139,7 @@ end
 Obtains the primal and dual solution information for a single constraint or variable.
 """
 function getsolutioni end
-getsolutioni(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype) where {T2} = getsolutioni(task,accmode,Int32(i),whichsol)
+getsolutioni(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype) where {T2} = getsolutioni(task,accmode,convert(Int32,i),whichsol)
 function getsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: Soltype)
   sk_ = Vector{Int32}(undef,1)
   sl_ = Vector{Float64}(undef,1)
@@ -4212,7 +4212,7 @@ end
 Obtains a slice of one item from the solution. The format of the solution is exactly as in `Mosek.getsolution`. The parameter `solitem` determines which of the solution vectors should be returned.
 """
 function getsolutionslice end
-getsolutionslice(task:: MSKtask,whichsol:: Soltype,solitem:: Solitem,first:: T3,last:: T4) where {T3,T4} = getsolutionslice(task,whichsol,solitem,Int32(first),Int32(last))
+getsolutionslice(task:: MSKtask,whichsol:: Soltype,solitem:: Solitem,first:: T3,last:: T4) where {T3,T4} = getsolutionslice(task,whichsol,solitem,convert(Int32,first),convert(Int32,last))
 function getsolutionslice(task_:: MSKtask,whichsol_:: Soltype,solitem_:: Solitem,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4240,7 +4240,7 @@ end
 Get a single symmetric matrix from the matrix store.
 """
 function getsparsesymmat end
-getsparsesymmat(task:: MSKtask,idx:: T1) where {T1} = getsparsesymmat(task,Int64(idx))
+getsparsesymmat(task:: MSKtask,idx:: T1) where {T1} = getsparsesymmat(task,convert(Int64,idx))
 function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   maxlen_ = getsymmatinfo(task_,(idx_))[2]
   __tmp_var_0 = (maxlen_)
@@ -4349,7 +4349,7 @@ end
 Obtains a slice of the ``s_u^c`` vector for a solution.
 """
 function getsucslice end
-getsucslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getsucslice(task,whichsol,Int32(first),Int32(last))
+getsucslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getsucslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4401,7 +4401,7 @@ end
 Obtains a slice of the ``s_u^x`` vector for a solution.
 """
 function getsuxslice end
-getsuxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getsuxslice(task,whichsol,Int32(first),Int32(last))
+getsuxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getsuxslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4429,7 +4429,7 @@ end
 MOSEK maintains a vector denoted by ``E`` of symmetric data matrices. This function makes it possible to obtain important information about a single matrix in ``E``.
 """
 function getsymmatinfo end
-getsymmatinfo(task:: MSKtask,idx:: T1) where {T1} = getsymmatinfo(task,Int64(idx))
+getsymmatinfo(task:: MSKtask,idx:: T1) where {T1} = getsymmatinfo(task,convert(Int64,idx))
 function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
   dim_ = Vector{Int32}(undef,1)
   nz_ = Vector{Int64}(undef,1)
@@ -4501,7 +4501,7 @@ end
 Obtains bound information for one variable.
 """
 function getvarbound end
-getvarbound(task:: MSKtask,i:: T1) where {T1} = getvarbound(task,Int32(i))
+getvarbound(task:: MSKtask,i:: T1) where {T1} = getvarbound(task,convert(Int32,i))
 function getvarbound(task_:: MSKtask,i_:: Int32)
   bk_ = Vector{Int32}(undef,1)
   bl_ = Vector{Float64}(undef,1)
@@ -4530,7 +4530,7 @@ end
 Obtains bounds information for a slice of the variables.
 """
 function getvarboundslice end
-getvarboundslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getvarboundslice(task,Int32(first),Int32(last))
+getvarboundslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getvarboundslice(task,convert(Int32,first),convert(Int32,last))
 function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   bk_ = Vector{Int32}(undef,__tmp_var_0)
@@ -4561,7 +4561,7 @@ end
 Obtains the name of a variable.
 """
 function getvarname end
-getvarname(task:: MSKtask,j:: T1) where {T1} = getvarname(task,Int32(j))
+getvarname(task:: MSKtask,j:: T1) where {T1} = getvarname(task,convert(Int32,j))
 function getvarname(task_:: MSKtask,j_:: Int32)
   sizename_ = (1 + getvarnamelen(task_,(j_)))
   name_ = zeros(UInt8,(sizename_)+1)
@@ -4611,7 +4611,7 @@ end
 Obtains the length of the name of a variable.
 """
 function getvarnamelen end
-getvarnamelen(task:: MSKtask,i:: T1) where {T1} = getvarnamelen(task,Int32(i))
+getvarnamelen(task:: MSKtask,i:: T1) where {T1} = getvarnamelen(task,convert(Int32,i))
 function getvarnamelen(task_:: MSKtask,i_:: Int32)
   len_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -4635,7 +4635,7 @@ end
 Gets the variable type of one variable.
 """
 function getvartype end
-getvartype(task:: MSKtask,j:: T1) where {T1} = getvartype(task,Int32(j))
+getvartype(task:: MSKtask,j:: T1) where {T1} = getvartype(task,convert(Int32,j))
 function getvartype(task_:: MSKtask,j_:: Int32)
   vartype_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
@@ -4711,7 +4711,7 @@ end
 Obtains a slice of the ``x^c`` vector for a solution.
 """
 function getxcslice end
-getxcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getxcslice(task,whichsol,Int32(first),Int32(last))
+getxcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getxcslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4763,7 +4763,7 @@ end
 Obtains a slice of the ``x^x`` vector for a solution.
 """
 function getxxslice end
-getxxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getxxslice(task,whichsol,Int32(first),Int32(last))
+getxxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getxxslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4815,7 +4815,7 @@ end
 Obtains a slice of the ``y`` vector for a solution.
 """
 function getyslice end
-getyslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getyslice(task,whichsol,Int32(first),Int32(last))
+getyslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3) where {T2,T3} = getyslice(task,whichsol,convert(Int32,first),convert(Int32,last))
 function getyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32)
   __tmp_var_0 = ((last_) - (first_))
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
@@ -4890,7 +4890,7 @@ The non-zeros of ``A`` are inputted column-wise in the format described in Secti
 For an explained code example see Section :ref:`doc.tutorial_lo` and Section :ref:`doc.optimizer.matrix_formats`.
 """
 function inputdata end
-inputdata(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,c:: Vector{T3},cfix:: T4,aptrb:: Vector{T5},aptre:: Vector{T6},asub:: Vector{T7},aval:: Vector{T8},bkc:: Vector{Boundkey},blc:: Vector{T10},buc:: Vector{T11},bkx:: Vector{Boundkey},blx:: Vector{T13},bux:: Vector{T14}) where {T1,T2,T3,T4,T5,T6,T7,T8,T10,T11,T13,T14} = inputdata(task,Int32(maxnumcon),Int32(maxnumvar),convert(Vector{Float64},c),Float64(cfix),convert(Vector{Int64},aptrb),convert(Vector{Int64},aptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval),bkc,convert(Vector{Float64},blc),convert(Vector{Float64},buc),bkx,convert(Vector{Float64},blx),convert(Vector{Float64},bux))
+inputdata(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,c:: Vector{T3},cfix:: T4,aptrb:: Vector{T5},aptre:: Vector{T6},asub:: Vector{T7},aval:: Vector{T8},bkc:: Vector{Boundkey},blc:: Vector{T10},buc:: Vector{T11},bkx:: Vector{Boundkey},blx:: Vector{T13},bux:: Vector{T14}) where {T1,T2,T3,T4,T5,T6,T7,T8,T10,T11,T13,T14} = inputdata(task,convert(Int32,maxnumcon),convert(Int32,maxnumvar),convert(Vector{Float64},c),convert(Float64,cfix),convert(Vector{Int64},aptrb),convert(Vector{Int64},aptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval),bkc,convert(Vector{Float64},blc),convert(Vector{Float64},buc),bkx,convert(Vector{Float64},blx),convert(Vector{Float64},bux))
 function inputdata(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,c:: Vector{T3},cfix:: T4,A:: SparseMatrixCSC{Float64},bkc:: Vector{Boundkey},blc:: Vector{T10},buc:: Vector{T11},bkx:: Vector{Boundkey},blx:: Vector{T13},bux:: Vector{T14}) where {T1,T2,T3,T4,T10,T11,T13,T14}
   aptrb = A.colptr[1:size(A,2)]
   aptre = A.colptr[2:size(A,2)+1]
@@ -4990,7 +4990,7 @@ end
 Directs all output from a task stream `whichstream` to a file `filename`.
 """
 function linkfiletostream end
-linkfiletostream(task:: MSKtask,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(task,whichstream,filename,Int32(append))
+linkfiletostream(task:: MSKtask,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(task,whichstream,filename,convert(Int32,append))
 function linkfiletostream(task_:: MSKtask,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "linkfiletotaskstream",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},Int32,),task_.task,whichstream_.value,string(filename_),append_)
@@ -5217,7 +5217,7 @@ is normally used for debugging purposes only, e.g. to verify
 that the correct data has been inputted.
 """
 function printdata end
-printdata(task:: MSKtask,whichstream:: Streamtype,firsti:: T2,lasti:: T3,firstj:: T4,lastj:: T5,firstk:: T6,lastk:: T7,c:: T8,qo:: T9,a:: T10,qc:: T11,bc:: T12,bx:: T13,vartype:: T14,cones:: T15) where {T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15} = printdata(task,whichstream,Int32(firsti),Int32(lasti),Int32(firstj),Int32(lastj),Int32(firstk),Int32(lastk),Int32(c),Int32(qo),Int32(a),Int32(qc),Int32(bc),Int32(bx),Int32(vartype),Int32(cones))
+printdata(task:: MSKtask,whichstream:: Streamtype,firsti:: T2,lasti:: T3,firstj:: T4,lastj:: T5,firstk:: T6,lastk:: T7,c:: T8,qo:: T9,a:: T10,qc:: T11,bc:: T12,bx:: T13,vartype:: T14,cones:: T15) where {T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15} = printdata(task,whichstream,convert(Int32,firsti),convert(Int32,lasti),convert(Int32,firstj),convert(Int32,lastj),convert(Int32,firstk),convert(Int32,lastk),convert(Int32,c),convert(Int32,qo),convert(Int32,a),convert(Int32,qc),convert(Int32,bc),convert(Int32,bx),convert(Int32,vartype),convert(Int32,cones))
 function printdata(task_:: MSKtask,whichstream_:: Streamtype,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32,firstk_:: Int32,lastk_:: Int32,c_:: Int32,qo_:: Int32,a_:: Int32,qc_:: Int32,bc_:: Int32,bx_:: Int32,vartype_:: Int32,cones_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "printdata",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,Int32,),task_.task,whichstream_.value,firsti_-1,lasti_-1,firstj_-1,lastj_-1,firstk_-1,lastk_-1,c_,qo_,a_,qc_,bc_,bx_,vartype_,cones_)
@@ -5263,7 +5263,7 @@ Change one column of the linear constraint matrix ``A``. Resets all the elements
 
 """
 function putacol end
-putacol(task:: MSKtask,j:: T1,subj:: Vector{T2},valj:: Vector{T3}) where {T1,T2,T3} = putacol(task,Int32(j),convert(Vector{Int32},subj),convert(Vector{Float64},valj))
+putacol(task:: MSKtask,j:: T1,subj:: Vector{T2},valj:: Vector{T3}) where {T1,T2,T3} = putacol(task,convert(Int32,j),convert(Vector{Int32},subj),convert(Vector{Float64},valj))
 function putacol(task_:: MSKtask,j_:: Int32,subj_:: Vector{Int32},valj_:: Vector{Float64})
   nzj_ = minimum([ length(subj_),length(valj_) ])
   res = disable_sigint() do
@@ -5343,7 +5343,7 @@ Change a slice of columns in the linear constraint matrix ``A`` with data in spa
 
 """
 function putacolslice end
-putacolslice(task:: MSKtask,first:: T1,last:: T2,ptrb:: Vector{T3},ptre:: Vector{T4},asub:: Vector{T5},aval:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putacolslice(task,Int32(first),Int32(last),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval))
+putacolslice(task:: MSKtask,first:: T1,last:: T2,ptrb:: Vector{T3},ptre:: Vector{T4},asub:: Vector{T5},aval:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putacolslice(task,convert(Int32,first),convert(Int32,last),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval))
 function putacolslice(task:: MSKtask,first:: T1,last:: T2,A:: SparseMatrixCSC{Float64}) where {T1,T2}
   ptrb = A.colptr[1:size(A,2)]
   ptre = A.colptr[2:size(A,2)+1]
@@ -5378,7 +5378,7 @@ Changes a coefficient in the linear coefficient matrix ``A`` using the method
 
 """
 function putaij end
-putaij(task:: MSKtask,i:: T1,j:: T2,aij:: T3) where {T1,T2,T3} = putaij(task,Int32(i),Int32(j),Float64(aij))
+putaij(task:: MSKtask,i:: T1,j:: T2,aij:: T3) where {T1,T2,T3} = putaij(task,convert(Int32,i),convert(Int32,j),convert(Float64,aij))
 function putaij(task_:: MSKtask,i_:: Int32,j_:: Int32,aij_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putaij",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,j_-1,aij_)
@@ -5435,7 +5435,7 @@ Change one row of the linear constraint matrix ``A``. Resets all the elements in
 
 """
 function putarow end
-putarow(task:: MSKtask,i:: T1,subi:: Vector{T2},vali:: Vector{T3}) where {T1,T2,T3} = putarow(task,Int32(i),convert(Vector{Int32},subi),convert(Vector{Float64},vali))
+putarow(task:: MSKtask,i:: T1,subi:: Vector{T2},vali:: Vector{T3}) where {T1,T2,T3} = putarow(task,convert(Int32,i),convert(Vector{Int32},subi),convert(Vector{Float64},vali))
 function putarow(task_:: MSKtask,i_:: Int32,subi_:: Vector{Int32},vali_:: Vector{Float64})
   nzi_ = minimum([ length(subi_),length(vali_) ])
   res = disable_sigint() do
@@ -5515,7 +5515,7 @@ Change a slice of rows in the linear constraint matrix ``A`` with data in sparse
 
 """
 function putarowslice end
-putarowslice(task:: MSKtask,first:: T1,last:: T2,ptrb:: Vector{T3},ptre:: Vector{T4},asub:: Vector{T5},aval:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putarowslice(task,Int32(first),Int32(last),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval))
+putarowslice(task:: MSKtask,first:: T1,last:: T2,ptrb:: Vector{T3},ptre:: Vector{T4},asub:: Vector{T5},aval:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putarowslice(task,convert(Int32,first),convert(Int32,last),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},asub),convert(Vector{Float64},aval))
 function putarowslice(task:: MSKtask,first:: T1,last:: T2,At:: SparseMatrixCSC{Float64}) where {T1,T2}
   ptrb = At.colptr[1:size(At,2)]
   ptre = At.colptr[2:size(At,2)+1]
@@ -5558,7 +5558,7 @@ end
 Inputs the ``\\bar A`` matrix in block triplet form.
 """
 function putbarablocktriplet end
-putbarablocktriplet(task:: MSKtask,num:: T1,subi:: Vector{T2},subj:: Vector{T3},subk:: Vector{T4},subl:: Vector{T5},valijkl:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putbarablocktriplet(task,Int64(num),convert(Vector{Int32},subi),convert(Vector{Int32},subj),convert(Vector{Int32},subk),convert(Vector{Int32},subl),convert(Vector{Float64},valijkl))
+putbarablocktriplet(task:: MSKtask,num:: T1,subi:: Vector{T2},subj:: Vector{T3},subk:: Vector{T4},subl:: Vector{T5},valijkl:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putbarablocktriplet(task,convert(Int64,num),convert(Vector{Int32},subi),convert(Vector{Int32},subj),convert(Vector{Int32},subk),convert(Vector{Int32},subl),convert(Vector{Float64},valijkl))
 function putbarablocktriplet(task_:: MSKtask,num_:: Int64,subi_:: Vector{Int32},subj_:: Vector{Int32},subk_:: Vector{Int32},subl_:: Vector{Int32},valijkl_:: Vector{Float64})
   __tmp_var_0 = (num_)
   if length(subi_) < __tmp_var_0
@@ -5616,7 +5616,7 @@ The symmetric matrices from ``E`` are defined separately
 using the function `Mosek.appendsparsesymmat`.
 """
 function putbaraij end
-putbaraij(task:: MSKtask,i:: T1,j:: T2,sub:: Vector{T3},weights:: Vector{T4}) where {T1,T2,T3,T4} = putbaraij(task,Int32(i),Int32(j),convert(Vector{Int64},sub),convert(Vector{Float64},weights))
+putbaraij(task:: MSKtask,i:: T1,j:: T2,sub:: Vector{T3},weights:: Vector{T4}) where {T1,T2,T3,T4} = putbaraij(task,convert(Int32,i),convert(Int32,j),convert(Vector{Int64},sub),convert(Vector{Float64},weights))
 function putbaraij(task_:: MSKtask,i_:: Int32,j_:: Int32,sub_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(weights_) ])
   res = disable_sigint() do
@@ -5642,7 +5642,7 @@ end
 Inputs the ``\\bar C`` matrix in block triplet form.
 """
 function putbarcblocktriplet end
-putbarcblocktriplet(task:: MSKtask,num:: T1,subj:: Vector{T2},subk:: Vector{T3},subl:: Vector{T4},valjkl:: Vector{T5}) where {T1,T2,T3,T4,T5} = putbarcblocktriplet(task,Int64(num),convert(Vector{Int32},subj),convert(Vector{Int32},subk),convert(Vector{Int32},subl),convert(Vector{Float64},valjkl))
+putbarcblocktriplet(task:: MSKtask,num:: T1,subj:: Vector{T2},subk:: Vector{T3},subl:: Vector{T4},valjkl:: Vector{T5}) where {T1,T2,T3,T4,T5} = putbarcblocktriplet(task,convert(Int64,num),convert(Vector{Int32},subj),convert(Vector{Int32},subk),convert(Vector{Int32},subl),convert(Vector{Float64},valjkl))
 function putbarcblocktriplet(task_:: MSKtask,num_:: Int64,subj_:: Vector{Int32},subk_:: Vector{Int32},subl_:: Vector{Int32},valjkl_:: Vector{Float64})
   __tmp_var_0 = (num_)
   if length(subj_) < __tmp_var_0
@@ -5694,7 +5694,7 @@ The symmetric matrices from ``E`` are defined separately
 using the function `Mosek.appendsparsesymmat`.
 """
 function putbarcj end
-putbarcj(task:: MSKtask,j:: T1,sub:: Vector{T2},weights:: Vector{T3}) where {T1,T2,T3} = putbarcj(task,Int32(j),convert(Vector{Int64},sub),convert(Vector{Float64},weights))
+putbarcj(task:: MSKtask,j:: T1,sub:: Vector{T2},weights:: Vector{T3}) where {T1,T2,T3} = putbarcj(task,convert(Int32,j),convert(Vector{Int64},sub),convert(Vector{Float64},weights))
 function putbarcj(task_:: MSKtask,j_:: Int32,sub_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(weights_) ])
   res = disable_sigint() do
@@ -5718,7 +5718,7 @@ end
 Sets the dual solution for a semidefinite variable.
 """
 function putbarsj end
-putbarsj(task:: MSKtask,whichsol:: Soltype,j:: T2,barsj:: Vector{T3}) where {T2,T3} = putbarsj(task,whichsol,Int32(j),convert(Vector{Float64},barsj))
+putbarsj(task:: MSKtask,whichsol:: Soltype,j:: T2,barsj:: Vector{T3}) where {T2,T3} = putbarsj(task,whichsol,convert(Int32,j),convert(Vector{Float64},barsj))
 function putbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32,barsj_:: Vector{Float64})
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   if length(barsj_) < __tmp_var_0
@@ -5745,7 +5745,7 @@ end
 Sets the name of a semidefinite variable.
 """
 function putbarvarname end
-putbarvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putbarvarname(task,Int32(j),name)
+putbarvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putbarvarname(task,convert(Int32,j),name)
 function putbarvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
     @msk_ccall( "putbarvarname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
@@ -5768,7 +5768,7 @@ end
 Sets the primal solution for a semidefinite variable.
 """
 function putbarxj end
-putbarxj(task:: MSKtask,whichsol:: Soltype,j:: T2,barxj:: Vector{T3}) where {T2,T3} = putbarxj(task,whichsol,Int32(j),convert(Vector{Float64},barxj))
+putbarxj(task:: MSKtask,whichsol:: Soltype,j:: T2,barxj:: Vector{T3}) where {T2,T3} = putbarxj(task,whichsol,convert(Int32,j),convert(Vector{Float64},barxj))
 function putbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32,barxj_:: Vector{Float64})
   __tmp_var_0 = getlenbarvarj(task_,(j_))
   if length(barxj_) < __tmp_var_0
@@ -5798,7 +5798,7 @@ end
 Changes the bound for either one constraint or one variable.
 """
 function putbound end
-putbound(task:: MSKtask,accmode:: Accmode,i:: T2,bk:: Boundkey,bl:: T4,bu:: T5) where {T2,T4,T5} = putbound(task,accmode,Int32(i),bk,Float64(bl),Float64(bu))
+putbound(task:: MSKtask,accmode:: Accmode,i:: T2,bk:: Boundkey,bl:: T4,bu:: T5) where {T2,T4,T5} = putbound(task,accmode,convert(Int32,i),bk,convert(Float64,bl),convert(Float64,bu))
 function putbound(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,),task_.task,accmode_.value,i_-1,bk_.value,bl_,bu_)
@@ -5851,7 +5851,7 @@ end
 Changes the bounds for a slice of constraints or variables.
 """
 function putboundslice end
-putboundslice(task:: MSKtask,con:: Accmode,first:: T2,last:: T3,bk:: Vector{Boundkey},bl:: Vector{T5},bu:: Vector{T6}) where {T2,T3,T5,T6} = putboundslice(task,con,Int32(first),Int32(last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
+putboundslice(task:: MSKtask,con:: Accmode,first:: T2,last:: T3,bk:: Vector{Boundkey},bl:: Vector{T5},bu:: Vector{T6}) where {T2,T3,T5,T6} = putboundslice(task,con,convert(Int32,first),convert(Int32,last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
 function putboundslice(task_:: MSKtask,con_:: Accmode,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(bk_) < __tmp_var_0
@@ -5888,7 +5888,7 @@ end
 Replaces the fixed term in the objective by a new one.
 """
 function putcfix end
-putcfix(task:: MSKtask,cfix:: T1) where {T1} = putcfix(task,Float64(cfix))
+putcfix(task:: MSKtask,cfix:: T1) where {T1} = putcfix(task,convert(Float64,cfix))
 function putcfix(task_:: MSKtask,cfix_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putcfix",Int32,(Ptr{Nothing},Float64,),task_.task,cfix_)
@@ -5915,7 +5915,7 @@ Modifies one coefficient in the linear objective vector ``c``, i.e.
 If the absolute value exceeds `MSK_DPAR_DATA_TOL_C_HUGE`` an error is generated. If the absolute value exceeds `MSK_DPAR_DATA_TOL_CJ_LARGE``, a warning is generated, but the coefficient is inputted as specified.
 """
 function putcj end
-putcj(task:: MSKtask,j:: T1,cj:: T2) where {T1,T2} = putcj(task,Int32(j),Float64(cj))
+putcj(task:: MSKtask,j:: T1,cj:: T2) where {T1,T2} = putcj(task,convert(Int32,j),convert(Float64,cj))
 function putcj(task_:: MSKtask,j_:: Int32,cj_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putcj",Int32,(Ptr{Nothing},Int32,Float64,),task_.task,j_-1,cj_)
@@ -5970,7 +5970,7 @@ If the bound value specified is numerically larger than `MSK_DPAR_DATA_TOL_BOUND
 changed accordingly. If a bound value is numerically larger than `MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is inputted as specified.
 """
 function putconbound end
-putconbound(task:: MSKtask,i:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putconbound(task,Int32(i),bk,Float64(bl),Float64(bu))
+putconbound(task:: MSKtask,i:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putconbound(task,convert(Int32,i),bk,convert(Float64,bl),convert(Float64,bu))
 function putconbound(task_:: MSKtask,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putconbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,i_-1,bk_.value,bl_,bu_)
@@ -6021,7 +6021,7 @@ end
 Changes the bounds for a slice of the constraints. Data checks are performed as in `Mosek.putconbound`.
 """
 function putconboundslice end
-putconboundslice(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) where {T1,T2,T4,T5} = putconboundslice(task,Int32(first),Int32(last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
+putconboundslice(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) where {T1,T2,T4,T5} = putconboundslice(task,convert(Int32,first),convert(Int32,last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
 function putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(bk_) < __tmp_var_0
@@ -6061,7 +6061,7 @@ end
 Replaces a conic constraint.
 """
 function putcone end
-putcone(task:: MSKtask,k:: T1,ct:: Conetype,conepar:: T3,submem:: Vector{T4}) where {T1,T3,T4} = putcone(task,Int32(k),ct,Float64(conepar),convert(Vector{Int32},submem))
+putcone(task:: MSKtask,k:: T1,ct:: Conetype,conepar:: T3,submem:: Vector{T4}) where {T1,T3,T4} = putcone(task,convert(Int32,k),ct,convert(Float64,conepar),convert(Vector{Int32},submem))
 function putcone(task_:: MSKtask,k_:: Int32,ct_:: Conetype,conepar_:: Float64,submem_:: Vector{Int32})
   nummem_ = minimum([ length(submem_) ])
   res = disable_sigint() do
@@ -6084,7 +6084,7 @@ end
 Sets the name of a cone.
 """
 function putconename end
-putconename(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putconename(task,Int32(j),name)
+putconename(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putconename(task,convert(Int32,j),name)
 function putconename(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
     @msk_ccall( "putconename",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
@@ -6106,7 +6106,7 @@ end
 Sets the name of a constraint.
 """
 function putconname end
-putconname(task:: MSKtask,i:: T1,name:: AbstractString) where {T1} = putconname(task,Int32(i),name)
+putconname(task:: MSKtask,i:: T1,name:: AbstractString) where {T1} = putconname(task,convert(Int32,i),name)
 function putconname(task_:: MSKtask,i_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
     @msk_ccall( "putconname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,i_-1,string(name_))
@@ -6134,7 +6134,7 @@ Modifies a slice in the linear term ``c`` in the objective using the principle
 Data checks are performed as in `Mosek.putcj`.
 """
 function putcslice end
-putcslice(task:: MSKtask,first:: T1,last:: T2,slice:: Vector{T3}) where {T1,T2,T3} = putcslice(task,Int32(first),Int32(last),convert(Vector{Float64},slice))
+putcslice(task:: MSKtask,first:: T1,last:: T2,slice:: Vector{T3}) where {T1,T2,T3} = putcslice(task,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},slice))
 function putcslice(task_:: MSKtask,first_:: Int32,last_:: Int32,slice_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(slice_) < __tmp_var_0
@@ -6161,7 +6161,7 @@ end
 Sets the value of a double parameter.
 """
 function putdouparam end
-putdouparam(task:: MSKtask,param:: Dparam,parvalue:: T2) where {T2} = putdouparam(task,param,Float64(parvalue))
+putdouparam(task:: MSKtask,param:: Dparam,parvalue:: T2) where {T2} = putdouparam(task,param,convert(Float64,parvalue))
 function putdouparam(task_:: MSKtask,param_:: Dparam,parvalue_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putdouparam",Int32,(Ptr{Nothing},Int32,Float64,),task_.task,param_.value,parvalue_)
@@ -6191,7 +6191,7 @@ Sets the value of an integer parameter.
        task.putintparam(mosek.iparam.opf_write_problem, mosek.onoffkey.on.value)
 """
 function putintparam end
-putintparam(task:: MSKtask,param:: Iparam,parvalue:: T2) where {T2} = putintparam(task,param,Int32(parvalue))
+putintparam(task:: MSKtask,param:: Iparam,parvalue:: T2) where {T2} = putintparam(task,param,convert(Int32,parvalue))
 function putintparam(task_:: MSKtask,param_:: Iparam,parvalue_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putintparam",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,param_.value,parvalue_)
@@ -6227,7 +6227,7 @@ internal structures whenever it is necessary.
 The function call has no effect if both `maxnumcon` and `maxnumvar` are zero.
 """
 function putmaxnumanz end
-putmaxnumanz(task:: MSKtask,maxnumanz:: T1) where {T1} = putmaxnumanz(task,Int64(maxnumanz))
+putmaxnumanz(task:: MSKtask,maxnumanz:: T1) where {T1} = putmaxnumanz(task,convert(Int64,maxnumanz))
 function putmaxnumanz(task_:: MSKtask,maxnumanz_:: Int64)
   res = disable_sigint() do
     @msk_ccall( "putmaxnumanz",Int32,(Ptr{Nothing},Int64,),task_.task,maxnumanz_)
@@ -6256,7 +6256,7 @@ Please note that `maxnumbarvar` must be larger than the current number of
 symmetric matrix variables in the task.
 """
 function putmaxnumbarvar end
-putmaxnumbarvar(task:: MSKtask,maxnumbarvar:: T1) where {T1} = putmaxnumbarvar(task,Int32(maxnumbarvar))
+putmaxnumbarvar(task:: MSKtask,maxnumbarvar:: T1) where {T1} = putmaxnumbarvar(task,convert(Int32,maxnumbarvar))
 function putmaxnumbarvar(task_:: MSKtask,maxnumbarvar_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putmaxnumbarvar",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumbarvar_)
@@ -6285,7 +6285,7 @@ Please note that `maxnumcon` must be larger than the current number of
 constraints in the task.
 """
 function putmaxnumcon end
-putmaxnumcon(task:: MSKtask,maxnumcon:: T1) where {T1} = putmaxnumcon(task,Int32(maxnumcon))
+putmaxnumcon(task:: MSKtask,maxnumcon:: T1) where {T1} = putmaxnumcon(task,convert(Int32,maxnumcon))
 function putmaxnumcon(task_:: MSKtask,maxnumcon_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putmaxnumcon",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumcon_)
@@ -6314,7 +6314,7 @@ Please note that `maxnumcon` must be larger than the current number of conic
 constraints in the task.
 """
 function putmaxnumcone end
-putmaxnumcone(task:: MSKtask,maxnumcone:: T1) where {T1} = putmaxnumcone(task,Int32(maxnumcone))
+putmaxnumcone(task:: MSKtask,maxnumcone:: T1) where {T1} = putmaxnumcone(task,convert(Int32,maxnumcone))
 function putmaxnumcone(task_:: MSKtask,maxnumcone_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putmaxnumcone",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumcone_)
@@ -6348,7 +6348,7 @@ It is not mandatory to call this function, since MOSEK will reallocate
 internal structures whenever it is necessary.
 """
 function putmaxnumqnz end
-putmaxnumqnz(task:: MSKtask,maxnumqnz:: T1) where {T1} = putmaxnumqnz(task,Int64(maxnumqnz))
+putmaxnumqnz(task:: MSKtask,maxnumqnz:: T1) where {T1} = putmaxnumqnz(task,convert(Int64,maxnumqnz))
 function putmaxnumqnz(task_:: MSKtask,maxnumqnz_:: Int64)
   res = disable_sigint() do
     @msk_ccall( "putmaxnumqnz",Int32,(Ptr{Nothing},Int64,),task_.task,maxnumqnz_)
@@ -6377,7 +6377,7 @@ Please note that `maxnumvar` must be larger than the current number of
 variables in the task.
 """
 function putmaxnumvar end
-putmaxnumvar(task:: MSKtask,maxnumvar:: T1) where {T1} = putmaxnumvar(task,Int32(maxnumvar))
+putmaxnumvar(task:: MSKtask,maxnumvar:: T1) where {T1} = putmaxnumvar(task,convert(Int32,maxnumvar))
 function putmaxnumvar(task_:: MSKtask,maxnumvar_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putmaxnumvar",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumvar_)
@@ -6399,7 +6399,7 @@ end
 Sets the value of a named double parameter.
 """
 function putnadouparam end
-putnadouparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnadouparam(task,paramname,Float64(parvalue))
+putnadouparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnadouparam(task,paramname,convert(Float64,parvalue))
 function putnadouparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putnadouparam",Int32,(Ptr{Nothing},Ptr{UInt8},Float64,),task_.task,string(paramname_),parvalue_)
@@ -6421,7 +6421,7 @@ end
 Sets the value of a named integer parameter.
 """
 function putnaintparam end
-putnaintparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnaintparam(task,paramname,Int32(parvalue))
+putnaintparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnaintparam(task,paramname,convert(Int32,parvalue))
 function putnaintparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putnaintparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),task_.task,string(paramname_),parvalue_)
@@ -6571,7 +6571,7 @@ end
 Replaces all the quadratic entries in one constraint. This function performs the same operations as `Mosek.putqcon` but only with respect to constraint number `k` and it does not modify the other constraints. See the description of `Mosek.putqcon` for definitions and important remarks.
 """
 function putqconk end
-putqconk(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4}) where {T1,T2,T3,T4} = putqconk(task,Int32(k),convert(Vector{Int32},qcsubi),convert(Vector{Int32},qcsubj),convert(Vector{Float64},qcval))
+putqconk(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4}) where {T1,T2,T3,T4} = putqconk(task,convert(Int32,k),convert(Vector{Int32},qcsubi),convert(Vector{Int32},qcsubj),convert(Vector{Float64},qcval))
 function putqconk(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64}) where {T1}
   ptrb = Qk.colptr[1:size(Qk,2)]
   ptre = Qk.colptr[2:size(Qk,2)+1]
@@ -6660,7 +6660,7 @@ computationally expensive than replacing them all at once. Use
 `Mosek.putqobj` instead whenever possible.
 """
 function putqobjij end
-putqobjij(task:: MSKtask,i:: T1,j:: T2,qoij:: T3) where {T1,T2,T3} = putqobjij(task,Int32(i),Int32(j),Float64(qoij))
+putqobjij(task:: MSKtask,i:: T1,j:: T2,qoij:: T3) where {T1,T2,T3} = putqobjij(task,convert(Int32,i),convert(Int32,j),convert(Float64,qoij))
 function putqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32,qoij_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putqobjij",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,j_-1,qoij_)
@@ -6710,7 +6710,7 @@ end
 Sets the status keys for a slice of the constraints.
 """
 function putskcslice end
-putskcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,skc:: Vector{Stakey}) where {T2,T3} = putskcslice(task,whichsol,Int32(first),Int32(last),skc)
+putskcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,skc:: Vector{Stakey}) where {T2,T3} = putskcslice(task,whichsol,convert(Int32,first),convert(Int32,last),skc)
 function putskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,skc_:: Vector{Stakey})
   __tmp_var_0 = ((last_) - (first_))
   if length(skc_) < __tmp_var_0
@@ -6766,7 +6766,7 @@ end
 Sets the status keys for a slice of the variables.
 """
 function putskxslice end
-putskxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,skx:: Vector{Stakey}) where {T2,T3} = putskxslice(task,whichsol,Int32(first),Int32(last),skx)
+putskxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,skx:: Vector{Stakey}) where {T2,T3} = putskxslice(task,whichsol,convert(Int32,first),convert(Int32,last),skx)
 function putskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,skx_:: Vector{Stakey})
   __tmp_var_0 = ((last_) - (first_))
   if length(skx_) < __tmp_var_0
@@ -6823,7 +6823,7 @@ end
 Sets a slice of the ``s_l^c`` vector for a solution.
 """
 function putslcslice end
-putslcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slc:: Vector{T4}) where {T2,T3,T4} = putslcslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},slc))
+putslcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slc:: Vector{T4}) where {T2,T3,T4} = putslcslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},slc))
 function putslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,slc_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(slc_) < __tmp_var_0
@@ -6879,7 +6879,7 @@ end
 Sets a slice of the ``s_l^x`` vector for a solution.
 """
 function putslxslice end
-putslxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slx:: Vector{T4}) where {T2,T3,T4} = putslxslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},slx))
+putslxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,slx:: Vector{T4}) where {T2,T3,T4} = putslxslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},slx))
 function putslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,slx_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(slx_) < __tmp_var_0
@@ -6935,7 +6935,7 @@ end
 Sets a slice of the ``s_n^x`` vector for a solution.
 """
 function putsnxslice end
-putsnxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,snx:: Vector{T4}) where {T2,T3,T4} = putsnxslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},snx))
+putsnxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,snx:: Vector{T4}) where {T2,T3,T4} = putsnxslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},snx))
 function putsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,snx_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(snx_) < __tmp_var_0
@@ -7004,7 +7004,7 @@ Sets the primal and dual solution information for a single
 constraint or variable.
 """
 function putsolutioni end
-putsolutioni(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype,sk:: Stakey,x:: T5,sl:: T6,su:: T7,sn:: T8) where {T2,T5,T6,T7,T8} = putsolutioni(task,accmode,Int32(i),whichsol,sk,Float64(x),Float64(sl),Float64(su),Float64(sn))
+putsolutioni(task:: MSKtask,accmode:: Accmode,i:: T2,whichsol:: Soltype,sk:: Stakey,x:: T5,sl:: T6,su:: T7,sn:: T8) where {T2,T5,T6,T7,T8} = putsolutioni(task,accmode,convert(Int32,i),whichsol,sk,convert(Float64,x),convert(Float64,sl),convert(Float64,su),convert(Float64,sn))
 function putsolutioni(task_:: MSKtask,accmode_:: Accmode,i_:: Int32,whichsol_:: Soltype,sk_:: Stakey,x_:: Float64,sl_:: Float64,su_:: Float64,sn_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putsolutioni",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Float64,Float64,Float64,Float64,),task_.task,accmode_.value,i_-1,whichsol_.value,sk_.value,x_,sl_,su_,sn_)
@@ -7027,7 +7027,7 @@ end
 Inputs the dual variable of a solution.
 """
 function putsolutionyi end
-putsolutionyi(task:: MSKtask,i:: T1,whichsol:: Soltype,y:: T3) where {T1,T3} = putsolutionyi(task,Int32(i),whichsol,Float64(y))
+putsolutionyi(task:: MSKtask,i:: T1,whichsol:: Soltype,y:: T3) where {T1,T3} = putsolutionyi(task,convert(Int32,i),whichsol,convert(Float64,y))
 function putsolutionyi(task_:: MSKtask,i_:: Int32,whichsol_:: Soltype,y_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putsolutionyi",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,whichsol_.value,y_)
@@ -7098,7 +7098,7 @@ end
 Sets a slice of the ``s_u^c`` vector for a solution.
 """
 function putsucslice end
-putsucslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,suc:: Vector{T4}) where {T2,T3,T4} = putsucslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},suc))
+putsucslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,suc:: Vector{T4}) where {T2,T3,T4} = putsucslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},suc))
 function putsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,suc_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(suc_) < __tmp_var_0
@@ -7154,7 +7154,7 @@ end
 Sets a slice of the ``s_u^x`` vector for a solution.
 """
 function putsuxslice end
-putsuxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,sux:: Vector{T4}) where {T2,T3,T4} = putsuxslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},sux))
+putsuxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,sux:: Vector{T4}) where {T2,T3,T4} = putsuxslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},sux))
 function putsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,sux_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(sux_) < __tmp_var_0
@@ -7208,7 +7208,7 @@ changed accordingly. If a bound value is numerically larger than
 inputted as specified.
 """
 function putvarbound end
-putvarbound(task:: MSKtask,j:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putvarbound(task,Int32(j),bk,Float64(bl),Float64(bu))
+putvarbound(task:: MSKtask,j:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putvarbound(task,convert(Int32,j),bk,convert(Float64,bl),convert(Float64,bu))
 function putvarbound(task_:: MSKtask,j_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
   res = disable_sigint() do
     @msk_ccall( "putvarbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,j_-1,bk_.value,bl_,bu_)
@@ -7259,7 +7259,7 @@ end
 Changes the bounds for a slice of the variables. Data checks are performed as in `Mosek.putvarbound`.
 """
 function putvarboundslice end
-putvarboundslice(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) where {T1,T2,T4,T5} = putvarboundslice(task,Int32(first),Int32(last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
+putvarboundslice(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) where {T1,T2,T4,T5} = putvarboundslice(task,convert(Int32,first),convert(Int32,last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
 function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(bk_) < __tmp_var_0
@@ -7297,7 +7297,7 @@ end
 Sets the name of a variable.
 """
 function putvarname end
-putvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putvarname(task,Int32(j),name)
+putvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putvarname(task,convert(Int32,j),name)
 function putvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
     @msk_ccall( "putvarname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
@@ -7319,7 +7319,7 @@ end
 Sets the variable type of one variable.
 """
 function putvartype end
-putvartype(task:: MSKtask,j:: T1,vartype:: Variabletype) where {T1} = putvartype(task,Int32(j),vartype)
+putvartype(task:: MSKtask,j:: T1,vartype:: Variabletype) where {T1} = putvartype(task,convert(Int32,j),vartype)
 function putvartype(task_:: MSKtask,j_:: Int32,vartype_:: Variabletype)
   res = disable_sigint() do
     @msk_ccall( "putvartype",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,j_-1,vartype_.value)
@@ -7392,7 +7392,7 @@ end
 Sets a slice of the ``x^c`` vector for a solution.
 """
 function putxcslice end
-putxcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,xc:: Vector{T4}) where {T2,T3,T4} = putxcslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},xc))
+putxcslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,xc:: Vector{T4}) where {T2,T3,T4} = putxcslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},xc))
 function putxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,xc_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(xc_) < __tmp_var_0
@@ -7448,7 +7448,7 @@ end
 Obtains a slice of the ``x^x`` vector for a solution.
 """
 function putxxslice end
-putxxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,xx:: Vector{T4}) where {T2,T3,T4} = putxxslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},xx))
+putxxslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,xx:: Vector{T4}) where {T2,T3,T4} = putxxslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},xx))
 function putxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,xx_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(xx_) < __tmp_var_0
@@ -7504,7 +7504,7 @@ end
 Sets a slice of the ``y`` vector for a solution.
 """
 function putyslice end
-putyslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,y:: Vector{T4}) where {T2,T3,T4} = putyslice(task,whichsol,Int32(first),Int32(last),convert(Vector{Float64},y))
+putyslice(task:: MSKtask,whichsol:: Soltype,first:: T2,last:: T3,y:: Vector{T4}) where {T2,T3,T4} = putyslice(task,whichsol,convert(Int32,first),convert(Int32,last),convert(Vector{Float64},y))
 function putyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: Int32,y_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
   if length(y_) < __tmp_var_0
@@ -7758,7 +7758,7 @@ Please note that the procedure is **destructive** in the sense that all
 existing data stored in the task is destroyed.
 """
 function resizetask end
-resizetask(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,maxnumcone:: T3,maxnumanz:: T4,maxnumqnz:: T5) where {T1,T2,T3,T4,T5} = resizetask(task,Int32(maxnumcon),Int32(maxnumvar),Int32(maxnumcone),Int64(maxnumanz),Int64(maxnumqnz))
+resizetask(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,maxnumcone:: T3,maxnumanz:: T4,maxnumqnz:: T5) where {T1,T2,T3,T4,T5} = resizetask(task,convert(Int32,maxnumcon),convert(Int32,maxnumvar),convert(Int32,maxnumcone),convert(Int64,maxnumanz),convert(Int64,maxnumqnz))
 function resizetask(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,maxnumcone_:: Int32,maxnumanz_:: Int64,maxnumqnz_:: Int64)
   res = disable_sigint() do
     @msk_ccall( "resizetask",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int64,Int64,),task_.task,maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_)
@@ -7905,7 +7905,7 @@ Please note that this function exploits the
 sparsity in the vector ``b`` to speed up the computations.
 """
 function solvewithbasis end
-solvewithbasis(task:: MSKtask,transp:: T1,numnz:: T2,sub:: Vector{T3},val:: Vector{T4}) where {T1,T2,T3,T4} = solvewithbasis(task,Int32(transp),Int32(numnz),convert(Vector{Int32},sub),convert(Vector{Float64},val))
+solvewithbasis(task:: MSKtask,transp:: T1,numnz:: T2,sub:: Vector{T3},val:: Vector{T4}) where {T1,T2,T3,T4} = solvewithbasis(task,convert(Int32,transp),Int32(numnz),convert(Vector{Int32},sub),convert(Vector{Float64},val))
 function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Vector{Int32},val_:: Vector{Float64})
   __tmp_var_0 = Int32[ numnz_ ]
   __tmp_var_1 = getnumcon(task_)
@@ -8189,7 +8189,7 @@ end
 Prints an intro to message stream.
 """
 function echointro end
-echointro(env:: MSKenv,longver:: T1) where {T1} = echointro(env,Int32(longver))
+echointro(env:: MSKenv,longver:: T1) where {T1} = echointro(env,convert(Int32,longver))
 function echointro(env_:: MSKenv,longver_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "echointro",Int32,(Ptr{Nothing},Int32,),env_.env,longver_)
@@ -8277,7 +8277,7 @@ end
 
 Sends all output from the stream defined by `whichstream` to the file given by `filename`.
 """
-linkfiletostream(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(env,whichstream,filename,Int32(append))
+linkfiletostream(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(env,whichstream,filename,convert(Int32,append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_.value,string(filename_),append_)
@@ -8322,7 +8322,7 @@ end
 Enables debug information for the license system. If `licdebug` is non-zero, then MOSEK will print debug info regarding the license checkout.
 """
 function putlicensedebug end
-putlicensedebug(env:: MSKenv,licdebug:: T1) where {T1} = putlicensedebug(env,Int32(licdebug))
+putlicensedebug(env:: MSKenv,licdebug:: T1) where {T1} = putlicensedebug(env,convert(Int32,licdebug))
 function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putlicensedebug",Int32,(Ptr{Nothing},Int32,),env_.env,licdebug_)
@@ -8360,7 +8360,7 @@ end
 Control whether MOSEK should wait for an available license if no license is available. If `licwait` is non-zero, then MOSEK will wait for `licwait-1` milliseconds between each check for an available license.
 """
 function putlicensewait end
-putlicensewait(env:: MSKenv,licwait:: T1) where {T1} = putlicensewait(env,Int32(licwait))
+putlicensewait(env:: MSKenv,licwait:: T1) where {T1} = putlicensewait(env,convert(Int32,licwait))
 function putlicensewait(env_:: MSKenv,licwait_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "putlicensewait",Int32,(Ptr{Nothing},Int32,),env_.env,licwait_)

@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 8.1.0.63
+# MOSEK 8.1.0.65
 
 export
   Solveform,
@@ -1264,6 +1264,7 @@ export
 
 abstract type MosekEnum end
 Base.convert(::Type{Int32},c::T) where {T <: MosekEnum} = c.value
+Base.broadcastable(c::T) where {T <: MosekEnum} = Ref(c)
 Base.iterate(e::Type{T}) where {T <: MosekEnum} = (members(T)[1],2)
 Base.iterate(e::Type{T},state::Int) where {T <: MosekEnum} = if state <= Base.length(T); (members(T)[state],state+1,state+1) else nothing end
 
@@ -4273,7 +4274,6 @@ Bound keys
 struct Boundkey <: MosekEnum
   value :: Int32
 end # boundkey
-Base.broadcastable(bk::Boundkey) = Ref(bk)
 
 "The constraint or variable is free."
 const MSK_BK_FR = Boundkey(3)
