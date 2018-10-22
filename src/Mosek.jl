@@ -266,6 +266,7 @@ using SparseArrays
 
 include("msk_enums.jl")
 include("msk_functions.jl")
+include("msk_function_ext.jl")
 include("msk_callback.jl")
 
 ## General Convex optimizer has been discontinued

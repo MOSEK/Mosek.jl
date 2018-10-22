@@ -183,6 +183,7 @@ export
   linkfiletostream,
   onesolutionsummary,
   optimize,
+  optimizermt,
   optimizersummary,
   primalrepair,
   primalsensitivity,
@@ -5403,6 +5404,33 @@ function onesolutionsummary(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
+end
+
+"""
+    trmcode = optimizermt(task_:: MSKtask,server_:: AbstractString,port_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `server :: String`. Name or IP address of the solver server.
+* `port :: String`. Network port of the solver server.
+* `trmcode :: Rescode`. Is either OK or a termination response code.
+
+Offload the optimization task to a solver server
+defined by `server:port`. The call will block until a result is
+available or the connection closes.
+
+If the string parameter :msk:sparam:`remote_access_token` is not blank, it will be passed to the server as authentication.
+"""
+function optimizermt end
+function optimizermt(task_:: MSKtask,server_:: AbstractString,port_:: AbstractString)
+  trmcode_ = Vector{Int32}(undef,1)
+  res = disable_sigint() do
+    @msk_ccall( "optimizermt",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ptr{Int32},),task_.task,string(server_),string(port_),trmcode_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (Rescode(trmcode_[1]))
 end
 
 """
