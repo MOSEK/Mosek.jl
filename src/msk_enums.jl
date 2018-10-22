@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.45
+# MOSEK 9.0.55
 
 export
   Basindtype,
@@ -1257,6 +1257,7 @@ export
 
 abstract type MosekEnum end
 Base.convert(::Type{Int32},c::T) where {T <: MosekEnum} = c.value
+Base.broadcastable(c::T) where {T <: MosekEnum} = Ref(c)
 Base.iterate(e::Type{T}) where {T <: MosekEnum} = (members(T)[1],2)
 Base.iterate(e::Type{T},state::Int) where {T <: MosekEnum} = if state <= Base.length(T); (members(T)[state],state+1,state+1) else nothing end
 
