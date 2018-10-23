@@ -190,7 +190,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 trilsz = length(idxs)
                 barvardim[barvarptr] = d
                 Mosek.appendbarvars(m.task, Int32[d])
-                varmap[idxs] = -barvarptr
+                varmap[idxs] .= -barvarptr
                 barvarij[idxs] = Int64[1:trilsz;]
                 barvarptr += 1
 
