@@ -6,6 +6,7 @@
 ##
 
 using Mosek
+using Printf
 # Since the actual value of Infinity is ignores, we define it solely
 # for symbolic purposes:
 
