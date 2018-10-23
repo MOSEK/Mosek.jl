@@ -157,7 +157,7 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
 
                 varmap[idxs] = first:last
 
-                bk[first:last] =
+                bk[first:last] .=
                    if     sym == :Free   Mosek.MSK_BK_FR
                    elseif sym == :Zero   Mosek.MSK_BK_FX
                    elseif sym == :NonNeg Mosek.MSK_BK_LO
@@ -226,16 +226,16 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
             for ci in 1:A.n
                 let n = A.colptr[ci+1]-A.colptr[ci]
                     if varmap[ci] > 0
-                        asubi[ptr:ptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
-                        asubj[ptr:ptr+n-1] = varmap[ci]
-                        acof[ptr:ptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
+                        asubi[ptr:ptr+n-1]  = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
+                        asubj[ptr:ptr+n-1] .= varmap[ci]
+                        acof[ptr:ptr+n-1]   = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
 
                         ptr += n
                     else
-                        barasubi[barptr:barptr+n-1] = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
-                        barasubj[barptr:barptr+n-1] = -varmap[ci]
-                        barvij[barptr:barptr+n-1]   = barvarij[ci]
-                        baracof[barptr:barptr+n-1]  = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
+                        barasubi[barptr:barptr+n-1]  = A.rowval[A.colptr[ci]:A.colptr[ci+1]-1]
+                        barasubj[barptr:barptr+n-1] .= -varmap[ci]
+                        barvij[barptr:barptr+n-1]   .= barvarij[ci]
+                        baracof[barptr:barptr+n-1]   = A.nzval[A.colptr[ci]:A.colptr[ci+1]-1]
 
                         barptr += n
                     end
@@ -291,8 +291,13 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                 idxs = coneidxstoarray(idxs_)
                 n = length(idxs)
                 if sym in [ :Free, :Zero, :NonPos, :NonNeg ]
-                    conslack[idxs] = 0 # no slack
-                    bk[idxs] =
+                    firstcon = conptr
+                    lastcon  = conptr+n-1
+                    conptr += n
+
+                    conslack[idxs] .= 0 # no slack
+
+                    bk[idxs] .=
                       if     sym == :Free   Mosek.MSK_BK_FR
                       elseif sym == :Zero   Mosek.MSK_BK_FX
                       elseif sym == :NonNeg Mosek.MSK_BK_LO
@@ -321,7 +326,10 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
                     barslackj  = barvarptr
                     d = floor(Int32,sqrt(.25+2*length(idxs))-0.5)
 
-                    bk[idxs] = Mosek.MSK_BK_FX
+                    firstcon = conptr
+                    lastcon  = conptr+n-1
+
+                    bk[firstcon:lastcon] .= Mosek.MSK_BK_FX
 
                     barvardim[barvarptr] = d
                     Mosek.appendbarvars(m.task, Int32[d])
@@ -350,9 +358,9 @@ function MathProgBase.loadproblem!(m::MosekMathProgConicModel,
 
 
     # Input objective
-    let lincidxs = find(j -> varmap[j] > 0 && abs(c[j]) > 1e-8,1:length(c)),
+    let lincidxs = findall(j -> varmap[j] > 0 && abs(c[j]) > 1e-8,1:length(c)),
         numcnz   = length(lincidxs),
-        barcidxs = find(j -> varmap[j] < 0 && abs(c[j]) > 1e-8,1:length(c)),
+        barcidxs = findall(j -> varmap[j] < 0 && abs(c[j]) > 1e-8,1:length(c)),
         numbarcnz = length(barcidxs)
 
         if numcnz > 0
@@ -608,7 +616,7 @@ function MathProgBase.setvartype!(m::MosekMathProgConicModel, intvarflag::Vector
     if n > 0
         all(x->in(x,[:Cont,:Int,:Bin]), intvarflag) || error("Invalid variable type present")
 
-        idxs        = find(i -> m.varmap[i] > 0,1:n) # indexes into intvarflag for non-PSD vars
+        idxs        = findall(i -> m.varmap[i] > 0,1:n) # indexes into intvarflag for non-PSD vars
 
         newbk = Mosek.Boundkey[ if (intvarflag[i] == :Bin) Mosek.MSK_BK_RA else m.varbk[i] end for i in idxs ]
         newbl = Float64[0.0 for i in idxs ]
@@ -624,9 +632,9 @@ end
 
 function MathProgBase.getvartype(m::MosekMathProgConicModel)
     vartypes = [ if isbin :Bin else :Cont end for isbin in m.binvarflag[m.numvar]]
-    idxs = find(i -> m.varmap[i] > 0 && vartype[i] == :Cont, 1:m.numvar)
+    idxs = findall(i -> m.varmap[i] > 0 && vartype[i] == :Cont, 1:m.numvar)
     mskvartypes = Mosek.getvartypelist(m.task,m.varmap[idxs])
-    intvaridxs = find(i -> mskvartypes[i] == Mosek.MSK_VAR_TYPE_INT, 1:length(mskvartypes))
+    intvaridxs = findall(i -> mskvartypes[i] == Mosek.MSK_VAR_TYPE_INT, 1:length(mskvartypes))
     vartypes[intvaridxs] = :Int
 
     vartypes
