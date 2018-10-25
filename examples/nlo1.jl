@@ -100,7 +100,8 @@ maketask() do t
                    grdconi,
                    heslag)
 
-    optimize(t)
+    #optimize(t)
+    optimize(t,"solve.mosek.com","30080")
 
     # Print a summary containing information
     # about the solution for debugging purposes
