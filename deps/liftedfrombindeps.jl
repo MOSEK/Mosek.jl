@@ -58,7 +58,7 @@ function download_cmd(url::AbstractString, filename::AbstractString)
         return `fetch -f $filename $url`
     elseif downloadcmd == :powershell
         recmkdir(dirname(filename))
-        return `powershell -file $(joinpath(dirname(abspath(@__FILE__)),"deps","winget.ps0")) $url $filename`
+        return `powershell -file $(joinpath(dirname(abspath(@__FILE__)),"winget.ps0")) $url $filename`
     else
         error("No download agent available; install curl, wget, fetch, or powershell.")
     end
@@ -112,7 +112,7 @@ end
             end
         elseif extension == ".zip"
             rm(directory,recursive=true)
-            return (`powershell -file $(joinpath(dirname(abspath(@__FILE__)),"deps","winunzip.ps1")) $file $directory`)
+            return (`powershell -file $(joinpath(dirname(abspath(@__FILE__)),"winunzip.ps1")) $file $directory`)
         else
             error("I don't know how to unpack $file")
         end
