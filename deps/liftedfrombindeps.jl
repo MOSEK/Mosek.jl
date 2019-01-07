@@ -58,7 +58,7 @@ function download_cmd(url::AbstractString, filename::AbstractString)
         return `fetch -f $filename $url`
     elseif downloadcmd == :powershell
         recmkdir(dirname(filename))
-        return `powershell -file $(joinpath(dirname(abspath(@__FILE__)),"winget.ps0")) $url $filename`
+        return `powershell -file $(joinpath(dirname(abspath(@__FILE__)),"winget.ps1")) $url $filename`
     else
         error("No download agent available; install curl, wget, fetch, or powershell.")
     end
