@@ -153,7 +153,7 @@ mskbindir =
                 strip(read(f,String))
             end
 
-        verurl   = "https://$downloadhost/stable/$mskvmajor/version"        
+        verurl   = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
 
         cur_version =
             if isfile(joinpath(bindepsdir,"version"))
