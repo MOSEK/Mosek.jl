@@ -34,7 +34,7 @@ maketask() do task
 
         solutionsummary(task,MSK_STREAM_MSG)
     catch e
-        printlnFailed to solve: $e")
+        println("Failed to solve: $e")
     end
         
 end
