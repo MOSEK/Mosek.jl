@@ -44,7 +44,7 @@ function production(productNames     :: Vector{String},
         putobjsense(t,MSK_OBJECTIVE_SENSE_MAXIMIZE)
         putclist(t,Int32[1:n...],profit)
 
-        optimize(t)
+        r = optimize(t,"mosek://solve.mosek.com:30080")
         xx = getxx(t,MSK_SOL_BAS)
         println("Initial solution:")
         for i in 1:n

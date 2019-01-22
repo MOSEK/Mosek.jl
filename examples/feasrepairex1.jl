@@ -29,7 +29,7 @@ maketask() do task
     sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
     println("Minimized sum of violations = $sum_viol\n")
 
-    optimize(task)
+    optimize(task,"mosek://solve.mosek.com:30080")
 
     solutionsummary(task,MSK_STREAM_MSG)
 end

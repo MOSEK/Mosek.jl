@@ -4,18 +4,6 @@
 # change is submitted).
 # If there is no valid license file, we default to that file.
 
-if haskey(ENV,"MOSEKLM_LICENSE_FILE")
-    # that's nice
-elseif haskey(ENV,"HOME")
-    if isfile(joinpath(ENV["HOME"],"mosek","mosek.lic"))
-        # our lucky day!
-    else
-        import Mosek
-        Mosek.putlicensepath(Mosek.msk_global_env,joinpath(@__DIR__,"..","test",".dontuse-probablyexpired.lic"))
-    end
-end
-
-
 using Test
 
 include("apitest.jl")

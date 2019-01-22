@@ -39,7 +39,7 @@ function intProduction(productNames     :: Vector{String},
         putcallbackfunc(t,callbackfunc)
 
         writedata(t,"test.opf")
-        optimize(t)
+        optimize(t,"mosek://solve.mosek.com:30080")
         
         xx = getxx(t,MSK_SOL_ITG)
         println("Final solution: $xx")

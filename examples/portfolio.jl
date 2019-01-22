@@ -87,7 +87,7 @@ function basicPortfolio(w :: Float64, x0 :: Vector{Float64}, mu :: Vector{Float6
         # Turn all log output off.
         putintparam(t,MSK_IPAR_LOG, Int32(0))
 
-        optimize(t)
+        optimize(t,"mosek://solve.mosek.com:30080")
 
         # Display the solution summary for quick inspection of results.
         solutionsummary(t, MSK_STREAM_MSG) 

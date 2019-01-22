@@ -79,7 +79,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
     
     
-    r = optimize(task)
+    r = optimize(task,"mosek://solve.mosek.com:30080")
     if r != MSK_RES_OK
         println("Mosek warning: $r")
     end
