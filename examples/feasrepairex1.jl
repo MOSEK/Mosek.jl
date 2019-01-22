@@ -24,12 +24,17 @@ maketask() do task
 
     putintparam(task,MSK_IPAR_LOG_FEAS_REPAIR,3)
 
-    primalrepair(task,ones(ncons),ones(ncons),ones(nvars),ones(nvars))
+    try 
+        primalrepair(task,ones(ncons),ones(ncons),ones(nvars),ones(nvars))
 
-    sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
-    println("Minimized sum of violations = $sum_viol\n")
+        sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
+        println("Minimized sum of violations = $sum_viol\n")
+        
+        optimize(task,"mosek://solve.mosek.com:30080")
 
-    optimize(task,"mosek://solve.mosek.com:30080")
-
-    solutionsummary(task,MSK_STREAM_MSG)
+        solutionsummary(task,MSK_STREAM_MSG)
+    catch e
+        printlnFailed to solve: $e")
+    end
+        
 end
