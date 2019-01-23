@@ -54,6 +54,6 @@ function test_mathprogbase(solver)
 
 end
 
-test_mathprogbase(Mosek.MosekSolver(QUIET = true))
+test_mathprogbase(Mosek.MosekSolver(QUIET = true, fallback = "mosek://solve.mosek.com"))
 
 end

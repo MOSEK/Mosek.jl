@@ -250,6 +250,8 @@ function loadoptions_internal!(t::Mosek.Task, options)
         parname = string(option)
         if parname == "QUIET"
             be_quiet = convert(Bool,val)
+        elseif parname == "fallback"
+            #pass
         elseif startswith(parname, "MSK_IPAR_")
             Mosek.putnaintparam(t, parname, convert(Integer, val))
         elseif startswith(parname, "MSK_DPAR_")

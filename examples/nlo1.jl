@@ -100,31 +100,33 @@ maketask() do t
                    grdconi,
                    heslag)
 
-    #optimize(t)
-    optimize(t,"solve.mosek.com","30080")
+    try 
+        optimize(t)
+        
+        # Print a summary containing information
+        # about the solution for debugging purposes
+        solutionsummary(t,MSK_STREAM_MSG)
 
-    # Print a summary containing information
-    # about the solution for debugging purposes
-    solutionsummary(t,MSK_STREAM_MSG)
+        # Get status information about the solution
+        solsta = getsolsta(t,MSK_SOL_ITR)
 
-    # Get status information about the solution
-    solsta = getsolsta(t,MSK_SOL_ITR)
-
-    if solsta in     [ MSK_SOL_STA_OPTIMAL, 
-                      MSK_SOL_STA_NEAR_OPTIMAL ]
-        xx = getxx(t,MSK_SOL_ITR)
-        println("Optimal solution:\n")
-        show(xx)
-        println()
-    elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
-                      MSK_SOL_STA_PRIM_INFEAS_CER,
-                      MSK_SOL_STA_NEAR_DUAL_INFEAS_CER,
-                      MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
-        println("Primal or dual infeasibility certificate found.\n")
-    elseif solsta == MSK_SOL_STA_UNKNOWN
-        println("Unknown solution status\n")
-    else
-        @printf("Other solution status (%d)\n",solsta)
+        if solsta in     [ MSK_SOL_STA_OPTIMAL, 
+                           MSK_SOL_STA_NEAR_OPTIMAL ]
+            xx = getxx(t,MSK_SOL_ITR)
+            println("Optimal solution:\n")
+            show(xx)
+            println()
+        elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
+                           MSK_SOL_STA_PRIM_INFEAS_CER,
+                           MSK_SOL_STA_NEAR_DUAL_INFEAS_CER,
+                           MSK_SOL_STA_NEAR_PRIM_INFEAS_CER ]
+            println("Primal or dual infeasibility certificate found.\n")
+        elseif solsta == MSK_SOL_STA_UNKNOWN
+            println("Unknown solution status\n")
+        else
+            @printf("Other solution status (%d)\n",solsta)
+        end
+    catch e
+        println("Failed to solve: $e")
     end
-
 end

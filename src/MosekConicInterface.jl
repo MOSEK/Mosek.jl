@@ -50,6 +50,7 @@ mutable struct MosekMathProgConicModel <: MathProgBase.AbstractConicModel
     # last termination code, used for status(task)
     lasttrm :: Mosek.Rescode
 
+    fallbacksolver :: Union{String,Nothing}
     # Solver options
     options
 end
@@ -70,6 +71,7 @@ function MathProgBase.ConicModel(s::Mosek.MosekSolver)
                                 Int64[],  # barconij
                                 Int32[],  # conbk
                                 Mosek.MSK_RES_OK,
+                                nothing,
                                 s.options)
     loadoptions!(m)
 
@@ -78,7 +80,12 @@ end
 
 
 function loadoptions!(m::MosekMathProgConicModel)
-  loadoptions_internal!(m.task, m.options)
+    for (key,value) in m.options
+        if key == :fallback
+            m.fallbacksolver = value
+        end
+    end
+    loadoptions_internal!(m.task, m.options)
 end
 
 
@@ -579,7 +586,11 @@ MathProgBase.getobjval(m::MosekMathProgConicModel) = getobjval(m.task)
 
 function MathProgBase.optimize!(m::MosekMathProgConicModel)
     try
-        m.lasttrm = Mosek.optimize(m.task)
+        if m.fallbacksolver != nothing
+            m.lasttrm = Mosek.optimize(m.task,m.fallbacksolver)
+        else
+            m.lasttrm = Mosek.optimize(m.task)
+        end
         Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
     catch err
         if isa(err,Mosek.MosekError)

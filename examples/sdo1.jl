@@ -100,8 +100,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
 
     # Solve the problem and print summary
-    #optimize(task)
-    optimize(task,"solve.mosek.com","30080")
+    optimize(task,"mosek://solve.mosek.com:30080")
     solutionsummary(task,MSK_STREAM_MSG)
 
     # Get status information about the solution

@@ -65,8 +65,7 @@ maketask() do task
                    [ MSK_VAR_TYPE_INT, MSK_VAR_TYPE_INT ])
     
     # Optimize the task
-    #optimize(task)
-    optimize(task,"solve.mosek.com","30080")
+    optimize(task,"mosek://solve.mosek.com:30080")
 
     # Print a summary containing information
     # about the solution for debugging purposes

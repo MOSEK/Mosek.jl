@@ -31,8 +31,7 @@ maketask() do task
     sum_viol = getdouinf(task,MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ)
     @printf("Minimized sum of violations = %e\n", sum_viol)
 
-    #optimize(task)
-    optimize(task,"solve.mosek.com","30080")
+    optimize(task,"mosek://solve.mosek.com:30080")
 
     solutionsummary(task,MSK_STREAM_MSG)
 end

@@ -23,6 +23,7 @@ mutable struct MosekLinearQuadraticModel <: MathProgBase.AbstractLinearQuadratic
 
     lasttrm    :: Mosek.Rescode
 
+    fallback   :: Union{String,Nothing}
     options
 end
 
@@ -65,6 +66,7 @@ function MathProgBase.LinearQuadraticModel(s::Mosek.MosekSolver)
 
                                 Mosek.MSK_RES_OK,
 
+                                nothing,
                                 s.options)
     loadoptions!(r)
     r
@@ -188,7 +190,13 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
 end
 
 function loadoptions!(m::MosekLinearQuadraticModel)
-  loadoptions_internal!(m.task, m.options)
+    println("options = ",m.options)
+    for (key,value) in m.options
+        if key == :fallback
+            m.fallback = value
+        end
+    end
+    loadoptions_internal!(m.task, m.options)
 end
 
 function MathProgBase.writeproblem(m::MosekLinearQuadraticModel, filename::AbstractString)
@@ -656,7 +664,11 @@ end
 
 function MathProgBase.optimize!(m::MosekLinearQuadraticModel)
     try
-        m.lasttrm = Mosek.optimize(m.task)
+        if m.fallback != nothing
+            m.lasttrm = Mosek.optimize(m.task,m.fallback)
+        else
+            m.lasttrm = Mosek.optimize(m.task)
+        end
         Mosek.solutionsummary(m.task,Mosek.MSK_STREAM_LOG)
     catch err
         if isa(err,Mosek.MosekError)
