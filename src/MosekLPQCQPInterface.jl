@@ -190,7 +190,6 @@ function MathProgBase.loadproblem!(m::MosekLinearQuadraticModel,
 end
 
 function loadoptions!(m::MosekLinearQuadraticModel)
-    println("options = ",m.options)
     for (key,value) in m.options
         if key == :fallback
             m.fallback = value
