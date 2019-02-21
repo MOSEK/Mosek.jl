@@ -119,4 +119,4 @@ provided value.
 `MathOptInterface`
 ------------------
 
-The `MathOptInterface` for MOSEK is a separate package called `MathOptInterfaceMosek`.
+The `MathOptInterface` for MOSEK is a separate package called [`MathOptInterfaceMosek`](https://github.com/JuliaOpt/MathOptInterfaceMosek.jl).
