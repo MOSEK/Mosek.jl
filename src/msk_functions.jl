@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.55
+# MOSEK 9.0.79
 
 export
   analyzenames,
@@ -138,6 +138,7 @@ export
   getreducedcosts,
   getskc,
   getskcslice,
+  getskn,
   getskx,
   getskxslice,
   getslc,
@@ -211,7 +212,9 @@ export
   putclist,
   putconbound,
   putconboundlist,
+  putconboundlistconst,
   putconboundslice,
+  putconboundsliceconst,
   putcone,
   putconename,
   putconname,
@@ -259,7 +262,9 @@ export
   puttaskname,
   putvarbound,
   putvarboundlist,
+  putvarboundlistconst,
   putvarboundslice,
+  putvarboundsliceconst,
   putvarname,
   putvarsolutionj,
   putvartype,
@@ -276,6 +281,7 @@ export
   readlpstring,
   readopfstring,
   readparamfile,
+  readptfstring,
   readsolution,
   readsummary,
   readtask,
@@ -4130,6 +4136,29 @@ function getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
 end
 
 """
+    skn = getskn(task_:: MSKtask,whichsol_:: Soltype)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `skn :: Vector{Stakey}`. Status keys for the conic constraints.
+
+Obtains the status keys for the conic constraints.
+"""
+function getskn end
+function getskn(task_:: MSKtask,whichsol_:: Soltype)
+  __tmp_var_0 = getnumcone(task_)
+  skn_ = Vector{Int32}(undef,__tmp_var_0)
+  res = disable_sigint() do
+    @msk_ccall( "getskn",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skn_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (Stakey[ Stakey(i) for i in skn_])
+end
+
+"""
     skx = getskx(task_:: MSKtask,whichsol_:: Soltype)
 
 * `task :: MSKtask`. An optimization task.
@@ -6359,14 +6388,14 @@ function putclist(task_:: MSKtask,subj_:: Vector{Int32},val_:: Vector{Float64})
 end
 
 """
-    putconbound{T1,T3,T4}(task:: MSKtask,i:: T1,bk:: Boundkey,bl:: T3,bu:: T4)
-    putconbound(task_:: MSKtask,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
+    putconbound{T1,T3,T4}(task:: MSKtask,i:: T1,bkc:: Boundkey,blc:: T3,buc:: T4)
+    putconbound(task_:: MSKtask,i_:: Int32,bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
 
 * `task :: MSKtask`. An optimization task.
 * `i :: Int32`. Index of the constraint.
-* `bk :: Boundkey`. New bound key.
-* `bl :: Float64`. New lower bound.
-* `bu :: Float64`. New upper bound.
+* `bkc :: Boundkey`. New bound key.
+* `blc :: Float64`. New lower bound.
+* `buc :: Float64`. New upper bound.
 
 Changes the bounds for one constraint.
 
@@ -6374,10 +6403,10 @@ If the bound value specified is numerically larger than `MSK_DPAR_DATA_TOL_BOUND
 changed accordingly. If a bound value is numerically larger than `MSK_DPAR_DATA_TOL_BOUND_WRN``, a warning will be displayed, but the bound is inputted as specified.
 """
 function putconbound end
-putconbound(task:: MSKtask,i:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putconbound(task,convert(Int32,i),bk,convert(Float64,bl),convert(Float64,bu))
-function putconbound(task_:: MSKtask,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
+putconbound(task:: MSKtask,i:: T1,bkc:: Boundkey,blc:: T3,buc:: T4) where {T1,T3,T4} = putconbound(task,convert(Int32,i),bkc,convert(Float64,blc),convert(Float64,buc))
+function putconbound(task_:: MSKtask,i_:: Int32,bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putconbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,i_-1,bk_.value,bl_,bu_)
+    @msk_ccall( "putconbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,i_-1,bkc_.value,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6386,24 +6415,24 @@ function putconbound(task_:: MSKtask,i_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_
 end
 
 """
-    putconboundlist{T1,T3,T4}(task:: MSKtask,sub:: Vector{T1},bk:: Vector{Boundkey},bl:: Vector{T3},bu:: Vector{T4})
-    putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
+    putconboundlist{T1,T3,T4}(task:: MSKtask,sub:: Vector{T1},bkc:: Vector{Boundkey},blc:: Vector{T3},buc:: Vector{T4})
+    putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bkc_:: Vector{Boundkey},blc_:: Vector{Float64},buc_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
 * `sub :: Vector{Int32}`. List of constraint indexes.
-* `bk :: Vector{Int32}`. Bound keys.
-* `bl :: Vector{Float64}`. Values for lower bounds.
-* `bu :: Vector{Float64}`. Values for upper bounds.
+* `bkc :: Vector{Int32}`. Bound keys for the constraints.
+* `blc :: Vector{Float64}`. Lower bounds for the constraints.
+* `buc :: Vector{Float64}`. Upper bounds for the constraints.
 
 Changes the bounds for a list of constraints. If multiple bound changes are specified for a constraint, then only the last change takes effect. Data checks are performed as in `Mosek.putconbound`.
 """
 function putconboundlist end
-putconboundlist(task:: MSKtask,sub:: Vector{T1},bk:: Vector{Boundkey},bl:: Vector{T3},bu:: Vector{T4}) where {T1,T3,T4} = putconboundlist(task,convert(Vector{Int32},sub),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
-function putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
-  bk_i32 = Int32[item.value for item in bk_]
-  num_ = minimum([ length(sub_),length(bk_),length(bl_),length(bu_) ])
+putconboundlist(task:: MSKtask,sub:: Vector{T1},bkc:: Vector{Boundkey},blc:: Vector{T3},buc:: Vector{T4}) where {T1,T3,T4} = putconboundlist(task,convert(Vector{Int32},sub),bkc,convert(Vector{Float64},blc),convert(Vector{Float64},buc))
+function putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bkc_:: Vector{Boundkey},blc_:: Vector{Float64},buc_:: Vector{Float64})
+  bkc_i32 = Int32[item.value for item in bkc_]
+  num_ = minimum([ length(sub_),length(bkc_),length(blc_),length(buc_) ])
   res = disable_sigint() do
-    @msk_ccall( "putconboundlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bk_,bl_,bu_)
+    @msk_ccall( "putconboundlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bkc_,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6412,39 +6441,89 @@ function putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bk_:: Vector{Bound
 end
 
 """
-    putconboundslice{T1,T2,T4,T5}(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5})
-    putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
+    putconboundlistconst{T1,T3,T4}(task:: MSKtask,sub:: Vector{T1},bkc:: Boundkey,blc:: T3,buc:: T4)
+    putconboundlistconst(task_:: MSKtask,sub_:: Vector{Int32},bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `sub :: Vector{Int32}`. List of constraint indexes.
+* `bkc :: Boundkey`. New bound key for all constraints in the list.
+* `blc :: Float64`. New lower bound for all constraints in the list.
+* `buc :: Float64`. New upper bound for all constraints in the list.
+
+Changes the bounds for one or more constraints. Data checks are performed as in `Mosek.putconbound`.
+"""
+function putconboundlistconst end
+putconboundlistconst(task:: MSKtask,sub:: Vector{T1},bkc:: Boundkey,blc:: T3,buc:: T4) where {T1,T3,T4} = putconboundlistconst(task,convert(Vector{Int32},sub),bkc,convert(Float64,blc),convert(Float64,buc))
+function putconboundlistconst(task_:: MSKtask,sub_:: Vector{Int32},bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
+  num_ = minimum([ length(sub_) ])
+  res = disable_sigint() do
+    @msk_ccall( "putconboundlistconst",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Int32,Float64,Float64,),task_.task,num_,sub_ .- Int32(1),bkc_.value,blc_,buc_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putconboundslice{T1,T2,T4,T5}(task:: MSKtask,first:: T1,last:: T2,bkc:: Vector{Boundkey},blc:: Vector{T4},buc:: Vector{T5})
+    putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bkc_:: Vector{Boundkey},blc_:: Vector{Float64},buc_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. First index in the sequence.
 * `last :: Int32`. Last index plus 1 in the sequence.
-* `bk :: Vector{Int32}`. Bound keys.
-* `bl :: Vector{Float64}`. Values for lower bounds.
-* `bu :: Vector{Float64}`. Values for upper bounds.
+* `bkc :: Vector{Int32}`. Bound keys for the constraints.
+* `blc :: Vector{Float64}`. Lower bounds for the constraints.
+* `buc :: Vector{Float64}`. Upper bounds for the constraints.
 
 Changes the bounds for a slice of the constraints. Data checks are performed as in `Mosek.putconbound`.
 """
 function putconboundslice end
-putconboundslice(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) where {T1,T2,T4,T5} = putconboundslice(task,convert(Int32,first),convert(Int32,last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
-function putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
+putconboundslice(task:: MSKtask,first:: T1,last:: T2,bkc:: Vector{Boundkey},blc:: Vector{T4},buc:: Vector{T5}) where {T1,T2,T4,T5} = putconboundslice(task,convert(Int32,first),convert(Int32,last),bkc,convert(Vector{Float64},blc),convert(Vector{Float64},buc))
+function putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bkc_:: Vector{Boundkey},blc_:: Vector{Float64},buc_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
-  if length(bk_) < __tmp_var_0
-    println("Array argument bk is not long enough")
+  if length(bkc_) < __tmp_var_0
+    println("Array argument bkc is not long enough")
     throw(BoundsError())
   end
-  bk_i32 = Int32[item.value for item in bk_]
+  bkc_i32 = Int32[item.value for item in bkc_]
   __tmp_var_1 = ((last_) - (first_))
-  if length(bl_) < __tmp_var_1
-    println("Array argument bl is not long enough")
+  if length(blc_) < __tmp_var_1
+    println("Array argument blc is not long enough")
     throw(BoundsError())
   end
   __tmp_var_2 = ((last_) - (first_))
-  if length(bu_) < __tmp_var_2
-    println("Array argument bu is not long enough")
+  if length(buc_) < __tmp_var_2
+    println("Array argument buc is not long enough")
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putconboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
+    @msk_ccall( "putconboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bkc_,blc_,buc_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putconboundsliceconst{T1,T2,T4,T5}(task:: MSKtask,first:: T1,last:: T2,bkc:: Boundkey,blc:: T4,buc:: T5)
+    putconboundsliceconst(task_:: MSKtask,first_:: Int32,last_:: Int32,bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `first :: Int32`. First index in the sequence.
+* `last :: Int32`. Last index plus 1 in the sequence.
+* `bkc :: Boundkey`. New bound key for all constraints in the slice.
+* `blc :: Float64`. New lower bound for all constraints in the slice.
+* `buc :: Float64`. New upper bound for all constraints in the slice.
+
+Changes the bounds for a slice of the constraints. Data checks are performed as in `Mosek.putconbound`.
+"""
+function putconboundsliceconst end
+putconboundsliceconst(task:: MSKtask,first:: T1,last:: T2,bkc:: Boundkey,blc:: T4,buc:: T5) where {T1,T2,T4,T5} = putconboundsliceconst(task,convert(Int32,first),convert(Int32,last),bkc,convert(Float64,blc),convert(Float64,buc))
+function putconboundsliceconst(task_:: MSKtask,first_:: Int32,last_:: Int32,bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
+  res = disable_sigint() do
+    @msk_ccall( "putconboundsliceconst",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,),task_.task,first_-1,last_-1,bkc_.value,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7674,14 +7753,14 @@ function puttaskname(task_:: MSKtask,taskname_:: AbstractString)
 end
 
 """
-    putvarbound{T1,T3,T4}(task:: MSKtask,j:: T1,bk:: Boundkey,bl:: T3,bu:: T4)
-    putvarbound(task_:: MSKtask,j_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
+    putvarbound{T1,T3,T4}(task:: MSKtask,j:: T1,bkx:: Boundkey,blx:: T3,bux:: T4)
+    putvarbound(task_:: MSKtask,j_:: Int32,bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
 
 * `task :: MSKtask`. An optimization task.
 * `j :: Int32`. Index of the variable.
-* `bk :: Boundkey`. New bound key.
-* `bl :: Float64`. New lower bound.
-* `bu :: Float64`. New upper bound.
+* `bkx :: Boundkey`. New bound key.
+* `blx :: Float64`. New lower bound.
+* `bux :: Float64`. New upper bound.
 
 Changes the bounds for one variable.
 
@@ -7692,10 +7771,10 @@ changed accordingly. If a bound value is numerically larger than
 inputted as specified.
 """
 function putvarbound end
-putvarbound(task:: MSKtask,j:: T1,bk:: Boundkey,bl:: T3,bu:: T4) where {T1,T3,T4} = putvarbound(task,convert(Int32,j),bk,convert(Float64,bl),convert(Float64,bu))
-function putvarbound(task_:: MSKtask,j_:: Int32,bk_:: Boundkey,bl_:: Float64,bu_:: Float64)
+putvarbound(task:: MSKtask,j:: T1,bkx:: Boundkey,blx:: T3,bux:: T4) where {T1,T3,T4} = putvarbound(task,convert(Int32,j),bkx,convert(Float64,blx),convert(Float64,bux))
+function putvarbound(task_:: MSKtask,j_:: Int32,bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putvarbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,j_-1,bk_.value,bl_,bu_)
+    @msk_ccall( "putvarbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,j_-1,bkx_.value,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7730,39 +7809,89 @@ function putvarboundlist(task_:: MSKtask,sub_:: Vector{Int32},bkx_:: Vector{Boun
 end
 
 """
-    putvarboundslice{T1,T2,T4,T5}(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5})
-    putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
+    putvarboundlistconst{T1,T3,T4}(task:: MSKtask,sub:: Vector{T1},bkx:: Boundkey,blx:: T3,bux:: T4)
+    putvarboundlistconst(task_:: MSKtask,sub_:: Vector{Int32},bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `sub :: Vector{Int32}`. List of variable indexes.
+* `bkx :: Boundkey`. New bound key for all variables in the list.
+* `blx :: Float64`. New lower bound for all variables in the list.
+* `bux :: Float64`. New upper bound for all variables in the list.
+
+Changes the bounds for one or more variables. Data checks are performed as in `Mosek.putvarbound`.
+"""
+function putvarboundlistconst end
+putvarboundlistconst(task:: MSKtask,sub:: Vector{T1},bkx:: Boundkey,blx:: T3,bux:: T4) where {T1,T3,T4} = putvarboundlistconst(task,convert(Vector{Int32},sub),bkx,convert(Float64,blx),convert(Float64,bux))
+function putvarboundlistconst(task_:: MSKtask,sub_:: Vector{Int32},bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
+  num_ = minimum([ length(sub_) ])
+  res = disable_sigint() do
+    @msk_ccall( "putvarboundlistconst",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Int32,Float64,Float64,),task_.task,num_,sub_ .- Int32(1),bkx_.value,blx_,bux_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putvarboundslice{T1,T2,T4,T5}(task:: MSKtask,first:: T1,last:: T2,bkx:: Vector{Boundkey},blx:: Vector{T4},bux:: Vector{T5})
+    putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bkx_:: Vector{Boundkey},blx_:: Vector{Float64},bux_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
 * `first :: Int32`. First index in the sequence.
 * `last :: Int32`. Last index plus 1 in the sequence.
-* `bk :: Vector{Int32}`. Bound keys.
-* `bl :: Vector{Float64}`. Values for lower bounds.
-* `bu :: Vector{Float64}`. Values for upper bounds.
+* `bkx :: Vector{Int32}`. Bound keys for the variables.
+* `blx :: Vector{Float64}`. Lower bounds for the variables.
+* `bux :: Vector{Float64}`. Upper bounds for the variables.
 
 Changes the bounds for a slice of the variables. Data checks are performed as in `Mosek.putvarbound`.
 """
 function putvarboundslice end
-putvarboundslice(task:: MSKtask,first:: T1,last:: T2,bk:: Vector{Boundkey},bl:: Vector{T4},bu:: Vector{T5}) where {T1,T2,T4,T5} = putvarboundslice(task,convert(Int32,first),convert(Int32,last),bk,convert(Vector{Float64},bl),convert(Vector{Float64},bu))
-function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bk_:: Vector{Boundkey},bl_:: Vector{Float64},bu_:: Vector{Float64})
+putvarboundslice(task:: MSKtask,first:: T1,last:: T2,bkx:: Vector{Boundkey},blx:: Vector{T4},bux:: Vector{T5}) where {T1,T2,T4,T5} = putvarboundslice(task,convert(Int32,first),convert(Int32,last),bkx,convert(Vector{Float64},blx),convert(Vector{Float64},bux))
+function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bkx_:: Vector{Boundkey},blx_:: Vector{Float64},bux_:: Vector{Float64})
   __tmp_var_0 = ((last_) - (first_))
-  if length(bk_) < __tmp_var_0
-    println("Array argument bk is not long enough")
+  if length(bkx_) < __tmp_var_0
+    println("Array argument bkx is not long enough")
     throw(BoundsError())
   end
-  bk_i32 = Int32[item.value for item in bk_]
+  bkx_i32 = Int32[item.value for item in bkx_]
   __tmp_var_1 = ((last_) - (first_))
-  if length(bl_) < __tmp_var_1
-    println("Array argument bl is not long enough")
+  if length(blx_) < __tmp_var_1
+    println("Array argument blx is not long enough")
     throw(BoundsError())
   end
   __tmp_var_2 = ((last_) - (first_))
-  if length(bu_) < __tmp_var_2
-    println("Array argument bu is not long enough")
+  if length(bux_) < __tmp_var_2
+    println("Array argument bux is not long enough")
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putvarboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,bl_,bu_)
+    @msk_ccall( "putvarboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bkx_,blx_,bux_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putvarboundsliceconst{T1,T2,T4,T5}(task:: MSKtask,first:: T1,last:: T2,bkx:: Boundkey,blx:: T4,bux:: T5)
+    putvarboundsliceconst(task_:: MSKtask,first_:: Int32,last_:: Int32,bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `first :: Int32`. First index in the sequence.
+* `last :: Int32`. Last index plus 1 in the sequence.
+* `bkx :: Boundkey`. New bound key for all variables in the slice.
+* `blx :: Float64`. New lower bound for all variables in the slice.
+* `bux :: Float64`. New upper bound for all variables in the slice.
+
+Changes the bounds for a slice of the variables. Data checks are performed as in `Mosek.putvarbound`.
+"""
+function putvarboundsliceconst end
+putvarboundsliceconst(task:: MSKtask,first:: T1,last:: T2,bkx:: Boundkey,blx:: T4,bux:: T5) where {T1,T2,T4,T5} = putvarboundsliceconst(task,convert(Int32,first),convert(Int32,last),bkx,convert(Float64,blx),convert(Float64,bux))
+function putvarboundsliceconst(task_:: MSKtask,first_:: Int32,last_:: Int32,bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
+  res = disable_sigint() do
+    @msk_ccall( "putvarboundsliceconst",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,),task_.task,first_-1,last_-1,bkx_.value,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8145,6 +8274,28 @@ function readparamfile end
 function readparamfile(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
     @msk_ccall( "readparamfile",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    readptfstring(task_:: MSKtask,data_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `data :: String`. Problem data in text format.
+
+Load task data from a PTF string, replacing any data that already exists in the task
+object. All problem data, parameters and other settings are resorted, but if the string contains solutions, the
+solution status after loading a file is set to unknown, even if it is optimal
+or otherwise well-defined.
+"""
+function readptfstring end
+function readptfstring(task_:: MSKtask,data_:: AbstractString)
+  res = disable_sigint() do
+    @msk_ccall( "readptfstring",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(data_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
