@@ -1,7 +1,7 @@
 Mosek.jl
 ========
 
-Interface to the Mosek solver in Julia. 
+Interface to the Mosek solver in Julia.
 
 Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Most MOSEK C API functions are available
@@ -9,7 +9,7 @@ Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Interface for the MOSEK general convex solver
 - Implementation of the `LinprogSolver` interface and other interfaces for `JuMP` (https://github.com/JuliaOpt/JuMP.jl)
 
-MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite), 
+MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite),
 QP (quadratic objective, quadratic constraints), and MIP (mixed-integer problems). These can be mixed as follows:
 - LP+CONIC+SDP
 - LP+CONIC+MIP
@@ -26,14 +26,14 @@ Use the Julia package manager to install Mosek.jl:
 ```julia
 Pkg.add("Mosek")
 ```
-    
+
 The `Mosek.jl` package requires the MOSEK distribution binaries run. Upon
 installation it will attempt to either local an installed MOSEK or download and
 install from the MOSEK website (www.mosek.com):
 
 1. If the environment variable `MOSEKBINDIR` is defined, the installer will assume that this directory contains the necessary libraries. If it does not, the installer will fail.
 2. If the current `MOSEK.jl` installation uses a user-defined MOSEK and this is a valid version, this will be used.
-3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used. 
+3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used.
 4. If no usable MOSEK installation is found here, the installer will
   attempt to download and unpack the latest distro. In this case doing
   `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
@@ -90,7 +90,7 @@ Documentation
 
 All functions and constants in the Mosek.jl are briefly documented in docs strings, and an HTML reference can be built using `Documenter.jl`.
 
-For a more complete description of functions, please refer to 
+For a more complete description of functions, please refer to
 [the MOSEK C API documentation](https://www.mosek.com/documentation/).
 
 `MathProgBase` interface
@@ -102,4 +102,4 @@ The [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) for MOSEK is a s
 `MathOptInterface`
 ------------------
 
-The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called `MathOptInterfaceMosek`.
+The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called [`MathOptInterfaceMosek`](https://github.com/JuliaOpt/MathOptInterfaceMosek.jl).
