@@ -36,9 +36,4 @@
         include("../examples/callback.jl")
 
     end
-    @testset "feasrepairex1" begin
-        push!(ARGS, "$(dirname(dirname(@__FILE__)))/examples/feasrepair.lp")
-        include("../examples/feasrepairex1.jl")
-
-    end
 end
