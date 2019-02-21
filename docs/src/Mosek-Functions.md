@@ -31,6 +31,7 @@ appendconeseq
 appendconesseq
 appendcons
 appendsparsesymmat
+appendsparsesymmatlist
 appendvars
 basiscond
 bktostr
@@ -47,6 +48,9 @@ conetypetostr
 deletesolution
 dualsensitivity
 echointro
+generateconenames
+generateconnames
+generatevarnames
 getacol
 getacolnumnz
 getacolslice
@@ -154,6 +158,7 @@ getqobjij
 getreducedcosts
 getskc
 getskcslice
+getskn
 getskx
 getskxslice
 getslc
@@ -199,10 +204,10 @@ licensecleanup
 linkfiletostream
 onesolutionsummary
 optimize
+optimizermt
 optimizersummary
 primalrepair
 primalsensitivity
-printdata
 printparam
 putacol
 putacollist
@@ -215,6 +220,8 @@ putarowslice
 putatruncatetol
 putbarablocktriplet
 putbaraij
+putbaraijlist
+putbararowlist
 putbarcblocktriplet
 putbarcj
 putbarsj
@@ -225,7 +232,9 @@ putcj
 putclist
 putconbound
 putconboundlist
+putconboundlistconst
 putconboundslice
+putconboundsliceconst
 putcone
 putconename
 putconname
@@ -273,7 +282,9 @@ putsuxslice
 puttaskname
 putvarbound
 putvarboundlist
+putvarboundlistconst
 putvarboundslice
+putvarboundsliceconst
 putvarname
 putvarsolutionj
 putvartype
@@ -286,7 +297,11 @@ puty
 putyslice
 readdata
 readdataformat
+readjsonstring
+readlpstring
+readopfstring
 readparamfile
+readptfstring
 readsolution
 readsummary
 readtask
@@ -297,6 +312,7 @@ removevars
 resizetask
 sensitivityreport
 setdefaults
+setupthreads
 solutiondef
 solutionsummary
 solvewithbasis
