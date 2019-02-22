@@ -3,10 +3,19 @@ module Mosek
 using SparseArrays
 
 
+
 if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
 else
     error("Mosek not properly installed. Please run Pkg.build(\"Mosek\")")
+end
+
+# The MathOptInterface wrapper is in MosekTools.jl but it can be created with
+# `using MosekTools; Mosek.Optimizer()`.
+function Optimizer(args...; kwargs...)
+    error("To use Mosek with JuMP (or MathOptInterface), you need to use ",
+          "the package `MosekTools` (via `using MosekTools`). You may need ",
+          "to first install it via `import Pkg; Pkg.add(\"MosekTools\")`.")
 end
 
 export
@@ -25,7 +34,7 @@ end
 # -----
 # Types
 # -----
-mutable struct MosekError <: Exception
+struct MosekError <: Exception
     rcode :: Int32
     msg   :: String
 end
