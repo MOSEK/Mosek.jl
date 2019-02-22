@@ -11,3 +11,4 @@ include("testexamples.jl")
 #end
 
 include("test_mathprogbase.jl")
+include("test_optimizer.jl")

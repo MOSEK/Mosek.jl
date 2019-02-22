@@ -8,6 +8,14 @@ else
     error("Mosek not properly installed. Please run Pkg.build(\"Mosek\")")
 end
 
+# The MathOptInterface wrapper is in MosekTools.jl but it can be created with
+# `using MosekTools; Mosek.Optimizer()`.
+function Optimizer(args...; kwargs...)
+    error("To use Mosek with JuMP (or MathOptInterface), you need to use ",
+          "the package `MosekTools` (via `using MosekTools`). You may need ",
+          "to first install it via `import Pkg; Pkg.add(\"MosekTools\")`.")
+end
+
 export
     makeenv, maketask, maketask_ptr,
     MosekError
