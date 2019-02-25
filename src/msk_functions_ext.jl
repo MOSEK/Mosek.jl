@@ -22,3 +22,16 @@ function optimize(task:: MSKtask, fallback :: String)
         return optimize(task)
     end
 end
+
+function getclist(task:: MSKtask, subj :: Vector{Int32})
+    n = length(subj)
+    r = Vector{Float64}(n)
+    for i in 1:n
+        r[i] = getcj(task, subj[i])
+    end
+    return r
+end
+
+function getclist(task:: MSKtask, subj :: Vector{T1}) where T1 <: Integer
+    return getclist(task,convert(Vector{Int32},subj))
+end
