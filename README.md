@@ -102,4 +102,4 @@ The [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) for MOSEK is a s
 `MathOptInterface`
 ------------------
 
-The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called [`MathOptInterfaceMosek`](https://github.com/JuliaOpt/MathOptInterfaceMosek.jl).
+The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called [`MosekTools`](https://github.com/JuliaOpt/MosekTools.jl).
