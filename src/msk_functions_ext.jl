@@ -25,7 +25,7 @@ end
 
 function getclist(task:: MSKtask, subj :: Vector{Int32})
     n = length(subj)
-    r = Vector{Float64}(n)
+    r = Vector{Float64}(undef, n)
     for i in 1:n
         r[i] = getcj(task, subj[i])
     end
@@ -33,5 +33,5 @@ function getclist(task:: MSKtask, subj :: Vector{Int32})
 end
 
 function getclist(task:: MSKtask, subj :: Vector{T1}) where T1 <: Integer
-    return getclist(task,convert(Vector{Int32},subj))
+    return getclist(task, convert(Vector{Int32}, subj))
 end
