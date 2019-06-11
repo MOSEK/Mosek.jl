@@ -89,30 +89,31 @@ end
     has_7z  = nothing
     has_zip = nothing    
     function unpack_cmd(file,directory,extension,secondary_extension)
-        global has_7z
-        global has_zip
+        #global has_7z
+        #global has_zip
 
         if has_7z === nothing
-            has_7z  = success(`where 7z`)
-            has_zip = success(`where unzip`)
+            #has_7z  = success(`where 7z`)
+            #has_zip = success(`where unzip`)
         end
 
-        if has_7z
-            if((extension == ".gz" || extension == ".xz" || extension == ".bz2") && secondary_extension == ".tar") ||
-                extension == ".tgz" || extension == ".tbz"
-                return (`7z x $file -y -so`|>`7z x -si -y -ttar -o$directory`)
-            elseif extension == ".zip" || extension == ".7z"
-                return (`7z x $file -y -o$directory`)
-            else
-                error("I don't know how to unpack $file")
-            end
-        elseif has_zip
-            if extension == ".zip"
-                return (`unzip $file -o -d$directory`)
-            else
-                error("I don't know how to unpack $file")
-            end
-        elseif extension == ".zip"
+        #if has_7z
+        #    if((extension == ".gz" || extension == ".xz" || extension == ".bz2") && secondary_extension == ".tar") ||
+        #        extension == ".tgz" || extension == ".tbz"
+        #        return (`7z x $file -y -so`|>`7z x -si -y -ttar -o$directory`)
+        #    elseif extension == ".zip" || extension == ".7z"
+        #        return (`7z x $file -y -o$directory`)
+        #    else
+        #        error("I don't know how to unpack $file")
+        #    end
+        #elseif has_zip
+        #    if extension == ".zip"
+        #        return (`unzip $file -o -d$directory`)
+        #    else
+        #        error("I don't know how to unpack $file")
+        #    end
+        #else
+        if extension == ".zip"
             rm(directory,recursive=true)
             return (`powershell -file $(joinpath(dirname(abspath(@__FILE__)),"winunzip.ps1")) $file $directory`)
         else
