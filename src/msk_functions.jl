@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.79
+# MOSEK 9.0.90
 
 export
   analyzenames,
@@ -16,7 +16,6 @@ export
   basiscond,
   bktostr,
   callbackcodetostr,
-  checkconvexity,
   checkinall,
   checkinlicense,
   checkmem,
@@ -415,19 +414,19 @@ to the problem, where ``\\mathcal{K}`` is a convex cone. ``\\hat{x}`` is a
 subset of the variables which will be specified by the argument
 `submem`. Cone type is specified by `ct`.
 
-Define 
+Define
 
 ```math
  \\hat{x} = x_{\\mathtt{submem}[0]},\\ldots,x_{\\mathtt{submem}[\\mathtt{nummem}-1]}.
 ```
 Depending on the value of `ct` this function appends one of the constraints:
 
-* Quadratic cone (`MSK_CT_QUAD`, requires ``\\mathtt{nummem}\\geq 1``): 
+* Quadratic cone (`MSK_CT_QUAD`, requires ``\\mathtt{nummem}\\geq 1``):
 
 ```math
  \\hat{x}_0 \\geq \\sqrt{\\sum_{i=1}^{i<\\mathtt{nummem}} \\hat{x}_i^2}
 ```
-* Rotated quadratic cone (`MSK_CT_RQUAD`, requires ``\\mathtt{nummem}\\geq 2``): 
+* Rotated quadratic cone (`MSK_CT_RQUAD`, requires ``\\mathtt{nummem}\\geq 2``):
 
 ```math
  2 \\hat{x}_0 \\hat{x}_1 \\geq \\sum_{i=2}^{i<\\mathtt{nummem}} \\hat{x}^2_i, \\mathcal{C}_q \\hat{x}_{0}, \\hat{x}_1 \\geq 0
@@ -765,26 +764,6 @@ function callbackcodetostr(code_:: Callbackcode)
 end
 
 """
-    checkconvexity(task_:: MSKtask)
-
-* `task :: MSKtask`. An optimization task.
-
-This function checks if a quadratic optimization problem is convex. The amount of checking is controlled by `MSK_IPAR_CHECK_CONVEXITY``.
-
-The function reports an error if the problem is not convex.
-"""
-function checkconvexity end
-function checkconvexity(task_:: MSKtask)
-  res = disable_sigint() do
-    @msk_ccall( "checkconvexity",Int32,(Ptr{Nothing},),task_.task)
-  end
-  if res != MSK_RES_OK.value
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-end
-
-"""
     checkinall(env_:: MSKenv)
 
 * `env :: MSKenv`. The MOSEK environment.
@@ -895,22 +874,22 @@ If `lower` is non-zero, then the lower bound is changed as follows:
   \\left\\{
     \\begin{array}{ll}
       - \\infty,       & \\mathtt{finite}=0, \\\\
-      \\mathtt{value}  & \\mbox{otherwise}. 
+      \\mathtt{value}  & \\mbox{otherwise}.
     \\end{array}
   \\right.
 ```
 Otherwise if `lower` is zero, then
 
 ```math
-\\mbox{new upper bound} = 
+\\mbox{new upper bound} =
   \\left\\{
     \\begin{array}{ll}
       \\infty,        & \\mathtt{finite}=0, \\\\
-      \\mathtt{value} & \\mbox{otherwise}. 
+      \\mathtt{value} & \\mbox{otherwise}.
     \\end{array}
   \\right.
 ```
-Please note that this function automatically updates the bound key for the 
+Please note that this function automatically updates the bound key for the
 bound, in particular, if the lower and upper bounds are identical, the
 bound key is changed to `fixed`.
 """
@@ -945,18 +924,18 @@ If `lower` is non-zero, then the lower bound is changed as follows:
   \\left\\{
     \\begin{array}{ll}
       - \\infty,     & \\mathtt{finite}=0, \\\\
-      \\mathtt{value} & \\mbox{otherwise}. 
+      \\mathtt{value} & \\mbox{otherwise}.
     \\end{array}
   \\right.
 ```
 Otherwise if `lower` is zero, then
 
 ```math
-\\mbox{new upper bound} = 
+\\mbox{new upper bound} =
   \\left\\{
     \\begin{array}{ll}
       \\infty,     & \\mathtt{finite}=0, \\\\
-      \\mathtt{value} & \\mbox{otherwise}. 
+      \\mathtt{value} & \\mbox{otherwise}.
     \\end{array}
   \\right.
 ```
@@ -1556,7 +1535,7 @@ end
 * `val :: Vector{Float64}`. Values.
 
 Obtains a sequence of rows from ``A`` in sparse triplet format. The function returns the
-content of all rows whose index `i` satisfies `first <= i < last`. 
+content of all rows whose index `i` satisfies `first <= i < last`.
 The triplets corresponding to nonzero entries are stored in the arrays `subi`, `subj` and `val`.
 """
 function getarowslicetrip end
@@ -1928,7 +1907,7 @@ end
 * `numnz :: Int64`. Number of nonzero elements in barc.
 * `idxj :: Vector{Int64}`. Internal positions of the nonzeros elements in barc.
 
-Internally only the nonzero elements of ``\\bar C`` are stored 
+Internally only the nonzero elements of ``\\bar C`` are stored
 in a vector. This function is used to obtain the nonzero elements of ``\\bar C``
 and their indexes in the internal vector representation (in `idx`). From the index
 detailed information about each nonzero ``\\bar C_j`` can be
@@ -2630,7 +2609,7 @@ end
 * `whichsol :: Soltype`. Selects a solution.
 * `dualobj :: Float64`. Objective value corresponding to the dual solution.
 
-Computes the dual objective value associated with the solution. Note that if the solution is a primal infeasibility certificate, then the fixed term in the objective value is not included. 
+Computes the dual objective value associated with the solution. Note that if the solution is a primal infeasibility certificate, then the fixed term in the objective value is not included.
 
 Moreover, since there is no dual solution associated with an integer solution, an error will be reported if the dual objective value is requested for the integer solution.
 """
@@ -3801,7 +3780,7 @@ end
 * `sub :: Vector{Int32}`. An array of indexes of barX variables.
 * `viol :: Vector{Float64}`. List of violations corresponding to sub.
 
-Computes the primal solution violation for a set of semidefinite variables. 
+Computes the primal solution violation for a set of semidefinite variables.
 Let ``(\\bar X_j)^*`` be the value of the variable ``\\bar X_j`` for the
 specified solution.  Then the primal violation of the solution associated with
 variable ``\\bar X_j`` is given by
@@ -3837,7 +3816,7 @@ end
 * `sub :: Vector{Int32}`. An array of indexes of constraints.
 * `viol :: Vector{Float64}`. List of violations corresponding to sub.
 
-Computes the primal solution violation for a set of constraints. 
+Computes the primal solution violation for a set of constraints.
 The primal violation of the solution associated with the ``i``-th constraint is given by
 
 ```math
@@ -3875,7 +3854,7 @@ end
 * `sub :: Vector{Int32}`. An array of indexes of conic constraints.
 * `viol :: Vector{Float64}`. List of violations corresponding to sub.
 
-Computes the primal solution violation for a set of conic constraints. 
+Computes the primal solution violation for a set of conic constraints.
 Let ``x^*`` be the value of the variable ``x`` for the specified solution.
 For simplicity let us assume that ``x`` is a member of a quadratic cone, then
 the violation is computed as follows
@@ -3916,7 +3895,7 @@ end
 * `sub :: Vector{Int32}`. An array of indexes of x variables.
 * `viol :: Vector{Float64}`. List of violations corresponding to sub.
 
-Computes the primal solution violation associated to a set of variables. 
+Computes the primal solution violation associated to a set of variables.
 Let ``x_j^*`` be the value of ``x_j`` for the specified
 solution.  Then the primal violation of the solution associated with variable
 ``x_j`` is given by
@@ -5216,7 +5195,7 @@ Prepare a task for use with the `Mosek.solvewithbasis` function.
 This function should be called
 
 * immediately before the first call to `Mosek.solvewithbasis`, and
-* immediately before any subsequent call to `Mosek.solvewithbasis` if the task has been modified. 
+* immediately before any subsequent call to `Mosek.solvewithbasis` if the task has been modified.
 
 If the basis is singular i.e. not invertible, then the error :msk:res:`err_basis_singular` is reported.
 """
@@ -5585,7 +5564,7 @@ end
 * `leftrangej :: Vector{Float64}`. Left range for variables.
 * `rightrangej :: Vector{Float64}`. Right range for variables.
 
-Calculates sensitivity information for bounds on variables and constraints. For details on sensitivity 
+Calculates sensitivity information for bounds on variables and constraints. For details on sensitivity
 analysis, the definitions of *shadow price* and *linearity interval* and an example see Section :ref:`doc.sensitivity_analysis`.
 
 The type of sensitivity analysis to be performed (basis or optimal partition)
@@ -5697,7 +5676,7 @@ Change a set of columns in the linear constraint matrix ``A`` with data in spars
 ```math
 \\begin{array}{rl}
   \\mathtt{for} & i=1,\\ldots,+1{num}\\\\
-              & a_{\\mathtt{asub}[k],\\mathtt{sub}[i]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+              & a_{\\mathtt{asub}[k],\\mathtt{sub}[i]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1.
 \\end{array}
 ```
 
@@ -5736,12 +5715,12 @@ end
 * `aval :: Vector{Float64}`. Coefficient values.
 * `A :: SparseMatrixCSC{Float64}`. Sparse matrix defining the column values
 
-Change a slice of columns in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with: 
+Change a slice of columns in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with:
 
 ```math
 \\begin{array}{rl}
   \\mathtt{for} & i=\\mathtt{first},\\ldots,\\mathtt{last}-1\\\\
-              & a_{\\mathtt{asub}[k],i} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+              & a_{\\mathtt{asub}[k],i} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1.
 \\end{array}
 ```
 
@@ -5864,12 +5843,12 @@ end
 * `aval :: Vector{Float64}`. Coefficient values.
 * `At :: SparseMatrixCSC{Float64}`. Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
-Change a set of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested rows are set to zero and then updated with:  
+Change a set of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested rows are set to zero and then updated with:
 
 ```math
 \\begin{array}{rl}
   \\mathtt{for} & i=1,\\ldots,+1{num} \\\\
-               & a_{\\mathtt{sub}[i],\\mathtt{asub}[k]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+               & a_{\\mathtt{sub}[i],\\mathtt{asub}[k]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1.
 \\end{array}
 ```
 
@@ -5913,7 +5892,7 @@ Change a slice of rows in the linear constraint matrix ``A`` with data in sparse
 ```math
 \\begin{array}{rl}
   \\mathtt{for} & i=\\mathtt{first},\\ldots,\\mathtt{last}-1 \\\\
-               & a_{\\mathtt{sub}[i],\\mathtt{asub}[k]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1. 
+               & a_{\\mathtt{sub}[i],\\mathtt{asub}[k]} = \\mathtt{aval}[k],\\mathcal{C}_q k=\\mathtt{ptrb}[i],\\ldots,\\mathtt{ptre}[i]-1.
 \\end{array}
 ```
 
@@ -6040,7 +6019,7 @@ Each element in the ``\\bar A`` matrix is a weighted sum of
 symmetric matrices from the symmetric matrix storage ``E``, so
 ``\\bar A_{ij}`` is a symmetric matrix. By default all elements in
 ``\\bar A`` are 0, so only non-zero elements need be added.
-Setting the same element again will overwrite the earlier entry. 
+Setting the same element again will overwrite the earlier entry.
 
 The symmetric matrices from ``E`` are defined separately
 using the function `Mosek.appendsparsesymmat`.
@@ -6078,7 +6057,7 @@ Each element in the ``\\bar A`` matrix is a weighted sum of
 symmetric matrices from the symmetric matrix storage ``E``, so
 ``\\bar A_{ij}`` is a symmetric matrix. By default all elements in
 ``\\bar A`` are 0, so only non-zero elements need be added.
-Setting the same element again will overwrite the earlier entry. 
+Setting the same element again will overwrite the earlier entry.
 
 The symmetric matrices from ``E`` are defined separately
 using the function `Mosek.appendsparsesymmat`.
@@ -6215,7 +6194,7 @@ Each element in the ``\\bar C`` vector is a weighted sum of
 symmetric matrices from the symmetric matrix storage ``E``, so
 ``\\bar C_{j}`` is a symmetric matrix. By default all elements in
 ``\\bar C`` are 0, so only non-zero elements need be added.
-Setting the same element again will overwrite the earlier entry. 
+Setting the same element again will overwrite the earlier entry.
 
 The symmetric matrices from ``E`` are defined separately
 using the function `Mosek.appendsparsesymmat`.
@@ -6801,9 +6780,9 @@ end
 * `task :: MSKtask`. An optimization task.
 * `maxnumanz :: Int64`. New size of the storage reserved for storing the linear coefficient matrix.
 
-Sets the number of preallocated non-zero entries in ``A``. 
+Sets the number of preallocated non-zero entries in ``A``.
 
-MOSEK stores only the non-zero elements in the linear coefficient matrix ``A`` and it 
+MOSEK stores only the non-zero elements in the linear coefficient matrix ``A`` and it
 cannot predict how much storage is required to store ``A``. Using this
 function it is possible to specify the number of non-zeros to preallocate for
 storing ``A``.
@@ -6902,7 +6881,7 @@ allocate more space for conic constraints.
 It is not mandatory to call this function, since MOSEK will reallocate any
 internal structures whenever it is required.
 
-Please note that `maxnumcon` must be larger than the current number of conic 
+Please note that `maxnumcon` must be larger than the current number of conic
 constraints in the task.
 """
 function putmaxnumcone end
@@ -6962,7 +6941,7 @@ Sets the number of preallocated variables in the optimization task. When this
 number of variables is reached MOSEK will automatically allocate more space
 for variables.
 
-It is not mandatory to call this function. It only gives 
+It is not mandatory to call this function. It only gives
 a hint about the amount of data to preallocate for efficiency reasons.
 
 Please note that `maxnumvar` must be larger than the current number of
@@ -7128,7 +7107,7 @@ for ``t=1,\\ldots,+1{numqcnz}``.
 Please note that:
 
 * For large problems it is essential for the efficiency that the function `Mosek.putmaxnumqnz` is employed to pre-allocate space.
-* Only the lower triangular parts should be specified because the ``Q`` matrices are symmetric. Specifying entries where ``i < j`` will result in an error. 
+* Only the lower triangular parts should be specified because the ``Q`` matrices are symmetric. Specifying entries where ``i < j`` will result in an error.
 * Only non-zero elements should be specified.
 * The order in which the non-zero elements are specified is insignificant.
 * Duplicate elements are added together as shown above. Hence, it is usually not recommended to specify the same entry multiple times.
@@ -8373,7 +8352,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `subset :: Vector{Int32}`. Indexes of symmetric matrices which should be removed.
 
-The function removes a subset of the symmetric matrices 
+The function removes a subset of the symmetric matrices
 from the optimization task. This implies that the remaining
 symmetric matrices are renumbered.
 """
@@ -8420,7 +8399,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `subset :: Vector{Int32}`. Indexes of constraints which should be removed.
 
-The function removes a subset of the constraints 
+The function removes a subset of the constraints
 from the optimization task. This implies that the remaining
 constraints are renumbered.
 """
@@ -8444,7 +8423,7 @@ end
 * `task :: MSKtask`. An optimization task.
 * `subset :: Vector{Int32}`. Indexes of variables which should be removed.
 
-The function removes a subset of the variables 
+The function removes a subset of the variables
 from the optimization task. This implies that the remaining
 variables are renumbered.
 """
@@ -8475,7 +8454,7 @@ end
 Sets the amount of preallocated space assigned for each type of data in an
 optimization task.
 
-It is never mandatory to call this function, since it only gives 
+It is never mandatory to call this function, since it only gives
 a hint about the amount of data to preallocate for efficiency reasons.
 
 Please note that the procedure is **destructive** in the sense that all
@@ -8613,7 +8592,7 @@ equation system
 ```math
 :label: ais-eq-Bxb
 
-B \\bar X = b                       
+B \\bar X = b
 ```
 or the system
 
@@ -8622,7 +8601,7 @@ or the system
 
 B^T \\bar X = b
 ```
-for the unknowns ``\\bar X``, with ``b`` being a user-defined  vector.                    
+for the unknowns ``\\bar X``, with ``b`` being a user-defined  vector.
 In order to make sense of the solution ``\\bar X`` it is important
 to know the ordering of the variables in the basis because the
 ordering specifies how ``B`` is constructed. When calling
@@ -8641,7 +8620,7 @@ Otherwise if the ``k``-th basis variable is variable ``x_j^c`` it implies that
 B_{i,k} = \\left\\{ \\begin{array}{ll}
                         -1, & i = j, \\\\
                         0 , & i \\neq j. \\\\
-                    \\end{array} 
+                    \\end{array}
             \\right.
 ```
 The function `Mosek.initbasissolve` must be called before a call to this function.
