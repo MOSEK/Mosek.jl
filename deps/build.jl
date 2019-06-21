@@ -74,6 +74,7 @@ function bindirIsCurrentVersion(bindir)
     if ver != nothing
         ver = split(ver,".")
         
+        @info "Expect MOSEK v$mskvmajor.$mskvminor, got $(ver[1]).$(ver[2])"
         return ver[1] == mskvmajor && ver[2] == mskvminor
     else
         return false
