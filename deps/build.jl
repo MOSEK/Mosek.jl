@@ -171,7 +171,8 @@ mskbindir =
             end
 
         @info("Get latest MOSEK version ($verurl)")
-        success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
+        #success(download_cmd(verurl, joinpath(dldir,"new_version"))) || error("Failed to get MOSEK version")
+        run(download_cmd(verurl, joinpath(dldir,"new_version")))
 
         new_version =
             open(joinpath(dldir,"new_version"),"r") do f
@@ -200,11 +201,13 @@ mskbindir =
 
             basename,ext,sndext = splittarpath(archname)
 
-            success(download_cmd(archurl, joinpath(dldir,archname))) || error("Failed to download MOSEK distro")
+            #success(download_cmd(archurl, joinpath(dldir,archname))) || error("Failed to download MOSEK distro")
+            run(download_cmd(archurl, joinpath(dldir,archname)))
 
             mkpath(srcdir)
             @info("Unpack MOSEK distro ($dldir/$archname -> $srcdir)")
-            success(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
+            #success(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext)) || error("Failed to unpack MOSEK distro")
+            run(unpack_cmd(joinpath(dldir,archname),srcdir, ext, sndext))
 
             @info("MOSEK installation complete.")
             joinpath(srcdir,"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
