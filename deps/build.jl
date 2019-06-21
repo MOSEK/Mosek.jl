@@ -54,6 +54,7 @@ function versionFromBindir(bindir ::AbstractString)
         txt = read(`$bindir/$mosekbin`,String)
         m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9])",txt)
         if m == nothing
+            @info "MOSEK version could not be extracted correctly"
             return nothing
         else
             return m.captures[1]
@@ -72,6 +73,7 @@ function bindirIsCurrentVersion(bindir)
         return ver[1] == mskvmajor && ver[2] == mskvminor
         #return ver[1] == mskvmajor && ver[2] == mskvminor
     else
+        @info "Expect MOSEK v$mskvmajor.$mskvminor, got no version"
         return false
     end
 end
