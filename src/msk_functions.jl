@@ -2898,12 +2898,12 @@ function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname
   res = disable_sigint() do
     @msk_ccall( "getnastrparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
   end
-  parvalue_str = convert(String,parvalue_)
+  parvalue_str = String(parvalue_)
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str[1:searchindex(parvalue_str,'\0')-1])
+  (convert(Int32,len_[1]),parvalue_str[1:findfirst(isequal('\0'), parvalue_str)-1])
 end
 
 """
