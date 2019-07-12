@@ -47,8 +47,6 @@
 #
 
 using JuMP
-import MathOptInterface
-const MOI = MathOptInterface
 
 # Models the convex set 
 #
@@ -112,7 +110,7 @@ function lownerjohn_inner(solver :: MOI.AbstractOptimizer,
                           b      :: Vector{Float64})
     m,n = size(A)
 
-    model = Model(mode=JuMP.Direct, backend=solver)
+    model = direct_model(solver)
 
     @variable(model, t >= 0)
     @variable(model, C[1:n,1:n], PSD)
@@ -152,7 +150,7 @@ end
 function lownerjohn_outer(solver :: MOI.AbstractOptimizer,
                           x      :: Array{Float64,2})
     m,n = size(x)
-    model = Model(mode=JuMP.Direct, backend=solver)
+    model = direct_model(solver)
 
     @variable(model,t >= 0)
     @variable(model,P[1:n,1:n],PSD)
@@ -178,8 +176,8 @@ end
 
 
 # Probably do something else here:
-import MathOptInterfaceMosek
-solver = MathOptInterfaceMosek.MosekOptimizer
+using MosekTools
+solver = Mosek.Optimizer
 
 # Test
 
