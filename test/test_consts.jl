@@ -1,5 +1,5 @@
+using Test
 import Mosek
-using Base.Test
 
 vmajor,vminor,vbuild,brevision = Mosek.getversion()
 
