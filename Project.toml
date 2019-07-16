@@ -1,7 +1,7 @@
 name = "Mosek"
 uuid = "6405355b-0ac2-5fba-af84-adbd65488c0e"
 repo = "https://github.com/JuliaOpt/Mosek.jl.git"
-version = "1.0.2"
+#version = "0.0.0" ## NOTE: we should never release from the master branch
 
 [deps]
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
