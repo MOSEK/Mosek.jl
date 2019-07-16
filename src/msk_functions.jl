@@ -4928,7 +4928,7 @@ function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]))
+  (convert(Int32, asgn_[1]), convert(Int32, index_[1] + 1))
 end
 
 """

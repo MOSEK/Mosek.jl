@@ -3,17 +3,14 @@ language: julia
 os:
   - linux
 julia:
-  - 0.7
+  - 1.0
+  - 1.1
 notifications:
   email: false
 git:
   depth: 99999999
 before-install:
   - sudo apt-get install curl
-script:
-  - julia -e 'import Pkg; Pkg.clone(pwd());'
-  - julia -e 'import Pkg; Pkg.build("Mosek");'
-  - julia -e 'import Pkg; Pkg.test("Mosek");'
 
 after_success:
   - julia -e 'import Pkg; Pkg.add("Documenter")'

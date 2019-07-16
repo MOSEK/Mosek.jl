@@ -15,16 +15,14 @@
 #
 
 using JuMP
-import MathOptInterface
-import MathOptInterfaceMosek
-const MOI = MathOptInterface
+using MosekTools
 
 # Find the position x with minimal risk such that we get at least thge
 # expected return δ.
 #
 #
 function portfolio_min_risk(solver, V :: Array{Float64,2}, μ :: Vector{Float64}, δ :: Float64)
-    model = Model(optimizer = solver())
+    model = Model(with_optimizer(solver))
     n = size(μ,1)
     m = size(V,2)
 
@@ -39,14 +37,14 @@ function portfolio_min_risk(solver, V :: Array{Float64,2}, μ :: Vector{Float64}
 
     @objective(model, Min, t)
 
-    optimize(model)
+    optimize!(model)
 
-    JuMP.resultvalue(t), [ JuMP.resultvalue(item) for item in x ]
+    value(t), [ value(item) for item in x ]
 end
 
 # Find the position x with maximum return such that the variance is at most σ.
 function portfolio_max_return(solver, V :: Array{Float64,2}, μ :: Vector{Float64}, R :: Float64)
-    model = Model(optimizer = solver())
+    model = Model(with_optimizer(solver))
     n = length(μ)
     m = size(V,2)
     
@@ -59,9 +57,9 @@ function portfolio_max_return(solver, V :: Array{Float64,2}, μ :: Vector{Float6
 
     @objective(model, Max, μ'x)
 
-    optimize(model)
+    optimize!(model)
 
-    JuMP.resultvalue(t), [ JuMP.resultvalue(item) for item in x ]
+    value(t), [ value(item) for item in x ]
 end
 
 
@@ -72,7 +70,7 @@ end
 #
 # Note that in the implementation we minimize 1/S(x).
 function portfolio_sharpe_ratio(solver, V :: Array{Float64,2}, μ :: Vector{Float64}, rf :: Float64)
-    model = Model(optimizer = solver())
+    model = Model(with_optimizer(solver))
     n = length(μ)
     m = size(V,2)
     
@@ -86,11 +84,11 @@ function portfolio_sharpe_ratio(solver, V :: Array{Float64,2}, μ :: Vector{Floa
 
     @objective(model, Min, t)
 
-    optimize(model)
+    optimize!(model)
 
-    zres = JuMP.resultvalue(z)
+    zres = value(z)
     
-    1.0/JuMP.resultvalue(t), [ JuMP.resultvalue(item)/zres for item in y ] 
+    1.0/value(t), [ value(item)/zres for item in y ] 
 end
 
 #
@@ -100,7 +98,7 @@ end
 #
 # Here c is the weight given to the parity term.
 function portfolio_risk_parity(solver, V :: Array{Float64,2}, μ :: Vector{Float64}, δ :: Float64, c :: Float64)
-    model = Model(backend = solver(), mode=JuMP.Direct)
+    model = direct_model(solver())
     n = size(μ,1)
     m = size(V,2)
     
@@ -118,9 +116,9 @@ function portfolio_risk_parity(solver, V :: Array{Float64,2}, μ :: Vector{Float
 
     @objective(model, Min, t + c * sum(s))
 
-    optimize(model)
+    optimize!(model)
 
-    JuMP.resultvalue(t), [ JuMP.resultvalue(item) for item in x ]
+    value(t), [ value(item) for item in x ]
 end
 
 
@@ -130,7 +128,7 @@ end
 
 
 
-solver = MathOptInterfaceMosek.MosekOptimizer
+solver = Mosek.Optimizer
 ## Example data:
 
 # Vector of expected returns
@@ -175,4 +173,3 @@ println("Minimize risk with parity:")
 println("  risk = $t4")
 println("  x = $x4")
 println("  expected return = $(μ'x4)")
-

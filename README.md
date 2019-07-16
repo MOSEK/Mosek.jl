@@ -96,10 +96,10 @@ For a more complete description of functions, please refer to
 `MathProgBase` interface
 ------------------------
 
-The [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) for MOSEK is a separate package called `MathProgBaseMosek`.
+The [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) for MOSEK is implemented in the `MosekConicInterface.jl`, `MosekLPQCQPInterface.jl` and `MosekSolverInterface.jl` files in the `src` folder.
 
 
 `MathOptInterface`
 ------------------
 
-The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called [`MathOptInterfaceMosek`](https://github.com/JuliaOpt/MathOptInterfaceMosek.jl).
+The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called [`MosekTools`](https://github.com/JuliaOpt/MosekTools.jl).
