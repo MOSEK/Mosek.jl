@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.90
+# MOSEK 9.0.98
 
 export
   analyzenames,
@@ -2480,7 +2480,7 @@ function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]))
+  (convert(Int32,asgn_[1]),convert(Int32,index_[1]+1))
 end
 
 """
@@ -4928,7 +4928,7 @@ function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32, asgn_[1]), convert(Int32, index_[1] + 1))
+  (convert(Int32,asgn_[1]),convert(Int32,index_[1]+1))
 end
 
 """
