@@ -1,8 +1,8 @@
 include("liftedfrombindeps.jl")
 
 # define current version:
-mskvmajor = "9"
-mskvminor = "0"
+mosekver = open(joinpath(dirname(@__FILE__),"..","MOSEKVER")) do f readline(f) end
+mskvmajor,mskvminor = split(mosekver,".")
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
