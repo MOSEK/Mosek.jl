@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.98
+# MOSEK 9.1.0
 
 export
   Basindtype,
@@ -721,6 +721,7 @@ export
   MSK_RES_WRN_LICENSE_SERVER,
   MSK_RES_WRN_EMPTY_NAME,
   MSK_RES_WRN_USING_GENERIC_NAMES,
+  MSK_RES_WRN_INVALID_MPS_NAME,
   MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,
   MSK_RES_WRN_PARAM_NAME_DOU,
   MSK_RES_WRN_PARAM_NAME_INT,
@@ -7581,6 +7582,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_WRN_LICENSE_SERVER`. The license server is not responding.
 * `MSK_RES_WRN_EMPTY_NAME`. A variable or constraint name is empty. The output file may be invalid.
 * `MSK_RES_WRN_USING_GENERIC_NAMES`. Generic names are used because a name is not valid.
+* `MSK_RES_WRN_INVALID_MPS_NAME`. A name e.g. a row name is not a valid MPS name.
 * `MSK_RES_WRN_LICENSE_FEATURE_EXPIRE`. The license expires.
 * `MSK_RES_WRN_PARAM_NAME_DOU`. Parameter name not recognized.
 * `MSK_RES_WRN_PARAM_NAME_INT`. Parameter name not recognized.
@@ -8104,6 +8106,9 @@ const MSK_RES_WRN_EMPTY_NAME = Rescode(502)
 
 "Generic names are used because a name is not valid."
 const MSK_RES_WRN_USING_GENERIC_NAMES = Rescode(503)
+
+"A name e.g. a row name is not a valid MPS name."
+const MSK_RES_WRN_INVALID_MPS_NAME = Rescode(504)
 
 "The license expires."
 const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE = Rescode(505)
@@ -9413,6 +9418,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 501 "Mosek.MSK_RES_WRN_LICENSE_SERVER"
   elseif v.value == 502 "Mosek.MSK_RES_WRN_EMPTY_NAME"
   elseif v.value == 503 "Mosek.MSK_RES_WRN_USING_GENERIC_NAMES"
+  elseif v.value == 504 "Mosek.MSK_RES_WRN_INVALID_MPS_NAME"
   elseif v.value == 505 "Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"
   elseif v.value == 510 "Mosek.MSK_RES_WRN_PARAM_NAME_DOU"
   elseif v.value == 511 "Mosek.MSK_RES_WRN_PARAM_NAME_INT"
@@ -9873,6 +9879,7 @@ const Rescode_members = Rescode[
     MSK_RES_WRN_LICENSE_SERVER,
     MSK_RES_WRN_EMPTY_NAME,
     MSK_RES_WRN_USING_GENERIC_NAMES,
+    MSK_RES_WRN_INVALID_MPS_NAME,
     MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,
     MSK_RES_WRN_PARAM_NAME_DOU,
     MSK_RES_WRN_PARAM_NAME_INT,
@@ -10300,7 +10307,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 457
+Base.length(::Type{Rescode}) = 458
 """
     Rescodetype
 

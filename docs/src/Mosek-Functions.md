@@ -36,7 +36,6 @@ appendvars
 basiscond
 bktostr
 callbackcodetostr
-checkconvexity
 checkinall
 checkinlicense
 checkmem
