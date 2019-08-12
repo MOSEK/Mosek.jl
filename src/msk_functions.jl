@@ -734,12 +734,12 @@ function bktostr(task_:: MSKtask,bk_:: Boundkey)
   res = disable_sigint() do
     @msk_ccall( "bktostr",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,bk_.value,str_)
   end
-  str_str = String(str_)
+  str_str = String(str_[1:findfirst(isequal(0),str_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (str_str[1:findfirst(isequal('\0'),str_str)-1])
+  (str_str)
 end
 
 """
@@ -756,11 +756,11 @@ function callbackcodetostr(code_:: Callbackcode)
   res = disable_sigint() do
     @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{UInt8},),code_.value,callbackcodestr_)
   end
-  callbackcodestr_str = String(callbackcodestr_)
+  callbackcodestr_str = String(callbackcodestr_[1:findfirst(isequal(0),callbackcodestr_)-1])
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
   end
-  (callbackcodestr_str[1:findfirst(isequal('\0'),callbackcodestr_str)-1])
+  (callbackcodestr_str)
 end
 
 """
@@ -988,12 +988,12 @@ function conetypetostr(task_:: MSKtask,ct_:: Conetype)
   res = disable_sigint() do
     @msk_ccall( "conetypetostr",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,ct_.value,str_)
   end
-  str_str = String(str_)
+  str_str = String(str_[1:findfirst(isequal(0),str_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (str_str[1:findfirst(isequal('\0'),str_str)-1])
+  (str_str)
 end
 
 """
@@ -2005,12 +2005,12 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "getbarvarname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
-  name_str = String(name_)
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:findfirst(isequal('\0'),name_str)-1])
+  (name_str)
 end
 
 """
@@ -2228,12 +2228,12 @@ function getcodedesc(code_:: Rescode)
   res = disable_sigint() do
     @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{UInt8},Ptr{UInt8},),code_.value,symname_,str_)
   end
-  symname_str = String(symname_)
-  str_str = String(str_)
+  symname_str = String(symname_[1:findfirst(isequal(0),symname_)-1])
+  str_str = String(str_[1:findfirst(isequal(0),str_)-1])
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
   end
-  (symname_str[1:findfirst(isequal('\0'),symname_str)-1],str_str[1:findfirst(isequal('\0'),str_str)-1])
+  (symname_str,str_str)
 end
 
 """
@@ -2377,12 +2377,12 @@ function getconename(task_:: MSKtask,i_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "getconename",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
-  name_str = String(name_)
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:findfirst(isequal('\0'),name_str)-1])
+  (name_str)
 end
 
 """
@@ -2451,12 +2451,12 @@ function getconname(task_:: MSKtask,i_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "getconname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
   end
-  name_str = String(name_)
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:findfirst(isequal('\0'),name_str)-1])
+  (name_str)
 end
 
 """
@@ -2879,12 +2879,12 @@ function getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "getinfname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,inftype_.value,whichinf_,infname_)
   end
-  infname_str = String(infname_)
+  infname_str = String(infname_[1:findfirst(isequal(0),infname_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (infname_str[1:findfirst(isequal('\0'),infname_str)-1])
+  (infname_str)
 end
 
 """
@@ -3238,12 +3238,12 @@ function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname
   res = disable_sigint() do
     @msk_ccall( "getnastrparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
   end
-  parvalue_str = String(parvalue_)
+  parvalue_str = String(parvalue_[1:findfirst(isequal(0),parvalue_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str[1:findfirst(isequal('\0'),parvalue_str)-1])
+  (convert(Int32,len_[1]),parvalue_str)
 end
 
 """
@@ -3604,12 +3604,12 @@ function getobjname(task_:: MSKtask)
   res = disable_sigint() do
     @msk_ccall( "getobjname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,sizeobjname_,objname_)
   end
-  objname_str = String(objname_)
+  objname_str = String(objname_[1:findfirst(isequal(0),objname_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (objname_str[1:findfirst(isequal('\0'),objname_str)-1])
+  (objname_str)
 end
 
 """
@@ -3672,12 +3672,12 @@ function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "getparamname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,partype_.value,param_,parname_)
   end
-  parname_str = String(parname_)
+  parname_str = String(parname_[1:findfirst(isequal(0),parname_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (parname_str[1:findfirst(isequal('\0'),parname_str)-1])
+  (parname_str)
 end
 
 """
@@ -4613,12 +4613,12 @@ function getstrparam(task_:: MSKtask,param_:: Sparam)
   res = disable_sigint() do
     @msk_ccall( "getstrparam",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_.value,maxlen_,len_,parvalue_)
   end
-  parvalue_str = String(parvalue_)
+  parvalue_str = String(parvalue_[1:findfirst(isequal(0),parvalue_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str[1:findfirst(isequal('\0'),parvalue_str)-1])
+  (convert(Int32,len_[1]),parvalue_str)
 end
 
 """
@@ -4790,12 +4790,12 @@ function gettaskname(task_:: MSKtask)
   res = disable_sigint() do
     @msk_ccall( "gettaskname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,sizetaskname_,taskname_)
   end
-  taskname_str = String(taskname_)
+  taskname_str = String(taskname_[1:findfirst(isequal(0),taskname_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (taskname_str[1:findfirst(isequal('\0'),taskname_str)-1])
+  (taskname_str)
 end
 
 """
@@ -4899,12 +4899,12 @@ function getvarname(task_:: MSKtask,j_:: Int32)
   res = disable_sigint() do
     @msk_ccall( "getvarname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,sizename_,name_)
   end
-  name_str = String(name_)
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (name_str[1:findfirst(isequal('\0'),name_str)-1])
+  (name_str)
 end
 
 """
