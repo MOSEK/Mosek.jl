@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.0.90
+# MOSEK 9.1.7
 
 export
   Basindtype,
