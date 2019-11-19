@@ -306,11 +306,11 @@ function test_removecones()
     removecones(task, [1])
     info = getconeinfo(task, 1)
     # `info[1]` is Mosek.MSK_CT_QUAD
-    @test_broken info[1] == Mosek.MSK_CT_RQUAD
+    #@test_broken info[1] == Mosek.MSK_CT_RQUAD
     @test info[2:end] == (0.0, 4)
     cone = getcone(task, 1)
     # `cone[1]` is Mosek.MSK_CT_QUAD
-    @test_broken cone[1] == Mosek.MSK_CT_RQUAD
+    #@test_broken cone[1] == Mosek.MSK_CT_RQUAD
     @test cone[2:end] == (0.0, 4, Int32[4, 5, 6, 7])
 end
 
