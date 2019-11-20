@@ -8384,7 +8384,7 @@ removecones(task:: MSKtask,subset:: Vector{T1}) where {T1} = removecones(task,co
 function removecones(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removecones",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_ .- Int32(1))
+    @msk_ccall( "removecones",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_, subset_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
