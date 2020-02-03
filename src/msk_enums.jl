@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.1.7
+# MOSEK 10.0.0
 
 export
   Basindtype,
@@ -721,6 +721,8 @@ export
   MSK_RES_WRN_LICENSE_SERVER,
   MSK_RES_WRN_EMPTY_NAME,
   MSK_RES_WRN_USING_GENERIC_NAMES,
+  MSK_RES_WRN_INVALID_MPS_NAME,
+  MSK_RES_WRN_INVALID_MPS_OBJ_NAME,
   MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,
   MSK_RES_WRN_PARAM_NAME_DOU,
   MSK_RES_WRN_PARAM_NAME_INT,
@@ -1126,6 +1128,7 @@ export
   MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER,
   MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES,
   MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES,
+  MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE,
   MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD,
   MSK_RES_ERR_TOCONIC_CONSTRAINT_FX,
   MSK_RES_ERR_TOCONIC_CONSTRAINT_RA,
@@ -1135,6 +1138,10 @@ export
   MSK_RES_ERR_SERVER_PROTOCOL,
   MSK_RES_ERR_SERVER_STATUS,
   MSK_RES_ERR_SERVER_TOKEN,
+  MSK_RES_ERR_SERVER_ADDRESS,
+  MSK_RES_ERR_SERVER_CERTIFICATE,
+  MSK_RES_ERR_SERVER_TLS_CLIENT,
+  MSK_RES_ERR_SERVER_ACCESS_TOKEN,
   MSK_RES_TRM_MAX_ITERATIONS,
   MSK_RES_TRM_MAX_TIME,
   MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -1237,7 +1244,8 @@ export
   MSK_SPAR_READ_MPS_OBJ_NAME,
   MSK_SPAR_READ_MPS_RAN_NAME,
   MSK_SPAR_READ_MPS_RHS_NAME,
-  MSK_SPAR_REMOTE_ACCESS_TOKEN,
+  MSK_SPAR_REMOTE_TLS_CERT,
+  MSK_SPAR_REMOTE_TLS_CERT_PATH,
   MSK_SPAR_SENSITIVITY_FILE_NAME,
   MSK_SPAR_SENSITIVITY_RES_FILE_NAME,
   MSK_SPAR_SOL_FILTER_XC_LOW,
@@ -7581,6 +7589,8 @@ The enumeration type containing all response codes.
 * `MSK_RES_WRN_LICENSE_SERVER`. The license server is not responding.
 * `MSK_RES_WRN_EMPTY_NAME`. A variable or constraint name is empty. The output file may be invalid.
 * `MSK_RES_WRN_USING_GENERIC_NAMES`. Generic names are used because a name is not valid.
+* `MSK_RES_WRN_INVALID_MPS_NAME`. A name e.g. a row name is not a valid MPS name.
+* `MSK_RES_WRN_INVALID_MPS_OBJ_NAME`. The objective name is not a valid MPS name.
 * `MSK_RES_WRN_LICENSE_FEATURE_EXPIRE`. The license expires.
 * `MSK_RES_WRN_PARAM_NAME_DOU`. Parameter name not recognized.
 * `MSK_RES_WRN_PARAM_NAME_INT`. Parameter name not recognized.
@@ -7986,6 +7996,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER`. An invalid node optimizer was selected for the problem type.
 * `MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES`. Invalid number of cones.
 * `MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES`. Invalid dimension of cones.
+* `MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE`. An invalid cone type occurs when writing a CPLEX formatted MPS file.
 * `MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD`. The matrix defining the quadratric part of constraint is not positive semidefinite.
 * `MSK_RES_ERR_TOCONIC_CONSTRAINT_FX`. The quadratic constraint is an equality, thus not convex.
 * `MSK_RES_ERR_TOCONIC_CONSTRAINT_RA`. The quadratic constraint has finite lower and upper bound, and therefore it is not convex.
@@ -7995,6 +8006,10 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_SERVER_PROTOCOL`. Unexpected message or data from solver server.
 * `MSK_RES_ERR_SERVER_STATUS`. Server returned non-ok status code
 * `MSK_RES_ERR_SERVER_TOKEN`. Invalid job ID
+* `MSK_RES_ERR_SERVER_ADDRESS`. Invalid address
+* `MSK_RES_ERR_SERVER_CERTIFICATE`. Invalid TLS certificate format or path
+* `MSK_RES_ERR_SERVER_TLS_CLIENT`. Failed to create TLS client
+* `MSK_RES_ERR_SERVER_ACCESS_TOKEN`. Invalid access token
 * `MSK_RES_TRM_MAX_ITERATIONS`. The optimizer terminated at the maximum number of iterations.
 * `MSK_RES_TRM_MAX_TIME`. The optimizer terminated at the maximum amount of time.
 * `MSK_RES_TRM_OBJECTIVE_RANGE`. The optimizer terminated with an objective value outside the objective range.
@@ -8105,8 +8120,14 @@ const MSK_RES_WRN_EMPTY_NAME = Rescode(502)
 "Generic names are used because a name is not valid."
 const MSK_RES_WRN_USING_GENERIC_NAMES = Rescode(503)
 
+"A name e.g. a row name is not a valid MPS name."
+const MSK_RES_WRN_INVALID_MPS_NAME = Rescode(504)
+
+"The objective name is not a valid MPS name."
+const MSK_RES_WRN_INVALID_MPS_OBJ_NAME = Rescode(505)
+
 "The license expires."
-const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE = Rescode(505)
+const MSK_RES_WRN_LICENSE_FEATURE_EXPIRE = Rescode(509)
 
 "Parameter name not recognized."
 const MSK_RES_WRN_PARAM_NAME_DOU = Rescode(510)
@@ -9320,6 +9341,9 @@ const MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES = Rescode(7740)
 "Invalid dimension of cones."
 const MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES = Rescode(7741)
 
+"An invalid cone type occurs when writing a CPLEX formatted MPS file."
+const MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE = Rescode(7750)
+
 "The matrix defining the quadratric part of constraint is not positive semidefinite."
 const MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD = Rescode(7800)
 
@@ -9346,6 +9370,18 @@ const MSK_RES_ERR_SERVER_STATUS = Rescode(8002)
 
 "Invalid job ID"
 const MSK_RES_ERR_SERVER_TOKEN = Rescode(8003)
+
+"Invalid address"
+const MSK_RES_ERR_SERVER_ADDRESS = Rescode(8004)
+
+"Invalid TLS certificate format or path"
+const MSK_RES_ERR_SERVER_CERTIFICATE = Rescode(8005)
+
+"Failed to create TLS client"
+const MSK_RES_ERR_SERVER_TLS_CLIENT = Rescode(8006)
+
+"Invalid access token"
+const MSK_RES_ERR_SERVER_ACCESS_TOKEN = Rescode(8007)
 
 "The optimizer terminated at the maximum number of iterations."
 const MSK_RES_TRM_MAX_ITERATIONS = Rescode(10000)
@@ -9413,7 +9449,9 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 501 "Mosek.MSK_RES_WRN_LICENSE_SERVER"
   elseif v.value == 502 "Mosek.MSK_RES_WRN_EMPTY_NAME"
   elseif v.value == 503 "Mosek.MSK_RES_WRN_USING_GENERIC_NAMES"
-  elseif v.value == 505 "Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"
+  elseif v.value == 504 "Mosek.MSK_RES_WRN_INVALID_MPS_NAME"
+  elseif v.value == 505 "Mosek.MSK_RES_WRN_INVALID_MPS_OBJ_NAME"
+  elseif v.value == 509 "Mosek.MSK_RES_WRN_LICENSE_FEATURE_EXPIRE"
   elseif v.value == 510 "Mosek.MSK_RES_WRN_PARAM_NAME_DOU"
   elseif v.value == 511 "Mosek.MSK_RES_WRN_PARAM_NAME_INT"
   elseif v.value == 512 "Mosek.MSK_RES_WRN_PARAM_NAME_STR"
@@ -9818,6 +9856,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 7701 "Mosek.MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER"
   elseif v.value == 7740 "Mosek.MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES"
   elseif v.value == 7741 "Mosek.MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES"
+  elseif v.value == 7750 "Mosek.MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE"
   elseif v.value == 7800 "Mosek.MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD"
   elseif v.value == 7801 "Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_FX"
   elseif v.value == 7802 "Mosek.MSK_RES_ERR_TOCONIC_CONSTRAINT_RA"
@@ -9827,6 +9866,10 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 8001 "Mosek.MSK_RES_ERR_SERVER_PROTOCOL"
   elseif v.value == 8002 "Mosek.MSK_RES_ERR_SERVER_STATUS"
   elseif v.value == 8003 "Mosek.MSK_RES_ERR_SERVER_TOKEN"
+  elseif v.value == 8004 "Mosek.MSK_RES_ERR_SERVER_ADDRESS"
+  elseif v.value == 8005 "Mosek.MSK_RES_ERR_SERVER_CERTIFICATE"
+  elseif v.value == 8006 "Mosek.MSK_RES_ERR_SERVER_TLS_CLIENT"
+  elseif v.value == 8007 "Mosek.MSK_RES_ERR_SERVER_ACCESS_TOKEN"
   elseif v.value == 10000 "Mosek.MSK_RES_TRM_MAX_ITERATIONS"
   elseif v.value == 10001 "Mosek.MSK_RES_TRM_MAX_TIME"
   elseif v.value == 10002 "Mosek.MSK_RES_TRM_OBJECTIVE_RANGE"
@@ -9873,6 +9916,8 @@ const Rescode_members = Rescode[
     MSK_RES_WRN_LICENSE_SERVER,
     MSK_RES_WRN_EMPTY_NAME,
     MSK_RES_WRN_USING_GENERIC_NAMES,
+    MSK_RES_WRN_INVALID_MPS_NAME,
+    MSK_RES_WRN_INVALID_MPS_OBJ_NAME,
     MSK_RES_WRN_LICENSE_FEATURE_EXPIRE,
     MSK_RES_WRN_PARAM_NAME_DOU,
     MSK_RES_WRN_PARAM_NAME_INT,
@@ -10278,6 +10323,7 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_MIO_INVALID_NODE_OPTIMIZER,
     MSK_RES_ERR_CBF_INVALID_NUMBER_OF_CONES,
     MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_CONES,
+    MSK_RES_ERR_MPS_WRITE_CPLEX_INVALID_CONE_TYPE,
     MSK_RES_ERR_TOCONIC_CONSTR_Q_NOT_PSD,
     MSK_RES_ERR_TOCONIC_CONSTRAINT_FX,
     MSK_RES_ERR_TOCONIC_CONSTRAINT_RA,
@@ -10287,6 +10333,10 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_SERVER_PROTOCOL,
     MSK_RES_ERR_SERVER_STATUS,
     MSK_RES_ERR_SERVER_TOKEN,
+    MSK_RES_ERR_SERVER_ADDRESS,
+    MSK_RES_ERR_SERVER_CERTIFICATE,
+    MSK_RES_ERR_SERVER_TLS_CLIENT,
+    MSK_RES_ERR_SERVER_ACCESS_TOKEN,
     MSK_RES_TRM_MAX_ITERATIONS,
     MSK_RES_TRM_MAX_TIME,
     MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -10300,7 +10350,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 457
+Base.length(::Type{Rescode}) = 464
 """
     Rescodetype
 
@@ -10887,7 +10937,8 @@ The enumeration type containing all string parameters.
 * `MSK_SPAR_READ_MPS_OBJ_NAME`. Objective name in the MPS file.
 * `MSK_SPAR_READ_MPS_RAN_NAME`. Name of the RANGE vector  used. An empty name means that the first RANGE vector is used.
 * `MSK_SPAR_READ_MPS_RHS_NAME`. Name of the RHS used. An empty name means that the first RHS vector is used.
-* `MSK_SPAR_REMOTE_ACCESS_TOKEN`. An access token used to submit tasks to a remote MOSEK server
+* `MSK_SPAR_REMOTE_TLS_CERT`. Known server certificates in PEM format
+* `MSK_SPAR_REMOTE_TLS_CERT_PATH`. Path to known server certificates in PEM format
 * `MSK_SPAR_SENSITIVITY_FILE_NAME`. Sensitivity report file name.
 * `MSK_SPAR_SENSITIVITY_RES_FILE_NAME`. Name of the sensitivity report output file.
 * `MSK_SPAR_SOL_FILTER_XC_LOW`. Solution file filter.
@@ -11034,14 +11085,24 @@ Possible Values: Any valid MPS name.
 const MSK_SPAR_READ_MPS_RHS_NAME = Sparam(12)
 
 """
-An access token used to submit tasks to a remote MOSEK server
+Known server certificates in PEM format
 
 Default value: "``"
 
-Possible Values: Any valid string.
+Possible Values: PEM files separated by new-lines.
 
 """
-const MSK_SPAR_REMOTE_ACCESS_TOKEN = Sparam(13)
+const MSK_SPAR_REMOTE_TLS_CERT = Sparam(13)
+
+"""
+Path to known server certificates in PEM format
+
+Default value: "``"
+
+Possible Values: Any valid path.
+
+"""
+const MSK_SPAR_REMOTE_TLS_CERT_PATH = Sparam(14)
 
 """
 Sensitivity report file name.
@@ -11051,7 +11112,7 @@ Default value: "``"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_SENSITIVITY_FILE_NAME = Sparam(14)
+const MSK_SPAR_SENSITIVITY_FILE_NAME = Sparam(15)
 
 """
 Name of the sensitivity report output file.
@@ -11061,7 +11122,7 @@ Default value: "``"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_SENSITIVITY_RES_FILE_NAME = Sparam(15)
+const MSK_SPAR_SENSITIVITY_RES_FILE_NAME = Sparam(16)
 
 """
 Solution file filter.
@@ -11071,7 +11132,7 @@ Default value: "``"
 Possible Values: Any valid filter.
 
 """
-const MSK_SPAR_SOL_FILTER_XC_LOW = Sparam(16)
+const MSK_SPAR_SOL_FILTER_XC_LOW = Sparam(17)
 
 """
 Solution file filter.
@@ -11081,7 +11142,7 @@ Default value: "``"
 Possible Values: Any valid filter.
 
 """
-const MSK_SPAR_SOL_FILTER_XC_UPR = Sparam(17)
+const MSK_SPAR_SOL_FILTER_XC_UPR = Sparam(18)
 
 """
 Solution file filter.
@@ -11091,7 +11152,7 @@ Default value: "``"
 Possible Values: Any valid filter.
 
 """
-const MSK_SPAR_SOL_FILTER_XX_LOW = Sparam(18)
+const MSK_SPAR_SOL_FILTER_XX_LOW = Sparam(19)
 
 """
 Solution file filter.
@@ -11101,7 +11162,7 @@ Default value: "``"
 Possible Values: Any valid file name.
 
 """
-const MSK_SPAR_SOL_FILTER_XX_UPR = Sparam(19)
+const MSK_SPAR_SOL_FILTER_XX_UPR = Sparam(20)
 
 """
 Statistics file name.
@@ -11111,7 +11172,7 @@ Default value: "``"
 Possible Values: Any valid file name.
 
 """
-const MSK_SPAR_STAT_FILE_NAME = Sparam(20)
+const MSK_SPAR_STAT_FILE_NAME = Sparam(21)
 
 """
 Key used when writing the summary file.
@@ -11121,7 +11182,7 @@ Default value: "``"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_STAT_KEY = Sparam(21)
+const MSK_SPAR_STAT_KEY = Sparam(22)
 
 """
 Name used when writing the statistics file.
@@ -11131,7 +11192,7 @@ Default value: "``"
 Possible Values: Any valid XML string.
 
 """
-const MSK_SPAR_STAT_NAME = Sparam(22)
+const MSK_SPAR_STAT_NAME = Sparam(23)
 
 """
 Added variable names in the LP files.
@@ -11141,7 +11202,7 @@ Default value: "`xmskgen`"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_WRITE_LP_GEN_VAR_NAME = Sparam(23)
+const MSK_SPAR_WRITE_LP_GEN_VAR_NAME = Sparam(24)
 tostr(v::Sparam) = if v.value == 0 "Mosek.MSK_SPAR_BAS_SOL_FILE_NAME"
   elseif v.value == 1 "Mosek.MSK_SPAR_DATA_FILE_NAME"
   elseif v.value == 2 "Mosek.MSK_SPAR_DEBUG_FILE_NAME"
@@ -11155,17 +11216,18 @@ tostr(v::Sparam) = if v.value == 0 "Mosek.MSK_SPAR_BAS_SOL_FILE_NAME"
   elseif v.value == 10 "Mosek.MSK_SPAR_READ_MPS_OBJ_NAME"
   elseif v.value == 11 "Mosek.MSK_SPAR_READ_MPS_RAN_NAME"
   elseif v.value == 12 "Mosek.MSK_SPAR_READ_MPS_RHS_NAME"
-  elseif v.value == 13 "Mosek.MSK_SPAR_REMOTE_ACCESS_TOKEN"
-  elseif v.value == 14 "Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME"
-  elseif v.value == 15 "Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME"
-  elseif v.value == 16 "Mosek.MSK_SPAR_SOL_FILTER_XC_LOW"
-  elseif v.value == 17 "Mosek.MSK_SPAR_SOL_FILTER_XC_UPR"
-  elseif v.value == 18 "Mosek.MSK_SPAR_SOL_FILTER_XX_LOW"
-  elseif v.value == 19 "Mosek.MSK_SPAR_SOL_FILTER_XX_UPR"
-  elseif v.value == 20 "Mosek.MSK_SPAR_STAT_FILE_NAME"
-  elseif v.value == 21 "Mosek.MSK_SPAR_STAT_KEY"
-  elseif v.value == 22 "Mosek.MSK_SPAR_STAT_NAME"
-  elseif v.value == 23 "Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME"
+  elseif v.value == 13 "Mosek.MSK_SPAR_REMOTE_TLS_CERT"
+  elseif v.value == 14 "Mosek.MSK_SPAR_REMOTE_TLS_CERT_PATH"
+  elseif v.value == 15 "Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME"
+  elseif v.value == 16 "Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME"
+  elseif v.value == 17 "Mosek.MSK_SPAR_SOL_FILTER_XC_LOW"
+  elseif v.value == 18 "Mosek.MSK_SPAR_SOL_FILTER_XC_UPR"
+  elseif v.value == 19 "Mosek.MSK_SPAR_SOL_FILTER_XX_LOW"
+  elseif v.value == 20 "Mosek.MSK_SPAR_SOL_FILTER_XX_UPR"
+  elseif v.value == 21 "Mosek.MSK_SPAR_STAT_FILE_NAME"
+  elseif v.value == 22 "Mosek.MSK_SPAR_STAT_KEY"
+  elseif v.value == 23 "Mosek.MSK_SPAR_STAT_NAME"
+  elseif v.value == 24 "Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME"
   else "Mosek.Sparam(?)"
   end
 const Sparam_members = Sparam[
@@ -11182,7 +11244,8 @@ const Sparam_members = Sparam[
     MSK_SPAR_READ_MPS_OBJ_NAME,
     MSK_SPAR_READ_MPS_RAN_NAME,
     MSK_SPAR_READ_MPS_RHS_NAME,
-    MSK_SPAR_REMOTE_ACCESS_TOKEN,
+    MSK_SPAR_REMOTE_TLS_CERT,
+    MSK_SPAR_REMOTE_TLS_CERT_PATH,
     MSK_SPAR_SENSITIVITY_FILE_NAME,
     MSK_SPAR_SENSITIVITY_RES_FILE_NAME,
     MSK_SPAR_SOL_FILTER_XC_LOW,
@@ -11194,7 +11257,7 @@ const Sparam_members = Sparam[
     MSK_SPAR_STAT_NAME,
     MSK_SPAR_WRITE_LP_GEN_VAR_NAME ]
 members(::Type{Sparam}) = Sparam_members
-Base.length(::Type{Sparam}) = 24
+Base.length(::Type{Sparam}) = 25
 """
     Stakey
 

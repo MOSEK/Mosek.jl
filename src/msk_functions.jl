@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.1.7
+# MOSEK 10.0.0
 
 export
   analyzenames,
@@ -568,6 +568,7 @@ end
 * `subj :: Vector{Int32}`. Column subscripts in the triplets.
 * `valij :: Vector{Float64}`. Values of each triplet.
 * `idx :: Int64`. Unique index assigned to the inputted matrix.
+* `data :: SparseMatrixCSC{Float64}`. The symmetric matrix 1/2 (data' + data) is used
 
 MOSEK maintains a storage of symmetric data matrices that is used to build
 ``\\bar C`` and ``\\bar A``. The storage can be thought of as a vector of
@@ -5415,24 +5416,27 @@ function onesolutionsummary(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:
 end
 
 """
-    trmcode = optimizermt(task_:: MSKtask,server_:: AbstractString,port_:: AbstractString)
+    trmcode = optimizermt(task_:: MSKtask,addr_:: AbstractString,accesstoken_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
-* `server :: String`. Name or IP address of the solver server.
-* `port :: String`. Network port of the solver server.
+* `addr :: String`. Address of the OptServer.
+* `accesstoken :: String`. Access token.
 * `trmcode :: Rescode`. Is either OK or a termination response code.
 
-Offload the optimization task to a solver server
-defined by `server:port`. The call will block until a result is
+Offload the optimization task to an instance of OoptServer specified by `addr`, which should be a valid URL,
+for example `http://server:port` or `https://server:port`. The call will block until a result is
 available or the connection closes.
 
-If the string parameter :msk:sparam:`remote_access_token` is not blank, it will be passed to the server as authentication.
+If the server requires authentication, the authentication token can be passed in the `accesstoken` argument.
+
+If the server requires encryption, the keys can be passed using one of the solver parameters
+:msk:sparam:`remote_tls_cert` or :msk:sparam:`remote_tls_cert_path`.
 """
 function optimizermt end
-function optimizermt(task_:: MSKtask,server_:: AbstractString,port_:: AbstractString)
+function optimizermt(task_:: MSKtask,addr_:: AbstractString,accesstoken_:: AbstractString)
   trmcode_ = Vector{Int32}(undef,1)
   res = disable_sigint() do
-    @msk_ccall( "optimizermt",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ptr{Int32},),task_.task,string(server_),string(port_),trmcode_)
+    @msk_ccall( "optimizermt",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ptr{Int32},),task_.task,string(addr_),string(accesstoken_),trmcode_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6084,7 +6088,7 @@ end
 
 """
     putbararowlist{T1,T2,T3,T4,T5,T6,T7}(task:: MSKtask,subi:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},subj:: Vector{T4},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7})
-    putbararowlist{T1,T5,T6,T7}(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7})
+    putbararowlist{T1,T6,T7}(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},matidx:: Vector{T6},weights:: Vector{T7})
     putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},subj_:: Vector{Int32},nummat_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
@@ -6101,11 +6105,11 @@ This function replaces a list of rows in the ``\\bar A`` matrix.
 """
 function putbararowlist end
 putbararowlist(task:: MSKtask,subi:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},subj:: Vector{T4},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T2,T3,T4,T5,T6,T7} = putbararowlist(task,convert(Vector{Int32},subi),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},subj),convert(Vector{Int64},nummat),convert(Vector{Int64},matidx),convert(Vector{Float64},weights))
-function putbararowlist(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T5,T6,T7}
+function putbararowlist(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T6,T7}
   ptrb = A.colptr[1:size(A,2)]
   ptre = A.colptr[2:size(A,2)+1]
   subj = A.rowval
-  val = A.nzval
+  nummat = A.nzval
   putbararowlist(task,subi,ptrb,ptre,subj,nummat,matidx,weights)
 end
 function putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},subj_:: Vector{Int32},nummat_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
@@ -7129,7 +7133,6 @@ end
 
 """
     putqconk{T1,T2,T3,T4}(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4})
-    putqconk{T1}(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64})
     putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
@@ -7143,14 +7146,6 @@ Replaces all the quadratic entries in one constraint. This function performs the
 """
 function putqconk end
 putqconk(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4}) where {T1,T2,T3,T4} = putqconk(task,convert(Int32,k),convert(Vector{Int32},qcsubi),convert(Vector{Int32},qcsubj),convert(Vector{Float64},qcval))
-function putqconk(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64}) where {T1}
-  ptrb = Qk.colptr[1:size(Qk,2)]
-  ptre = Qk.colptr[2:size(Qk,2)+1]
-  qcsubi = Qk.rowval
-  qcsubi = Qk.rowval
-  qcval = Qk.nzval
-  putqconk(task,k,qcsubi,qcsubj,qcval)
-end
 function putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
   numqcnz_ = minimum([ length(qcsubi_),length(qcsubj_),length(qcval_) ])
   res = disable_sigint() do
@@ -7164,7 +7159,6 @@ end
 
 """
     putqobj{T1,T2,T3}(task:: MSKtask,qosubi:: Vector{T1},qosubj:: Vector{T2},qoval:: Vector{T3})
-    putqobj(task:: MSKtask,Qk:: SparseMatrixCSC{Float64})
     putqobj(task_:: MSKtask,qosubi_:: Vector{Int32},qosubj_:: Vector{Int32},qoval_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
@@ -7189,14 +7183,6 @@ See the description of `Mosek.putqcon` for important remarks and example.
 """
 function putqobj end
 putqobj(task:: MSKtask,qosubi:: Vector{T1},qosubj:: Vector{T2},qoval:: Vector{T3}) where {T1,T2,T3} = putqobj(task,convert(Vector{Int32},qosubi),convert(Vector{Int32},qosubj),convert(Vector{Float64},qoval))
-function putqobj(task:: MSKtask,Qk:: SparseMatrixCSC{Float64})
-  ptrb = Qk.colptr[1:size(Qk,2)]
-  ptre = Qk.colptr[2:size(Qk,2)+1]
-  qosubi = Qk.rowval
-  qosubi = Qk.rowval
-  qoval = Qk.nzval
-  putqobj(task,qosubi,qosubj,qoval)
-end
 function putqobj(task_:: MSKtask,qosubi_:: Vector{Int32},qosubj_:: Vector{Int32},qoval_:: Vector{Float64})
   numqonz_ = minimum([ length(qosubi_),length(qosubj_),length(qoval_) ])
   res = disable_sigint() do
