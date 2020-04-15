@@ -76,6 +76,24 @@ function bindirIsCurrentVersion(bindir)
     end
 end
 
+function collect_output(cmd::Cmd)
+    out = Pipe()
+    err = Pipe()
+
+    process = run(pipeline(ignorestatus(cmd), stdout=out, stderr=err))
+
+    stdout = @async (read(out))
+    stderr = @async (read(err))
+
+    wait(process)
+    close(out.in)
+    close(err.in)
+    (
+        process.exitcode,
+        fetch(stdout),
+        fetch(stderr)
+    )
+end
 
 # Detect previous installation method:
 #   "internal" -> the MOSEK distro was downloaded and installed by the installer
@@ -148,12 +166,19 @@ mskbindir =
         hosturl  = "https://www.mosek.com/downloads/default_dns.txt"
 
         mkpath(dldir)
+
+
         dlcmd = download_cmd(hosturl, joinpath(dldir,"downloadhostname"))
         @info("Download command: $dlcmd")
-        success(dlcmd) || error("Failed to get MOSEK download host")
+        (res,stdout,stderr) = collect_output(dlcmd)
         downloadhost =
-            open(joinpath(dldir,"downloadhostname"),"r") do f
-                strip(read(f,String))
+            if res != 0
+                @error(String(stderr))
+                error("Failed to get MOSEK download host")
+            else
+                open(joinpath(dldir,"downloadhostname"),"r") do f
+                    strip(read(f,String))
+                end
             end
 
         verurl   = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
