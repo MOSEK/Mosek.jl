@@ -52,6 +52,7 @@ function versionFromBindir(bindir ::AbstractString)
     try
         mosekbin = if Sys.iswindows() "mosek.exe" else "mosek" end
         txt = read(`$bindir/$mosekbin`,String)
+        @info(txt)
         m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9])",txt)
         if m == nothing
             return nothing
@@ -66,8 +67,8 @@ end
 function bindirIsCurrentVersion(bindir)
     ver = versionFromBindir(bindir)
     if ver != nothing
+        @info("Got version: $ver, expected version: $mskvmajor.$mskvminor")
         ver = split(ver,".")
-
         return ver[1] == mskvmajor && ver[2] == mskvminor
         #return ver[1] == mskvmajor && ver[2] == mskvminor
     else
