@@ -11,7 +11,12 @@ git:
   depth: 99999999
 before-install:
   - sudo apt-get install curl
-
+script:
+  - julia --project=examples -e 'using Pkg; Pkg.instantiate(); Pkg.develop(PackageSpec(path=pwd())); Pkg.build("Mosek"); Pkg.test("Mosek")'
+  #- Pkg.instantiate(); Pkg.develop(PackageSpec(path=pwd()))
+  #- julia -e 'import Pkg; Pkg.clone(pwd());'
+  #- julia -e 'import Pkg; Pkg.build("Mosek");'
+  #- julia -e 'import Pkg; Pkg.test("Mosek");'
 after_success:
-  - julia -e 'import Pkg; Pkg.add("Documenter")'
-  - julia -e 'import Mosek; cd(dirname(dirname(pathof(Mosek)))); include(joinpath("docs", "make.jl"))'
+  - julia --project=examples -e 'import Pkg; Pkg.add("Documenter")'
+  - julia --project=examples -e 'import Mosek; cd(dirname(dirname(pathof(Mosek)))); include(joinpath("docs", "make.jl"))'
