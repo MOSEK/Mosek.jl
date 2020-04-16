@@ -382,6 +382,26 @@ function test_nlo1()
     end
 end
 
+function test_removecones()
+    task = maketask()
+    appendvars(task, 7)
+    appendcone(task, MSK_CT_QUAD, 0.0, [1, 2, 3])
+    appendcone(task, MSK_CT_RQUAD, 0.0, [4, 5, 6, 7])
+    @test getcone(task, 1) == (Mosek.MSK_CT_QUAD, 0.0, 3, Int32[1, 2, 3])
+    @test getconeinfo(task, 1) == (Mosek.MSK_CT_QUAD, 0.0, 3)
+    @test getcone(task, 2) == (Mosek.MSK_CT_RQUAD, 0.0, 4, Int32[4, 5, 6, 7])
+    @test getconeinfo(task, 2) == (Mosek.MSK_CT_RQUAD, 0.0, 4)
+    removecones(task, [1])
+    info = getconeinfo(task, 1)
+    # `info[1]` is Mosek.MSK_CT_QUAD
+    @test_broken info[1] == Mosek.MSK_CT_RQUAD
+    @test info[2:end] == (0.0, 4)
+    cone = getcone(task, 1)
+    # `cone[1]` is Mosek.MSK_CT_QUAD
+    @test_broken cone[1] == Mosek.MSK_CT_RQUAD
+    @test cone[2:end] == (0.0, 4, Int32[4, 5, 6, 7])
+end
+
 @testset "[apitest]" begin
     @testset "lo1" begin
         test_lo1()
@@ -410,5 +430,10 @@ end
     @testset "nlo1" begin
         test_nlo1()
     end
+
+    @testset "removecones" begin
+        test_removecones()
+    end
+
 end
 
