@@ -214,8 +214,8 @@ if Pkg.installed("Plots") != nothing && Pkg.installed("GR") != nothing
                 t -> Ci[2,:]' * [ cos(t),sin(t) ] + di[2],
                 0,2*pi)
 
-    Plots.plot!(t -> Poinv[1,:]' * ( [cos(t),sin(t)] + c ),
-                t -> Poinv[2,:]' * ( [cos(t),sin(t)] + c ),
+    Plots.plot!(t -> Poinv[1,:]' * ( [cos(t),sin(t)] + co ),
+                t -> Poinv[2,:]' * ( [cos(t),sin(t)] + co ),
                 0,2*pi)
     
     println("Plot done. Press enter to continue.")
