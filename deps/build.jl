@@ -52,6 +52,7 @@ function versionFromBindir(bindir ::AbstractString)
     try
         mosekbin = if Sys.iswindows() "mosek.exe" else "mosek" end
         txt = read(`$bindir/$mosekbin`,String)
+        @info(txt)
         m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9])",txt)
         if m == nothing
             return nothing
@@ -66,8 +67,8 @@ end
 function bindirIsCurrentVersion(bindir)
     ver = versionFromBindir(bindir)
     if ver != nothing
+        @info("Got version: $ver, expected version: $mskvmajor.$mskvminor")
         ver = split(ver,".")
-
         return ver[1] == mskvmajor && ver[2] == mskvminor
         #return ver[1] == mskvmajor && ver[2] == mskvminor
     else
@@ -75,6 +76,24 @@ function bindirIsCurrentVersion(bindir)
     end
 end
 
+function collect_output(cmd::Cmd)
+    out = Pipe()
+    err = Pipe()
+
+    process = run(pipeline(ignorestatus(cmd), stdout=out, stderr=err))
+
+    stdout = @async (read(out))
+    stderr = @async (read(err))
+
+    wait(process)
+    close(out.in)
+    close(err.in)
+    (
+        process.exitcode,
+        fetch(stdout),
+        fetch(stderr)
+    )
+end
 
 # Detect previous installation method:
 #   "internal" -> the MOSEK distro was downloaded and installed by the installer
@@ -147,10 +166,19 @@ mskbindir =
         hosturl  = "https://www.mosek.com/downloads/default_dns.txt"
 
         mkpath(dldir)
-        success(download_cmd(hosturl, joinpath(dldir,"downloadhostname"))) || error("Failed to get MOSEK download host")
+
+
+        dlcmd = download_cmd(hosturl, joinpath(dldir,"downloadhostname"))
+        @info("Download command: $dlcmd")
+        (res,stdout,stderr) = collect_output(dlcmd)
         downloadhost =
-            open(joinpath(dldir,"downloadhostname"),"r") do f
-                strip(read(f,String))
+            if res != 0
+                @error(String(stderr))
+                error("Failed to get MOSEK download host")
+            else
+                open(joinpath(dldir,"downloadhostname"),"r") do f
+                    strip(read(f,String))
+                end
             end
 
         verurl   = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
