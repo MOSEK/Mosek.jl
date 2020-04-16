@@ -18,5 +18,5 @@ script:
   #- julia -e 'import Pkg; Pkg.test("Mosek");'
 
 after_success:
-  - julia -e 'import Pkg; Pkg.add("Documenter")'
-  - julia -e 'import Mosek; cd(dirname(dirname(pathof(Mosek)))); include(joinpath("docs", "make.jl"))'
+  - julia --project=examples -e 'import Pkg; Pkg.add("Documenter")'
+  - julia --project=examples -e 'import Mosek; cd(dirname(dirname(pathof(Mosek)))); include(joinpath("docs", "make.jl"))'
