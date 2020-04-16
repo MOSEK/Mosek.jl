@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.1.7
+# MOSEK 9.2.4
 
 export
   Basindtype,
@@ -1135,6 +1135,7 @@ export
   MSK_RES_ERR_SERVER_PROTOCOL,
   MSK_RES_ERR_SERVER_STATUS,
   MSK_RES_ERR_SERVER_TOKEN,
+  MSK_RES_ERR_SERVER_PROBLEM_SIZE,
   MSK_RES_TRM_MAX_ITERATIONS,
   MSK_RES_TRM_MAX_TIME,
   MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -7995,6 +7996,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_SERVER_PROTOCOL`. Unexpected message or data from solver server.
 * `MSK_RES_ERR_SERVER_STATUS`. Server returned non-ok status code
 * `MSK_RES_ERR_SERVER_TOKEN`. Invalid job ID
+* `MSK_RES_ERR_SERVER_PROBLEM_SIZE`. The problem is too large.
 * `MSK_RES_TRM_MAX_ITERATIONS`. The optimizer terminated at the maximum number of iterations.
 * `MSK_RES_TRM_MAX_TIME`. The optimizer terminated at the maximum amount of time.
 * `MSK_RES_TRM_OBJECTIVE_RANGE`. The optimizer terminated with an objective value outside the objective range.
@@ -9347,6 +9349,9 @@ const MSK_RES_ERR_SERVER_STATUS = Rescode(8002)
 "Invalid job ID"
 const MSK_RES_ERR_SERVER_TOKEN = Rescode(8003)
 
+"The problem is too large."
+const MSK_RES_ERR_SERVER_PROBLEM_SIZE = Rescode(8008)
+
 "The optimizer terminated at the maximum number of iterations."
 const MSK_RES_TRM_MAX_ITERATIONS = Rescode(10000)
 
@@ -9827,6 +9832,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 8001 "Mosek.MSK_RES_ERR_SERVER_PROTOCOL"
   elseif v.value == 8002 "Mosek.MSK_RES_ERR_SERVER_STATUS"
   elseif v.value == 8003 "Mosek.MSK_RES_ERR_SERVER_TOKEN"
+  elseif v.value == 8008 "Mosek.MSK_RES_ERR_SERVER_PROBLEM_SIZE"
   elseif v.value == 10000 "Mosek.MSK_RES_TRM_MAX_ITERATIONS"
   elseif v.value == 10001 "Mosek.MSK_RES_TRM_MAX_TIME"
   elseif v.value == 10002 "Mosek.MSK_RES_TRM_OBJECTIVE_RANGE"
@@ -10287,6 +10293,7 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_SERVER_PROTOCOL,
     MSK_RES_ERR_SERVER_STATUS,
     MSK_RES_ERR_SERVER_TOKEN,
+    MSK_RES_ERR_SERVER_PROBLEM_SIZE,
     MSK_RES_TRM_MAX_ITERATIONS,
     MSK_RES_TRM_MAX_TIME,
     MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -10300,7 +10307,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 457
+Base.length(::Type{Rescode}) = 458
 """
     Rescodetype
 

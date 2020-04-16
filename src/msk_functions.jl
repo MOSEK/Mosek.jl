@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.1.7
+# MOSEK 9.2.4
 
 export
   analyzenames,
@@ -236,6 +236,7 @@ export
   putnastrparam,
   putobjname,
   putobjsense,
+  putoptserverhost,
   putparam,
   putqcon,
   putqconk,
@@ -5887,7 +5888,7 @@ end
 * `aval :: Vector{Float64}`. Coefficient values.
 * `At :: SparseMatrixCSC{Float64}`. Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
-Change a slice of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with:
+Change a slice of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested rows are set to zero and then updated with:
 
 ```math
 \\begin{array}{rl}
@@ -6084,7 +6085,7 @@ end
 
 """
     putbararowlist{T1,T2,T3,T4,T5,T6,T7}(task:: MSKtask,subi:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},subj:: Vector{T4},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7})
-    putbararowlist{T1,T5,T6,T7}(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7})
+    putbararowlist{T1,T6,T7}(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},matidx:: Vector{T6},weights:: Vector{T7})
     putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},subj_:: Vector{Int32},nummat_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
@@ -6101,11 +6102,11 @@ This function replaces a list of rows in the ``\\bar A`` matrix.
 """
 function putbararowlist end
 putbararowlist(task:: MSKtask,subi:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},subj:: Vector{T4},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T2,T3,T4,T5,T6,T7} = putbararowlist(task,convert(Vector{Int32},subi),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},subj),convert(Vector{Int64},nummat),convert(Vector{Int64},matidx),convert(Vector{Float64},weights))
-function putbararowlist(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T5,T6,T7}
+function putbararowlist(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T6,T7}
   ptrb = A.colptr[1:size(A,2)]
   ptre = A.colptr[2:size(A,2)+1]
   subj = A.rowval
-  val = A.nzval
+  nummat = A.nzval
   putbararowlist(task,subi,ptrb,ptre,subj,nummat,matidx,weights)
 end
 function putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},subj_:: Vector{Int32},nummat_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
@@ -7054,6 +7055,25 @@ function putobjsense end
 function putobjsense(task_:: MSKtask,sense_:: Objsense)
   res = disable_sigint() do
     @msk_ccall( "putobjsense",Int32,(Ptr{Nothing},Int32,),task_.task,sense_.value)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putoptserverhost(task_:: MSKtask,host_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `host :: String`. A URL specifying the optimization server to be used.
+
+Specify an OptServer URL for remote calls. The URL should contain protocol, host and port in the form `http://server:port`. If the URL is set using this function, all subsequent calls to any MOSEK function that involves synchronous optimization will be sent to the specified OptServer instead of being executed locally. Passing NULL deactivates this redirection.
+"""
+function putoptserverhost end
+function putoptserverhost(task_:: MSKtask,host_:: AbstractString)
+  res = disable_sigint() do
+    @msk_ccall( "putoptserverhost",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(host_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8384,7 +8404,7 @@ removecones(task:: MSKtask,subset:: Vector{T1}) where {T1} = removecones(task,co
 function removecones(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removecones",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_, subset_ .- Int32(1))
+    @msk_ccall( "removecones",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
