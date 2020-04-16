@@ -13,9 +13,9 @@ function test_lo1()
     bux = [+Inf, 10.0, +Inf, +Inf]
     numvar = length(bkx)
     numcon = length(bkc)
-    c = [ 3.0, 1.0, 5.0, 1.0 ] 
-    A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3], 
-               [1, 1, 2, 2, 2, 3, 3, 4, 4], 
+    c = [ 3.0, 1.0, 5.0, 1.0 ]
+    A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3],
+               [1, 1, 2, 2, 2, 3, 3, 4, 4],
                [3.0, 2.0, 1.0, 1.0, 2.0, 2.0, 3.0, 1.0, 3.0 ],
                numcon,numvar)
 
@@ -46,8 +46,8 @@ function test_lo1()
     solsta = getsolsta(task,MSK_SOL_BAS)
     prosta = getprosta(task,MSK_SOL_BAS)
 
-    @test getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL 
-    @test solsta == MSK_SOL_STA_OPTIMAL 
+    @test getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL
+    @test solsta == MSK_SOL_STA_OPTIMAL
     @test prosta == MSK_PRO_STA_PRIM_AND_DUAL_FEAS
 
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
@@ -67,8 +67,8 @@ function test_qo1()
     numvar = length(bkx)
     numcon = length(bkc)
     c     = [ 0.0, -1.0, 0.0 ]
-    A     = sparse( [ 1, 1, 1 ], 
-                    [ 1, 2, 3 ], 
+    A     = sparse( [ 1, 1, 1 ],
+                    [ 1, 2, 3 ],
                     [ 1.0, 1.0, 1.0 ],
                     numcon, numvar )
     task = maketask()
@@ -91,7 +91,7 @@ function test_qo1()
     prosta = getprosta(task,MSK_SOL_ITR)
     solsta = getsolsta(task,MSK_SOL_ITR)
 
-    @test solsta == MSK_SOL_STA_OPTIMAL 
+    @test solsta == MSK_SOL_STA_OPTIMAL
     @test prosta == MSK_PRO_STA_PRIM_AND_DUAL_FEAS
 
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
@@ -158,8 +158,8 @@ function test_milo1()
     blx = [       0.0,       0.0  ]
     bux = [       Inf,       Inf  ]
     c   = [       1.0,      0.64 ]
-    A    = sparse( [ 1, 1, 2, 2], 
-                   [ 1, 2, 1, 2], 
+    A    = sparse( [ 1, 1, 2, 2],
+                   [ 1, 2, 1, 2],
                    [ 50.0, 3.0, 31.0, -2.0])
     numvar = length(bkx)
     numcon = length(bkc)
@@ -186,7 +186,7 @@ end
 
 function test_cqo()
         printstream(msg::String) = nothing # print(msg)
-    callback(where,dinf,iinf,liinf) = 0 
+    callback(where,dinf,iinf,liinf) = 0
     bkc = [ MSK_BK_FX ]
     blc = [ 1.0 ]
     buc = [ 1.0 ]
@@ -262,9 +262,9 @@ function test_sdo1()
                  A.colptr[1:numvar], A.colptr[2:numvar+1],
                  A.rowval,A.nzval)
     appendcone(task,MSK_CT_QUAD, 0.0, conesub)
-    symc  = appendsparsesymmat(task,barvardim[1], 
-                               barci, 
-                               barcj, 
+    symc  = appendsparsesymmat(task,barvardim[1],
+                               barci,
+                               barcj,
                                barcval)
 
     syma0 = appendsparsesymmat(task,
@@ -272,9 +272,9 @@ function test_sdo1()
                                barai[1],
                                baraj[1],+
                                baraval[1])
-    syma1 = appendsparsesymmat(task,barvardim[1], 
-                               barai[2], 
-                               baraj[2], 
+    syma1 = appendsparsesymmat(task,barvardim[1],
+                               barai[2],
+                               baraj[2],
                                baraval[2])
     putbarcj(task,1, [symc], [1.0])
     putbaraij(task,1, 1, [syma0], [1.0])
@@ -287,7 +287,7 @@ function test_sdo1()
 
     @test solsta in [MSK_SOL_STA_OPTIMAL]
     @test prosta in [MSK_PRO_STA_PRIM_AND_DUAL_FEAS]
-    
+
     if solsta in     [ MSK_SOL_STA_OPTIMAL ]
         xx = getxx(task,MSK_SOL_ITR)
         # check feasibility and optimality of solution
@@ -306,11 +306,11 @@ function test_removecones()
     removecones(task, [1])
     info = getconeinfo(task, 1)
     # `info[1]` is Mosek.MSK_CT_QUAD
-    @test_broken info[1] == Mosek.MSK_CT_RQUAD
+    #@test_broken info[1] == Mosek.MSK_CT_RQUAD
     @test info[2:end] == (0.0, 4)
     cone = getcone(task, 1)
     # `cone[1]` is Mosek.MSK_CT_QUAD
-    @test_broken cone[1] == Mosek.MSK_CT_RQUAD
+    #@test_broken cone[1] == Mosek.MSK_CT_RQUAD
     @test cone[2:end] == (0.0, 4, Int32[4, 5, 6, 7])
 end
 
@@ -344,4 +344,3 @@ end
     end
 
 end
-
