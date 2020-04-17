@@ -7,7 +7,7 @@ mskvminor = "2"
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
     if     Sys.islinux()   "linux32x86",  ".tar.bz2"
-    elseif Sys.iswindows()() "win32x86",  ".zip"
+    elseif Sys.iswindows() "win32x86",  ".zip"
     else   error("Platform not supported")
     end
   elseif Sys.ARCH == :x86_64
@@ -21,6 +21,31 @@ mskplatform,distroext =
   end
 
 bindepsdir = dirname(@__FILE__)
+
+function getregistrykey(path::String,key::String)
+    if ! Sys.iswindows()
+        error("Only valid for Windows")
+    else
+        lines = open(`reg query $path /v $key`) do f split(String(f.read()),"\r\n") end
+        res = split(lines[3],r"\s+")
+        res[3]
+    end
+end
+
+function hasregistrykey(path::String,key::String)
+    if ! Sys.iswindows()
+        false
+    else
+        try
+            getregistrykey(path,key)
+            true
+        catch err
+            false
+        end
+    end
+end
+
+
 
 function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::AbstractString)
     moseklib =
@@ -147,7 +172,7 @@ mskbindir =
         instmethod = "external"
 
         joinpath(ENV["HOME"],"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
-# 2c. Windows default install path
+# 2c. Windows default home
     elseif ! forcedownload &&
         haskey(ENV,"HOMEDRIVE") &&
         haskey(ENV,"HOMEPATH") &&
@@ -158,6 +183,10 @@ mskbindir =
         instmethod = "external"
 
         joinpath(home,"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
+        # 2d. Window global installation
+    elseif ! forcedownload && hasregistrykey("HKEY_LOCAL_MACHINE\\SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+        instmethod = "external"
+        getregistrykey("HKEY_LOCAL_MACHINE\\SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
         srcdir   = joinpath(bindepsdir,"src")
