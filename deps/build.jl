@@ -25,7 +25,7 @@ mskplatform,distroext =
 bindepsdir = dirname(@__FILE__)
 
 function getregistrykey(base::UInt32,path::String,key::String)
-    WinReg.query(base,path,key)
+    WinReg.querykey(base,path,key)
 end
 
 function hasregistrykey(base::UInt32,path::String,key::String)
@@ -33,7 +33,8 @@ function hasregistrykey(base::UInt32,path::String,key::String)
         false
     else
         try
-            hasregistrykey(base,path,key)
+            getregistrykey(base,path,key)
+	    true
         catch err
             false
         end
@@ -90,7 +91,6 @@ function bindirIsCurrentVersion(bindir)
         @info("Got version: $ver, expected version: $mskvmajor.$mskvminor")
         ver = split(ver,".")
         return ver[1] == mskvmajor && ver[2] == mskvminor
-        #return ver[1] == mskvmajor && ver[2] == mskvminor
     else
         return false
     end
@@ -178,12 +178,13 @@ mskbindir =
         instmethod = "external"
 
         joinpath(home,"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
-        # 2d. Window global installation
-    elseif ! forcedownload && hasregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+# 2d. Window global installation
+    elseif ! forcedownload && hasregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\mosek$mskvmajor$mskvminor","InstallDir")
         instmethod = "external"
-        r = getregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
-        @info("Using global installation: $r")
-        r
+        p = getregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+	# Fix for broken  registry entry:
+	p = replace(p,"\\\\" => "\\")
+        joinpath(p,"tools","platform",mskplatform,"bin")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
         srcdir   = joinpath(bindepsdir,"src")
