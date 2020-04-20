@@ -181,7 +181,9 @@ mskbindir =
         # 2d. Window global installation
     elseif ! forcedownload && hasregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
         instmethod = "external"
-        getregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+        r = getregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+        @info("Using global installation: $r")
+        r
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
         srcdir   = joinpath(bindepsdir,"src")
