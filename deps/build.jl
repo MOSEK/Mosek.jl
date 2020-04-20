@@ -1,5 +1,7 @@
 include("liftedfrombindeps.jl")
 
+import WinReg
+
 # define current version:
 mskvmajor = "9"
 mskvminor = "2"
@@ -22,23 +24,16 @@ mskplatform,distroext =
 
 bindepsdir = dirname(@__FILE__)
 
-function getregistrykey(path::String,key::String)
-    if ! Sys.iswindows()
-        error("Only valid for Windows")
-    else
-        lines = open(`reg query $path /v $key`) do f split(String(f.read()),"\r\n") end
-        res = split(lines[3],r"\s+")
-        res[3]
-    end
+function getregistrykey(base::UInt32,path::String,key::String)
+    WinReg.query(base,path,key)
 end
 
-function hasregistrykey(path::String,key::String)
+function hasregistrykey(base::UInt32,path::String,key::String)
     if ! Sys.iswindows()
         false
     else
         try
-            getregistrykey(path,key)
-            true
+            hasregistrykey(base,path,key)
         catch err
             false
         end
@@ -184,9 +179,9 @@ mskbindir =
 
         joinpath(home,"mosek","$mskvmajor.$mskvminor","tools","platform",mskplatform,"bin")
         # 2d. Window global installation
-    elseif ! forcedownload && hasregistrykey("HKEY_LOCAL_MACHINE\\SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+    elseif ! forcedownload && hasregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
         instmethod = "external"
-        getregistrykey("HKEY_LOCAL_MACHINE\\SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
+        getregistrykey(WinReg.HKEY_LOCAL_MACHINE,"SOFTWARE\\MOSEK$mskvmajor$mskvminor","InstallDir")
 # 3. Otherwise, fetch the MOSEK distro and unpack it
     else
         srcdir   = joinpath(bindepsdir,"src")
