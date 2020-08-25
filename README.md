@@ -1,3 +1,6 @@
+**This repository is in the process of being moved to https://github.com/MOSEK/Mosek.jl**
+
+
 Note on versions and release
 ============================
 
