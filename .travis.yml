@@ -3,7 +3,7 @@ language: julia
 os:
   - linux
 julia:
-  - 0.7
+  - 1
 notifications:
   email: false
 git:
@@ -11,7 +11,7 @@ git:
 before-install:
   - sudo apt-get install curl
 script:
-  - julia -e 'import Pkg; Pkg.add(Pkg.PackageSpec(url=pwd()));'
+  - julia -e 'import Pkg; Pkg.dev(Pkg.PackageSpec(url=pwd()));'
   - julia -e 'import Pkg; Pkg.build("Mosek");'
   - julia -e 'import Pkg; Pkg.test("Mosek");'
 
