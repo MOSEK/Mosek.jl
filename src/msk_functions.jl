@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.2.4
+# MOSEK 9.2.30
 
 export
   analyzenames,
@@ -305,6 +305,24 @@ export
   writesolution,
   writetask
 
+function tril(m::SparseArrays.SparseMatrixCSC{Float64})
+  m  = 0.5*(m+m')
+  nnz  = length(m.nzval)
+  jj = zeros(Int64,nnz); for i in 1:m.n jj[m.colptr[i]:m.colptr[i+1]-1] .= i end
+  subi = zeros(Int64,nnz)
+  subj = zeros(Int64,nnz)
+  val  = zeros(Float64,nnz)
+  k = 0
+  for i in 1:nnz
+    if m.rowval[i] >= jj[i]
+      k += 1
+      subi[k] = m.rowval[i]
+      subj[k] = jj[i]
+      val[k]  = m.nzval[i]
+    end
+  end
+  return subi[1:k],subj[1:k],val[1:k]
+end
 """
     analyzenames(task_:: MSKtask,whichstream_:: Streamtype,nametype_:: Nametype)
 
@@ -7164,11 +7182,7 @@ Replaces all the quadratic entries in one constraint. This function performs the
 function putqconk end
 putqconk(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4}) where {T1,T2,T3,T4} = putqconk(task,convert(Int32,k),convert(Vector{Int32},qcsubi),convert(Vector{Int32},qcsubj),convert(Vector{Float64},qcval))
 function putqconk(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64}) where {T1}
-  ptrb = Qk.colptr[1:size(Qk,2)]
-  ptre = Qk.colptr[2:size(Qk,2)+1]
-  qcsubi = Qk.rowval
-  qcsubi = Qk.rowval
-  qcval = Qk.nzval
+  qcsubi,qcsubj,qcval = tril(Qk)
   putqconk(task,k,qcsubi,qcsubj,qcval)
 end
 function putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
@@ -7210,11 +7224,7 @@ See the description of `Mosek.putqcon` for important remarks and example.
 function putqobj end
 putqobj(task:: MSKtask,qosubi:: Vector{T1},qosubj:: Vector{T2},qoval:: Vector{T3}) where {T1,T2,T3} = putqobj(task,convert(Vector{Int32},qosubi),convert(Vector{Int32},qosubj),convert(Vector{Float64},qoval))
 function putqobj(task:: MSKtask,Qk:: SparseMatrixCSC{Float64})
-  ptrb = Qk.colptr[1:size(Qk,2)]
-  ptre = Qk.colptr[2:size(Qk,2)+1]
-  qosubi = Qk.rowval
-  qosubi = Qk.rowval
-  qoval = Qk.nzval
+  qosubi,qosubj,qoval = tril(Qk)
   putqobj(task,qosubi,qosubj,qoval)
 end
 function putqobj(task_:: MSKtask,qosubi_:: Vector{Int32},qosubj_:: Vector{Int32},qoval_:: Vector{Float64})
