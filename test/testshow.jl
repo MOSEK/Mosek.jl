@@ -37,9 +37,9 @@ mosekbase = dirname(dirname(pathof(Mosek)))
                         println(f,t[Barvar(j)])
                     end
                 end
-                
+
                 for which in Soltype
-                    if solutiondef(t,which)
+                    if 0 != solutiondef(t,which)
                         sol = t[Sol(which)]
 
                         println(f,sol)
@@ -62,7 +62,7 @@ mosekbase = dirname(dirname(pathof(Mosek)))
                             end
                         end
                     end
-                end    
+                end
             end
         end
     end

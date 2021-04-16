@@ -1,15 +1,36 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.1.7
+# MOSEK 10.0.4
 
 export
   analyzenames,
   analyzeproblem,
   analyzesolution,
+  appendacc,
+  appendaccs,
+  appendaccseq,
+  appendaccsseq,
+  appendafes,
   appendbarvars,
   appendcone,
   appendconeseq,
   appendconesseq,
   appendcons,
+  appenddjcs,
+  appenddualexpconedomain,
+  appenddualgeomeanconedomain,
+  appenddualpowerconedomain,
+  appendinfnormconedomain,
+  appendonenormconedomain,
+  appendprimalexpconedomain,
+  appendprimalgeomeanconedomain,
+  appendprimalpowerconedomain,
+  appendpsdconedomain,
+  appendquadraticconedomain,
+  appendrdomain,
+  appendrminusdomain,
+  appendrplusdomain,
+  appendrquadraticconedomain,
+  appendrzerodomain,
   appendsparsesymmat,
   appendsparsesymmatlist,
   appendvars,
@@ -27,14 +48,41 @@ export
   deletesolution,
   dualsensitivity,
   echointro,
+  emptyafebarfrow,
+  emptyafebarfrowlist,
+  emptyafefcol,
+  emptyafefcollist,
+  emptyafefrow,
+  emptyafefrowlist,
+  evaluateacc,
+  evaluateaccs,
+  generateaccnames,
   generateconenames,
   generateconnames,
   generatevarnames,
+  getaccafeidxlist,
+  getaccb,
+  getaccdomain,
+  getaccdoty,
+  getaccn,
+  getaccname,
+  getaccnamelen,
+  getaccntot,
+  getaccs,
   getacol,
   getacolnumnz,
   getacolslice,
   getacolslicenumnz,
   getacolslicetrip,
+  getafebarfnumrowentries,
+  getafebarfrow,
+  getafebarfrowinfo,
+  getafefnumnz,
+  getafefrow,
+  getafefrownumnz,
+  getafeftrip,
+  getafeg,
+  getafegslice,
   getaij,
   getapiecenumnz,
   getarow,
@@ -77,10 +125,28 @@ export
   getconnamelen,
   getcslice,
   getdimbarvarj,
+  getdjcafeidxlist,
+  getdjcb,
+  getdjcdomainidxlist,
+  getdjcname,
+  getdjcnamelen,
+  getdjcnumafe,
+  getdjcnumafetot,
+  getdjcnumdomain,
+  getdjcnumdomaintot,
+  getdjcnumterm,
+  getdjcnumtermtot,
+  getdjcs,
+  getdjctermsizelist,
+  getdomainn,
+  getdomainname,
+  getdomainnamelen,
+  getdomaintype,
   getdouinf,
   getdouparam,
   getdualobj,
   getdualsolutionnorms,
+  getdviolacc,
   getdviolbarvar,
   getdviolcon,
   getdviolcones,
@@ -103,6 +169,8 @@ export
   getnaintinf,
   getnaintparam,
   getnastrparam,
+  getnumacc,
+  getnumafe,
   getnumanz,
   getnumanz64,
   getnumbarablocktriplets,
@@ -113,6 +181,8 @@ export
   getnumcon,
   getnumcone,
   getnumconemem,
+  getnumdjc,
+  getnumdomain,
   getnumintvar,
   getnumparam,
   getnumqconknz,
@@ -123,13 +193,17 @@ export
   getobjnamelen,
   getobjsense,
   getparamname,
+  getpowerdomainalpha,
+  getpowerdomaininfo,
   getprimalobj,
   getprimalsolutionnorms,
   getprobtype,
   getprosta,
+  getpviolacc,
   getpviolbarvar,
   getpviolcon,
   getpviolcones,
+  getpvioldjc,
   getpviolvar,
   getqconk,
   getqobj,
@@ -149,6 +223,8 @@ export
   getsolsta,
   getsolution,
   getsolutioninfo,
+  getsolutioninfonew,
+  getsolutionnew,
   getsolutionslice,
   getsparsesymmat,
   getstrparam,
@@ -188,9 +264,26 @@ export
   primalrepair,
   primalsensitivity,
   printparam,
+  putacc,
+  putaccb,
+  putaccbj,
+  putaccdoty,
+  putacclist,
+  putaccname,
   putacol,
   putacollist,
   putacolslice,
+  putafebarfblocktriplet,
+  putafebarfentry,
+  putafebarfentrylist,
+  putafebarfrow,
+  putafefentry,
+  putafefentrylist,
+  putafefrow,
+  putafefrowlist,
+  putafeg,
+  putafeglist,
+  putafegslice,
   putaij,
   putaijlist,
   putarow,
@@ -219,16 +312,24 @@ export
   putconname,
   putconsolutioni,
   putcslice,
+  putdjc,
+  putdjcname,
+  putdjcslice,
+  putdomainname,
   putdouparam,
   putintparam,
   putlicensecode,
   putlicensedebug,
   putlicensepath,
   putlicensewait,
+  putmaxnumacc,
+  putmaxnumafe,
   putmaxnumanz,
   putmaxnumbarvar,
   putmaxnumcon,
   putmaxnumcone,
+  putmaxnumdjc,
+  putmaxnumdomain,
   putmaxnumqnz,
   putmaxnumvar,
   putnadouparam,
@@ -236,6 +337,7 @@ export
   putnastrparam,
   putobjname,
   putobjsense,
+  putoptserverhost,
   putparam,
   putqcon,
   putqconk,
@@ -252,6 +354,7 @@ export
   putsnx,
   putsnxslice,
   putsolution,
+  putsolutionnew,
   putsolutionyi,
   putstrparam,
   putsuc,
@@ -304,6 +407,3259 @@ export
   writesolution,
   writetask
 
+function tril(m::SparseArrays.SparseMatrixCSC{Float64})
+  m  = 0.5*(m+m')
+  nnz  = length(m.nzval)
+  jj = zeros(Int64,nnz); for i in 1:m.n jj[m.colptr[i]:m.colptr[i+1]-1] .= i end
+  subi = zeros(Int64,nnz)
+  subj = zeros(Int64,nnz)
+  val  = zeros(Float64,nnz)
+  k = 0
+  for i in 1:nnz
+    if m.rowval[i] >= jj[i]
+      k += 1
+      subi[k] = m.rowval[i]
+      subj[k] = jj[i]
+      val[k]  = m.nzval[i]
+    end
+  end
+  return subi[1:k],subj[1:k],val[1:k]
+end
+macro MSK_analyzenames(task,whichstream,nametype)
+  f = Base.Meta.quot(:MSK_analyzenames)
+  args = [esc(task),esc(whichstream),esc(nametype)]
+  types = :((Ptr{Nothing},Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_analyzeproblem(task,whichstream)
+  f = Base.Meta.quot(:MSK_analyzeproblem)
+  args = [esc(task),esc(whichstream)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_analyzesolution(task,whichstream,whichsol)
+  f = Base.Meta.quot(:MSK_analyzesolution)
+  args = [esc(task),esc(whichstream),esc(whichsol)]
+  types = :((Ptr{Nothing},Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendacc(task,domidx,numafeidx,afeidxlist,b)
+  f = Base.Meta.quot(:MSK_appendacc)
+  args = [esc(task),esc(domidx),esc(numafeidx),esc(afeidxlist),esc(b)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendaccs(task,numaccs,domidxs,numafeidx,afeidxlist,b)
+  f = Base.Meta.quot(:MSK_appendaccs)
+  args = [esc(task),esc(numaccs),esc(domidxs),esc(numafeidx),esc(afeidxlist),esc(b)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendaccseq(task,domidx,numafeidx,afeidxfirst,b)
+  f = Base.Meta.quot(:MSK_appendaccseq)
+  args = [esc(task),esc(domidx),esc(numafeidx),esc(afeidxfirst),esc(b)]
+  types = :((Ptr{Nothing},Int64,Int64,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendaccsseq(task,numaccs,domidxs,numafeidx,afeidxfirst,b)
+  f = Base.Meta.quot(:MSK_appendaccsseq)
+  args = [esc(task),esc(numaccs),esc(domidxs),esc(numafeidx),esc(afeidxfirst),esc(b)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Int64,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendafes(task,num)
+  f = Base.Meta.quot(:MSK_appendafes)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendbarvars(task,num,dim)
+  f = Base.Meta.quot(:MSK_appendbarvars)
+  args = [esc(task),esc(num),esc(dim)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendcone(task,ct,conepar,nummem,submem)
+  f = Base.Meta.quot(:MSK_appendcone)
+  args = [esc(task),esc(ct),esc(conepar),esc(nummem),esc(submem)]
+  types = :((Ptr{Nothing},Int32,Float64,Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendconeseq(task,ct,conepar,nummem,j)
+  f = Base.Meta.quot(:MSK_appendconeseq)
+  args = [esc(task),esc(ct),esc(conepar),esc(nummem),esc(j)]
+  types = :((Ptr{Nothing},Int32,Float64,Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendconesseq(task,num,ct,conepar,nummem,j)
+  f = Base.Meta.quot(:MSK_appendconesseq)
+  args = [esc(task),esc(num),esc(ct),esc(conepar),esc(nummem),esc(j)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendcons(task,num)
+  f = Base.Meta.quot(:MSK_appendcons)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appenddjcs(task,num)
+  f = Base.Meta.quot(:MSK_appenddjcs)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appenddualexpconedomain(task,domidx)
+  f = Base.Meta.quot(:MSK_appenddualexpconedomain)
+  args = [esc(task),esc(domidx)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appenddualgeomeanconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appenddualgeomeanconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appenddualpowerconedomain(task,n,nleft,alpha,domidx)
+  f = Base.Meta.quot(:MSK_appenddualpowerconedomain)
+  args = [esc(task),esc(n),esc(nleft),esc(alpha),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Float64},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendinfnormconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendinfnormconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendonenormconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendonenormconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendprimalexpconedomain(task,domidx)
+  f = Base.Meta.quot(:MSK_appendprimalexpconedomain)
+  args = [esc(task),esc(domidx)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendprimalgeomeanconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendprimalgeomeanconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendprimalpowerconedomain(task,n,nleft,alpha,domidx)
+  f = Base.Meta.quot(:MSK_appendprimalpowerconedomain)
+  args = [esc(task),esc(n),esc(nleft),esc(alpha),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Float64},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendpsdconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendpsdconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendquadraticconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendquadraticconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendrdomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendrdomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendrminusdomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendrminusdomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendrplusdomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendrplusdomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendrquadraticconedomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendrquadraticconedomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendrzerodomain(task,n,domidx)
+  f = Base.Meta.quot(:MSK_appendrzerodomain)
+  args = [esc(task),esc(n),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendsparsesymmat(task,dim,nz,subi,subj,valij,idx)
+  f = Base.Meta.quot(:MSK_appendsparsesymmat)
+  args = [esc(task),esc(dim),esc(nz),esc(subi),esc(subj),esc(valij),esc(idx)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendsparsesymmatlist(task,num,dims,nz,subi,subj,valij,idx)
+  f = Base.Meta.quot(:MSK_appendsparsesymmatlist)
+  args = [esc(task),esc(num),esc(dims),esc(nz),esc(subi),esc(subj),esc(valij),esc(idx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_appendvars(task,num)
+  f = Base.Meta.quot(:MSK_appendvars)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_basiscond(task,nrmbasis,nrminvbasis)
+  f = Base.Meta.quot(:MSK_basiscond)
+  args = [esc(task),esc(nrmbasis),esc(nrminvbasis)]
+  types = :((Ptr{Nothing},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_bktostr(task,bk,str)
+  f = Base.Meta.quot(:MSK_bktostr)
+  args = [esc(task),esc(bk),esc(str)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_callbackcodetostr(code,callbackcodestr)
+  f = Base.Meta.quot(:MSK_callbackcodetostr)
+  args = [esc(code),esc(callbackcodestr)]
+  types = :((Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_checkinall(env)
+  f = Base.Meta.quot(:MSK_checkinall)
+  args = [esc(env)]
+  types = :((Ptr{Nothing},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_checkinlicense(env,feature)
+  f = Base.Meta.quot(:MSK_checkinlicense)
+  args = [esc(env),esc(feature)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_checkmemtask(task,file,line)
+  f = Base.Meta.quot(:MSK_checkmemtask)
+  args = [esc(task),esc(file),esc(line)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_checkoutlicense(env,feature)
+  f = Base.Meta.quot(:MSK_checkoutlicense)
+  args = [esc(env),esc(feature)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_chgconbound(task,i,lower,finite,value)
+  f = Base.Meta.quot(:MSK_chgconbound)
+  args = [esc(task),esc(i),esc(lower),esc(finite),esc(value)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_chgvarbound(task,j,lower,finite,value)
+  f = Base.Meta.quot(:MSK_chgvarbound)
+  args = [esc(task),esc(j),esc(lower),esc(finite),esc(value)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_commitchanges(task)
+  f = Base.Meta.quot(:MSK_commitchanges)
+  args = [esc(task)]
+  types = :((Ptr{Nothing},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_conetypetostr(task,ct,str)
+  f = Base.Meta.quot(:MSK_conetypetostr)
+  args = [esc(task),esc(ct),esc(str)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_deletesolution(task,whichsol)
+  f = Base.Meta.quot(:MSK_deletesolution)
+  args = [esc(task),esc(whichsol)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_dualsensitivity(task,numj,subj,leftpricej,rightpricej,leftrangej,rightrangej)
+  f = Base.Meta.quot(:MSK_dualsensitivity)
+  args = [esc(task),esc(numj),esc(subj),esc(leftpricej),esc(rightpricej),esc(leftrangej),esc(rightrangej)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_echointro(env,longver)
+  f = Base.Meta.quot(:MSK_echointro)
+  args = [esc(env),esc(longver)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_emptyafebarfrow(task,afeidx)
+  f = Base.Meta.quot(:MSK_emptyafebarfrow)
+  args = [esc(task),esc(afeidx)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_emptyafebarfrowlist(task,numafeidx,afeidxlist)
+  f = Base.Meta.quot(:MSK_emptyafebarfrowlist)
+  args = [esc(task),esc(numafeidx),esc(afeidxlist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_emptyafefcol(task,j)
+  f = Base.Meta.quot(:MSK_emptyafefcol)
+  args = [esc(task),esc(j)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_emptyafefcollist(task,numvaridx,varidxlist)
+  f = Base.Meta.quot(:MSK_emptyafefcollist)
+  args = [esc(task),esc(numvaridx),esc(varidxlist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_emptyafefrow(task,afeidx)
+  f = Base.Meta.quot(:MSK_emptyafefrow)
+  args = [esc(task),esc(afeidx)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_emptyafefrowlist(task,numafeidx,afeidxlist)
+  f = Base.Meta.quot(:MSK_emptyafefrowlist)
+  args = [esc(task),esc(numafeidx),esc(afeidxlist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_evaluateacc(task,whichsol,accidx,activity)
+  f = Base.Meta.quot(:MSK_evaluateacc)
+  args = [esc(task),esc(whichsol),esc(accidx),esc(activity)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_evaluateaccs(task,whichsol,activity)
+  f = Base.Meta.quot(:MSK_evaluateaccs)
+  args = [esc(task),esc(whichsol),esc(activity)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_generateaccnames(task,num,sub,fmt,ndims,dims)
+  f = Base.Meta.quot(:MSK_generateaccnames)
+  args = [esc(task),esc(num),esc(sub),esc(fmt),esc(ndims),esc(dims)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{UInt8},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_generateconenames(task,num,subk,fmt,ndims,dims,sp)
+  f = Base.Meta.quot(:MSK_generateconenames)
+  args = [esc(task),esc(num),esc(subk),esc(fmt),esc(ndims),esc(dims),esc(sp)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_generateconnames(task,num,subi,fmt,ndims,dims,sp)
+  f = Base.Meta.quot(:MSK_generateconnames)
+  args = [esc(task),esc(num),esc(subi),esc(fmt),esc(ndims),esc(dims),esc(sp)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_generatevarnames(task,num,subj,fmt,ndims,dims,sp)
+  f = Base.Meta.quot(:MSK_generatevarnames)
+  args = [esc(task),esc(num),esc(subj),esc(fmt),esc(ndims),esc(dims),esc(sp)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccafeidxlist(task,accidx,afeidxlist)
+  f = Base.Meta.quot(:MSK_getaccafeidxlist)
+  args = [esc(task),esc(accidx),esc(afeidxlist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccb(task,accidx,b)
+  f = Base.Meta.quot(:MSK_getaccb)
+  args = [esc(task),esc(accidx),esc(b)]
+  types = :((Ptr{Nothing},Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccdomain(task,accidx,domidx)
+  f = Base.Meta.quot(:MSK_getaccdomain)
+  args = [esc(task),esc(accidx),esc(domidx)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccdoty(task,whichsol,accidx,doty)
+  f = Base.Meta.quot(:MSK_getaccdoty)
+  args = [esc(task),esc(whichsol),esc(accidx),esc(doty)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccn(task,accidx,n)
+  f = Base.Meta.quot(:MSK_getaccn)
+  args = [esc(task),esc(accidx),esc(n)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccname(task,accidx,sizename,name)
+  f = Base.Meta.quot(:MSK_getaccname)
+  args = [esc(task),esc(accidx),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int64,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccnamelen(task,accidx,len)
+  f = Base.Meta.quot(:MSK_getaccnamelen)
+  args = [esc(task),esc(accidx),esc(len)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccntot(task,n)
+  f = Base.Meta.quot(:MSK_getaccntot)
+  args = [esc(task),esc(n)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaccs(task,domidxlist,afeidxlist,b)
+  f = Base.Meta.quot(:MSK_getaccs)
+  args = [esc(task),esc(domidxlist),esc(afeidxlist),esc(b)]
+  types = :((Ptr{Nothing},Ptr{Int64},Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getacol(task,j,nzj,subj,valj)
+  f = Base.Meta.quot(:MSK_getacol)
+  args = [esc(task),esc(j),esc(nzj),esc(subj),esc(valj)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getacolnumnz(task,i,nzj)
+  f = Base.Meta.quot(:MSK_getacolnumnz)
+  args = [esc(task),esc(i),esc(nzj)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getacolslice64(task,first,last,maxnumnz,surp,ptrb,ptre,sub,val)
+  f = Base.Meta.quot(:MSK_getacolslice64)
+  args = [esc(task),esc(first),esc(last),esc(maxnumnz),esc(surp),esc(ptrb),esc(ptre),esc(sub),esc(val)]
+  types = :((Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getacolslicenumnz64(task,first,last,numnz)
+  f = Base.Meta.quot(:MSK_getacolslicenumnz64)
+  args = [esc(task),esc(first),esc(last),esc(numnz)]
+  types = :((Ptr{Nothing},Int32,Int32,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getacolslicetrip(task,first,last,maxnumnz,surp,subi,subj,val)
+  f = Base.Meta.quot(:MSK_getacolslicetrip)
+  args = [esc(task),esc(first),esc(last),esc(maxnumnz),esc(surp),esc(subi),esc(subj),esc(val)]
+  types = :((Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafebarfnumrowentries(task,afeidx,numentries)
+  f = Base.Meta.quot(:MSK_getafebarfnumrowentries)
+  args = [esc(task),esc(afeidx),esc(numentries)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafebarfrow(task,afeidx,barvaridx,termptr,numterms,termidx,termweight)
+  f = Base.Meta.quot(:MSK_getafebarfrow)
+  args = [esc(task),esc(afeidx),esc(barvaridx),esc(termptr),esc(numterms),esc(termidx),esc(termweight)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafebarfrowinfo(task,afeidx,numentries,numterms)
+  f = Base.Meta.quot(:MSK_getafebarfrowinfo)
+  args = [esc(task),esc(afeidx),esc(numentries),esc(numterms)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafefnumnz(task,numfnz)
+  f = Base.Meta.quot(:MSK_getafefnumnz)
+  args = [esc(task),esc(numfnz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafefrow(task,afeidx,nzi,subi,vali)
+  f = Base.Meta.quot(:MSK_getafefrow)
+  args = [esc(task),esc(afeidx),esc(nzi),esc(subi),esc(vali)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafefrownumnz(task,afeidx,nzi)
+  f = Base.Meta.quot(:MSK_getafefrownumnz)
+  args = [esc(task),esc(afeidx),esc(nzi)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafeftrip(task,subi,subj,vali)
+  f = Base.Meta.quot(:MSK_getafeftrip)
+  args = [esc(task),esc(subi),esc(subj),esc(vali)]
+  types = :((Ptr{Nothing},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafeg(task,afeidx,g)
+  f = Base.Meta.quot(:MSK_getafeg)
+  args = [esc(task),esc(afeidx),esc(g)]
+  types = :((Ptr{Nothing},Int64,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getafegslice(task,first,last,g)
+  f = Base.Meta.quot(:MSK_getafegslice)
+  args = [esc(task),esc(first),esc(last),esc(g)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getaij(task,i,j,aij)
+  f = Base.Meta.quot(:MSK_getaij)
+  args = [esc(task),esc(i),esc(j),esc(aij)]
+  types = :((Ptr{Nothing},Int32,Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getapiecenumnz(task,firsti,lasti,firstj,lastj,numnz)
+  f = Base.Meta.quot(:MSK_getapiecenumnz)
+  args = [esc(task),esc(firsti),esc(lasti),esc(firstj),esc(lastj),esc(numnz)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getarow(task,i,nzi,subi,vali)
+  f = Base.Meta.quot(:MSK_getarow)
+  args = [esc(task),esc(i),esc(nzi),esc(subi),esc(vali)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getarownumnz(task,i,nzi)
+  f = Base.Meta.quot(:MSK_getarownumnz)
+  args = [esc(task),esc(i),esc(nzi)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getarowslice64(task,first,last,maxnumnz,surp,ptrb,ptre,sub,val)
+  f = Base.Meta.quot(:MSK_getarowslice64)
+  args = [esc(task),esc(first),esc(last),esc(maxnumnz),esc(surp),esc(ptrb),esc(ptre),esc(sub),esc(val)]
+  types = :((Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getarowslicenumnz64(task,first,last,numnz)
+  f = Base.Meta.quot(:MSK_getarowslicenumnz64)
+  args = [esc(task),esc(first),esc(last),esc(numnz)]
+  types = :((Ptr{Nothing},Int32,Int32,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getarowslicetrip(task,first,last,maxnumnz,surp,subi,subj,val)
+  f = Base.Meta.quot(:MSK_getarowslicetrip)
+  args = [esc(task),esc(first),esc(last),esc(maxnumnz),esc(surp),esc(subi),esc(subj),esc(val)]
+  types = :((Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getatruncatetol(task,tolzero)
+  f = Base.Meta.quot(:MSK_getatruncatetol)
+  args = [esc(task),esc(tolzero)]
+  types = :((Ptr{Nothing},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarablocktriplet(task,maxnum,num,subi,subj,subk,subl,valijkl)
+  f = Base.Meta.quot(:MSK_getbarablocktriplet)
+  args = [esc(task),esc(maxnum),esc(num),esc(subi),esc(subj),esc(subk),esc(subl),esc(valijkl)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbaraidx(task,idx,maxnum,i,j,num,sub,weights)
+  f = Base.Meta.quot(:MSK_getbaraidx)
+  args = [esc(task),esc(idx),esc(maxnum),esc(i),esc(j),esc(num),esc(sub),esc(weights)]
+  types = :((Ptr{Nothing},Int64,Int64,Ref{Int32},Ref{Int32},Ref{Int64},Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbaraidxij(task,idx,i,j)
+  f = Base.Meta.quot(:MSK_getbaraidxij)
+  args = [esc(task),esc(idx),esc(i),esc(j)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbaraidxinfo(task,idx,num)
+  f = Base.Meta.quot(:MSK_getbaraidxinfo)
+  args = [esc(task),esc(idx),esc(num)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarasparsity(task,maxnumnz,numnz,idxij)
+  f = Base.Meta.quot(:MSK_getbarasparsity)
+  args = [esc(task),esc(maxnumnz),esc(numnz),esc(idxij)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarcblocktriplet(task,maxnum,num,subj,subk,subl,valjkl)
+  f = Base.Meta.quot(:MSK_getbarcblocktriplet)
+  args = [esc(task),esc(maxnum),esc(num),esc(subj),esc(subk),esc(subl),esc(valjkl)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarcidx(task,idx,maxnum,j,num,sub,weights)
+  f = Base.Meta.quot(:MSK_getbarcidx)
+  args = [esc(task),esc(idx),esc(maxnum),esc(j),esc(num),esc(sub),esc(weights)]
+  types = :((Ptr{Nothing},Int64,Int64,Ref{Int32},Ref{Int64},Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarcidxinfo(task,idx,num)
+  f = Base.Meta.quot(:MSK_getbarcidxinfo)
+  args = [esc(task),esc(idx),esc(num)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarcidxj(task,idx,j)
+  f = Base.Meta.quot(:MSK_getbarcidxj)
+  args = [esc(task),esc(idx),esc(j)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarcsparsity(task,maxnumnz,numnz,idxj)
+  f = Base.Meta.quot(:MSK_getbarcsparsity)
+  args = [esc(task),esc(maxnumnz),esc(numnz),esc(idxj)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarsj(task,whichsol,j,barsj)
+  f = Base.Meta.quot(:MSK_getbarsj)
+  args = [esc(task),esc(whichsol),esc(j),esc(barsj)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarsslice(task,whichsol,first,last,slicesize,barsslice)
+  f = Base.Meta.quot(:MSK_getbarsslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(slicesize),esc(barsslice)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarvarname(task,i,sizename,name)
+  f = Base.Meta.quot(:MSK_getbarvarname)
+  args = [esc(task),esc(i),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarvarnameindex(task,somename,asgn,index)
+  f = Base.Meta.quot(:MSK_getbarvarnameindex)
+  args = [esc(task),esc(somename),esc(asgn),esc(index)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarvarnamelen(task,i,len)
+  f = Base.Meta.quot(:MSK_getbarvarnamelen)
+  args = [esc(task),esc(i),esc(len)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarxj(task,whichsol,j,barxj)
+  f = Base.Meta.quot(:MSK_getbarxj)
+  args = [esc(task),esc(whichsol),esc(j),esc(barxj)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getbarxslice(task,whichsol,first,last,slicesize,barxslice)
+  f = Base.Meta.quot(:MSK_getbarxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(slicesize),esc(barxslice)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getc(task,c)
+  f = Base.Meta.quot(:MSK_getc)
+  args = [esc(task),esc(c)]
+  types = :((Ptr{Nothing},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getcfix(task,cfix)
+  f = Base.Meta.quot(:MSK_getcfix)
+  args = [esc(task),esc(cfix)]
+  types = :((Ptr{Nothing},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getcj(task,j,cj)
+  f = Base.Meta.quot(:MSK_getcj)
+  args = [esc(task),esc(j),esc(cj)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getclist(task,num,subj,c)
+  f = Base.Meta.quot(:MSK_getclist)
+  args = [esc(task),esc(num),esc(subj),esc(c)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getcodedesc(code,symname,str)
+  f = Base.Meta.quot(:MSK_getcodedesc)
+  args = [esc(code),esc(symname),esc(str)]
+  types = :((Int32,Ptr{UInt8},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconbound(task,i,bk,bl,bu)
+  f = Base.Meta.quot(:MSK_getconbound)
+  args = [esc(task),esc(i),esc(bk),esc(bl),esc(bu)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconboundslice(task,first,last,bk,bl,bu)
+  f = Base.Meta.quot(:MSK_getconboundslice)
+  args = [esc(task),esc(first),esc(last),esc(bk),esc(bl),esc(bu)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getcone(task,k,ct,conepar,nummem,submem)
+  f = Base.Meta.quot(:MSK_getcone)
+  args = [esc(task),esc(k),esc(ct),esc(conepar),esc(nummem),esc(submem)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ref{Float64},Ref{Int32},Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconeinfo(task,k,ct,conepar,nummem)
+  f = Base.Meta.quot(:MSK_getconeinfo)
+  args = [esc(task),esc(k),esc(ct),esc(conepar),esc(nummem)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ref{Float64},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconename(task,i,sizename,name)
+  f = Base.Meta.quot(:MSK_getconename)
+  args = [esc(task),esc(i),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconenameindex(task,somename,asgn,index)
+  f = Base.Meta.quot(:MSK_getconenameindex)
+  args = [esc(task),esc(somename),esc(asgn),esc(index)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconenamelen(task,i,len)
+  f = Base.Meta.quot(:MSK_getconenamelen)
+  args = [esc(task),esc(i),esc(len)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconname(task,i,sizename,name)
+  f = Base.Meta.quot(:MSK_getconname)
+  args = [esc(task),esc(i),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconnameindex(task,somename,asgn,index)
+  f = Base.Meta.quot(:MSK_getconnameindex)
+  args = [esc(task),esc(somename),esc(asgn),esc(index)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getconnamelen(task,i,len)
+  f = Base.Meta.quot(:MSK_getconnamelen)
+  args = [esc(task),esc(i),esc(len)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getcslice(task,first,last,c)
+  f = Base.Meta.quot(:MSK_getcslice)
+  args = [esc(task),esc(first),esc(last),esc(c)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdimbarvarj(task,j,dimbarvarj)
+  f = Base.Meta.quot(:MSK_getdimbarvarj)
+  args = [esc(task),esc(j),esc(dimbarvarj)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcafeidxlist(task,djcidx,afeidxlist)
+  f = Base.Meta.quot(:MSK_getdjcafeidxlist)
+  args = [esc(task),esc(djcidx),esc(afeidxlist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcb(task,djcidx,b)
+  f = Base.Meta.quot(:MSK_getdjcb)
+  args = [esc(task),esc(djcidx),esc(b)]
+  types = :((Ptr{Nothing},Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcdomainidxlist(task,djcidx,domidxlist)
+  f = Base.Meta.quot(:MSK_getdjcdomainidxlist)
+  args = [esc(task),esc(djcidx),esc(domidxlist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcname(task,djcidx,sizename,name)
+  f = Base.Meta.quot(:MSK_getdjcname)
+  args = [esc(task),esc(djcidx),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int64,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnamelen(task,djcidx,len)
+  f = Base.Meta.quot(:MSK_getdjcnamelen)
+  args = [esc(task),esc(djcidx),esc(len)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnumafe(task,idjc,numafe)
+  f = Base.Meta.quot(:MSK_getdjcnumafe)
+  args = [esc(task),esc(idjc),esc(numafe)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnumafetot(task,numafetot)
+  f = Base.Meta.quot(:MSK_getdjcnumafetot)
+  args = [esc(task),esc(numafetot)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnumdomain(task,idjc,numdomain)
+  f = Base.Meta.quot(:MSK_getdjcnumdomain)
+  args = [esc(task),esc(idjc),esc(numdomain)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnumdomaintot(task,numdomaintot)
+  f = Base.Meta.quot(:MSK_getdjcnumdomaintot)
+  args = [esc(task),esc(numdomaintot)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnumterm(task,idjc,numterm)
+  f = Base.Meta.quot(:MSK_getdjcnumterm)
+  args = [esc(task),esc(idjc),esc(numterm)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcnumtermtot(task,numtermtot)
+  f = Base.Meta.quot(:MSK_getdjcnumtermtot)
+  args = [esc(task),esc(numtermtot)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjcs(task,domidxlist,afeidxlist,b,termsizelist,numterms)
+  f = Base.Meta.quot(:MSK_getdjcs)
+  args = [esc(task),esc(domidxlist),esc(afeidxlist),esc(b),esc(termsizelist),esc(numterms)]
+  types = :((Ptr{Nothing},Ptr{Int64},Ptr{Int64},Ptr{Float64},Ptr{Int64},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdjctermsizelist(task,djcidx,termsizelist)
+  f = Base.Meta.quot(:MSK_getdjctermsizelist)
+  args = [esc(task),esc(djcidx),esc(termsizelist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdomainn(task,domidx,n)
+  f = Base.Meta.quot(:MSK_getdomainn)
+  args = [esc(task),esc(domidx),esc(n)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdomainname(task,domidx,sizename,name)
+  f = Base.Meta.quot(:MSK_getdomainname)
+  args = [esc(task),esc(domidx),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int64,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdomainnamelen(task,domidx,len)
+  f = Base.Meta.quot(:MSK_getdomainnamelen)
+  args = [esc(task),esc(domidx),esc(len)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdomaintype(task,domidx,domaintype)
+  f = Base.Meta.quot(:MSK_getdomaintype)
+  args = [esc(task),esc(domidx),esc(domaintype)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdouinf(task,whichdinf,dvalue)
+  f = Base.Meta.quot(:MSK_getdouinf)
+  args = [esc(task),esc(whichdinf),esc(dvalue)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdouparam(task,param,parvalue)
+  f = Base.Meta.quot(:MSK_getdouparam)
+  args = [esc(task),esc(param),esc(parvalue)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdualobj(task,whichsol,dualobj)
+  f = Base.Meta.quot(:MSK_getdualobj)
+  args = [esc(task),esc(whichsol),esc(dualobj)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdualsolutionnorms(task,whichsol,nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars)
+  f = Base.Meta.quot(:MSK_getdualsolutionnorms)
+  args = [esc(task),esc(whichsol),esc(nrmy),esc(nrmslc),esc(nrmsuc),esc(nrmslx),esc(nrmsux),esc(nrmsnx),esc(nrmbars)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdviolacc(task,whichsol,numaccidx,accidxlist,viol)
+  f = Base.Meta.quot(:MSK_getdviolacc)
+  args = [esc(task),esc(whichsol),esc(numaccidx),esc(accidxlist),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdviolbarvar(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getdviolbarvar)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdviolcon(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getdviolcon)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdviolcones(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getdviolcones)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getdviolvar(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getdviolvar)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getinfeasiblesubproblem(task,whichsol,inftask)
+  f = Base.Meta.quot(:MSK_getinfeasiblesubproblem)
+  args = [esc(task),esc(whichsol),esc(inftask)]
+  types = :((Ptr{Nothing},Int32,Ref{Ptr{Nothing}},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getinfname(task,inftype,whichinf,infname)
+  f = Base.Meta.quot(:MSK_getinfname)
+  args = [esc(task),esc(inftype),esc(whichinf),esc(infname)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getintinf(task,whichiinf,ivalue)
+  f = Base.Meta.quot(:MSK_getintinf)
+  args = [esc(task),esc(whichiinf),esc(ivalue)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getintparam(task,param,parvalue)
+  f = Base.Meta.quot(:MSK_getintparam)
+  args = [esc(task),esc(param),esc(parvalue)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getlenbarvarj(task,j,lenbarvarj)
+  f = Base.Meta.quot(:MSK_getlenbarvarj)
+  args = [esc(task),esc(j),esc(lenbarvarj)]
+  types = :((Ptr{Nothing},Int32,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getlintinf(task,whichliinf,ivalue)
+  f = Base.Meta.quot(:MSK_getlintinf)
+  args = [esc(task),esc(whichliinf),esc(ivalue)]
+  types = :((Ptr{Nothing},Int32,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmaxnumanz64(task,maxnumanz)
+  f = Base.Meta.quot(:MSK_getmaxnumanz64)
+  args = [esc(task),esc(maxnumanz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmaxnumbarvar(task,maxnumbarvar)
+  f = Base.Meta.quot(:MSK_getmaxnumbarvar)
+  args = [esc(task),esc(maxnumbarvar)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmaxnumcon(task,maxnumcon)
+  f = Base.Meta.quot(:MSK_getmaxnumcon)
+  args = [esc(task),esc(maxnumcon)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmaxnumcone(task,maxnumcone)
+  f = Base.Meta.quot(:MSK_getmaxnumcone)
+  args = [esc(task),esc(maxnumcone)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmaxnumqnz64(task,maxnumqnz)
+  f = Base.Meta.quot(:MSK_getmaxnumqnz64)
+  args = [esc(task),esc(maxnumqnz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmaxnumvar(task,maxnumvar)
+  f = Base.Meta.quot(:MSK_getmaxnumvar)
+  args = [esc(task),esc(maxnumvar)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getmemusagetask(task,meminuse,maxmemuse)
+  f = Base.Meta.quot(:MSK_getmemusagetask)
+  args = [esc(task),esc(meminuse),esc(maxmemuse)]
+  types = :((Ptr{Nothing},Ref{Int64},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnadouinf(task,infitemname,dvalue)
+  f = Base.Meta.quot(:MSK_getnadouinf)
+  args = [esc(task),esc(infitemname),esc(dvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnadouparam(task,paramname,parvalue)
+  f = Base.Meta.quot(:MSK_getnadouparam)
+  args = [esc(task),esc(paramname),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnaintinf(task,infitemname,ivalue)
+  f = Base.Meta.quot(:MSK_getnaintinf)
+  args = [esc(task),esc(infitemname),esc(ivalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnaintparam(task,paramname,parvalue)
+  f = Base.Meta.quot(:MSK_getnaintparam)
+  args = [esc(task),esc(paramname),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnastrparam(task,paramname,sizeparamname,len,parvalue)
+  f = Base.Meta.quot(:MSK_getnastrparam)
+  args = [esc(task),esc(paramname),esc(sizeparamname),esc(len),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Int32,Ref{Int32},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumacc(task,num)
+  f = Base.Meta.quot(:MSK_getnumacc)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumafe(task,numafe)
+  f = Base.Meta.quot(:MSK_getnumafe)
+  args = [esc(task),esc(numafe)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumanz(task,numanz)
+  f = Base.Meta.quot(:MSK_getnumanz)
+  args = [esc(task),esc(numanz)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumanz64(task,numanz)
+  f = Base.Meta.quot(:MSK_getnumanz64)
+  args = [esc(task),esc(numanz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumbarablocktriplets(task,num)
+  f = Base.Meta.quot(:MSK_getnumbarablocktriplets)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumbaranz(task,nz)
+  f = Base.Meta.quot(:MSK_getnumbaranz)
+  args = [esc(task),esc(nz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumbarcblocktriplets(task,num)
+  f = Base.Meta.quot(:MSK_getnumbarcblocktriplets)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumbarcnz(task,nz)
+  f = Base.Meta.quot(:MSK_getnumbarcnz)
+  args = [esc(task),esc(nz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumbarvar(task,numbarvar)
+  f = Base.Meta.quot(:MSK_getnumbarvar)
+  args = [esc(task),esc(numbarvar)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumcon(task,numcon)
+  f = Base.Meta.quot(:MSK_getnumcon)
+  args = [esc(task),esc(numcon)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumcone(task,numcone)
+  f = Base.Meta.quot(:MSK_getnumcone)
+  args = [esc(task),esc(numcone)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumconemem(task,k,nummem)
+  f = Base.Meta.quot(:MSK_getnumconemem)
+  args = [esc(task),esc(k),esc(nummem)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumdjc(task,num)
+  f = Base.Meta.quot(:MSK_getnumdjc)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumdomain(task,numdomain)
+  f = Base.Meta.quot(:MSK_getnumdomain)
+  args = [esc(task),esc(numdomain)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumintvar(task,numintvar)
+  f = Base.Meta.quot(:MSK_getnumintvar)
+  args = [esc(task),esc(numintvar)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumparam(task,partype,numparam)
+  f = Base.Meta.quot(:MSK_getnumparam)
+  args = [esc(task),esc(partype),esc(numparam)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumqconknz64(task,k,numqcnz)
+  f = Base.Meta.quot(:MSK_getnumqconknz64)
+  args = [esc(task),esc(k),esc(numqcnz)]
+  types = :((Ptr{Nothing},Int32,Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumqobjnz64(task,numqonz)
+  f = Base.Meta.quot(:MSK_getnumqobjnz64)
+  args = [esc(task),esc(numqonz)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumsymmat(task,num)
+  f = Base.Meta.quot(:MSK_getnumsymmat)
+  args = [esc(task),esc(num)]
+  types = :((Ptr{Nothing},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getnumvar(task,numvar)
+  f = Base.Meta.quot(:MSK_getnumvar)
+  args = [esc(task),esc(numvar)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getobjname(task,sizeobjname,objname)
+  f = Base.Meta.quot(:MSK_getobjname)
+  args = [esc(task),esc(sizeobjname),esc(objname)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getobjnamelen(task,len)
+  f = Base.Meta.quot(:MSK_getobjnamelen)
+  args = [esc(task),esc(len)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getobjsense(task,sense)
+  f = Base.Meta.quot(:MSK_getobjsense)
+  args = [esc(task),esc(sense)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getparamname(task,partype,param,parname)
+  f = Base.Meta.quot(:MSK_getparamname)
+  args = [esc(task),esc(partype),esc(param),esc(parname)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpowerdomainalpha(task,domidx,alpha)
+  f = Base.Meta.quot(:MSK_getpowerdomainalpha)
+  args = [esc(task),esc(domidx),esc(alpha)]
+  types = :((Ptr{Nothing},Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpowerdomaininfo(task,domidx,n,nleft)
+  f = Base.Meta.quot(:MSK_getpowerdomaininfo)
+  args = [esc(task),esc(domidx),esc(n),esc(nleft)]
+  types = :((Ptr{Nothing},Int64,Ref{Int64},Ref{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getprimalobj(task,whichsol,primalobj)
+  f = Base.Meta.quot(:MSK_getprimalobj)
+  args = [esc(task),esc(whichsol),esc(primalobj)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getprimalsolutionnorms(task,whichsol,nrmxc,nrmxx,nrmbarx)
+  f = Base.Meta.quot(:MSK_getprimalsolutionnorms)
+  args = [esc(task),esc(whichsol),esc(nrmxc),esc(nrmxx),esc(nrmbarx)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getprobtype(task,probtype)
+  f = Base.Meta.quot(:MSK_getprobtype)
+  args = [esc(task),esc(probtype)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getprosta(task,whichsol,prosta)
+  f = Base.Meta.quot(:MSK_getprosta)
+  args = [esc(task),esc(whichsol),esc(prosta)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpviolacc(task,whichsol,numaccidx,accidxlist,viol)
+  f = Base.Meta.quot(:MSK_getpviolacc)
+  args = [esc(task),esc(whichsol),esc(numaccidx),esc(accidxlist),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpviolbarvar(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getpviolbarvar)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpviolcon(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getpviolcon)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpviolcones(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getpviolcones)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpvioldjc(task,whichsol,numdjcidx,djcidxlist,viol)
+  f = Base.Meta.quot(:MSK_getpvioldjc)
+  args = [esc(task),esc(whichsol),esc(numdjcidx),esc(djcidxlist),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getpviolvar(task,whichsol,num,sub,viol)
+  f = Base.Meta.quot(:MSK_getpviolvar)
+  args = [esc(task),esc(whichsol),esc(num),esc(sub),esc(viol)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getqconk64(task,k,maxnumqcnz,qcsurp,numqcnz,qcsubi,qcsubj,qcval)
+  f = Base.Meta.quot(:MSK_getqconk64)
+  args = [esc(task),esc(k),esc(maxnumqcnz),esc(qcsurp),esc(numqcnz),esc(qcsubi),esc(qcsubj),esc(qcval)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Int64},Ref{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getqobj64(task,maxnumqonz,qosurp,numqonz,qosubi,qosubj,qoval)
+  f = Base.Meta.quot(:MSK_getqobj64)
+  args = [esc(task),esc(maxnumqonz),esc(qosurp),esc(numqonz),esc(qosubi),esc(qosubj),esc(qoval)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ref{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getqobjij(task,i,j,qoij)
+  f = Base.Meta.quot(:MSK_getqobjij)
+  args = [esc(task),esc(i),esc(j),esc(qoij)]
+  types = :((Ptr{Nothing},Int32,Int32,Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getreducedcosts(task,whichsol,first,last,redcosts)
+  f = Base.Meta.quot(:MSK_getreducedcosts)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(redcosts)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getskc(task,whichsol,skc)
+  f = Base.Meta.quot(:MSK_getskc)
+  args = [esc(task),esc(whichsol),esc(skc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getskcslice(task,whichsol,first,last,skc)
+  f = Base.Meta.quot(:MSK_getskcslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(skc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getskn(task,whichsol,skn)
+  f = Base.Meta.quot(:MSK_getskn)
+  args = [esc(task),esc(whichsol),esc(skn)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getskx(task,whichsol,skx)
+  f = Base.Meta.quot(:MSK_getskx)
+  args = [esc(task),esc(whichsol),esc(skx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getskxslice(task,whichsol,first,last,skx)
+  f = Base.Meta.quot(:MSK_getskxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(skx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getslc(task,whichsol,slc)
+  f = Base.Meta.quot(:MSK_getslc)
+  args = [esc(task),esc(whichsol),esc(slc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getslcslice(task,whichsol,first,last,slc)
+  f = Base.Meta.quot(:MSK_getslcslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(slc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getslx(task,whichsol,slx)
+  f = Base.Meta.quot(:MSK_getslx)
+  args = [esc(task),esc(whichsol),esc(slx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getslxslice(task,whichsol,first,last,slx)
+  f = Base.Meta.quot(:MSK_getslxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(slx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsnx(task,whichsol,snx)
+  f = Base.Meta.quot(:MSK_getsnx)
+  args = [esc(task),esc(whichsol),esc(snx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsnxslice(task,whichsol,first,last,snx)
+  f = Base.Meta.quot(:MSK_getsnxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(snx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsolsta(task,whichsol,solsta)
+  f = Base.Meta.quot(:MSK_getsolsta)
+  args = [esc(task),esc(whichsol),esc(solsta)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsolution(task,whichsol,prosta,solsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx)
+  f = Base.Meta.quot(:MSK_getsolution)
+  args = [esc(task),esc(whichsol),esc(prosta),esc(solsta),esc(skc),esc(skx),esc(skn),esc(xc),esc(xx),esc(y),esc(slc),esc(suc),esc(slx),esc(sux),esc(snx)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ref{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsolutioninfo(task,whichsol,pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone)
+  f = Base.Meta.quot(:MSK_getsolutioninfo)
+  args = [esc(task),esc(whichsol),esc(pobj),esc(pviolcon),esc(pviolvar),esc(pviolbarvar),esc(pviolcone),esc(pviolitg),esc(dobj),esc(dviolcon),esc(dviolvar),esc(dviolbarvar),esc(dviolcone)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsolutioninfonew(task,whichsol,pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolacc,pvioldjc,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone,dviolacc)
+  f = Base.Meta.quot(:MSK_getsolutioninfonew)
+  args = [esc(task),esc(whichsol),esc(pobj),esc(pviolcon),esc(pviolvar),esc(pviolbarvar),esc(pviolcone),esc(pviolacc),esc(pvioldjc),esc(pviolitg),esc(dobj),esc(dviolcon),esc(dviolvar),esc(dviolbarvar),esc(dviolcone),esc(dviolacc)]
+  types = :((Ptr{Nothing},Int32,Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsolutionnew(task,whichsol,prosta,solsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty)
+  f = Base.Meta.quot(:MSK_getsolutionnew)
+  args = [esc(task),esc(whichsol),esc(prosta),esc(solsta),esc(skc),esc(skx),esc(skn),esc(xc),esc(xx),esc(y),esc(slc),esc(suc),esc(slx),esc(sux),esc(snx),esc(doty)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ref{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsolutionslice(task,whichsol,solitem,first,last,values)
+  f = Base.Meta.quot(:MSK_getsolutionslice)
+  args = [esc(task),esc(whichsol),esc(solitem),esc(first),esc(last),esc(values)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsparsesymmat(task,idx,maxlen,subi,subj,valij)
+  f = Base.Meta.quot(:MSK_getsparsesymmat)
+  args = [esc(task),esc(idx),esc(maxlen),esc(subi),esc(subj),esc(valij)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getstrparam(task,param,maxlen,len,parvalue)
+  f = Base.Meta.quot(:MSK_getstrparam)
+  args = [esc(task),esc(param),esc(maxlen),esc(len),esc(parvalue)]
+  types = :((Ptr{Nothing},Int32,Int32,Ref{Int32},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getstrparamlen(task,param,len)
+  f = Base.Meta.quot(:MSK_getstrparamlen)
+  args = [esc(task),esc(param),esc(len)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsuc(task,whichsol,suc)
+  f = Base.Meta.quot(:MSK_getsuc)
+  args = [esc(task),esc(whichsol),esc(suc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsucslice(task,whichsol,first,last,suc)
+  f = Base.Meta.quot(:MSK_getsucslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(suc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsux(task,whichsol,sux)
+  f = Base.Meta.quot(:MSK_getsux)
+  args = [esc(task),esc(whichsol),esc(sux)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsuxslice(task,whichsol,first,last,sux)
+  f = Base.Meta.quot(:MSK_getsuxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(sux)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getsymmatinfo(task,idx,dim,nz,type)
+  f = Base.Meta.quot(:MSK_getsymmatinfo)
+  args = [esc(task),esc(idx),esc(dim),esc(nz),esc(type)]
+  types = :((Ptr{Nothing},Int64,Ref{Int32},Ref{Int64},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_gettaskname(task,sizetaskname,taskname)
+  f = Base.Meta.quot(:MSK_gettaskname)
+  args = [esc(task),esc(sizetaskname),esc(taskname)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_gettasknamelen(task,len)
+  f = Base.Meta.quot(:MSK_gettasknamelen)
+  args = [esc(task),esc(len)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvarbound(task,i,bk,bl,bu)
+  f = Base.Meta.quot(:MSK_getvarbound)
+  args = [esc(task),esc(i),esc(bk),esc(bl),esc(bu)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ref{Float64},Ref{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvarboundslice(task,first,last,bk,bl,bu)
+  f = Base.Meta.quot(:MSK_getvarboundslice)
+  args = [esc(task),esc(first),esc(last),esc(bk),esc(bl),esc(bu)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvarname(task,j,sizename,name)
+  f = Base.Meta.quot(:MSK_getvarname)
+  args = [esc(task),esc(j),esc(sizename),esc(name)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvarnameindex(task,somename,asgn,index)
+  f = Base.Meta.quot(:MSK_getvarnameindex)
+  args = [esc(task),esc(somename),esc(asgn),esc(index)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvarnamelen(task,i,len)
+  f = Base.Meta.quot(:MSK_getvarnamelen)
+  args = [esc(task),esc(i),esc(len)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvartype(task,j,vartype)
+  f = Base.Meta.quot(:MSK_getvartype)
+  args = [esc(task),esc(j),esc(vartype)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getvartypelist(task,num,subj,vartype)
+  f = Base.Meta.quot(:MSK_getvartypelist)
+  args = [esc(task),esc(num),esc(subj),esc(vartype)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getversion(major,minor,revision)
+  f = Base.Meta.quot(:MSK_getversion)
+  args = [esc(major),esc(minor),esc(revision)]
+  types = :((Ref{Int32},Ref{Int32},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getxc(task,whichsol,xc)
+  f = Base.Meta.quot(:MSK_getxc)
+  args = [esc(task),esc(whichsol),esc(xc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getxcslice(task,whichsol,first,last,xc)
+  f = Base.Meta.quot(:MSK_getxcslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(xc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getxx(task,whichsol,xx)
+  f = Base.Meta.quot(:MSK_getxx)
+  args = [esc(task),esc(whichsol),esc(xx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getxxslice(task,whichsol,first,last,xx)
+  f = Base.Meta.quot(:MSK_getxxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(xx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_gety(task,whichsol,y)
+  f = Base.Meta.quot(:MSK_gety)
+  args = [esc(task),esc(whichsol),esc(y)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_getyslice(task,whichsol,first,last,y)
+  f = Base.Meta.quot(:MSK_getyslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(y)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_initbasissolve(task,basis)
+  f = Base.Meta.quot(:MSK_initbasissolve)
+  args = [esc(task),esc(basis)]
+  types = :((Ptr{Nothing},Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_inputdata64(task,maxnumcon,maxnumvar,numcon,numvar,c,cfix,aptrb,aptre,asub,aval,bkc,blc,buc,bkx,blx,bux)
+  f = Base.Meta.quot(:MSK_inputdata64)
+  args = [esc(task),esc(maxnumcon),esc(maxnumvar),esc(numcon),esc(numvar),esc(c),esc(cfix),esc(aptrb),esc(aptre),esc(asub),esc(aval),esc(bkc),esc(blc),esc(buc),esc(bkx),esc(blx),esc(bux)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Float64},Float64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_isdouparname(task,parname,param)
+  f = Base.Meta.quot(:MSK_isdouparname)
+  args = [esc(task),esc(parname),esc(param)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_isintparname(task,parname,param)
+  f = Base.Meta.quot(:MSK_isintparname)
+  args = [esc(task),esc(parname),esc(param)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_isstrparname(task,parname,param)
+  f = Base.Meta.quot(:MSK_isstrparname)
+  args = [esc(task),esc(parname),esc(param)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_licensecleanup()
+ :(@msk_ccall "licensecleanup" Int32 ())
+end
+macro MSK_linkfiletoenvstream(env,whichstream,filename,append)
+  f = Base.Meta.quot(:MSK_linkfiletoenvstream)
+  args = [esc(env),esc(whichstream),esc(filename),esc(append)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_linkfiletotaskstream(task,whichstream,filename,append)
+  f = Base.Meta.quot(:MSK_linkfiletotaskstream)
+  args = [esc(task),esc(whichstream),esc(filename),esc(append)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_onesolutionsummary(task,whichstream,whichsol)
+  f = Base.Meta.quot(:MSK_onesolutionsummary)
+  args = [esc(task),esc(whichstream),esc(whichsol)]
+  types = :((Ptr{Nothing},Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_optimizermt(task,addr,accesstoken,trmcode)
+  f = Base.Meta.quot(:MSK_optimizermt)
+  args = [esc(task),esc(addr),esc(accesstoken),esc(trmcode)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_optimizersummary(task,whichstream)
+  f = Base.Meta.quot(:MSK_optimizersummary)
+  args = [esc(task),esc(whichstream)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_optimizetrm(task,trmcode)
+  f = Base.Meta.quot(:MSK_optimizetrm)
+  args = [esc(task),esc(trmcode)]
+  types = :((Ptr{Nothing},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_primalrepair(task,wlc,wuc,wlx,wux)
+  f = Base.Meta.quot(:MSK_primalrepair)
+  args = [esc(task),esc(wlc),esc(wuc),esc(wlx),esc(wux)]
+  types = :((Ptr{Nothing},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_primalsensitivity(task,numi,subi,marki,numj,subj,markj,leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej)
+  f = Base.Meta.quot(:MSK_primalsensitivity)
+  args = [esc(task),esc(numi),esc(subi),esc(marki),esc(numj),esc(subj),esc(markj),esc(leftpricei),esc(rightpricei),esc(leftrangei),esc(rightrangei),esc(leftpricej),esc(rightpricej),esc(leftrangej),esc(rightrangej)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_printparam(task)
+  f = Base.Meta.quot(:MSK_printparam)
+  args = [esc(task)]
+  types = :((Ptr{Nothing},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putacc(task,accidx,domidx,numafeidx,afeidxlist,b)
+  f = Base.Meta.quot(:MSK_putacc)
+  args = [esc(task),esc(accidx),esc(domidx),esc(numafeidx),esc(afeidxlist),esc(b)]
+  types = :((Ptr{Nothing},Int64,Int64,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putaccb(task,accidx,lengthb,b)
+  f = Base.Meta.quot(:MSK_putaccb)
+  args = [esc(task),esc(accidx),esc(lengthb),esc(b)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putaccbj(task,accidx,j,bj)
+  f = Base.Meta.quot(:MSK_putaccbj)
+  args = [esc(task),esc(accidx),esc(j),esc(bj)]
+  types = :((Ptr{Nothing},Int64,Int64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putaccdoty(task,whichsol,accidx,doty)
+  f = Base.Meta.quot(:MSK_putaccdoty)
+  args = [esc(task),esc(whichsol),esc(accidx),esc(doty)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putacclist(task,numaccs,accidxs,domidxs,numafeidx,afeidxlist,b)
+  f = Base.Meta.quot(:MSK_putacclist)
+  args = [esc(task),esc(numaccs),esc(accidxs),esc(domidxs),esc(numafeidx),esc(afeidxlist),esc(b)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putaccname(task,accidx,name)
+  f = Base.Meta.quot(:MSK_putaccname)
+  args = [esc(task),esc(accidx),esc(name)]
+  types = :((Ptr{Nothing},Int64,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putacol(task,j,nzj,subj,valj)
+  f = Base.Meta.quot(:MSK_putacol)
+  args = [esc(task),esc(j),esc(nzj),esc(subj),esc(valj)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putacollist64(task,num,sub,ptrb,ptre,asub,aval)
+  f = Base.Meta.quot(:MSK_putacollist64)
+  args = [esc(task),esc(num),esc(sub),esc(ptrb),esc(ptre),esc(asub),esc(aval)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putacolslice64(task,first,last,ptrb,ptre,asub,aval)
+  f = Base.Meta.quot(:MSK_putacolslice64)
+  args = [esc(task),esc(first),esc(last),esc(ptrb),esc(ptre),esc(asub),esc(aval)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafebarfblocktriplet(task,num,afeidx,barvaridx,subk,subl,valkl)
+  f = Base.Meta.quot(:MSK_putafebarfblocktriplet)
+  args = [esc(task),esc(num),esc(afeidx),esc(barvaridx),esc(subk),esc(subl),esc(valkl)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafebarfentry(task,afeidx,barvaridx,numterms,termidx,termweight)
+  f = Base.Meta.quot(:MSK_putafebarfentry)
+  args = [esc(task),esc(afeidx),esc(barvaridx),esc(numterms),esc(termidx),esc(termweight)]
+  types = :((Ptr{Nothing},Int64,Int32,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafebarfentrylist(task,lenlist,afeidxlist,barvaridxlist,numtermslist,ptrtermslist,lenterms,termidx,termweight)
+  f = Base.Meta.quot(:MSK_putafebarfentrylist)
+  args = [esc(task),esc(lenlist),esc(afeidxlist),esc(barvaridxlist),esc(numtermslist),esc(ptrtermslist),esc(lenterms),esc(termidx),esc(termweight)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int64},Ptr{Int64},Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafebarfrow(task,afeidx,numentries,barvaridxlist,numtermlist,ptrtermlist,lenterms,termidx,termweight)
+  f = Base.Meta.quot(:MSK_putafebarfrow)
+  args = [esc(task),esc(afeidx),esc(numentries),esc(barvaridxlist),esc(numtermlist),esc(ptrtermlist),esc(lenterms),esc(termidx),esc(termweight)]
+  types = :((Ptr{Nothing},Int64,Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafefentry(task,afeidx,j,value)
+  f = Base.Meta.quot(:MSK_putafefentry)
+  args = [esc(task),esc(afeidx),esc(j),esc(value)]
+  types = :((Ptr{Nothing},Int64,Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafefentrylist(task,numentries,afeidx,j,value)
+  f = Base.Meta.quot(:MSK_putafefentrylist)
+  args = [esc(task),esc(numentries),esc(afeidx),esc(j),esc(value)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafefrow(task,afeidx,nzi,subi,vali)
+  f = Base.Meta.quot(:MSK_putafefrow)
+  args = [esc(task),esc(afeidx),esc(nzi),esc(subi),esc(vali)]
+  types = :((Ptr{Nothing},Int64,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafefrowlist(task,numafeidx,afeidxlist,nzrow,ptrrow,lenidxval,idxrow,valrow)
+  f = Base.Meta.quot(:MSK_putafefrowlist)
+  args = [esc(task),esc(numafeidx),esc(afeidxlist),esc(nzrow),esc(ptrrow),esc(lenidxval),esc(idxrow),esc(valrow)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int64},Int64,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafeg(task,afeidx,gi)
+  f = Base.Meta.quot(:MSK_putafeg)
+  args = [esc(task),esc(afeidx),esc(gi)]
+  types = :((Ptr{Nothing},Int64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafeglist(task,numafeidx,afeidxlist,glist)
+  f = Base.Meta.quot(:MSK_putafeglist)
+  args = [esc(task),esc(numafeidx),esc(afeidxlist),esc(glist)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putafegslice(task,first,last,slice)
+  f = Base.Meta.quot(:MSK_putafegslice)
+  args = [esc(task),esc(first),esc(last),esc(slice)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putaij(task,i,j,aij)
+  f = Base.Meta.quot(:MSK_putaij)
+  args = [esc(task),esc(i),esc(j),esc(aij)]
+  types = :((Ptr{Nothing},Int32,Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putaijlist64(task,num,subi,subj,valij)
+  f = Base.Meta.quot(:MSK_putaijlist64)
+  args = [esc(task),esc(num),esc(subi),esc(subj),esc(valij)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putarow(task,i,nzi,subi,vali)
+  f = Base.Meta.quot(:MSK_putarow)
+  args = [esc(task),esc(i),esc(nzi),esc(subi),esc(vali)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putarowlist64(task,num,sub,ptrb,ptre,asub,aval)
+  f = Base.Meta.quot(:MSK_putarowlist64)
+  args = [esc(task),esc(num),esc(sub),esc(ptrb),esc(ptre),esc(asub),esc(aval)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putarowslice64(task,first,last,ptrb,ptre,asub,aval)
+  f = Base.Meta.quot(:MSK_putarowslice64)
+  args = [esc(task),esc(first),esc(last),esc(ptrb),esc(ptre),esc(asub),esc(aval)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putatruncatetol(task,tolzero)
+  f = Base.Meta.quot(:MSK_putatruncatetol)
+  args = [esc(task),esc(tolzero)]
+  types = :((Ptr{Nothing},Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbarablocktriplet(task,num,subi,subj,subk,subl,valijkl)
+  f = Base.Meta.quot(:MSK_putbarablocktriplet)
+  args = [esc(task),esc(num),esc(subi),esc(subj),esc(subk),esc(subl),esc(valijkl)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbaraij(task,i,j,num,sub,weights)
+  f = Base.Meta.quot(:MSK_putbaraij)
+  args = [esc(task),esc(i),esc(j),esc(num),esc(sub),esc(weights)]
+  types = :((Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbaraijlist(task,num,subi,subj,alphaptrb,alphaptre,matidx,weights)
+  f = Base.Meta.quot(:MSK_putbaraijlist)
+  args = [esc(task),esc(num),esc(subi),esc(subj),esc(alphaptrb),esc(alphaptre),esc(matidx),esc(weights)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbararowlist(task,num,subi,ptrb,ptre,subj,nummat,matidx,weights)
+  f = Base.Meta.quot(:MSK_putbararowlist)
+  args = [esc(task),esc(num),esc(subi),esc(ptrb),esc(ptre),esc(subj),esc(nummat),esc(matidx),esc(weights)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbarcblocktriplet(task,num,subj,subk,subl,valjkl)
+  f = Base.Meta.quot(:MSK_putbarcblocktriplet)
+  args = [esc(task),esc(num),esc(subj),esc(subk),esc(subl),esc(valjkl)]
+  types = :((Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbarcj(task,j,num,sub,weights)
+  f = Base.Meta.quot(:MSK_putbarcj)
+  args = [esc(task),esc(j),esc(num),esc(sub),esc(weights)]
+  types = :((Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbarsj(task,whichsol,j,barsj)
+  f = Base.Meta.quot(:MSK_putbarsj)
+  args = [esc(task),esc(whichsol),esc(j),esc(barsj)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbarvarname(task,j,name)
+  f = Base.Meta.quot(:MSK_putbarvarname)
+  args = [esc(task),esc(j),esc(name)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putbarxj(task,whichsol,j,barxj)
+  f = Base.Meta.quot(:MSK_putbarxj)
+  args = [esc(task),esc(whichsol),esc(j),esc(barxj)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putcfix(task,cfix)
+  f = Base.Meta.quot(:MSK_putcfix)
+  args = [esc(task),esc(cfix)]
+  types = :((Ptr{Nothing},Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putcj(task,j,cj)
+  f = Base.Meta.quot(:MSK_putcj)
+  args = [esc(task),esc(j),esc(cj)]
+  types = :((Ptr{Nothing},Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putclist(task,num,subj,val)
+  f = Base.Meta.quot(:MSK_putclist)
+  args = [esc(task),esc(num),esc(subj),esc(val)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconbound(task,i,bkc,blc,buc)
+  f = Base.Meta.quot(:MSK_putconbound)
+  args = [esc(task),esc(i),esc(bkc),esc(blc),esc(buc)]
+  types = :((Ptr{Nothing},Int32,Int32,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconboundlist(task,num,sub,bkc,blc,buc)
+  f = Base.Meta.quot(:MSK_putconboundlist)
+  args = [esc(task),esc(num),esc(sub),esc(bkc),esc(blc),esc(buc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconboundlistconst(task,num,sub,bkc,blc,buc)
+  f = Base.Meta.quot(:MSK_putconboundlistconst)
+  args = [esc(task),esc(num),esc(sub),esc(bkc),esc(blc),esc(buc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Int32,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconboundslice(task,first,last,bkc,blc,buc)
+  f = Base.Meta.quot(:MSK_putconboundslice)
+  args = [esc(task),esc(first),esc(last),esc(bkc),esc(blc),esc(buc)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconboundsliceconst(task,first,last,bkc,blc,buc)
+  f = Base.Meta.quot(:MSK_putconboundsliceconst)
+  args = [esc(task),esc(first),esc(last),esc(bkc),esc(blc),esc(buc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putcone(task,k,ct,conepar,nummem,submem)
+  f = Base.Meta.quot(:MSK_putcone)
+  args = [esc(task),esc(k),esc(ct),esc(conepar),esc(nummem),esc(submem)]
+  types = :((Ptr{Nothing},Int32,Int32,Float64,Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconename(task,j,name)
+  f = Base.Meta.quot(:MSK_putconename)
+  args = [esc(task),esc(j),esc(name)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconname(task,i,name)
+  f = Base.Meta.quot(:MSK_putconname)
+  args = [esc(task),esc(i),esc(name)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putconsolutioni(task,i,whichsol,sk,x,sl,su)
+  f = Base.Meta.quot(:MSK_putconsolutioni)
+  args = [esc(task),esc(i),esc(whichsol),esc(sk),esc(x),esc(sl),esc(su)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putcslice(task,first,last,slice)
+  f = Base.Meta.quot(:MSK_putcslice)
+  args = [esc(task),esc(first),esc(last),esc(slice)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putdjc(task,djcidx,numdomidx,domidxlist,numafeidx,afeidxlist,b,numterms,termsizelist)
+  f = Base.Meta.quot(:MSK_putdjc)
+  args = [esc(task),esc(djcidx),esc(numdomidx),esc(domidxlist),esc(numafeidx),esc(afeidxlist),esc(b),esc(numterms),esc(termsizelist)]
+  types = :((Ptr{Nothing},Int64,Int64,Ptr{Int64},Int64,Ptr{Int64},Ptr{Float64},Int64,Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putdjcname(task,djcidx,name)
+  f = Base.Meta.quot(:MSK_putdjcname)
+  args = [esc(task),esc(djcidx),esc(name)]
+  types = :((Ptr{Nothing},Int64,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putdjcslice(task,idxfirst,idxlast,numdomidx,domidxlist,numafeidx,afeidxlist,b,numterms,termsizelist,termsindjc)
+  f = Base.Meta.quot(:MSK_putdjcslice)
+  args = [esc(task),esc(idxfirst),esc(idxlast),esc(numdomidx),esc(domidxlist),esc(numafeidx),esc(afeidxlist),esc(b),esc(numterms),esc(termsizelist),esc(termsindjc)]
+  types = :((Ptr{Nothing},Int64,Int64,Int64,Ptr{Int64},Int64,Ptr{Int64},Ptr{Float64},Int64,Ptr{Int64},Ptr{Int64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putdomainname(task,domidx,name)
+  f = Base.Meta.quot(:MSK_putdomainname)
+  args = [esc(task),esc(domidx),esc(name)]
+  types = :((Ptr{Nothing},Int64,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putdouparam(task,param,parvalue)
+  f = Base.Meta.quot(:MSK_putdouparam)
+  args = [esc(task),esc(param),esc(parvalue)]
+  types = :((Ptr{Nothing},Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putintparam(task,param,parvalue)
+  f = Base.Meta.quot(:MSK_putintparam)
+  args = [esc(task),esc(param),esc(parvalue)]
+  types = :((Ptr{Nothing},Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putlicensecode(env,code)
+  f = Base.Meta.quot(:MSK_putlicensecode)
+  args = [esc(env),esc(code)]
+  types = :((Ptr{Nothing},Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putlicensedebug(env,licdebug)
+  f = Base.Meta.quot(:MSK_putlicensedebug)
+  args = [esc(env),esc(licdebug)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putlicensepath(env,licensepath)
+  f = Base.Meta.quot(:MSK_putlicensepath)
+  args = [esc(env),esc(licensepath)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putlicensewait(env,licwait)
+  f = Base.Meta.quot(:MSK_putlicensewait)
+  args = [esc(env),esc(licwait)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumacc(task,maxnumacc)
+  f = Base.Meta.quot(:MSK_putmaxnumacc)
+  args = [esc(task),esc(maxnumacc)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumafe(task,maxnumafe)
+  f = Base.Meta.quot(:MSK_putmaxnumafe)
+  args = [esc(task),esc(maxnumafe)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumanz(task,maxnumanz)
+  f = Base.Meta.quot(:MSK_putmaxnumanz)
+  args = [esc(task),esc(maxnumanz)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumbarvar(task,maxnumbarvar)
+  f = Base.Meta.quot(:MSK_putmaxnumbarvar)
+  args = [esc(task),esc(maxnumbarvar)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumcon(task,maxnumcon)
+  f = Base.Meta.quot(:MSK_putmaxnumcon)
+  args = [esc(task),esc(maxnumcon)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumcone(task,maxnumcone)
+  f = Base.Meta.quot(:MSK_putmaxnumcone)
+  args = [esc(task),esc(maxnumcone)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumdjc(task,maxnumdjc)
+  f = Base.Meta.quot(:MSK_putmaxnumdjc)
+  args = [esc(task),esc(maxnumdjc)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumdomain(task,maxnumdomain)
+  f = Base.Meta.quot(:MSK_putmaxnumdomain)
+  args = [esc(task),esc(maxnumdomain)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumqnz(task,maxnumqnz)
+  f = Base.Meta.quot(:MSK_putmaxnumqnz)
+  args = [esc(task),esc(maxnumqnz)]
+  types = :((Ptr{Nothing},Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putmaxnumvar(task,maxnumvar)
+  f = Base.Meta.quot(:MSK_putmaxnumvar)
+  args = [esc(task),esc(maxnumvar)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putnadouparam(task,paramname,parvalue)
+  f = Base.Meta.quot(:MSK_putnadouparam)
+  args = [esc(task),esc(paramname),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putnaintparam(task,paramname,parvalue)
+  f = Base.Meta.quot(:MSK_putnaintparam)
+  args = [esc(task),esc(paramname),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putnastrparam(task,paramname,parvalue)
+  f = Base.Meta.quot(:MSK_putnastrparam)
+  args = [esc(task),esc(paramname),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putobjname(task,objname)
+  f = Base.Meta.quot(:MSK_putobjname)
+  args = [esc(task),esc(objname)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putobjsense(task,sense)
+  f = Base.Meta.quot(:MSK_putobjsense)
+  args = [esc(task),esc(sense)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putoptserverhost(task,host)
+  f = Base.Meta.quot(:MSK_putoptserverhost)
+  args = [esc(task),esc(host)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putparam(task,parname,parvalue)
+  f = Base.Meta.quot(:MSK_putparam)
+  args = [esc(task),esc(parname),esc(parvalue)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putqcon(task,numqcnz,qcsubk,qcsubi,qcsubj,qcval)
+  f = Base.Meta.quot(:MSK_putqcon)
+  args = [esc(task),esc(numqcnz),esc(qcsubk),esc(qcsubi),esc(qcsubj),esc(qcval)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putqconk(task,k,numqcnz,qcsubi,qcsubj,qcval)
+  f = Base.Meta.quot(:MSK_putqconk)
+  args = [esc(task),esc(k),esc(numqcnz),esc(qcsubi),esc(qcsubj),esc(qcval)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putqobj(task,numqonz,qosubi,qosubj,qoval)
+  f = Base.Meta.quot(:MSK_putqobj)
+  args = [esc(task),esc(numqonz),esc(qosubi),esc(qosubj),esc(qoval)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putqobjij(task,i,j,qoij)
+  f = Base.Meta.quot(:MSK_putqobjij)
+  args = [esc(task),esc(i),esc(j),esc(qoij)]
+  types = :((Ptr{Nothing},Int32,Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putskc(task,whichsol,skc)
+  f = Base.Meta.quot(:MSK_putskc)
+  args = [esc(task),esc(whichsol),esc(skc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putskcslice(task,whichsol,first,last,skc)
+  f = Base.Meta.quot(:MSK_putskcslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(skc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putskx(task,whichsol,skx)
+  f = Base.Meta.quot(:MSK_putskx)
+  args = [esc(task),esc(whichsol),esc(skx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putskxslice(task,whichsol,first,last,skx)
+  f = Base.Meta.quot(:MSK_putskxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(skx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putslc(task,whichsol,slc)
+  f = Base.Meta.quot(:MSK_putslc)
+  args = [esc(task),esc(whichsol),esc(slc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putslcslice(task,whichsol,first,last,slc)
+  f = Base.Meta.quot(:MSK_putslcslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(slc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putslx(task,whichsol,slx)
+  f = Base.Meta.quot(:MSK_putslx)
+  args = [esc(task),esc(whichsol),esc(slx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putslxslice(task,whichsol,first,last,slx)
+  f = Base.Meta.quot(:MSK_putslxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(slx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsnx(task,whichsol,sux)
+  f = Base.Meta.quot(:MSK_putsnx)
+  args = [esc(task),esc(whichsol),esc(sux)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsnxslice(task,whichsol,first,last,snx)
+  f = Base.Meta.quot(:MSK_putsnxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(snx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsolution(task,whichsol,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx)
+  f = Base.Meta.quot(:MSK_putsolution)
+  args = [esc(task),esc(whichsol),esc(skc),esc(skx),esc(skn),esc(xc),esc(xx),esc(y),esc(slc),esc(suc),esc(slx),esc(sux),esc(snx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsolutionnew(task,whichsol,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty)
+  f = Base.Meta.quot(:MSK_putsolutionnew)
+  args = [esc(task),esc(whichsol),esc(skc),esc(skx),esc(skn),esc(xc),esc(xx),esc(y),esc(slc),esc(suc),esc(slx),esc(sux),esc(snx),esc(doty)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsolutionyi(task,i,whichsol,y)
+  f = Base.Meta.quot(:MSK_putsolutionyi)
+  args = [esc(task),esc(i),esc(whichsol),esc(y)]
+  types = :((Ptr{Nothing},Int32,Int32,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putstrparam(task,param,parvalue)
+  f = Base.Meta.quot(:MSK_putstrparam)
+  args = [esc(task),esc(param),esc(parvalue)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsuc(task,whichsol,suc)
+  f = Base.Meta.quot(:MSK_putsuc)
+  args = [esc(task),esc(whichsol),esc(suc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsucslice(task,whichsol,first,last,suc)
+  f = Base.Meta.quot(:MSK_putsucslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(suc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsux(task,whichsol,sux)
+  f = Base.Meta.quot(:MSK_putsux)
+  args = [esc(task),esc(whichsol),esc(sux)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putsuxslice(task,whichsol,first,last,sux)
+  f = Base.Meta.quot(:MSK_putsuxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(sux)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_puttaskname(task,taskname)
+  f = Base.Meta.quot(:MSK_puttaskname)
+  args = [esc(task),esc(taskname)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarbound(task,j,bkx,blx,bux)
+  f = Base.Meta.quot(:MSK_putvarbound)
+  args = [esc(task),esc(j),esc(bkx),esc(blx),esc(bux)]
+  types = :((Ptr{Nothing},Int32,Int32,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarboundlist(task,num,sub,bkx,blx,bux)
+  f = Base.Meta.quot(:MSK_putvarboundlist)
+  args = [esc(task),esc(num),esc(sub),esc(bkx),esc(blx),esc(bux)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarboundlistconst(task,num,sub,bkx,blx,bux)
+  f = Base.Meta.quot(:MSK_putvarboundlistconst)
+  args = [esc(task),esc(num),esc(sub),esc(bkx),esc(blx),esc(bux)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Int32,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarboundslice(task,first,last,bkx,blx,bux)
+  f = Base.Meta.quot(:MSK_putvarboundslice)
+  args = [esc(task),esc(first),esc(last),esc(bkx),esc(blx),esc(bux)]
+  types = :((Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarboundsliceconst(task,first,last,bkx,blx,bux)
+  f = Base.Meta.quot(:MSK_putvarboundsliceconst)
+  args = [esc(task),esc(first),esc(last),esc(bkx),esc(blx),esc(bux)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarname(task,j,name)
+  f = Base.Meta.quot(:MSK_putvarname)
+  args = [esc(task),esc(j),esc(name)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvarsolutionj(task,j,whichsol,sk,x,sl,su,sn)
+  f = Base.Meta.quot(:MSK_putvarsolutionj)
+  args = [esc(task),esc(j),esc(whichsol),esc(sk),esc(x),esc(sl),esc(su),esc(sn)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,Float64,Float64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvartype(task,j,vartype)
+  f = Base.Meta.quot(:MSK_putvartype)
+  args = [esc(task),esc(j),esc(vartype)]
+  types = :((Ptr{Nothing},Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putvartypelist(task,num,subj,vartype)
+  f = Base.Meta.quot(:MSK_putvartypelist)
+  args = [esc(task),esc(num),esc(subj),esc(vartype)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putxc(task,whichsol,xc)
+  f = Base.Meta.quot(:MSK_putxc)
+  args = [esc(task),esc(whichsol),esc(xc)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putxcslice(task,whichsol,first,last,xc)
+  f = Base.Meta.quot(:MSK_putxcslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(xc)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putxx(task,whichsol,xx)
+  f = Base.Meta.quot(:MSK_putxx)
+  args = [esc(task),esc(whichsol),esc(xx)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putxxslice(task,whichsol,first,last,xx)
+  f = Base.Meta.quot(:MSK_putxxslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(xx)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_puty(task,whichsol,y)
+  f = Base.Meta.quot(:MSK_puty)
+  args = [esc(task),esc(whichsol),esc(y)]
+  types = :((Ptr{Nothing},Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_putyslice(task,whichsol,first,last,y)
+  f = Base.Meta.quot(:MSK_putyslice)
+  args = [esc(task),esc(whichsol),esc(first),esc(last),esc(y)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readdataautoformat(task,filename)
+  f = Base.Meta.quot(:MSK_readdataautoformat)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readdataformat(task,filename,format,compress)
+  f = Base.Meta.quot(:MSK_readdataformat)
+  args = [esc(task),esc(filename),esc(format),esc(compress)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Int32,Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readjsonstring(task,data)
+  f = Base.Meta.quot(:MSK_readjsonstring)
+  args = [esc(task),esc(data)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readlpstring(task,data)
+  f = Base.Meta.quot(:MSK_readlpstring)
+  args = [esc(task),esc(data)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readopfstring(task,data)
+  f = Base.Meta.quot(:MSK_readopfstring)
+  args = [esc(task),esc(data)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readparamfile(task,filename)
+  f = Base.Meta.quot(:MSK_readparamfile)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readptfstring(task,data)
+  f = Base.Meta.quot(:MSK_readptfstring)
+  args = [esc(task),esc(data)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readsolution(task,whichsol,filename)
+  f = Base.Meta.quot(:MSK_readsolution)
+  args = [esc(task),esc(whichsol),esc(filename)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readsummary(task,whichstream)
+  f = Base.Meta.quot(:MSK_readsummary)
+  args = [esc(task),esc(whichstream)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_readtask(task,filename)
+  f = Base.Meta.quot(:MSK_readtask)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_removebarvars(task,num,subset)
+  f = Base.Meta.quot(:MSK_removebarvars)
+  args = [esc(task),esc(num),esc(subset)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_removecones(task,num,subset)
+  f = Base.Meta.quot(:MSK_removecones)
+  args = [esc(task),esc(num),esc(subset)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_removecons(task,num,subset)
+  f = Base.Meta.quot(:MSK_removecons)
+  args = [esc(task),esc(num),esc(subset)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_removevars(task,num,subset)
+  f = Base.Meta.quot(:MSK_removevars)
+  args = [esc(task),esc(num),esc(subset)]
+  types = :((Ptr{Nothing},Int32,Ptr{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_resizetask(task,maxnumcon,maxnumvar,maxnumcone,maxnumanz,maxnumqnz)
+  f = Base.Meta.quot(:MSK_resizetask)
+  args = [esc(task),esc(maxnumcon),esc(maxnumvar),esc(maxnumcone),esc(maxnumanz),esc(maxnumqnz)]
+  types = :((Ptr{Nothing},Int32,Int32,Int32,Int64,Int64,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_sensitivityreport(task,whichstream)
+  f = Base.Meta.quot(:MSK_sensitivityreport)
+  args = [esc(task),esc(whichstream)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_setdefaults(task)
+  f = Base.Meta.quot(:MSK_setdefaults)
+  args = [esc(task)]
+  types = :((Ptr{Nothing},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_setupthreads(env,numthreads)
+  f = Base.Meta.quot(:MSK_setupthreads)
+  args = [esc(env),esc(numthreads)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_solutiondef(task,whichsol,isdef)
+  f = Base.Meta.quot(:MSK_solutiondef)
+  args = [esc(task),esc(whichsol),esc(isdef)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_solutionsummary(task,whichstream)
+  f = Base.Meta.quot(:MSK_solutionsummary)
+  args = [esc(task),esc(whichstream)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_solvewithbasis(task,transp,numnz,sub,val)
+  f = Base.Meta.quot(:MSK_solvewithbasis)
+  args = [esc(task),esc(transp),esc(numnz),esc(sub),esc(val)]
+  types = :((Ptr{Nothing},Int32,Ref{Int32},Ptr{Int32},Ptr{Float64},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_strtoconetype(task,str,conetype)
+  f = Base.Meta.quot(:MSK_strtoconetype)
+  args = [esc(task),esc(str),esc(conetype)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_strtosk(task,str,sk)
+  f = Base.Meta.quot(:MSK_strtosk)
+  args = [esc(task),esc(str),esc(sk)]
+  types = :((Ptr{Nothing},Ptr{UInt8},Ref{Int32},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_updatesolutioninfo(task,whichsol)
+  f = Base.Meta.quot(:MSK_updatesolutioninfo)
+  args = [esc(task),esc(whichsol)]
+  types = :((Ptr{Nothing},Int32,))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_writedata(task,filename)
+  f = Base.Meta.quot(:MSK_writedata)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_writejsonsol(task,filename)
+  f = Base.Meta.quot(:MSK_writejsonsol)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_writeparamfile(task,filename)
+  f = Base.Meta.quot(:MSK_writeparamfile)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_writesolution(task,whichsol,filename)
+  f = Base.Meta.quot(:MSK_writesolution)
+  args = [esc(task),esc(whichsol),esc(filename)]
+  types = :((Ptr{Nothing},Int32,Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
+macro MSK_writetask(task,filename)
+  f = Base.Meta.quot(:MSK_writetask)
+  args = [esc(task),esc(filename)]
+  types = :((Ptr{Nothing},Ptr{UInt8},))
+  quote
+    ccall(($f,libmosek), Int32, $types, $(args...))
+  end
+end
 """
     analyzenames(task_:: MSKtask,whichstream_:: Streamtype,nametype_:: Nametype)
 
@@ -316,7 +3672,7 @@ The function analyzes the names and issues an error if a name is invalid.
 function analyzenames end
 function analyzenames(task_:: MSKtask,whichstream_:: Streamtype,nametype_:: Nametype)
   res = disable_sigint() do
-    @msk_ccall( "analyzenames",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,whichstream_.value,nametype_.value)
+    @MSK_analyzenames(task_.task,whichstream_.value,nametype_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -335,7 +3691,7 @@ The function analyzes the data of a task and writes out a report.
 function analyzeproblem end
 function analyzeproblem(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "analyzeproblem",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
+    @MSK_analyzeproblem(task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -366,7 +3722,176 @@ Following parameters can be used to configure the printed statistics:
 function analyzesolution end
 function analyzesolution(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "analyzesolution",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,whichstream_.value,whichsol_.value)
+    @MSK_analyzesolution(task_.task,whichstream_.value,whichsol_.value)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    appendacc{T1,T2,T3}(task:: MSKtask,domidx:: T1,afeidxlist:: Vector{T2},b:: Vector{T3})
+    appendacc(task_:: MSKtask,domidx_:: Int64,afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Domain index.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Appends an affine conic constraint to the task. The affine constraint has the form *a sequence of affine expressions belongs to a domain*.
+
+The domain index is specified with `domidx` and should refer to a domain previously appended with one of the `append...domain` functions.
+
+The length of the affine expression list `afeidxlist` must be equal to the dimension ``n`` of the domain. The elements of `afeidxlist` are indexes to the store of affine expressions, i.e. the affine expressions appearing in the affine conic constraint are:
+
+```math
+ F_{\\mathrm{afeidxlist}[k],:}x + g_{\\mathrm{afeidxlist}[k]} \\mathcal{C}_q \\mathrm{for}\\ k=0,\\ldots,n-1.
+```
+If an optional vector `b` of the same length as `afeidxlist` is specified then the expressions appearing in the affine constraint will instead be taken as:
+
+```math
+ F_{\\mathrm{afeidxlist}[k],:}x + g_{\\mathrm{afeidxlist}[k]} - b_k \\mathcal{C}_q \\mathrm{for}\\ k=0,\\ldots,n-1.
+```
+
+"""
+function appendacc end
+appendacc(task:: MSKtask,domidx:: T1,afeidxlist:: Vector{T2},b:: Vector{T3}) where {T1,T2,T3} = appendacc(task,convert(Int64,domidx),convert(Vector{Int64},afeidxlist),convert(Vector{Float64},b))
+function appendacc(task_:: MSKtask,domidx_:: Int64,afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_appendacc(task_.task,domidx_-1,numafeidx_,afeidxlist_ .- Int32(1),b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    appendaccs{T1,T2,T3}(task:: MSKtask,domidxs:: Vector{T1},afeidxlist:: Vector{T2},b:: Vector{T3})
+    appendaccs(task_:: MSKtask,domidxs_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `domidxs :: Vector{Int64}`. Domain indices.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Appends `numaccs` affine conic constraint to the task. Each single affine conic constraint should be specified as in `Mosek.appendacc` and the input of this function should contain the concatenation of all these descriptions.
+
+In particular, the length of `afeidxlist` must equal the sum of dimensions of domains indexed in `domainsidxs`.
+"""
+function appendaccs end
+appendaccs(task:: MSKtask,domidxs:: Vector{T1},afeidxlist:: Vector{T2},b:: Vector{T3}) where {T1,T2,T3} = appendaccs(task,convert(Vector{Int64},domidxs),convert(Vector{Int64},afeidxlist),convert(Vector{Float64},b))
+function appendaccs(task_:: MSKtask,domidxs_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+  numaccs_ = minimum([ length(domidxs_) ])
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_appendaccs(task_.task,numaccs_,domidxs_,numafeidx_,afeidxlist_,b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    appendaccseq{T1,T2,T3}(task:: MSKtask,domidx:: T1,afeidxfirst:: T2,b:: Vector{T3})
+    appendaccseq(task_:: MSKtask,domidx_:: Int64,afeidxfirst_:: Int64,b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Domain index.
+* `afeidxfirst :: Int64`. Index of the first affine expression.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Appends an affine conic constraint to the task, as in `Mosek.appendacc`. The function assumes the affine expressions forming the constraint are sequential. The affine constraint has the form *a sequence of affine expressions belongs to a domain*.
+
+The domain index is specified with `domidx` and should refer to a domain previously appended with one of the `append...domain` functions.
+
+The number of affine expressions should be equal to the dimension ``n`` of the domain. The affine expressions forming the affine constraint are arranged sequentially in a contiguous block of the affine expression store starting from position `afeidxfirst`. That is, the affine expressions appearing in the affine conic constraint are:
+
+```math
+ F_{\\mathrm{afeidxfirst}+k,:}x + g_{\\mathrm{afeidxfirst}+k} \\mathcal{C}_q \\mathrm{for}\\ k=0,\\ldots,n-1.
+```
+If an optional vector `b` of length `numafeidx` is specified then the expressions appearing in the affine constraint will instead be taken as
+
+```math
+ F_{\\mathrm{afeidxfirst}+k,:}x + g_{\\mathrm{afeidxfirst}+k} - b_k \\mathcal{C}_q \\mathrm{for}\\ k=0,\\ldots,n-1.
+```
+
+"""
+function appendaccseq end
+appendaccseq(task:: MSKtask,domidx:: T1,afeidxfirst:: T2,b:: Vector{T3}) where {T1,T2,T3} = appendaccseq(task,convert(Int64,domidx),convert(Int64,afeidxfirst),convert(Vector{Float64},b))
+function appendaccseq(task_:: MSKtask,domidx_:: Int64,afeidxfirst_:: Int64,b_:: Vector{Float64})
+  numafeidx_ = begin __tmp_var_appendaccseq_0 = Ref{Int64}(); @MSK_getdomainn(task_.task,(domidx_),__tmp_var_appendaccseq_0); __tmp_var_appendaccseq_0.x end
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_appendaccseq(task_.task,domidx_,numafeidx_,afeidxfirst_,b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    appendaccsseq{T1,T2,T3,T4}(task:: MSKtask,domidxs:: Vector{T1},numafeidx:: T2,afeidxfirst:: T3,b:: Vector{T4})
+    appendaccsseq(task_:: MSKtask,domidxs_:: Vector{Int64},numafeidx_:: Int64,afeidxfirst_:: Int64,b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `domidxs :: Vector{Int64}`. Domain indices.
+* `numafeidx :: Int64`. Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
+* `afeidxfirst :: Int64`. Index of the first affine expression.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Appends `numaccs` affine conic constraint to the task. It is the block variant of `Mosek.appendaccs`, that is it assumes that the affine expressions appearing in the affine conic constraints are sequential in the affine expression store, starting from position `afeidxfirst`.
+"""
+function appendaccsseq end
+appendaccsseq(task:: MSKtask,domidxs:: Vector{T1},numafeidx:: T2,afeidxfirst:: T3,b:: Vector{T4}) where {T1,T2,T3,T4} = appendaccsseq(task,convert(Vector{Int64},domidxs),convert(Int64,numafeidx),convert(Int64,afeidxfirst),convert(Vector{Float64},b))
+function appendaccsseq(task_:: MSKtask,domidxs_:: Vector{Int64},numafeidx_:: Int64,afeidxfirst_:: Int64,b_:: Vector{Float64})
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  numaccs_ = minimum([ length(domidxs_) ])
+  res = disable_sigint() do
+    @MSK_appendaccsseq(task_.task,numaccs_,domidxs_,numafeidx_,afeidxfirst_,b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    appendafes{T1}(task:: MSKtask,num:: T1)
+    appendafes(task_:: MSKtask,num_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `num :: Int64`. Number of empty affine expressions which should be appended.
+
+Appends a number of empty affine expressions to the task.
+"""
+function appendafes end
+appendafes(task:: MSKtask,num:: T1) where {T1} = appendafes(task,convert(Int64,num))
+function appendafes(task_:: MSKtask,num_:: Int64)
+  res = disable_sigint() do
+    @MSK_appendafes(task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -388,7 +3913,7 @@ appendbarvars(task:: MSKtask,dim:: Vector{T1}) where {T1} = appendbarvars(task,c
 function appendbarvars(task_:: MSKtask,dim_:: Vector{Int32})
   num_ = minimum([ length(dim_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendbarvars",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,dim_)
+    @MSK_appendbarvars(task_.task,num_,dim_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -404,6 +3929,8 @@ end
 * `ct :: Conetype`. Specifies the type of the cone.
 * `conepar :: Float64`. For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
 * `submem :: Vector{Int32}`. Variable subscripts of the members in the cone.
+
+Deprecated in MOSEK 10
 
 Appends a new conic constraint to the problem. Hence, add a constraint
 
@@ -469,7 +3996,7 @@ appendcone(task:: MSKtask,ct:: Conetype,conepar:: T2,submem:: Vector{T3}) where 
 function appendcone(task_:: MSKtask,ct_:: Conetype,conepar_:: Float64,submem_:: Vector{Int32})
   nummem_ = minimum([ length(submem_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendcone",Int32,(Ptr{Nothing},Int32,Float64,Int32,Ptr{Int32},),task_.task,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
+    @MSK_appendcone(task_.task,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -487,6 +4014,8 @@ end
 * `nummem :: Int32`. Number of member variables in the cone.
 * `j :: Int32`. Index of the first variable in the conic constraint.
 
+Deprecated in MOSEK 10
+
 Appends a new conic constraint to the problem, as in `Mosek.appendcone`. The
 function assumes the members of cone are sequential
 where the first member has index `j` and the last
@@ -496,7 +4025,7 @@ function appendconeseq end
 appendconeseq(task:: MSKtask,ct:: Conetype,conepar:: T2,nummem:: T3,j:: T4) where {T2,T3,T4} = appendconeseq(task,ct,convert(Float64,conepar),convert(Int32,nummem),convert(Int32,j))
 function appendconeseq(task_:: MSKtask,ct_:: Conetype,conepar_:: Float64,nummem_:: Int32,j_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "appendconeseq",Int32,(Ptr{Nothing},Int32,Float64,Int32,Int32,),task_.task,ct_.value,conepar_,nummem_,j_-1)
+    @MSK_appendconeseq(task_.task,ct_.value,conepar_,nummem_,j_-1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -514,6 +4043,8 @@ end
 * `nummem :: Vector{Int32}`. Numbers of member variables in the cones.
 * `j :: Int32`. Index of the first variable in the first cone to be appended.
 
+Deprecated in MOSEK 10
+
 Appends a number of conic constraints to the problem, as in `Mosek.appendcone`.
 The ``k`` th cone is assumed to be of dimension `nummem[k]`. Moreover, it is assumed
 that the first variable of the first cone has index ``j`` and starting from there the
@@ -525,7 +4056,7 @@ function appendconesseq(task_:: MSKtask,ct_:: Vector{Conetype},conepar_:: Vector
   ct_i32 = Int32[item.value for item in ct_]
   num_ = minimum([ length(ct_),length(conepar_),length(nummem_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendconesseq",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Int32,),task_.task,num_,ct_,conepar_,nummem_,j_-1)
+    @MSK_appendconesseq(task_.task,num_,ct_,conepar_,nummem_,j_-1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -550,7 +4081,7 @@ function appendcons end
 appendcons(task:: MSKtask,num:: T1) where {T1} = appendcons(task,convert(Int32,num))
 function appendcons(task_:: MSKtask,num_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "appendcons",Int32,(Ptr{Nothing},Int32,),task_.task,num_)
+    @MSK_appendcons(task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -559,7 +4090,401 @@ function appendcons(task_:: MSKtask,num_:: Int32)
 end
 
 """
+    appenddjcs{T1}(task:: MSKtask,num:: T1)
+    appenddjcs(task_:: MSKtask,num_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `num :: Int64`. Number of empty disjunctive constraints which should be appended.
+
+Appends a number of empty disjunctive constraints to the task.
+"""
+function appenddjcs end
+appenddjcs(task:: MSKtask,num:: T1) where {T1} = appenddjcs(task,convert(Int64,num))
+function appenddjcs(task_:: MSKtask,num_:: Int64)
+  res = disable_sigint() do
+    @MSK_appenddjcs(task_.task,num_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    domidx = appenddualexpconedomain(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the dual exponential cone ``\\left\\{ x\\in \\real^3 ~:~ x_0 \\geq -x_2 e^{-1} e^{x_1/x_2},\\ x_0> 0,\\ x_2< 0 \\right\\}`` to the list of domains.
+"""
+function appenddualexpconedomain end
+function appenddualexpconedomain(task_:: MSKtask)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appenddualexpconedomain(task_.task,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appenddualgeomeanconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appenddualgeomeanconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the dual geometric mean cone ``\\left\\{ x\\in \\real^n ~:~ (n-1) \\left(\\prod_{i=0}^{n-2} x_i\\right)^{1/(n-1)} \\geq |x_{n-1}|,\\ x_0,\\ldots,x_{n-2}\\geq 0 \\right\\}`` to the list of domains.
+"""
+function appenddualgeomeanconedomain end
+appenddualgeomeanconedomain(task:: MSKtask,n:: T1) where {T1} = appenddualgeomeanconedomain(task,convert(Int64,n))
+function appenddualgeomeanconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appenddualgeomeanconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appenddualpowerconedomain{T1,T2}(task:: MSKtask,n:: T1,alpha:: Vector{T2})
+    domidx = appenddualpowerconedomain(task_:: MSKtask,n_:: Int64,alpha_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimension of the domain.
+* `alpha :: Vector{Float64}`. The sequence proportional to exponents. Must be positive.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the dual power cone domain of dimension ``n``, with ``n_\\ell`` variables appearing on the left-hand side, where ``n_\\ell`` is the length of ``\\alpha``, and with a homogenous sequence of exponents ``\\alpha_0,\\ldots,\\alpha_{n_\\ell-1}``.
+
+Formally, let ``s = \\sum_i \\alpha_i`` and ``\\beta_i = \\alpha_i / s``, so that ``\\sum_i \\beta_i=1``. Then the dual power cone is defined as follows:
+
+```math
+ \\left\\{ x\\in \\real^n ~:~ \\prod_{i=0}^{n_\\ell-1} \\left(\\frac{x_i}{\\beta_i}\\right)^{\\beta_i} \\geq \\sqrt{\\sum_{j=n_\\ell}^{n-1}x_j^2},\\ x_0\\ldots,x_{n_\\ell-1}\\geq 0 \\right\\}
+```
+
+"""
+function appenddualpowerconedomain end
+appenddualpowerconedomain(task:: MSKtask,n:: T1,alpha:: Vector{T2}) where {T1,T2} = appenddualpowerconedomain(task,convert(Int64,n),convert(Vector{Float64},alpha))
+function appenddualpowerconedomain(task_:: MSKtask,n_:: Int64,alpha_:: Vector{Float64})
+  domidx_ = Ref(Int64(1))
+  nleft_ = minimum([ length(alpha_) ])
+  res = disable_sigint() do
+    @MSK_appenddualpowerconedomain(task_.task,n_,nleft_,alpha_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendinfnormconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendinfnormconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional ``\\infty``-norm cone ``\\left\\{ x\\in \\real^n ~:~ x_0 \\geq \\mathrm{sup}_{i=1,\\ldots,n-1}|x_i| \\right\\}`` to the list of domains.
+"""
+function appendinfnormconedomain end
+appendinfnormconedomain(task:: MSKtask,n:: T1) where {T1} = appendinfnormconedomain(task,convert(Int64,n))
+function appendinfnormconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendinfnormconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendonenormconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendonenormconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional ``1``-norm cone ``\\left\\{ x\\in \\real^n ~:~ x_0 \\geq \\sum_{i=1}^{n-1} |x_i| \\right\\}`` to the list of domains.
+"""
+function appendonenormconedomain end
+appendonenormconedomain(task:: MSKtask,n:: T1) where {T1} = appendonenormconedomain(task,convert(Int64,n))
+function appendonenormconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendonenormconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendprimalexpconedomain(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the primal exponential cone ``\\left\\{ x\\in \\real^3 ~:~ x_0 \\geq x_1 e^{x_2/x_1},\\ x_0,x_1> 0 \\right\\}`` to the list of domains.
+"""
+function appendprimalexpconedomain end
+function appendprimalexpconedomain(task_:: MSKtask)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendprimalexpconedomain(task_.task,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendprimalgeomeanconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendprimalgeomeanconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the primal geometric mean cone ``\\left\\{ x\\in \\real^n ~:~ \\left(\\prod_{i=0}^{n-2} x_i\\right)^{1/(n-1)} \\geq |x_{n-1}|,\\ x_0\\ldots,x_{n-2}\\geq 0 \\right\\}`` to the list of domains.
+"""
+function appendprimalgeomeanconedomain end
+appendprimalgeomeanconedomain(task:: MSKtask,n:: T1) where {T1} = appendprimalgeomeanconedomain(task,convert(Int64,n))
+function appendprimalgeomeanconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendprimalgeomeanconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendprimalpowerconedomain{T1,T2}(task:: MSKtask,n:: T1,alpha:: Vector{T2})
+    domidx = appendprimalpowerconedomain(task_:: MSKtask,n_:: Int64,alpha_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimension of the domain.
+* `alpha :: Vector{Float64}`. The sequence proportional to exponents. Must be positive.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the primal power cone domain of dimension ``n``, with ``n_\\ell`` variables appearing on the left-hand side, where ``n_\\ell`` is the length of ``\\alpha``, and with a homogenous sequence of exponents ``\\alpha_0,\\ldots,\\alpha_{n_\\ell-1}``.
+
+Formally, let ``s = \\sum_i \\alpha_i`` and ``\\beta_i = \\alpha_i / s``, so that ``\\sum_i \\beta_i=1``. Then the primal power cone is defined as follows:
+
+```math
+ \\left\\{ x\\in \\real^n ~:~ \\prod_{i=0}^{n_\\ell-1} x_i^{\\beta_i} \\geq \\sqrt{\\sum_{j=n_\\ell}^{n-1}x_j^2},\\ x_0\\ldots,x_{n_\\ell-1}\\geq 0 \\right\\}
+```
+
+"""
+function appendprimalpowerconedomain end
+appendprimalpowerconedomain(task:: MSKtask,n:: T1,alpha:: Vector{T2}) where {T1,T2} = appendprimalpowerconedomain(task,convert(Int64,n),convert(Vector{Float64},alpha))
+function appendprimalpowerconedomain(task_:: MSKtask,n_:: Int64,alpha_:: Vector{Float64})
+  domidx_ = Ref(Int64(1))
+  nleft_ = minimum([ length(alpha_) ])
+  res = disable_sigint() do
+    @MSK_appendprimalpowerconedomain(task_.task,n_,nleft_,alpha_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendpsdconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendpsdconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the lower-triangular positive semidefinite cone domain: the set of ``x\\in \\real^n`` which are the vectorized lower-triangular part of some symmetric positive semidefinite matrix ``X\\in\\PSD^d`` where ``n=d(d+1)/2`` for some ``d\\geq 1``, stored in column-major format.
+"""
+function appendpsdconedomain end
+appendpsdconedomain(task:: MSKtask,n:: T1) where {T1} = appendpsdconedomain(task,convert(Int64,n))
+function appendpsdconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendpsdconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendquadraticconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendquadraticconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional quadratic cone ``\\left\\{x\\in\\real^n~:~x_0 \\geq \\sqrt{\\sum_{i=1}^{n-1} x_i^2}\\right\\}`` to the list of domains.
+"""
+function appendquadraticconedomain end
+appendquadraticconedomain(task:: MSKtask,n:: T1) where {T1} = appendquadraticconedomain(task,convert(Int64,n))
+function appendquadraticconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendquadraticconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendrdomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendrdomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional real space ``\\{ x \\in \\real^n \\}`` to the list of domains.
+"""
+function appendrdomain end
+appendrdomain(task:: MSKtask,n:: T1) where {T1} = appendrdomain(task,convert(Int64,n))
+function appendrdomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendrdomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendrminusdomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendrminusdomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional negative orthant ``\\{ x \\in \\real^n: \\, x \\leq 0 \\}`` to the list of domains.
+"""
+function appendrminusdomain end
+appendrminusdomain(task:: MSKtask,n:: T1) where {T1} = appendrminusdomain(task,convert(Int64,n))
+function appendrminusdomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendrminusdomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendrplusdomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendrplusdomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional positive orthant ``\\{ x \\in \\real^n: \\, x \\geq 0 \\}`` to the list of domains.
+"""
+function appendrplusdomain end
+appendrplusdomain(task:: MSKtask,n:: T1) where {T1} = appendrplusdomain(task,convert(Int64,n))
+function appendrplusdomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendrplusdomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendrquadraticconedomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendrquadraticconedomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the ``n``-dimensional rotated quadratic cone ``\\left\\{x\\in\\real^n~:~2 x_0 x_1 \\geq \\sqrt{\\sum_{i=2}^{n-1} x_i^2},\\ x_0,x_1\\geq 0\\right\\}`` to the list of domains.
+"""
+function appendrquadraticconedomain end
+appendrquadraticconedomain(task:: MSKtask,n:: T1) where {T1} = appendrquadraticconedomain(task,convert(Int64,n))
+function appendrquadraticconedomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendrquadraticconedomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
+    domidx = appendrzerodomain{T1}(task:: MSKtask,n:: T1)
+    domidx = appendrzerodomain(task_:: MSKtask,n_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. Dimmension of the domain.
+* `domidx :: Int64`. Index of the domain.
+
+Appends the zero in ``n``-dimensional real space ``\\{ x \\in \\real^n: \\, x = 0 \\}`` to the list of domains.
+"""
+function appendrzerodomain end
+appendrzerodomain(task:: MSKtask,n:: T1) where {T1} = appendrzerodomain(task,convert(Int64,n))
+function appendrzerodomain(task_:: MSKtask,n_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_appendrzerodomain(task_.task,n_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x+1))
+end
+
+"""
     idx = appendsparsesymmat{T1,T2,T3,T4}(task:: MSKtask,dim:: T1,subi:: Vector{T2},subj:: Vector{T3},valij:: Vector{T4})
+    idx = appendsparsesymmat{T1}(task:: MSKtask,dim:: T1,data:: SparseMatrixCSC{Float64})
     idx = appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
@@ -568,6 +4493,7 @@ end
 * `subj :: Vector{Int32}`. Column subscripts in the triplets.
 * `valij :: Vector{Float64}`. Values of each triplet.
 * `idx :: Int64`. Unique index assigned to the inputted matrix.
+* `data :: SparseMatrixCSC{Float64}`. The symmetric matrix 1/2 (data' + data) is used
 
 MOSEK maintains a storage of symmetric data matrices that is used to build
 ``\\bar C`` and ``\\bar A``. The storage can be thought of as a vector of
@@ -586,17 +4512,21 @@ Observe the function reports the index (position) of the appended matrix in
 """
 function appendsparsesymmat end
 appendsparsesymmat(task:: MSKtask,dim:: T1,subi:: Vector{T2},subj:: Vector{T3},valij:: Vector{T4}) where {T1,T2,T3,T4} = appendsparsesymmat(task,convert(Int32,dim),convert(Vector{Int32},subi),convert(Vector{Int32},subj),convert(Vector{Float64},valij))
+function appendsparsesymmat(task:: MSKtask,dim:: T1,data:: SparseMatrixCSC{Float64}) where {T1}
+  subi,subj,valij = tril(data)
+  appendsparsesymmat(task,dim,subi,subj,valij)
+end
 function appendsparsesymmat(task_:: MSKtask,dim_:: Int32,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
-  idx_ = Vector{Int64}(undef,1)
+  idx_ = Ref(Int64(1))
   nz_ = minimum([ length(subi_),length(subj_),length(valij_) ])
   res = disable_sigint() do
-    @msk_ccall( "appendsparsesymmat",Int32,(Ptr{Nothing},Int32,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Int64},),task_.task,dim_,nz_,subi_ .- Int32(1),subj_ .- Int32(1),valij_,idx_)
+    @MSK_appendsparsesymmat(task_.task,dim_,nz_,subi_ .- Int32(1),subj_ .- Int32(1),valij_,idx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,idx_[1]+1))
+  (convert(Int64,idx_.x+1))
 end
 
 """
@@ -649,7 +4579,7 @@ function appendsparsesymmatlist(task_:: MSKtask,dims_:: Vector{Int32},nz_:: Vect
   __tmp_var_4 = zeros(Int64,__tmp_var_3)
   idx_ = __tmp_var_4
   res = disable_sigint() do
-    @msk_ccall( "appendsparsesymmatlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Int64},),task_.task,num_,dims_,nz_,subi_ .- Int32(1),subj_ .- Int32(1),valij_,__tmp_var_4)
+    @MSK_appendsparsesymmatlist(task_.task,num_,dims_,nz_,subi_ .- Int32(1),subj_ .- Int32(1),valij_,__tmp_var_4)
   end
   __tmp_var_4 .+= 1
   if res != MSK_RES_OK.value
@@ -675,7 +4605,7 @@ function appendvars end
 appendvars(task:: MSKtask,num:: T1) where {T1} = appendvars(task,convert(Int32,num))
 function appendvars(task_:: MSKtask,num_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "appendvars",Int32,(Ptr{Nothing},Int32,),task_.task,num_)
+    @MSK_appendvars(task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -707,16 +4637,16 @@ estimate ``\\kappa_1(B)``.
 """
 function basiscond end
 function basiscond(task_:: MSKtask)
-  nrmbasis_ = Vector{Float64}(undef,1)
-  nrminvbasis_ = Vector{Float64}(undef,1)
+  nrmbasis_ = Ref(Float64(1))
+  nrminvbasis_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "basiscond",Int32,(Ptr{Nothing},Ptr{Float64},Ptr{Float64},),task_.task,nrmbasis_,nrminvbasis_)
+    @MSK_basiscond(task_.task,nrmbasis_,nrminvbasis_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,nrmbasis_[1]),convert(Float64,nrminvbasis_[1]))
+  (convert(Float64,nrmbasis_.x),convert(Float64,nrminvbasis_.x))
 end
 
 """
@@ -732,7 +4662,7 @@ function bktostr end
 function bktostr(task_:: MSKtask,bk_:: Boundkey)
   str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "bktostr",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,bk_.value,str_)
+    @MSK_bktostr(task_.task,bk_.value,str_)
   end
   str_str = String(str_[1:findfirst(isequal(0),str_)-1])
   if res != MSK_RES_OK.value
@@ -754,7 +4684,7 @@ function callbackcodetostr end
 function callbackcodetostr(code_:: Callbackcode)
   callbackcodestr_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "callbackcodetostr",Int32,(Int32,Ptr{UInt8},),code_.value,callbackcodestr_)
+    @MSK_callbackcodetostr(code_.value,callbackcodestr_)
   end
   callbackcodestr_str = String(callbackcodestr_[1:findfirst(isequal(0),callbackcodestr_)-1])
   if res != MSK_RES_OK.value
@@ -773,7 +4703,7 @@ Check in all unused license features to the license token server.
 function checkinall end
 function checkinall(env_:: MSKenv)
   res = disable_sigint() do
-    @msk_ccall( "checkinall",Int32,(Ptr{Nothing},),env_.env)
+    @MSK_checkinall(env_.env)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -800,7 +4730,7 @@ overhead, so frequent calls to this function should be avoided.
 function checkinlicense end
 function checkinlicense(env_:: MSKenv,feature_:: Feature)
   res = disable_sigint() do
-    @msk_ccall( "checkinlicense",Int32,(Ptr{Nothing},Int32,),env_.env,feature_.value)
+    @MSK_checkinlicense(env_.env,feature_.value)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -821,7 +4751,7 @@ function checkmem end
 checkmem(task:: MSKtask,file:: AbstractString,line:: T2) where {T2} = checkmem(task,file,convert(Int32,line))
 function checkmem(task_:: MSKtask,file_:: AbstractString,line_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "checkmemtask",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),task_.task,string(file_),line_)
+    @MSK_checkmemtask(task_.task,string(file_),line_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -848,7 +4778,7 @@ If a given feature is already checked out when this function is called, the call
 function checkoutlicense end
 function checkoutlicense(env_:: MSKenv,feature_:: Feature)
   res = disable_sigint() do
-    @msk_ccall( "checkoutlicense",Int32,(Ptr{Nothing},Int32,),env_.env,feature_.value)
+    @MSK_checkoutlicense(env_.env,feature_.value)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -897,7 +4827,7 @@ function chgconbound end
 chgconbound(task:: MSKtask,i:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgconbound(task,convert(Int32,i),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
 function chgconbound(task_:: MSKtask,i_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "chgconbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),task_.task,i_-1,lower_,finite_,value_)
+    @MSK_chgconbound(task_.task,i_-1,lower_,finite_,value_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -947,7 +4877,7 @@ function chgvarbound end
 chgvarbound(task:: MSKtask,j:: T1,lower:: T2,finite:: T3,value:: T4) where {T1,T2,T3,T4} = chgvarbound(task,convert(Int32,j),convert(Int32,lower),convert(Int32,finite),convert(Float64,value))
 function chgvarbound(task_:: MSKtask,j_:: Int32,lower_:: Int32,finite_:: Int32,value_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "chgvarbound",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),task_.task,j_-1,lower_,finite_,value_)
+    @MSK_chgvarbound(task_.task,j_-1,lower_,finite_,value_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -965,7 +4895,7 @@ Commits all cached problem changes to the task. It is usually not necessary to c
 function commitchanges end
 function commitchanges(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "commitchanges",Int32,(Ptr{Nothing},),task_.task)
+    @MSK_commitchanges(task_.task)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -980,13 +4910,15 @@ end
 * `ct :: Conetype`. Specifies the type of the cone.
 * `str :: AbstractString`. String corresponding to the cone type.
 
+Deprecated in MOSEK 10
+
 Obtains the cone string identifier corresponding to a cone type.
 """
 function conetypetostr end
 function conetypetostr(task_:: MSKtask,ct_:: Conetype)
   str_ = zeros(UInt8,1024+1)
   res = disable_sigint() do
-    @msk_ccall( "conetypetostr",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,ct_.value,str_)
+    @MSK_conetypetostr(task_.task,ct_.value,str_)
   end
   str_str = String(str_[1:findfirst(isequal(0),str_)-1])
   if res != MSK_RES_OK.value
@@ -1007,7 +4939,7 @@ Undefine a solution and free the memory it uses.
 function deletesolution end
 function deletesolution(task_:: MSKtask,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "deletesolution",Int32,(Ptr{Nothing},Int32,),task_.task,whichsol_.value)
+    @MSK_deletesolution(task_.task,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1052,7 +4984,7 @@ function dualsensitivity(task_:: MSKtask,subj_:: Vector{Int32})
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   rightrangej_ = __tmp_var_7
   res = disable_sigint() do
-    @msk_ccall( "dualsensitivity",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numj_,subj_ .- Int32(1),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @MSK_dualsensitivity(task_.task,numj_,subj_ .- Int32(1),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1074,10 +5006,215 @@ function echointro end
 echointro(env:: MSKenv,longver:: T1) where {T1} = echointro(env,convert(Int32,longver))
 function echointro(env_:: MSKenv,longver_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "echointro",Int32,(Ptr{Nothing},Int32,),env_.env,longver_)
+    @MSK_echointro(env_.env,longver_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
+  end
+end
+
+"""
+    emptyafebarfrow{T1}(task:: MSKtask,afeidx:: T1)
+    emptyafebarfrow(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index of barF.
+
+Clears a row in ``\\barF`` i.e. sets ``\\barF_{\\mathrm{afeidx},*} = 0``.
+"""
+function emptyafebarfrow end
+emptyafebarfrow(task:: MSKtask,afeidx:: T1) where {T1} = emptyafebarfrow(task,convert(Int64,afeidx))
+function emptyafebarfrow(task_:: MSKtask,afeidx_:: Int64)
+  res = disable_sigint() do
+    @MSK_emptyafebarfrow(task_.task,afeidx_-1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    emptyafebarfrowlist{T1}(task:: MSKtask,afeidxlist:: Vector{T1})
+    emptyafebarfrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidxlist :: Vector{Int64}`. Indices of rows in barF to clear.
+
+Clears a number of rows in ``\\barF`` i.e. sets ``\\barF_{i,*} = 0`` for all indices ``i`` in `afeidxlist`.
+"""
+function emptyafebarfrowlist end
+emptyafebarfrowlist(task:: MSKtask,afeidxlist:: Vector{T1}) where {T1} = emptyafebarfrowlist(task,convert(Vector{Int64},afeidxlist))
+function emptyafebarfrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64})
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  res = disable_sigint() do
+    @MSK_emptyafebarfrowlist(task_.task,numafeidx_,afeidxlist_ .- Int32(1))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    emptyafefcol{T1}(task:: MSKtask,j:: T1)
+    emptyafefcol(task_:: MSKtask,j_:: Int32)
+
+* `task :: MSKtask`. An optimization task.
+* `j :: Int32`. Variable index.
+
+Clears one column in the affine constraint matrix ``F``, that is sets ``F_{*,j}=0``.
+"""
+function emptyafefcol end
+emptyafefcol(task:: MSKtask,j:: T1) where {T1} = emptyafefcol(task,convert(Int32,j))
+function emptyafefcol(task_:: MSKtask,j_:: Int32)
+  res = disable_sigint() do
+    @MSK_emptyafefcol(task_.task,j_-1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    emptyafefcollist{T1}(task:: MSKtask,varidxlist:: Vector{T1})
+    emptyafefcollist(task_:: MSKtask,varidxlist_:: Vector{Int32})
+
+* `task :: MSKtask`. An optimization task.
+* `varidxlist :: Vector{Int32}`. Indices of variables in F to clear.
+
+Clears a number of columns in ``F`` i.e. sets ``F_{*,j} = 0`` for all indices ``j`` in `varidxlist`.
+"""
+function emptyafefcollist end
+emptyafefcollist(task:: MSKtask,varidxlist:: Vector{T1}) where {T1} = emptyafefcollist(task,convert(Vector{Int32},varidxlist))
+function emptyafefcollist(task_:: MSKtask,varidxlist_:: Vector{Int32})
+  numvaridx_ = minimum([ length(varidxlist_) ])
+  res = disable_sigint() do
+    @MSK_emptyafefcollist(task_.task,numvaridx_,varidxlist_ .- Int32(1))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    emptyafefrow{T1}(task:: MSKtask,afeidx:: T1)
+    emptyafefrow(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index.
+
+Clears one row in the affine constraint matrix ``F``, that is sets ``F_{\\mathrm{afeidx},*}=0``.
+"""
+function emptyafefrow end
+emptyafefrow(task:: MSKtask,afeidx:: T1) where {T1} = emptyafefrow(task,convert(Int64,afeidx))
+function emptyafefrow(task_:: MSKtask,afeidx_:: Int64)
+  res = disable_sigint() do
+    @MSK_emptyafefrow(task_.task,afeidx_-1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    emptyafefrowlist{T1}(task:: MSKtask,afeidxlist:: Vector{T1})
+    emptyafefrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidxlist :: Vector{Int64}`. Indices of rows in F to clear.
+
+Clears a number of rows in ``F`` i.e. sets ``F_{i,*} = 0`` for all indices ``i`` in `afeidxlist`.
+"""
+function emptyafefrowlist end
+emptyafefrowlist(task:: MSKtask,afeidxlist:: Vector{T1}) where {T1} = emptyafefrowlist(task,convert(Vector{Int64},afeidxlist))
+function emptyafefrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64})
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  res = disable_sigint() do
+    @MSK_emptyafefrowlist(task_.task,numafeidx_,afeidxlist_ .- Int32(1))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    activity = evaluateacc{T2}(task:: MSKtask,whichsol:: Soltype,accidx:: T2)
+    activity = evaluateacc(task_:: MSKtask,whichsol_:: Soltype,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `accidx :: Int64`. The index of the affine conic constraint.
+* `activity :: Vector{Float64}`. The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
+
+Evaluates the activity of an affine conic constraint.
+"""
+function evaluateacc end
+evaluateacc(task:: MSKtask,whichsol:: Soltype,accidx:: T2) where {T2} = evaluateacc(task,whichsol,convert(Int64,accidx))
+function evaluateacc(task_:: MSKtask,whichsol_:: Soltype,accidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_evaluateacc_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_evaluateacc_0); __tmp_var_evaluateacc_0.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  activity_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_evaluateacc(task_.task,whichsol_.value,accidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    activity = evaluateaccs(task_:: MSKtask,whichsol_:: Soltype)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `activity :: Vector{Float64}`. The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
+
+Evaluates the activities of all affine conic constraints.
+"""
+function evaluateaccs end
+function evaluateaccs(task_:: MSKtask,whichsol_:: Soltype)
+  __tmp_var_0 = begin __tmp_var_evaluateaccs_0 = Ref{Int64}(); @MSK_getaccntot(task_.task,__tmp_var_evaluateaccs_0); __tmp_var_evaluateaccs_0.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  activity_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_evaluateaccs(task_.task,whichsol_.value,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    generateaccnames{T1,T3}(task:: MSKtask,sub:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3})
+    generateaccnames(task_:: MSKtask,sub_:: Vector{Int64},fmt_:: AbstractString,dims_:: Vector{Int32})
+
+* `task :: MSKtask`. An optimization task.
+* `sub :: Vector{Int64}`. Indexes of the affine conic constraints.
+* `fmt :: String`. The variable name formatting string.
+* `dims :: Vector{Int32}`. Dimensions in the shape.
+
+Internal.
+"""
+function generateaccnames end
+generateaccnames(task:: MSKtask,sub:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3}) where {T1,T3} = generateaccnames(task,convert(Vector{Int64},sub),fmt,convert(Vector{Int32},dims))
+function generateaccnames(task_:: MSKtask,sub_:: Vector{Int64},fmt_:: AbstractString,dims_:: Vector{Int32})
+  ndims_ = minimum([ length(dims_) ])
+  num_ = minimum([ length(sub_) ])
+  res = disable_sigint() do
+    @MSK_generateaccnames(task_.task,num_,sub_ .- Int32(1),string(fmt_),ndims_,dims_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
   end
 end
 
@@ -1091,7 +5228,7 @@ end
 * `dims :: Vector{Int32}`. Dimensions in the shape.
 * `sp :: Vector{Int64}`. Items that should be named.
 
-Generates systematic names for cone.
+Internal, deprecated.
 """
 function generateconenames end
 generateconenames(task:: MSKtask,subk:: Vector{T1},fmt:: AbstractString,dims:: Vector{T3},sp:: Vector{T4}) where {T1,T3,T4} = generateconenames(task,convert(Vector{Int32},subk),fmt,convert(Vector{Int32},dims),convert(Vector{Int64},sp))
@@ -1104,7 +5241,7 @@ function generateconenames(task_:: MSKtask,subk_:: Vector{Int32},fmt_:: Abstract
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "generateconenames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subk_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
+    @MSK_generateconenames(task_.task,num_,subk_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1135,7 +5272,7 @@ function generateconnames(task_:: MSKtask,subi_:: Vector{Int32},fmt_:: AbstractS
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "generateconnames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subi_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
+    @MSK_generateconnames(task_.task,num_,subi_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1166,12 +5303,243 @@ function generatevarnames(task_:: MSKtask,subj_:: Vector{Int32},fmt_:: AbstractS
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "generatevarnames",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{UInt8},Int32,Ptr{Int32},Ptr{Int64},),task_.task,num_,subj_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
+    @MSK_generatevarnames(task_.task,num_,subj_ .- Int32(1),string(fmt_),ndims_,dims_,sp_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
+end
+
+"""
+    afeidxlist = getaccafeidxlist{T1}(task:: MSKtask,accidx:: T1)
+    afeidxlist = getaccafeidxlist(task_:: MSKtask,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Index of the affine conic constraint.
+* `afeidxlist :: Vector{Int64}`. List of indexes of affine expressions appearing in the constraint.
+
+Obtains the list of affine expressions appearing in the affine conic constraint.
+"""
+function getaccafeidxlist end
+getaccafeidxlist(task:: MSKtask,accidx:: T1) where {T1} = getaccafeidxlist(task,convert(Int64,accidx))
+function getaccafeidxlist(task_:: MSKtask,accidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getaccafeidxlist_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_getaccafeidxlist_0); __tmp_var_getaccafeidxlist_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  afeidxlist_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getaccafeidxlist(task_.task,accidx_,__tmp_var_1)
+  end
+  __tmp_var_1 .+= 1
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    b = getaccb{T1}(task:: MSKtask,accidx:: T1)
+    b = getaccb(task_:: MSKtask,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Index of the affine conic constraint.
+* `b :: Vector{Float64}`. The vector b appearing in the constraint.
+
+Obtains the additional constant term vector appearing in the affine conic constraint.
+"""
+function getaccb end
+getaccb(task:: MSKtask,accidx:: T1) where {T1} = getaccb(task,convert(Int64,accidx))
+function getaccb(task_:: MSKtask,accidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getaccb_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_getaccb_0); __tmp_var_getaccb_0.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  b_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getaccb(task_.task,accidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    domidx = getaccdomain{T1}(task:: MSKtask,accidx:: T1)
+    domidx = getaccdomain(task_:: MSKtask,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. The index of the affine conic constraint.
+* `domidx :: Int64`. The index of domain in the affine conic constraint.
+
+Obtains the domain appearing in the affine conic constraint.
+"""
+function getaccdomain end
+getaccdomain(task:: MSKtask,accidx:: T1) where {T1} = getaccdomain(task,convert(Int64,accidx))
+function getaccdomain(task_:: MSKtask,accidx_:: Int64)
+  domidx_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getaccdomain(task_.task,accidx_,domidx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,domidx_.x))
+end
+
+"""
+    doty = getaccdoty{T2}(task:: MSKtask,whichsol:: Soltype,accidx:: T2)
+    doty = getaccdoty(task_:: MSKtask,whichsol_:: Soltype,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `accidx :: Int64`. The index of the affine conic constraint.
+* `doty :: Vector{Float64}`. The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
+
+Obtains the ``\\dot{y}`` vector for a solution (the dual values of an affine conic constraint).
+"""
+function getaccdoty end
+getaccdoty(task:: MSKtask,whichsol:: Soltype,accidx:: T2) where {T2} = getaccdoty(task,whichsol,convert(Int64,accidx))
+function getaccdoty(task_:: MSKtask,whichsol_:: Soltype,accidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getaccdoty_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_getaccdoty_0); __tmp_var_getaccdoty_0.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  doty_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getaccdoty(task_.task,whichsol_.value,accidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    n = getaccn{T1}(task:: MSKtask,accidx:: T1)
+    n = getaccn(task_:: MSKtask,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. The index of the affine conic constraint.
+* `n :: Int64`. The dimension of the affine conic constraint (equal to the dimension of its domain).
+
+Obtains the dimension of the affine conic constraint.
+"""
+function getaccn end
+getaccn(task:: MSKtask,accidx:: T1) where {T1} = getaccn(task,convert(Int64,accidx))
+function getaccn(task_:: MSKtask,accidx_:: Int64)
+  n_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getaccn(task_.task,accidx_,n_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,n_.x))
+end
+
+"""
+    name = getaccname{T1}(task:: MSKtask,accidx:: T1)
+    name = getaccname(task_:: MSKtask,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Index of an affine conic constraint.
+* `name :: AbstractString`. Returns the required name.
+
+Obtains the name of an affine conic constraint.
+"""
+function getaccname end
+getaccname(task:: MSKtask,accidx:: T1) where {T1} = getaccname(task,convert(Int64,accidx))
+function getaccname(task_:: MSKtask,accidx_:: Int64)
+  sizename_ = (1 + begin __tmp_var_getaccname_0 = Ref{Int32}(); @MSK_getaccnamelen(task_.task,(accidx_-1),__tmp_var_getaccname_0); __tmp_var_getaccname_0.x end)
+  name_ = zeros(UInt8,(sizename_)+1)
+  res = disable_sigint() do
+    @MSK_getaccname(task_.task,accidx_-1,sizename_,name_)
+  end
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (name_str)
+end
+
+"""
+    len = getaccnamelen{T1}(task:: MSKtask,accidx:: T1)
+    len = getaccnamelen(task_:: MSKtask,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Index of an affine conic constraint.
+* `len :: Int32`. Returns the length of the indicated name.
+
+Obtains the length of the name of an affine conic constraint.
+"""
+function getaccnamelen end
+getaccnamelen(task:: MSKtask,accidx:: T1) where {T1} = getaccnamelen(task,convert(Int64,accidx))
+function getaccnamelen(task_:: MSKtask,accidx_:: Int64)
+  len_ = Ref(Int32(1))
+  res = disable_sigint() do
+    @MSK_getaccnamelen(task_.task,accidx_-1,len_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,len_.x))
+end
+
+"""
+    n = getaccntot(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `n :: Int64`. The total dimension of all affine conic constraints.
+
+Obtains the total dimension of all affine conic constraints (the sum of all their dimensions).
+"""
+function getaccntot end
+function getaccntot(task_:: MSKtask)
+  n_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getaccntot(task_.task,n_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,n_.x))
+end
+
+"""
+    (domidxlist,afeidxlist,b) = getaccs(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `domidxlist :: Vector{Int64}`. The list of domains appearing in all affine conic constraints.
+* `afeidxlist :: Vector{Int64}`. The concatenation of index lists of affine expressions appearing in all affine conic constraints.
+* `b :: Vector{Float64}`. The concatenation of vectors b appearing in all affine conic constraints.
+
+Obtains full data of all affine conic constraints. The output array `domainidxlist` must have at least length determined by `Mosek.getnumacc`. The output arrays `afeidxlist` and `b` must have at least length determined by `Mosek.getaccntot`.
+"""
+function getaccs end
+function getaccs(task_:: MSKtask)
+  __tmp_var_2 = begin __tmp_var_getaccs_0 = Ref{Int64}(); @MSK_getaccntot(task_.task,__tmp_var_getaccs_0); __tmp_var_getaccs_0.x end
+  __tmp_var_3 = zeros(Int64,__tmp_var_2)
+  afeidxlist_ = __tmp_var_3
+  __tmp_var_4 = begin __tmp_var_getaccs_0 = Ref{Int64}(); @MSK_getaccntot(task_.task,__tmp_var_getaccs_0); __tmp_var_getaccs_0.x end
+  __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  b_ = __tmp_var_5
+  __tmp_var_0 = begin __tmp_var_getaccs_0 = Ref{Int64}(); @MSK_getnumacc(task_.task,__tmp_var_getaccs_0); __tmp_var_getaccs_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  domidxlist_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getaccs(task_.task,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  end
+  __tmp_var_3 .+= 1
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1,__tmp_var_3,__tmp_var_5)
 end
 
 """
@@ -1189,7 +5557,7 @@ Obtains one column of ``A`` in a sparse format.
 function getacol end
 getacol(task:: MSKtask,j:: T1) where {T1} = getacol(task,convert(Int32,j))
 function getacol(task_:: MSKtask,j_:: Int32)
-  nzj_ = Vector{Int32}(undef,1)
+  nzj_ = Ref(Int32(1))
   __tmp_var_0 = getacolnumnz(task_,(j_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   subj_ = __tmp_var_1
@@ -1197,14 +5565,14 @@ function getacol(task_:: MSKtask,j_:: Int32)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   valj_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getacol",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
+    @MSK_getacol(task_.task,j_-1,nzj_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,nzj_[1]),__tmp_var_1,__tmp_var_3)
+  (convert(Int32,nzj_.x),__tmp_var_1,__tmp_var_3)
 end
 
 """
@@ -1220,15 +5588,15 @@ Obtains the number of non-zero elements in one column of ``A``.
 function getacolnumnz end
 getacolnumnz(task:: MSKtask,i:: T1) where {T1} = getacolnumnz(task,convert(Int32,i))
 function getacolnumnz(task_:: MSKtask,i_:: Int32)
-  nzj_ = Vector{Int32}(undef,1)
+  nzj_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getacolnumnz",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,nzj_)
+    @MSK_getacolnumnz(task_.task,i_-1,nzj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,nzj_[1]))
+  (convert(Int32,nzj_.x))
 end
 
 """
@@ -1263,7 +5631,7 @@ function getacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   val_ = __tmp_var_7
   surp_ = convert(Int64,length(sub_))
   res = disable_sigint() do
-    @msk_ccall( "getacolslice64",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @MSK_getacolslice64(task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -1289,15 +5657,15 @@ Obtains the number of non-zeros in a slice of columns of ``A``.
 function getacolslicenumnz end
 getacolslicenumnz(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getacolslicenumnz(task,convert(Int32,first),convert(Int32,last))
 function getacolslicenumnz(task_:: MSKtask,first_:: Int32,last_:: Int32)
-  numnz_ = Vector{Int64}(undef,1)
+  numnz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getacolslicenumnz64",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int64},),task_.task,first_-1,last_-1,numnz_)
+    @MSK_getacolslicenumnz64(task_.task,first_-1,last_-1,numnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numnz_[1]))
+  (convert(Int64,numnz_.x))
 end
 
 """
@@ -1328,7 +5696,7 @@ function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   val_ = __tmp_var_5
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
-    @msk_ccall( "getacolslicetrip",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @MSK_getacolslicetrip(task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -1337,6 +5705,267 @@ function getacolslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
     throw(MosekError(res,msg))
   end
   (__tmp_var_1,__tmp_var_3,__tmp_var_5)
+end
+
+"""
+    numentries = getafebarfnumrowentries{T1}(task:: MSKtask,afeidx:: T1)
+    numentries = getafebarfnumrowentries(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index of barF.
+* `numentries :: Int32`. Number of nonzero entries in a row of barF.
+
+Obtains the number of nonzero entries in one row of ``\\barF``, that is the number of ``j`` such that ``\\barF_{\\mathrm{afeidx},j}`` is not the zero matrix.
+"""
+function getafebarfnumrowentries end
+getafebarfnumrowentries(task:: MSKtask,afeidx:: T1) where {T1} = getafebarfnumrowentries(task,convert(Int64,afeidx))
+function getafebarfnumrowentries(task_:: MSKtask,afeidx_:: Int64)
+  numentries_ = Ref(Int32(1))
+  res = disable_sigint() do
+    @MSK_getafebarfnumrowentries(task_.task,afeidx_-1,numentries_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,numentries_.x))
+end
+
+"""
+    (barvaridx,termptr,numterms,termidx,termweight) = getafebarfrow{T1}(task:: MSKtask,afeidx:: T1)
+    (barvaridx,termptr,numterms,termidx,termweight) = getafebarfrow(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index of barF.
+* `barvaridx :: Vector{Int32}`. Semidefinite variable indices.
+* `termptr :: Vector{Int64}`. Pointers to the description of entries.
+* `numterms :: Vector{Int64}`. Number of terms in each entry.
+* `termidx :: Vector{Int64}`. Indices of semidefinite matrices from E.
+* `termweight :: Vector{Float64}`. Weights appearing in the weighted sum representation.
+
+Obtains all nonzero entries in one row ``\\barF_{\\mathrm{afeidx},*}`` of ``\\barF``. For every ``k`` there is a nonzero entry ``\\barF_{\\mathrm{afeidx}, \\mathrm{barvaridx}[k]}``, which is represented as a weighted sum of ``\\mathrm{numterms}[k]`` terms. The indices in the matrix store ``E`` and their weights for the ``k``-th entry appear in the arrays `termidx` and `termweight` in positions
+
+```math
+ \\mathrm{termptr}[k],\\ldots,\\mathrm{termptr}[k]+\\mathrm{numterms}[k]-1.
+```
+The arrays should be long enough to accommodate the data; their required lengths can be obtained with `Mosek.getafebarfrowinfo`.
+"""
+function getafebarfrow end
+getafebarfrow(task:: MSKtask,afeidx:: T1) where {T1} = getafebarfrow(task,convert(Int64,afeidx))
+function getafebarfrow(task_:: MSKtask,afeidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getafebarfrow_0 = Ref{Int32}(); __tmp_var_getafebarfrow_1 = Ref{Int64}(); @MSK_getafebarfrowinfo(task_.task,(afeidx_-1),__tmp_var_getafebarfrow_0,__tmp_var_getafebarfrow_1); __tmp_var_getafebarfrow_0.x end
+  __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  barvaridx_ = __tmp_var_1
+  __tmp_var_4 = begin __tmp_var_getafebarfrow_0 = Ref{Int32}(); __tmp_var_getafebarfrow_1 = Ref{Int64}(); @MSK_getafebarfrowinfo(task_.task,(afeidx_-1),__tmp_var_getafebarfrow_0,__tmp_var_getafebarfrow_1); __tmp_var_getafebarfrow_0.x end
+  __tmp_var_5 = zeros(Int64,__tmp_var_4)
+  numterms_ = __tmp_var_5
+  __tmp_var_6 = begin __tmp_var_getafebarfrow_0 = Ref{Int32}(); __tmp_var_getafebarfrow_1 = Ref{Int64}(); @MSK_getafebarfrowinfo(task_.task,(afeidx_-1),__tmp_var_getafebarfrow_0,__tmp_var_getafebarfrow_1); __tmp_var_getafebarfrow_1.x end
+  __tmp_var_7 = zeros(Int64,__tmp_var_6)
+  termidx_ = __tmp_var_7
+  __tmp_var_2 = begin __tmp_var_getafebarfrow_0 = Ref{Int32}(); __tmp_var_getafebarfrow_1 = Ref{Int64}(); @MSK_getafebarfrowinfo(task_.task,(afeidx_-1),__tmp_var_getafebarfrow_0,__tmp_var_getafebarfrow_1); __tmp_var_getafebarfrow_0.x end
+  __tmp_var_3 = zeros(Int64,__tmp_var_2)
+  termptr_ = __tmp_var_3
+  __tmp_var_8 = begin __tmp_var_getafebarfrow_0 = Ref{Int32}(); __tmp_var_getafebarfrow_1 = Ref{Int64}(); @MSK_getafebarfrowinfo(task_.task,(afeidx_-1),__tmp_var_getafebarfrow_0,__tmp_var_getafebarfrow_1); __tmp_var_getafebarfrow_1.x end
+  __tmp_var_9 = zeros(Float64,__tmp_var_8)
+  termweight_ = __tmp_var_9
+  res = disable_sigint() do
+    @MSK_getafebarfrow(task_.task,afeidx_-1,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+end
+
+"""
+    (numentries,numterms) = getafebarfrowinfo{T1}(task:: MSKtask,afeidx:: T1)
+    (numentries,numterms) = getafebarfrowinfo(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index of barF.
+* `numentries :: Int32`. Number of nonzero entries in a row of barF.
+* `numterms :: Int64`. Number of terms in the weighted sums representation of the row of barF.
+
+Obtains information about one row of ``\\barF``: the number of nonzero entries, that is the number of ``j`` such that ``\\barF_{\\mathrm{afeidx},j}`` is not the zero matrix, as well as the total number of terms in the representations of all
+these entries as weighted sums of matrices from ``E``. This information provides the data sizes required for a call to
+`Mosek.getafebarfrow`.
+"""
+function getafebarfrowinfo end
+getafebarfrowinfo(task:: MSKtask,afeidx:: T1) where {T1} = getafebarfrowinfo(task,convert(Int64,afeidx))
+function getafebarfrowinfo(task_:: MSKtask,afeidx_:: Int64)
+  numentries_ = Ref(Int32(1))
+  numterms_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getafebarfrowinfo(task_.task,afeidx_-1,numentries_,numterms_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,numentries_.x),convert(Int64,numterms_.x))
+end
+
+"""
+    numfnz = getafefnumnz(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `numfnz :: Int64`. Number of nonzeros in F.
+
+Obtains the total number of nonzeros in ``F``.
+"""
+function getafefnumnz end
+function getafefnumnz(task_:: MSKtask)
+  numfnz_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getafefnumnz(task_.task,numfnz_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numfnz_.x))
+end
+
+"""
+    (nzi,subi,vali) = getafefrow{T1}(task:: MSKtask,afeidx:: T1)
+    (nzi,subi,vali) = getafefrow(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index.
+* `nzi :: Int32`. Number of non-zeros in the row obtained.
+* `subi :: Vector{Int32}`. Column indices of the non-zeros in the row obtained.
+* `vali :: Vector{Float64}`. Column indices of the non-zeros in the row obtained.
+
+Obtains one row of ``F`` in sparse format.
+"""
+function getafefrow end
+getafefrow(task:: MSKtask,afeidx:: T1) where {T1} = getafefrow(task,convert(Int64,afeidx))
+function getafefrow(task_:: MSKtask,afeidx_:: Int64)
+  nzi_ = Ref(Int32(1))
+  __tmp_var_0 = begin __tmp_var_getafefrow_0 = Ref{Int32}(); @MSK_getafefrownumnz(task_.task,(afeidx_-1),__tmp_var_getafefrow_0); __tmp_var_getafefrow_0.x end
+  __tmp_var_1 = zeros(Int32,__tmp_var_0)
+  subi_ = __tmp_var_1
+  __tmp_var_2 = begin __tmp_var_getafefrow_0 = Ref{Int32}(); @MSK_getafefrownumnz(task_.task,(afeidx_-1),__tmp_var_getafefrow_0); __tmp_var_getafefrow_0.x end
+  __tmp_var_3 = zeros(Float64,__tmp_var_2)
+  vali_ = __tmp_var_3
+  res = disable_sigint() do
+    @MSK_getafefrow(task_.task,afeidx_-1,nzi_,__tmp_var_1,__tmp_var_3)
+  end
+  __tmp_var_1 .+= 1
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,nzi_.x),__tmp_var_1,__tmp_var_3)
+end
+
+"""
+    nzi = getafefrownumnz{T1}(task:: MSKtask,afeidx:: T1)
+    nzi = getafefrownumnz(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index.
+* `nzi :: Int32`. Number of non-zeros in the row.
+
+Obtains the number of nonzeros in one row of ``F``.
+"""
+function getafefrownumnz end
+getafefrownumnz(task:: MSKtask,afeidx:: T1) where {T1} = getafefrownumnz(task,convert(Int64,afeidx))
+function getafefrownumnz(task_:: MSKtask,afeidx_:: Int64)
+  nzi_ = Ref(Int32(1))
+  res = disable_sigint() do
+    @MSK_getafefrownumnz(task_.task,afeidx_-1,nzi_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,nzi_.x))
+end
+
+"""
+    (subi,subj,vali) = getafeftrip(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `subi :: Vector{Int64}`. Row indices of nonzeros.
+* `subj :: Vector{Int32}`. Column indices of nonzeros.
+* `vali :: Vector{Float64}`. Values of nonzero entries.
+
+Obtains the ``F`` in triplet format.
+"""
+function getafeftrip end
+function getafeftrip(task_:: MSKtask)
+  __tmp_var_0 = begin __tmp_var_getafeftrip_0 = Ref{Int64}(); @MSK_getafefnumnz(task_.task,__tmp_var_getafeftrip_0); __tmp_var_getafeftrip_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  subi_ = __tmp_var_1
+  __tmp_var_2 = begin __tmp_var_getafeftrip_0 = Ref{Int64}(); @MSK_getafefnumnz(task_.task,__tmp_var_getafeftrip_0); __tmp_var_getafeftrip_0.x end
+  __tmp_var_3 = zeros(Int32,__tmp_var_2)
+  subj_ = __tmp_var_3
+  __tmp_var_4 = begin __tmp_var_getafeftrip_0 = Ref{Int64}(); @MSK_getafefnumnz(task_.task,__tmp_var_getafeftrip_0); __tmp_var_getafeftrip_0.x end
+  __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  vali_ = __tmp_var_5
+  res = disable_sigint() do
+    @MSK_getafeftrip(task_.task,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  end
+  __tmp_var_1 .+= 1
+  __tmp_var_3 .+= 1
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1,__tmp_var_3,__tmp_var_5)
+end
+
+"""
+    g = getafeg{T1}(task:: MSKtask,afeidx:: T1)
+    g = getafeg(task_:: MSKtask,afeidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Element index.
+* `g :: Float64`. The entry in g.
+
+Obtains a single coefficient in ``g``.
+"""
+function getafeg end
+getafeg(task:: MSKtask,afeidx:: T1) where {T1} = getafeg(task,convert(Int64,afeidx))
+function getafeg(task_:: MSKtask,afeidx_:: Int64)
+  g_ = Ref(Float64(1))
+  res = disable_sigint() do
+    @MSK_getafeg(task_.task,afeidx_-1,g_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Float64,g_.x))
+end
+
+"""
+    g = getafegslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    g = getafegslice(task_:: MSKtask,first_:: Int64,last_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `first :: Int64`. First index in the sequence.
+* `last :: Int64`. Last index plus 1 in the sequence.
+* `g :: Vector{Float64}`. The slice of g as a dense vector.
+
+Obtains a sequence of elements from the vector ``g`` of constant terms in the affine expressions list.
+"""
+function getafegslice end
+getafegslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getafegslice(task,convert(Int64,first),convert(Int64,last))
+function getafegslice(task_:: MSKtask,first_:: Int64,last_:: Int64)
+  __tmp_var_0 = ((last_) - (first_))
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  g_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getafegslice(task_.task,first_-1,last_-1,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
 end
 
 """
@@ -1353,15 +5982,15 @@ Obtains a single coefficient in ``A``.
 function getaij end
 getaij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getaij(task,convert(Int32,i),convert(Int32,j))
 function getaij(task_:: MSKtask,i_:: Int32,j_:: Int32)
-  aij_ = Vector{Float64}(undef,1)
+  aij_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getaij",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,i_-1,j_-1,aij_)
+    @MSK_getaij(task_.task,i_-1,j_-1,aij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,aij_[1]))
+  (convert(Float64,aij_.x))
 end
 
 """
@@ -1386,15 +6015,15 @@ row or column. In that case use the function `Mosek.getarownumnz` or `Mosek.geta
 function getapiecenumnz end
 getapiecenumnz(task:: MSKtask,firsti:: T1,lasti:: T2,firstj:: T3,lastj:: T4) where {T1,T2,T3,T4} = getapiecenumnz(task,convert(Int32,firsti),convert(Int32,lasti),convert(Int32,firstj),convert(Int32,lastj))
 function getapiecenumnz(task_:: MSKtask,firsti_:: Int32,lasti_:: Int32,firstj_:: Int32,lastj_:: Int32)
-  numnz_ = Vector{Int32}(undef,1)
+  numnz_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getapiecenumnz",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Int32},),task_.task,firsti_-1,lasti_-1,firstj_-1,lastj_-1,numnz_)
+    @MSK_getapiecenumnz(task_.task,firsti_-1,lasti_-1,firstj_-1,lastj_-1,numnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numnz_[1]))
+  (convert(Int32,numnz_.x))
 end
 
 """
@@ -1412,7 +6041,7 @@ Obtains one row of ``A`` in a sparse format.
 function getarow end
 getarow(task:: MSKtask,i:: T1) where {T1} = getarow(task,convert(Int32,i))
 function getarow(task_:: MSKtask,i_:: Int32)
-  nzi_ = Vector{Int32}(undef,1)
+  nzi_ = Ref(Int32(1))
   __tmp_var_0 = getarownumnz(task_,(i_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   subi_ = __tmp_var_1
@@ -1420,14 +6049,14 @@ function getarow(task_:: MSKtask,i_:: Int32)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   vali_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getarow",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
+    @MSK_getarow(task_.task,i_-1,nzi_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,nzi_[1]),__tmp_var_1,__tmp_var_3)
+  (convert(Int32,nzi_.x),__tmp_var_1,__tmp_var_3)
 end
 
 """
@@ -1443,15 +6072,15 @@ Obtains the number of non-zero elements in one row of ``A``.
 function getarownumnz end
 getarownumnz(task:: MSKtask,i:: T1) where {T1} = getarownumnz(task,convert(Int32,i))
 function getarownumnz(task_:: MSKtask,i_:: Int32)
-  nzi_ = Vector{Int32}(undef,1)
+  nzi_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getarownumnz",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,nzi_)
+    @MSK_getarownumnz(task_.task,i_-1,nzi_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,nzi_[1]))
+  (convert(Int32,nzi_.x))
 end
 
 """
@@ -1486,7 +6115,7 @@ function getarowslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   val_ = __tmp_var_7
   surp_ = convert(Int64,length(sub_))
   res = disable_sigint() do
-    @msk_ccall( "getarowslice64",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @MSK_getarowslice64(task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -1512,15 +6141,15 @@ Obtains the number of non-zeros in a slice of rows of ``A``.
 function getarowslicenumnz end
 getarowslicenumnz(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = getarowslicenumnz(task,convert(Int32,first),convert(Int32,last))
 function getarowslicenumnz(task_:: MSKtask,first_:: Int32,last_:: Int32)
-  numnz_ = Vector{Int64}(undef,1)
+  numnz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getarowslicenumnz64",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int64},),task_.task,first_-1,last_-1,numnz_)
+    @MSK_getarowslicenumnz64(task_.task,first_-1,last_-1,numnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numnz_[1]))
+  (convert(Int64,numnz_.x))
 end
 
 """
@@ -1553,7 +6182,7 @@ function getarowslicetrip(task_:: MSKtask,first_:: Int32,last_:: Int32)
   val_ = __tmp_var_5
   surp_ = convert(Int64,length(subi_))
   res = disable_sigint() do
-    @msk_ccall( "getarowslicetrip",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @MSK_getarowslicetrip(task_.task,first_-1,last_-1,maxnumnz_,Ref(surp_),__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -1578,7 +6207,7 @@ function getatruncatetol(task_:: MSKtask)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   tolzero_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getatruncatetol",Int32,(Ptr{Nothing},Ptr{Float64},),task_.task,__tmp_var_1)
+    @MSK_getatruncatetol(task_.task,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1603,7 +6232,7 @@ Obtains ``\\bar A`` in block triplet form.
 function getbarablocktriplet end
 function getbarablocktriplet(task_:: MSKtask)
   maxnum_ = getnumbarablocktriplets(task_)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   subi_ = __tmp_var_1
@@ -1620,7 +6249,7 @@ function getbarablocktriplet(task_:: MSKtask)
   __tmp_var_9 = zeros(Float64,__tmp_var_8)
   valijkl_ = __tmp_var_9
   res = disable_sigint() do
-    @msk_ccall( "getbarablocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+    @MSK_getbarablocktriplet(task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -1630,7 +6259,7 @@ function getbarablocktriplet(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+  (convert(Int64,num_.x),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
 end
 
 """
@@ -1659,9 +6288,9 @@ element with the highest index is the one that is used.
 function getbaraidx end
 getbaraidx(task:: MSKtask,idx:: T1) where {T1} = getbaraidx(task,convert(Int64,idx))
 function getbaraidx(task_:: MSKtask,idx_:: Int64)
-  i_ = Vector{Int32}(undef,1)
-  j_ = Vector{Int32}(undef,1)
-  num_ = Vector{Int64}(undef,1)
+  i_ = Ref(Int32(1))
+  j_ = Ref(Int32(1))
+  num_ = Ref(Int64(1))
   maxnum_ = getbaraidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
@@ -1670,14 +6299,14 @@ function getbaraidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   weights_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getbaraidx",Int32,(Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
+    @MSK_getbaraidx(task_.task,idx_-1,maxnum_,i_,j_,num_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,i_[1]+1),convert(Int32,j_[1]+1),convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3)
+  (convert(Int32,i_.x+1),convert(Int32,j_.x+1),convert(Int64,num_.x),__tmp_var_1,__tmp_var_3)
 end
 
 """
@@ -1703,16 +6332,16 @@ element with the highest index is the one that is used.
 function getbaraidxij end
 getbaraidxij(task:: MSKtask,idx:: T1) where {T1} = getbaraidxij(task,convert(Int64,idx))
 function getbaraidxij(task_:: MSKtask,idx_:: Int64)
-  i_ = Vector{Int32}(undef,1)
-  j_ = Vector{Int32}(undef,1)
+  i_ = Ref(Int32(1))
+  j_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getbaraidxij",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},),task_.task,idx_-1,i_,j_)
+    @MSK_getbaraidxij(task_.task,idx_-1,i_,j_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,i_[1]+1),convert(Int32,j_[1]+1))
+  (convert(Int32,i_.x+1),convert(Int32,j_.x+1))
 end
 
 """
@@ -1731,15 +6360,15 @@ about the weighted sum.
 function getbaraidxinfo end
 getbaraidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbaraidxinfo(task,convert(Int64,idx))
 function getbaraidxinfo(task_:: MSKtask,idx_:: Int64)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getbaraidxinfo",Int32,(Ptr{Nothing},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
+    @MSK_getbaraidxinfo(task_.task,idx_-1,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]))
+  (convert(Int64,num_.x))
 end
 
 """
@@ -1760,19 +6389,19 @@ obtained using `Mosek.getbaraidxinfo` and `Mosek.getbaraidx`.
 function getbarasparsity end
 function getbarasparsity(task_:: MSKtask)
   maxnumnz_ = getnumbaranz(task_)
-  numnz_ = Vector{Int64}(undef,1)
+  numnz_ = Ref(Int64(1))
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   idxij_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarasparsity",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
+    @MSK_getbarasparsity(task_.task,maxnumnz_,numnz_,__tmp_var_1)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numnz_[1]),__tmp_var_1)
+  (convert(Int64,numnz_.x),__tmp_var_1)
 end
 
 """
@@ -1790,7 +6419,7 @@ Obtains ``\\bar C`` in block triplet form.
 function getbarcblocktriplet end
 function getbarcblocktriplet(task_:: MSKtask)
   maxnum_ = getnumbarcblocktriplets(task_)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   subj_ = __tmp_var_1
@@ -1804,7 +6433,7 @@ function getbarcblocktriplet(task_:: MSKtask)
   __tmp_var_7 = zeros(Float64,__tmp_var_6)
   valjkl_ = __tmp_var_7
   res = disable_sigint() do
-    @msk_ccall( "getbarcblocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+    @MSK_getbarcblocktriplet(task_.task,maxnum_,num_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -1813,7 +6442,7 @@ function getbarcblocktriplet(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
+  (convert(Int64,num_.x),__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7)
 end
 
 """
@@ -1832,8 +6461,8 @@ Obtains information about an element in ``\\bar C``.
 function getbarcidx end
 getbarcidx(task:: MSKtask,idx:: T1) where {T1} = getbarcidx(task,convert(Int64,idx))
 function getbarcidx(task_:: MSKtask,idx_:: Int64)
-  j_ = Vector{Int32}(undef,1)
-  num_ = Vector{Int64}(undef,1)
+  j_ = Ref(Int32(1))
+  num_ = Ref(Int64(1))
   maxnum_ = getbarcidxinfo(task_,(idx_))
   __tmp_var_0 = (maxnum_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
@@ -1842,14 +6471,14 @@ function getbarcidx(task_:: MSKtask,idx_:: Int64)
   __tmp_var_3 = zeros(Float64,__tmp_var_2)
   weights_ = __tmp_var_3
   res = disable_sigint() do
-    @msk_ccall( "getbarcidx",Int32,(Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
+    @MSK_getbarcidx(task_.task,idx_-1,maxnum_,j_,num_,__tmp_var_1,__tmp_var_3)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,j_[1]+1),convert(Int64,num_[1]),__tmp_var_1,__tmp_var_3)
+  (convert(Int32,j_.x+1),convert(Int64,num_.x),__tmp_var_1,__tmp_var_3)
 end
 
 """
@@ -1865,15 +6494,15 @@ Obtains the number of terms in the weighted sum that forms a particular element 
 function getbarcidxinfo end
 getbarcidxinfo(task:: MSKtask,idx:: T1) where {T1} = getbarcidxinfo(task,convert(Int64,idx))
 function getbarcidxinfo(task_:: MSKtask,idx_:: Int64)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getbarcidxinfo",Int32,(Ptr{Nothing},Int64,Ptr{Int64},),task_.task,idx_-1,num_)
+    @MSK_getbarcidxinfo(task_.task,idx_-1,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]))
+  (convert(Int64,num_.x))
 end
 
 """
@@ -1889,15 +6518,15 @@ Obtains the row index of an element in ``\\bar C``.
 function getbarcidxj end
 getbarcidxj(task:: MSKtask,idx:: T1) where {T1} = getbarcidxj(task,convert(Int64,idx))
 function getbarcidxj(task_:: MSKtask,idx_:: Int64)
-  j_ = Vector{Int32}(undef,1)
+  j_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getbarcidxj",Int32,(Ptr{Nothing},Int64,Ptr{Int32},),task_.task,idx_-1,j_)
+    @MSK_getbarcidxj(task_.task,idx_-1,j_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,j_[1]+1))
+  (convert(Int32,j_.x+1))
 end
 
 """
@@ -1916,19 +6545,19 @@ obtained using `Mosek.getbarcidxinfo` and `Mosek.getbarcidx`.
 function getbarcsparsity end
 function getbarcsparsity(task_:: MSKtask)
   maxnumnz_ = getnumbarcnz(task_)
-  numnz_ = Vector{Int64}(undef,1)
+  numnz_ = Ref(Int64(1))
   __tmp_var_0 = (maxnumnz_)
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   idxj_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarcsparsity",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},),task_.task,maxnumnz_,numnz_,__tmp_var_1)
+    @MSK_getbarcsparsity(task_.task,maxnumnz_,numnz_,__tmp_var_1)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numnz_[1]),__tmp_var_1)
+  (convert(Int64,numnz_.x),__tmp_var_1)
 end
 
 """
@@ -1949,7 +6578,7 @@ function getbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   barsj_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarsj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,__tmp_var_1)
+    @MSK_getbarsj(task_.task,whichsol_.value,j_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -1978,7 +6607,7 @@ function getbarsslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_::
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   barsslice_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarsslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int64,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slicesize_,__tmp_var_1)
+    @MSK_getbarsslice(task_.task,whichsol_.value,first_-1,last_-1,slicesize_,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2003,7 +6632,7 @@ function getbarvarname(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getbarvarnamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getbarvarname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
+    @MSK_getbarvarname(task_.task,i_-1,sizename_,name_)
   end
   name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
@@ -2025,16 +6654,16 @@ Obtains the index of semidefinite variable from its name.
 """
 function getbarvarnameindex end
 function getbarvarnameindex(task_:: MSKtask,somename_:: AbstractString)
-  asgn_ = Vector{Int32}(undef,1)
-  index_ = Vector{Int32}(undef,1)
+  asgn_ = Ref(Int32(1))
+  index_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getbarvarnameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @MSK_getbarvarnameindex(task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]))
+  (convert(Int32,asgn_.x),convert(Int32,index_.x))
 end
 
 """
@@ -2050,15 +6679,15 @@ Obtains the length of the name of a semidefinite variable.
 function getbarvarnamelen end
 getbarvarnamelen(task:: MSKtask,i:: T1) where {T1} = getbarvarnamelen(task,convert(Int32,i))
 function getbarvarnamelen(task_:: MSKtask,i_:: Int32)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getbarvarnamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @MSK_getbarvarnamelen(task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -2079,7 +6708,7 @@ function getbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   barxj_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarxj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,__tmp_var_1)
+    @MSK_getbarxj(task_.task,whichsol_.value,j_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2108,7 +6737,7 @@ function getbarxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_::
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   barxslice_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getbarxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int64,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slicesize_,__tmp_var_1)
+    @MSK_getbarxslice(task_.task,whichsol_.value,first_-1,last_-1,slicesize_,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2131,7 +6760,7 @@ function getc(task_:: MSKtask)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   c_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getc",Int32,(Ptr{Nothing},Ptr{Float64},),task_.task,__tmp_var_1)
+    @MSK_getc(task_.task,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2150,15 +6779,15 @@ Obtains the fixed term in the objective.
 """
 function getcfix end
 function getcfix(task_:: MSKtask)
-  cfix_ = Vector{Float64}(undef,1)
+  cfix_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getcfix",Int32,(Ptr{Nothing},Ptr{Float64},),task_.task,cfix_)
+    @MSK_getcfix(task_.task,cfix_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,cfix_[1]))
+  (convert(Float64,cfix_.x))
 end
 
 """
@@ -2174,15 +6803,15 @@ Obtains one coefficient of ``c``.
 function getcj end
 getcj(task:: MSKtask,j:: T1) where {T1} = getcj(task,convert(Int32,j))
 function getcj(task_:: MSKtask,j_:: Int32)
-  cj_ = Vector{Float64}(undef,1)
+  cj_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getcj",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,j_-1,cj_)
+    @MSK_getcj(task_.task,j_-1,cj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,cj_[1]))
+  (convert(Float64,cj_.x))
 end
 
 """
@@ -2203,7 +6832,7 @@ function getclist(task_:: MSKtask,subj_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   c_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getclist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),__tmp_var_1)
+    @MSK_getclist(task_.task,num_,subj_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2226,7 +6855,7 @@ function getcodedesc(code_:: Rescode)
   str_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   symname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "getcodedesc",Int32,(Int32,Ptr{UInt8},Ptr{UInt8},),code_.value,symname_,str_)
+    @MSK_getcodedesc(code_.value,symname_,str_)
   end
   symname_str = String(symname_[1:findfirst(isequal(0),symname_)-1])
   str_str = String(str_[1:findfirst(isequal(0),str_)-1])
@@ -2251,17 +6880,17 @@ Obtains bound information for one constraint.
 function getconbound end
 getconbound(task:: MSKtask,i:: T1) where {T1} = getconbound(task,convert(Int32,i))
 function getconbound(task_:: MSKtask,i_:: Int32)
-  bk_ = Vector{Int32}(undef,1)
-  bl_ = Vector{Float64}(undef,1)
-  bu_ = Vector{Float64}(undef,1)
+  bk_ = Ref(Int32(1))
+  bl_ = Ref(Float64(1))
+  bu_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getconbound",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,i_-1,bk_,bl_,bu_)
+    @MSK_getconbound(task_.task,i_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Boundkey(bk_[1]),convert(Float64,bl_[1]),convert(Float64,bu_[1]))
+  (Boundkey(bk_.x),convert(Float64,bl_.x),convert(Float64,bu_.x))
 end
 
 """
@@ -2289,7 +6918,7 @@ function getconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
   bu_ = __tmp_var_4
   res = disable_sigint() do
-    @msk_ccall( "getconboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
+    @MSK_getconboundslice(task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2309,26 +6938,26 @@ end
 * `nummem :: Int32`. Number of member variables in the cone.
 * `submem :: Vector{Int32}`. Variable subscripts of the members in the cone.
 
-Obtains a cone.
+Deprecated in MOSEK 10
 """
 function getcone end
 getcone(task:: MSKtask,k:: T1) where {T1} = getcone(task,convert(Int32,k))
 function getcone(task_:: MSKtask,k_:: Int32)
-  conepar_ = Vector{Float64}(undef,1)
-  ct_ = Vector{Int32}(undef,1)
-  nummem_ = Vector{Int32}(undef,1)
+  conepar_ = Ref(Float64(1))
+  ct_ = Ref(Int32(1))
+  nummem_ = Ref(Int32(1))
   __tmp_var_0 = getconeinfo(task_,(k_))[3]
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   submem_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getcone",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_,__tmp_var_1)
+    @MSK_getcone(task_.task,k_-1,ct_,conepar_,nummem_,__tmp_var_1)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Conetype(ct_[1]),convert(Float64,conepar_[1]),convert(Int32,nummem_[1]),__tmp_var_1)
+  (Conetype(ct_.x),convert(Float64,conepar_.x),convert(Int32,nummem_.x),__tmp_var_1)
 end
 
 """
@@ -2341,22 +6970,22 @@ end
 * `conepar :: Float64`. For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
 * `nummem :: Int32`. Number of member variables in the cone.
 
-Obtains information about a cone.
+Deprecated in MOSEK 10
 """
 function getconeinfo end
 getconeinfo(task:: MSKtask,k:: T1) where {T1} = getconeinfo(task,convert(Int32,k))
 function getconeinfo(task_:: MSKtask,k_:: Int32)
-  conepar_ = Vector{Float64}(undef,1)
-  ct_ = Vector{Int32}(undef,1)
-  nummem_ = Vector{Int32}(undef,1)
+  conepar_ = Ref(Float64(1))
+  ct_ = Ref(Int32(1))
+  nummem_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getconeinfo",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Int32},),task_.task,k_-1,ct_,conepar_,nummem_)
+    @MSK_getconeinfo(task_.task,k_-1,ct_,conepar_,nummem_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Conetype(ct_[1]),convert(Float64,conepar_[1]),convert(Int32,nummem_[1]))
+  (Conetype(ct_.x),convert(Float64,conepar_.x),convert(Int32,nummem_.x))
 end
 
 """
@@ -2367,7 +6996,7 @@ end
 * `i :: Int32`. Index of the cone.
 * `name :: AbstractString`. The required name.
 
-Obtains the name of a cone.
+Deprecated in MOSEK 10
 """
 function getconename end
 getconename(task:: MSKtask,i:: T1) where {T1} = getconename(task,convert(Int32,i))
@@ -2375,7 +7004,7 @@ function getconename(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getconenamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getconename",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
+    @MSK_getconename(task_.task,i_-1,sizename_,name_)
   end
   name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
@@ -2393,20 +7022,22 @@ end
 * `asgn :: Int32`. Is non-zero if the name somename is assigned to some cone.
 * `index :: Int32`. If the name somename is assigned to some cone, this is the index of the cone.
 
+Deprecated in MOSEK 10
+
 Checks whether the name `somename` has been assigned to any cone. If it has been assigned to a cone, then the index of the cone is reported.
 """
 function getconenameindex end
 function getconenameindex(task_:: MSKtask,somename_:: AbstractString)
-  asgn_ = Vector{Int32}(undef,1)
-  index_ = Vector{Int32}(undef,1)
+  asgn_ = Ref(Int32(1))
+  index_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getconenameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @MSK_getconenameindex(task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]))
+  (convert(Int32,asgn_.x),convert(Int32,index_.x))
 end
 
 """
@@ -2417,20 +7048,20 @@ end
 * `i :: Int32`. Index of the cone.
 * `len :: Int32`. Returns the length of the indicated name.
 
-Obtains the length of the name of a cone.
+Deprecated in MOSEK 10
 """
 function getconenamelen end
 getconenamelen(task:: MSKtask,i:: T1) where {T1} = getconenamelen(task,convert(Int32,i))
 function getconenamelen(task_:: MSKtask,i_:: Int32)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getconenamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @MSK_getconenamelen(task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -2449,7 +7080,7 @@ function getconname(task_:: MSKtask,i_:: Int32)
   sizename_ = (1 + getconnamelen(task_,(i_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getconname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,i_-1,sizename_,name_)
+    @MSK_getconname(task_.task,i_-1,sizename_,name_)
   end
   name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
@@ -2471,16 +7102,16 @@ Checks whether the name `somename` has been assigned to any constraint. If so, t
 """
 function getconnameindex end
 function getconnameindex(task_:: MSKtask,somename_:: AbstractString)
-  asgn_ = Vector{Int32}(undef,1)
-  index_ = Vector{Int32}(undef,1)
+  asgn_ = Ref(Int32(1))
+  index_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getconnameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @MSK_getconnameindex(task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]+1))
+  (convert(Int32,asgn_.x),convert(Int32,index_.x+1))
 end
 
 """
@@ -2496,15 +7127,15 @@ Obtains the length of the name of a constraint.
 function getconnamelen end
 getconnamelen(task:: MSKtask,i:: T1) where {T1} = getconnamelen(task,convert(Int32,i))
 function getconnamelen(task_:: MSKtask,i_:: Int32)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getconnamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @MSK_getconnamelen(task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -2525,7 +7156,7 @@ function getcslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   c_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getcslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,__tmp_var_1)
+    @MSK_getcslice(task_.task,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2547,15 +7178,443 @@ Obtains the dimension of a symmetric matrix variable.
 function getdimbarvarj end
 getdimbarvarj(task:: MSKtask,j:: T1) where {T1} = getdimbarvarj(task,convert(Int32,j))
 function getdimbarvarj(task_:: MSKtask,j_:: Int32)
-  dimbarvarj_ = Vector{Int32}(undef,1)
+  dimbarvarj_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getdimbarvarj",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,j_-1,dimbarvarj_)
+    @MSK_getdimbarvarj(task_.task,j_-1,dimbarvarj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,dimbarvarj_[1]))
+  (convert(Int32,dimbarvarj_.x))
+end
+
+"""
+    afeidxlist = getdjcafeidxlist{T1}(task:: MSKtask,djcidx:: T1)
+    afeidxlist = getdjcafeidxlist(task_:: MSKtask,djcidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of the disjunctive constraint.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+
+Obtains the list of affine expression indexes in a disjunctive constraint.
+"""
+function getdjcafeidxlist end
+getdjcafeidxlist(task:: MSKtask,djcidx:: T1) where {T1} = getdjcafeidxlist(task,convert(Int64,djcidx))
+function getdjcafeidxlist(task_:: MSKtask,djcidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getdjcafeidxlist_0 = Ref{Int64}(); @MSK_getdjcnumafe(task_.task,(djcidx_),__tmp_var_getdjcafeidxlist_0); __tmp_var_getdjcafeidxlist_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  afeidxlist_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getdjcafeidxlist(task_.task,djcidx_,__tmp_var_1)
+  end
+  __tmp_var_1 .+= 1
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    b = getdjcb{T1}(task:: MSKtask,djcidx:: T1)
+    b = getdjcb(task_:: MSKtask,djcidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of the disjunctive constraint.
+* `b :: Vector{Float64}`. The vector b.
+
+Obtains the optional constant term vector of a disjunctive constraint.
+"""
+function getdjcb end
+getdjcb(task:: MSKtask,djcidx:: T1) where {T1} = getdjcb(task,convert(Int64,djcidx))
+function getdjcb(task_:: MSKtask,djcidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getdjcb_0 = Ref{Int64}(); @MSK_getdjcnumafe(task_.task,(djcidx_),__tmp_var_getdjcb_0); __tmp_var_getdjcb_0.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  b_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getdjcb(task_.task,djcidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    domidxlist = getdjcdomainidxlist{T1}(task:: MSKtask,djcidx:: T1)
+    domidxlist = getdjcdomainidxlist(task_:: MSKtask,djcidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of the disjunctive constraint.
+* `domidxlist :: Vector{Int64}`. List of term sizes.
+
+Obtains the list of domain indexes in a disjunctive constraint.
+"""
+function getdjcdomainidxlist end
+getdjcdomainidxlist(task:: MSKtask,djcidx:: T1) where {T1} = getdjcdomainidxlist(task,convert(Int64,djcidx))
+function getdjcdomainidxlist(task_:: MSKtask,djcidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getdjcdomainidxlist_0 = Ref{Int64}(); @MSK_getdjcnumdomain(task_.task,(djcidx_),__tmp_var_getdjcdomainidxlist_0); __tmp_var_getdjcdomainidxlist_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  domidxlist_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getdjcdomainidxlist(task_.task,djcidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    name = getdjcname{T1}(task:: MSKtask,djcidx:: T1)
+    name = getdjcname(task_:: MSKtask,djcidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of a disjunctive constraint.
+* `name :: AbstractString`. Returns the required name.
+
+Obtains the name of a disjunctive constraint.
+"""
+function getdjcname end
+getdjcname(task:: MSKtask,djcidx:: T1) where {T1} = getdjcname(task,convert(Int64,djcidx))
+function getdjcname(task_:: MSKtask,djcidx_:: Int64)
+  sizename_ = (1 + begin __tmp_var_getdjcname_0 = Ref{Int32}(); @MSK_getdjcnamelen(task_.task,(djcidx_-1),__tmp_var_getdjcname_0); __tmp_var_getdjcname_0.x end)
+  name_ = zeros(UInt8,(sizename_)+1)
+  res = disable_sigint() do
+    @MSK_getdjcname(task_.task,djcidx_-1,sizename_,name_)
+  end
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (name_str)
+end
+
+"""
+    len = getdjcnamelen{T1}(task:: MSKtask,djcidx:: T1)
+    len = getdjcnamelen(task_:: MSKtask,djcidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of a disjunctive constraint.
+* `len :: Int32`. Returns the length of the indicated name.
+
+Obtains the length of the name of a disjunctive constraint.
+"""
+function getdjcnamelen end
+getdjcnamelen(task:: MSKtask,djcidx:: T1) where {T1} = getdjcnamelen(task,convert(Int64,djcidx))
+function getdjcnamelen(task_:: MSKtask,djcidx_:: Int64)
+  len_ = Ref(Int32(1))
+  res = disable_sigint() do
+    @MSK_getdjcnamelen(task_.task,djcidx_-1,len_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,len_.x))
+end
+
+"""
+    numafe = getdjcnumafe{T1}(task:: MSKtask,idjc:: T1)
+    numafe = getdjcnumafe(task_:: MSKtask,idjc_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `idjc :: Int64`. Index of the disjunctive constraint.
+* `numafe :: Int64`. Number of affine expressions in the disjunctive constraint.
+
+Obtains the number of affine expressions in the disjunctive constraint.
+"""
+function getdjcnumafe end
+getdjcnumafe(task:: MSKtask,idjc:: T1) where {T1} = getdjcnumafe(task,convert(Int64,idjc))
+function getdjcnumafe(task_:: MSKtask,idjc_:: Int64)
+  numafe_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdjcnumafe(task_.task,idjc_,numafe_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numafe_.x))
+end
+
+"""
+    numafetot = getdjcnumafetot(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `numafetot :: Int64`. Number of affine expressions in all disjunctive constraints.
+
+Obtains the total number of affine expressions in all disjunctive constraints.
+"""
+function getdjcnumafetot end
+function getdjcnumafetot(task_:: MSKtask)
+  numafetot_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdjcnumafetot(task_.task,numafetot_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numafetot_.x))
+end
+
+"""
+    numdomain = getdjcnumdomain{T1}(task:: MSKtask,idjc:: T1)
+    numdomain = getdjcnumdomain(task_:: MSKtask,idjc_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `idjc :: Int64`. Index of the disjunctive constraint.
+* `numdomain :: Int64`. Number of domains in the disjunctive constraint.
+
+Obtains the number of domains in the disjunctive constraint.
+"""
+function getdjcnumdomain end
+getdjcnumdomain(task:: MSKtask,idjc:: T1) where {T1} = getdjcnumdomain(task,convert(Int64,idjc))
+function getdjcnumdomain(task_:: MSKtask,idjc_:: Int64)
+  numdomain_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdjcnumdomain(task_.task,idjc_,numdomain_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numdomain_.x))
+end
+
+"""
+    numdomaintot = getdjcnumdomaintot(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `numdomaintot :: Int64`. Number of domains in all disjunctive constraints.
+
+Obtains the total number of domains in all disjunctive constraints.
+"""
+function getdjcnumdomaintot end
+function getdjcnumdomaintot(task_:: MSKtask)
+  numdomaintot_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdjcnumdomaintot(task_.task,numdomaintot_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numdomaintot_.x))
+end
+
+"""
+    numterm = getdjcnumterm{T1}(task:: MSKtask,idjc:: T1)
+    numterm = getdjcnumterm(task_:: MSKtask,idjc_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `idjc :: Int64`. Index of the disjunctive constraint.
+* `numterm :: Int64`. Number of terms in the disjunctive constraint.
+
+Obtains the number terms in the disjunctive constraint.
+"""
+function getdjcnumterm end
+getdjcnumterm(task:: MSKtask,idjc:: T1) where {T1} = getdjcnumterm(task,convert(Int64,idjc))
+function getdjcnumterm(task_:: MSKtask,idjc_:: Int64)
+  numterm_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdjcnumterm(task_.task,idjc_,numterm_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numterm_.x))
+end
+
+"""
+    numtermtot = getdjcnumtermtot(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `numtermtot :: Int64`. Total number of terms in all disjunctive constraints.
+
+Obtains the total number of terms in all disjunctive constraints.
+"""
+function getdjcnumtermtot end
+function getdjcnumtermtot(task_:: MSKtask)
+  numtermtot_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdjcnumtermtot(task_.task,numtermtot_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numtermtot_.x))
+end
+
+"""
+    (domidxlist,afeidxlist,b,termsizelist,numterms) = getdjcs(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `domidxlist :: Vector{Int64}`. The concatenation of index lists of domains appearing in all disjunctive constraints.
+* `afeidxlist :: Vector{Int64}`. The concatenation of index lists of affine expressions appearing in all disjunctive constraints.
+* `b :: Vector{Float64}`. The concatenation of vectors b appearing in all disjunctive constraints.
+* `termsizelist :: Vector{Int64}`. The concatenation of lists of term sizes appearing in all disjunctive constraints.
+* `numterms :: Vector{Int64}`. The number of terms in each of the disjunctive constraints.
+
+Obtains full data of all disjunctive constraints. The output arrays must have minimal lengths determined by the following methods: `domainidxlist` by `Mosek.getdjcnumdomaintot`, `afeidxlist` and `b` by `Mosek.getdjcnumafetot`, `termsizelist` by `Mosek.getdjcnumtermtot` and `numterms` by `Mosek.getnumdomain`.
+"""
+function getdjcs end
+function getdjcs(task_:: MSKtask)
+  __tmp_var_2 = begin __tmp_var_getdjcs_0 = Ref{Int64}(); @MSK_getdjcnumafetot(task_.task,__tmp_var_getdjcs_0); __tmp_var_getdjcs_0.x end
+  __tmp_var_3 = zeros(Int64,__tmp_var_2)
+  afeidxlist_ = __tmp_var_3
+  __tmp_var_4 = begin __tmp_var_getdjcs_0 = Ref{Int64}(); @MSK_getdjcnumafetot(task_.task,__tmp_var_getdjcs_0); __tmp_var_getdjcs_0.x end
+  __tmp_var_5 = zeros(Float64,__tmp_var_4)
+  b_ = __tmp_var_5
+  __tmp_var_0 = begin __tmp_var_getdjcs_0 = Ref{Int64}(); @MSK_getdjcnumdomaintot(task_.task,__tmp_var_getdjcs_0); __tmp_var_getdjcs_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  domidxlist_ = __tmp_var_1
+  __tmp_var_8 = begin __tmp_var_getdjcs_0 = Ref{Int64}(); @MSK_getnumdjc(task_.task,__tmp_var_getdjcs_0); __tmp_var_getdjcs_0.x end
+  __tmp_var_9 = zeros(Int64,__tmp_var_8)
+  numterms_ = __tmp_var_9
+  __tmp_var_6 = begin __tmp_var_getdjcs_0 = Ref{Int64}(); @MSK_getdjcnumtermtot(task_.task,__tmp_var_getdjcs_0); __tmp_var_getdjcs_0.x end
+  __tmp_var_7 = zeros(Int64,__tmp_var_6)
+  termsizelist_ = __tmp_var_7
+  res = disable_sigint() do
+    @MSK_getdjcs(task_.task,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+  end
+  __tmp_var_3 .+= 1
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
+end
+
+"""
+    termsizelist = getdjctermsizelist{T1}(task:: MSKtask,djcidx:: T1)
+    termsizelist = getdjctermsizelist(task_:: MSKtask,djcidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of the disjunctive constraint.
+* `termsizelist :: Vector{Int64}`. List of term sizes.
+
+Obtains the list of term sizes in a disjunctive constraint.
+"""
+function getdjctermsizelist end
+getdjctermsizelist(task:: MSKtask,djcidx:: T1) where {T1} = getdjctermsizelist(task,convert(Int64,djcidx))
+function getdjctermsizelist(task_:: MSKtask,djcidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getdjctermsizelist_0 = Ref{Int64}(); @MSK_getdjcnumterm(task_.task,(djcidx_),__tmp_var_getdjctermsizelist_0); __tmp_var_getdjctermsizelist_0.x end
+  __tmp_var_1 = zeros(Int64,__tmp_var_0)
+  termsizelist_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getdjctermsizelist(task_.task,djcidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    n = getdomainn{T1}(task:: MSKtask,domidx:: T1)
+    n = getdomainn(task_:: MSKtask,domidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+* `n :: Int64`. Dimension of the domain.
+
+Obtains the dimension of the domain.
+"""
+function getdomainn end
+getdomainn(task:: MSKtask,domidx:: T1) where {T1} = getdomainn(task,convert(Int64,domidx))
+function getdomainn(task_:: MSKtask,domidx_:: Int64)
+  n_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getdomainn(task_.task,domidx_-1,n_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,n_.x))
+end
+
+"""
+    name = getdomainname{T1}(task:: MSKtask,domidx:: T1)
+    name = getdomainname(task_:: MSKtask,domidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of a domain.
+* `name :: AbstractString`. Returns the required name.
+
+Obtains the name of a domain.
+"""
+function getdomainname end
+getdomainname(task:: MSKtask,domidx:: T1) where {T1} = getdomainname(task,convert(Int64,domidx))
+function getdomainname(task_:: MSKtask,domidx_:: Int64)
+  sizename_ = (1 + begin __tmp_var_getdomainname_0 = Ref{Int32}(); @MSK_getdomainnamelen(task_.task,(domidx_-1),__tmp_var_getdomainname_0); __tmp_var_getdomainname_0.x end)
+  name_ = zeros(UInt8,(sizename_)+1)
+  res = disable_sigint() do
+    @MSK_getdomainname(task_.task,domidx_-1,sizename_,name_)
+  end
+  name_str = String(name_[1:findfirst(isequal(0),name_)-1])
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (name_str)
+end
+
+"""
+    len = getdomainnamelen{T1}(task:: MSKtask,domidx:: T1)
+    len = getdomainnamelen(task_:: MSKtask,domidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of a domain.
+* `len :: Int32`. Returns the length of the indicated name.
+
+Obtains the length of the name of a domain.
+"""
+function getdomainnamelen end
+getdomainnamelen(task:: MSKtask,domidx:: T1) where {T1} = getdomainnamelen(task,convert(Int64,domidx))
+function getdomainnamelen(task_:: MSKtask,domidx_:: Int64)
+  len_ = Ref(Int32(1))
+  res = disable_sigint() do
+    @MSK_getdomainnamelen(task_.task,domidx_-1,len_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int32,len_.x))
+end
+
+"""
+    domaintype = getdomaintype{T1}(task:: MSKtask,domidx:: T1)
+    domaintype = getdomaintype(task_:: MSKtask,domidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+* `domaintype :: Domaintype`. The type of the domain.
+
+Returns the type of the domain.
+"""
+function getdomaintype end
+getdomaintype(task:: MSKtask,domidx:: T1) where {T1} = getdomaintype(task,convert(Int64,domidx))
+function getdomaintype(task_:: MSKtask,domidx_:: Int64)
+  domaintype_ = Ref(Int32(1))
+  res = disable_sigint() do
+    @MSK_getdomaintype(task_.task,domidx_-1,domaintype_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (Domaintype(domaintype_.x))
 end
 
 """
@@ -2569,15 +7628,15 @@ Obtains a double information item from the task information database.
 """
 function getdouinf end
 function getdouinf(task_:: MSKtask,whichdinf_:: Dinfitem)
-  dvalue_ = Vector{Float64}(undef,1)
+  dvalue_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getdouinf",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichdinf_.value,dvalue_)
+    @MSK_getdouinf(task_.task,whichdinf_.value,dvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,dvalue_[1]))
+  (convert(Float64,dvalue_.x))
 end
 
 """
@@ -2591,15 +7650,15 @@ Obtains the value of a double parameter.
 """
 function getdouparam end
 function getdouparam(task_:: MSKtask,param_:: Dparam)
-  parvalue_ = Vector{Float64}(undef,1)
+  parvalue_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getdouparam",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,param_.value,parvalue_)
+    @MSK_getdouparam(task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,parvalue_[1]))
+  (convert(Float64,parvalue_.x))
 end
 
 """
@@ -2615,15 +7674,15 @@ Moreover, since there is no dual solution associated with an integer solution, a
 """
 function getdualobj end
 function getdualobj(task_:: MSKtask,whichsol_:: Soltype)
-  dualobj_ = Vector{Float64}(undef,1)
+  dualobj_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getdualobj",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,dualobj_)
+    @MSK_getdualobj(task_.task,whichsol_.value,dualobj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,dualobj_[1]))
+  (convert(Float64,dualobj_.x))
 end
 
 """
@@ -2643,21 +7702,62 @@ Compute norms of the dual solution.
 """
 function getdualsolutionnorms end
 function getdualsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
-  nrmbars_ = Vector{Float64}(undef,1)
-  nrmslc_ = Vector{Float64}(undef,1)
-  nrmslx_ = Vector{Float64}(undef,1)
-  nrmsnx_ = Vector{Float64}(undef,1)
-  nrmsuc_ = Vector{Float64}(undef,1)
-  nrmsux_ = Vector{Float64}(undef,1)
-  nrmy_ = Vector{Float64}(undef,1)
+  nrmbars_ = Ref(Float64(1))
+  nrmslc_ = Ref(Float64(1))
+  nrmslx_ = Ref(Float64(1))
+  nrmsnx_ = Ref(Float64(1))
+  nrmsuc_ = Ref(Float64(1))
+  nrmsux_ = Ref(Float64(1))
+  nrmy_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getdualsolutionnorms",Int32,(Ptr{Nothing},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_)
+    @MSK_getdualsolutionnorms(task_.task,whichsol_.value,nrmy_,nrmslc_,nrmsuc_,nrmslx_,nrmsux_,nrmsnx_,nrmbars_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,nrmy_[1]),convert(Float64,nrmslc_[1]),convert(Float64,nrmsuc_[1]),convert(Float64,nrmslx_[1]),convert(Float64,nrmsux_[1]),convert(Float64,nrmsnx_[1]),convert(Float64,nrmbars_[1]))
+  (convert(Float64,nrmy_.x),convert(Float64,nrmslc_.x),convert(Float64,nrmsuc_.x),convert(Float64,nrmslx_.x),convert(Float64,nrmsux_.x),convert(Float64,nrmsnx_.x),convert(Float64,nrmbars_.x))
+end
+
+"""
+    viol = getdviolacc{T2}(task:: MSKtask,whichsol:: Soltype,accidxlist:: Vector{T2})
+    viol = getdviolacc(task_:: MSKtask,whichsol_:: Soltype,accidxlist_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `accidxlist :: Vector{Int64}`. An array of indexes of conic constraints.
+* `viol :: Vector{Float64}`. List of violations corresponding to sub.
+
+Let ``(s_n^x)^*`` be the value of variable ``(s_n^x)`` for the
+specified solution. For simplicity let us assume that ``s_n^x`` is a member
+of a quadratic cone, then the violation is computed as follows
+
+```math
+\\left\\{
+  \\begin{array}{ll}
+    \\max(0,(\\|s_n^x\\|_{2:n}^*-(s_n^x)_1^*) / \\sqrt{2}, & (s_n^x)^* \\geq -\\|(s_n^x)_{2:n}^*\\|, \\\\
+    \\|(s_n^x)^*\\|, & \\mbox{otherwise.}
+  \\end{array}
+\\right.
+```
+Both when the solution is a certificate of primal infeasibility or when it is a
+dual feasible solution the violation should be small.
+"""
+function getdviolacc end
+getdviolacc(task:: MSKtask,whichsol:: Soltype,accidxlist:: Vector{T2}) where {T2} = getdviolacc(task,whichsol,convert(Vector{Int64},accidxlist))
+function getdviolacc(task_:: MSKtask,whichsol_:: Soltype,accidxlist_:: Vector{Int64})
+  numaccidx_ = minimum([ length(accidxlist_) ])
+  __tmp_var_0 = (numaccidx_)
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getdviolacc(task_.task,whichsol_.value,numaccidx_,accidxlist_ .- Int32(1),__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
 end
 
 """
@@ -2687,7 +7787,7 @@ function getdviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32}
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolbarvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getdviolbarvar(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2732,7 +7832,7 @@ function getdviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolcon",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getdviolcon(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2749,6 +7849,8 @@ end
 * `whichsol :: Soltype`. Selects a solution.
 * `sub :: Vector{Int32}`. An array of indexes of conic constraints.
 * `viol :: Vector{Float64}`. List of violations corresponding to sub.
+
+Deprecated in MOSEK 10
 
 Let ``(s_n^x)^*`` be the value of variable ``(s_n^x)`` for the
 specified solution. For simplicity let us assume that ``s_n^x`` is a member
@@ -2773,7 +7875,7 @@ function getdviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolcones",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getdviolcones(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2819,7 +7921,7 @@ function getdviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getdviolvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getdviolvar(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -2850,15 +7952,15 @@ For more information see :numref:`doc.debugging.infeas` and :numref:`doc.shared.
 """
 function getinfeasiblesubproblem end
 function getinfeasiblesubproblem(task_:: MSKtask,whichsol_:: Soltype)
-  inftask_ = Vector{Ptr{Nothing}}(undef,1)
+  inftask_ = Ref(Ptr{Nothing}(1))
   res = disable_sigint() do
-    @msk_ccall( "getinfeasiblesubproblem",Int32,(Ptr{Nothing},Int32,Ptr{Ptr{Nothing}},),task_.task,whichsol_.value,inftask_)
+    @MSK_getinfeasiblesubproblem(task_.task,whichsol_.value,inftask_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(MSKtask,inftask_[1]))
+  (convert(MSKtask,inftask_.x))
 end
 
 """
@@ -2877,7 +7979,7 @@ getinfname(task:: MSKtask,inftype:: Inftype,whichinf:: T2) where {T2} = getinfna
 function getinfname(task_:: MSKtask,inftype_:: Inftype,whichinf_:: Int32)
   infname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "getinfname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,inftype_.value,whichinf_,infname_)
+    @MSK_getinfname(task_.task,inftype_.value,whichinf_,infname_)
   end
   infname_str = String(infname_[1:findfirst(isequal(0),infname_)-1])
   if res != MSK_RES_OK.value
@@ -2898,15 +8000,15 @@ Obtains an integer information item from the task information database.
 """
 function getintinf end
 function getintinf(task_:: MSKtask,whichiinf_:: Iinfitem)
-  ivalue_ = Vector{Int32}(undef,1)
+  ivalue_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getintinf",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichiinf_.value,ivalue_)
+    @MSK_getintinf(task_.task,whichiinf_.value,ivalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,ivalue_[1]))
+  (convert(Int32,ivalue_.x))
 end
 
 """
@@ -2920,15 +8022,15 @@ Obtains the value of an integer parameter.
 """
 function getintparam end
 function getintparam(task_:: MSKtask,param_:: Iparam)
-  parvalue_ = Vector{Int32}(undef,1)
+  parvalue_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getintparam",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,param_.value,parvalue_)
+    @MSK_getintparam(task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,parvalue_[1]))
+  (convert(Int32,parvalue_.x))
 end
 
 """
@@ -2944,15 +8046,15 @@ Obtains the length of the ``j``-th semidefinite variable i.e. the number of elem
 function getlenbarvarj end
 getlenbarvarj(task:: MSKtask,j:: T1) where {T1} = getlenbarvarj(task,convert(Int32,j))
 function getlenbarvarj(task_:: MSKtask,j_:: Int32)
-  lenbarvarj_ = Vector{Int64}(undef,1)
+  lenbarvarj_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getlenbarvarj",Int32,(Ptr{Nothing},Int32,Ptr{Int64},),task_.task,j_-1,lenbarvarj_)
+    @MSK_getlenbarvarj(task_.task,j_-1,lenbarvarj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,lenbarvarj_[1]))
+  (convert(Int64,lenbarvarj_.x))
 end
 
 """
@@ -2966,15 +8068,15 @@ Obtains a long integer information item from the task information database.
 """
 function getlintinf end
 function getlintinf(task_:: MSKtask,whichliinf_:: Liinfitem)
-  ivalue_ = Vector{Int64}(undef,1)
+  ivalue_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getlintinf",Int32,(Ptr{Nothing},Int32,Ptr{Int64},),task_.task,whichliinf_.value,ivalue_)
+    @MSK_getlintinf(task_.task,whichliinf_.value,ivalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,ivalue_[1]))
+  (convert(Int64,ivalue_.x))
 end
 
 """
@@ -2987,15 +8089,15 @@ Obtains number of preallocated non-zeros in ``A``. When this number of non-zeros
 """
 function getmaxnumanz end
 function getmaxnumanz(task_:: MSKtask)
-  maxnumanz_ = Vector{Int64}(undef,1)
+  maxnumanz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumanz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,maxnumanz_)
+    @MSK_getmaxnumanz64(task_.task,maxnumanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,maxnumanz_[1]))
+  (convert(Int64,maxnumanz_.x))
 end
 
 """
@@ -3008,15 +8110,15 @@ Obtains maximum number of symmetric matrix variables for which space is currentl
 """
 function getmaxnumbarvar end
 function getmaxnumbarvar(task_:: MSKtask)
-  maxnumbarvar_ = Vector{Int32}(undef,1)
+  maxnumbarvar_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumbarvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumbarvar_)
+    @MSK_getmaxnumbarvar(task_.task,maxnumbarvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,maxnumbarvar_[1]))
+  (convert(Int32,maxnumbarvar_.x))
 end
 
 """
@@ -3029,15 +8131,15 @@ Obtains the number of preallocated constraints in the optimization task. When th
 """
 function getmaxnumcon end
 function getmaxnumcon(task_:: MSKtask)
-  maxnumcon_ = Vector{Int32}(undef,1)
+  maxnumcon_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumcon",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumcon_)
+    @MSK_getmaxnumcon(task_.task,maxnumcon_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,maxnumcon_[1]))
+  (convert(Int32,maxnumcon_.x))
 end
 
 """
@@ -3046,21 +8148,23 @@ end
 * `task :: MSKtask`. An optimization task.
 * `maxnumcone :: Int32`. Number of preallocated conic constraints in the optimization task.
 
+Deprecated in MOSEK 10
+
 Obtains the number of preallocated cones in the optimization task. When this
 number of cones is reached MOSEK will automatically allocate space for more
 cones.
 """
 function getmaxnumcone end
 function getmaxnumcone(task_:: MSKtask)
-  maxnumcone_ = Vector{Int32}(undef,1)
+  maxnumcone_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumcone",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumcone_)
+    @MSK_getmaxnumcone(task_.task,maxnumcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,maxnumcone_[1]))
+  (convert(Int32,maxnumcone_.x))
 end
 
 """
@@ -3075,15 +8179,15 @@ automatically allocate more space for ``Q``.
 """
 function getmaxnumqnz end
 function getmaxnumqnz(task_:: MSKtask)
-  maxnumqnz_ = Vector{Int64}(undef,1)
+  maxnumqnz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumqnz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,maxnumqnz_)
+    @MSK_getmaxnumqnz64(task_.task,maxnumqnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,maxnumqnz_[1]))
+  (convert(Int64,maxnumqnz_.x))
 end
 
 """
@@ -3096,15 +8200,15 @@ Obtains the number of preallocated variables in the optimization task. When this
 """
 function getmaxnumvar end
 function getmaxnumvar(task_:: MSKtask)
-  maxnumvar_ = Vector{Int32}(undef,1)
+  maxnumvar_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getmaxnumvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,maxnumvar_)
+    @MSK_getmaxnumvar(task_.task,maxnumvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,maxnumvar_[1]))
+  (convert(Int32,maxnumvar_.x))
 end
 
 """
@@ -3118,16 +8222,16 @@ Obtains information about the amount of memory used by a task.
 """
 function getmemusage end
 function getmemusage(task_:: MSKtask)
-  maxmemuse_ = Vector{Int64}(undef,1)
-  meminuse_ = Vector{Int64}(undef,1)
+  maxmemuse_ = Ref(Int64(1))
+  meminuse_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getmemusagetask",Int32,(Ptr{Nothing},Ptr{Int64},Ptr{Int64},),task_.task,meminuse_,maxmemuse_)
+    @MSK_getmemusagetask(task_.task,meminuse_,maxmemuse_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,meminuse_[1]),convert(Int64,maxmemuse_[1]))
+  (convert(Int64,meminuse_.x),convert(Int64,maxmemuse_.x))
 end
 
 """
@@ -3141,15 +8245,15 @@ Obtains a named double information item from task information database.
 """
 function getnadouinf end
 function getnadouinf(task_:: MSKtask,infitemname_:: AbstractString)
-  dvalue_ = Vector{Float64}(undef,1)
+  dvalue_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnadouinf",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Float64},),task_.task,string(infitemname_),dvalue_)
+    @MSK_getnadouinf(task_.task,string(infitemname_),dvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,dvalue_[1]))
+  (convert(Float64,dvalue_.x))
 end
 
 """
@@ -3163,15 +8267,15 @@ Obtains the value of a named double parameter.
 """
 function getnadouparam end
 function getnadouparam(task_:: MSKtask,paramname_:: AbstractString)
-  parvalue_ = Vector{Float64}(undef,1)
+  parvalue_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnadouparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Float64},),task_.task,string(paramname_),parvalue_)
+    @MSK_getnadouparam(task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,parvalue_[1]))
+  (convert(Float64,parvalue_.x))
 end
 
 """
@@ -3185,15 +8289,15 @@ Obtains a named integer information item from the task information database.
 """
 function getnaintinf end
 function getnaintinf(task_:: MSKtask,infitemname_:: AbstractString)
-  ivalue_ = Vector{Int32}(undef,1)
+  ivalue_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnaintinf",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(infitemname_),ivalue_)
+    @MSK_getnaintinf(task_.task,string(infitemname_),ivalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,ivalue_[1]))
+  (convert(Int32,ivalue_.x))
 end
 
 """
@@ -3207,15 +8311,15 @@ Obtains the value of a named integer parameter.
 """
 function getnaintparam end
 function getnaintparam(task_:: MSKtask,paramname_:: AbstractString)
-  parvalue_ = Vector{Int32}(undef,1)
+  parvalue_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnaintparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(paramname_),parvalue_)
+    @MSK_getnaintparam(task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,parvalue_[1]))
+  (convert(Int32,parvalue_.x))
 end
 
 """
@@ -3233,17 +8337,59 @@ Obtains the value of a named string parameter.
 function getnastrparam end
 getnastrparam(task:: MSKtask,paramname:: AbstractString,sizeparamname:: T2) where {T2} = getnastrparam(task,paramname,convert(Int32,sizeparamname))
 function getnastrparam(task_:: MSKtask,paramname_:: AbstractString,sizeparamname_:: Int32)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   parvalue_ = zeros(UInt8,(sizeparamname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getnastrparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,Ptr{Int32},Ptr{UInt8},),task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
+    @MSK_getnastrparam(task_.task,string(paramname_),sizeparamname_,len_,parvalue_)
   end
   parvalue_str = String(parvalue_[1:findfirst(isequal(0),parvalue_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str)
+  (convert(Int32,len_.x),parvalue_str)
+end
+
+"""
+    num = getnumacc(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `num :: Int64`. The number of affine conic constraints.
+
+Obtains the number of affine conic constraints.
+"""
+function getnumacc end
+function getnumacc(task_:: MSKtask)
+  num_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getnumacc(task_.task,num_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,num_.x))
+end
+
+"""
+    numafe = getnumafe(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `numafe :: Int64`. Number of affine expressions.
+
+Obtains the number of affine expressions.
+"""
+function getnumafe end
+function getnumafe(task_:: MSKtask)
+  numafe_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getnumafe(task_.task,numafe_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numafe_.x))
 end
 
 """
@@ -3256,15 +8402,15 @@ Obtains the number of non-zeros in ``A``.
 """
 function getnumanz end
 function getnumanz(task_:: MSKtask)
-  numanz_ = Vector{Int32}(undef,1)
+  numanz_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumanz",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numanz_)
+    @MSK_getnumanz(task_.task,numanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numanz_[1]))
+  (convert(Int32,numanz_.x))
 end
 
 """
@@ -3277,15 +8423,15 @@ Obtains the number of non-zeros in ``A``.
 """
 function getnumanz64 end
 function getnumanz64(task_:: MSKtask)
-  numanz_ = Vector{Int64}(undef,1)
+  numanz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumanz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,numanz_)
+    @MSK_getnumanz64(task_.task,numanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numanz_[1]))
+  (convert(Int64,numanz_.x))
 end
 
 """
@@ -3298,15 +8444,15 @@ Obtains an upper bound on the number of elements in the block triplet form of ``
 """
 function getnumbarablocktriplets end
 function getnumbarablocktriplets(task_:: MSKtask)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumbarablocktriplets",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,num_)
+    @MSK_getnumbarablocktriplets(task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]))
+  (convert(Int64,num_.x))
 end
 
 """
@@ -3319,15 +8465,15 @@ Get the number of nonzero elements in ``\\bar A``.
 """
 function getnumbaranz end
 function getnumbaranz(task_:: MSKtask)
-  nz_ = Vector{Int64}(undef,1)
+  nz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumbaranz",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,nz_)
+    @MSK_getnumbaranz(task_.task,nz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,nz_[1]))
+  (convert(Int64,nz_.x))
 end
 
 """
@@ -3340,15 +8486,15 @@ Obtains an upper bound on the number of elements in the block triplet form of ``
 """
 function getnumbarcblocktriplets end
 function getnumbarcblocktriplets(task_:: MSKtask)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumbarcblocktriplets",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,num_)
+    @MSK_getnumbarcblocktriplets(task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]))
+  (convert(Int64,num_.x))
 end
 
 """
@@ -3361,15 +8507,15 @@ Obtains the number of nonzero elements in ``\\bar C``.
 """
 function getnumbarcnz end
 function getnumbarcnz(task_:: MSKtask)
-  nz_ = Vector{Int64}(undef,1)
+  nz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumbarcnz",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,nz_)
+    @MSK_getnumbarcnz(task_.task,nz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,nz_[1]))
+  (convert(Int64,nz_.x))
 end
 
 """
@@ -3382,15 +8528,15 @@ Obtains the number of semidefinite variables.
 """
 function getnumbarvar end
 function getnumbarvar(task_:: MSKtask)
-  numbarvar_ = Vector{Int32}(undef,1)
+  numbarvar_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumbarvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numbarvar_)
+    @MSK_getnumbarvar(task_.task,numbarvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numbarvar_[1]))
+  (convert(Int32,numbarvar_.x))
 end
 
 """
@@ -3403,15 +8549,15 @@ Obtains the number of constraints.
 """
 function getnumcon end
 function getnumcon(task_:: MSKtask)
-  numcon_ = Vector{Int32}(undef,1)
+  numcon_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumcon",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numcon_)
+    @MSK_getnumcon(task_.task,numcon_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numcon_[1]))
+  (convert(Int32,numcon_.x))
 end
 
 """
@@ -3420,19 +8566,19 @@ end
 * `task :: MSKtask`. An optimization task.
 * `numcone :: Int32`. Number of conic constraints.
 
-Obtains the number of cones.
+Deprecated in MOSEK 10
 """
 function getnumcone end
 function getnumcone(task_:: MSKtask)
-  numcone_ = Vector{Int32}(undef,1)
+  numcone_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumcone",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numcone_)
+    @MSK_getnumcone(task_.task,numcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numcone_[1]))
+  (convert(Int32,numcone_.x))
 end
 
 """
@@ -3443,20 +8589,62 @@ end
 * `k :: Int32`. Index of the cone.
 * `nummem :: Int32`. Number of member variables in the cone.
 
-Obtains the number of members in a cone.
+Deprecated in MOSEK 10
 """
 function getnumconemem end
 getnumconemem(task:: MSKtask,k:: T1) where {T1} = getnumconemem(task,convert(Int32,k))
 function getnumconemem(task_:: MSKtask,k_:: Int32)
-  nummem_ = Vector{Int32}(undef,1)
+  nummem_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumconemem",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,k_-1,nummem_)
+    @MSK_getnumconemem(task_.task,k_-1,nummem_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,nummem_[1]))
+  (convert(Int32,nummem_.x))
+end
+
+"""
+    num = getnumdjc(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `num :: Int64`. The number of disjunctive constraints.
+
+Obtains the number of disjunctive constraints.
+"""
+function getnumdjc end
+function getnumdjc(task_:: MSKtask)
+  num_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getnumdjc(task_.task,num_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,num_.x))
+end
+
+"""
+    numdomain = getnumdomain(task_:: MSKtask)
+
+* `task :: MSKtask`. An optimization task.
+* `numdomain :: Int64`. Number of domains in the task.
+
+Obtain the number of domains defined.
+"""
+function getnumdomain end
+function getnumdomain(task_:: MSKtask)
+  numdomain_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getnumdomain(task_.task,numdomain_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,numdomain_.x))
 end
 
 """
@@ -3469,15 +8657,15 @@ Obtains the number of integer-constrained variables.
 """
 function getnumintvar end
 function getnumintvar(task_:: MSKtask)
-  numintvar_ = Vector{Int32}(undef,1)
+  numintvar_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumintvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numintvar_)
+    @MSK_getnumintvar(task_.task,numintvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numintvar_[1]))
+  (convert(Int32,numintvar_.x))
 end
 
 """
@@ -3491,15 +8679,15 @@ Obtains the number of parameters of a given type.
 """
 function getnumparam end
 function getnumparam(task_:: MSKtask,partype_:: Parametertype)
-  numparam_ = Vector{Int32}(undef,1)
+  numparam_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumparam",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,partype_.value,numparam_)
+    @MSK_getnumparam(task_.task,partype_.value,numparam_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numparam_[1]))
+  (convert(Int32,numparam_.x))
 end
 
 """
@@ -3515,15 +8703,15 @@ Obtains the number of non-zero quadratic terms in a constraint.
 function getnumqconknz end
 getnumqconknz(task:: MSKtask,k:: T1) where {T1} = getnumqconknz(task,convert(Int32,k))
 function getnumqconknz(task_:: MSKtask,k_:: Int32)
-  numqcnz_ = Vector{Int64}(undef,1)
+  numqcnz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumqconknz64",Int32,(Ptr{Nothing},Int32,Ptr{Int64},),task_.task,k_-1,numqcnz_)
+    @MSK_getnumqconknz64(task_.task,k_-1,numqcnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numqcnz_[1]))
+  (convert(Int64,numqcnz_.x))
 end
 
 """
@@ -3536,15 +8724,15 @@ Obtains the number of non-zero quadratic terms in the objective.
 """
 function getnumqobjnz end
 function getnumqobjnz(task_:: MSKtask)
-  numqonz_ = Vector{Int64}(undef,1)
+  numqonz_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumqobjnz64",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,numqonz_)
+    @MSK_getnumqobjnz64(task_.task,numqonz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numqonz_[1]))
+  (convert(Int64,numqonz_.x))
 end
 
 """
@@ -3557,15 +8745,15 @@ Obtains the number of symmetric matrices stored in the vector ``E``.
 """
 function getnumsymmat end
 function getnumsymmat(task_:: MSKtask)
-  num_ = Vector{Int64}(undef,1)
+  num_ = Ref(Int64(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumsymmat",Int32,(Ptr{Nothing},Ptr{Int64},),task_.task,num_)
+    @MSK_getnumsymmat(task_.task,num_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,num_[1]))
+  (convert(Int64,num_.x))
 end
 
 """
@@ -3578,15 +8766,15 @@ Obtains the number of variables.
 """
 function getnumvar end
 function getnumvar(task_:: MSKtask)
-  numvar_ = Vector{Int32}(undef,1)
+  numvar_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getnumvar",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,numvar_)
+    @MSK_getnumvar(task_.task,numvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,numvar_[1]))
+  (convert(Int32,numvar_.x))
 end
 
 """
@@ -3602,7 +8790,7 @@ function getobjname(task_:: MSKtask)
   sizeobjname_ = (1 + getobjnamelen(task_))
   objname_ = zeros(UInt8,(sizeobjname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getobjname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,sizeobjname_,objname_)
+    @MSK_getobjname(task_.task,sizeobjname_,objname_)
   end
   objname_str = String(objname_[1:findfirst(isequal(0),objname_)-1])
   if res != MSK_RES_OK.value
@@ -3622,15 +8810,15 @@ Obtains the length of the name assigned to the objective function.
 """
 function getobjnamelen end
 function getobjnamelen(task_:: MSKtask)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getobjnamelen",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,len_)
+    @MSK_getobjnamelen(task_.task,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -3643,15 +8831,15 @@ Gets the objective sense of the task.
 """
 function getobjsense end
 function getobjsense(task_:: MSKtask)
-  sense_ = Vector{Int32}(undef,1)
+  sense_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getobjsense",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,sense_)
+    @MSK_getobjsense(task_.task,sense_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Objsense(sense_[1]))
+  (Objsense(sense_.x))
 end
 
 """
@@ -3670,7 +8858,7 @@ getparamname(task:: MSKtask,partype:: Parametertype,param:: T2) where {T2} = get
 function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
   parname_ = zeros(UInt8,MSK_MAX_STR_LEN+1)
   res = disable_sigint() do
-    @msk_ccall( "getparamname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,partype_.value,param_,parname_)
+    @MSK_getparamname(task_.task,partype_.value,param_,parname_)
   end
   parname_str = String(parname_[1:findfirst(isequal(0),parname_)-1])
   if res != MSK_RES_OK.value
@@ -3678,6 +8866,58 @@ function getparamname(task_:: MSKtask,partype_:: Parametertype,param_:: Int32)
     throw(MosekError(res,msg))
   end
   (parname_str)
+end
+
+"""
+    alpha = getpowerdomainalpha{T1}(task:: MSKtask,domidx:: T1)
+    alpha = getpowerdomainalpha(task_:: MSKtask,domidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+* `alpha :: Vector{Float64}`. The exponent vector of the domain.
+
+Obtains the exponent vector ``\\alpha`` of a primal or dual power cone domain.
+"""
+function getpowerdomainalpha end
+getpowerdomainalpha(task:: MSKtask,domidx:: T1) where {T1} = getpowerdomainalpha(task,convert(Int64,domidx))
+function getpowerdomainalpha(task_:: MSKtask,domidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_getpowerdomainalpha_0 = Ref{Int64}(); __tmp_var_getpowerdomainalpha_1 = Ref{Int64}(); @MSK_getpowerdomaininfo(task_.task,(domidx_-1),__tmp_var_getpowerdomainalpha_0,__tmp_var_getpowerdomainalpha_1); __tmp_var_getpowerdomainalpha_1.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  alpha_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getpowerdomainalpha(task_.task,domidx_-1,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    (n,nleft) = getpowerdomaininfo{T1}(task:: MSKtask,domidx:: T1)
+    (n,nleft) = getpowerdomaininfo(task_:: MSKtask,domidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+* `n :: Int64`. Dimension of the domain.
+* `nleft :: Int64`. Number of variables on the left hand side.
+
+Obtains structural information about a primal or dual power cone domain.
+"""
+function getpowerdomaininfo end
+getpowerdomaininfo(task:: MSKtask,domidx:: T1) where {T1} = getpowerdomaininfo(task,convert(Int64,domidx))
+function getpowerdomaininfo(task_:: MSKtask,domidx_:: Int64)
+  n_ = Ref(Int64(1))
+  nleft_ = Ref(Int64(1))
+  res = disable_sigint() do
+    @MSK_getpowerdomaininfo(task_.task,domidx_-1,n_,nleft_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Int64,n_.x),convert(Int64,nleft_.x))
 end
 
 """
@@ -3691,15 +8931,15 @@ Computes the primal objective value for the desired solution. Note that if the s
 """
 function getprimalobj end
 function getprimalobj(task_:: MSKtask,whichsol_:: Soltype)
-  primalobj_ = Vector{Float64}(undef,1)
+  primalobj_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getprimalobj",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,primalobj_)
+    @MSK_getprimalobj(task_.task,whichsol_.value,primalobj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,primalobj_[1]))
+  (convert(Float64,primalobj_.x))
 end
 
 """
@@ -3715,17 +8955,17 @@ Compute norms of the primal solution.
 """
 function getprimalsolutionnorms end
 function getprimalsolutionnorms(task_:: MSKtask,whichsol_:: Soltype)
-  nrmbarx_ = Vector{Float64}(undef,1)
-  nrmxc_ = Vector{Float64}(undef,1)
-  nrmxx_ = Vector{Float64}(undef,1)
+  nrmbarx_ = Ref(Float64(1))
+  nrmxc_ = Ref(Float64(1))
+  nrmxx_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getprimalsolutionnorms",Int32,(Ptr{Nothing},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,nrmxc_,nrmxx_,nrmbarx_)
+    @MSK_getprimalsolutionnorms(task_.task,whichsol_.value,nrmxc_,nrmxx_,nrmbarx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,nrmxc_[1]),convert(Float64,nrmxx_[1]),convert(Float64,nrmbarx_[1]))
+  (convert(Float64,nrmxc_.x),convert(Float64,nrmxx_.x),convert(Float64,nrmbarx_.x))
 end
 
 """
@@ -3738,15 +8978,15 @@ Obtains the problem type.
 """
 function getprobtype end
 function getprobtype(task_:: MSKtask)
-  probtype_ = Vector{Int32}(undef,1)
+  probtype_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getprobtype",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,probtype_)
+    @MSK_getprobtype(task_.task,probtype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Problemtype(probtype_[1]))
+  (Problemtype(probtype_.x))
 end
 
 """
@@ -3760,15 +9000,56 @@ Obtains the problem status.
 """
 function getprosta end
 function getprosta(task_:: MSKtask,whichsol_:: Soltype)
-  prosta_ = Vector{Int32}(undef,1)
+  prosta_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getprosta",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,prosta_)
+    @MSK_getprosta(task_.task,whichsol_.value,prosta_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Prosta(prosta_[1]))
+  (Prosta(prosta_.x))
+end
+
+"""
+    viol = getpviolacc{T2}(task:: MSKtask,whichsol:: Soltype,accidxlist:: Vector{T2})
+    viol = getpviolacc(task_:: MSKtask,whichsol_:: Soltype,accidxlist_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `accidxlist :: Vector{Int64}`. An array of indexes of conic constraints.
+* `viol :: Vector{Float64}`. List of violations corresponding to sub.
+
+Computes the primal solution violation for a set of affine conic constraints.
+Let ``x^*`` be the value of the variable ``x`` for the specified solution.
+For simplicity let us assume that ``x`` is a member of a quadratic cone, then
+the violation is computed as follows
+
+```math
+\\left\\{
+  \\begin{array}{ll}
+    \\max(0,\\|x_{2:n}\\|-x_1) / \\sqrt{2}, & x_1 \\geq -\\|x_{2:n}\\|, \\\\
+    \\|x\\|, & \\mbox{otherwise.}
+  \\end{array}
+\\right.
+```
+Both when the solution is a certificate of dual infeasibility or when it is primal feasible the violation should be small.
+"""
+function getpviolacc end
+getpviolacc(task:: MSKtask,whichsol:: Soltype,accidxlist:: Vector{T2}) where {T2} = getpviolacc(task,whichsol,convert(Vector{Int64},accidxlist))
+function getpviolacc(task_:: MSKtask,whichsol_:: Soltype,accidxlist_:: Vector{Int64})
+  numaccidx_ = minimum([ length(accidxlist_) ])
+  __tmp_var_0 = (numaccidx_)
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getpviolacc(task_.task,whichsol_.value,numaccidx_,accidxlist_ .- Int32(1),__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
 end
 
 """
@@ -3798,7 +9079,7 @@ function getpviolbarvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32}
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolbarvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getpviolbarvar(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3836,7 +9117,7 @@ function getpviolcon(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolcon",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getpviolcon(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3853,6 +9134,8 @@ end
 * `whichsol :: Soltype`. Selects a solution.
 * `sub :: Vector{Int32}`. An array of indexes of conic constraints.
 * `viol :: Vector{Float64}`. List of violations corresponding to sub.
+
+Deprecated in MOSEK 10
 
 Computes the primal solution violation for a set of conic constraints.
 Let ``x^*`` be the value of the variable ``x`` for the specified solution.
@@ -3877,7 +9160,35 @@ function getpviolcones(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolcones",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getpviolcones(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    viol = getpvioldjc{T2}(task:: MSKtask,whichsol:: Soltype,djcidxlist:: Vector{T2})
+    viol = getpvioldjc(task_:: MSKtask,whichsol_:: Soltype,djcidxlist_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `djcidxlist :: Vector{Int64}`. An array of indexes of conic constraints.
+* `viol :: Vector{Float64}`. List of violations corresponding to sub.
+
+TBD
+"""
+function getpvioldjc end
+getpvioldjc(task:: MSKtask,whichsol:: Soltype,djcidxlist:: Vector{T2}) where {T2} = getpvioldjc(task,whichsol,convert(Vector{Int64},djcidxlist))
+function getpvioldjc(task_:: MSKtask,whichsol_:: Soltype,djcidxlist_:: Vector{Int64})
+  numdjcidx_ = minimum([ length(djcidxlist_) ])
+  __tmp_var_0 = (numdjcidx_)
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  viol_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_getpvioldjc(task_.task,whichsol_.value,numdjcidx_,djcidxlist_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3916,7 +9227,7 @@ function getpviolvar(task_:: MSKtask,whichsol_:: Soltype,sub_:: Vector{Int32})
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   viol_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getpviolvar",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
+    @MSK_getpviolvar(task_.task,whichsol_.value,num_,sub_ .- Int32(1),__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3942,7 +9253,7 @@ terms are stored sequentially in `qcsubi`, `qcsubj`, and `qcval`.
 function getqconk end
 getqconk(task:: MSKtask,k:: T1) where {T1} = getqconk(task,convert(Int32,k))
 function getqconk(task_:: MSKtask,k_:: Int32)
-  numqcnz_ = Vector{Int64}(undef,1)
+  numqcnz_ = Ref(Int64(1))
   maxnumqcnz_ = getnumqconknz(task_,(k_))
   __tmp_var_0 = getnumqconknz(task_,(k_))
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
@@ -3955,7 +9266,7 @@ function getqconk(task_:: MSKtask,k_:: Int32)
   qcval_ = __tmp_var_5
   qcsurp_ = convert(Int64,length(qcsubi_))
   res = disable_sigint() do
-    @msk_ccall( "getqconk64",Int32,(Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,maxnumqcnz_,Ref(qcsurp_),numqcnz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @MSK_getqconk64(task_.task,k_-1,maxnumqcnz_,Ref(qcsurp_),numqcnz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -3963,7 +9274,7 @@ function getqconk(task_:: MSKtask,k_:: Int32)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numqcnz_[1]),__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  (convert(Int64,numqcnz_.x),__tmp_var_1,__tmp_var_3,__tmp_var_5)
 end
 
 """
@@ -3981,7 +9292,7 @@ are stored sequentially in `qosubi`, `qosubj`, and `qoval`.
 function getqobj end
 function getqobj(task_:: MSKtask)
   maxnumqonz_ = getnumqobjnz(task_)
-  numqonz_ = Vector{Int64}(undef,1)
+  numqonz_ = Ref(Int64(1))
   __tmp_var_0 = (maxnumqonz_)
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   qosubi_ = __tmp_var_1
@@ -3993,7 +9304,7 @@ function getqobj(task_:: MSKtask)
   qoval_ = __tmp_var_5
   qosurp_ = convert(Int64,length(qosubi_))
   res = disable_sigint() do
-    @msk_ccall( "getqobj64",Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,maxnumqonz_,Ref(qosurp_),numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @MSK_getqobj64(task_.task,maxnumqonz_,Ref(qosurp_),numqonz_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -4001,7 +9312,7 @@ function getqobj(task_:: MSKtask)
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,numqonz_[1]),__tmp_var_1,__tmp_var_3,__tmp_var_5)
+  (convert(Int64,numqonz_.x),__tmp_var_1,__tmp_var_3,__tmp_var_5)
 end
 
 """
@@ -4018,15 +9329,15 @@ Obtains one coefficient ``q_{ij}^o`` in the quadratic term of the objective.
 function getqobjij end
 getqobjij(task:: MSKtask,i:: T1,j:: T2) where {T1,T2} = getqobjij(task,convert(Int32,i),convert(Int32,j))
 function getqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32)
-  qoij_ = Vector{Float64}(undef,1)
+  qoij_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getqobjij",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,i_-1,j_-1,qoij_)
+    @MSK_getqobjij(task_.task,i_-1,j_-1,qoij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,qoij_[1]))
+  (convert(Float64,qoij_.x))
 end
 
 """
@@ -4055,7 +9366,7 @@ function getreducedcosts(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   redcosts_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getreducedcosts",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getreducedcosts(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4078,7 +9389,7 @@ function getskc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumcon(task_)
   skc_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskc",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
+    @MSK_getskc(task_.task,whichsol_.value,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4105,7 +9416,7 @@ function getskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_0 = ((last_) - (first_))
   skc_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
+    @MSK_getskcslice(task_.task,whichsol_.value,first_-1,last_-1,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4128,7 +9439,7 @@ function getskn(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumcone(task_)
   skn_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskn",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skn_)
+    @MSK_getskn(task_.task,whichsol_.value,skn_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4151,7 +9462,7 @@ function getskx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_0 = getnumvar(task_)
   skx_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskx",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
+    @MSK_getskx(task_.task,whichsol_.value,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4178,7 +9489,7 @@ function getskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_0 = ((last_) - (first_))
   skx_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getskxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
+    @MSK_getskxslice(task_.task,whichsol_.value,first_-1,last_-1,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4202,7 +9513,7 @@ function getslc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getslc(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4230,7 +9541,7 @@ function getslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getslcslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4254,7 +9565,7 @@ function getslx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getslx(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4282,7 +9593,7 @@ function getslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   slx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getslxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getslxslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4306,7 +9617,7 @@ function getsnx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   snx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsnx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getsnx(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4334,7 +9645,7 @@ function getsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   snx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsnxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getsnxslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4354,15 +9665,15 @@ Obtains the solution status.
 """
 function getsolsta end
 function getsolsta(task_:: MSKtask,whichsol_:: Soltype)
-  solsta_ = Vector{Int32}(undef,1)
+  solsta_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getsolsta",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,solsta_)
+    @MSK_getsolsta(task_.task,whichsol_.value,solsta_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Solsta(solsta_[1]))
+  (Solsta(solsta_.x))
 end
 
 """
@@ -4445,7 +9756,7 @@ In order to retrieve the primal and dual values of semidefinite variables see `M
 """
 function getsolution end
 function getsolution(task_:: MSKtask,whichsol_:: Soltype)
-  prosta_ = Vector{Int32}(undef,1)
+  prosta_ = Ref(Int32(1))
   __tmp_var_0 = getnumcon(task_)
   skc_ = Vector{Int32}(undef,__tmp_var_0)
   __tmp_var_2 = getnumcone(task_)
@@ -4461,7 +9772,7 @@ function getsolution(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_17 = getnumvar(task_)
   __tmp_var_18 = zeros(Float64,__tmp_var_17)
   snx_ = __tmp_var_18
-  solsta_ = Vector{Int32}(undef,1)
+  solsta_ = Ref(Int32(1))
   __tmp_var_11 = getnumcon(task_)
   __tmp_var_12 = zeros(Float64,__tmp_var_11)
   suc_ = __tmp_var_12
@@ -4478,13 +9789,13 @@ function getsolution(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_8 = zeros(Float64,__tmp_var_7)
   y_ = __tmp_var_8
   res = disable_sigint() do
-    @msk_ccall( "getsolution",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,prosta_,solsta_,skc_,skx_,skn_,__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
+    @MSK_getsolution(task_.task,whichsol_.value,prosta_,solsta_,skc_,skx_,skn_,__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Prosta(prosta_[1]),Solsta(solsta_[1]),Stakey[ Stakey(i) for i in skc_],Stakey[ Stakey(i) for i in skx_],Stakey[ Stakey(i) for i in skn_],__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
+  (Prosta(prosta_.x),Solsta(solsta_.x),Stakey[ Stakey(i) for i in skc_],Stakey[ Stakey(i) for i in skx_],Stakey[ Stakey(i) for i in skn_],__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18)
 end
 
 """
@@ -4508,25 +9819,144 @@ Obtains information about a solution.
 """
 function getsolutioninfo end
 function getsolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
-  dobj_ = Vector{Float64}(undef,1)
-  dviolbarvar_ = Vector{Float64}(undef,1)
-  dviolcon_ = Vector{Float64}(undef,1)
-  dviolcone_ = Vector{Float64}(undef,1)
-  dviolvar_ = Vector{Float64}(undef,1)
-  pobj_ = Vector{Float64}(undef,1)
-  pviolbarvar_ = Vector{Float64}(undef,1)
-  pviolcon_ = Vector{Float64}(undef,1)
-  pviolcone_ = Vector{Float64}(undef,1)
-  pviolitg_ = Vector{Float64}(undef,1)
-  pviolvar_ = Vector{Float64}(undef,1)
+  dobj_ = Ref(Float64(1))
+  dviolbarvar_ = Ref(Float64(1))
+  dviolcon_ = Ref(Float64(1))
+  dviolcone_ = Ref(Float64(1))
+  dviolvar_ = Ref(Float64(1))
+  pobj_ = Ref(Float64(1))
+  pviolbarvar_ = Ref(Float64(1))
+  pviolcon_ = Ref(Float64(1))
+  pviolcone_ = Ref(Float64(1))
+  pviolitg_ = Ref(Float64(1))
+  pviolvar_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getsolutioninfo",Int32,(Ptr{Nothing},Int32,Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_)
+    @MSK_getsolutioninfo(task_.task,whichsol_.value,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Float64,pobj_[1]),convert(Float64,pviolcon_[1]),convert(Float64,pviolvar_[1]),convert(Float64,pviolbarvar_[1]),convert(Float64,pviolcone_[1]),convert(Float64,pviolitg_[1]),convert(Float64,dobj_[1]),convert(Float64,dviolcon_[1]),convert(Float64,dviolvar_[1]),convert(Float64,dviolbarvar_[1]),convert(Float64,dviolcone_[1]))
+  (convert(Float64,pobj_.x),convert(Float64,pviolcon_.x),convert(Float64,pviolvar_.x),convert(Float64,pviolbarvar_.x),convert(Float64,pviolcone_.x),convert(Float64,pviolitg_.x),convert(Float64,dobj_.x),convert(Float64,dviolcon_.x),convert(Float64,dviolvar_.x),convert(Float64,dviolbarvar_.x),convert(Float64,dviolcone_.x))
+end
+
+"""
+    (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolacc,pvioldjc,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone,dviolacc) = getsolutioninfonew(task_:: MSKtask,whichsol_:: Soltype)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `pobj :: Float64`. The primal objective value.
+* `pviolcon :: Float64`. Maximal primal bound violation for a xc variable.
+* `pviolvar :: Float64`. Maximal primal bound violation for a xx variable.
+* `pviolbarvar :: Float64`. Maximal primal bound violation for a barx variable.
+* `pviolcone :: Float64`. Maximal primal violation of the solution with respect to the conic constraints.
+* `pviolacc :: Float64`. Maximal primal violation of the solution with respect to the affine conic constraints.
+* `pvioldjc :: Float64`. Maximal primal violation of the solution with respect to the disjunctive constraints.
+* `pviolitg :: Float64`. Maximal violation in the integer constraints.
+* `dobj :: Float64`. Dual objective value.
+* `dviolcon :: Float64`. Maximal dual bound violation for a xc variable.
+* `dviolvar :: Float64`. Maximal dual bound violation for a xx variable.
+* `dviolbarvar :: Float64`. Maximal dual bound violation for a bars variable.
+* `dviolcone :: Float64`. Maximum violation of the dual solution in the dual conic constraints.
+* `dviolacc :: Float64`. Maximum violation of the dual solution in the dual affine conic constraints.
+
+Obtains information about a solution.
+"""
+function getsolutioninfonew end
+function getsolutioninfonew(task_:: MSKtask,whichsol_:: Soltype)
+  dobj_ = Ref(Float64(1))
+  dviolacc_ = Ref(Float64(1))
+  dviolbarvar_ = Ref(Float64(1))
+  dviolcon_ = Ref(Float64(1))
+  dviolcone_ = Ref(Float64(1))
+  dviolvar_ = Ref(Float64(1))
+  pobj_ = Ref(Float64(1))
+  pviolacc_ = Ref(Float64(1))
+  pviolbarvar_ = Ref(Float64(1))
+  pviolcon_ = Ref(Float64(1))
+  pviolcone_ = Ref(Float64(1))
+  pvioldjc_ = Ref(Float64(1))
+  pviolitg_ = Ref(Float64(1))
+  pviolvar_ = Ref(Float64(1))
+  res = disable_sigint() do
+    @MSK_getsolutioninfonew(task_.task,whichsol_.value,pobj_,pviolcon_,pviolvar_,pviolbarvar_,pviolcone_,pviolacc_,pvioldjc_,pviolitg_,dobj_,dviolcon_,dviolvar_,dviolbarvar_,dviolcone_,dviolacc_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (convert(Float64,pobj_.x),convert(Float64,pviolcon_.x),convert(Float64,pviolvar_.x),convert(Float64,pviolbarvar_.x),convert(Float64,pviolcone_.x),convert(Float64,pviolacc_.x),convert(Float64,pvioldjc_.x),convert(Float64,pviolitg_.x),convert(Float64,dobj_.x),convert(Float64,dviolcon_.x),convert(Float64,dviolvar_.x),convert(Float64,dviolbarvar_.x),convert(Float64,dviolcone_.x),convert(Float64,dviolacc_.x))
+end
+
+"""
+    (prosta,solsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty) = getsolutionnew(task_:: MSKtask,whichsol_:: Soltype)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `prosta :: Prosta`. Problem status.
+* `solsta :: Solsta`. Solution status.
+* `skc :: Vector{Stakey}`. Status keys for the constraints.
+* `skx :: Vector{Stakey}`. Status keys for the variables.
+* `skn :: Vector{Stakey}`. Status keys for the conic constraints.
+* `xc :: Vector{Float64}`. Primal constraint solution.
+* `xx :: Vector{Float64}`. Primal variable solution.
+* `y :: Vector{Float64}`. Vector of dual variables corresponding to the constraints.
+* `slc :: Vector{Float64}`. Dual variables corresponding to the lower bounds on the constraints.
+* `suc :: Vector{Float64}`. Dual variables corresponding to the upper bounds on the constraints.
+* `slx :: Vector{Float64}`. Dual variables corresponding to the lower bounds on the variables.
+* `sux :: Vector{Float64}`. Dual variables corresponding to the upper bounds on the variables.
+* `snx :: Vector{Float64}`. Dual variables corresponding to the conic constraints on the variables.
+* `doty :: Vector{Float64}`. Dual variables corresponding to affine conic constraints.
+
+Obtains the complete solution. See `Mosek.getsolution` for further information.
+
+In order to retrieve the primal and dual values of semidefinite variables see `Mosek.getbarxj` and `Mosek.getbarsj`.
+"""
+function getsolutionnew end
+function getsolutionnew(task_:: MSKtask,whichsol_:: Soltype)
+  __tmp_var_19 = begin __tmp_var_getsolutionnew_0 = Ref{Int64}(); @MSK_getaccntot(task_.task,__tmp_var_getsolutionnew_0); __tmp_var_getsolutionnew_0.x end
+  __tmp_var_20 = zeros(Float64,__tmp_var_19)
+  doty_ = __tmp_var_20
+  prosta_ = Ref(Int32(1))
+  __tmp_var_0 = getnumcon(task_)
+  skc_ = Vector{Int32}(undef,__tmp_var_0)
+  __tmp_var_2 = getnumcone(task_)
+  skn_ = Vector{Int32}(undef,__tmp_var_2)
+  __tmp_var_1 = getnumvar(task_)
+  skx_ = Vector{Int32}(undef,__tmp_var_1)
+  __tmp_var_9 = getnumcon(task_)
+  __tmp_var_10 = zeros(Float64,__tmp_var_9)
+  slc_ = __tmp_var_10
+  __tmp_var_13 = getnumvar(task_)
+  __tmp_var_14 = zeros(Float64,__tmp_var_13)
+  slx_ = __tmp_var_14
+  __tmp_var_17 = getnumvar(task_)
+  __tmp_var_18 = zeros(Float64,__tmp_var_17)
+  snx_ = __tmp_var_18
+  solsta_ = Ref(Int32(1))
+  __tmp_var_11 = getnumcon(task_)
+  __tmp_var_12 = zeros(Float64,__tmp_var_11)
+  suc_ = __tmp_var_12
+  __tmp_var_15 = getnumvar(task_)
+  __tmp_var_16 = zeros(Float64,__tmp_var_15)
+  sux_ = __tmp_var_16
+  __tmp_var_3 = getnumcon(task_)
+  __tmp_var_4 = zeros(Float64,__tmp_var_3)
+  xc_ = __tmp_var_4
+  __tmp_var_5 = getnumvar(task_)
+  __tmp_var_6 = zeros(Float64,__tmp_var_5)
+  xx_ = __tmp_var_6
+  __tmp_var_7 = getnumcon(task_)
+  __tmp_var_8 = zeros(Float64,__tmp_var_7)
+  y_ = __tmp_var_8
+  res = disable_sigint() do
+    @MSK_getsolutionnew(task_.task,whichsol_.value,prosta_,solsta_,skc_,skx_,skn_,__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18,__tmp_var_20)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (Prosta(prosta_.x),Solsta(solsta_.x),Stakey[ Stakey(i) for i in skc_],Stakey[ Stakey(i) for i in skx_],Stakey[ Stakey(i) for i in skn_],__tmp_var_4,__tmp_var_6,__tmp_var_8,__tmp_var_10,__tmp_var_12,__tmp_var_14,__tmp_var_16,__tmp_var_18,__tmp_var_20)
 end
 
 """
@@ -4549,7 +9979,7 @@ function getsolutionslice(task_:: MSKtask,whichsol_:: Soltype,solitem_:: Solitem
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   values_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsolutionslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,solitem_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getsolutionslice(task_.task,whichsol_.value,solitem_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4584,7 +10014,7 @@ function getsparsesymmat(task_:: MSKtask,idx_:: Int64)
   __tmp_var_5 = zeros(Float64,__tmp_var_4)
   valij_ = __tmp_var_5
   res = disable_sigint() do
-    @msk_ccall( "getsparsesymmat",Int32,(Ptr{Nothing},Int64,Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
+    @MSK_getsparsesymmat(task_.task,idx_-1,maxlen_,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
   __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
@@ -4607,18 +10037,18 @@ Obtains the value of a string parameter.
 """
 function getstrparam end
 function getstrparam(task_:: MSKtask,param_:: Sparam)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   maxlen_ = (1 + getstrparamlen(task_,(param_)))
   parvalue_ = zeros(UInt8,(maxlen_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getstrparam",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{UInt8},),task_.task,param_.value,maxlen_,len_,parvalue_)
+    @MSK_getstrparam(task_.task,param_.value,maxlen_,len_,parvalue_)
   end
   parvalue_str = String(parvalue_[1:findfirst(isequal(0),parvalue_)-1])
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]),parvalue_str)
+  (convert(Int32,len_.x),parvalue_str)
 end
 
 """
@@ -4632,15 +10062,15 @@ Obtains the length of a string parameter.
 """
 function getstrparamlen end
 function getstrparamlen(task_:: MSKtask,param_:: Sparam)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getstrparamlen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,param_.value,len_)
+    @MSK_getstrparamlen(task_.task,param_.value,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -4658,7 +10088,7 @@ function getsuc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   suc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsuc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getsuc(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4686,7 +10116,7 @@ function getsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   suc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsucslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getsucslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4710,7 +10140,7 @@ function getsux(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   sux_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsux",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getsux(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4738,7 +10168,7 @@ function getsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   sux_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getsuxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getsuxslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4762,17 +10192,17 @@ MOSEK maintains a vector denoted by ``E`` of symmetric data matrices. This funct
 function getsymmatinfo end
 getsymmatinfo(task:: MSKtask,idx:: T1) where {T1} = getsymmatinfo(task,convert(Int64,idx))
 function getsymmatinfo(task_:: MSKtask,idx_:: Int64)
-  dim_ = Vector{Int32}(undef,1)
-  nz_ = Vector{Int64}(undef,1)
-  type_ = Vector{Int32}(undef,1)
+  dim_ = Ref(Int32(1))
+  nz_ = Ref(Int64(1))
+  type_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getsymmatinfo",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int64},Ptr{Int32},),task_.task,idx_-1,dim_,nz_,type_)
+    @MSK_getsymmatinfo(task_.task,idx_-1,dim_,nz_,type_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,dim_[1]),convert(Int64,nz_[1]),Symmattype(type_[1]))
+  (convert(Int32,dim_.x),convert(Int64,nz_.x),Symmattype(type_.x))
 end
 
 """
@@ -4788,7 +10218,7 @@ function gettaskname(task_:: MSKtask)
   sizetaskname_ = (1 + gettasknamelen(task_))
   taskname_ = zeros(UInt8,(sizetaskname_)+1)
   res = disable_sigint() do
-    @msk_ccall( "gettaskname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,sizetaskname_,taskname_)
+    @MSK_gettaskname(task_.task,sizetaskname_,taskname_)
   end
   taskname_str = String(taskname_[1:findfirst(isequal(0),taskname_)-1])
   if res != MSK_RES_OK.value
@@ -4808,15 +10238,15 @@ Obtains the length the task name.
 """
 function gettasknamelen end
 function gettasknamelen(task_:: MSKtask)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "gettasknamelen",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,len_)
+    @MSK_gettasknamelen(task_.task,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -4834,17 +10264,17 @@ Obtains bound information for one variable.
 function getvarbound end
 getvarbound(task:: MSKtask,i:: T1) where {T1} = getvarbound(task,convert(Int32,i))
 function getvarbound(task_:: MSKtask,i_:: Int32)
-  bk_ = Vector{Int32}(undef,1)
-  bl_ = Vector{Float64}(undef,1)
-  bu_ = Vector{Float64}(undef,1)
+  bk_ = Ref(Int32(1))
+  bl_ = Ref(Float64(1))
+  bu_ = Ref(Float64(1))
   res = disable_sigint() do
-    @msk_ccall( "getvarbound",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,i_-1,bk_,bl_,bu_)
+    @MSK_getvarbound(task_.task,i_-1,bk_,bl_,bu_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Boundkey(bk_[1]),convert(Float64,bl_[1]),convert(Float64,bu_[1]))
+  (Boundkey(bk_.x),convert(Float64,bl_.x),convert(Float64,bu_.x))
 end
 
 """
@@ -4872,7 +10302,7 @@ function getvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32)
   __tmp_var_4 = zeros(Float64,__tmp_var_3)
   bu_ = __tmp_var_4
   res = disable_sigint() do
-    @msk_ccall( "getvarboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
+    @MSK_getvarboundslice(task_.task,first_-1,last_-1,bk_,__tmp_var_2,__tmp_var_4)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -4897,7 +10327,7 @@ function getvarname(task_:: MSKtask,j_:: Int32)
   sizename_ = (1 + getvarnamelen(task_,(j_)))
   name_ = zeros(UInt8,(sizename_)+1)
   res = disable_sigint() do
-    @msk_ccall( "getvarname",Int32,(Ptr{Nothing},Int32,Int32,Ptr{UInt8},),task_.task,j_-1,sizename_,name_)
+    @MSK_getvarname(task_.task,j_-1,sizename_,name_)
   end
   name_str = String(name_[1:findfirst(isequal(0),name_)-1])
   if res != MSK_RES_OK.value
@@ -4919,16 +10349,16 @@ Checks whether the name `somename` has been assigned to any variable. If so, the
 """
 function getvarnameindex end
 function getvarnameindex(task_:: MSKtask,somename_:: AbstractString)
-  asgn_ = Vector{Int32}(undef,1)
-  index_ = Vector{Int32}(undef,1)
+  asgn_ = Ref(Int32(1))
+  index_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getvarnameindex",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},Ptr{Int32},),task_.task,string(somename_),asgn_,index_)
+    @MSK_getvarnameindex(task_.task,string(somename_),asgn_,index_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,asgn_[1]),convert(Int32,index_[1]+1))
+  (convert(Int32,asgn_.x),convert(Int32,index_.x+1))
 end
 
 """
@@ -4944,15 +10374,15 @@ Obtains the length of the name of a variable.
 function getvarnamelen end
 getvarnamelen(task:: MSKtask,i:: T1) where {T1} = getvarnamelen(task,convert(Int32,i))
 function getvarnamelen(task_:: MSKtask,i_:: Int32)
-  len_ = Vector{Int32}(undef,1)
+  len_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getvarnamelen",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,i_-1,len_)
+    @MSK_getvarnamelen(task_.task,i_-1,len_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int32,len_[1]))
+  (convert(Int32,len_.x))
 end
 
 """
@@ -4968,15 +10398,15 @@ Gets the variable type of one variable.
 function getvartype end
 getvartype(task:: MSKtask,j:: T1) where {T1} = getvartype(task,convert(Int32,j))
 function getvartype(task_:: MSKtask,j_:: Int32)
-  vartype_ = Vector{Int32}(undef,1)
+  vartype_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getvartype",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,j_-1,vartype_)
+    @MSK_getvartype(task_.task,j_-1,vartype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Variabletype(vartype_[1]))
+  (Variabletype(vartype_.x))
 end
 
 """
@@ -4996,7 +10426,7 @@ function getvartypelist(task_:: MSKtask,subj_:: Vector{Int32})
   __tmp_var_0 = (num_)
   vartype_ = Vector{Int32}(undef,__tmp_var_0)
   res = disable_sigint() do
-    @msk_ccall( "getvartypelist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
+    @MSK_getvartypelist(task_.task,num_,subj_ .- Int32(1),vartype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5016,16 +10446,16 @@ Obtains MOSEK version information.
 """
 function getversion end
 function getversion()
-  major_ = Vector{Int32}(undef,1)
-  minor_ = Vector{Int32}(undef,1)
-  revision_ = Vector{Int32}(undef,1)
+  major_ = Ref(Int32(1))
+  minor_ = Ref(Int32(1))
+  revision_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "getversion",Int32,(Ptr{Int32},Ptr{Int32},Ptr{Int32},),major_,minor_,revision_)
+    @MSK_getversion(major_,minor_,revision_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
   end
-  (convert(Int32,major_[1]),convert(Int32,minor_[1]),convert(Int32,revision_[1]))
+  (convert(Int32,major_.x),convert(Int32,minor_.x),convert(Int32,revision_.x))
 end
 
 """
@@ -5043,7 +10473,7 @@ function getxc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getxc(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5071,7 +10501,7 @@ function getxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getxcslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5095,7 +10525,7 @@ function getxx(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_getxx(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5123,7 +10553,7 @@ function getxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xx_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getxxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getxxslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5147,7 +10577,7 @@ function gety(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   y_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "gety",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_gety(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5175,7 +10605,7 @@ function getyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: In
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   y_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "getyslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
+    @MSK_getyslice(task_.task,whichsol_.value,first_-1,last_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5201,11 +10631,11 @@ If the basis is singular i.e. not invertible, then the error :msk:res:`err_basis
 """
 function initbasissolve end
 function initbasissolve(task_:: MSKtask)
-  __tmp_var_0 = getnumcon(task_)
+  __tmp_var_0 = begin __tmp_var_initbasissolve_0 = Ref{Int32}(); @MSK_getnumcon(task_.task,__tmp_var_initbasissolve_0); __tmp_var_initbasissolve_0.x end
   __tmp_var_1 = zeros(Int32,__tmp_var_0)
   basis_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "initbasissolve",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,__tmp_var_1)
+    @MSK_initbasissolve(task_.task,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5258,7 +10688,7 @@ function inputdata(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,c_:: Ve
   numcon_ = minimum([ length(buc_),length(blc_),length(bkc_) ])
   numvar_ = minimum([ length(c_),length(bux_),length(blx_),length(bkx_),length(aptrb_),length(aptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "inputdata64",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int32,Ptr{Float64},Float64,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,maxnumcon_,maxnumvar_,numcon_,numvar_,c_,cfix_,aptrb_ .- Int32(1),aptre_ .- Int32(1),asub_ .- Int32(1),aval_,bkc_,blc_,buc_,bkx_,blx_,bux_)
+    @MSK_inputdata64(task_.task,maxnumcon_,maxnumvar_,numcon_,numvar_,c_,cfix_,aptrb_ .- Int32(1),aptre_ .- Int32(1),asub_ .- Int32(1),aval_,bkc_,blc_,buc_,bkx_,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5277,15 +10707,15 @@ Checks whether `parname` is a valid double parameter name.
 """
 function isdouparname end
 function isdouparname(task_:: MSKtask,parname_:: AbstractString)
-  param_ = Vector{Int32}(undef,1)
+  param_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "isdouparname",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
+    @MSK_isdouparname(task_.task,string(parname_),param_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Dparam(param_[1]))
+  (Dparam(param_.x))
 end
 
 """
@@ -5299,15 +10729,15 @@ Checks whether `parname` is a valid integer parameter name.
 """
 function isintparname end
 function isintparname(task_:: MSKtask,parname_:: AbstractString)
-  param_ = Vector{Int32}(undef,1)
+  param_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "isintparname",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
+    @MSK_isintparname(task_.task,string(parname_),param_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Iparam(param_[1]))
+  (Iparam(param_.x))
 end
 
 """
@@ -5321,15 +10751,15 @@ Checks whether `parname` is a valid string parameter name.
 """
 function isstrparname end
 function isstrparname(task_:: MSKtask,parname_:: AbstractString)
-  param_ = Vector{Int32}(undef,1)
+  param_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "isstrparname",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(parname_),param_)
+    @MSK_isstrparname(task_.task,string(parname_),param_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Sparam(param_[1]))
+  (Sparam(param_.x))
 end
 
 """
@@ -5343,7 +10773,7 @@ MOSEK API calls are valid after this.
 function licensecleanup end
 function licensecleanup()
   res = disable_sigint() do
-    @msk_ccall( "licensecleanup",Int32,())
+    @MSK_licensecleanup()
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -5365,7 +10795,7 @@ function linkfiletostream end
 linkfiletostream(env:: MSKenv,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(env,whichstream,filename,convert(Int32,append))
 function linkfiletostream(env_:: MSKenv,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "linkfiletoenvstream",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},Int32,),env_.env,whichstream_.value,string(filename_),append_)
+    @MSK_linkfiletoenvstream(env_.env,whichstream_.value,string(filename_),append_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -5386,7 +10816,7 @@ Directs all output from a task stream `whichstream` to a file `filename`.
 linkfiletostream(task:: MSKtask,whichstream:: Streamtype,filename:: AbstractString,append:: T3) where {T3} = linkfiletostream(task,whichstream,filename,convert(Int32,append))
 function linkfiletostream(task_:: MSKtask,whichstream_:: Streamtype,filename_:: AbstractString,append_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "linkfiletotaskstream",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},Int32,),task_.task,whichstream_.value,string(filename_),append_)
+    @MSK_linkfiletotaskstream(task_.task,whichstream_.value,string(filename_),append_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5406,7 +10836,7 @@ Prints a short summary of a specified solution.
 function onesolutionsummary end
 function onesolutionsummary(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "onesolutionsummary",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,whichstream_.value,whichsol_.value)
+    @MSK_onesolutionsummary(task_.task,whichstream_.value,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5415,30 +10845,33 @@ function onesolutionsummary(task_:: MSKtask,whichstream_:: Streamtype,whichsol_:
 end
 
 """
-    trmcode = optimizermt(task_:: MSKtask,server_:: AbstractString,port_:: AbstractString)
+    trmcode = optimizermt(task_:: MSKtask,addr_:: AbstractString,accesstoken_:: AbstractString)
 
 * `task :: MSKtask`. An optimization task.
-* `server :: String`. Name or IP address of the solver server.
-* `port :: String`. Network port of the solver server.
+* `addr :: String`. Address of the OptServer.
+* `accesstoken :: String`. Access token.
 * `trmcode :: Rescode`. Is either OK or a termination response code.
 
-Offload the optimization task to a solver server
-defined by `server:port`. The call will block until a result is
+Offload the optimization task to an instance of OptServer specified by `addr`, which should be a valid URL,
+for example `http://server:port` or `https://server:port`. The call will block until a result is
 available or the connection closes.
 
-If the string parameter :msk:sparam:`remote_access_token` is not blank, it will be passed to the server as authentication.
+If the server requires authentication, the authentication token can be passed in the `accesstoken` argument.
+
+If the server requires encryption, the keys can be passed using one of the solver parameters
+:msk:sparam:`remote_tls_cert` or :msk:sparam:`remote_tls_cert_path`.
 """
 function optimizermt end
-function optimizermt(task_:: MSKtask,server_:: AbstractString,port_:: AbstractString)
-  trmcode_ = Vector{Int32}(undef,1)
+function optimizermt(task_:: MSKtask,addr_:: AbstractString,accesstoken_:: AbstractString)
+  trmcode_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "optimizermt",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ptr{Int32},),task_.task,string(server_),string(port_),trmcode_)
+    @MSK_optimizermt(task_.task,string(addr_),string(accesstoken_),trmcode_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Rescode(trmcode_[1]))
+  (Rescode(trmcode_.x))
 end
 
 """
@@ -5452,7 +10885,7 @@ Prints a short summary with optimizer statistics from last optimization.
 function optimizersummary end
 function optimizersummary(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "optimizersummary",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
+    @MSK_optimizersummary(task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5481,15 +10914,15 @@ selected manually by setting the parameter `MSK_IPAR_OPTIMIZER``.
 """
 function optimize end
 function optimize(task_:: MSKtask)
-  trmcode_ = Vector{Int32}(undef,1)
+  trmcode_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "optimizetrm",Int32,(Ptr{Nothing},Ptr{Int32},),task_.task,trmcode_)
+    @MSK_optimizetrm(task_.task,trmcode_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Rescode(trmcode_[1]))
+  (Rescode(trmcode_.x))
 end
 
 """
@@ -5538,7 +10971,7 @@ function primalrepair(task_:: MSKtask,wlc_:: Vector{Float64},wuc_:: Vector{Float
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "primalrepair",Int32,(Ptr{Nothing},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,wlc_,wuc_,wlx_,wux_)
+    @MSK_primalrepair(task_.task,wlc_,wuc_,wlx_,wux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5602,7 +11035,7 @@ function primalsensitivity(task_:: MSKtask,subi_:: Vector{Int32},marki_:: Vector
   __tmp_var_15 = zeros(Float64,__tmp_var_14)
   rightrangej_ = __tmp_var_15
   res = disable_sigint() do
-    @msk_ccall( "primalsensitivity",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,numi_,subi_ .- Int32(1),marki_,numj_,subj_ .- Int32(1),markj_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9,__tmp_var_11,__tmp_var_13,__tmp_var_15)
+    @MSK_primalsensitivity(task_.task,numi_,subi_ .- Int32(1),marki_,numj_,subj_ .- Int32(1),markj_,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9,__tmp_var_11,__tmp_var_13,__tmp_var_15)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5621,7 +11054,163 @@ Prints the current parameter settings to the message stream.
 function printparam end
 function printparam(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "printparam",Int32,(Ptr{Nothing},),task_.task)
+    @MSK_printparam(task_.task)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putacc{T1,T2,T3,T4}(task:: MSKtask,accidx:: T1,domidx:: T2,afeidxlist:: Vector{T3},b:: Vector{T4})
+    putacc(task_:: MSKtask,accidx_:: Int64,domidx_:: Int64,afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Affine conic constraint index.
+* `domidx :: Int64`. Domain index.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Puts an affine conic constraint. This method overwrites an existing affine conic constraint number `accidx` with new data specified in the same format as in `Mosek.appendacc`.
+"""
+function putacc end
+putacc(task:: MSKtask,accidx:: T1,domidx:: T2,afeidxlist:: Vector{T3},b:: Vector{T4}) where {T1,T2,T3,T4} = putacc(task,convert(Int64,accidx),convert(Int64,domidx),convert(Vector{Int64},afeidxlist),convert(Vector{Float64},b))
+function putacc(task_:: MSKtask,accidx_:: Int64,domidx_:: Int64,afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_putacc(task_.task,accidx_,domidx_-1,numafeidx_,afeidxlist_ .- Int32(1),b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putaccb{T1,T2}(task:: MSKtask,accidx:: T1,b:: Vector{T2})
+    putaccb(task_:: MSKtask,accidx_:: Int64,b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Affine conic constraint index.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Updates an existing affine conic constraint number `accidx` by putting a new vector ``b``.
+"""
+function putaccb end
+putaccb(task:: MSKtask,accidx:: T1,b:: Vector{T2}) where {T1,T2} = putaccb(task,convert(Int64,accidx),convert(Vector{Float64},b))
+function putaccb(task_:: MSKtask,accidx_:: Int64,b_:: Vector{Float64})
+  lengthb_ = minimum([ length(b_) ])
+  res = disable_sigint() do
+    @MSK_putaccb(task_.task,accidx_,lengthb_,b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putaccbj{T1,T2,T3}(task:: MSKtask,accidx:: T1,j:: T2,bj:: T3)
+    putaccbj(task_:: MSKtask,accidx_:: Int64,j_:: Int64,bj_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Affine conic constraint index.
+* `j :: Int64`. The index of an element in b to change.
+* `bj :: Float64`. The new value of b[j].
+
+Sets one value ``b[j]`` in the ``b`` vector for the affine conic constraint number `accidx`.
+"""
+function putaccbj end
+putaccbj(task:: MSKtask,accidx:: T1,j:: T2,bj:: T3) where {T1,T2,T3} = putaccbj(task,convert(Int64,accidx),convert(Int64,j),convert(Float64,bj))
+function putaccbj(task_:: MSKtask,accidx_:: Int64,j_:: Int64,bj_:: Float64)
+  res = disable_sigint() do
+    @MSK_putaccbj(task_.task,accidx_,j_,bj_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    doty = putaccdoty{T2}(task:: MSKtask,whichsol:: Soltype,accidx:: T2)
+    doty = putaccdoty(task_:: MSKtask,whichsol_:: Soltype,accidx_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `accidx :: Int64`. The index of the affine conic constraint.
+* `doty :: Vector{Float64}`. The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
+
+Puts the ``\\dot{y}`` vector for a solution (the dual values of an affine conic constraint).
+"""
+function putaccdoty end
+putaccdoty(task:: MSKtask,whichsol:: Soltype,accidx:: T2) where {T2} = putaccdoty(task,whichsol,convert(Int64,accidx))
+function putaccdoty(task_:: MSKtask,whichsol_:: Soltype,accidx_:: Int64)
+  __tmp_var_0 = begin __tmp_var_putaccdoty_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_putaccdoty_0); __tmp_var_putaccdoty_0.x end
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  doty_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_putaccdoty(task_.task,whichsol_.value,accidx_,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
+end
+
+"""
+    putacclist{T1,T2,T3,T4}(task:: MSKtask,accidxs:: Vector{T1},domidxs:: Vector{T2},afeidxlist:: Vector{T3},b:: Vector{T4})
+    putacclist(task_:: MSKtask,accidxs_:: Vector{Int64},domidxs_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `accidxs :: Vector{Int64}`. Affine conic constraint indices.
+* `domidxs :: Vector{Int64}`. Domain indices.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, can be NULL.
+
+Puts affine conic constraints. This method overwrites existing affine conic constraints whose numbers are provided in the list `accidxs` with new data which is a concatenation of individual constraint descriptions in the same format as in `Mosek.appendacc` (see also `Mosek.appendaccs`).
+"""
+function putacclist end
+putacclist(task:: MSKtask,accidxs:: Vector{T1},domidxs:: Vector{T2},afeidxlist:: Vector{T3},b:: Vector{T4}) where {T1,T2,T3,T4} = putacclist(task,convert(Vector{Int64},accidxs),convert(Vector{Int64},domidxs),convert(Vector{Int64},afeidxlist),convert(Vector{Float64},b))
+function putacclist(task_:: MSKtask,accidxs_:: Vector{Int64},domidxs_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
+  numaccs_ = minimum([ length(domidxs_),length(accidxs_) ])
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_putacclist(task_.task,numaccs_,accidxs_,domidxs_,numafeidx_,afeidxlist_ .- Int32(1),b_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putaccname{T1}(task:: MSKtask,accidx:: T1,name:: AbstractString)
+    putaccname(task_:: MSKtask,accidx_:: Int64,name_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `accidx :: Int64`. Index of the affine conic constraint.
+* `name :: String`. The name of the affine conic constraint.
+
+Sets the name of an affine conic constraint.
+"""
+function putaccname end
+putaccname(task:: MSKtask,accidx:: T1,name:: AbstractString) where {T1} = putaccname(task,convert(Int64,accidx),name)
+function putaccname(task_:: MSKtask,accidx_:: Int64,name_:: AbstractString)
+  res = disable_sigint() do
+    @MSK_putaccname(task_.task,accidx_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5650,7 +11239,7 @@ putacol(task:: MSKtask,j:: T1,subj:: Vector{T2},valj:: Vector{T3}) where {T1,T2,
 function putacol(task_:: MSKtask,j_:: Int32,subj_:: Vector{Int32},valj_:: Vector{Float64})
   nzj_ = minimum([ length(subj_),length(valj_) ])
   res = disable_sigint() do
-    @msk_ccall( "putacol",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,j_-1,nzj_,subj_ .- Int32(1),valj_)
+    @MSK_putacol(task_.task,j_-1,nzj_,subj_ .- Int32(1),valj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5693,7 +11282,7 @@ end
 function putacollist(task_:: MSKtask,sub_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},asub_:: Vector{Int32},aval_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(ptrb_),length(ptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "putacollist64",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @MSK_putacollist64(task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5736,12 +11325,384 @@ function putacolslice(task:: MSKtask,first:: T1,last:: T2,A:: SparseMatrixCSC{Fl
 end
 function putacolslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Vector{Int64},ptre_:: Vector{Int64},asub_:: Vector{Int32},aval_:: Vector{Float64})
   res = disable_sigint() do
-    @msk_ccall( "putacolslice64",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @MSK_putacolslice64(task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
+end
+
+"""
+    putafebarfblocktriplet{T1,T2,T3,T4,T5,T6}(task:: MSKtask,num:: T1,afeidx:: Vector{T2},barvaridx:: Vector{T3},subk:: Vector{T4},subl:: Vector{T5},valkl:: Vector{T6})
+    putafebarfblocktriplet(task_:: MSKtask,num_:: Int64,afeidx_:: Vector{Int64},barvaridx_:: Vector{Int32},subk_:: Vector{Int32},subl_:: Vector{Int32},valkl_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `num :: Int64`. Number of elements in the block triplet form.
+* `afeidx :: Vector{Int64}`. Constraint index.
+* `barvaridx :: Vector{Int32}`. Symmetric matrix variable index.
+* `subk :: Vector{Int32}`. Block row index.
+* `subl :: Vector{Int32}`. Block column index.
+* `valkl :: Vector{Float64}`. The numerical value associated with each block triplet.
+
+Inputs the ``\\barF`` matrix data in block triplet form.
+"""
+function putafebarfblocktriplet end
+putafebarfblocktriplet(task:: MSKtask,num:: T1,afeidx:: Vector{T2},barvaridx:: Vector{T3},subk:: Vector{T4},subl:: Vector{T5},valkl:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putafebarfblocktriplet(task,convert(Int64,num),convert(Vector{Int64},afeidx),convert(Vector{Int32},barvaridx),convert(Vector{Int32},subk),convert(Vector{Int32},subl),convert(Vector{Float64},valkl))
+function putafebarfblocktriplet(task_:: MSKtask,num_:: Int64,afeidx_:: Vector{Int64},barvaridx_:: Vector{Int32},subk_:: Vector{Int32},subl_:: Vector{Int32},valkl_:: Vector{Float64})
+  __tmp_var_0 = (num_)
+  if length(afeidx_) < __tmp_var_0
+    println("Array argument afeidx is not long enough")
+    throw(BoundsError())
+  end
+  __tmp_var_1 = (num_)
+  if length(barvaridx_) < __tmp_var_1
+    println("Array argument barvaridx is not long enough")
+    throw(BoundsError())
+  end
+  __tmp_var_2 = (num_)
+  if length(subk_) < __tmp_var_2
+    println("Array argument subk is not long enough")
+    throw(BoundsError())
+  end
+  __tmp_var_3 = (num_)
+  if length(subl_) < __tmp_var_3
+    println("Array argument subl is not long enough")
+    throw(BoundsError())
+  end
+  __tmp_var_4 = (num_)
+  if length(valkl_) < __tmp_var_4
+    println("Array argument valkl is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_putafebarfblocktriplet(task_.task,num_,afeidx_ .- Int32(1),barvaridx_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valkl_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafebarfentry{T1,T2,T3,T4}(task:: MSKtask,afeidx:: T1,barvaridx:: T2,termidx:: Vector{T3},termweight:: Vector{T4})
+    putafebarfentry(task_:: MSKtask,afeidx_:: Int64,barvaridx_:: Int32,termidx_:: Vector{Int64},termweight_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index of barF.
+* `barvaridx :: Int32`. Semidefinite variable index.
+* `termidx :: Vector{Int64}`. Element indices in matrix storage.
+* `termweight :: Vector{Float64}`. Weights in the weighted sum.
+
+This function sets one entry ``\\barF_{ij}`` where ``i=\\mathrm{afeidx}`` is the row index in the store of
+affine expressions and ``j=\\mathrm{barvaridx}`` is the index of a symmetric variable. That is, the expression
+
+```math
+\\langle \\barF_{ij}, \\bar X_j\\rangle
+```
+will be added to the ``i``-th affine expression.
+
+The matrix ``\\barF_{ij}`` is specified as a weighted sum of
+symmetric matrices from the symmetric matrix storage ``E``, so
+``\\barF_{ij}`` is a symmetric matrix, precisely:
+
+```math
+\\barF_{\\mathrm{afeidx},\\mathrm{barvaridx}} = \\sum_{k} \\mathrm{termweight}[k] \\cdot E_{\\mathrm{termidx}[k]}.
+```
+By default all elements in
+``\\barF`` are 0, so only non-zero elements need be added.
+Setting the same entry again will overwrite the earlier entry.
+
+The symmetric matrices from ``E`` are defined separately
+using the function `Mosek.appendsparsesymmat`.
+"""
+function putafebarfentry end
+putafebarfentry(task:: MSKtask,afeidx:: T1,barvaridx:: T2,termidx:: Vector{T3},termweight:: Vector{T4}) where {T1,T2,T3,T4} = putafebarfentry(task,convert(Int64,afeidx),convert(Int32,barvaridx),convert(Vector{Int64},termidx),convert(Vector{Float64},termweight))
+function putafebarfentry(task_:: MSKtask,afeidx_:: Int64,barvaridx_:: Int32,termidx_:: Vector{Int64},termweight_:: Vector{Float64})
+  numterms_ = minimum([ length(termidx_),length(termweight_) ])
+  res = disable_sigint() do
+    @MSK_putafebarfentry(task_.task,afeidx_-1,barvaridx_-1,numterms_,termidx_ .- Int32(1),termweight_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafebarfentrylist{T1,T2,T3,T4,T5,T6}(task:: MSKtask,afeidxlist:: Vector{T1},barvaridxlist:: Vector{T2},numtermslist:: Vector{T3},ptrtermslist:: Vector{T4},termidx:: Vector{T5},termweight:: Vector{T6})
+    putafebarfentrylist(task_:: MSKtask,afeidxlist_:: Vector{Int64},barvaridxlist_:: Vector{Int32},numtermslist_:: Vector{Int64},ptrtermslist_:: Vector{Int64},termidx_:: Vector{Int64},termweight_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidxlist :: Vector{Int64}`. Row indexes of barF.
+* `barvaridxlist :: Vector{Int32}`. Semidefinite variable indexes.
+* `numtermslist :: Vector{Int64}`. Number of terms in the weighted sums.
+* `ptrtermslist :: Vector{Int64}`. Pointer to the terms forming each entry.
+* `termidx :: Vector{Int64}`. Concatenated element indexes in matrix storage.
+* `termweight :: Vector{Float64}`. Concatenated weights in the weighted sum.
+
+This function sets a list of entries in ``\\barF``. Each entry should be described as in `Mosek.putafebarfentry`
+and all those descriptions should be concatenated in the input to this method. That means the ``k``-th entry set will
+have row index `afeidxlist[k]`, symmetric variable index `barvaridx[k]` and the description of this term consists of
+indices in ``E`` and weights appearing in positions
+
+```math
+\\mathrm{ptrtermlists}[k],\\ldots,\\mathrm{ptrtermlists}[k] + \\mathrm{numtermslist}[k] - 1
+```
+in the corresponding arrays `termidx` and `termweight`. See `Mosek.putafebarfentry` for details.
+"""
+function putafebarfentrylist end
+putafebarfentrylist(task:: MSKtask,afeidxlist:: Vector{T1},barvaridxlist:: Vector{T2},numtermslist:: Vector{T3},ptrtermslist:: Vector{T4},termidx:: Vector{T5},termweight:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putafebarfentrylist(task,convert(Vector{Int64},afeidxlist),convert(Vector{Int32},barvaridxlist),convert(Vector{Int64},numtermslist),convert(Vector{Int64},ptrtermslist),convert(Vector{Int64},termidx),convert(Vector{Float64},termweight))
+function putafebarfentrylist(task_:: MSKtask,afeidxlist_:: Vector{Int64},barvaridxlist_:: Vector{Int32},numtermslist_:: Vector{Int64},ptrtermslist_:: Vector{Int64},termidx_:: Vector{Int64},termweight_:: Vector{Float64})
+  lenlist_ = minimum([ length(afeidxlist_),length(barvaridxlist_),length(numtermslist_),length(ptrtermslist_) ])
+  lenterms_ = minimum([ length(termidx_),length(termweight_) ])
+  res = disable_sigint() do
+    @MSK_putafebarfentrylist(task_.task,lenlist_-1,afeidxlist_ .- Int32(1),barvaridxlist_ .- Int32(1),numtermslist_ .- Int32(1),ptrtermslist_,lenterms_-1,termidx_ .- Int32(1),termweight_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafebarfrow{T1,T2,T3,T4,T5,T6}(task:: MSKtask,afeidx:: T1,barvaridxlist:: Vector{T2},numtermlist:: Vector{T3},ptrtermlist:: Vector{T4},termidx:: Vector{T5},termweight:: Vector{T6})
+    putafebarfrow(task_:: MSKtask,afeidx_:: Int64,barvaridxlist_:: Vector{Int32},numtermlist_:: Vector{Int64},ptrtermlist_:: Vector{Int64},termidx_:: Vector{Int64},termweight_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index of barF.
+* `barvaridxlist :: Vector{Int32}`. Semidefinite variable indexes.
+* `numtermlist :: Vector{Int64}`. Number of terms in the weighted sums.
+* `ptrtermlist :: Vector{Int64}`. Pointer to the terms forming each entry.
+* `termidx :: Vector{Int64}`. Concatenated element indexes in matrix storage.
+* `termweight :: Vector{Float64}`. Concatenated weights in the weighted sum.
+
+This function inputs one row in ``\\barF``. It first clears the row, i.e. sets ``\\barF_{\\mathrm{afeidx},*}=0`` and then sets the new entries. Each entry should be described as in `Mosek.putafebarfentry` and all those descriptions should be concatenated in the input to this method. That means the ``k``-th entry set will
+have row index `afeidx`, symmetric variable index `barvaridx[k]` and the description of this term consists of
+indices in ``E`` and weights appearing in positions
+
+```math
+\\mathrm{ptrtermlist}[k],\\ldots,\\mathrm{ptrtermlist}[k] + \\mathrm{numtermlist}[k] - 1
+```
+in the corresponding arrays `termidx` and `termweight`. See `Mosek.putafebarfentry` for details.
+"""
+function putafebarfrow end
+putafebarfrow(task:: MSKtask,afeidx:: T1,barvaridxlist:: Vector{T2},numtermlist:: Vector{T3},ptrtermlist:: Vector{T4},termidx:: Vector{T5},termweight:: Vector{T6}) where {T1,T2,T3,T4,T5,T6} = putafebarfrow(task,convert(Int64,afeidx),convert(Vector{Int32},barvaridxlist),convert(Vector{Int64},numtermlist),convert(Vector{Int64},ptrtermlist),convert(Vector{Int64},termidx),convert(Vector{Float64},termweight))
+function putafebarfrow(task_:: MSKtask,afeidx_:: Int64,barvaridxlist_:: Vector{Int32},numtermlist_:: Vector{Int64},ptrtermlist_:: Vector{Int64},termidx_:: Vector{Int64},termweight_:: Vector{Float64})
+  lenterms_ = minimum([ length(termidx_),length(termweight_) ])
+  numentries_ = minimum([ length(barvaridxlist_),length(numtermlist_),length(ptrtermlist_) ])
+  res = disable_sigint() do
+    @MSK_putafebarfrow(task_.task,afeidx_-1,numentries_,barvaridxlist_ .- Int32(1),numtermlist_,ptrtermlist_,lenterms_,termidx_ .- Int32(1),termweight_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafefentry{T1,T2,T3}(task:: MSKtask,afeidx:: T1,j:: T2,value:: T3)
+    putafefentry(task_:: MSKtask,afeidx_:: Int64,j_:: Int32,value_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index in F.
+* `j :: Int32`. Column index in F.
+* `value :: Float64`. Value of the entry.
+
+Replaces one entry in the affine expression store ``F``, that is it sets:
+
+```math
+ F_{\\mathrm{afeidx}, j} = \\mathrm{value}.
+```
+
+"""
+function putafefentry end
+putafefentry(task:: MSKtask,afeidx:: T1,j:: T2,value:: T3) where {T1,T2,T3} = putafefentry(task,convert(Int64,afeidx),convert(Int32,j),convert(Float64,value))
+function putafefentry(task_:: MSKtask,afeidx_:: Int64,j_:: Int32,value_:: Float64)
+  res = disable_sigint() do
+    @MSK_putafefentry(task_.task,afeidx_-1,j_-1,value_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafefentrylist{T1,T2,T3}(task:: MSKtask,afeidx:: Vector{T1},j:: Vector{T2},value:: Vector{T3})
+    putafefentrylist(task_:: MSKtask,afeidx_:: Vector{Int64},j_:: Vector{Int32},value_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Vector{Int64}`. Row indices in F.
+* `j :: Vector{Int32}`. Column indices in F.
+* `value :: Vector{Float64}`. Values of the entries in F.
+
+Replaces a number of entries in the affine expression store ``F``, that is it sets:
+
+```math
+ F_{\\mathrm{afeidxs}[k], j[k]} = \\mathrm{value}[k]
+```
+for all ``k``.
+"""
+function putafefentrylist end
+putafefentrylist(task:: MSKtask,afeidx:: Vector{T1},j:: Vector{T2},value:: Vector{T3}) where {T1,T2,T3} = putafefentrylist(task,convert(Vector{Int64},afeidx),convert(Vector{Int32},j),convert(Vector{Float64},value))
+function putafefentrylist(task_:: MSKtask,afeidx_:: Vector{Int64},j_:: Vector{Int32},value_:: Vector{Float64})
+  numentries_ = minimum([ length(afeidx_),length(j_),length(value_) ])
+  res = disable_sigint() do
+    @MSK_putafefentrylist(task_.task,numentries_,afeidx_ .- Int32(1),j_ .- Int32(1),value_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafefrow{T1,T2,T3}(task:: MSKtask,afeidx:: T1,subi:: Vector{T2},vali:: Vector{T3})
+    putafefrow(task_:: MSKtask,afeidx_:: Int64,subi_:: Vector{Int32},vali_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index.
+* `subi :: Vector{Int32}`. Column indexes of non-zero values in the row.
+* `vali :: Vector{Float64}`. New non-zero values in the row.
+
+Change one row of the matrix ``F`` of affine expressions. Resets all the elements in row `afeidx` to zero and then sets
+
+```math
+ F_{\\mathtt{afeidx},\\mathtt{subi}[k]} = \\mathtt{vali}[k], \\mathcal{C}_q k=0,\\ldots,\\mathtt{nzi}-1.
+```
+
+"""
+function putafefrow end
+putafefrow(task:: MSKtask,afeidx:: T1,subi:: Vector{T2},vali:: Vector{T3}) where {T1,T2,T3} = putafefrow(task,convert(Int64,afeidx),convert(Vector{Int32},subi),convert(Vector{Float64},vali))
+function putafefrow(task_:: MSKtask,afeidx_:: Int64,subi_:: Vector{Int32},vali_:: Vector{Float64})
+  nzi_ = minimum([ length(subi_),length(vali_) ])
+  res = disable_sigint() do
+    @MSK_putafefrow(task_.task,afeidx_-1,nzi_,subi_ .- Int32(1),vali_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafefrowlist{T1,T2,T3,T4,T5}(task:: MSKtask,afeidxlist:: Vector{T1},nzrow:: Vector{T2},ptrrow:: Vector{T3},idxrow:: Vector{T4},valrow:: Vector{T5})
+    putafefrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64},nzrow_:: Vector{Int32},ptrrow_:: Vector{Int64},idxrow_:: Vector{Int32},valrow_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidxlist :: Vector{Int64}`. Row indices.
+* `nzrow :: Vector{Int32}`. Number of non-zeros in each row.
+* `ptrrow :: Vector{Int64}`. Pointer to the first nonzero in each row.
+* `idxrow :: Vector{Int32}`. Column indexes of non-zero values.
+* `valrow :: Vector{Float64}`. New non-zero values in the rows.
+
+Clears and then changes a number of rows of the matrix ``F`` of affine expressions. The ``k``-th of the rows to be changed has index ``i = \\mathrm{afeidxlist}[k]``, contains ``\\mathrm{numrow}[k]`` nonzeros and its description as in `Mosek.putafefrow` starts in position ``\\mathrm{ptrrow}[k]`` of the arrays `idxrow` and `valrow`. Formally, the row with index ``i`` is cleared and then set as:
+
+```math
+ F_{i,\\mathrm{idxrow}[\\mathrm{ptrrow}[k]+j]} = \\mathrm{valrow}[\\mathrm{ptrrow}[k] + j], \\mathcal{C}_q j=0,\\ldots,\\mathrm{nzrow}[k]-1.
+```
+
+"""
+function putafefrowlist end
+putafefrowlist(task:: MSKtask,afeidxlist:: Vector{T1},nzrow:: Vector{T2},ptrrow:: Vector{T3},idxrow:: Vector{T4},valrow:: Vector{T5}) where {T1,T2,T3,T4,T5} = putafefrowlist(task,convert(Vector{Int64},afeidxlist),convert(Vector{Int32},nzrow),convert(Vector{Int64},ptrrow),convert(Vector{Int32},idxrow),convert(Vector{Float64},valrow))
+function putafefrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64},nzrow_:: Vector{Int32},ptrrow_:: Vector{Int64},idxrow_:: Vector{Int32},valrow_:: Vector{Float64})
+  lenidxval_ = minimum([ length(idxrow_),length(valrow_) ])
+  numafeidx_ = minimum([ length(afeidxlist_),length(nzrow_),length(ptrrow_) ])
+  res = disable_sigint() do
+    @MSK_putafefrowlist(task_.task,numafeidx_,afeidxlist_ .- Int32(1),nzrow_,ptrrow_,lenidxval_,idxrow_ .- Int32(1),valrow_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafeg{T1,T2}(task:: MSKtask,afeidx:: T1,gi:: T2)
+    putafeg(task_:: MSKtask,afeidx_:: Int64,gi_:: Float64)
+
+* `task :: MSKtask`. An optimization task.
+* `afeidx :: Int64`. Row index.
+* `gi :: Float64`. New value for the element of g.
+
+Change one element of the vector ``g`` in affine expressions i.e.
+
+```math
+ g_{\\mathtt{afeidx}} = \\mathtt{gi}.
+```
+
+"""
+function putafeg end
+putafeg(task:: MSKtask,afeidx:: T1,gi:: T2) where {T1,T2} = putafeg(task,convert(Int64,afeidx),convert(Float64,gi))
+function putafeg(task_:: MSKtask,afeidx_:: Int64,gi_:: Float64)
+  res = disable_sigint() do
+    @MSK_putafeg(task_.task,afeidx_-1,gi_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putafeglist{T1,T2}(task:: MSKtask,afeidxlist:: Vector{T1},glist:: Vector{T2})
+    putafeglist(task_:: MSKtask,afeidxlist_:: Vector{Int64},glist_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `afeidxlist :: Vector{Int64}`. Indices of entries in g.
+* `glist :: Vector{Float64}`. New values for the elements of g.
+
+Changes a list of elements of the vector ``g`` in affine expressions i.e. for all ``k`` it sets
+
+```math
+ g_{\\mathrm{afeidx}[k]} = \\mathrm{glist}[k].
+```
+
+"""
+function putafeglist end
+putafeglist(task:: MSKtask,afeidxlist:: Vector{T1},glist:: Vector{T2}) where {T1,T2} = putafeglist(task,convert(Vector{Int64},afeidxlist),convert(Vector{Float64},glist))
+function putafeglist(task_:: MSKtask,afeidxlist_:: Vector{Int64},glist_:: Vector{Float64})
+  numafeidx_ = minimum([ length(afeidxlist_),length(glist_) ])
+  res = disable_sigint() do
+    @MSK_putafeglist(task_.task,numafeidx_,afeidxlist_ .- Int32(1),glist_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    slice = putafegslice{T1,T2}(task:: MSKtask,first:: T1,last:: T2)
+    slice = putafegslice(task_:: MSKtask,first_:: Int64,last_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `first :: Int64`. First index in the sequence.
+* `last :: Int64`. Last index plus 1 in the sequence.
+* `slice :: Vector{Float64}`. The slice of g as a dense vector.
+
+Modifies a slice in the vector ``g`` of constant terms in affine expressions using the principle
+
+```math
+ g_{\\mathtt{j}} = \\mathtt{slice[j-first]}, \\mathcal{C}_q j=\\mathrm{first},..,+1{\\mathrm{last}}
+```
+
+"""
+function putafegslice end
+putafegslice(task:: MSKtask,first:: T1,last:: T2) where {T1,T2} = putafegslice(task,convert(Int64,first),convert(Int64,last))
+function putafegslice(task_:: MSKtask,first_:: Int64,last_:: Int64)
+  __tmp_var_0 = ((last_) - (first_))
+  __tmp_var_1 = zeros(Float64,__tmp_var_0)
+  slice_ = __tmp_var_1
+  res = disable_sigint() do
+    @MSK_putafegslice(task_.task,first_-1,last_-1,__tmp_var_1)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+  (__tmp_var_1)
 end
 
 """
@@ -5764,7 +11725,7 @@ function putaij end
 putaij(task:: MSKtask,i:: T1,j:: T2,aij:: T3) where {T1,T2,T3} = putaij(task,convert(Int32,i),convert(Int32,j),convert(Float64,aij))
 function putaij(task_:: MSKtask,i_:: Int32,j_:: Int32,aij_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putaij",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,j_-1,aij_)
+    @MSK_putaij(task_.task,i_-1,j_-1,aij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5793,7 +11754,7 @@ putaijlist(task:: MSKtask,subi:: Vector{T1},subj:: Vector{T2},valij:: Vector{T3}
 function putaijlist(task_:: MSKtask,subi_:: Vector{Int32},subj_:: Vector{Int32},valij_:: Vector{Float64})
   num_ = minimum([ length(subi_),length(subj_),length(valij_) ])
   res = disable_sigint() do
-    @msk_ccall( "putaijlist64",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),valij_)
+    @MSK_putaijlist64(task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),valij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5822,7 +11783,7 @@ putarow(task:: MSKtask,i:: T1,subi:: Vector{T2},vali:: Vector{T3}) where {T1,T2,
 function putarow(task_:: MSKtask,i_:: Int32,subi_:: Vector{Int32},vali_:: Vector{Float64})
   nzi_ = minimum([ length(subi_),length(vali_) ])
   res = disable_sigint() do
-    @msk_ccall( "putarow",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},),task_.task,i_-1,nzi_,subi_ .- Int32(1),vali_)
+    @MSK_putarow(task_.task,i_-1,nzi_,subi_ .- Int32(1),vali_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5865,7 +11826,7 @@ end
 function putarowlist(task_:: MSKtask,sub_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},asub_:: Vector{Int32},aval_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(ptrb_),length(ptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "putarowlist64",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @MSK_putarowlist64(task_.task,num_,sub_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5887,7 +11848,7 @@ end
 * `aval :: Vector{Float64}`. Coefficient values.
 * `At :: SparseMatrixCSC{Float64}`. Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
 
-Change a slice of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested columns are set to zero and then updated with:
+Change a slice of rows in the linear constraint matrix ``A`` with data in sparse triplet format. The requested rows are set to zero and then updated with:
 
 ```math
 \\begin{array}{rl}
@@ -5918,7 +11879,7 @@ function putarowslice(task_:: MSKtask,first_:: Int32,last_:: Int32,ptrb_:: Vecto
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putarowslice64",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Float64},),task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
+    @MSK_putarowslice64(task_.task,first_-1,last_-1,ptrb_ .- Int32(1),ptre_ .- Int32(1),asub_ .- Int32(1),aval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5944,7 +11905,7 @@ function putatruncatetol end
 putatruncatetol(task:: MSKtask,tolzero:: T1) where {T1} = putatruncatetol(task,convert(Float64,tolzero))
 function putatruncatetol(task_:: MSKtask,tolzero_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putatruncatetol",Int32,(Ptr{Nothing},Float64,),task_.task,tolzero_)
+    @MSK_putatruncatetol(task_.task,tolzero_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5995,7 +11956,7 @@ function putbarablocktriplet(task_:: MSKtask,num_:: Int64,subi_:: Vector{Int32},
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarablocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valijkl_)
+    @MSK_putbarablocktriplet(task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valijkl_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6029,7 +11990,7 @@ putbaraij(task:: MSKtask,i:: T1,j:: T2,sub:: Vector{T3},weights:: Vector{T4}) wh
 function putbaraij(task_:: MSKtask,i_:: Int32,j_:: Int32,sub_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(weights_) ])
   res = disable_sigint() do
-    @msk_ccall( "putbaraij",Int32,(Ptr{Nothing},Int32,Int32,Int64,Ptr{Int64},Ptr{Float64},),task_.task,i_-1,j_-1,num_,sub_ .- Int32(1),weights_)
+    @MSK_putbaraij(task_.task,i_-1,j_-1,num_,sub_ .- Int32(1),weights_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6074,7 +12035,7 @@ end
 function putbaraijlist(task_:: MSKtask,subi_:: Vector{Int32},subj_:: Vector{Int32},alphaptrb_:: Vector{Int64},alphaptre_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(subi_),length(subj_),length(alphaptrb_),length(alphaptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "putbaraijlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,num_-1,subi_ .- Int32(1),subj_ .- Int32(1),alphaptrb_,alphaptre_,matidx_ .- Int32(1),weights_)
+    @MSK_putbaraijlist(task_.task,num_-1,subi_ .- Int32(1),subj_ .- Int32(1),alphaptrb_,alphaptre_,matidx_ .- Int32(1),weights_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6084,7 +12045,7 @@ end
 
 """
     putbararowlist{T1,T2,T3,T4,T5,T6,T7}(task:: MSKtask,subi:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},subj:: Vector{T4},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7})
-    putbararowlist{T1,T5,T6,T7}(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7})
+    putbararowlist{T1,T6,T7}(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},matidx:: Vector{T6},weights:: Vector{T7})
     putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},subj_:: Vector{Int32},nummat_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
 
 * `task :: MSKtask`. An optimization task.
@@ -6101,11 +12062,11 @@ This function replaces a list of rows in the ``\\bar A`` matrix.
 """
 function putbararowlist end
 putbararowlist(task:: MSKtask,subi:: Vector{T1},ptrb:: Vector{T2},ptre:: Vector{T3},subj:: Vector{T4},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T2,T3,T4,T5,T6,T7} = putbararowlist(task,convert(Vector{Int32},subi),convert(Vector{Int64},ptrb),convert(Vector{Int64},ptre),convert(Vector{Int32},subj),convert(Vector{Int64},nummat),convert(Vector{Int64},matidx),convert(Vector{Float64},weights))
-function putbararowlist(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},nummat:: Vector{T5},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T5,T6,T7}
+function putbararowlist(task:: MSKtask,subi:: Vector{T1},A:: SparseMatrixCSC{Float64},matidx:: Vector{T6},weights:: Vector{T7}) where {T1,T6,T7}
   ptrb = A.colptr[1:size(A,2)]
   ptre = A.colptr[2:size(A,2)+1]
   subj = A.rowval
-  val = A.nzval
+  nummat = A.nzval
   putbararowlist(task,subi,ptrb,ptre,subj,nummat,matidx,weights)
 end
 function putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int64},ptre_:: Vector{Int64},subj_:: Vector{Int32},nummat_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
@@ -6126,7 +12087,7 @@ function putbararowlist(task_:: MSKtask,subi_:: Vector{Int32},ptrb_:: Vector{Int
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbararowlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,num_-1,subi_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),subj_ .- Int32(1),nummat_ .- Int32(1),matidx_ .- Int32(1),weights_ .- Int32(1))
+    @MSK_putbararowlist(task_.task,num_-1,subi_ .- Int32(1),ptrb_ .- Int32(1),ptre_ .- Int32(1),subj_ .- Int32(1),nummat_ .- Int32(1),matidx_ .- Int32(1),weights_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6171,7 +12132,7 @@ function putbarcblocktriplet(task_:: MSKtask,num_:: Int64,subj_:: Vector{Int32},
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarcblocktriplet",Int32,(Ptr{Nothing},Int64,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valjkl_)
+    @MSK_putbarcblocktriplet(task_.task,num_,subj_ .- Int32(1),subk_ .- Int32(1),subl_ .- Int32(1),valjkl_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6204,7 +12165,7 @@ putbarcj(task:: MSKtask,j:: T1,sub:: Vector{T2},weights:: Vector{T3}) where {T1,
 function putbarcj(task_:: MSKtask,j_:: Int32,sub_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(sub_),length(weights_) ])
   res = disable_sigint() do
-    @msk_ccall( "putbarcj",Int32,(Ptr{Nothing},Int32,Int64,Ptr{Int64},Ptr{Float64},),task_.task,j_-1,num_,sub_ .- Int32(1),weights_)
+    @MSK_putbarcj(task_.task,j_-1,num_,sub_ .- Int32(1),weights_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6232,7 +12193,7 @@ function putbarsj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32,barsj_:: Vector
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarsj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,barsj_)
+    @MSK_putbarsj(task_.task,whichsol_.value,j_-1,barsj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6254,7 +12215,7 @@ function putbarvarname end
 putbarvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putbarvarname(task,convert(Int32,j),name)
 function putbarvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putbarvarname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
+    @MSK_putbarvarname(task_.task,j_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6282,7 +12243,7 @@ function putbarxj(task_:: MSKtask,whichsol_:: Soltype,j_:: Int32,barxj_:: Vector
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putbarxj",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,j_-1,barxj_)
+    @MSK_putbarxj(task_.task,whichsol_.value,j_-1,barxj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6303,7 +12264,7 @@ function putcfix end
 putcfix(task:: MSKtask,cfix:: T1) where {T1} = putcfix(task,convert(Float64,cfix))
 function putcfix(task_:: MSKtask,cfix_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putcfix",Int32,(Ptr{Nothing},Float64,),task_.task,cfix_)
+    @MSK_putcfix(task_.task,cfix_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6330,7 +12291,7 @@ function putcj end
 putcj(task:: MSKtask,j:: T1,cj:: T2) where {T1,T2} = putcj(task,convert(Int32,j),convert(Float64,cj))
 function putcj(task_:: MSKtask,j_:: Int32,cj_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putcj",Int32,(Ptr{Nothing},Int32,Float64,),task_.task,j_-1,cj_)
+    @MSK_putcj(task_.task,j_-1,cj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6358,7 +12319,7 @@ putclist(task:: MSKtask,subj:: Vector{T1},val:: Vector{T2}) where {T1,T2} = putc
 function putclist(task_:: MSKtask,subj_:: Vector{Int32},val_:: Vector{Float64})
   num_ = minimum([ length(subj_),length(val_) ])
   res = disable_sigint() do
-    @msk_ccall( "putclist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Float64},),task_.task,num_,subj_ .- Int32(1),val_)
+    @MSK_putclist(task_.task,num_,subj_ .- Int32(1),val_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6385,7 +12346,7 @@ function putconbound end
 putconbound(task:: MSKtask,i:: T1,bkc:: Boundkey,blc:: T3,buc:: T4) where {T1,T3,T4} = putconbound(task,convert(Int32,i),bkc,convert(Float64,blc),convert(Float64,buc))
 function putconbound(task_:: MSKtask,i_:: Int32,bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putconbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,i_-1,bkc_.value,blc_,buc_)
+    @MSK_putconbound(task_.task,i_-1,bkc_.value,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6411,7 +12372,7 @@ function putconboundlist(task_:: MSKtask,sub_:: Vector{Int32},bkc_:: Vector{Boun
   bkc_i32 = Int32[item.value for item in bkc_]
   num_ = minimum([ length(sub_),length(bkc_),length(blc_),length(buc_) ])
   res = disable_sigint() do
-    @msk_ccall( "putconboundlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bkc_,blc_,buc_)
+    @MSK_putconboundlist(task_.task,num_,sub_ .- Int32(1),bkc_,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6436,7 +12397,7 @@ putconboundlistconst(task:: MSKtask,sub:: Vector{T1},bkc:: Boundkey,blc:: T3,buc
 function putconboundlistconst(task_:: MSKtask,sub_:: Vector{Int32},bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
   num_ = minimum([ length(sub_) ])
   res = disable_sigint() do
-    @msk_ccall( "putconboundlistconst",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Int32,Float64,Float64,),task_.task,num_,sub_ .- Int32(1),bkc_.value,blc_,buc_)
+    @MSK_putconboundlistconst(task_.task,num_,sub_ .- Int32(1),bkc_.value,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6477,7 +12438,7 @@ function putconboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bkc_:: Ve
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putconboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bkc_,blc_,buc_)
+    @MSK_putconboundslice(task_.task,first_-1,last_-1,bkc_,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6502,7 +12463,7 @@ function putconboundsliceconst end
 putconboundsliceconst(task:: MSKtask,first:: T1,last:: T2,bkc:: Boundkey,blc:: T4,buc:: T5) where {T1,T2,T4,T5} = putconboundsliceconst(task,convert(Int32,first),convert(Int32,last),bkc,convert(Float64,blc),convert(Float64,buc))
 function putconboundsliceconst(task_:: MSKtask,first_:: Int32,last_:: Int32,bkc_:: Boundkey,blc_:: Float64,buc_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putconboundsliceconst",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,),task_.task,first_-1,last_-1,bkc_.value,blc_,buc_)
+    @MSK_putconboundsliceconst(task_.task,first_-1,last_-1,bkc_.value,blc_,buc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6520,14 +12481,14 @@ end
 * `conepar :: Float64`. For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
 * `submem :: Vector{Int32}`. Variable subscripts of the members in the cone.
 
-Replaces a conic constraint.
+Deprecated in MOSEK 10
 """
 function putcone end
 putcone(task:: MSKtask,k:: T1,ct:: Conetype,conepar:: T3,submem:: Vector{T4}) where {T1,T3,T4} = putcone(task,convert(Int32,k),ct,convert(Float64,conepar),convert(Vector{Int32},submem))
 function putcone(task_:: MSKtask,k_:: Int32,ct_:: Conetype,conepar_:: Float64,submem_:: Vector{Int32})
   nummem_ = minimum([ length(submem_) ])
   res = disable_sigint() do
-    @msk_ccall( "putcone",Int32,(Ptr{Nothing},Int32,Int32,Float64,Int32,Ptr{Int32},),task_.task,k_-1,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
+    @MSK_putcone(task_.task,k_-1,ct_.value,conepar_,nummem_,submem_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6543,13 +12504,13 @@ end
 * `j :: Int32`. Index of the cone.
 * `name :: String`. The name of the cone.
 
-Sets the name of a cone.
+Deprecated in MOSEK 10
 """
 function putconename end
 putconename(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putconename(task,convert(Int32,j),name)
 function putconename(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putconename",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
+    @MSK_putconename(task_.task,j_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6571,7 +12532,7 @@ function putconname end
 putconname(task:: MSKtask,i:: T1,name:: AbstractString) where {T1} = putconname(task,convert(Int32,i),name)
 function putconname(task_:: MSKtask,i_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putconname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,i_-1,string(name_))
+    @MSK_putconname(task_.task,i_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6597,7 +12558,7 @@ function putconsolutioni end
 putconsolutioni(task:: MSKtask,i:: T1,whichsol:: Soltype,sk:: Stakey,x:: T4,sl:: T5,su:: T6) where {T1,T4,T5,T6} = putconsolutioni(task,convert(Int32,i),whichsol,sk,convert(Float64,x),convert(Float64,sl),convert(Float64,su))
 function putconsolutioni(task_:: MSKtask,i_:: Int32,whichsol_:: Soltype,sk_:: Stakey,x_:: Float64,sl_:: Float64,su_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putconsolutioni",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,Float64,),task_.task,i_-1,whichsol_.value,sk_.value,x_,sl_,su_)
+    @MSK_putconsolutioni(task_.task,i_-1,whichsol_.value,sk_.value,x_,sl_,su_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6630,7 +12591,149 @@ function putcslice(task_:: MSKtask,first_:: Int32,last_:: Int32,slice_:: Vector{
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putcslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Float64},),task_.task,first_-1,last_-1,slice_)
+    @MSK_putcslice(task_.task,first_-1,last_-1,slice_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putdjc{T1,T2,T3,T4,T5}(task:: MSKtask,djcidx:: T1,domidxlist:: Vector{T2},afeidxlist:: Vector{T3},b:: Vector{T4},termsizelist:: Vector{T5})
+    putdjc(task_:: MSKtask,djcidx_:: Int64,domidxlist_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64},termsizelist_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of the disjunctive constraint.
+* `domidxlist :: Vector{Int64}`. List of domain indexes.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions.
+* `termsizelist :: Vector{Int64}`. List of term sizes.
+
+Inputs a disjunctive constraint. The constraint has the form
+
+```math
+ T_1\\ \\mathrm{or}\\ T_2\\ \\mathrm{or}\\ \\cdots\\ \\mathrm{or}\\ T_{\\mathrm{numterms}}
+```
+For each ``i=1,\\ldots\\mathrm{numterms}`` the ``i``-th clause (term) ``T_i`` has the form *a sequence of affine expressions belongs to a product of domains*, where the number of domains is ``\\mathrm{termsizelist}[i]`` and the number of affine expressions is equal to the sum of dimensions of all domains appearing in ``T_i``.
+
+All the domains and all the affine expressions appearing in the above description are arranged sequentially in the lists `domidxlist` and `afeidxlist`, respectively. In particular, the length of `domidxlist` must be equal to the sum of elements of `termsizelist`, and the length of `afeidxlist` must be equal to the sum of dimensions of all the domains appearing in `domidxlist`.
+
+The elements of `domidxlist` are indexes of domains previously defined with one of the `append...domain` functions.
+
+The elements of `afeidxlist` are indexes to the store of affine expressions, i.e. the ``k``-th affine expression appearing in the disjunctive constraint is going to be
+
+```math
+ F_{\\mathrm{afeidxlist}[k],:}x + g_{\\mathrm{afeidxlist}[k]}
+```
+If an optional vector `b` of the same length as `afeidxlist` is specified then the ``k``-th affine expression appearing in the disjunctive constraint will be taken as
+
+```math
+ F_{\\mathrm{afeidxlist}[k],:}x + g_{\\mathrm{afeidxlist}[k]} - b_k
+```
+
+"""
+function putdjc end
+putdjc(task:: MSKtask,djcidx:: T1,domidxlist:: Vector{T2},afeidxlist:: Vector{T3},b:: Vector{T4},termsizelist:: Vector{T5}) where {T1,T2,T3,T4,T5} = putdjc(task,convert(Int64,djcidx),convert(Vector{Int64},domidxlist),convert(Vector{Int64},afeidxlist),convert(Vector{Float64},b),convert(Vector{Int64},termsizelist))
+function putdjc(task_:: MSKtask,djcidx_:: Int64,domidxlist_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64},termsizelist_:: Vector{Int64})
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  numdomidx_ = minimum([ length(domidxlist_) ])
+  numterms_ = minimum([ length(termsizelist_) ])
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_putdjc(task_.task,djcidx_,numdomidx_,domidxlist_,numafeidx_,afeidxlist_ .- Int32(1),b_,numterms_,termsizelist_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putdjcname{T1}(task:: MSKtask,djcidx:: T1,name:: AbstractString)
+    putdjcname(task_:: MSKtask,djcidx_:: Int64,name_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `djcidx :: Int64`. Index of the disjunctive constraint.
+* `name :: String`. The name of the disjunctive constraint.
+
+Sets the name of a disjunctive constraint.
+"""
+function putdjcname end
+putdjcname(task:: MSKtask,djcidx:: T1,name:: AbstractString) where {T1} = putdjcname(task,convert(Int64,djcidx),name)
+function putdjcname(task_:: MSKtask,djcidx_:: Int64,name_:: AbstractString)
+  res = disable_sigint() do
+    @MSK_putdjcname(task_.task,djcidx_-1,string(name_))
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putdjcslice{T1,T2,T3,T4,T5,T6,T7}(task:: MSKtask,idxfirst:: T1,idxlast:: T2,domidxlist:: Vector{T3},afeidxlist:: Vector{T4},b:: Vector{T5},termsizelist:: Vector{T6},termsindjc:: Vector{T7})
+    putdjcslice(task_:: MSKtask,idxfirst_:: Int64,idxlast_:: Int64,domidxlist_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64},termsizelist_:: Vector{Int64},termsindjc_:: Vector{Int64})
+
+* `task :: MSKtask`. An optimization task.
+* `idxfirst :: Int64`. Index of the first disjunctive constraint in the slice.
+* `idxlast :: Int64`. Index of the last disjunctive constraint in the slice plus 1.
+* `domidxlist :: Vector{Int64}`. List of domain indexes.
+* `afeidxlist :: Vector{Int64}`. List of affine expression indexes.
+* `b :: Vector{Float64}`. The vector of constant terms added to affine expressions. Optional, may be NULL.
+* `termsizelist :: Vector{Int64}`. List of term sizes.
+* `termsindjc :: Vector{Int64}`. Number of terms in each of the disjunctive constraints in the slice.
+
+Inputs a slice of disjunctive constraints.
+
+The array `termsindjc` should have length ``\\mathrm{idxlast}-\\mathrm{idxfirst}`` and contain the number of terms in consecutive constraints forming the slice.
+
+The rest of the input consists of concatenated descriptions of individual constraints, where each constraint is described as in `Mosek.putdjc`.
+"""
+function putdjcslice end
+putdjcslice(task:: MSKtask,idxfirst:: T1,idxlast:: T2,domidxlist:: Vector{T3},afeidxlist:: Vector{T4},b:: Vector{T5},termsizelist:: Vector{T6},termsindjc:: Vector{T7}) where {T1,T2,T3,T4,T5,T6,T7} = putdjcslice(task,convert(Int64,idxfirst),convert(Int64,idxlast),convert(Vector{Int64},domidxlist),convert(Vector{Int64},afeidxlist),convert(Vector{Float64},b),convert(Vector{Int64},termsizelist),convert(Vector{Int64},termsindjc))
+function putdjcslice(task_:: MSKtask,idxfirst_:: Int64,idxlast_:: Int64,domidxlist_:: Vector{Int64},afeidxlist_:: Vector{Int64},b_:: Vector{Float64},termsizelist_:: Vector{Int64},termsindjc_:: Vector{Int64})
+  numafeidx_ = minimum([ length(afeidxlist_) ])
+  numdomidx_ = minimum([ length(domidxlist_) ])
+  numterms_ = minimum([ length(termsizelist_) ])
+  __tmp_var_1 = ((idxlast_) - (idxfirst_))
+  if length(termsindjc_) < __tmp_var_1
+    println("Array argument termsindjc is not long enough")
+    throw(BoundsError())
+  end
+  __tmp_var_0 = (numafeidx_)
+  if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
+    throw(BoundsError())
+  end
+  res = disable_sigint() do
+    @MSK_putdjcslice(task_.task,idxfirst_,idxlast_,numdomidx_,domidxlist_,numafeidx_,afeidxlist_ .- Int32(1),b_,numterms_,termsizelist_,termsindjc_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putdomainname{T1}(task:: MSKtask,domidx:: T1,name:: AbstractString)
+    putdomainname(task_:: MSKtask,domidx_:: Int64,name_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `domidx :: Int64`. Index of the domain.
+* `name :: String`. The name of the domain.
+
+Sets the name of a domain.
+"""
+function putdomainname end
+putdomainname(task:: MSKtask,domidx:: T1,name:: AbstractString) where {T1} = putdomainname(task,convert(Int64,domidx),name)
+function putdomainname(task_:: MSKtask,domidx_:: Int64,name_:: AbstractString)
+  res = disable_sigint() do
+    @MSK_putdomainname(task_.task,domidx_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6652,7 +12755,7 @@ function putdouparam end
 putdouparam(task:: MSKtask,param:: Dparam,parvalue:: T2) where {T2} = putdouparam(task,param,convert(Float64,parvalue))
 function putdouparam(task_:: MSKtask,param_:: Dparam,parvalue_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putdouparam",Int32,(Ptr{Nothing},Int32,Float64,),task_.task,param_.value,parvalue_)
+    @MSK_putdouparam(task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6682,7 +12785,7 @@ function putintparam end
 putintparam(task:: MSKtask,param:: Iparam,parvalue:: T2) where {T2} = putintparam(task,param,convert(Int32,parvalue))
 function putintparam(task_:: MSKtask,param_:: Iparam,parvalue_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putintparam",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,param_.value,parvalue_)
+    @MSK_putintparam(task_.task,param_.value,parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6708,7 +12811,7 @@ function putlicensecode(env_:: MSKenv,code_:: Vector{Int32})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putlicensecode",Int32,(Ptr{Nothing},Ptr{Int32},),env_.env,code_)
+    @MSK_putlicensecode(env_.env,code_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -6728,7 +12831,7 @@ function putlicensedebug end
 putlicensedebug(env:: MSKenv,licdebug:: T1) where {T1} = putlicensedebug(env,convert(Int32,licdebug))
 function putlicensedebug(env_:: MSKenv,licdebug_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putlicensedebug",Int32,(Ptr{Nothing},Int32,),env_.env,licdebug_)
+    @MSK_putlicensedebug(env_.env,licdebug_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -6746,7 +12849,7 @@ Set the path to the license file.
 function putlicensepath end
 function putlicensepath(env_:: MSKenv,licensepath_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putlicensepath",Int32,(Ptr{Nothing},Ptr{UInt8},),env_.env,string(licensepath_))
+    @MSK_putlicensepath(env_.env,string(licensepath_))
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -6766,10 +12869,58 @@ function putlicensewait end
 putlicensewait(env:: MSKenv,licwait:: T1) where {T1} = putlicensewait(env,convert(Int32,licwait))
 function putlicensewait(env_:: MSKenv,licwait_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putlicensewait",Int32,(Ptr{Nothing},Int32,),env_.env,licwait_)
+    @MSK_putlicensewait(env_.env,licwait_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
+  end
+end
+
+"""
+    putmaxnumacc{T1}(task:: MSKtask,maxnumacc:: T1)
+    putmaxnumacc(task_:: MSKtask,maxnumacc_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `maxnumacc :: Int64`. Number of preallocated affine conic constraints.
+
+Sets the number of preallocated affine conic constraints in the optimization task. When this
+number is reached MOSEK will automatically allocate more space.
+It is never mandatory to call this function, since MOSEK will reallocate any
+internal structures whenever it is required.
+"""
+function putmaxnumacc end
+putmaxnumacc(task:: MSKtask,maxnumacc:: T1) where {T1} = putmaxnumacc(task,convert(Int64,maxnumacc))
+function putmaxnumacc(task_:: MSKtask,maxnumacc_:: Int64)
+  res = disable_sigint() do
+    @MSK_putmaxnumacc(task_.task,maxnumacc_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putmaxnumafe{T1}(task:: MSKtask,maxnumafe:: T1)
+    putmaxnumafe(task_:: MSKtask,maxnumafe_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `maxnumafe :: Int64`. Number of preallocated affine expressions.
+
+Sets the number of preallocated affine expressions in the optimization task. When this
+number is reached MOSEK will automatically allocate more space for affine expressions.
+It is never mandatory to call this function, since MOSEK will reallocate any
+internal structures whenever it is required.
+"""
+function putmaxnumafe end
+putmaxnumafe(task:: MSKtask,maxnumafe:: T1) where {T1} = putmaxnumafe(task,convert(Int64,maxnumafe))
+function putmaxnumafe(task_:: MSKtask,maxnumafe_:: Int64)
+  res = disable_sigint() do
+    @MSK_putmaxnumafe(task_.task,maxnumafe_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
   end
 end
 
@@ -6801,7 +12952,7 @@ function putmaxnumanz end
 putmaxnumanz(task:: MSKtask,maxnumanz:: T1) where {T1} = putmaxnumanz(task,convert(Int64,maxnumanz))
 function putmaxnumanz(task_:: MSKtask,maxnumanz_:: Int64)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumanz",Int32,(Ptr{Nothing},Int64,),task_.task,maxnumanz_)
+    @MSK_putmaxnumanz(task_.task,maxnumanz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6830,7 +12981,7 @@ function putmaxnumbarvar end
 putmaxnumbarvar(task:: MSKtask,maxnumbarvar:: T1) where {T1} = putmaxnumbarvar(task,convert(Int32,maxnumbarvar))
 function putmaxnumbarvar(task_:: MSKtask,maxnumbarvar_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumbarvar",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumbarvar_)
+    @MSK_putmaxnumbarvar(task_.task,maxnumbarvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6859,7 +13010,7 @@ function putmaxnumcon end
 putmaxnumcon(task:: MSKtask,maxnumcon:: T1) where {T1} = putmaxnumcon(task,convert(Int32,maxnumcon))
 function putmaxnumcon(task_:: MSKtask,maxnumcon_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumcon",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumcon_)
+    @MSK_putmaxnumcon(task_.task,maxnumcon_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6873,6 +13024,8 @@ end
 
 * `task :: MSKtask`. An optimization task.
 * `maxnumcone :: Int32`. Number of preallocated conic constraints in the optimization task.
+
+Deprecated in MOSEK 10
 
 Sets the number of preallocated conic constraints in the optimization task.
 When this number of conic constraints is reached MOSEK will automatically
@@ -6888,7 +13041,55 @@ function putmaxnumcone end
 putmaxnumcone(task:: MSKtask,maxnumcone:: T1) where {T1} = putmaxnumcone(task,convert(Int32,maxnumcone))
 function putmaxnumcone(task_:: MSKtask,maxnumcone_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumcone",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumcone_)
+    @MSK_putmaxnumcone(task_.task,maxnumcone_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putmaxnumdjc{T1}(task:: MSKtask,maxnumdjc:: T1)
+    putmaxnumdjc(task_:: MSKtask,maxnumdjc_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `maxnumdjc :: Int64`. Number of preallocated disjunctive constraints in the task.
+
+Sets the number of preallocated disjunctive constraints in the optimization task. When this
+number is reached MOSEK will automatically allocate more space.
+It is never mandatory to call this function, since MOSEK will reallocate any
+internal structures whenever it is required.
+"""
+function putmaxnumdjc end
+putmaxnumdjc(task:: MSKtask,maxnumdjc:: T1) where {T1} = putmaxnumdjc(task,convert(Int64,maxnumdjc))
+function putmaxnumdjc(task_:: MSKtask,maxnumdjc_:: Int64)
+  res = disable_sigint() do
+    @MSK_putmaxnumdjc(task_.task,maxnumdjc_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putmaxnumdomain{T1}(task:: MSKtask,maxnumdomain:: T1)
+    putmaxnumdomain(task_:: MSKtask,maxnumdomain_:: Int64)
+
+* `task :: MSKtask`. An optimization task.
+* `maxnumdomain :: Int64`. Number of preallocated domains.
+
+Sets the number of preallocated domains in the optimization task. When this
+number is reached MOSEK will automatically allocate more space.
+It is never mandatory to call this function, since MOSEK will reallocate any
+internal structures whenever it is required.
+"""
+function putmaxnumdomain end
+putmaxnumdomain(task:: MSKtask,maxnumdomain:: T1) where {T1} = putmaxnumdomain(task,convert(Int64,maxnumdomain))
+function putmaxnumdomain(task_:: MSKtask,maxnumdomain_:: Int64)
+  res = disable_sigint() do
+    @MSK_putmaxnumdomain(task_.task,maxnumdomain_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6922,7 +13123,7 @@ function putmaxnumqnz end
 putmaxnumqnz(task:: MSKtask,maxnumqnz:: T1) where {T1} = putmaxnumqnz(task,convert(Int64,maxnumqnz))
 function putmaxnumqnz(task_:: MSKtask,maxnumqnz_:: Int64)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumqnz",Int32,(Ptr{Nothing},Int64,),task_.task,maxnumqnz_)
+    @MSK_putmaxnumqnz(task_.task,maxnumqnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6951,7 +13152,7 @@ function putmaxnumvar end
 putmaxnumvar(task:: MSKtask,maxnumvar:: T1) where {T1} = putmaxnumvar(task,convert(Int32,maxnumvar))
 function putmaxnumvar(task_:: MSKtask,maxnumvar_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putmaxnumvar",Int32,(Ptr{Nothing},Int32,),task_.task,maxnumvar_)
+    @MSK_putmaxnumvar(task_.task,maxnumvar_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6973,7 +13174,7 @@ function putnadouparam end
 putnadouparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnadouparam(task,paramname,convert(Float64,parvalue))
 function putnadouparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putnadouparam",Int32,(Ptr{Nothing},Ptr{UInt8},Float64,),task_.task,string(paramname_),parvalue_)
+    @MSK_putnadouparam(task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -6995,7 +13196,7 @@ function putnaintparam end
 putnaintparam(task:: MSKtask,paramname:: AbstractString,parvalue:: T2) where {T2} = putnaintparam(task,paramname,convert(Int32,parvalue))
 function putnaintparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "putnaintparam",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),task_.task,string(paramname_),parvalue_)
+    @MSK_putnaintparam(task_.task,string(paramname_),parvalue_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7015,7 +13216,7 @@ Sets the value of a named string parameter.
 function putnastrparam end
 function putnastrparam(task_:: MSKtask,paramname_:: AbstractString,parvalue_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putnastrparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},),task_.task,string(paramname_),string(parvalue_))
+    @MSK_putnastrparam(task_.task,string(paramname_),string(parvalue_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7034,7 +13235,7 @@ Assigns a new name to the objective.
 function putobjname end
 function putobjname(task_:: MSKtask,objname_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putobjname",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(objname_))
+    @MSK_putobjname(task_.task,string(objname_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7053,7 +13254,26 @@ Sets the objective sense of the task.
 function putobjsense end
 function putobjsense(task_:: MSKtask,sense_:: Objsense)
   res = disable_sigint() do
-    @msk_ccall( "putobjsense",Int32,(Ptr{Nothing},Int32,),task_.task,sense_.value)
+    @MSK_putobjsense(task_.task,sense_.value)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putoptserverhost(task_:: MSKtask,host_:: AbstractString)
+
+* `task :: MSKtask`. An optimization task.
+* `host :: String`. A URL specifying the optimization server to be used.
+
+Specify an OptServer URL for remote calls. The URL should contain protocol, host and port in the form `http://server:port` or `https://server:port`. If the URL is set using this function, all subsequent calls to any MOSEK function that involves synchronous optimization will be sent to the specified OptServer instead of being executed locally. Passing NULL deactivates this redirection.
+"""
+function putoptserverhost end
+function putoptserverhost(task_:: MSKtask,host_:: AbstractString)
+  res = disable_sigint() do
+    @MSK_putoptserverhost(task_.task,string(host_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7074,7 +13294,7 @@ assigned the value specified by `parvalue`.
 function putparam end
 function putparam(task_:: MSKtask,parname_:: AbstractString,parvalue_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putparam",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},),task_.task,string(parname_),string(parvalue_))
+    @MSK_putparam(task_.task,string(parname_),string(parvalue_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7119,7 +13339,7 @@ putqcon(task:: MSKtask,qcsubk:: Vector{T1},qcsubi:: Vector{T2},qcsubj:: Vector{T
 function putqcon(task_:: MSKtask,qcsubk_:: Vector{Int32},qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
   numqcnz_ = minimum([ length(qcsubi_),length(qcsubj_),length(qcval_) ])
   res = disable_sigint() do
-    @msk_ccall( "putqcon",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,numqcnz_,qcsubk_ .- Int32(1),qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
+    @MSK_putqcon(task_.task,numqcnz_,qcsubk_ .- Int32(1),qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7144,17 +13364,13 @@ Replaces all the quadratic entries in one constraint. This function performs the
 function putqconk end
 putqconk(task:: MSKtask,k:: T1,qcsubi:: Vector{T2},qcsubj:: Vector{T3},qcval:: Vector{T4}) where {T1,T2,T3,T4} = putqconk(task,convert(Int32,k),convert(Vector{Int32},qcsubi),convert(Vector{Int32},qcsubj),convert(Vector{Float64},qcval))
 function putqconk(task:: MSKtask,k:: T1,Qk:: SparseMatrixCSC{Float64}) where {T1}
-  ptrb = Qk.colptr[1:size(Qk,2)]
-  ptre = Qk.colptr[2:size(Qk,2)+1]
-  qcsubi = Qk.rowval
-  qcsubi = Qk.rowval
-  qcval = Qk.nzval
+  qcsubi,qcsubj,qcval = tril(Qk)
   putqconk(task,k,qcsubi,qcsubj,qcval)
 end
 function putqconk(task_:: MSKtask,k_:: Int32,qcsubi_:: Vector{Int32},qcsubj_:: Vector{Int32},qcval_:: Vector{Float64})
   numqcnz_ = minimum([ length(qcsubi_),length(qcsubj_),length(qcval_) ])
   res = disable_sigint() do
-    @msk_ccall( "putqconk",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,k_-1,numqcnz_,qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
+    @MSK_putqconk(task_.task,k_-1,numqcnz_,qcsubi_ .- Int32(1),qcsubj_ .- Int32(1),qcval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7190,17 +13406,13 @@ See the description of `Mosek.putqcon` for important remarks and example.
 function putqobj end
 putqobj(task:: MSKtask,qosubi:: Vector{T1},qosubj:: Vector{T2},qoval:: Vector{T3}) where {T1,T2,T3} = putqobj(task,convert(Vector{Int32},qosubi),convert(Vector{Int32},qosubj),convert(Vector{Float64},qoval))
 function putqobj(task:: MSKtask,Qk:: SparseMatrixCSC{Float64})
-  ptrb = Qk.colptr[1:size(Qk,2)]
-  ptre = Qk.colptr[2:size(Qk,2)+1]
-  qosubi = Qk.rowval
-  qosubi = Qk.rowval
-  qoval = Qk.nzval
+  qosubi,qosubj,qoval = tril(Qk)
   putqobj(task,qosubi,qosubj,qoval)
 end
 function putqobj(task_:: MSKtask,qosubi_:: Vector{Int32},qosubj_:: Vector{Int32},qoval_:: Vector{Float64})
   numqonz_ = minimum([ length(qosubi_),length(qosubj_),length(qoval_) ])
   res = disable_sigint() do
-    @msk_ccall( "putqobj",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,numqonz_,qosubi_ .- Int32(1),qosubj_ .- Int32(1),qoval_)
+    @MSK_putqobj(task_.task,numqonz_,qosubi_ .- Int32(1),qosubj_ .- Int32(1),qoval_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7234,7 +13446,7 @@ function putqobjij end
 putqobjij(task:: MSKtask,i:: T1,j:: T2,qoij:: T3) where {T1,T2,T3} = putqobjij(task,convert(Int32,i),convert(Int32,j),convert(Float64,qoij))
 function putqobjij(task_:: MSKtask,i_:: Int32,j_:: Int32,qoij_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putqobjij",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,j_-1,qoij_)
+    @MSK_putqobjij(task_.task,i_-1,j_-1,qoij_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7260,7 +13472,7 @@ function putskc(task_:: MSKtask,whichsol_:: Soltype,skc_:: Vector{Stakey})
   end
   skc_i32 = Int32[item.value for item in skc_]
   res = disable_sigint() do
-    @msk_ccall( "putskc",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skc_)
+    @MSK_putskc(task_.task,whichsol_.value,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7290,7 +13502,7 @@ function putskcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   end
   skc_i32 = Int32[item.value for item in skc_]
   res = disable_sigint() do
-    @msk_ccall( "putskcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skc_)
+    @MSK_putskcslice(task_.task,whichsol_.value,first_-1,last_-1,skc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7316,7 +13528,7 @@ function putskx(task_:: MSKtask,whichsol_:: Soltype,skx_:: Vector{Stakey})
   end
   skx_i32 = Int32[item.value for item in skx_]
   res = disable_sigint() do
-    @msk_ccall( "putskx",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,skx_)
+    @MSK_putskx(task_.task,whichsol_.value,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7346,7 +13558,7 @@ function putskxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
   end
   skx_i32 = Int32[item.value for item in skx_]
   res = disable_sigint() do
-    @msk_ccall( "putskxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Int32},),task_.task,whichsol_.value,first_-1,last_-1,skx_)
+    @MSK_putskxslice(task_.task,whichsol_.value,first_-1,last_-1,skx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7373,7 +13585,7 @@ function putslc(task_:: MSKtask,whichsol_:: Soltype,slc_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,slc_)
+    @MSK_putslc(task_.task,whichsol_.value,slc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7402,7 +13614,7 @@ function putslcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slc_)
+    @MSK_putslcslice(task_.task,whichsol_.value,first_-1,last_-1,slc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7429,7 +13641,7 @@ function putslx(task_:: MSKtask,whichsol_:: Soltype,slx_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,slx_)
+    @MSK_putslx(task_.task,whichsol_.value,slx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7458,7 +13670,7 @@ function putslxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putslxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,slx_)
+    @MSK_putslxslice(task_.task,whichsol_.value,first_-1,last_-1,slx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7485,7 +13697,7 @@ function putsnx(task_:: MSKtask,whichsol_:: Soltype,sux_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsnx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,sux_)
+    @MSK_putsnx(task_.task,whichsol_.value,sux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7514,7 +13726,7 @@ function putsnxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsnxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,snx_)
+    @MSK_putsnxslice(task_.task,whichsol_.value,first_-1,last_-1,snx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7549,7 +13761,43 @@ function putsolution(task_:: MSKtask,whichsol_:: Soltype,skc_:: Vector{Stakey},s
   skn_i32 = Int32[item.value for item in skn_]
   skx_i32 = Int32[item.value for item in skx_]
   res = disable_sigint() do
-    @msk_ccall( "putsolution",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},Ptr{Float64},),task_.task,whichsol_.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
+    @MSK_putsolution(task_.task,whichsol_.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
+  end
+  if res != MSK_RES_OK.value
+    msg = getlasterror(task_)
+    throw(MosekError(res,msg))
+  end
+end
+
+"""
+    putsolutionnew{T5,T6,T7,T8,T9,T10,T11,T12,T13}(task:: MSKtask,whichsol:: Soltype,skc:: Vector{Stakey},skx:: Vector{Stakey},skn:: Vector{Stakey},xc:: Vector{T5},xx:: Vector{T6},y:: Vector{T7},slc:: Vector{T8},suc:: Vector{T9},slx:: Vector{T10},sux:: Vector{T11},snx:: Vector{T12},doty:: Vector{T13})
+    putsolutionnew(task_:: MSKtask,whichsol_:: Soltype,skc_:: Vector{Stakey},skx_:: Vector{Stakey},skn_:: Vector{Stakey},xc_:: Vector{Float64},xx_:: Vector{Float64},y_:: Vector{Float64},slc_:: Vector{Float64},suc_:: Vector{Float64},slx_:: Vector{Float64},sux_:: Vector{Float64},snx_:: Vector{Float64},doty_:: Vector{Float64})
+
+* `task :: MSKtask`. An optimization task.
+* `whichsol :: Soltype`. Selects a solution.
+* `skc :: Vector{Int32}`. Status keys for the constraints.
+* `skx :: Vector{Int32}`. Status keys for the variables.
+* `skn :: Vector{Int32}`. Status keys for the conic constraints.
+* `xc :: Vector{Float64}`. Primal constraint solution.
+* `xx :: Vector{Float64}`. Primal variable solution.
+* `y :: Vector{Float64}`. Vector of dual variables corresponding to the constraints.
+* `slc :: Vector{Float64}`. Dual variables corresponding to the lower bounds on the constraints.
+* `suc :: Vector{Float64}`. Dual variables corresponding to the upper bounds on the constraints.
+* `slx :: Vector{Float64}`. Dual variables corresponding to the lower bounds on the variables.
+* `sux :: Vector{Float64}`. Dual variables corresponding to the upper bounds on the variables.
+* `snx :: Vector{Float64}`. Dual variables corresponding to the conic constraints on the variables.
+* `doty :: Vector{Float64}`. Dual variables corresponding to affine conic constraints.
+
+Inserts a solution into the task.
+"""
+function putsolutionnew end
+putsolutionnew(task:: MSKtask,whichsol:: Soltype,skc:: Vector{Stakey},skx:: Vector{Stakey},skn:: Vector{Stakey},xc:: Vector{T5},xx:: Vector{T6},y:: Vector{T7},slc:: Vector{T8},suc:: Vector{T9},slx:: Vector{T10},sux:: Vector{T11},snx:: Vector{T12},doty:: Vector{T13}) where {T5,T6,T7,T8,T9,T10,T11,T12,T13} = putsolutionnew(task,whichsol,skc,skx,skn,convert(Vector{Float64},xc),convert(Vector{Float64},xx),convert(Vector{Float64},y),convert(Vector{Float64},slc),convert(Vector{Float64},suc),convert(Vector{Float64},slx),convert(Vector{Float64},sux),convert(Vector{Float64},snx),convert(Vector{Float64},doty))
+function putsolutionnew(task_:: MSKtask,whichsol_:: Soltype,skc_:: Vector{Stakey},skx_:: Vector{Stakey},skn_:: Vector{Stakey},xc_:: Vector{Float64},xx_:: Vector{Float64},y_:: Vector{Float64},slc_:: Vector{Float64},suc_:: Vector{Float64},slx_:: Vector{Float64},sux_:: Vector{Float64},snx_:: Vector{Float64},doty_:: Vector{Float64})
+  skc_i32 = Int32[item.value for item in skc_]
+  skn_i32 = Int32[item.value for item in skn_]
+  skx_i32 = Int32[item.value for item in skx_]
+  res = disable_sigint() do
+    @MSK_putsolutionnew(task_.task,whichsol_.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7572,7 +13820,7 @@ function putsolutionyi end
 putsolutionyi(task:: MSKtask,i:: T1,whichsol:: Soltype,y:: T3) where {T1,T3} = putsolutionyi(task,convert(Int32,i),whichsol,convert(Float64,y))
 function putsolutionyi(task_:: MSKtask,i_:: Int32,whichsol_:: Soltype,y_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putsolutionyi",Int32,(Ptr{Nothing},Int32,Int32,Float64,),task_.task,i_-1,whichsol_.value,y_)
+    @MSK_putsolutionyi(task_.task,i_-1,whichsol_.value,y_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7592,7 +13840,7 @@ Sets the value of a string parameter.
 function putstrparam end
 function putstrparam(task_:: MSKtask,param_:: Sparam,parvalue_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putstrparam",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,param_.value,string(parvalue_))
+    @MSK_putstrparam(task_.task,param_.value,string(parvalue_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7619,7 +13867,7 @@ function putsuc(task_:: MSKtask,whichsol_:: Soltype,suc_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsuc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,suc_)
+    @MSK_putsuc(task_.task,whichsol_.value,suc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7648,7 +13896,7 @@ function putsucslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsucslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,suc_)
+    @MSK_putsucslice(task_.task,whichsol_.value,first_-1,last_-1,suc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7675,7 +13923,7 @@ function putsux(task_:: MSKtask,whichsol_:: Soltype,sux_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsux",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,sux_)
+    @MSK_putsux(task_.task,whichsol_.value,sux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7704,7 +13952,7 @@ function putsuxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putsuxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,sux_)
+    @MSK_putsuxslice(task_.task,whichsol_.value,first_-1,last_-1,sux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7723,7 +13971,7 @@ Assigns a new name to the task.
 function puttaskname end
 function puttaskname(task_:: MSKtask,taskname_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "puttaskname",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(taskname_))
+    @MSK_puttaskname(task_.task,string(taskname_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7753,7 +14001,7 @@ function putvarbound end
 putvarbound(task:: MSKtask,j:: T1,bkx:: Boundkey,blx:: T3,bux:: T4) where {T1,T3,T4} = putvarbound(task,convert(Int32,j),bkx,convert(Float64,blx),convert(Float64,bux))
 function putvarbound(task_:: MSKtask,j_:: Int32,bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putvarbound",Int32,(Ptr{Nothing},Int32,Int32,Float64,Float64,),task_.task,j_-1,bkx_.value,blx_,bux_)
+    @MSK_putvarbound(task_.task,j_-1,bkx_.value,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7779,7 +14027,7 @@ function putvarboundlist(task_:: MSKtask,sub_:: Vector{Int32},bkx_:: Vector{Boun
   bkx_i32 = Int32[item.value for item in bkx_]
   num_ = minimum([ length(sub_),length(bkx_),length(blx_),length(bux_) ])
   res = disable_sigint() do
-    @msk_ccall( "putvarboundlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,num_,sub_ .- Int32(1),bkx_,blx_,bux_)
+    @MSK_putvarboundlist(task_.task,num_,sub_ .- Int32(1),bkx_,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7804,7 +14052,7 @@ putvarboundlistconst(task:: MSKtask,sub:: Vector{T1},bkx:: Boundkey,blx:: T3,bux
 function putvarboundlistconst(task_:: MSKtask,sub_:: Vector{Int32},bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
   num_ = minimum([ length(sub_) ])
   res = disable_sigint() do
-    @msk_ccall( "putvarboundlistconst",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Int32,Float64,Float64,),task_.task,num_,sub_ .- Int32(1),bkx_.value,blx_,bux_)
+    @MSK_putvarboundlistconst(task_.task,num_,sub_ .- Int32(1),bkx_.value,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7845,7 +14093,7 @@ function putvarboundslice(task_:: MSKtask,first_:: Int32,last_:: Int32,bkx_:: Ve
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putvarboundslice",Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ptr{Float64},),task_.task,first_-1,last_-1,bkx_,blx_,bux_)
+    @MSK_putvarboundslice(task_.task,first_-1,last_-1,bkx_,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7870,7 +14118,7 @@ function putvarboundsliceconst end
 putvarboundsliceconst(task:: MSKtask,first:: T1,last:: T2,bkx:: Boundkey,blx:: T4,bux:: T5) where {T1,T2,T4,T5} = putvarboundsliceconst(task,convert(Int32,first),convert(Int32,last),bkx,convert(Float64,blx),convert(Float64,bux))
 function putvarboundsliceconst(task_:: MSKtask,first_:: Int32,last_:: Int32,bkx_:: Boundkey,blx_:: Float64,bux_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putvarboundsliceconst",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,),task_.task,first_-1,last_-1,bkx_.value,blx_,bux_)
+    @MSK_putvarboundsliceconst(task_.task,first_-1,last_-1,bkx_.value,blx_,bux_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7892,7 +14140,7 @@ function putvarname end
 putvarname(task:: MSKtask,j:: T1,name:: AbstractString) where {T1} = putvarname(task,convert(Int32,j),name)
 function putvarname(task_:: MSKtask,j_:: Int32,name_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "putvarname",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,j_-1,string(name_))
+    @MSK_putvarname(task_.task,j_-1,string(name_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7919,7 +14167,7 @@ function putvarsolutionj end
 putvarsolutionj(task:: MSKtask,j:: T1,whichsol:: Soltype,sk:: Stakey,x:: T4,sl:: T5,su:: T6,sn:: T7) where {T1,T4,T5,T6,T7} = putvarsolutionj(task,convert(Int32,j),whichsol,sk,convert(Float64,x),convert(Float64,sl),convert(Float64,su),convert(Float64,sn))
 function putvarsolutionj(task_:: MSKtask,j_:: Int32,whichsol_:: Soltype,sk_:: Stakey,x_:: Float64,sl_:: Float64,su_:: Float64,sn_:: Float64)
   res = disable_sigint() do
-    @msk_ccall( "putvarsolutionj",Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,Float64,Float64,Float64,),task_.task,j_-1,whichsol_.value,sk_.value,x_,sl_,su_,sn_)
+    @MSK_putvarsolutionj(task_.task,j_-1,whichsol_.value,sk_.value,x_,sl_,su_,sn_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7941,7 +14189,7 @@ function putvartype end
 putvartype(task:: MSKtask,j:: T1,vartype:: Variabletype) where {T1} = putvartype(task,convert(Int32,j),vartype)
 function putvartype(task_:: MSKtask,j_:: Int32,vartype_:: Variabletype)
   res = disable_sigint() do
-    @msk_ccall( "putvartype",Int32,(Ptr{Nothing},Int32,Int32,),task_.task,j_-1,vartype_.value)
+    @MSK_putvartype(task_.task,j_-1,vartype_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7966,7 +14214,7 @@ function putvartypelist(task_:: MSKtask,subj_:: Vector{Int32},vartype_:: Vector{
   vartype_i32 = Int32[item.value for item in vartype_]
   num_ = minimum([ length(subj_),length(vartype_) ])
   res = disable_sigint() do
-    @msk_ccall( "putvartypelist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},),task_.task,num_,subj_ .- Int32(1),vartype_)
+    @MSK_putvartypelist(task_.task,num_,subj_ .- Int32(1),vartype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7989,7 +14237,7 @@ function putxc(task_:: MSKtask,whichsol_:: Soltype)
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   xc_ = __tmp_var_1
   res = disable_sigint() do
-    @msk_ccall( "putxc",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,__tmp_var_1)
+    @MSK_putxc(task_.task,whichsol_.value,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8019,7 +14267,7 @@ function putxcslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putxcslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,xc_)
+    @MSK_putxcslice(task_.task,whichsol_.value,first_-1,last_-1,xc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8046,7 +14294,7 @@ function putxx(task_:: MSKtask,whichsol_:: Soltype,xx_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putxx",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,xx_)
+    @MSK_putxx(task_.task,whichsol_.value,xx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8075,7 +14323,7 @@ function putxxslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: I
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putxxslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,xx_)
+    @MSK_putxxslice(task_.task,whichsol_.value,first_-1,last_-1,xx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8102,7 +14350,7 @@ function puty(task_:: MSKtask,whichsol_:: Soltype,y_:: Vector{Float64})
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "puty",Int32,(Ptr{Nothing},Int32,Ptr{Float64},),task_.task,whichsol_.value,y_)
+    @MSK_puty(task_.task,whichsol_.value,y_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8131,7 +14379,7 @@ function putyslice(task_:: MSKtask,whichsol_:: Soltype,first_:: Int32,last_:: In
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "putyslice",Int32,(Ptr{Nothing},Int32,Int32,Int32,Ptr{Float64},),task_.task,whichsol_.value,first_-1,last_-1,y_)
+    @MSK_putyslice(task_.task,whichsol_.value,first_-1,last_-1,y_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8150,7 +14398,7 @@ Reads an optimization problem and associated data from a file.
 function readdata end
 function readdata(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readdataautoformat",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_readdataautoformat(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8171,7 +14419,7 @@ Reads an optimization problem and associated data from a file.
 function readdataformat end
 function readdataformat(task_:: MSKtask,filename_:: AbstractString,format_:: Dataformat,compress_:: Compresstype)
   res = disable_sigint() do
-    @msk_ccall( "readdataformat",Int32,(Ptr{Nothing},Ptr{UInt8},Int32,Int32,),task_.task,string(filename_),format_.value,compress_.value)
+    @MSK_readdataformat(task_.task,string(filename_),format_.value,compress_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8193,7 +14441,7 @@ or otherwise well-defined.
 function readjsonstring end
 function readjsonstring(task_:: MSKtask,data_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readjsonstring",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(data_))
+    @MSK_readjsonstring(task_.task,string(data_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8213,7 +14461,7 @@ object.
 function readlpstring end
 function readlpstring(task_:: MSKtask,data_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readlpstring",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(data_))
+    @MSK_readlpstring(task_.task,string(data_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8233,7 +14481,7 @@ object.
 function readopfstring end
 function readopfstring(task_:: MSKtask,data_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readopfstring",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(data_))
+    @MSK_readopfstring(task_.task,string(data_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8252,7 +14500,7 @@ Reads MOSEK parameters from a file. Data is read from the file `filename` if it 
 function readparamfile end
 function readparamfile(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readparamfile",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_readparamfile(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8274,7 +14522,7 @@ or otherwise well-defined.
 function readptfstring end
 function readptfstring(task_:: MSKtask,data_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readptfstring",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(data_))
+    @MSK_readptfstring(task_.task,string(data_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8294,7 +14542,7 @@ Reads a solution file and inserts it as a specified solution in the task. Data i
 function readsolution end
 function readsolution(task_:: MSKtask,whichsol_:: Soltype,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readsolution",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,whichsol_.value,string(filename_))
+    @MSK_readsolution(task_.task,whichsol_.value,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8313,7 +14561,7 @@ Prints a short summary of last file that was read.
 function readsummary end
 function readsummary(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "readsummary",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
+    @MSK_readsummary(task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8337,7 +14585,7 @@ See section :ref:`doc.shared.taskformat` for a description of the Task format.
 function readtask end
 function readtask(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "readtask",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_readtask(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8361,7 +14609,7 @@ removebarvars(task:: MSKtask,subset:: Vector{T1}) where {T1} = removebarvars(tas
 function removebarvars(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removebarvars",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @MSK_removebarvars(task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8376,6 +14624,8 @@ end
 * `task :: MSKtask`. An optimization task.
 * `subset :: Vector{Int32}`. Indexes of cones which should be removed.
 
+Deprecated in MOSEK 10
+
 Removes a number of conic constraints from the problem. This implies that the remaining conic constraints are renumbered.
 In general, it is much more efficient to remove a cone with a high index than a low index.
 """
@@ -8384,7 +14634,7 @@ removecones(task:: MSKtask,subset:: Vector{T1}) where {T1} = removecones(task,co
 function removecones(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removecones",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_ .- Int32(1))
+    @MSK_removecones(task_.task,num_,subset_ .- Int32(1))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8408,7 +14658,7 @@ removecons(task:: MSKtask,subset:: Vector{T1}) where {T1} = removecons(task,conv
 function removecons(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removecons",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @MSK_removecons(task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8432,7 +14682,7 @@ removevars(task:: MSKtask,subset:: Vector{T1}) where {T1} = removevars(task,conv
 function removevars(task_:: MSKtask,subset_:: Vector{Int32})
   num_ = minimum([ length(subset_) ])
   res = disable_sigint() do
-    @msk_ccall( "removevars",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,num_,subset_)
+    @MSK_removevars(task_.task,num_,subset_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8464,7 +14714,7 @@ function resizetask end
 resizetask(task:: MSKtask,maxnumcon:: T1,maxnumvar:: T2,maxnumcone:: T3,maxnumanz:: T4,maxnumqnz:: T5) where {T1,T2,T3,T4,T5} = resizetask(task,convert(Int32,maxnumcon),convert(Int32,maxnumvar),convert(Int32,maxnumcone),convert(Int64,maxnumanz),convert(Int64,maxnumqnz))
 function resizetask(task_:: MSKtask,maxnumcon_:: Int32,maxnumvar_:: Int32,maxnumcone_:: Int32,maxnumanz_:: Int64,maxnumqnz_:: Int64)
   res = disable_sigint() do
-    @msk_ccall( "resizetask",Int32,(Ptr{Nothing},Int32,Int32,Int32,Int64,Int64,),task_.task,maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_)
+    @MSK_resizetask(task_.task,maxnumcon_,maxnumvar_,maxnumcone_,maxnumanz_,maxnumqnz_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8486,7 +14736,7 @@ string, then the sensitivity report is also written to a file of this name.
 function sensitivityreport end
 function sensitivityreport(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "sensitivityreport",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
+    @MSK_sensitivityreport(task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8504,7 +14754,7 @@ Resets all the parameters to their default values.
 function setdefaults end
 function setdefaults(task_:: MSKtask)
   res = disable_sigint() do
-    @msk_ccall( "setdefaults",Int32,(Ptr{Nothing},),task_.task)
+    @MSK_setdefaults(task_.task)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8525,7 +14775,7 @@ function setupthreads end
 setupthreads(env:: MSKenv,numthreads:: T1) where {T1} = setupthreads(env,convert(Int32,numthreads))
 function setupthreads(env_:: MSKenv,numthreads_:: Int32)
   res = disable_sigint() do
-    @msk_ccall( "setupthreads",Int32,(Ptr{Nothing},Int32,),env_.env,numthreads_)
+    @MSK_setupthreads(env_.env,numthreads_)
   end
   if res != MSK_RES_OK.value
     throw(MosekError(res,""))
@@ -8543,15 +14793,15 @@ Checks whether a solution is defined.
 """
 function solutiondef end
 function solutiondef(task_:: MSKtask,whichsol_:: Soltype)
-  isdef_ = Vector{Int32}(undef,1)
+  isdef_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "solutiondef",Int32,(Ptr{Nothing},Int32,Ptr{Int32},),task_.task,whichsol_.value,isdef_)
+    @MSK_solutiondef(task_.task,whichsol_.value,isdef_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Bool,isdef_[1]))
+  (convert(Bool,isdef_.x))
 end
 
 """
@@ -8565,7 +14815,7 @@ Prints a short summary of the current solutions.
 function solutionsummary end
 function solutionsummary(task_:: MSKtask,whichstream_:: Streamtype)
   res = disable_sigint() do
-    @msk_ccall( "solutionsummary",Int32,(Ptr{Nothing},Int32,),task_.task,whichstream_.value)
+    @MSK_solutionsummary(task_.task,whichstream_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8630,7 +14880,7 @@ sparsity in the vector ``b`` to speed up the computations.
 function solvewithbasis end
 solvewithbasis(task:: MSKtask,transp:: T1,numnz:: T2,sub:: Vector{T3},val:: Vector{T4}) where {T1,T2,T3,T4} = solvewithbasis(task,convert(Int32,transp),convert(Int32,numnz),convert(Vector{Int32},sub),convert(Vector{Float64},val))
 function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Vector{Int32},val_:: Vector{Float64})
-  __tmp_var_0 = Int32[ numnz_ ]
+  __tmp_var_0 = Ref{Int32}(numnz_)
   __tmp_var_1 = getnumcon(task_)
   if length(sub_) < __tmp_var_1
     println("Array argument sub is not long enough")
@@ -8642,13 +14892,13 @@ function solvewithbasis(task_:: MSKtask,transp_:: Int32,numnz_:: Int32,sub_:: Ve
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @msk_ccall( "solvewithbasis",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Float64},),task_.task,transp_,__tmp_var_0,sub_ .- Int32(1),val_)
+    @MSK_solvewithbasis(task_.task,transp_,__tmp_var_0,sub_ .- Int32(1),val_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (__tmp_var_0[1])
+  (__tmp_var_0.x)
 end
 
 """
@@ -8658,19 +14908,21 @@ end
 * `str :: String`. String corresponding to the cone type code.
 * `conetype :: Conetype`. The cone type corresponding to str.
 
+Deprecated in MOSEK 10
+
 Obtains cone type code corresponding to a cone type string.
 """
 function strtoconetype end
 function strtoconetype(task_:: MSKtask,str_:: AbstractString)
-  conetype_ = Vector{Int32}(undef,1)
+  conetype_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "strtoconetype",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(str_),conetype_)
+    @MSK_strtoconetype(task_.task,string(str_),conetype_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Conetype(conetype_[1]))
+  (Conetype(conetype_.x))
 end
 
 """
@@ -8684,15 +14936,15 @@ Obtains the status key corresponding to an abbreviation string.
 """
 function strtosk end
 function strtosk(task_:: MSKtask,str_:: AbstractString)
-  sk_ = Vector{Int32}(undef,1)
+  sk_ = Ref(Int32(1))
   res = disable_sigint() do
-    @msk_ccall( "strtosk",Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{Int32},),task_.task,string(str_),sk_)
+    @MSK_strtosk(task_.task,string(str_),sk_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (Stakey(sk_[1]))
+  (Stakey(sk_.x))
 end
 
 """
@@ -8706,7 +14958,7 @@ Update the information items related to the solution.
 function updatesolutioninfo end
 function updatesolutioninfo(task_:: MSKtask,whichsol_:: Soltype)
   res = disable_sigint() do
-    @msk_ccall( "updatesolutioninfo",Int32,(Ptr{Nothing},Int32,),task_.task,whichsol_.value)
+    @MSK_updatesolutioninfo(task_.task,whichsol_.value)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8739,7 +14991,7 @@ to the file specified by :msk:sparam:`data_file_name`.
 function writedata end
 function writedata(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writedata",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_writedata(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8758,7 +15010,7 @@ Saves the current solutions and solver information items in a JSON file.
 function writejsonsol end
 function writejsonsol(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writejsonsol",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_writejsonsol(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8777,7 +15029,7 @@ Writes all the parameters to a parameter file.
 function writeparamfile end
 function writeparamfile(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writeparamfile",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_writeparamfile(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8797,7 +15049,7 @@ Saves the current basic, interior-point, or integer solution to a file.
 function writesolution end
 function writesolution(task_:: MSKtask,whichsol_:: Soltype,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writesolution",Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),task_.task,whichsol_.value,string(filename_))
+    @MSK_writesolution(task_.task,whichsol_.value,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -8816,7 +15068,7 @@ Write a binary dump of the task data. This format saves all problem data, coeffi
 function writetask end
 function writetask(task_:: MSKtask,filename_:: AbstractString)
   res = disable_sigint() do
-    @msk_ccall( "writetask",Int32,(Ptr{Nothing},Ptr{UInt8},),task_.task,string(filename_))
+    @MSK_writetask(task_.task,string(filename_))
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
