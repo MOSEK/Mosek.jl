@@ -3760,6 +3760,7 @@ appendacc(task:: MSKtask,domidx:: T1,afeidxlist:: Vector{T2},b:: Vector{T3}) whe
 function appendacc(task_:: MSKtask,domidx_:: Int64,afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
   numafeidx_ = minimum([ length(afeidxlist_) ])
   __tmp_var_0 = (numafeidx_)
+  println("b_ = $b_, len(b) = $(length(b_)), numafeidx = $(numafeidx_)")
   if length(b_) < __tmp_var_0
     println("Array argument b is not long enough")
     throw(BoundsError())
@@ -3797,7 +3798,7 @@ function appendaccs(task_:: MSKtask,domidxs_:: Vector{Int64},afeidxlist_:: Vecto
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @MSK_appendaccs(task_.task,numaccs_,domidxs_,numafeidx_,afeidxlist_,b_)
+    @MSK_appendaccs(task_.task,numaccs_,domidxs_ .- Int32(1),numafeidx_,afeidxlist_ .- Int32(1),b_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3840,7 +3841,7 @@ function appendaccseq(task_:: MSKtask,domidx_:: Int64,afeidxfirst_:: Int64,b_:: 
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @MSK_appendaccseq(task_.task,domidx_,numafeidx_,afeidxfirst_,b_)
+    @MSK_appendaccseq(task_.task,domidx_,numafeidx_,afeidxfirst_-1,b_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -3870,7 +3871,7 @@ function appendaccsseq(task_:: MSKtask,domidxs_:: Vector{Int64},numafeidx_:: Int
   end
   numaccs_ = minimum([ length(domidxs_) ])
   res = disable_sigint() do
-    @MSK_appendaccsseq(task_.task,numaccs_,domidxs_,numafeidx_,afeidxfirst_,b_)
+    @MSK_appendaccsseq(task_.task,numaccs_,domidxs_ .- Int32(1),numafeidx_,afeidxfirst_-1,b_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5324,11 +5325,11 @@ Obtains the list of affine expressions appearing in the affine conic constraint.
 function getaccafeidxlist end
 getaccafeidxlist(task:: MSKtask,accidx:: T1) where {T1} = getaccafeidxlist(task,convert(Int64,accidx))
 function getaccafeidxlist(task_:: MSKtask,accidx_:: Int64)
-  __tmp_var_0 = begin __tmp_var_getaccafeidxlist_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_getaccafeidxlist_0); __tmp_var_getaccafeidxlist_0.x end
+  __tmp_var_0 = begin __tmp_var_getaccafeidxlist_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_-1),__tmp_var_getaccafeidxlist_0); __tmp_var_getaccafeidxlist_0.x end
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   afeidxlist_ = __tmp_var_1
   res = disable_sigint() do
-    @MSK_getaccafeidxlist(task_.task,accidx_,__tmp_var_1)
+    @MSK_getaccafeidxlist(task_.task,accidx_-1,__tmp_var_1)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
@@ -5351,11 +5352,11 @@ Obtains the additional constant term vector appearing in the affine conic constr
 function getaccb end
 getaccb(task:: MSKtask,accidx:: T1) where {T1} = getaccb(task,convert(Int64,accidx))
 function getaccb(task_:: MSKtask,accidx_:: Int64)
-  __tmp_var_0 = begin __tmp_var_getaccb_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_),__tmp_var_getaccb_0); __tmp_var_getaccb_0.x end
+  __tmp_var_0 = begin __tmp_var_getaccb_0 = Ref{Int64}(); @MSK_getaccn(task_.task,(accidx_-1),__tmp_var_getaccb_0); __tmp_var_getaccb_0.x end
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   b_ = __tmp_var_1
   res = disable_sigint() do
-    @MSK_getaccb(task_.task,accidx_,__tmp_var_1)
+    @MSK_getaccb(task_.task,accidx_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5379,13 +5380,13 @@ getaccdomain(task:: MSKtask,accidx:: T1) where {T1} = getaccdomain(task,convert(
 function getaccdomain(task_:: MSKtask,accidx_:: Int64)
   domidx_ = Ref(Int64(1))
   res = disable_sigint() do
-    @MSK_getaccdomain(task_.task,accidx_,domidx_)
+    @MSK_getaccdomain(task_.task,accidx_-1,domidx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
   end
-  (convert(Int64,domidx_.x))
+  (convert(Int64,domidx_.x+1))
 end
 
 """
@@ -5430,7 +5431,7 @@ getaccn(task:: MSKtask,accidx:: T1) where {T1} = getaccn(task,convert(Int64,acci
 function getaccn(task_:: MSKtask,accidx_:: Int64)
   n_ = Ref(Int64(1))
   res = disable_sigint() do
-    @MSK_getaccn(task_.task,accidx_,n_)
+    @MSK_getaccn(task_.task,accidx_-1,n_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5534,6 +5535,7 @@ function getaccs(task_:: MSKtask)
   res = disable_sigint() do
     @MSK_getaccs(task_.task,__tmp_var_1,__tmp_var_3,__tmp_var_5)
   end
+  __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -5771,6 +5773,9 @@ function getafebarfrow(task_:: MSKtask,afeidx_:: Int64)
   res = disable_sigint() do
     @MSK_getafebarfrow(task_.task,afeidx_-1,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
   end
+  __tmp_var_1 .+= 1
+  __tmp_var_3 .+= 1
+  __tmp_var_7 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -7202,11 +7207,11 @@ Obtains the list of affine expression indexes in a disjunctive constraint.
 function getdjcafeidxlist end
 getdjcafeidxlist(task:: MSKtask,djcidx:: T1) where {T1} = getdjcafeidxlist(task,convert(Int64,djcidx))
 function getdjcafeidxlist(task_:: MSKtask,djcidx_:: Int64)
-  __tmp_var_0 = begin __tmp_var_getdjcafeidxlist_0 = Ref{Int64}(); @MSK_getdjcnumafe(task_.task,(djcidx_),__tmp_var_getdjcafeidxlist_0); __tmp_var_getdjcafeidxlist_0.x end
+  __tmp_var_0 = begin __tmp_var_getdjcafeidxlist_0 = Ref{Int64}(); @MSK_getdjcnumafe(task_.task,(djcidx_-1),__tmp_var_getdjcafeidxlist_0); __tmp_var_getdjcafeidxlist_0.x end
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   afeidxlist_ = __tmp_var_1
   res = disable_sigint() do
-    @MSK_getdjcafeidxlist(task_.task,djcidx_,__tmp_var_1)
+    @MSK_getdjcafeidxlist(task_.task,djcidx_-1,__tmp_var_1)
   end
   __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
@@ -7229,11 +7234,11 @@ Obtains the optional constant term vector of a disjunctive constraint.
 function getdjcb end
 getdjcb(task:: MSKtask,djcidx:: T1) where {T1} = getdjcb(task,convert(Int64,djcidx))
 function getdjcb(task_:: MSKtask,djcidx_:: Int64)
-  __tmp_var_0 = begin __tmp_var_getdjcb_0 = Ref{Int64}(); @MSK_getdjcnumafe(task_.task,(djcidx_),__tmp_var_getdjcb_0); __tmp_var_getdjcb_0.x end
+  __tmp_var_0 = begin __tmp_var_getdjcb_0 = Ref{Int64}(); @MSK_getdjcnumafe(task_.task,(djcidx_-1),__tmp_var_getdjcb_0); __tmp_var_getdjcb_0.x end
   __tmp_var_1 = zeros(Float64,__tmp_var_0)
   b_ = __tmp_var_1
   res = disable_sigint() do
-    @MSK_getdjcb(task_.task,djcidx_,__tmp_var_1)
+    @MSK_getdjcb(task_.task,djcidx_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7255,12 +7260,13 @@ Obtains the list of domain indexes in a disjunctive constraint.
 function getdjcdomainidxlist end
 getdjcdomainidxlist(task:: MSKtask,djcidx:: T1) where {T1} = getdjcdomainidxlist(task,convert(Int64,djcidx))
 function getdjcdomainidxlist(task_:: MSKtask,djcidx_:: Int64)
-  __tmp_var_0 = begin __tmp_var_getdjcdomainidxlist_0 = Ref{Int64}(); @MSK_getdjcnumdomain(task_.task,(djcidx_),__tmp_var_getdjcdomainidxlist_0); __tmp_var_getdjcdomainidxlist_0.x end
+  __tmp_var_0 = begin __tmp_var_getdjcdomainidxlist_0 = Ref{Int64}(); @MSK_getdjcnumdomain(task_.task,(djcidx_-1),__tmp_var_getdjcdomainidxlist_0); __tmp_var_getdjcdomainidxlist_0.x end
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   domidxlist_ = __tmp_var_1
   res = disable_sigint() do
-    @MSK_getdjcdomainidxlist(task_.task,djcidx_,__tmp_var_1)
+    @MSK_getdjcdomainidxlist(task_.task,djcidx_-1,__tmp_var_1)
   end
+  __tmp_var_1 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
     throw(MosekError(res,msg))
@@ -7333,7 +7339,7 @@ getdjcnumafe(task:: MSKtask,idjc:: T1) where {T1} = getdjcnumafe(task,convert(In
 function getdjcnumafe(task_:: MSKtask,idjc_:: Int64)
   numafe_ = Ref(Int64(1))
   res = disable_sigint() do
-    @MSK_getdjcnumafe(task_.task,idjc_,numafe_)
+    @MSK_getdjcnumafe(task_.task,idjc_-1,numafe_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7378,7 +7384,7 @@ getdjcnumdomain(task:: MSKtask,idjc:: T1) where {T1} = getdjcnumdomain(task,conv
 function getdjcnumdomain(task_:: MSKtask,idjc_:: Int64)
   numdomain_ = Ref(Int64(1))
   res = disable_sigint() do
-    @MSK_getdjcnumdomain(task_.task,idjc_,numdomain_)
+    @MSK_getdjcnumdomain(task_.task,idjc_-1,numdomain_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7423,7 +7429,7 @@ getdjcnumterm(task:: MSKtask,idjc:: T1) where {T1} = getdjcnumterm(task,convert(
 function getdjcnumterm(task_:: MSKtask,idjc_:: Int64)
   numterm_ = Ref(Int64(1))
   res = disable_sigint() do
-    @MSK_getdjcnumterm(task_.task,idjc_,numterm_)
+    @MSK_getdjcnumterm(task_.task,idjc_-1,numterm_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7485,6 +7491,7 @@ function getdjcs(task_:: MSKtask)
   res = disable_sigint() do
     @MSK_getdjcs(task_.task,__tmp_var_1,__tmp_var_3,__tmp_var_5,__tmp_var_7,__tmp_var_9)
   end
+  __tmp_var_1 .+= 1
   __tmp_var_3 .+= 1
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -7506,11 +7513,11 @@ Obtains the list of term sizes in a disjunctive constraint.
 function getdjctermsizelist end
 getdjctermsizelist(task:: MSKtask,djcidx:: T1) where {T1} = getdjctermsizelist(task,convert(Int64,djcidx))
 function getdjctermsizelist(task_:: MSKtask,djcidx_:: Int64)
-  __tmp_var_0 = begin __tmp_var_getdjctermsizelist_0 = Ref{Int64}(); @MSK_getdjcnumterm(task_.task,(djcidx_),__tmp_var_getdjctermsizelist_0); __tmp_var_getdjctermsizelist_0.x end
+  __tmp_var_0 = begin __tmp_var_getdjctermsizelist_0 = Ref{Int64}(); @MSK_getdjcnumterm(task_.task,(djcidx_-1),__tmp_var_getdjctermsizelist_0); __tmp_var_getdjctermsizelist_0.x end
   __tmp_var_1 = zeros(Int64,__tmp_var_0)
   termsizelist_ = __tmp_var_1
   res = disable_sigint() do
-    @MSK_getdjctermsizelist(task_.task,djcidx_,__tmp_var_1)
+    @MSK_getdjctermsizelist(task_.task,djcidx_-1,__tmp_var_1)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11084,7 +11091,7 @@ function putacc(task_:: MSKtask,accidx_:: Int64,domidx_:: Int64,afeidxlist_:: Ve
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @MSK_putacc(task_.task,accidx_,domidx_-1,numafeidx_,afeidxlist_ .- Int32(1),b_)
+    @MSK_putacc(task_.task,accidx_-1,domidx_-1,numafeidx_-1,afeidxlist_ .- Int32(1),b_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11107,7 +11114,7 @@ putaccb(task:: MSKtask,accidx:: T1,b:: Vector{T2}) where {T1,T2} = putaccb(task,
 function putaccb(task_:: MSKtask,accidx_:: Int64,b_:: Vector{Float64})
   lengthb_ = minimum([ length(b_) ])
   res = disable_sigint() do
-    @MSK_putaccb(task_.task,accidx_,lengthb_,b_)
+    @MSK_putaccb(task_.task,accidx_-1,lengthb_,b_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11130,7 +11137,7 @@ function putaccbj end
 putaccbj(task:: MSKtask,accidx:: T1,j:: T2,bj:: T3) where {T1,T2,T3} = putaccbj(task,convert(Int64,accidx),convert(Int64,j),convert(Float64,bj))
 function putaccbj(task_:: MSKtask,accidx_:: Int64,j_:: Int64,bj_:: Float64)
   res = disable_sigint() do
-    @MSK_putaccbj(task_.task,accidx_,j_,bj_)
+    @MSK_putaccbj(task_.task,accidx_-1,j_-1,bj_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11188,7 +11195,7 @@ function putacclist(task_:: MSKtask,accidxs_:: Vector{Int64},domidxs_:: Vector{I
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @MSK_putacclist(task_.task,numaccs_,accidxs_,domidxs_,numafeidx_,afeidxlist_ .- Int32(1),b_)
+    @MSK_putacclist(task_.task,numaccs_,accidxs_ .- Int32(1),domidxs_ .- Int32(1),numafeidx_-1,afeidxlist_ .- Int32(1),b_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11457,7 +11464,7 @@ function putafebarfentrylist(task_:: MSKtask,afeidxlist_:: Vector{Int64},barvari
   lenlist_ = minimum([ length(afeidxlist_),length(barvaridxlist_),length(numtermslist_),length(ptrtermslist_) ])
   lenterms_ = minimum([ length(termidx_),length(termweight_) ])
   res = disable_sigint() do
-    @MSK_putafebarfentrylist(task_.task,lenlist_-1,afeidxlist_ .- Int32(1),barvaridxlist_ .- Int32(1),numtermslist_ .- Int32(1),ptrtermslist_,lenterms_-1,termidx_ .- Int32(1),termweight_)
+    @MSK_putafebarfentrylist(task_.task,lenlist_-1,afeidxlist_ .- Int32(1),barvaridxlist_ .- Int32(1),numtermslist_ .- Int32(1),ptrtermslist_ .- Int32(1),lenterms_-1,termidx_ .- Int32(1),termweight_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11492,7 +11499,7 @@ function putafebarfrow(task_:: MSKtask,afeidx_:: Int64,barvaridxlist_:: Vector{I
   lenterms_ = minimum([ length(termidx_),length(termweight_) ])
   numentries_ = minimum([ length(barvaridxlist_),length(numtermlist_),length(ptrtermlist_) ])
   res = disable_sigint() do
-    @MSK_putafebarfrow(task_.task,afeidx_-1,numentries_,barvaridxlist_ .- Int32(1),numtermlist_,ptrtermlist_,lenterms_,termidx_ .- Int32(1),termweight_)
+    @MSK_putafebarfrow(task_.task,afeidx_-1,numentries_,barvaridxlist_ .- Int32(1),numtermlist_,ptrtermlist_ .- Int32(1),lenterms_,termidx_ .- Int32(1),termweight_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11610,7 +11617,7 @@ function putafefrowlist(task_:: MSKtask,afeidxlist_:: Vector{Int64},nzrow_:: Vec
   lenidxval_ = minimum([ length(idxrow_),length(valrow_) ])
   numafeidx_ = minimum([ length(afeidxlist_),length(nzrow_),length(ptrrow_) ])
   res = disable_sigint() do
-    @MSK_putafefrowlist(task_.task,numafeidx_,afeidxlist_ .- Int32(1),nzrow_,ptrrow_,lenidxval_,idxrow_ .- Int32(1),valrow_)
+    @MSK_putafefrowlist(task_.task,numafeidx_,afeidxlist_ .- Int32(1),nzrow_,ptrrow_ .- Int32(1),lenidxval_,idxrow_ .- Int32(1),valrow_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -11665,7 +11672,7 @@ putafeglist(task:: MSKtask,afeidxlist:: Vector{T1},glist:: Vector{T2}) where {T1
 function putafeglist(task_:: MSKtask,afeidxlist_:: Vector{Int64},glist_:: Vector{Float64})
   numafeidx_ = minimum([ length(afeidxlist_),length(glist_) ])
   res = disable_sigint() do
-    @MSK_putafeglist(task_.task,numafeidx_,afeidxlist_ .- Int32(1),glist_)
+    @MSK_putafeglist(task_.task,numafeidx_-1,afeidxlist_ .- Int32(1),glist_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -12645,7 +12652,7 @@ function putdjc(task_:: MSKtask,djcidx_:: Int64,domidxlist_:: Vector{Int64},afei
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @MSK_putdjc(task_.task,djcidx_,numdomidx_,domidxlist_,numafeidx_,afeidxlist_ .- Int32(1),b_,numterms_,termsizelist_)
+    @MSK_putdjc(task_.task,djcidx_-1,numdomidx_,domidxlist_ .- Int32(1),numafeidx_-1,afeidxlist_ .- Int32(1),b_,numterms_,termsizelist_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -12711,7 +12718,7 @@ function putdjcslice(task_:: MSKtask,idxfirst_:: Int64,idxlast_:: Int64,domidxli
     throw(BoundsError())
   end
   res = disable_sigint() do
-    @MSK_putdjcslice(task_.task,idxfirst_,idxlast_,numdomidx_,domidxlist_,numafeidx_,afeidxlist_ .- Int32(1),b_,numterms_,termsizelist_,termsindjc_)
+    @MSK_putdjcslice(task_.task,idxfirst_-1,idxlast_-1,numdomidx_,domidxlist_ .- Int32(1),numafeidx_,afeidxlist_ .- Int32(1),b_,numterms_,termsizelist_,termsindjc_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -15075,4 +15082,3 @@ function writetask(task_:: MSKtask,filename_:: AbstractString)
     throw(MosekError(res,msg))
   end
 end
-

@@ -1134,6 +1134,7 @@ export
   MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES,
   MSK_RES_ERR_DUPLICATE_DJC_NAMES,
   MSK_RES_ERR_NON_UNIQUE_ARRAY,
+  MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL,
   MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE,
   MSK_RES_ERR_MIO_INTERNAL,
   MSK_RES_ERR_INVALID_PROBLEM_TYPE,
@@ -8385,6 +8386,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES`. Two domain names are identical.
 * `MSK_RES_ERR_DUPLICATE_DJC_NAMES`. Two disjunktive constraint names are identical.
 * `MSK_RES_ERR_NON_UNIQUE_ARRAY`. An array does not contain unique elements.
+* `MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL`. The value of a function argument is too small.
 * `MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE`. The value of a function argument is too large.
 * `MSK_RES_ERR_MIO_INTERNAL`. A fatal error occurred in the mixed integer optimizer.  Please contact MOSEK support.
 * `MSK_RES_ERR_INVALID_PROBLEM_TYPE`. An invalid problem type.
@@ -9708,6 +9710,9 @@ const MSK_RES_ERR_DUPLICATE_DJC_NAMES = Rescode(4505)
 "An array does not contain unique elements."
 const MSK_RES_ERR_NON_UNIQUE_ARRAY = Rescode(5000)
 
+"The value of a function argument is too small."
+const MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL = Rescode(5004)
+
 "The value of a function argument is too large."
 const MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE = Rescode(5005)
 
@@ -10453,6 +10458,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 4504 "Mosek.MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES"
   elseif v.value == 4505 "Mosek.MSK_RES_ERR_DUPLICATE_DJC_NAMES"
   elseif v.value == 5000 "Mosek.MSK_RES_ERR_NON_UNIQUE_ARRAY"
+  elseif v.value == 5004 "Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL"
   elseif v.value == 5005 "Mosek.MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE"
   elseif v.value == 5010 "Mosek.MSK_RES_ERR_MIO_INTERNAL"
   elseif v.value == 6000 "Mosek.MSK_RES_ERR_INVALID_PROBLEM_TYPE"
@@ -10972,6 +10978,7 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES,
     MSK_RES_ERR_DUPLICATE_DJC_NAMES,
     MSK_RES_ERR_NON_UNIQUE_ARRAY,
+    MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL,
     MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE,
     MSK_RES_ERR_MIO_INTERNAL,
     MSK_RES_ERR_INVALID_PROBLEM_TYPE,
@@ -11088,7 +11095,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 516
+Base.length(::Type{Rescode}) = 517
 """
     Rescodetype
 
