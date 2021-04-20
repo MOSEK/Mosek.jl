@@ -3760,9 +3760,7 @@ appendacc(task:: MSKtask,domidx:: T1,afeidxlist:: Vector{T2},b:: Vector{T3}) whe
 function appendacc(task_:: MSKtask,domidx_:: Int64,afeidxlist_:: Vector{Int64},b_:: Vector{Float64})
   numafeidx_ = minimum([ length(afeidxlist_) ])
   __tmp_var_0 = (numafeidx_)
-  println("b_ = $b_, len(b) = $(length(b_)), numafeidx = $(numafeidx_)")
   if length(b_) < __tmp_var_0
-    println("Array argument b is not long enough")
     throw(BoundsError())
   end
   res = disable_sigint() do
