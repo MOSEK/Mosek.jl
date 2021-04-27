@@ -32,7 +32,7 @@ Base.show(io::IOContext, t::Task) =
 function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     numvar    = getnumvar(t)
     numbarvar = getnumbarvar(t)
-    numcon    = getnumcon(t) 
+    numcon    = getnumcon(t)
     numcone   = getnumcone(t)
     numanz    = getnumanz(t)
     numqobjnz = getnumqobjnz(t)
@@ -49,8 +49,8 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     if numvar == 0 && numcon == 0 && numbarvar == 0
         println(f,"Empty Task")
     else
-        varnames = String[ escapename(getvarname(t,i)) for i in 1:numvar] 
-        barvarnames = String[ escapename(getbarvarname(t,i)) for i in 1:numbarvar] 
+        varnames = String[ escapename(getvarname(t,i)) for i in 1:numvar]
+        barvarnames = String[ escapename(getbarvarname(t,i)) for i in 1:numbarvar]
         connames = String[ escapename(getconname(t,i)) for i in 1:numcon]
         conenames = String[ escapename(getconename(t,i)) for i in 1:numcone]
 
@@ -187,7 +187,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                 (nzi,subi,vali) = getarow(t,Int32(i))
                 (bk,bl,bu) = getconbound(t,Int32(i))
 
-                
+
                 print(f,"        $(connames[i]): ")
                 if bk == MSK_BK_LO || bk == MSK_BK_RA
                     print(f,"$bl < ")
@@ -211,7 +211,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                             print(f,"$(fmtcof(w[1])) #MX$(sub[1]) ⋅ $(barvarnames[baraj]) ")
                         elseif num > 1
                             print(f,"(")
-                            printf(f,"$(fmtcof(w[1])) #MX$(sub[1])")                    
+                            printf(f,"$(fmtcof(w[1])) #MX$(sub[1])")
                             print(f,") ⋅ $(barvarnames[baraj]) ")
                         end
                         terms += 1
@@ -251,6 +251,67 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                     println(f,"")
                 end
             end
+
+            numacc = getnumacc(t)
+            for i in 1:numacc
+                domidx = getaccdomain(t,i)
+                sz = getdomainn(t,i)
+                name = getaccname(t,i)
+                afeidxs = getaccafeidxlist(t,i)
+                domtp = getdomaintype(t,domidx)
+
+                domname = ( if     domtp == MSK_DOMAIN_R "Unbounded"
+                            elseif domtp == MSK_DOMAIN_RZERO "Zero"
+                            elseif domtp == MSK_DOMAIN_RPLUS "Nonnegative"
+                            elseif domtp == MSK_DOMAIN_RMINUS "Nonpositive"
+                            elseif domtp == MSK_DOMAIN_INF_NORM_CONE "K_inf"
+                            elseif domtp == MSK_DOMAIN_ONE_NORM_CONE "K_1"
+                            elseif domtp == MSK_DOMAIN_QUADRATIC_CONE  "𝒞_q"
+                            elseif domtp == MSK_DOMAIN_RQUADRATIC_CONE  "𝒞_qr"
+                            elseif domtp == MSK_DOMAIN_PRIMAL_GEO_MEAN_CONE "GeoMean"
+                            elseif domtp == MSK_DOMAIN_PRIMAL_POWER_CONE "𝒞_pow"
+                            elseif domtp == MSK_DOMAIN_DUAL_POWER_CONE "𝒞*_pow"
+                            elseif domtp == MSK_DOMAIN_PRIMAL_EXP_CONE "𝒞_exp"
+                            elseif domtp == MSK_DOMAIN_DUAL_EXP_CONE "𝒞*_exp"
+                            elseif domtp == MSK_DOMAIN_PSD_CONE "PSD"
+                            else   "<?>"
+                            end )
+                println(f,"        \"$name\" $domname")
+                for j in 1:sz
+                    g = getafeg(t,afeidxs[j])
+                    (nzi,subj,cof) = getafefrow(t,afeidxs[j])
+                    (barj,termptr,midx,w) = getafebarfrow(t,afeidxs[j])
+                    print(f,"            ")
+
+                    terms = 0
+                    for k in 1:nzi
+                        if terms < termslimit
+                            print(f,"$(fmtcof(cof[k])) $(varnames[subj[k]]) ")
+                            terms += 1
+                        else
+                            omittedterms += 1
+                        end
+                    end
+
+                    # for idx in barj
+                    #     if terms < termslimit
+                    #         (barcj,num,sub,w) = getbarcidx(t,idx)
+                    #         if num == 1
+                    #             print(f,"$(fmtcof(w[1])) #MX$(sub[1]) ⋅ $(barvarnames[barcj]) ")
+                    #         elseif num > 1
+                    #             print(f,"(")
+                    #             printf(f,"$(fmtcof(w[1])) #MX$(sub[1])")
+                    #             print(f,") ⋅ $(barvarnames[barcj]) ")
+                    #         end
+                    #         terms += 1
+                    #     else
+                    #         omittedterms += 1
+                    #     end
+                    # end
+                    print(f,"\n")
+                end
+            end
+
             if limitnumcon < numcon
                 println(f,"        ... ($(numcon-limitnumcon) constraints omitted)")
             end
@@ -267,7 +328,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                         else "?{$ct}"
                         end
 
-                    
+
                     print(f,"        $(conenames[k]): (")
 
                     if nummem > 0
@@ -346,7 +407,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
             if limitnumsymmat < numsymmat
                 println(f,"        ... ($(numsymmat-limitnumsymmat) matrixes omitted)")
             end
-            
+
         end
     end
 end

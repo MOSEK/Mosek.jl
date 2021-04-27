@@ -17,12 +17,8 @@ export
   appendcons,
   appenddjcs,
   appenddualexpconedomain,
-  appenddualgeomeanconedomain,
   appenddualpowerconedomain,
-  appendinfnormconedomain,
-  appendonenormconedomain,
   appendprimalexpconedomain,
-  appendprimalgeomeanconedomain,
   appendprimalpowerconedomain,
   appendpsdconedomain,
   appendquadraticconedomain,
@@ -545,14 +541,6 @@ macro MSK_appenddualexpconedomain(task,domidx)
     ccall(($f,libmosek), Int32, $types, $(args...))
   end
 end
-macro MSK_appenddualgeomeanconedomain(task,n,domidx)
-  f = Base.Meta.quot(:MSK_appenddualgeomeanconedomain)
-  args = [esc(task),esc(n),esc(domidx)]
-  types = :((Ptr{Nothing},Int64,Ref{Int64},))
-  quote
-    ccall(($f,libmosek), Int32, $types, $(args...))
-  end
-end
 macro MSK_appenddualpowerconedomain(task,n,nleft,alpha,domidx)
   f = Base.Meta.quot(:MSK_appenddualpowerconedomain)
   args = [esc(task),esc(n),esc(nleft),esc(alpha),esc(domidx)]
@@ -561,34 +549,10 @@ macro MSK_appenddualpowerconedomain(task,n,nleft,alpha,domidx)
     ccall(($f,libmosek), Int32, $types, $(args...))
   end
 end
-macro MSK_appendinfnormconedomain(task,n,domidx)
-  f = Base.Meta.quot(:MSK_appendinfnormconedomain)
-  args = [esc(task),esc(n),esc(domidx)]
-  types = :((Ptr{Nothing},Int64,Ref{Int64},))
-  quote
-    ccall(($f,libmosek), Int32, $types, $(args...))
-  end
-end
-macro MSK_appendonenormconedomain(task,n,domidx)
-  f = Base.Meta.quot(:MSK_appendonenormconedomain)
-  args = [esc(task),esc(n),esc(domidx)]
-  types = :((Ptr{Nothing},Int64,Ref{Int64},))
-  quote
-    ccall(($f,libmosek), Int32, $types, $(args...))
-  end
-end
 macro MSK_appendprimalexpconedomain(task,domidx)
   f = Base.Meta.quot(:MSK_appendprimalexpconedomain)
   args = [esc(task),esc(domidx)]
   types = :((Ptr{Nothing},Ref{Int64},))
-  quote
-    ccall(($f,libmosek), Int32, $types, $(args...))
-  end
-end
-macro MSK_appendprimalgeomeanconedomain(task,n,domidx)
-  f = Base.Meta.quot(:MSK_appendprimalgeomeanconedomain)
-  args = [esc(task),esc(n),esc(domidx)]
-  types = :((Ptr{Nothing},Int64,Ref{Int64},))
   quote
     ccall(($f,libmosek), Int32, $types, $(args...))
   end
@@ -3761,6 +3725,7 @@ function appendacc(task_:: MSKtask,domidx_:: Int64,afeidxlist_:: Vector{Int64},b
   numafeidx_ = minimum([ length(afeidxlist_) ])
   __tmp_var_0 = (numafeidx_)
   if length(b_) < __tmp_var_0
+    println("Array argument b is not long enough")
     throw(BoundsError())
   end
   res = disable_sigint() do
@@ -4131,30 +4096,6 @@ function appenddualexpconedomain(task_:: MSKtask)
 end
 
 """
-    domidx = appenddualgeomeanconedomain{T1}(task:: MSKtask,n:: T1)
-    domidx = appenddualgeomeanconedomain(task_:: MSKtask,n_:: Int64)
-
-* `task :: MSKtask`. An optimization task.
-* `n :: Int64`. Dimmension of the domain.
-* `domidx :: Int64`. Index of the domain.
-
-Appends the dual geometric mean cone ``\\left\\{ x\\in \\real^n ~:~ (n-1) \\left(\\prod_{i=0}^{n-2} x_i\\right)^{1/(n-1)} \\geq |x_{n-1}|,\\ x_0,\\ldots,x_{n-2}\\geq 0 \\right\\}`` to the list of domains.
-"""
-function appenddualgeomeanconedomain end
-appenddualgeomeanconedomain(task:: MSKtask,n:: T1) where {T1} = appenddualgeomeanconedomain(task,convert(Int64,n))
-function appenddualgeomeanconedomain(task_:: MSKtask,n_:: Int64)
-  domidx_ = Ref(Int64(1))
-  res = disable_sigint() do
-    @MSK_appenddualgeomeanconedomain(task_.task,n_,domidx_)
-  end
-  if res != MSK_RES_OK.value
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-  (convert(Int64,domidx_.x+1))
-end
-
-"""
     domidx = appenddualpowerconedomain{T1,T2}(task:: MSKtask,n:: T1,alpha:: Vector{T2})
     domidx = appenddualpowerconedomain(task_:: MSKtask,n_:: Int64,alpha_:: Vector{Float64})
 
@@ -4188,54 +4129,6 @@ function appenddualpowerconedomain(task_:: MSKtask,n_:: Int64,alpha_:: Vector{Fl
 end
 
 """
-    domidx = appendinfnormconedomain{T1}(task:: MSKtask,n:: T1)
-    domidx = appendinfnormconedomain(task_:: MSKtask,n_:: Int64)
-
-* `task :: MSKtask`. An optimization task.
-* `n :: Int64`. Dimmension of the domain.
-* `domidx :: Int64`. Index of the domain.
-
-Appends the ``n``-dimensional ``\\infty``-norm cone ``\\left\\{ x\\in \\real^n ~:~ x_0 \\geq \\mathrm{sup}_{i=1,\\ldots,n-1}|x_i| \\right\\}`` to the list of domains.
-"""
-function appendinfnormconedomain end
-appendinfnormconedomain(task:: MSKtask,n:: T1) where {T1} = appendinfnormconedomain(task,convert(Int64,n))
-function appendinfnormconedomain(task_:: MSKtask,n_:: Int64)
-  domidx_ = Ref(Int64(1))
-  res = disable_sigint() do
-    @MSK_appendinfnormconedomain(task_.task,n_,domidx_)
-  end
-  if res != MSK_RES_OK.value
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-  (convert(Int64,domidx_.x+1))
-end
-
-"""
-    domidx = appendonenormconedomain{T1}(task:: MSKtask,n:: T1)
-    domidx = appendonenormconedomain(task_:: MSKtask,n_:: Int64)
-
-* `task :: MSKtask`. An optimization task.
-* `n :: Int64`. Dimmension of the domain.
-* `domidx :: Int64`. Index of the domain.
-
-Appends the ``n``-dimensional ``1``-norm cone ``\\left\\{ x\\in \\real^n ~:~ x_0 \\geq \\sum_{i=1}^{n-1} |x_i| \\right\\}`` to the list of domains.
-"""
-function appendonenormconedomain end
-appendonenormconedomain(task:: MSKtask,n:: T1) where {T1} = appendonenormconedomain(task,convert(Int64,n))
-function appendonenormconedomain(task_:: MSKtask,n_:: Int64)
-  domidx_ = Ref(Int64(1))
-  res = disable_sigint() do
-    @MSK_appendonenormconedomain(task_.task,n_,domidx_)
-  end
-  if res != MSK_RES_OK.value
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-  (convert(Int64,domidx_.x+1))
-end
-
-"""
     domidx = appendprimalexpconedomain(task_:: MSKtask)
 
 * `task :: MSKtask`. An optimization task.
@@ -4248,30 +4141,6 @@ function appendprimalexpconedomain(task_:: MSKtask)
   domidx_ = Ref(Int64(1))
   res = disable_sigint() do
     @MSK_appendprimalexpconedomain(task_.task,domidx_)
-  end
-  if res != MSK_RES_OK.value
-    msg = getlasterror(task_)
-    throw(MosekError(res,msg))
-  end
-  (convert(Int64,domidx_.x+1))
-end
-
-"""
-    domidx = appendprimalgeomeanconedomain{T1}(task:: MSKtask,n:: T1)
-    domidx = appendprimalgeomeanconedomain(task_:: MSKtask,n_:: Int64)
-
-* `task :: MSKtask`. An optimization task.
-* `n :: Int64`. Dimmension of the domain.
-* `domidx :: Int64`. Index of the domain.
-
-Appends the primal geometric mean cone ``\\left\\{ x\\in \\real^n ~:~ \\left(\\prod_{i=0}^{n-2} x_i\\right)^{1/(n-1)} \\geq |x_{n-1}|,\\ x_0\\ldots,x_{n-2}\\geq 0 \\right\\}`` to the list of domains.
-"""
-function appendprimalgeomeanconedomain end
-appendprimalgeomeanconedomain(task:: MSKtask,n:: T1) where {T1} = appendprimalgeomeanconedomain(task,convert(Int64,n))
-function appendprimalgeomeanconedomain(task_:: MSKtask,n_:: Int64)
-  domidx_ = Ref(Int64(1))
-  res = disable_sigint() do
-    @MSK_appendprimalgeomeanconedomain(task_.task,n_,domidx_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
@@ -15080,3 +14949,4 @@ function writetask(task_:: MSKtask,filename_:: AbstractString)
     throw(MosekError(res,msg))
   end
 end
+

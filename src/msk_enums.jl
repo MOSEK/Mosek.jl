@@ -2922,7 +2922,7 @@ Cone types
 * `MSK_DOMAIN_DUAL_GEO_MEAN_CONE`. The dual geometric mean cone.
 * `MSK_DOMAIN_INF_NORM_CONE`. The infinity norm cone.
 * `MSK_DOMAIN_ONE_NORM_CONE`. The 1-norm cone.
-* `MSK_DOMAIN_PSD_CONE`. The positive sedefinite cone cone.
+* `MSK_DOMAIN_PSD_CONE`. The positive semidefinite cone.
 """
 struct Domaintype <: MosekEnum
   value :: Int32
@@ -2970,7 +2970,7 @@ const MSK_DOMAIN_INF_NORM_CONE = Domaintype(12)
 "The 1-norm cone."
 const MSK_DOMAIN_ONE_NORM_CONE = Domaintype(13)
 
-"The positive sedefinite cone cone."
+"The positive semidefinite cone."
 const MSK_DOMAIN_PSD_CONE = Domaintype(14)
 tostr(v::Domaintype) = if v.value == 0 "Mosek.MSK_DOMAIN_R"
   elseif v.value == 1 "Mosek.MSK_DOMAIN_RZERO"
