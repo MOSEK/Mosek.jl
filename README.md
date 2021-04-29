@@ -1,28 +1,22 @@
-**This repository is in the process of being moved to https://github.com/MOSEK/Mosek.jl**
+## Note on versions and release
 
-
-Note on versions and release
-============================
-
-Since the `MOSEK.jl` package is designed to match a specific MOSEK version (major+minor version), there are branches for the different MOSEK versions:
+Since the `Mosek.jl` package is designed to match a specific MOSEK version (major+minor version), there are branches for the different MOSEK versions:
 - Branch `b0.8` is compatible with MOSEK 8.0. Not actively updated. 
 - Branch `b0.9` is compatible with MOSEK 8.1. Currently updated only for bugfixes.
 - Branch `b1.1-msk9.1` is compatible with MOSEK 9.1. Not actively updated.
 - Branch `b1.1-msk9.2` is compatible with MOSEK 9.2. Currently updated only for bugfixes. Since MOSEK 9.2 replaces 9.1, MOSEK.jl 1.1.x will take future releases from this branch.
 - The `master` branch. This is more or less kept compatible with the latest MOSEK release, either latest stable release or, if available, the latest alpha or beta.
 
-`MOSEK.jl` releases are taken from the `b*.*` branches.
+`Mosek.jl` releases are taken from the `b*.*` branches.
 
-Mosek.jl
-========
+# Mosek.jl
 
-Interface to the Mosek solver in Julia.
+Interface to the [MOSEK solver](https://www.mosek.com) in Julia.
 
 Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Most MOSEK C API functions are available
 - Callbacks for information retrival and log output during optimization
 - Interface for the MOSEK general convex solver
-- Implementation of the `LinprogSolver` interface and other interfaces for `JuMP` (https://github.com/JuliaOpt/JuMP.jl)
 
 MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite),
 QP (quadratic objective, quadratic constraints), and MIP (mixed-integer problems). These can be mixed as follows:
@@ -33,8 +27,7 @@ MOSEK is commercial software, but free licenses are available for
 academic use. See [here](http://mosek.com/products/academic-licenses/)
 for details.
 
-Installation
-------------
+## Installation
 
 Use the Julia package manager to install Mosek.jl:
 
@@ -47,7 +40,7 @@ installation it will attempt to either local an installed MOSEK or download and
 install from the MOSEK website (www.mosek.com):
 
 1. If the environment variable `MOSEKBINDIR` is defined, the installer will assume that this directory contains the necessary libraries. If it does not, the installer will fail.
-2. If the current `MOSEK.jl` installation uses a user-defined MOSEK and this is a valid version, this will be used.
+2. If the current `Mosek.jl` installation uses a user-defined MOSEK and this is a valid version, this will be used.
 3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used.
 4. If no usable MOSEK installation is found here, the installer will
   attempt to download and unpack the latest distro. In this case doing
@@ -80,6 +73,7 @@ $HOME/mosek/mosek.lic
 ```
 
 ### Updating the Mosek library
+
 If the MOSEK distro was installed manually, it can be updated simply
 by installing a newer distro in the same place. Otherwise, doing
 `Pkg.build("Mosek")` will check the latest MOSEK distro and update if
@@ -92,6 +86,7 @@ is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f rea
 ```
 
 ### When installation does not work
+
 If you experience problems installing (in particular on Windows or OS X), you can try to pull the latest revision and see if that works
 ```julia
 Pkg.checkout("Mosek","master")
@@ -100,21 +95,27 @@ Pkg.build("Mosek")
 
 If this also fails, please post an issue in Github.
 
-Documentation
--------------
+## Documentation
 
 All functions and constants in the Mosek.jl are briefly documented in docs strings, and an HTML reference can be built using `Documenter.jl`.
 
 For a more complete description of functions, please refer to
 [the MOSEK C API documentation](https://www.mosek.com/documentation/).
 
-`MathProgBase` interface
-------------------------
+## Use with JuMP
 
-The [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) for MOSEK is implemented in the `MosekConicInterface.jl`, `MosekLPQCQPInterface.jl` and `MosekSolverInterface.jl` files in the `src` folder.
+The [MathOptInterface](https://github.com/jump-dev/MathOptInterface.jl) wrapper
+for MOSEK is a separate package called [`MosekTools`](https://github.com/jump-dev/MosekTools.jl).
+However, for consistency the optimizer is still named `Mosek.Optimizer`.
 
+Use MOSEK with JuMP as follows:
+```julia
+using JuMP, MosekTools
+model = Model(Mosek.Optimizer)
+```
 
-`MathOptInterface`
-------------------
+## `MathProgBase` interface
 
-The [MathOptInterface](https://github.com/JuliaOpt/MathOptInterface.jl) for MOSEK is a separate package called [`MosekTools`](https://github.com/JuliaOpt/MosekTools.jl).
+The legacy [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) wrapper
+for MOSEK is implemented in the `MosekConicInterface.jl`, `MosekLPQCQPInterface.jl`
+and `MosekSolverInterface.jl` files in the `src` folder.
