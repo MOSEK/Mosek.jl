@@ -4,7 +4,8 @@ Since the `Mosek.jl` package is designed to match a specific MOSEK version (majo
 - Branch `b0.8` is compatible with MOSEK 8.0. Not actively updated. 
 - Branch `b0.9` is compatible with MOSEK 8.1. Currently updated only for bugfixes.
 - Branch `b1.1-msk9.1` is compatible with MOSEK 9.1. Not actively updated.
-- Branch `b1.1-msk9.2` is compatible with MOSEK 9.2. Currently updated only for bugfixes. Since MOSEK 9.2 replaces 9.1, MOSEK.jl 1.1.x will take future releases from this branch.
+- Branch `b1.1-msk9.2` is compatible with MOSEK 9.2. Not actively updated.
+- Branch `b1.1-msk9.3` is compatible with MOSEK 9.3. Currently updated only for bugfixes.
 - The `master` branch. This is more or less kept compatible with the latest MOSEK release, either latest stable release or, if available, the latest alpha or beta.
 
 `Mosek.jl` releases are taken from the `b*.*` branches.
