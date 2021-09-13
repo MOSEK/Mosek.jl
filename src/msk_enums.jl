@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.2.30
+# MOSEK 9.3.6
 
 export
   Basindtype,
@@ -980,6 +980,7 @@ export
   MSK_RES_ERR_NAN_IN_BLX,
   MSK_RES_ERR_NAN_IN_BUX,
   MSK_RES_ERR_INVALID_AIJ,
+  MSK_RES_ERR_INVALID_CJ,
   MSK_RES_ERR_SYM_MAT_INVALID,
   MSK_RES_ERR_SYM_MAT_HUGE,
   MSK_RES_ERR_INV_PROBLEM,
@@ -7841,6 +7842,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_NAN_IN_BLX`. blx contains an invalid floating point value, i.e. a NaN.
 * `MSK_RES_ERR_NAN_IN_BUX`. bux contains an invalid floating point value, i.e. a NaN.
 * `MSK_RES_ERR_INVALID_AIJ`. a[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
+* `MSK_RES_ERR_INVALID_CJ`. c[j] contains an invalid floating point value, i.e. a NaN or an infinite value.
 * `MSK_RES_ERR_SYM_MAT_INVALID`. A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value.
 * `MSK_RES_ERR_SYM_MAT_HUGE`. A numerically huge value is specified for an element in A.
 * `MSK_RES_ERR_INV_PROBLEM`. Invalid problem type.
@@ -8884,6 +8886,9 @@ const MSK_RES_ERR_NAN_IN_BUX = Rescode(1472)
 "a[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value."
 const MSK_RES_ERR_INVALID_AIJ = Rescode(1473)
 
+"c[j] contains an invalid floating point value, i.e. a NaN or an infinite value."
+const MSK_RES_ERR_INVALID_CJ = Rescode(1474)
+
 "A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value."
 const MSK_RES_ERR_SYM_MAT_INVALID = Rescode(1480)
 
@@ -9677,6 +9682,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1471 "Mosek.MSK_RES_ERR_NAN_IN_BLX"
   elseif v.value == 1472 "Mosek.MSK_RES_ERR_NAN_IN_BUX"
   elseif v.value == 1473 "Mosek.MSK_RES_ERR_INVALID_AIJ"
+  elseif v.value == 1474 "Mosek.MSK_RES_ERR_INVALID_CJ"
   elseif v.value == 1480 "Mosek.MSK_RES_ERR_SYM_MAT_INVALID"
   elseif v.value == 1482 "Mosek.MSK_RES_ERR_SYM_MAT_HUGE"
   elseif v.value == 1500 "Mosek.MSK_RES_ERR_INV_PROBLEM"
@@ -10138,6 +10144,7 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_NAN_IN_BLX,
     MSK_RES_ERR_NAN_IN_BUX,
     MSK_RES_ERR_INVALID_AIJ,
+    MSK_RES_ERR_INVALID_CJ,
     MSK_RES_ERR_SYM_MAT_INVALID,
     MSK_RES_ERR_SYM_MAT_HUGE,
     MSK_RES_ERR_INV_PROBLEM,
@@ -10307,7 +10314,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 458
+Base.length(::Type{Rescode}) = 459
 """
     Rescodetype
 
