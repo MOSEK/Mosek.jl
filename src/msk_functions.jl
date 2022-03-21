@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand!
-# MOSEK 9.3.6
+# MOSEK 9.3.18
 
 export
   analyzenames,
@@ -6093,7 +6093,7 @@ end
 function putbaraijlist(task_:: MSKtask,subi_:: Vector{Int32},subj_:: Vector{Int32},alphaptrb_:: Vector{Int64},alphaptre_:: Vector{Int64},matidx_:: Vector{Int64},weights_:: Vector{Float64})
   num_ = minimum([ length(subi_),length(subj_),length(alphaptrb_),length(alphaptre_) ])
   res = disable_sigint() do
-    @msk_ccall( "putbaraijlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,num_-1,subi_ .- Int32(1),subj_ .- Int32(1),alphaptrb_,alphaptre_,matidx_ .- Int32(1),weights_)
+    @msk_ccall( "putbaraijlist",Int32,(Ptr{Nothing},Int32,Ptr{Int32},Ptr{Int32},Ptr{Int64},Ptr{Int64},Ptr{Int64},Ptr{Float64},),task_.task,num_,subi_ .- Int32(1),subj_ .- Int32(1),alphaptrb_,alphaptre_,matidx_ .- Int32(1),weights_)
   end
   if res != MSK_RES_OK.value
     msg = getlasterror(task_)
