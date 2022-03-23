@@ -76,7 +76,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterror(t)))
+            throw(MosekError(r,getlasterrorx(t)))
         end
 
         task
@@ -98,7 +98,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterror(t)))
+            throw(MosekError(r,getlasterrorx(t)))
         end
 
         task
@@ -113,7 +113,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterror(t)))
+            throw(MosekError(r,getlasterrorx(t)))
         end
 
         task
@@ -259,16 +259,22 @@ function deleteenv(e::Env)
     end
 end
 
-function getlasterror(t::Task)
-    lasterrcode = Array{Cint}(undef,1)
-    lastmsglen = Array{Cint}(undef,1)
+# function getlasterror(t::Task)
+#     lasterrcode = Array{Cint}(undef,1)
+#     lastmsglen = Array{Cint}(undef,1)
 
-    @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
-               t.task, lasterrcode, 0, lastmsglen, C_NULL)
-    lastmsg = Array{UInt8}(undef,lastmsglen[1])
-    @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
-               t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
-    String(lastmsg[1:lastmsglen[1]-1])
+#     @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
+#                t.task, lasterrcode, 0, lastmsglen, C_NULL)
+#     lastmsg = Array{UInt8}(undef,lastmsglen[1])
+#     @msk_ccall(getlasterror,Cint,(Ptr{Nothing},Ptr{Cint},Cint,Ptr{Cint},Ptr{UInt8}),
+#                t.task, lasterrcode, lastmsglen[1], lastmsglen, lastmsg)
+#     String(lastmsg[1:lastmsglen[1]-1])
+# end
+
+function getlasterrorx(t::Task)
+    let _,_,lastmsg = getlasterror(t)
+        lastmsg
+    end
 end
 
 using SparseArrays

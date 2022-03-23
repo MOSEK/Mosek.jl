@@ -399,7 +399,7 @@ solstainfo(solsta) =
 
 function Base.show(f::IO, sol :: Solution, limit :: Int)
     t = sol.t
-    if solutiondef(t,sol.which)
+    if 0 != solutiondef(t,sol.which)
         solname =
             if     sol.which == MSK_SOL_ITG "Integer Solution"
             elseif sol.which == MSK_SOL_BAS "Basis Solution"

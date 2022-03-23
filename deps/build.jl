@@ -41,8 +41,6 @@ function hasregistrykey(base::UInt32,path::String,key::String)
     end
 end
 
-
-
 function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::AbstractString)
     moseklib =
         if Sys.ARCH == :i386 || Sys.ARCH == :i686
@@ -195,18 +193,19 @@ mskbindir =
         mkpath(dldir)
 
 
-        dlcmd = download_cmd(hosturl, joinpath(dldir,"downloadhostname"))
-        @info("Download command: $dlcmd")
-        (res,stdout,stderr) = collect_output(dlcmd)
-        downloadhost =
-            if res != 0
-                @error(String(stderr))
-                error("Failed to get MOSEK download host")
-            else
-                open(joinpath(dldir,"downloadhostname"),"r") do f
-                    strip(read(f,String))
-                end
-            end
+        downloadhost = "download.mosek.com"
+        #dlcmd = download_cmd(hosturl, joinpath(dldir,"downloadhostname"))
+        #@info("Download command: $dlcmd")
+        #(res,stdout,stderr) = collect_output(dlcmd)
+        #downloadhost =
+        #    if res != 0
+        #        @error(String(stderr))
+        #        error("Failed to get MOSEK download host")
+        #    else
+        #        open(joinpath(dldir,"downloadhostname"),"r") do f
+        #            strip(read(f,String))
+        #        end
+        #    end
 
         verurl   = "https://$downloadhost/stable/$mskvmajor.$mskvminor/version"
 
