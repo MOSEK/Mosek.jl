@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.8
+# Target: Mosek 10.0.12
 export
   analyzeproblem,
   analyzenames,
@@ -120,6 +120,7 @@ export
   gety,
   getslc,
   getaccdoty,
+  getaccdotys,
   evaluateacc,
   evaluateaccs,
   getsuc,
@@ -280,6 +281,11 @@ export
   getaccafeidxlist,
   getaccb,
   getaccs,
+  getaccfnumnz,
+  getaccftrip,
+  getaccgvector,
+  getaccbarfnumblocktriplets,
+  getaccbarfblocktriplet,
   appenddjcs,
   putdjc,
   putdjcslice,
@@ -1626,6 +1632,15 @@ end
 macro MSK_getaccdoty(task,whichsol,accidx,doty)
   quote
      local res = disable_sigint(()->ccall((:MSK_getaccdoty,libmosek),Int32,(Ptr{Nothing},Int32,Int64,Ptr{Float64},),$(esc(task)),$(esc(whichsol)),$(esc(accidx)),$(esc(doty))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_getaccdotys(task,whichsol,doty)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getaccdotys,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{Float64},),$(esc(task)),$(esc(whichsol)),$(esc(doty))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -3207,6 +3222,51 @@ macro MSK_getaccs(task,domidxlist,afeidxlist,b)
      nothing
   end
 end
+macro MSK_getaccfnumnz(task,accfnnz)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getaccfnumnz,libmosek),Int32,(Ptr{Nothing},Ref{Int64},),$(esc(task)),$(esc(accfnnz))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_getaccftrip(task,frow,fcol,fval)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getaccftrip,libmosek),Int32,(Ptr{Nothing},Ptr{Int64},Ptr{Int32},Ptr{Float64},),$(esc(task)),$(esc(frow)),$(esc(fcol)),$(esc(fval))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_getaccgvector(task,g)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getaccgvector,libmosek),Int32,(Ptr{Nothing},Ptr{Float64},),$(esc(task)),$(esc(g))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_getaccbarfnumblocktriplets(task,numtrip)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getaccbarfnumblocktriplets,libmosek),Int32,(Ptr{Nothing},Ref{Int64},),$(esc(task)),$(esc(numtrip))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_getaccbarfblocktriplet(task,maxnumtrip,numtrip,acc_afe,bar_var,blk_row,blk_col,blk_val)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getaccbarfblocktriplet,libmosek),Int32,(Ptr{Nothing},Int64,Ref{Int64},Ptr{Int64},Ptr{Int32},Ptr{Int32},Ptr{Int32},Ptr{Float64},),$(esc(task)),$(esc(maxnumtrip)),$(esc(numtrip)),$(esc(acc_afe)),$(esc(bar_var)),$(esc(blk_row)),$(esc(blk_col)),$(esc(blk_val))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_appenddjcs(task,num)
   quote
      local res = disable_sigint(()->ccall((:MSK_appenddjcs,libmosek),Int32,(Ptr{Nothing},Int64,),$(esc(task)),$(esc(num))))
@@ -3945,9 +4005,9 @@ macro MSK_readdatacb(task,hread,h,format,path)
      nothing
   end
 end
-macro MSK_writedatahandle(task,func,handle,format)
+macro MSK_writedatahandle(task,func,handle,format,compress)
   quote
-     local res = disable_sigint(()->ccall((:MSK_writedatahandle,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,),$(esc(task)),$(esc(func)),$(esc(handle)),$(esc(format))))
+     local res = disable_sigint(()->ccall((:MSK_writedatahandle,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,Int32,),$(esc(task)),$(esc(func)),$(esc(handle)),$(esc(format)),$(esc(compress))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -4471,15 +4531,6 @@ end
 macro MSK_makeenv(env,dbgfile)
   quote
      local res = disable_sigint(()->ccall((:MSK_makeenv,libmosek),Int32,(Ref{Ptr{Nothing}},Ptr{UInt8},),$(esc(env)),$(esc(dbgfile))))
-     if res != 0
-       throw(MosekError(res,""))
-     end
-     nothing
-  end
-end
-macro MSK_makeenvalloc(env,usrptr,usrmalloc,usrcalloc,usrrealloc,usrfree,dbgfile)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_makeenvalloc,libmosek),Int32,(Ref{Ptr{Nothing}},Any,Ptr{Cvoid},Ptr{Cvoid},Ptr{Cvoid},Ptr{Cvoid},Ptr{UInt8},),$(esc(env)),$(esc(usrptr)),$(esc(usrmalloc)),$(esc(usrcalloc)),$(esc(usrrealloc)),$(esc(usrfree)),$(esc(dbgfile))))
      if res != 0
        throw(MosekError(res,""))
      end
@@ -7843,7 +7894,7 @@ end
   getaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64) :: doty
   getaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
 
-  Obtains the doty vector for a solution.
+  Obtains the doty vector for an affine conic constraint.
 
   Arguments
     task::MSKtask An optimization task.
@@ -7871,6 +7922,29 @@ end
 
 
 """
+  getaccdotys(task::MSKtask,whichsol::Soltype) :: doty
+
+  Obtains the doty vector for a solution.
+
+  Arguments
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+  Returns
+    doty::Vector{Float64} The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
+"""
+function getaccdotys end
+function getaccdotys(task::MSKtask,whichsol::Soltype)
+  __tmp_248 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_248)
+  __tmp_247 = __tmp_248[]
+  doty_ = Vector{Float64}(undef,__tmp_247)
+  @MSK_getaccdotys(task.task,whichsol.value,doty_)
+  doty = doty_; doty .+= 1
+  doty
+end
+
+
+"""
   evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64) :: activity
   evaluateacc(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: activity
 
@@ -7885,10 +7959,10 @@ end
 """
 function evaluateacc end
 function evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64)
-  __tmp_248 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_248)
-  __tmp_247 = __tmp_248[]
-  activity_ = Vector{Float64}(undef,__tmp_247)
+  __tmp_251 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_251)
+  __tmp_250 = __tmp_251[]
+  activity_ = Vector{Float64}(undef,__tmp_250)
   @MSK_evaluateacc(task.task,whichsol.value,accidx,activity_)
   activity = activity_; activity .+= 1
   activity
@@ -7914,10 +7988,10 @@ end
 """
 function evaluateaccs end
 function evaluateaccs(task::MSKtask,whichsol::Soltype)
-  __tmp_251 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_251)
-  __tmp_250 = __tmp_251[]
-  activity_ = Vector{Float64}(undef,__tmp_250)
+  __tmp_254 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_254)
+  __tmp_253 = __tmp_254[]
+  activity_ = Vector{Float64}(undef,__tmp_253)
   @MSK_evaluateaccs(task.task,whichsol.value,activity_)
   activity = activity_; activity .+= 1
   activity
@@ -7937,10 +8011,10 @@ end
 """
 function getsuc end
 function getsuc(task::MSKtask,whichsol::Soltype)
-  __tmp_254 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_254)
-  __tmp_253 = __tmp_254[]
-  suc_ = Vector{Float64}(undef,__tmp_253)
+  __tmp_257 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_257)
+  __tmp_256 = __tmp_257[]
+  suc_ = Vector{Float64}(undef,__tmp_256)
   @MSK_getsuc(task.task,whichsol.value,suc_)
   suc = suc_; suc .+= 1
   suc
@@ -7960,10 +8034,10 @@ end
 """
 function getslx end
 function getslx(task::MSKtask,whichsol::Soltype)
-  __tmp_257 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_257)
-  __tmp_256 = __tmp_257[]
-  slx_ = Vector{Float64}(undef,__tmp_256)
+  __tmp_260 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_260)
+  __tmp_259 = __tmp_260[]
+  slx_ = Vector{Float64}(undef,__tmp_259)
   @MSK_getslx(task.task,whichsol.value,slx_)
   slx = slx_; slx .+= 1
   slx
@@ -7983,10 +8057,10 @@ end
 """
 function getsux end
 function getsux(task::MSKtask,whichsol::Soltype)
-  __tmp_260 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_260)
-  __tmp_259 = __tmp_260[]
-  sux_ = Vector{Float64}(undef,__tmp_259)
+  __tmp_263 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_263)
+  __tmp_262 = __tmp_263[]
+  sux_ = Vector{Float64}(undef,__tmp_262)
   @MSK_getsux(task.task,whichsol.value,sux_)
   sux = sux_; sux .+= 1
   sux
@@ -8006,10 +8080,10 @@ end
 """
 function getsnx end
 function getsnx(task::MSKtask,whichsol::Soltype)
-  __tmp_263 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_263)
-  __tmp_262 = __tmp_263[]
-  snx_ = Vector{Float64}(undef,__tmp_262)
+  __tmp_266 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_266)
+  __tmp_265 = __tmp_266[]
+  snx_ = Vector{Float64}(undef,__tmp_265)
   @MSK_getsnx(task.task,whichsol.value,snx_)
   snx = snx_; snx .+= 1
   snx
@@ -8331,10 +8405,10 @@ end
 """
 function getbarxj end
 function getbarxj(task::MSKtask,whichsol::Soltype,j::Int32)
-  __tmp_276 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_276)
-  __tmp_275 = __tmp_276[]
-  barxj_ = Vector{Float64}(undef,__tmp_275)
+  __tmp_279 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_279)
+  __tmp_278 = __tmp_279[]
+  barxj_ = Vector{Float64}(undef,__tmp_278)
   @MSK_getbarxj(task.task,whichsol.value,j-Int32(1),barxj_)
   barxj = barxj_; barxj .+= 1
   barxj
@@ -8394,10 +8468,10 @@ end
 """
 function getbarsj end
 function getbarsj(task::MSKtask,whichsol::Soltype,j::Int32)
-  __tmp_280 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_280)
-  __tmp_279 = __tmp_280[]
-  barsj_ = Vector{Float64}(undef,__tmp_279)
+  __tmp_283 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_283)
+  __tmp_282 = __tmp_283[]
+  barsj_ = Vector{Float64}(undef,__tmp_282)
   @MSK_getbarsj(task.task,whichsol.value,j-Int32(1),barsj_)
   barsj = barsj_; barsj .+= 1
   barsj
@@ -8454,10 +8528,10 @@ end
 """
 function putskc end
 function putskc(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey})
-  __tmp_284 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_284)
-  __tmp_283 = __tmp_284[]
-  if length(skc) < __tmp_283
+  __tmp_287 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_287)
+  __tmp_286 = __tmp_287[]
+  if length(skc) < __tmp_286
     throw(BoundsError())
   end
   skc_ = Int32[item.value for item in skc]
@@ -8478,10 +8552,10 @@ end
 """
 function putskx end
 function putskx(task::MSKtask,whichsol::Soltype,skx::Vector{Stakey})
-  __tmp_287 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_287)
-  __tmp_286 = __tmp_287[]
-  if length(skx) < __tmp_286
+  __tmp_290 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_290)
+  __tmp_289 = __tmp_290[]
+  if length(skx) < __tmp_289
     throw(BoundsError())
   end
   skx_ = Int32[item.value for item in skx]
@@ -8503,10 +8577,10 @@ end
 """
 function putxc end
 function putxc(task::MSKtask,whichsol::Soltype)
-  __tmp_290 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_290)
-  __tmp_289 = __tmp_290[]
-  xc_ = Vector{Float64}(undef,__tmp_289)
+  __tmp_293 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_293)
+  __tmp_292 = __tmp_293[]
+  xc_ = Vector{Float64}(undef,__tmp_292)
   @MSK_putxc(task.task,whichsol.value,xc_)
   xc = xc_; xc .+= 1
   xc
@@ -8526,10 +8600,10 @@ end
 """
 function putxx end
 function putxx(task::MSKtask,whichsol::Soltype,xx::Vector{Float64})
-  __tmp_293 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_293)
-  __tmp_292 = __tmp_293[]
-  if length(xx) < __tmp_292
+  __tmp_296 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_296)
+  __tmp_295 = __tmp_296[]
+  if length(xx) < __tmp_295
     throw(BoundsError())
   end
   xx_ = xx
@@ -8557,10 +8631,10 @@ end
 """
 function puty end
 function puty(task::MSKtask,whichsol::Soltype,y::Vector{Float64})
-  __tmp_296 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_296)
-  __tmp_295 = __tmp_296[]
-  if length(y) < __tmp_295
+  __tmp_299 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_299)
+  __tmp_298 = __tmp_299[]
+  if length(y) < __tmp_298
     throw(BoundsError())
   end
   y_ = y
@@ -8588,10 +8662,10 @@ end
 """
 function putslc end
 function putslc(task::MSKtask,whichsol::Soltype,slc::Vector{Float64})
-  __tmp_299 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_299)
-  __tmp_298 = __tmp_299[]
-  if length(slc) < __tmp_298
+  __tmp_302 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_302)
+  __tmp_301 = __tmp_302[]
+  if length(slc) < __tmp_301
     throw(BoundsError())
   end
   slc_ = slc
@@ -8619,10 +8693,10 @@ end
 """
 function putsuc end
 function putsuc(task::MSKtask,whichsol::Soltype,suc::Vector{Float64})
-  __tmp_302 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_302)
-  __tmp_301 = __tmp_302[]
-  if length(suc) < __tmp_301
+  __tmp_305 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_305)
+  __tmp_304 = __tmp_305[]
+  if length(suc) < __tmp_304
     throw(BoundsError())
   end
   suc_ = suc
@@ -8650,10 +8724,10 @@ end
 """
 function putslx end
 function putslx(task::MSKtask,whichsol::Soltype,slx::Vector{Float64})
-  __tmp_305 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_305)
-  __tmp_304 = __tmp_305[]
-  if length(slx) < __tmp_304
+  __tmp_308 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_308)
+  __tmp_307 = __tmp_308[]
+  if length(slx) < __tmp_307
     throw(BoundsError())
   end
   slx_ = slx
@@ -8681,10 +8755,10 @@ end
 """
 function putsux end
 function putsux(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
-  __tmp_308 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_308)
-  __tmp_307 = __tmp_308[]
-  if length(sux) < __tmp_307
+  __tmp_311 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_311)
+  __tmp_310 = __tmp_311[]
+  if length(sux) < __tmp_310
     throw(BoundsError())
   end
   sux_ = sux
@@ -8712,10 +8786,10 @@ end
 """
 function putsnx end
 function putsnx(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
-  __tmp_311 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_311)
-  __tmp_310 = __tmp_311[]
-  if length(sux) < __tmp_310
+  __tmp_314 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_314)
+  __tmp_313 = __tmp_314[]
+  if length(sux) < __tmp_313
     throw(BoundsError())
   end
   sux_ = sux
@@ -8745,10 +8819,10 @@ end
 """
 function putaccdoty end
 function putaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64)
-  __tmp_314 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_314)
-  __tmp_313 = __tmp_314[]
-  doty_ = Vector{Float64}(undef,__tmp_313)
+  __tmp_317 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_317)
+  __tmp_316 = __tmp_317[]
+  doty_ = Vector{Float64}(undef,__tmp_316)
   @MSK_putaccdoty(task.task,whichsol.value,accidx,doty_)
   doty = doty_; doty .+= 1
   doty
@@ -9095,10 +9169,10 @@ end
 """
 function putbarxj end
 function putbarxj(task::MSKtask,whichsol::Soltype,j::Int32,barxj::Vector{Float64})
-  __tmp_327 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_327)
-  __tmp_326 = __tmp_327[]
-  if length(barxj) < __tmp_326
+  __tmp_330 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_330)
+  __tmp_329 = __tmp_330[]
+  if length(barxj) < __tmp_329
     throw(BoundsError())
   end
   barxj_ = barxj
@@ -9128,10 +9202,10 @@ end
 """
 function putbarsj end
 function putbarsj(task::MSKtask,whichsol::Soltype,j::Int32,barsj::Vector{Float64})
-  __tmp_330 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_330)
-  __tmp_329 = __tmp_330[]
-  if length(barsj) < __tmp_329
+  __tmp_333 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_333)
+  __tmp_332 = __tmp_333[]
+  if length(barsj) < __tmp_332
     throw(BoundsError())
   end
   barsj_ = barsj
@@ -9301,12 +9375,12 @@ end
   getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::Vector{Int64}) :: viol
   getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
-  Computes the violation of a solution for set of affine conic constraints.
+  Computes the violation of a solution for set of disjunctive constraints.
 
   Arguments
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
-    djcidxlist::Vector{Int64} An array of indexes of conic constraints.
+    djcidxlist::Vector{Int64} An array of indexes of disjunctive constraints.
   Returns
     viol::Vector{Float64} List of violations corresponding to sub.
 """
@@ -9691,10 +9765,10 @@ end
 """
 function getstrparam end
 function getstrparam(task::MSKtask,param::Sparam)
-  __tmp_350 = Ref{Int32}()
-  @MSK_getstrparamlen(task.task,param,__tmp_350)
-  __tmp_349 = __tmp_350[]
-  maxlen = Int32((1 + __tmp_349))
+  __tmp_353 = Ref{Int32}()
+  @MSK_getstrparamlen(task.task,param,__tmp_353)
+  __tmp_352 = __tmp_353[]
+  maxlen = Int32((1 + __tmp_352))
   len_ = Ref{Int32}()
   parvalue_ = Array{UInt8}(undef,maxlen)
   @MSK_getstrparam(task.task,param.value,maxlen,len_,parvalue_)
@@ -9757,10 +9831,10 @@ end
 """
 function gettaskname end
 function gettaskname(task::MSKtask)
-  __tmp_355 = Ref{Int32}()
-  @MSK_gettasknamelen(task.task,__tmp_355)
-  __tmp_354 = __tmp_355[]
-  sizetaskname = Int32((1 + __tmp_354))
+  __tmp_358 = Ref{Int32}()
+  @MSK_gettasknamelen(task.task,__tmp_358)
+  __tmp_357 = __tmp_358[]
+  sizetaskname = Int32((1 + __tmp_357))
   taskname_ = Array{UInt8}(undef,sizetaskname)
   @MSK_gettaskname(task.task,sizetaskname,taskname_)
   taskname_len = findfirst(_c->_c==0,taskname_)
@@ -10002,31 +10076,31 @@ end
 """
 function primalrepair end
 function primalrepair(task::MSKtask,wlc::Vector{Float64},wuc::Vector{Float64},wlx::Vector{Float64},wux::Vector{Float64})
-  __tmp_365 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_365)
-  __tmp_364 = __tmp_365[]
-  if length(wlc) < __tmp_364
+  __tmp_368 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_368)
+  __tmp_367 = __tmp_368[]
+  if length(wlc) < __tmp_367
     throw(BoundsError())
   end
   wlc_ = wlc
-  __tmp_367 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_367)
-  __tmp_366 = __tmp_367[]
-  if length(wuc) < __tmp_366
+  __tmp_370 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_370)
+  __tmp_369 = __tmp_370[]
+  if length(wuc) < __tmp_369
     throw(BoundsError())
   end
   wuc_ = wuc
-  __tmp_369 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_369)
-  __tmp_368 = __tmp_369[]
-  if length(wlx) < __tmp_368
+  __tmp_372 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_372)
+  __tmp_371 = __tmp_372[]
+  if length(wlx) < __tmp_371
     throw(BoundsError())
   end
   wlx_ = wlx
-  __tmp_371 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_371)
-  __tmp_370 = __tmp_371[]
-  if length(wux) < __tmp_370
+  __tmp_374 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_374)
+  __tmp_373 = __tmp_374[]
+  if length(wux) < __tmp_373
     throw(BoundsError())
   end
   wux_ = wux
@@ -10621,10 +10695,10 @@ end
 """
 function getbarcsparsity end
 function getbarcsparsity(task::MSKtask)
-  __tmp_392 = Ref{Int64}()
-  @MSK_getnumbarcnz(task.task,__tmp_392)
-  __tmp_391 = __tmp_392[]
-  maxnumnz = Int64(__tmp_391)
+  __tmp_395 = Ref{Int64}()
+  @MSK_getnumbarcnz(task.task,__tmp_395)
+  __tmp_394 = __tmp_395[]
+  maxnumnz = Int64(__tmp_394)
   numnz_ = Ref{Int64}()
   idxj_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarcsparsity(task.task,maxnumnz,numnz_,idxj_)
@@ -10646,10 +10720,10 @@ end
 """
 function getbarasparsity end
 function getbarasparsity(task::MSKtask)
-  __tmp_395 = Ref{Int64}()
-  @MSK_getnumbaranz(task.task,__tmp_395)
-  __tmp_394 = __tmp_395[]
-  maxnumnz = Int64(__tmp_394)
+  __tmp_398 = Ref{Int64}()
+  @MSK_getnumbaranz(task.task,__tmp_398)
+  __tmp_397 = __tmp_398[]
+  maxnumnz = Int64(__tmp_397)
   numnz_ = Ref{Int64}()
   idxij_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarasparsity(task.task,maxnumnz,numnz_,idxij_)
@@ -10725,10 +10799,10 @@ end
 """
 function getbarcidx end
 function getbarcidx(task::MSKtask,idx::Int64)
-  __tmp_400 = Ref{Int64}()
-  @MSK_getbarcidxinfo(task.task,idx-Int64(1),__tmp_400)
-  __tmp_399 = __tmp_400[]
-  maxnum = Int64(__tmp_399)
+  __tmp_403 = Ref{Int64}()
+  @MSK_getbarcidxinfo(task.task,idx-Int64(1),__tmp_403)
+  __tmp_402 = __tmp_403[]
+  maxnum = Int64(__tmp_402)
   j_ = Ref{Int32}()
   num_ = Ref{Int64}()
   sub_ = Vector{Int64}(undef,maxnum)
@@ -10815,10 +10889,10 @@ end
 """
 function getbaraidx end
 function getbaraidx(task::MSKtask,idx::Int64)
-  __tmp_405 = Ref{Int64}()
-  @MSK_getbaraidxinfo(task.task,idx-Int64(1),__tmp_405)
-  __tmp_404 = __tmp_405[]
-  maxnum = Int64(__tmp_404)
+  __tmp_408 = Ref{Int64}()
+  @MSK_getbaraidxinfo(task.task,idx-Int64(1),__tmp_408)
+  __tmp_407 = __tmp_408[]
+  maxnum = Int64(__tmp_407)
   i_ = Ref{Int32}()
   j_ = Ref{Int32}()
   num_ = Ref{Int64}()
@@ -10916,10 +10990,10 @@ end
 """
 function getbarcblocktriplet end
 function getbarcblocktriplet(task::MSKtask)
-  __tmp_410 = Ref{Int64}()
-  @MSK_getnumbarcblocktriplets(task.task,__tmp_410)
-  __tmp_409 = __tmp_410[]
-  maxnum = Int64(__tmp_409)
+  __tmp_413 = Ref{Int64}()
+  @MSK_getnumbarcblocktriplets(task.task,__tmp_413)
+  __tmp_412 = __tmp_413[]
+  maxnum = Int64(__tmp_412)
   num_ = Ref{Int64}()
   subj_ = Vector{Int32}(undef,maxnum)
   subk_ = Vector{Int32}(undef,maxnum)
@@ -11021,10 +11095,10 @@ end
 """
 function getbarablocktriplet end
 function getbarablocktriplet(task::MSKtask)
-  __tmp_415 = Ref{Int64}()
-  @MSK_getnumbarablocktriplets(task.task,__tmp_415)
-  __tmp_414 = __tmp_415[]
-  maxnum = Int64(__tmp_414)
+  __tmp_418 = Ref{Int64}()
+  @MSK_getnumbarablocktriplets(task.task,__tmp_418)
+  __tmp_417 = __tmp_418[]
+  maxnum = Int64(__tmp_417)
   num_ = Ref{Int64}()
   subi_ = Vector{Int32}(undef,maxnum)
   subj_ = Vector{Int32}(undef,maxnum)
@@ -11406,14 +11480,14 @@ end
 function getafefrow end
 function getafefrow(task::MSKtask,afeidx::Int64)
   numnz_ = Ref{Int32}()
-  __tmp_432 = Ref{Int32}()
-  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_432)
-  __tmp_431 = __tmp_432[]
-  varidx_ = Vector{Int32}(undef,__tmp_431)
-  __tmp_434 = Ref{Int32}()
-  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_434)
-  __tmp_433 = __tmp_434[]
-  val_ = Vector{Float64}(undef,__tmp_433)
+  __tmp_435 = Ref{Int32}()
+  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_435)
+  __tmp_434 = __tmp_435[]
+  varidx_ = Vector{Int32}(undef,__tmp_434)
+  __tmp_437 = Ref{Int32}()
+  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_437)
+  __tmp_436 = __tmp_437[]
+  val_ = Vector{Float64}(undef,__tmp_436)
   @MSK_getafefrow(task.task,afeidx-Int64(1),numnz_,varidx_,val_)
   varidx = varidx_; varidx .+= 1
   val = val_; val .+= 1
@@ -11440,18 +11514,18 @@ end
 """
 function getafeftrip end
 function getafeftrip(task::MSKtask)
-  __tmp_437 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_437)
-  __tmp_436 = __tmp_437[]
-  afeidx_ = Vector{Int64}(undef,__tmp_436)
-  __tmp_439 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_439)
-  __tmp_438 = __tmp_439[]
-  varidx_ = Vector{Int32}(undef,__tmp_438)
-  __tmp_441 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_441)
-  __tmp_440 = __tmp_441[]
-  val_ = Vector{Float64}(undef,__tmp_440)
+  __tmp_440 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_440)
+  __tmp_439 = __tmp_440[]
+  afeidx_ = Vector{Int64}(undef,__tmp_439)
+  __tmp_442 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_442)
+  __tmp_441 = __tmp_442[]
+  varidx_ = Vector{Int32}(undef,__tmp_441)
+  __tmp_444 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_444)
+  __tmp_443 = __tmp_444[]
+  val_ = Vector{Float64}(undef,__tmp_443)
   @MSK_getafeftrip(task.task,afeidx_,varidx_,val_)
   afeidx = afeidx_; afeidx .+= 1
   varidx = varidx_; varidx .+= 1
@@ -11703,10 +11777,10 @@ end
 """
 function getafebarfblocktriplet end
 function getafebarfblocktriplet(task::MSKtask)
-  __tmp_451 = Ref{Int64}()
-  @MSK_getafebarfnumblocktriplets(task.task,__tmp_451)
-  __tmp_450 = __tmp_451[]
-  maxnumtrip = Int64(__tmp_450)
+  __tmp_454 = Ref{Int64}()
+  @MSK_getafebarfnumblocktriplets(task.task,__tmp_454)
+  __tmp_453 = __tmp_454[]
+  maxnumtrip = Int64(__tmp_453)
   numtrip_ = Ref{Int64}()
   afeidx_ = Vector{Int64}(undef,maxnumtrip)
   barvaridx_ = Vector{Int32}(undef,maxnumtrip)
@@ -11793,26 +11867,26 @@ end
 """
 function getafebarfrow end
 function getafebarfrow(task::MSKtask,afeidx::Int64)
-  __tmp_456 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_456,Ref{Int64}())
-  __tmp_455 = __tmp_456[]
-  barvaridx_ = Vector{Int32}(undef,__tmp_455)
-  __tmp_458 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_458,Ref{Int64}())
-  __tmp_457 = __tmp_458[]
-  ptrterm_ = Vector{Int64}(undef,__tmp_457)
-  __tmp_460 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_460,Ref{Int64}())
-  __tmp_459 = __tmp_460[]
-  numterm_ = Vector{Int64}(undef,__tmp_459)
-  __tmp_462 = Ref{Int64}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_462)
-  __tmp_461 = __tmp_462[]
-  termidx_ = Vector{Int64}(undef,__tmp_461)
-  __tmp_464 = Ref{Int64}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_464)
-  __tmp_463 = __tmp_464[]
-  termweight_ = Vector{Float64}(undef,__tmp_463)
+  __tmp_459 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_459,Ref{Int64}())
+  __tmp_458 = __tmp_459[]
+  barvaridx_ = Vector{Int32}(undef,__tmp_458)
+  __tmp_461 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_461,Ref{Int64}())
+  __tmp_460 = __tmp_461[]
+  ptrterm_ = Vector{Int64}(undef,__tmp_460)
+  __tmp_463 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_463,Ref{Int64}())
+  __tmp_462 = __tmp_463[]
+  numterm_ = Vector{Int64}(undef,__tmp_462)
+  __tmp_465 = Ref{Int64}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_465)
+  __tmp_464 = __tmp_465[]
+  termidx_ = Vector{Int64}(undef,__tmp_464)
+  __tmp_467 = Ref{Int64}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_467)
+  __tmp_466 = __tmp_467[]
+  termweight_ = Vector{Float64}(undef,__tmp_466)
   @MSK_getafebarfrow(task.task,afeidx-Int64(1),barvaridx_,ptrterm_,numterm_,termidx_,termweight_)
   barvaridx = barvaridx_; barvaridx .+= 1
   ptrterm = ptrterm_; ptrterm .+= 1
@@ -12251,10 +12325,10 @@ end
 """
 function appendaccseq end
 function appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Vector{Float64})
-  __tmp_484 = Ref{Int64}()
-  @MSK_getdomainn(task.task,domidx-Int64(1),__tmp_484)
-  __tmp_483 = __tmp_484[]
-  numafeidx = Int64(__tmp_483)
+  __tmp_487 = Ref{Int64}()
+  @MSK_getdomainn(task.task,domidx-Int64(1),__tmp_487)
+  __tmp_486 = __tmp_487[]
+  numafeidx = Int64(__tmp_486)
   if length(b) < numafeidx
     throw(BoundsError())
   end
@@ -12510,10 +12584,10 @@ end
 """
 function getaccafeidxlist end
 function getaccafeidxlist(task::MSKtask,accidx::Int64)
-  __tmp_495 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_495)
-  __tmp_494 = __tmp_495[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_494)
+  __tmp_498 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_498)
+  __tmp_497 = __tmp_498[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_497)
   @MSK_getaccafeidxlist(task.task,accidx-Int64(1),afeidxlist_)
   afeidxlist = afeidxlist_; afeidxlist .+= 1
   afeidxlist
@@ -12539,10 +12613,10 @@ end
 """
 function getaccb end
 function getaccb(task::MSKtask,accidx::Int64)
-  __tmp_498 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_498)
-  __tmp_497 = __tmp_498[]
-  b_ = Vector{Float64}(undef,__tmp_497)
+  __tmp_501 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_501)
+  __tmp_500 = __tmp_501[]
+  b_ = Vector{Float64}(undef,__tmp_500)
   @MSK_getaccb(task.task,accidx-Int64(1),b_)
   b = b_; b .+= 1
   b
@@ -12568,23 +12642,152 @@ end
 """
 function getaccs end
 function getaccs(task::MSKtask)
-  __tmp_501 = Ref{Int64}()
-  @MSK_getnumacc(task.task,__tmp_501)
-  __tmp_500 = __tmp_501[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_500)
-  __tmp_503 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_503)
-  __tmp_502 = __tmp_503[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_502)
-  __tmp_505 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_505)
-  __tmp_504 = __tmp_505[]
-  b_ = Vector{Float64}(undef,__tmp_504)
+  __tmp_504 = Ref{Int64}()
+  @MSK_getnumacc(task.task,__tmp_504)
+  __tmp_503 = __tmp_504[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_503)
+  __tmp_506 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_506)
+  __tmp_505 = __tmp_506[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_505)
+  __tmp_508 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_508)
+  __tmp_507 = __tmp_508[]
+  b_ = Vector{Float64}(undef,__tmp_507)
   @MSK_getaccs(task.task,domidxlist_,afeidxlist_,b_)
   domidxlist = domidxlist_; domidxlist .+= 1
   afeidxlist = afeidxlist_; afeidxlist .+= 1
   b = b_; b .+= 1
   domidxlist,afeidxlist,b
+end
+
+
+"""
+  getaccfnumnz(task::MSKtask) :: accfnnz
+
+  Obtains the total number of nonzeros in the ACC implied F matrix.
+
+  Arguments
+    task::MSKtask An optimization task.
+  Returns
+    accfnnz::Int64 Number of nonzeros in the F matrix implied by ACCs.
+"""
+function getaccfnumnz end
+function getaccfnumnz(task::MSKtask)
+  accfnnz_ = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,accfnnz_)
+  accfnnz_[]
+end
+
+
+"""
+  getaccftrip(task::MSKtask) :: (frow,fcol,fval)
+
+  Obtains the F matrix (implied by the AFE ordering within the ACCs) in triplet format.
+
+  Arguments
+    task::MSKtask An optimization task.
+  Returns
+    frow::Vector{Int64} Row indices of nonzeros in the implied F matrix.
+    fcol::Vector{Int32} Column indices of nonzeros in the implied F matrix.
+    fval::Vector{Float64} Values of nonzero entries in the implied F matrix.
+"""
+function getaccftrip end
+function getaccftrip(task::MSKtask)
+  __tmp_512 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_512)
+  __tmp_511 = __tmp_512[]
+  frow_ = Vector{Int64}(undef,__tmp_511)
+  __tmp_514 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_514)
+  __tmp_513 = __tmp_514[]
+  fcol_ = Vector{Int32}(undef,__tmp_513)
+  __tmp_516 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_516)
+  __tmp_515 = __tmp_516[]
+  fval_ = Vector{Float64}(undef,__tmp_515)
+  @MSK_getaccftrip(task.task,frow_,fcol_,fval_)
+  frow = frow_; frow .+= 1
+  fcol = fcol_; fcol .+= 1
+  fval = fval_; fval .+= 1
+  frow,fcol,fval
+end
+
+
+"""
+  getaccgvector(task::MSKtask) :: g
+
+  The g vector as used within the ACCs.
+
+  Arguments
+    task::MSKtask An optimization task.
+  Returns
+    g::Vector{Float64} The g vector as used within the ACCs.
+"""
+function getaccgvector end
+function getaccgvector(task::MSKtask)
+  __tmp_519 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_519)
+  __tmp_518 = __tmp_519[]
+  g_ = Vector{Float64}(undef,__tmp_518)
+  @MSK_getaccgvector(task.task,g_)
+  g = g_; g .+= 1
+  g
+end
+
+
+"""
+  getaccbarfnumblocktriplets(task::MSKtask) :: numtrip
+
+  Obtains an upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
+
+  Arguments
+    task::MSKtask An optimization task.
+  Returns
+    numtrip::Int64 An upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
+"""
+function getaccbarfnumblocktriplets end
+function getaccbarfnumblocktriplets(task::MSKtask)
+  numtrip_ = Ref{Int64}()
+  @MSK_getaccbarfnumblocktriplets(task.task,numtrip_)
+  numtrip_[]
+end
+
+
+"""
+  getaccbarfblocktriplet(task::MSKtask) :: (numtrip,acc_afe,bar_var,blk_row,blk_col,blk_val)
+
+  Obtains barF, implied by the ACCs, in block triplet form.
+
+  Arguments
+    task::MSKtask An optimization task.
+  Returns
+    numtrip::Int64 Number of elements in the block triplet form.
+    acc_afe::Vector{Int64} Index of the AFE within the concatenated list of AFEs in ACCs.
+    bar_var::Vector{Int32} Symmetric matrix variable index.
+    blk_row::Vector{Int32} Block row index.
+    blk_col::Vector{Int32} Block column index.
+    blk_val::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function getaccbarfblocktriplet end
+function getaccbarfblocktriplet(task::MSKtask)
+  __tmp_523 = Ref{Int64}()
+  @MSK_getaccbarfnumblocktriplets(task.task,__tmp_523)
+  __tmp_522 = __tmp_523[]
+  maxnumtrip = Int64(__tmp_522)
+  numtrip_ = Ref{Int64}()
+  acc_afe_ = Vector{Int64}(undef,maxnumtrip)
+  bar_var_ = Vector{Int32}(undef,maxnumtrip)
+  blk_row_ = Vector{Int32}(undef,maxnumtrip)
+  blk_col_ = Vector{Int32}(undef,maxnumtrip)
+  blk_val_ = Vector{Float64}(undef,maxnumtrip)
+  @MSK_getaccbarfblocktriplet(task.task,maxnumtrip,numtrip_,acc_afe_,bar_var_,blk_row_,blk_col_,blk_val_)
+  acc_afe = acc_afe_; acc_afe .+= 1
+  bar_var = bar_var_; bar_var .+= 1
+  blk_row = blk_row_; blk_row .+= 1
+  blk_col = blk_col_; blk_col .+= 1
+  blk_val = blk_val_; blk_val .+= 1
+  numtrip_[],acc_afe,bar_var,blk_row,blk_col,blk_val
 end
 
 
@@ -12712,10 +12915,10 @@ end
 """
 function getdjcdomainidxlist end
 function getdjcdomainidxlist(task::MSKtask,djcidx::Int64)
-  __tmp_511 = Ref{Int64}()
-  @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),__tmp_511)
-  __tmp_510 = __tmp_511[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_510)
+  __tmp_529 = Ref{Int64}()
+  @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),__tmp_529)
+  __tmp_528 = __tmp_529[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_528)
   @MSK_getdjcdomainidxlist(task.task,djcidx-Int64(1),domidxlist_)
   domidxlist = domidxlist_; domidxlist .+= 1
   domidxlist
@@ -12741,10 +12944,10 @@ end
 """
 function getdjcafeidxlist end
 function getdjcafeidxlist(task::MSKtask,djcidx::Int64)
-  __tmp_514 = Ref{Int64}()
-  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_514)
-  __tmp_513 = __tmp_514[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_513)
+  __tmp_532 = Ref{Int64}()
+  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_532)
+  __tmp_531 = __tmp_532[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_531)
   @MSK_getdjcafeidxlist(task.task,djcidx-Int64(1),afeidxlist_)
   afeidxlist = afeidxlist_; afeidxlist .+= 1
   afeidxlist
@@ -12770,10 +12973,10 @@ end
 """
 function getdjcb end
 function getdjcb(task::MSKtask,djcidx::Int64)
-  __tmp_517 = Ref{Int64}()
-  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_517)
-  __tmp_516 = __tmp_517[]
-  b_ = Vector{Float64}(undef,__tmp_516)
+  __tmp_535 = Ref{Int64}()
+  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_535)
+  __tmp_534 = __tmp_535[]
+  b_ = Vector{Float64}(undef,__tmp_534)
   @MSK_getdjcb(task.task,djcidx-Int64(1),b_)
   b = b_; b .+= 1
   b
@@ -12799,10 +13002,10 @@ end
 """
 function getdjctermsizelist end
 function getdjctermsizelist(task::MSKtask,djcidx::Int64)
-  __tmp_520 = Ref{Int64}()
-  @MSK_getdjcnumterm(task.task,djcidx-Int64(1),__tmp_520)
-  __tmp_519 = __tmp_520[]
-  termsizelist_ = Vector{Int64}(undef,__tmp_519)
+  __tmp_538 = Ref{Int64}()
+  @MSK_getdjcnumterm(task.task,djcidx-Int64(1),__tmp_538)
+  __tmp_537 = __tmp_538[]
+  termsizelist_ = Vector{Int64}(undef,__tmp_537)
   @MSK_getdjctermsizelist(task.task,djcidx-Int64(1),termsizelist_)
   termsizelist = termsizelist_; termsizelist .+= 1
   termsizelist
@@ -12830,26 +13033,26 @@ end
 """
 function getdjcs end
 function getdjcs(task::MSKtask)
-  __tmp_523 = Ref{Int64}()
-  @MSK_getdjcnumdomaintot(task.task,__tmp_523)
-  __tmp_522 = __tmp_523[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_522)
-  __tmp_525 = Ref{Int64}()
-  @MSK_getdjcnumafetot(task.task,__tmp_525)
-  __tmp_524 = __tmp_525[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_524)
-  __tmp_527 = Ref{Int64}()
-  @MSK_getdjcnumafetot(task.task,__tmp_527)
-  __tmp_526 = __tmp_527[]
-  b_ = Vector{Float64}(undef,__tmp_526)
-  __tmp_529 = Ref{Int64}()
-  @MSK_getdjcnumtermtot(task.task,__tmp_529)
-  __tmp_528 = __tmp_529[]
-  termsizelist_ = Vector{Int64}(undef,__tmp_528)
-  __tmp_531 = Ref{Int64}()
-  @MSK_getnumdjc(task.task,__tmp_531)
-  __tmp_530 = __tmp_531[]
-  numterms_ = Vector{Int64}(undef,__tmp_530)
+  __tmp_541 = Ref{Int64}()
+  @MSK_getdjcnumdomaintot(task.task,__tmp_541)
+  __tmp_540 = __tmp_541[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_540)
+  __tmp_543 = Ref{Int64}()
+  @MSK_getdjcnumafetot(task.task,__tmp_543)
+  __tmp_542 = __tmp_543[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_542)
+  __tmp_545 = Ref{Int64}()
+  @MSK_getdjcnumafetot(task.task,__tmp_545)
+  __tmp_544 = __tmp_545[]
+  b_ = Vector{Float64}(undef,__tmp_544)
+  __tmp_547 = Ref{Int64}()
+  @MSK_getdjcnumtermtot(task.task,__tmp_547)
+  __tmp_546 = __tmp_547[]
+  termsizelist_ = Vector{Int64}(undef,__tmp_546)
+  __tmp_549 = Ref{Int64}()
+  @MSK_getnumdjc(task.task,__tmp_549)
+  __tmp_548 = __tmp_549[]
+  numterms_ = Vector{Int64}(undef,__tmp_548)
   @MSK_getdjcs(task.task,domidxlist_,afeidxlist_,b_,termsizelist_,numterms_)
   domidxlist = domidxlist_; domidxlist .+= 1
   afeidxlist = afeidxlist_; afeidxlist .+= 1
@@ -13834,10 +14037,10 @@ end
 """
 function getpowerdomainalpha end
 function getpowerdomainalpha(task::MSKtask,domidx::Int64)
-  __tmp_570 = Ref{Int64}()
-  @MSK_getpowerdomaininfo(task.task,domidx-Int64(1),Ref{Int64}(),__tmp_570)
-  __tmp_569 = __tmp_570[]
-  alpha_ = Vector{Float64}(undef,__tmp_569)
+  __tmp_588 = Ref{Int64}()
+  @MSK_getpowerdomaininfo(task.task,domidx-Int64(1),Ref{Int64}(),__tmp_588)
+  __tmp_587 = __tmp_588[]
+  alpha_ = Vector{Float64}(undef,__tmp_587)
   @MSK_getpowerdomainalpha(task.task,domidx-Int64(1),alpha_)
   alpha = alpha_; alpha .+= 1
   alpha
@@ -14003,10 +14206,10 @@ end
 """
 function getsparsesymmat end
 function getsparsesymmat(task::MSKtask,idx::Int64)
-  __tmp_577 = Ref{Int64}()
-  @MSK_getsymmatinfo(task.task,idx-Int64(1),Ref{Int32}(),__tmp_577,Ref{Int32}())
-  __tmp_576 = __tmp_577[]
-  maxlen = Int64(__tmp_576)
+  __tmp_595 = Ref{Int64}()
+  @MSK_getsymmatinfo(task.task,idx-Int64(1),Ref{Int32}(),__tmp_595,Ref{Int32}())
+  __tmp_594 = __tmp_595[]
+  maxlen = Int64(__tmp_594)
   subi_ = Vector{Int32}(undef,maxlen)
   subj_ = Vector{Int32}(undef,maxlen)
   valij_ = Vector{Float64}(undef,maxlen)
@@ -15405,10 +15608,10 @@ end
 function getlasterror end
 function getlasterror(task::MSKtask)
   lastrescode_ = Ref{Int32}()
-  __tmp_639 = Ref{Int64}()
-  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_639,C_NULL)
-  __tmp_638 = __tmp_639[]
-  sizelastmsg = Int64((__tmp_638 + Int64(1)))
+  __tmp_657 = Ref{Int64}()
+  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_657,C_NULL)
+  __tmp_656 = __tmp_657[]
+  sizelastmsg = Int64((__tmp_656 + Int64(1)))
   lastmsglen_ = Ref{Int64}()
   lastmsg_ = Array{UInt8}(undef,sizelastmsg)
   @MSK_getlasterror64(task.task,lastrescode_,sizelastmsg,lastmsglen_,lastmsg_)
@@ -15777,23 +15980,23 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_661 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_661))
+  __tmp_679 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_679))
   @MSK_freeenv(env,perm_[])
-  __tmp_662 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_662))
+  __tmp_680 = n
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_680))
   @MSK_freeenv(env,diag_[])
-  __tmp_663 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_663))
+  __tmp_681 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_681))
   @MSK_freeenv(env,lnzc_[])
-  __tmp_664 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_664))
+  __tmp_682 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_682))
   @MSK_freeenv(env,lptrc_[])
-  __tmp_665 = lensubnval
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_665))
+  __tmp_683 = lensubnval
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_683))
   @MSK_freeenv(env,lsubc_[])
-  __tmp_666 = lensubnval
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_666))
+  __tmp_684 = lensubnval
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_684))
   @MSK_freeenv(env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
