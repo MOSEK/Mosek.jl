@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.12
+# Target: Mosek 10.0.13
 export
   analyzeproblem,
   analyzenames,
@@ -402,6 +402,8 @@ export
   checkoutlicense,
   checkinlicense,
   checkinall,
+  expirylicenses,
+  resetexpirylicenses,
   echointro,
   getcodedesc,
   getversion,
@@ -449,9 +451,9 @@ macro MSK_initbasissolve(task,basis)
      nothing
   end
 end
-macro MSK_solvewithbasis(task,transp,numnz,sub,val)
+macro MSK_solvewithbasis(task,transp,numnz,sub,val,numnzout)
   quote
-     local res = disable_sigint(()->ccall((:MSK_solvewithbasis,libmosek),Int32,(Ptr{Nothing},Int32,Ref{Int32},Ptr{Int32},Ptr{Float64},),$(esc(task)),$(esc(transp)),$(esc(numnz)),$(esc(sub)),$(esc(val))))
+     local res = disable_sigint(()->ccall((:MSK_solvewithbasis,libmosek),Int32,(Ptr{Nothing},Int32,Int32,Ptr{Int32},Ptr{Float64},Ref{Int32},),$(esc(task)),$(esc(transp)),$(esc(numnz)),$(esc(sub)),$(esc(val)),$(esc(numnzout))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -3996,9 +3998,9 @@ macro MSK_readdata(task,filename)
      nothing
   end
 end
-macro MSK_readdatacb(task,hread,h,format,path)
+macro MSK_readdatacb(task,hread,h,format,compress,path)
   quote
-     local res = disable_sigint(()->ccall((:MSK_readdatacb,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,Ptr{UInt8},),$(esc(task)),$(esc(hread)),$(esc(h)),$(esc(format)),$(esc(path))))
+     local res = disable_sigint(()->ccall((:MSK_readdatacb,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,Int32,Ptr{UInt8},),$(esc(task)),$(esc(hread)),$(esc(h)),$(esc(format)),$(esc(compress)),$(esc(path))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -4419,6 +4421,24 @@ macro MSK_checkinall(env)
      nothing
   end
 end
+macro MSK_expirylicenses(env,expiry)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_expirylicenses,libmosek),Int32,(Ptr{Nothing},Ref{Int64},),$(esc(env)),$(esc(expiry))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_resetexpirylicenses(env)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_resetexpirylicenses,libmosek),Int32,(Ptr{Nothing},),$(esc(env))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
 macro MSK_getbuildinfo(buildstate,builddate)
   quote
      local res = disable_sigint(()->ccall((:MSK_getbuildinfo,libmosek),Int32,(Ptr{UInt8},Ptr{UInt8},),$(esc(buildstate)),$(esc(builddate))))
@@ -4776,29 +4796,28 @@ function initbasissolve(task::MSKtask)
   __tmp_3 = __tmp_4[]
   basis_ = Vector{Int32}(undef,__tmp_3)
   @MSK_initbasissolve(task.task,basis_)
-  basis = basis_; basis .+= 1
+  basis = basis_;
   basis
 end
 
 
 """
-  solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int32},val::Vector{Float64}) :: numnz
-  solvewithbasis(task::MSKtask,transp::T0,numnz::T1,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer,T1 <: Integer}  :: numnz
+  solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int32},val::Vector{Float64}) :: numnzout
+  solvewithbasis(task::MSKtask,transp::T0,numnz::T1,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer,T1<:Integer}  :: numnzout
 
   Solve a linear equation system involving a basis matrix.
 
   Arguments
     task::MSKtask An optimization task.
     transp::Int32 Controls which problem formulation is solved.
-    numnz::Int32 Input (number of non-zeros in right-hand side) and output (number of non-zeros in solution vector).
+    numnz::Int32 Input (number of non-zeros in right-hand side).
     sub::Vector{Int32} Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
     val::Vector{Float64} Input (right-hand side values) and output (solution vector values).
   Returns
-    numnz::Int32 Input (number of non-zeros in right-hand side) and output (number of non-zeros in solution vector).
+    numnzout::Int32 Output (number of non-zeros in solution vector).
 """
 function solvewithbasis end
 function solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int32},val::Vector{Float64})
-  numnz_ = Ref{Int32}(numnz)
   __tmp_7 = Ref{Int32}()
   @MSK_getnumcon(task.task,__tmp_7)
   __tmp_6 = __tmp_7[]
@@ -4813,12 +4832,13 @@ function solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int
     throw(BoundsError())
   end
   val_ = val
-  @MSK_solvewithbasis(task.task,transp,numnz_,sub_,val_)
+  numnzout_ = Ref{Int32}()
+  @MSK_solvewithbasis(task.task,transp,numnz,sub_,val_,numnzout_)
   sub = sub_ .+ Int32(1)
-  val = val_ .+ Float64(1)
-  numnz_[]
+  val = val_
+  numnzout_[]
 end
-function solvewithbasis(task::MSKtask,transp::T0,numnz::T1,sub::Vector{Int32},val::Vector{Float64}) where { T0<:Integer,T1 <: Integer }
+function solvewithbasis(task::MSKtask,transp::T0,numnz::T1,sub::Vector{Int32},val::Vector{Float64}) where { T0<:Integer,T1<:Integer }
   solvewithbasis(
     task,
     convert(Int32,transp),
@@ -5339,8 +5359,9 @@ function getacol(task::MSKtask,j::Int32)
   __tmp_36 = __tmp_37[]
   valj_ = Vector{Float64}(undef,__tmp_36)
   @MSK_getacol(task.task,j-Int32(1),nzj_,subj_,valj_)
-  subj = subj_; subj .+= 1
-  valj = valj_; valj .+= 1
+  subj = subj_;
+  subj .+= 1
+  valj = valj_;
   nzj_[],subj,valj
 end
 function getacol(task::MSKtask,j::T0) where { T0<:Integer }
@@ -5378,10 +5399,13 @@ function getacolslice(task::MSKtask,first::Int32,last::Int32)
   sub_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
   @MSK_getacolslice64(task.task,first-Int32(1),last-Int32(1),maxnumnz,Ref(surp),ptrb_,ptre_,sub_,val_)
-  ptrb = ptrb_; ptrb .+= 1
-  ptre = ptre_; ptre .+= 1
-  sub = sub_; sub .+= 1
-  val = val_; val .+= 1
+  ptrb = ptrb_;
+  ptrb .+= 1
+  ptre = ptre_;
+  ptre .+= 1
+  sub = sub_;
+  sub .+= 1
+  val = val_;
   ptrb,ptre,sub,val
 end
 function getacolslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -5443,8 +5467,9 @@ function getarow(task::MSKtask,i::Int32)
   __tmp_47 = __tmp_48[]
   vali_ = Vector{Float64}(undef,__tmp_47)
   @MSK_getarow(task.task,i-Int32(1),nzi_,subi_,vali_)
-  subi = subi_; subi .+= 1
-  vali = vali_; vali .+= 1
+  subi = subi_;
+  subi .+= 1
+  vali = vali_;
   nzi_[],subi,vali
 end
 function getarow(task::MSKtask,i::T0) where { T0<:Integer }
@@ -5536,10 +5561,13 @@ function getarowslice(task::MSKtask,first::Int32,last::Int32)
   sub_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
   @MSK_getarowslice64(task.task,first-Int32(1),last-Int32(1),maxnumnz,Ref(surp),ptrb_,ptre_,sub_,val_)
-  ptrb = ptrb_; ptrb .+= 1
-  ptre = ptre_; ptre .+= 1
-  sub = sub_; sub .+= 1
-  val = val_; val .+= 1
+  ptrb = ptrb_;
+  ptrb .+= 1
+  ptre = ptre_;
+  ptre .+= 1
+  sub = sub_;
+  sub .+= 1
+  val = val_;
   ptrb,ptre,sub,val
 end
 function getarowslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -5573,9 +5601,11 @@ function getatrip(task::MSKtask)
   subj_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
   @MSK_getatrip(task.task,maxnumnz,Ref(surp),subi_,subj_,val_)
-  subi = subi_; subi .+= 1
-  subj = subj_; subj .+= 1
-  val = val_; val .+= 1
+  subi = subi_;
+  subi .+= 1
+  subj = subj_;
+  subj .+= 1
+  val = val_;
   subi,subj,val
 end
 
@@ -5606,9 +5636,11 @@ function getarowslicetrip(task::MSKtask,first::Int32,last::Int32)
   subj_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
   @MSK_getarowslicetrip(task.task,first-Int32(1),last-Int32(1),maxnumnz,Ref(surp),subi_,subj_,val_)
-  subi = subi_; subi .+= 1
-  subj = subj_; subj .+= 1
-  val = val_; val .+= 1
+  subi = subi_;
+  subi .+= 1
+  subj = subj_;
+  subj .+= 1
+  val = val_;
   subi,subj,val
 end
 function getarowslicetrip(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -5645,9 +5677,11 @@ function getacolslicetrip(task::MSKtask,first::Int32,last::Int32)
   subj_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
   @MSK_getacolslicetrip(task.task,first-Int32(1),last-Int32(1),maxnumnz,Ref(surp),subi_,subj_,val_)
-  subi = subi_; subi .+= 1
-  subj = subj_; subj .+= 1
-  val = val_; val .+= 1
+  subi = subi_;
+  subi .+= 1
+  subj = subj_;
+  subj .+= 1
+  val = val_;
   subi,subj,val
 end
 function getacolslicetrip(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -5740,8 +5774,8 @@ function getconboundslice(task::MSKtask,first::Int32,last::Int32)
   bu_ = Vector{Float64}(undef,(last - first))
   @MSK_getconboundslice(task.task,first-Int32(1),last-Int32(1),bk_,bl_,bu_)
   bk = Boundkey[Boundkey(item) for item in bk_]
-  bl = bl_; bl .+= 1
-  bu = bu_; bu .+= 1
+  bl = bl_;
+  bu = bu_;
   bk,bl,bu
 end
 function getconboundslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -5774,8 +5808,8 @@ function getvarboundslice(task::MSKtask,first::Int32,last::Int32)
   bu_ = Vector{Float64}(undef,(last - first))
   @MSK_getvarboundslice(task.task,first-Int32(1),last-Int32(1),bk_,bl_,bu_)
   bk = Boundkey[Boundkey(item) for item in bk_]
-  bl = bl_; bl .+= 1
-  bu = bu_; bu .+= 1
+  bl = bl_;
+  bu = bu_;
   bk,bl,bu
 end
 function getvarboundslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -5828,7 +5862,7 @@ function getc(task::MSKtask)
   __tmp_71 = __tmp_72[]
   c_ = Vector{Float64}(undef,__tmp_71)
   @MSK_getc(task.task,c_)
-  c = c_; c .+= 1
+  c = c_;
   c
 end
 
@@ -5877,7 +5911,8 @@ function getcone(task::MSKtask,k::Int32)
   submem_ = Vector{Int32}(undef,__tmp_75)
   @MSK_getcone(task.task,k-Int32(1),ct_,conepar_,nummem_,submem_)
   ct = Conetype(ct_[])
-  submem = submem_; submem .+= 1
+  submem = submem_;
+  submem .+= 1
   ct,conepar_[],nummem_[],submem
 end
 function getcone(task::MSKtask,k::T0) where { T0<:Integer }
@@ -5935,7 +5970,7 @@ function getclist(task::MSKtask,subj::Vector{Int32})
   subj_ = subj .- Int32(1)
   c_ = Vector{Float64}(undef,num)
   @MSK_getclist(task.task,num,subj_,c_)
-  c = c_; c .+= 1
+  c = c_;
   c
 end
 function getclist(task::MSKtask,subj::T0) where { T0<:AbstractVector{<:Integer} }
@@ -5962,7 +5997,7 @@ function getcslice end
 function getcslice(task::MSKtask,first::Int32,last::Int32)
   c_ = Vector{Float64}(undef,(last - first))
   @MSK_getcslice(task.task,first-Int32(1),last-Int32(1),c_)
-  c = c_; c .+= 1
+  c = c_;
   c
 end
 function getcslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -7407,9 +7442,11 @@ function getqconk(task::MSKtask,k::Int32)
   __tmp_162 = __tmp_163[]
   qcval_ = Vector{Float64}(undef,__tmp_162)
   @MSK_getqconk64(task.task,k-Int32(1),maxnumqcnz,Ref(qcsurp),numqcnz_,qcsubi_,qcsubj_,qcval_)
-  qcsubi = qcsubi_; qcsubi .+= 1
-  qcsubj = qcsubj_; qcsubj .+= 1
-  qcval = qcval_; qcval .+= 1
+  qcsubi = qcsubi_;
+  qcsubi .+= 1
+  qcsubj = qcsubj_;
+  qcsubj .+= 1
+  qcval = qcval_;
   numqcnz_[],qcsubi,qcsubj,qcval
 end
 function getqconk(task::MSKtask,k::T0) where { T0<:Integer }
@@ -7444,9 +7481,11 @@ function getqobj(task::MSKtask)
   qosubj_ = Vector{Int32}(undef,maxnumqonz)
   qoval_ = Vector{Float64}(undef,maxnumqonz)
   @MSK_getqobj64(task.task,maxnumqonz,Ref(qosurp),numqonz_,qosubi_,qosubj_,qoval_)
-  qosubi = qosubi_; qosubi .+= 1
-  qosubj = qosubj_; qosubj .+= 1
-  qoval = qoval_; qoval .+= 1
+  qosubi = qosubi_;
+  qosubi .+= 1
+  qosubj = qosubj_;
+  qosubj .+= 1
+  qoval = qoval_;
   numqonz_[],qosubi,qosubj,qoval
 end
 
@@ -7564,14 +7603,14 @@ function getsolution(task::MSKtask,whichsol::Soltype)
   skc = Stakey[Stakey(item) for item in skc_]
   skx = Stakey[Stakey(item) for item in skx_]
   skn = Stakey[Stakey(item) for item in skn_]
-  xc = xc_; xc .+= 1
-  xx = xx_; xx .+= 1
-  y = y_; y .+= 1
-  slc = slc_; slc .+= 1
-  suc = suc_; suc .+= 1
-  slx = slx_; slx .+= 1
-  sux = sux_; sux .+= 1
-  snx = snx_; snx .+= 1
+  xc = xc_;
+  xx = xx_;
+  y = y_;
+  slc = slc_;
+  suc = suc_;
+  slx = slx_;
+  sux = sux_;
+  snx = snx_;
   problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx
 end
 
@@ -7667,15 +7706,15 @@ function getsolutionnew(task::MSKtask,whichsol::Soltype)
   skc = Stakey[Stakey(item) for item in skc_]
   skx = Stakey[Stakey(item) for item in skx_]
   skn = Stakey[Stakey(item) for item in skn_]
-  xc = xc_; xc .+= 1
-  xx = xx_; xx .+= 1
-  y = y_; y .+= 1
-  slc = slc_; slc .+= 1
-  suc = suc_; suc .+= 1
-  slx = slx_; slx .+= 1
-  sux = sux_; sux .+= 1
-  snx = snx_; snx .+= 1
-  doty = doty_; doty .+= 1
+  xc = xc_;
+  xx = xx_;
+  y = y_;
+  slc = slc_;
+  suc = suc_;
+  slx = slx_;
+  sux = sux_;
+  snx = snx_;
+  doty = doty_;
   problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty
 end
 
@@ -7816,7 +7855,7 @@ function getxc(task::MSKtask,whichsol::Soltype)
   __tmp_232 = __tmp_233[]
   xc_ = Vector{Float64}(undef,__tmp_232)
   @MSK_getxc(task.task,whichsol.value,xc_)
-  xc = xc_; xc .+= 1
+  xc = xc_;
   xc
 end
 
@@ -7839,7 +7878,7 @@ function getxx(task::MSKtask,whichsol::Soltype)
   __tmp_235 = __tmp_236[]
   xx_ = Vector{Float64}(undef,__tmp_235)
   @MSK_getxx(task.task,whichsol.value,xx_)
-  xx = xx_; xx .+= 1
+  xx = xx_;
   xx
 end
 
@@ -7862,7 +7901,7 @@ function gety(task::MSKtask,whichsol::Soltype)
   __tmp_238 = __tmp_239[]
   y_ = Vector{Float64}(undef,__tmp_238)
   @MSK_gety(task.task,whichsol.value,y_)
-  y = y_; y .+= 1
+  y = y_;
   y
 end
 
@@ -7885,7 +7924,7 @@ function getslc(task::MSKtask,whichsol::Soltype)
   __tmp_241 = __tmp_242[]
   slc_ = Vector{Float64}(undef,__tmp_241)
   @MSK_getslc(task.task,whichsol.value,slc_)
-  slc = slc_; slc .+= 1
+  slc = slc_;
   slc
 end
 
@@ -7910,7 +7949,7 @@ function getaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64)
   __tmp_244 = __tmp_245[]
   doty_ = Vector{Float64}(undef,__tmp_244)
   @MSK_getaccdoty(task.task,whichsol.value,accidx,doty_)
-  doty = doty_; doty .+= 1
+  doty = doty_;
   doty
 end
 function getaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where { T0<:Integer }
@@ -7939,7 +7978,7 @@ function getaccdotys(task::MSKtask,whichsol::Soltype)
   __tmp_247 = __tmp_248[]
   doty_ = Vector{Float64}(undef,__tmp_247)
   @MSK_getaccdotys(task.task,whichsol.value,doty_)
-  doty = doty_; doty .+= 1
+  doty = doty_;
   doty
 end
 
@@ -7964,7 +8003,7 @@ function evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64)
   __tmp_250 = __tmp_251[]
   activity_ = Vector{Float64}(undef,__tmp_250)
   @MSK_evaluateacc(task.task,whichsol.value,accidx,activity_)
-  activity = activity_; activity .+= 1
+  activity = activity_;
   activity
 end
 function evaluateacc(task::MSKtask,whichsol::Soltype,accidx::T0) where { T0<:Integer }
@@ -7993,7 +8032,7 @@ function evaluateaccs(task::MSKtask,whichsol::Soltype)
   __tmp_253 = __tmp_254[]
   activity_ = Vector{Float64}(undef,__tmp_253)
   @MSK_evaluateaccs(task.task,whichsol.value,activity_)
-  activity = activity_; activity .+= 1
+  activity = activity_;
   activity
 end
 
@@ -8016,7 +8055,7 @@ function getsuc(task::MSKtask,whichsol::Soltype)
   __tmp_256 = __tmp_257[]
   suc_ = Vector{Float64}(undef,__tmp_256)
   @MSK_getsuc(task.task,whichsol.value,suc_)
-  suc = suc_; suc .+= 1
+  suc = suc_;
   suc
 end
 
@@ -8039,7 +8078,7 @@ function getslx(task::MSKtask,whichsol::Soltype)
   __tmp_259 = __tmp_260[]
   slx_ = Vector{Float64}(undef,__tmp_259)
   @MSK_getslx(task.task,whichsol.value,slx_)
-  slx = slx_; slx .+= 1
+  slx = slx_;
   slx
 end
 
@@ -8062,7 +8101,7 @@ function getsux(task::MSKtask,whichsol::Soltype)
   __tmp_262 = __tmp_263[]
   sux_ = Vector{Float64}(undef,__tmp_262)
   @MSK_getsux(task.task,whichsol.value,sux_)
-  sux = sux_; sux .+= 1
+  sux = sux_;
   sux
 end
 
@@ -8085,7 +8124,7 @@ function getsnx(task::MSKtask,whichsol::Soltype)
   __tmp_265 = __tmp_266[]
   snx_ = Vector{Float64}(undef,__tmp_265)
   @MSK_getsnx(task.task,whichsol.value,snx_)
-  snx = snx_; snx .+= 1
+  snx = snx_;
   snx
 end
 
@@ -8168,7 +8207,7 @@ function getxcslice end
 function getxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   xc_ = Vector{Float64}(undef,(last - first))
   @MSK_getxcslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),xc_)
-  xc = xc_; xc .+= 1
+  xc = xc_;
   xc
 end
 function getxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8198,7 +8237,7 @@ function getxxslice end
 function getxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   xx_ = Vector{Float64}(undef,(last - first))
   @MSK_getxxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),xx_)
-  xx = xx_; xx .+= 1
+  xx = xx_;
   xx
 end
 function getxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8228,7 +8267,7 @@ function getyslice end
 function getyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   y_ = Vector{Float64}(undef,(last - first))
   @MSK_getyslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),y_)
-  y = y_; y .+= 1
+  y = y_;
   y
 end
 function getyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8258,7 +8297,7 @@ function getslcslice end
 function getslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   slc_ = Vector{Float64}(undef,(last - first))
   @MSK_getslcslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slc_)
-  slc = slc_; slc .+= 1
+  slc = slc_;
   slc
 end
 function getslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8288,7 +8327,7 @@ function getsucslice end
 function getsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   suc_ = Vector{Float64}(undef,(last - first))
   @MSK_getsucslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),suc_)
-  suc = suc_; suc .+= 1
+  suc = suc_;
   suc
 end
 function getsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8318,7 +8357,7 @@ function getslxslice end
 function getslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   slx_ = Vector{Float64}(undef,(last - first))
   @MSK_getslxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slx_)
-  slx = slx_; slx .+= 1
+  slx = slx_;
   slx
 end
 function getslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8348,7 +8387,7 @@ function getsuxslice end
 function getsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   sux_ = Vector{Float64}(undef,(last - first))
   @MSK_getsuxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),sux_)
-  sux = sux_; sux .+= 1
+  sux = sux_;
   sux
 end
 function getsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8378,7 +8417,7 @@ function getsnxslice end
 function getsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   snx_ = Vector{Float64}(undef,(last - first))
   @MSK_getsnxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),snx_)
-  snx = snx_; snx .+= 1
+  snx = snx_;
   snx
 end
 function getsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -8410,7 +8449,7 @@ function getbarxj(task::MSKtask,whichsol::Soltype,j::Int32)
   __tmp_278 = __tmp_279[]
   barxj_ = Vector{Float64}(undef,__tmp_278)
   @MSK_getbarxj(task.task,whichsol.value,j-Int32(1),barxj_)
-  barxj = barxj_; barxj .+= 1
+  barxj = barxj_;
   barxj
 end
 function getbarxj(task::MSKtask,whichsol::Soltype,j::T0) where { T0<:Integer }
@@ -8440,7 +8479,7 @@ function getbarxslice end
 function getbarxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64)
   barxslice_ = Vector{Float64}(undef,slicesize)
   @MSK_getbarxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slicesize,barxslice_)
-  barxslice = barxslice_; barxslice .+= 1
+  barxslice = barxslice_;
   barxslice
 end
 function getbarxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where { T0<:Integer,T1<:Integer,T2<:Integer }
@@ -8473,7 +8512,7 @@ function getbarsj(task::MSKtask,whichsol::Soltype,j::Int32)
   __tmp_282 = __tmp_283[]
   barsj_ = Vector{Float64}(undef,__tmp_282)
   @MSK_getbarsj(task.task,whichsol.value,j-Int32(1),barsj_)
-  barsj = barsj_; barsj .+= 1
+  barsj = barsj_;
   barsj
 end
 function getbarsj(task::MSKtask,whichsol::Soltype,j::T0) where { T0<:Integer }
@@ -8503,7 +8542,7 @@ function getbarsslice end
 function getbarsslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64)
   barsslice_ = Vector{Float64}(undef,slicesize)
   @MSK_getbarsslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slicesize,barsslice_)
-  barsslice = barsslice_; barsslice .+= 1
+  barsslice = barsslice_;
   barsslice
 end
 function getbarsslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where { T0<:Integer,T1<:Integer,T2<:Integer }
@@ -8582,7 +8621,7 @@ function putxc(task::MSKtask,whichsol::Soltype)
   __tmp_292 = __tmp_293[]
   xc_ = Vector{Float64}(undef,__tmp_292)
   @MSK_putxc(task.task,whichsol.value,xc_)
-  xc = xc_; xc .+= 1
+  xc = xc_;
   xc
 end
 
@@ -8824,7 +8863,7 @@ function putaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64)
   __tmp_316 = __tmp_317[]
   doty_ = Vector{Float64}(undef,__tmp_316)
   @MSK_putaccdoty(task.task,whichsol.value,accidx,doty_)
-  doty = doty_; doty .+= 1
+  doty = doty_;
   doty
 end
 function putaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where { T0<:Integer }
@@ -9240,7 +9279,7 @@ function getpviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getpviolcon(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getpviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9270,7 +9309,7 @@ function getpviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getpviolvar(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getpviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9300,7 +9339,7 @@ function getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getpviolbarvar(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9330,7 +9369,7 @@ function getpviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getpviolcones(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getpviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9360,7 +9399,7 @@ function getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64})
   accidxlist_ = accidxlist .- Int64(1)
   viol_ = Vector{Float64}(undef,numaccidx)
   @MSK_getpviolacc(task.task,whichsol.value,numaccidx,accidxlist_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9390,7 +9429,7 @@ function getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::Vector{Int64})
   djcidxlist_ = djcidxlist .- Int64(1)
   viol_ = Vector{Float64}(undef,numdjcidx)
   @MSK_getpvioldjc(task.task,whichsol.value,numdjcidx,djcidxlist_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9420,7 +9459,7 @@ function getdviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getdviolcon(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getdviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9450,7 +9489,7 @@ function getdviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getdviolvar(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getdviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9480,7 +9519,7 @@ function getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getdviolbarvar(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9510,7 +9549,7 @@ function getdviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   sub_ = sub .- Int32(1)
   viol_ = Vector{Float64}(undef,num)
   @MSK_getdviolcones(task.task,whichsol.value,num,sub_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getdviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9540,7 +9579,7 @@ function getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64})
   accidxlist_ = accidxlist .- Int64(1)
   viol_ = Vector{Float64}(undef,numaccidx)
   @MSK_getdviolacc(task.task,whichsol.value,numaccidx,accidxlist_,viol_)
-  viol = viol_; viol .+= 1
+  viol = viol_;
   viol
 end
 function getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where { T0<:AbstractVector{<:Integer} }
@@ -9708,7 +9747,7 @@ function getsolutionslice end
 function getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::Int32,last::Int32)
   values_ = Vector{Float64}(undef,(last - first))
   @MSK_getsolutionslice(task.task,whichsol.value,solitem.value,first-Int32(1),last-Int32(1),values_)
-  values = values_; values .+= 1
+  values = values_;
   values
 end
 function getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -9739,7 +9778,7 @@ function getreducedcosts end
 function getreducedcosts(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   redcosts_ = Vector{Float64}(undef,(last - first))
   @MSK_getreducedcosts(task.task,whichsol.value,first-Int32(1),last-Int32(1),redcosts_)
-  redcosts = redcosts_; redcosts .+= 1
+  redcosts = redcosts_;
   redcosts
 end
 function getreducedcosts(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -10180,7 +10219,7 @@ function getatruncatetol end
 function getatruncatetol(task::MSKtask)
   tolzero_ = Vector{Float64}(undef,1)
   @MSK_getatruncatetol(task.task,tolzero_)
-  tolzero = tolzero_; tolzero .+= 1
+  tolzero = tolzero_;
   tolzero
 end
 
@@ -10702,7 +10741,8 @@ function getbarcsparsity(task::MSKtask)
   numnz_ = Ref{Int64}()
   idxj_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarcsparsity(task.task,maxnumnz,numnz_,idxj_)
-  idxj = idxj_; idxj .+= 1
+  idxj = idxj_;
+  idxj .+= 1
   numnz_[],idxj
 end
 
@@ -10727,7 +10767,8 @@ function getbarasparsity(task::MSKtask)
   numnz_ = Ref{Int64}()
   idxij_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarasparsity(task.task,maxnumnz,numnz_,idxij_)
-  idxij = idxij_; idxij .+= 1
+  idxij = idxij_;
+  idxij .+= 1
   numnz_[],idxij
 end
 
@@ -10808,8 +10849,9 @@ function getbarcidx(task::MSKtask,idx::Int64)
   sub_ = Vector{Int64}(undef,maxnum)
   weights_ = Vector{Float64}(undef,maxnum)
   @MSK_getbarcidx(task.task,idx-Int64(1),maxnum,j_,num_,sub_,weights_)
-  sub = sub_; sub .+= 1
-  weights = weights_; weights .+= 1
+  sub = sub_;
+  sub .+= 1
+  weights = weights_;
   j_[]+Int32(1),num_[],sub,weights
 end
 function getbarcidx(task::MSKtask,idx::T0) where { T0<:Integer }
@@ -10899,8 +10941,9 @@ function getbaraidx(task::MSKtask,idx::Int64)
   sub_ = Vector{Int64}(undef,maxnum)
   weights_ = Vector{Float64}(undef,maxnum)
   @MSK_getbaraidx(task.task,idx-Int64(1),maxnum,i_,j_,num_,sub_,weights_)
-  sub = sub_; sub .+= 1
-  weights = weights_; weights .+= 1
+  sub = sub_;
+  sub .+= 1
+  weights = weights_;
   i_[]+Int32(1),j_[]+Int32(1),num_[],sub,weights
 end
 function getbaraidx(task::MSKtask,idx::T0) where { T0<:Integer }
@@ -11000,10 +11043,13 @@ function getbarcblocktriplet(task::MSKtask)
   subl_ = Vector{Int32}(undef,maxnum)
   valjkl_ = Vector{Float64}(undef,maxnum)
   @MSK_getbarcblocktriplet(task.task,maxnum,num_,subj_,subk_,subl_,valjkl_)
-  subj = subj_; subj .+= 1
-  subk = subk_; subk .+= 1
-  subl = subl_; subl .+= 1
-  valjkl = valjkl_; valjkl .+= 1
+  subj = subj_;
+  subj .+= 1
+  subk = subk_;
+  subk .+= 1
+  subl = subl_;
+  subl .+= 1
+  valjkl = valjkl_;
   num_[],subj,subk,subl,valjkl
 end
 
@@ -11106,11 +11152,15 @@ function getbarablocktriplet(task::MSKtask)
   subl_ = Vector{Int32}(undef,maxnum)
   valijkl_ = Vector{Float64}(undef,maxnum)
   @MSK_getbarablocktriplet(task.task,maxnum,num_,subi_,subj_,subk_,subl_,valijkl_)
-  subi = subi_; subi .+= 1
-  subj = subj_; subj .+= 1
-  subk = subk_; subk .+= 1
-  subl = subl_; subl .+= 1
-  valijkl = valijkl_; valijkl .+= 1
+  subi = subi_;
+  subi .+= 1
+  subj = subj_;
+  subj .+= 1
+  subk = subk_;
+  subk .+= 1
+  subl = subl_;
+  subl .+= 1
+  valijkl = valijkl_;
   num_[],subi,subj,subk,subl,valijkl
 end
 
@@ -11489,8 +11539,9 @@ function getafefrow(task::MSKtask,afeidx::Int64)
   __tmp_436 = __tmp_437[]
   val_ = Vector{Float64}(undef,__tmp_436)
   @MSK_getafefrow(task.task,afeidx-Int64(1),numnz_,varidx_,val_)
-  varidx = varidx_; varidx .+= 1
-  val = val_; val .+= 1
+  varidx = varidx_;
+  varidx .+= 1
+  val = val_;
   numnz_[],varidx,val
 end
 function getafefrow(task::MSKtask,afeidx::T0) where { T0<:Integer }
@@ -11527,9 +11578,11 @@ function getafeftrip(task::MSKtask)
   __tmp_443 = __tmp_444[]
   val_ = Vector{Float64}(undef,__tmp_443)
   @MSK_getafeftrip(task.task,afeidx_,varidx_,val_)
-  afeidx = afeidx_; afeidx .+= 1
-  varidx = varidx_; varidx .+= 1
-  val = val_; val .+= 1
+  afeidx = afeidx_;
+  afeidx .+= 1
+  varidx = varidx_;
+  varidx .+= 1
+  val = val_;
   afeidx,varidx,val
 end
 
@@ -11788,11 +11841,15 @@ function getafebarfblocktriplet(task::MSKtask)
   subl_ = Vector{Int32}(undef,maxnumtrip)
   valkl_ = Vector{Float64}(undef,maxnumtrip)
   @MSK_getafebarfblocktriplet(task.task,maxnumtrip,numtrip_,afeidx_,barvaridx_,subk_,subl_,valkl_)
-  afeidx = afeidx_; afeidx .+= 1
-  barvaridx = barvaridx_; barvaridx .+= 1
-  subk = subk_; subk .+= 1
-  subl = subl_; subl .+= 1
-  valkl = valkl_; valkl .+= 1
+  afeidx = afeidx_;
+  afeidx .+= 1
+  barvaridx = barvaridx_;
+  barvaridx .+= 1
+  subk = subk_;
+  subk .+= 1
+  subl = subl_;
+  subl .+= 1
+  valkl = valkl_;
   numtrip_[],afeidx,barvaridx,subk,subl,valkl
 end
 
@@ -11888,11 +11945,14 @@ function getafebarfrow(task::MSKtask,afeidx::Int64)
   __tmp_466 = __tmp_467[]
   termweight_ = Vector{Float64}(undef,__tmp_466)
   @MSK_getafebarfrow(task.task,afeidx-Int64(1),barvaridx_,ptrterm_,numterm_,termidx_,termweight_)
-  barvaridx = barvaridx_; barvaridx .+= 1
-  ptrterm = ptrterm_; ptrterm .+= 1
-  numterm = numterm_; numterm .+= 1
-  termidx = termidx_; termidx .+= 1
-  termweight = termweight_; termweight .+= 1
+  barvaridx = barvaridx_;
+  barvaridx .+= 1
+  ptrterm = ptrterm_;
+  ptrterm .+= 1
+  numterm = numterm_;
+  termidx = termidx_;
+  termidx .+= 1
+  termweight = termweight_;
   barvaridx,ptrterm,numterm,termidx,termweight
 end
 function getafebarfrow(task::MSKtask,afeidx::T0) where { T0<:Integer }
@@ -11995,7 +12055,7 @@ function getafegslice end
 function getafegslice(task::MSKtask,first::Int64,last::Int64)
   g_ = Vector{Float64}(undef,(last - first))
   @MSK_getafegslice(task.task,first-Int64(1),last-Int64(1),g_)
-  g = g_; g .+= 1
+  g = g_;
   g
 end
 function getafegslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Integer }
@@ -12589,7 +12649,8 @@ function getaccafeidxlist(task::MSKtask,accidx::Int64)
   __tmp_497 = __tmp_498[]
   afeidxlist_ = Vector{Int64}(undef,__tmp_497)
   @MSK_getaccafeidxlist(task.task,accidx-Int64(1),afeidxlist_)
-  afeidxlist = afeidxlist_; afeidxlist .+= 1
+  afeidxlist = afeidxlist_;
+  afeidxlist .+= 1
   afeidxlist
 end
 function getaccafeidxlist(task::MSKtask,accidx::T0) where { T0<:Integer }
@@ -12618,7 +12679,7 @@ function getaccb(task::MSKtask,accidx::Int64)
   __tmp_500 = __tmp_501[]
   b_ = Vector{Float64}(undef,__tmp_500)
   @MSK_getaccb(task.task,accidx-Int64(1),b_)
-  b = b_; b .+= 1
+  b = b_;
   b
 end
 function getaccb(task::MSKtask,accidx::T0) where { T0<:Integer }
@@ -12655,9 +12716,11 @@ function getaccs(task::MSKtask)
   __tmp_507 = __tmp_508[]
   b_ = Vector{Float64}(undef,__tmp_507)
   @MSK_getaccs(task.task,domidxlist_,afeidxlist_,b_)
-  domidxlist = domidxlist_; domidxlist .+= 1
-  afeidxlist = afeidxlist_; afeidxlist .+= 1
-  b = b_; b .+= 1
+  domidxlist = domidxlist_;
+  domidxlist .+= 1
+  afeidxlist = afeidxlist_;
+  afeidxlist .+= 1
+  b = b_;
   domidxlist,afeidxlist,b
 end
 
@@ -12707,9 +12770,11 @@ function getaccftrip(task::MSKtask)
   __tmp_515 = __tmp_516[]
   fval_ = Vector{Float64}(undef,__tmp_515)
   @MSK_getaccftrip(task.task,frow_,fcol_,fval_)
-  frow = frow_; frow .+= 1
-  fcol = fcol_; fcol .+= 1
-  fval = fval_; fval .+= 1
+  frow = frow_;
+  frow .+= 1
+  fcol = fcol_;
+  fcol .+= 1
+  fval = fval_;
   frow,fcol,fval
 end
 
@@ -12731,7 +12796,7 @@ function getaccgvector(task::MSKtask)
   __tmp_518 = __tmp_519[]
   g_ = Vector{Float64}(undef,__tmp_518)
   @MSK_getaccgvector(task.task,g_)
-  g = g_; g .+= 1
+  g = g_;
   g
 end
 
@@ -12782,11 +12847,15 @@ function getaccbarfblocktriplet(task::MSKtask)
   blk_col_ = Vector{Int32}(undef,maxnumtrip)
   blk_val_ = Vector{Float64}(undef,maxnumtrip)
   @MSK_getaccbarfblocktriplet(task.task,maxnumtrip,numtrip_,acc_afe_,bar_var_,blk_row_,blk_col_,blk_val_)
-  acc_afe = acc_afe_; acc_afe .+= 1
-  bar_var = bar_var_; bar_var .+= 1
-  blk_row = blk_row_; blk_row .+= 1
-  blk_col = blk_col_; blk_col .+= 1
-  blk_val = blk_val_; blk_val .+= 1
+  acc_afe = acc_afe_;
+  acc_afe .+= 1
+  bar_var = bar_var_;
+  bar_var .+= 1
+  blk_row = blk_row_;
+  blk_row .+= 1
+  blk_col = blk_col_;
+  blk_col .+= 1
+  blk_val = blk_val_;
   numtrip_[],acc_afe,bar_var,blk_row,blk_col,blk_val
 end
 
@@ -12920,7 +12989,8 @@ function getdjcdomainidxlist(task::MSKtask,djcidx::Int64)
   __tmp_528 = __tmp_529[]
   domidxlist_ = Vector{Int64}(undef,__tmp_528)
   @MSK_getdjcdomainidxlist(task.task,djcidx-Int64(1),domidxlist_)
-  domidxlist = domidxlist_; domidxlist .+= 1
+  domidxlist = domidxlist_;
+  domidxlist .+= 1
   domidxlist
 end
 function getdjcdomainidxlist(task::MSKtask,djcidx::T0) where { T0<:Integer }
@@ -12949,7 +13019,8 @@ function getdjcafeidxlist(task::MSKtask,djcidx::Int64)
   __tmp_531 = __tmp_532[]
   afeidxlist_ = Vector{Int64}(undef,__tmp_531)
   @MSK_getdjcafeidxlist(task.task,djcidx-Int64(1),afeidxlist_)
-  afeidxlist = afeidxlist_; afeidxlist .+= 1
+  afeidxlist = afeidxlist_;
+  afeidxlist .+= 1
   afeidxlist
 end
 function getdjcafeidxlist(task::MSKtask,djcidx::T0) where { T0<:Integer }
@@ -12978,7 +13049,7 @@ function getdjcb(task::MSKtask,djcidx::Int64)
   __tmp_534 = __tmp_535[]
   b_ = Vector{Float64}(undef,__tmp_534)
   @MSK_getdjcb(task.task,djcidx-Int64(1),b_)
-  b = b_; b .+= 1
+  b = b_;
   b
 end
 function getdjcb(task::MSKtask,djcidx::T0) where { T0<:Integer }
@@ -13007,7 +13078,7 @@ function getdjctermsizelist(task::MSKtask,djcidx::Int64)
   __tmp_537 = __tmp_538[]
   termsizelist_ = Vector{Int64}(undef,__tmp_537)
   @MSK_getdjctermsizelist(task.task,djcidx-Int64(1),termsizelist_)
-  termsizelist = termsizelist_; termsizelist .+= 1
+  termsizelist = termsizelist_;
   termsizelist
 end
 function getdjctermsizelist(task::MSKtask,djcidx::T0) where { T0<:Integer }
@@ -13054,11 +13125,13 @@ function getdjcs(task::MSKtask)
   __tmp_548 = __tmp_549[]
   numterms_ = Vector{Int64}(undef,__tmp_548)
   @MSK_getdjcs(task.task,domidxlist_,afeidxlist_,b_,termsizelist_,numterms_)
-  domidxlist = domidxlist_; domidxlist .+= 1
-  afeidxlist = afeidxlist_; afeidxlist .+= 1
-  b = b_; b .+= 1
-  termsizelist = termsizelist_; termsizelist .+= 1
-  numterms = numterms_; numterms .+= 1
+  domidxlist = domidxlist_;
+  domidxlist .+= 1
+  afeidxlist = afeidxlist_;
+  afeidxlist .+= 1
+  b = b_;
+  termsizelist = termsizelist_;
+  numterms = numterms_;
   domidxlist,afeidxlist,b,termsizelist,numterms
 end
 
@@ -14042,7 +14115,7 @@ function getpowerdomainalpha(task::MSKtask,domidx::Int64)
   __tmp_587 = __tmp_588[]
   alpha_ = Vector{Float64}(undef,__tmp_587)
   @MSK_getpowerdomainalpha(task.task,domidx-Int64(1),alpha_)
-  alpha = alpha_; alpha .+= 1
+  alpha = alpha_;
   alpha
 end
 function getpowerdomainalpha(task::MSKtask,domidx::T0) where { T0<:Integer }
@@ -14128,7 +14201,8 @@ function appendsparsesymmatlist(task::MSKtask,dims::Vector{Int32},nz::Vector{Int
   valij_ = valij
   idx_ = Vector{Int64}(undef,num)
   @MSK_appendsparsesymmatlist(task.task,num,dims_,nz_,subi_,subj_,valij_,idx_)
-  idx = idx_; idx .+= 1
+  idx = idx_;
+  idx .+= 1
   idx
 end
 function appendsparsesymmatlist(task::MSKtask,dims::T0,nz::T1,subi::T2,subj::T3,valij::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
@@ -14214,9 +14288,11 @@ function getsparsesymmat(task::MSKtask,idx::Int64)
   subj_ = Vector{Int32}(undef,maxlen)
   valij_ = Vector{Float64}(undef,maxlen)
   @MSK_getsparsesymmat(task.task,idx-Int64(1),maxlen,subi_,subj_,valij_)
-  subi = subi_; subi .+= 1
-  subj = subj_; subj .+= 1
-  valij = valij_; valij .+= 1
+  subi = subi_;
+  subi .+= 1
+  subj = subj_;
+  subj .+= 1
+  valij = valij_;
   subi,subj,valij
 end
 function getsparsesymmat(task::MSKtask,idx::T0) where { T0<:Integer }
@@ -15520,14 +15596,14 @@ function primalsensitivity(task::MSKtask,subi::Vector{Int32},marki::Vector{Mark}
   leftrangej_ = Vector{Float64}(undef,numj)
   rightrangej_ = Vector{Float64}(undef,numj)
   @MSK_primalsensitivity(task.task,numi,subi_,marki_,numj,subj_,markj_,leftpricei_,rightpricei_,leftrangei_,rightrangei_,leftpricej_,rightpricej_,leftrangej_,rightrangej_)
-  leftpricei = leftpricei_; leftpricei .+= 1
-  rightpricei = rightpricei_; rightpricei .+= 1
-  leftrangei = leftrangei_; leftrangei .+= 1
-  rightrangei = rightrangei_; rightrangei .+= 1
-  leftpricej = leftpricej_; leftpricej .+= 1
-  rightpricej = rightpricej_; rightpricej .+= 1
-  leftrangej = leftrangej_; leftrangej .+= 1
-  rightrangej = rightrangej_; rightrangej .+= 1
+  leftpricei = leftpricei_;
+  rightpricei = rightpricei_;
+  leftrangei = leftrangei_;
+  rightrangei = rightrangei_;
+  leftpricej = leftpricej_;
+  rightpricej = rightpricej_;
+  leftrangej = leftrangej_;
+  rightrangej = rightrangej_;
   leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej
 end
 function primalsensitivity(task::MSKtask,subi::T0,marki::Vector{Mark},subj::T1,markj::Vector{Mark}) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer} }
@@ -15580,10 +15656,10 @@ function dualsensitivity(task::MSKtask,subj::Vector{Int32})
   leftrangej_ = Vector{Float64}(undef,numj)
   rightrangej_ = Vector{Float64}(undef,numj)
   @MSK_dualsensitivity(task.task,numj,subj_,leftpricej_,rightpricej_,leftrangej_,rightrangej_)
-  leftpricej = leftpricej_; leftpricej .+= 1
-  rightpricej = rightpricej_; rightpricej .+= 1
-  leftrangej = leftrangej_; leftrangej .+= 1
-  rightrangej = rightrangej_; rightrangej .+= 1
+  leftpricej = leftpricej_;
+  rightpricej = rightpricej_;
+  leftrangej = leftrangej_;
+  rightrangej = rightrangej_;
   leftpricej,rightpricej,leftrangej,rightrangej
 end
 function dualsensitivity(task::MSKtask,subj::T0) where { T0<:AbstractVector{<:Integer} }
@@ -15749,6 +15825,39 @@ end
 function checkinall end
 function checkinall(env::MSKenv)
   @MSK_checkinall(env.env)
+  nothing
+end
+
+
+"""
+  expirylicenses(env::MSKenv) :: expiry
+
+  Reports when the first license feature expires.
+
+  Arguments
+    env::MSKenv The MOSEK environment.
+  Returns
+    expiry::Int64 If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
+"""
+function expirylicenses end
+function expirylicenses(env::MSKenv)
+  expiry_ = Ref{Int64}()
+  @MSK_expirylicenses(env.env,expiry_)
+  expiry_[]
+end
+
+
+"""
+  resetexpirylicenses(env::MSKenv)
+
+  Reset the license expiry reporting startpoint.
+
+  Arguments
+    env::MSKenv The MOSEK environment.
+"""
+function resetexpirylicenses end
+function resetexpirylicenses(env::MSKenv)
+  @MSK_resetexpirylicenses(env.env)
   nothing
 end
 
@@ -15980,23 +16089,23 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_679 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_679))
-  @MSK_freeenv(env,perm_[])
-  __tmp_680 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_680))
-  @MSK_freeenv(env,diag_[])
   __tmp_681 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_681))
-  @MSK_freeenv(env,lnzc_[])
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_681))
+  @MSK_freeenv(env,perm_[])
   __tmp_682 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_682))
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_682))
+  @MSK_freeenv(env,diag_[])
+  __tmp_683 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_683))
+  @MSK_freeenv(env,lnzc_[])
+  __tmp_684 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_684))
   @MSK_freeenv(env,lptrc_[])
-  __tmp_683 = lensubnval
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_683))
+  __tmp_685 = lensubnval
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_685))
   @MSK_freeenv(env,lsubc_[])
-  __tmp_684 = lensubnval
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_684))
+  __tmp_686 = lensubnval
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_686))
   @MSK_freeenv(env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
