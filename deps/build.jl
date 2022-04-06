@@ -18,6 +18,11 @@ mskplatform,distroext =
     elseif Sys.iswindows() "win64x86",  ".zip"
     else   error("Platform not supported")
     end
+  elseif Sys.ARCH == :aarch64
+    if     Sys.islinux()   "linuxaarch64",".tar.bz2"
+    elseif Sys.isapple()   "osxaarch64",  ".tar.bz2"
+    else   error("Platform not supported")
+    end
   else
     error("Platform not supported")
   end
