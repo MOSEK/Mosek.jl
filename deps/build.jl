@@ -8,23 +8,22 @@ mskvmajor,mskvminor = split(mosekver,".")
 
 mskplatform,distroext =
   if Sys.ARCH == :i386 || Sys.ARCH == :i686
-    if     Sys.islinux()   "linux32x86",  ".tar.bz2"
-    elseif Sys.iswindows() "win32x86",  ".zip"
-    else   error("Platform not supported")
+    if     Sys.iswindows() "win32x86",  ".zip"
+    else   error("Platform not supported in i686")
     end
   elseif Sys.ARCH == :x86_64
     if     Sys.islinux()   "linux64x86",".tar.bz2"
     elseif Sys.isapple()   "osx64x86",  ".tar.bz2"
     elseif Sys.iswindows() "win64x86",  ".zip"
-    else   error("Platform not supported")
+    else   error("Platform not supported on AMD64")
     end
   elseif Sys.ARCH == :aarch64
     if     Sys.islinux()   "linuxaarch64",".tar.bz2"
     elseif Sys.isapple()   "osxaarch64",  ".tar.bz2"
-    else   error("Platform not supported")
+    else   error("System not supported on AArch64")
     end
   else
-    error("Platform not supported")
+    error("Platform not supported $(Sys.ARCH), $(Sys.isapple())")
   end
 
 bindepsdir = dirname(@__FILE__)
@@ -50,16 +49,21 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
     moseklib =
         if Sys.ARCH == :i386 || Sys.ARCH == :i686
             if     Sys.iswindows() "mosek$(mskvmajor)_$(mskvminor).dll"
-            else   error("Platform not supported")
+            else   error("Platform not supported i686")
             end
         elseif Sys.ARCH == :x86_64
             if     Sys.islinux()   "libmosek64.so.$(mskvmajor).$(mskvminor)"
             elseif Sys.isapple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib"
             elseif Sys.iswindows() "mosek64_$(mskvmajor)_$(mskvminor).dll"
-            else   error("Platform not supported")
+            else   error("Unexpected platform for AMD64")
+            end
+        elseif Sys.ARCH == :aarch64
+            if     Sys.islinux()   "libmosek64.so.$(mskvmajor).$(mskvminor)"
+            elseif Sys.isapple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib"
+            else   error("Unexpected platform for Aarch64")
             end
         else
-            error("Platform not supported")
+            error("Architecture not supported $(Sys.ARCH)")
         end
 
     let moseklibpath = joinpath(path,moseklib)
