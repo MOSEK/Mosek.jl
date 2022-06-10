@@ -102,17 +102,17 @@ function collect_output(cmd::Cmd)
 
     process = run(pipeline(ignorestatus(cmd), stdout=out, stderr=err))
 
-    stdout = @async (read(out))
-    stderr = @async (read(err))
+    sout = @async (read(out))
+    serr = @async (read(err))
 
     wait(process)
     close(out.in)
     close(err.in)
-    (
-        process.exitcode,
-        fetch(stdout),
-        fetch(stderr)
-    )
+
+
+    (process.exitcode,
+     fetch(sout),
+     fetch(serr))
 end
 
 # Detect previous installation method:
@@ -194,13 +194,12 @@ mskbindir =
 
         mkpath(dldir)
 
-
         dlcmd = download_cmd(hosturl, joinpath(dldir,"downloadhostname"))
-        @info("Download command: $dlcmd")
-        (res,stdout,stderr) = collect_output(dlcmd)
+        @info("Download command: $dlcmd)")
+        (exitcode,outtext,errtext) = collect_output(dlcmd)
         downloadhost =
-            if res != 0
-                @error(String(stderr))
+            if exitcode != 0
+                @error(String(errtext))
                 error("Failed to get MOSEK download host")
             else
                 open(joinpath(dldir,"downloadhostname"),"r") do f
