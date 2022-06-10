@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.13
+# Target: Mosek 10.0.16
 export
   Basindtype,
   MSK_BI_NEVER,
@@ -193,6 +193,11 @@ export
   MSK_DATA_FORMAT_PTF,
   MSK_DATA_FORMAT_CB,
   MSK_DATA_FORMAT_JSON_TASK,
+  Solformat,
+  MSK_SOL_FORMAT_EXTENSION,
+  MSK_SOL_FORMAT_B,
+  MSK_SOL_FORMAT_TASK,
+  MSK_SOL_FORMAT_JSON_TASK,
   Dinfitem,
   MSK_DINF_BI_CLEAN_DUAL_TIME,
   MSK_DINF_BI_CLEAN_PRIMAL_TIME,
@@ -676,7 +681,6 @@ export
   MSK_IPAR_WRITE_LP_TERMS_PER_LINE,
   MSK_IPAR_WRITE_MPS_FORMAT,
   MSK_IPAR_WRITE_MPS_INT,
-  MSK_IPAR_WRITE_PRECISION,
   MSK_IPAR_WRITE_SOL_BARVARIABLES,
   MSK_IPAR_WRITE_SOL_CONSTRAINTS,
   MSK_IPAR_WRITE_SOL_HEAD,
@@ -951,14 +955,11 @@ export
   MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,
   MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,
   MSK_RES_ERR_WRITING_FILE,
-  MSK_RES_ERR_PTF_FORMAT,
   MSK_RES_ERR_OPF_FORMAT,
   MSK_RES_ERR_OPF_NEW_VARIABLE,
   MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,
   MSK_RES_ERR_LP_INVALID_CON_NAME,
   MSK_RES_ERR_OPF_PREMATURE_EOF,
-  MSK_RES_ERR_PTF_UNDEFINED_ITEM,
-  MSK_RES_ERR_PTF_INCONSISTENCY,
   MSK_RES_ERR_JSON_SYNTAX,
   MSK_RES_ERR_JSON_STRING,
   MSK_RES_ERR_JSON_NUMBER_OVERFLOW,
@@ -966,6 +967,9 @@ export
   MSK_RES_ERR_JSON_DATA,
   MSK_RES_ERR_JSON_MISSING_DATA,
   MSK_RES_ERR_PTF_INCOMPATIBILITY,
+  MSK_RES_ERR_PTF_UNDEFINED_ITEM,
+  MSK_RES_ERR_PTF_INCONSISTENCY,
+  MSK_RES_ERR_PTF_FORMAT,
   MSK_RES_ERR_ARGUMENT_LENNEQ,
   MSK_RES_ERR_ARGUMENT_TYPE,
   MSK_RES_ERR_NUM_ARGUMENTS,
@@ -1286,6 +1290,8 @@ export
   MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH,
   MSK_RES_ERR_UNDEF_SOLUTION,
   MSK_RES_ERR_NO_DOTY,
+  MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES,
+  MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS,
   MSK_RES_TRM_MAX_ITERATIONS,
   MSK_RES_TRM_MAX_TIME,
   MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -1362,6 +1368,7 @@ export
   MSK_SPAR_READ_MPS_OBJ_NAME,
   MSK_SPAR_READ_MPS_RAN_NAME,
   MSK_SPAR_READ_MPS_RHS_NAME,
+  MSK_SPAR_REMOTE_OPTSERVER_HOST,
   MSK_SPAR_REMOTE_TLS_CERT,
   MSK_SPAR_REMOTE_TLS_CERT_PATH,
   MSK_SPAR_SENSITIVITY_FILE_NAME,
@@ -2709,6 +2716,44 @@ const Dataformat_members = Dataformat[
     MSK_DATA_FORMAT_JSON_TASK ]
 members(::Type{Dataformat}) = Dataformat_members
 Base.length(::Type{Dataformat}) = 9
+"""
+    Solformat
+
+Data format types
+
+* `MSK_SOL_FORMAT_EXTENSION`. The file extension is used to determine the data file format.
+* `MSK_SOL_FORMAT_B`. Simple binary format
+* `MSK_SOL_FORMAT_TASK`. Tar based format.
+* `MSK_SOL_FORMAT_JSON_TASK`. JSON based format.
+"""
+struct Solformat <: MosekEnum
+  value :: Int32
+end # solformat
+
+"The file extension is used to determine the data file format."
+const MSK_SOL_FORMAT_EXTENSION = Solformat(0)
+
+"Simple binary format"
+const MSK_SOL_FORMAT_B = Solformat(1)
+
+"Tar based format."
+const MSK_SOL_FORMAT_TASK = Solformat(2)
+
+"JSON based format."
+const MSK_SOL_FORMAT_JSON_TASK = Solformat(3)
+tostr(v::Solformat) = if v.value == 0 "Mosek.MSK_SOL_FORMAT_EXTENSION"
+  elseif v.value == 1 "Mosek.MSK_SOL_FORMAT_B"
+  elseif v.value == 2 "Mosek.MSK_SOL_FORMAT_TASK"
+  elseif v.value == 3 "Mosek.MSK_SOL_FORMAT_JSON_TASK"
+  else "Mosek.Solformat(?)"
+  end
+const Solformat_members = Solformat[
+    MSK_SOL_FORMAT_EXTENSION,
+    MSK_SOL_FORMAT_B,
+    MSK_SOL_FORMAT_TASK,
+    MSK_SOL_FORMAT_JSON_TASK ]
+members(::Type{Solformat}) = Solformat_members
+Base.length(::Type{Solformat}) = 4
 """
     Dinfitem
 
@@ -5137,7 +5182,6 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_WRITE_LP_TERMS_PER_LINE`. Controls the LP output file format.
 * `MSK_IPAR_WRITE_MPS_FORMAT`. Controls in which format the MPS is written.
 * `MSK_IPAR_WRITE_MPS_INT`. Controls the output file data.
-* `MSK_IPAR_WRITE_PRECISION`. Controls data precision employed in when writing an MPS file.
 * `MSK_IPAR_WRITE_SOL_BARVARIABLES`. Controls the solution file format.
 * `MSK_IPAR_WRITE_SOL_CONSTRAINTS`. Controls the solution file format.
 * `MSK_IPAR_WRITE_SOL_HEAD`. Controls solution file format.
@@ -7215,13 +7259,16 @@ Possible values:
 const MSK_IPAR_WRITE_MPS_INT = Iparam(182)
 
 """
-Controls data precision employed in when writing an MPS file.
+Controls the solution file format.
 
-Default value: `15`
+Default value: `ON`
 
-Possible Values: Any number between 0 and +inf.
+Possible values:
+
+* `MSK_ON`. Switch the option on.
+* `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_PRECISION = Iparam(183)
+const MSK_IPAR_WRITE_SOL_BARVARIABLES = Iparam(183)
 
 """
 Controls the solution file format.
@@ -7233,19 +7280,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_BARVARIABLES = Iparam(184)
-
-"""
-Controls the solution file format.
-
-Default value: `ON`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_WRITE_SOL_CONSTRAINTS = Iparam(185)
+const MSK_IPAR_WRITE_SOL_CONSTRAINTS = Iparam(184)
 
 """
 Controls solution file format.
@@ -7257,7 +7292,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_HEAD = Iparam(186)
+const MSK_IPAR_WRITE_SOL_HEAD = Iparam(185)
 
 """
 Controls whether the user specified names are employed even if they are invalid names.
@@ -7269,7 +7304,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = Iparam(187)
+const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = Iparam(186)
 
 """
 Controls the solution file format.
@@ -7281,7 +7316,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(188)
+const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(187)
 
 """
 Controls whether the solutions are stored in the task file too.
@@ -7293,7 +7328,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_TASK_INC_SOL = Iparam(189)
+const MSK_IPAR_WRITE_TASK_INC_SOL = Iparam(188)
 
 """
 Controls if linear coefficients should be written by row or column when writing in the XML file format.
@@ -7305,7 +7340,7 @@ Possible values:
 * `MSK_WRITE_XML_MODE_ROW`. Write in row order.
 * `MSK_WRITE_XML_MODE_COL`. Write in column order.
 """
-const MSK_IPAR_WRITE_XML_MODE = Iparam(190)
+const MSK_IPAR_WRITE_XML_MODE = Iparam(189)
 tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 1 "Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED"
   elseif v.value == 2 "Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"
@@ -7489,14 +7524,13 @@ tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 180 "Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE"
   elseif v.value == 181 "Mosek.MSK_IPAR_WRITE_MPS_FORMAT"
   elseif v.value == 182 "Mosek.MSK_IPAR_WRITE_MPS_INT"
-  elseif v.value == 183 "Mosek.MSK_IPAR_WRITE_PRECISION"
-  elseif v.value == 184 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
-  elseif v.value == 185 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
-  elseif v.value == 186 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
-  elseif v.value == 187 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
-  elseif v.value == 188 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
-  elseif v.value == 189 "Mosek.MSK_IPAR_WRITE_TASK_INC_SOL"
-  elseif v.value == 190 "Mosek.MSK_IPAR_WRITE_XML_MODE"
+  elseif v.value == 183 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
+  elseif v.value == 184 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
+  elseif v.value == 185 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
+  elseif v.value == 186 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
+  elseif v.value == 187 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
+  elseif v.value == 188 "Mosek.MSK_IPAR_WRITE_TASK_INC_SOL"
+  elseif v.value == 189 "Mosek.MSK_IPAR_WRITE_XML_MODE"
   else "Mosek.Iparam(?)"
   end
 const Iparam_members = Iparam[
@@ -7683,7 +7717,6 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_LP_TERMS_PER_LINE,
     MSK_IPAR_WRITE_MPS_FORMAT,
     MSK_IPAR_WRITE_MPS_INT,
-    MSK_IPAR_WRITE_PRECISION,
     MSK_IPAR_WRITE_SOL_BARVARIABLES,
     MSK_IPAR_WRITE_SOL_CONSTRAINTS,
     MSK_IPAR_WRITE_SOL_HEAD,
@@ -7692,7 +7725,7 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_TASK_INC_SOL,
     MSK_IPAR_WRITE_XML_MODE ]
 members(::Type{Iparam}) = Iparam_members
-Base.length(::Type{Iparam}) = 191
+Base.length(::Type{Iparam}) = 190
 """
     Branchdir
 
@@ -8555,14 +8588,11 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM`. The problem contains cones that cannot be written to an LP formatted file.
 * `MSK_RES_ERR_LP_WRITE_GECO_PROBLEM`. The problem contains general convex terms that cannot be written to an LP formatted file.
 * `MSK_RES_ERR_WRITING_FILE`. An error occurred while writing file
-* `MSK_RES_ERR_PTF_FORMAT`. Syntax error in an PTF file
 * `MSK_RES_ERR_OPF_FORMAT`. Syntax error in an OPF file
 * `MSK_RES_ERR_OPF_NEW_VARIABLE`. Variable not previously defined.
 * `MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE`. An invalid name occurred in a solution file.
 * `MSK_RES_ERR_LP_INVALID_CON_NAME`. A constraint name is invalid when used in an LP formatted file.
 * `MSK_RES_ERR_OPF_PREMATURE_EOF`. Premature end of file in an OPF file.
-* `MSK_RES_ERR_PTF_UNDEFINED_ITEM`. Undefined symbol referenced
-* `MSK_RES_ERR_PTF_INCONSISTENCY`. Inconsistent size of item
 * `MSK_RES_ERR_JSON_SYNTAX`. Syntax error in an JSON data
 * `MSK_RES_ERR_JSON_STRING`. Error in JSON string.
 * `MSK_RES_ERR_JSON_NUMBER_OVERFLOW`. Invalid number entry - wrong type or value overflow.
@@ -8570,6 +8600,9 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_JSON_DATA`. Inconsistent data in JSON Task file
 * `MSK_RES_ERR_JSON_MISSING_DATA`. Missing data section in JSON task file.
 * `MSK_RES_ERR_PTF_INCOMPATIBILITY`. Incompatible item
+* `MSK_RES_ERR_PTF_UNDEFINED_ITEM`. Undefined symbol referenced
+* `MSK_RES_ERR_PTF_INCONSISTENCY`. Inconsistent size of item
+* `MSK_RES_ERR_PTF_FORMAT`. Syntax error in an PTF file
 * `MSK_RES_ERR_ARGUMENT_LENNEQ`. Incorrect length of arguments.
 * `MSK_RES_ERR_ARGUMENT_TYPE`. Incorrect argument type.
 * `MSK_RES_ERR_NUM_ARGUMENTS`. Incorrect number of function arguments.
@@ -8693,7 +8726,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_INVALID_AIJ`. a[i,j] contains an invalid floating point value, i.e. a NaN or an infinite value.
 * `MSK_RES_ERR_INVALID_CJ`. c[j] contains an invalid floating point value, i.e. a NaN or an infinite value.
 * `MSK_RES_ERR_SYM_MAT_INVALID`. A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value.
-* `MSK_RES_ERR_SYM_MAT_HUGE`. A numerically huge value is specified for an element in A.
+* `MSK_RES_ERR_SYM_MAT_HUGE`. A numerically huge value is specified for an element in E.
 * `MSK_RES_ERR_INV_PROBLEM`. Invalid problem type.
 * `MSK_RES_ERR_MIXED_CONIC_AND_NL`. The problem contains both conic and nonlinear constraints.
 * `MSK_RES_ERR_GLOBAL_INV_CONIC_PROBLEM`. The global optimizer can only be applied to problems without semidefinite variables.
@@ -8768,7 +8801,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_SYM_MAT_INVALID_VALUE`. The numerical value specified in a sparse symmetric matrix is not a floating point value.
 * `MSK_RES_ERR_SYM_MAT_DUPLICATE`. A value in a symmetric matric as been specified more than once.
 * `MSK_RES_ERR_INVALID_SYM_MAT_DIM`. A sparse symmetric matrix of invalid dimension is specified.
-* `MSK_RES_ERR_API_INTERNAL`. An internal fatal error occurred in an interface function.:w
+* `MSK_RES_ERR_API_INTERNAL`. An internal fatal error occurred in an interface function.
 * `MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_SYM_MAT`. The file format does not support a problem with symmetric matrix variables.
 * `MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_CFIX`. The file format does not support a problem with nonzero fixed term in c.
 * `MSK_RES_ERR_INVALID_FILE_FORMAT_FOR_RANGED_CONSTRAINTS`. The file format does not support a problem with ranged constraints.
@@ -8783,7 +8816,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_DUPLICATE_BARVARIABLE_NAMES`. Two barvariable names are identical.
 * `MSK_RES_ERR_DUPLICATE_CONE_NAMES`. Two cone names are identical.
 * `MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES`. Two domain names are identical.
-* `MSK_RES_ERR_DUPLICATE_DJC_NAMES`. Two disjunktive constraint names are identical.
+* `MSK_RES_ERR_DUPLICATE_DJC_NAMES`. Two disjunctive constraint names are identical.
 * `MSK_RES_ERR_NON_UNIQUE_ARRAY`. An array does not contain unique elements.
 * `MSK_RES_ERR_ARGUMENT_IS_TOO_SMALL`. The value of a function argument is too small.
 * `MSK_RES_ERR_ARGUMENT_IS_TOO_LARGE`. The value of a function argument is too large.
@@ -8890,6 +8923,8 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH`. There total number of terms in all domains does not match.
 * `MSK_RES_ERR_UNDEF_SOLUTION`. The required solution is not defined.
 * `MSK_RES_ERR_NO_DOTY`. No doty is available.
+* `MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES`. An infeasibility report is not available when the problem contains matrix variables.
+* `MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS`. An infeasibility report is not available when the problem contains affine conic constraints.
 * `MSK_RES_TRM_MAX_ITERATIONS`. The optimizer terminated at the maximum number of iterations.
 * `MSK_RES_TRM_MAX_TIME`. The optimizer terminated at the maximum amount of time.
 * `MSK_RES_TRM_OBJECTIVE_RANGE`. The optimizer terminated with an objective value outside the objective range.
@@ -9433,9 +9468,6 @@ const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM = Rescode(1164)
 "An error occurred while writing file"
 const MSK_RES_ERR_WRITING_FILE = Rescode(1166)
 
-"Syntax error in an PTF file"
-const MSK_RES_ERR_PTF_FORMAT = Rescode(1167)
-
 "Syntax error in an OPF file"
 const MSK_RES_ERR_OPF_FORMAT = Rescode(1168)
 
@@ -9450,12 +9482,6 @@ const MSK_RES_ERR_LP_INVALID_CON_NAME = Rescode(1171)
 
 "Premature end of file in an OPF file."
 const MSK_RES_ERR_OPF_PREMATURE_EOF = Rescode(1172)
-
-"Undefined symbol referenced"
-const MSK_RES_ERR_PTF_UNDEFINED_ITEM = Rescode(1173)
-
-"Inconsistent size of item"
-const MSK_RES_ERR_PTF_INCONSISTENCY = Rescode(1174)
 
 "Syntax error in an JSON data"
 const MSK_RES_ERR_JSON_SYNTAX = Rescode(1175)
@@ -9477,6 +9503,15 @@ const MSK_RES_ERR_JSON_MISSING_DATA = Rescode(1180)
 
 "Incompatible item"
 const MSK_RES_ERR_PTF_INCOMPATIBILITY = Rescode(1181)
+
+"Undefined symbol referenced"
+const MSK_RES_ERR_PTF_UNDEFINED_ITEM = Rescode(1182)
+
+"Inconsistent size of item"
+const MSK_RES_ERR_PTF_INCONSISTENCY = Rescode(1183)
+
+"Syntax error in an PTF file"
+const MSK_RES_ERR_PTF_FORMAT = Rescode(1184)
 
 "Incorrect length of arguments."
 const MSK_RES_ERR_ARGUMENT_LENNEQ = Rescode(1197)
@@ -9847,7 +9882,7 @@ const MSK_RES_ERR_INVALID_CJ = Rescode(1474)
 "A symmetric matrix contains an invalid floating point value, i.e. a NaN or an infinite value."
 const MSK_RES_ERR_SYM_MAT_INVALID = Rescode(1480)
 
-"A numerically huge value is specified for an element in A."
+"A numerically huge value is specified for an element in E."
 const MSK_RES_ERR_SYM_MAT_HUGE = Rescode(1482)
 
 "Invalid problem type."
@@ -10072,7 +10107,7 @@ const MSK_RES_ERR_SYM_MAT_DUPLICATE = Rescode(3944)
 "A sparse symmetric matrix of invalid dimension is specified."
 const MSK_RES_ERR_INVALID_SYM_MAT_DIM = Rescode(3950)
 
-"An internal fatal error occurred in an interface function.:w"
+"An internal fatal error occurred in an interface function."
 const MSK_RES_ERR_API_INTERNAL = Rescode(3999)
 
 "The file format does not support a problem with symmetric matrix variables."
@@ -10117,7 +10152,7 @@ const MSK_RES_ERR_DUPLICATE_CONE_NAMES = Rescode(4503)
 "Two domain names are identical."
 const MSK_RES_ERR_DUPLICATE_DOMAIN_NAMES = Rescode(4504)
 
-"Two disjunktive constraint names are identical."
+"Two disjunctive constraint names are identical."
 const MSK_RES_ERR_DUPLICATE_DJC_NAMES = Rescode(4505)
 
 "An array does not contain unique elements."
@@ -10438,6 +10473,12 @@ const MSK_RES_ERR_UNDEF_SOLUTION = Rescode(22000)
 "No doty is available."
 const MSK_RES_ERR_NO_DOTY = Rescode(22010)
 
+"An infeasibility report is not available when the problem contains matrix variables."
+const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES = Rescode(23000)
+
+"An infeasibility report is not available when the problem contains affine conic constraints."
+const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS = Rescode(23005)
+
 "The optimizer terminated at the maximum number of iterations."
 const MSK_RES_TRM_MAX_ITERATIONS = Rescode(100000)
 
@@ -10651,14 +10692,11 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1163 "Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"
   elseif v.value == 1164 "Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"
   elseif v.value == 1166 "Mosek.MSK_RES_ERR_WRITING_FILE"
-  elseif v.value == 1167 "Mosek.MSK_RES_ERR_PTF_FORMAT"
   elseif v.value == 1168 "Mosek.MSK_RES_ERR_OPF_FORMAT"
   elseif v.value == 1169 "Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE"
   elseif v.value == 1170 "Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"
   elseif v.value == 1171 "Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME"
   elseif v.value == 1172 "Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF"
-  elseif v.value == 1173 "Mosek.MSK_RES_ERR_PTF_UNDEFINED_ITEM"
-  elseif v.value == 1174 "Mosek.MSK_RES_ERR_PTF_INCONSISTENCY"
   elseif v.value == 1175 "Mosek.MSK_RES_ERR_JSON_SYNTAX"
   elseif v.value == 1176 "Mosek.MSK_RES_ERR_JSON_STRING"
   elseif v.value == 1177 "Mosek.MSK_RES_ERR_JSON_NUMBER_OVERFLOW"
@@ -10666,6 +10704,9 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1179 "Mosek.MSK_RES_ERR_JSON_DATA"
   elseif v.value == 1180 "Mosek.MSK_RES_ERR_JSON_MISSING_DATA"
   elseif v.value == 1181 "Mosek.MSK_RES_ERR_PTF_INCOMPATIBILITY"
+  elseif v.value == 1182 "Mosek.MSK_RES_ERR_PTF_UNDEFINED_ITEM"
+  elseif v.value == 1183 "Mosek.MSK_RES_ERR_PTF_INCONSISTENCY"
+  elseif v.value == 1184 "Mosek.MSK_RES_ERR_PTF_FORMAT"
   elseif v.value == 1197 "Mosek.MSK_RES_ERR_ARGUMENT_LENNEQ"
   elseif v.value == 1198 "Mosek.MSK_RES_ERR_ARGUMENT_TYPE"
   elseif v.value == 1199 "Mosek.MSK_RES_ERR_NUM_ARGUMENTS"
@@ -10986,6 +11027,8 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 20705 "Mosek.MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH"
   elseif v.value == 22000 "Mosek.MSK_RES_ERR_UNDEF_SOLUTION"
   elseif v.value == 22010 "Mosek.MSK_RES_ERR_NO_DOTY"
+  elseif v.value == 23000 "Mosek.MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES"
+  elseif v.value == 23005 "Mosek.MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS"
   elseif v.value == 100000 "Mosek.MSK_RES_TRM_MAX_ITERATIONS"
   elseif v.value == 100001 "Mosek.MSK_RES_TRM_MAX_TIME"
   elseif v.value == 100002 "Mosek.MSK_RES_TRM_OBJECTIVE_RANGE"
@@ -11177,14 +11220,11 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,
     MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,
     MSK_RES_ERR_WRITING_FILE,
-    MSK_RES_ERR_PTF_FORMAT,
     MSK_RES_ERR_OPF_FORMAT,
     MSK_RES_ERR_OPF_NEW_VARIABLE,
     MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,
     MSK_RES_ERR_LP_INVALID_CON_NAME,
     MSK_RES_ERR_OPF_PREMATURE_EOF,
-    MSK_RES_ERR_PTF_UNDEFINED_ITEM,
-    MSK_RES_ERR_PTF_INCONSISTENCY,
     MSK_RES_ERR_JSON_SYNTAX,
     MSK_RES_ERR_JSON_STRING,
     MSK_RES_ERR_JSON_NUMBER_OVERFLOW,
@@ -11192,6 +11232,9 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_JSON_DATA,
     MSK_RES_ERR_JSON_MISSING_DATA,
     MSK_RES_ERR_PTF_INCOMPATIBILITY,
+    MSK_RES_ERR_PTF_UNDEFINED_ITEM,
+    MSK_RES_ERR_PTF_INCONSISTENCY,
+    MSK_RES_ERR_PTF_FORMAT,
     MSK_RES_ERR_ARGUMENT_LENNEQ,
     MSK_RES_ERR_ARGUMENT_TYPE,
     MSK_RES_ERR_NUM_ARGUMENTS,
@@ -11512,6 +11555,8 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH,
     MSK_RES_ERR_UNDEF_SOLUTION,
     MSK_RES_ERR_NO_DOTY,
+    MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES,
+    MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS,
     MSK_RES_TRM_MAX_ITERATIONS,
     MSK_RES_TRM_MAX_TIME,
     MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -11526,7 +11571,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 523
+Base.length(::Type{Rescode}) = 525
 """
     Rescodetype
 
@@ -11911,6 +11956,7 @@ The enumeration type containing all string parameters.
 * `MSK_SPAR_READ_MPS_OBJ_NAME`. Objective name in the MPS file.
 * `MSK_SPAR_READ_MPS_RAN_NAME`. Name of the RANGE vector  used. An empty name means that the first RANGE vector is used.
 * `MSK_SPAR_READ_MPS_RHS_NAME`. Name of the RHS used. An empty name means that the first RHS vector is used.
+* `MSK_SPAR_REMOTE_OPTSERVER_HOST`. URL of the remote optimization server.
 * `MSK_SPAR_REMOTE_TLS_CERT`. Known server certificates in PEM format
 * `MSK_SPAR_REMOTE_TLS_CERT_PATH`. Path to known server certificates in PEM format
 * `MSK_SPAR_SENSITIVITY_FILE_NAME`. Sensitivity report file name.
@@ -12058,6 +12104,16 @@ Possible Values: Any valid MPS name.
 const MSK_SPAR_READ_MPS_RHS_NAME = Sparam(12)
 
 """
+URL of the remote optimization server.
+
+Default value: "``"
+
+Possible Values: Any valid URL.
+
+"""
+const MSK_SPAR_REMOTE_OPTSERVER_HOST = Sparam(13)
+
+"""
 Known server certificates in PEM format
 
 Default value: "``"
@@ -12065,7 +12121,7 @@ Default value: "``"
 Possible Values: PEM files separated by new-lines.
 
 """
-const MSK_SPAR_REMOTE_TLS_CERT = Sparam(13)
+const MSK_SPAR_REMOTE_TLS_CERT = Sparam(14)
 
 """
 Path to known server certificates in PEM format
@@ -12075,7 +12131,7 @@ Default value: "``"
 Possible Values: Any valid path.
 
 """
-const MSK_SPAR_REMOTE_TLS_CERT_PATH = Sparam(14)
+const MSK_SPAR_REMOTE_TLS_CERT_PATH = Sparam(15)
 
 """
 Sensitivity report file name.
@@ -12085,7 +12141,7 @@ Default value: "``"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_SENSITIVITY_FILE_NAME = Sparam(15)
+const MSK_SPAR_SENSITIVITY_FILE_NAME = Sparam(16)
 
 """
 Name of the sensitivity report output file.
@@ -12095,7 +12151,7 @@ Default value: "``"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_SENSITIVITY_RES_FILE_NAME = Sparam(16)
+const MSK_SPAR_SENSITIVITY_RES_FILE_NAME = Sparam(17)
 
 """
 Solution file filter.
@@ -12105,7 +12161,7 @@ Default value: "``"
 Possible Values: Any valid filter.
 
 """
-const MSK_SPAR_SOL_FILTER_XC_LOW = Sparam(17)
+const MSK_SPAR_SOL_FILTER_XC_LOW = Sparam(18)
 
 """
 Solution file filter.
@@ -12115,7 +12171,7 @@ Default value: "``"
 Possible Values: Any valid filter.
 
 """
-const MSK_SPAR_SOL_FILTER_XC_UPR = Sparam(18)
+const MSK_SPAR_SOL_FILTER_XC_UPR = Sparam(19)
 
 """
 Solution file filter.
@@ -12125,7 +12181,7 @@ Default value: "``"
 Possible Values: Any valid filter.
 
 """
-const MSK_SPAR_SOL_FILTER_XX_LOW = Sparam(19)
+const MSK_SPAR_SOL_FILTER_XX_LOW = Sparam(20)
 
 """
 Solution file filter.
@@ -12135,7 +12191,7 @@ Default value: "``"
 Possible Values: Any valid file name.
 
 """
-const MSK_SPAR_SOL_FILTER_XX_UPR = Sparam(20)
+const MSK_SPAR_SOL_FILTER_XX_UPR = Sparam(21)
 
 """
 Key used when writing the summary file.
@@ -12145,7 +12201,7 @@ Default value: "``"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_STAT_KEY = Sparam(21)
+const MSK_SPAR_STAT_KEY = Sparam(22)
 
 """
 Name used when writing the statistics file.
@@ -12155,7 +12211,7 @@ Default value: "``"
 Possible Values: Any valid XML string.
 
 """
-const MSK_SPAR_STAT_NAME = Sparam(22)
+const MSK_SPAR_STAT_NAME = Sparam(23)
 
 """
 Added variable names in the LP files.
@@ -12165,7 +12221,7 @@ Default value: "`xmskgen`"
 Possible Values: Any valid string.
 
 """
-const MSK_SPAR_WRITE_LP_GEN_VAR_NAME = Sparam(23)
+const MSK_SPAR_WRITE_LP_GEN_VAR_NAME = Sparam(24)
 tostr(v::Sparam) = if v.value == 0 "Mosek.MSK_SPAR_BAS_SOL_FILE_NAME"
   elseif v.value == 1 "Mosek.MSK_SPAR_DATA_FILE_NAME"
   elseif v.value == 2 "Mosek.MSK_SPAR_DEBUG_FILE_NAME"
@@ -12179,17 +12235,18 @@ tostr(v::Sparam) = if v.value == 0 "Mosek.MSK_SPAR_BAS_SOL_FILE_NAME"
   elseif v.value == 10 "Mosek.MSK_SPAR_READ_MPS_OBJ_NAME"
   elseif v.value == 11 "Mosek.MSK_SPAR_READ_MPS_RAN_NAME"
   elseif v.value == 12 "Mosek.MSK_SPAR_READ_MPS_RHS_NAME"
-  elseif v.value == 13 "Mosek.MSK_SPAR_REMOTE_TLS_CERT"
-  elseif v.value == 14 "Mosek.MSK_SPAR_REMOTE_TLS_CERT_PATH"
-  elseif v.value == 15 "Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME"
-  elseif v.value == 16 "Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME"
-  elseif v.value == 17 "Mosek.MSK_SPAR_SOL_FILTER_XC_LOW"
-  elseif v.value == 18 "Mosek.MSK_SPAR_SOL_FILTER_XC_UPR"
-  elseif v.value == 19 "Mosek.MSK_SPAR_SOL_FILTER_XX_LOW"
-  elseif v.value == 20 "Mosek.MSK_SPAR_SOL_FILTER_XX_UPR"
-  elseif v.value == 21 "Mosek.MSK_SPAR_STAT_KEY"
-  elseif v.value == 22 "Mosek.MSK_SPAR_STAT_NAME"
-  elseif v.value == 23 "Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME"
+  elseif v.value == 13 "Mosek.MSK_SPAR_REMOTE_OPTSERVER_HOST"
+  elseif v.value == 14 "Mosek.MSK_SPAR_REMOTE_TLS_CERT"
+  elseif v.value == 15 "Mosek.MSK_SPAR_REMOTE_TLS_CERT_PATH"
+  elseif v.value == 16 "Mosek.MSK_SPAR_SENSITIVITY_FILE_NAME"
+  elseif v.value == 17 "Mosek.MSK_SPAR_SENSITIVITY_RES_FILE_NAME"
+  elseif v.value == 18 "Mosek.MSK_SPAR_SOL_FILTER_XC_LOW"
+  elseif v.value == 19 "Mosek.MSK_SPAR_SOL_FILTER_XC_UPR"
+  elseif v.value == 20 "Mosek.MSK_SPAR_SOL_FILTER_XX_LOW"
+  elseif v.value == 21 "Mosek.MSK_SPAR_SOL_FILTER_XX_UPR"
+  elseif v.value == 22 "Mosek.MSK_SPAR_STAT_KEY"
+  elseif v.value == 23 "Mosek.MSK_SPAR_STAT_NAME"
+  elseif v.value == 24 "Mosek.MSK_SPAR_WRITE_LP_GEN_VAR_NAME"
   else "Mosek.Sparam(?)"
   end
 const Sparam_members = Sparam[
@@ -12206,6 +12263,7 @@ const Sparam_members = Sparam[
     MSK_SPAR_READ_MPS_OBJ_NAME,
     MSK_SPAR_READ_MPS_RAN_NAME,
     MSK_SPAR_READ_MPS_RHS_NAME,
+    MSK_SPAR_REMOTE_OPTSERVER_HOST,
     MSK_SPAR_REMOTE_TLS_CERT,
     MSK_SPAR_REMOTE_TLS_CERT_PATH,
     MSK_SPAR_SENSITIVITY_FILE_NAME,
@@ -12218,7 +12276,7 @@ const Sparam_members = Sparam[
     MSK_SPAR_STAT_NAME,
     MSK_SPAR_WRITE_LP_GEN_VAR_NAME ]
 members(::Type{Sparam}) = Sparam_members
-Base.length(::Type{Sparam}) = 24
+Base.length(::Type{Sparam}) = 25
 """
     Stakey
 
