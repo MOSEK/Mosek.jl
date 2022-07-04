@@ -76,7 +76,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterrorx(t)))
+            throw(MosekError(r,getlasterrormsg(t)))
         end
 
         task
@@ -98,7 +98,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterrorx(t)))
+            throw(MosekError(r,getlasterrormsg(t)))
         end
 
         task
@@ -113,7 +113,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterrorx(t)))
+            throw(MosekError(r,getlasterrormsg(t)))
         end
 
         task
@@ -271,7 +271,7 @@ end
 #     String(lastmsg[1:lastmsglen[1]-1])
 # end
 
-function getlasterrorx(t::Task)
+function getlasterrormsg(t::Task)
     let _,_,lastmsg = getlasterror(t)
         lastmsg
     end
@@ -289,6 +289,24 @@ include("msk_callback.jl")
 
 include("show.jl")
 include("ext_functions.jl")
+
+function getlasterrormsg(t::Ptr{Nothing})
+    lastrescode_ = Ref{Int32}()
+    __tmp_662 = Ref{Int64}()
+    @MSK_getlasterror64(t,Ref{Int32}(),0,__tmp_662,C_NULL)
+    __tmp_661 = __tmp_662[]
+    sizelastmsg = Int64((__tmp_661 + Int64(1)))
+    lastmsglen_ = Ref{Int64}()
+    lastmsg_ = Array{UInt8}(undef,sizelastmsg)
+    @MSK_getlasterror64(t,lastrescode_,sizelastmsg,lastmsglen_,lastmsg_)
+    lastmsg_len = findfirst(_c->_c==0,lastmsg_)
+
+    if lastmsg_len === nothing
+        String(lastmsg_)
+    else
+        String(lastmsg_[1:lastmsg_len-1])
+    end
+end
 
 
 #import MathProgBase
