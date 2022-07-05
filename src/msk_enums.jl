@@ -840,6 +840,7 @@ export
   MSK_RES_WRN_ANA_EMPTY_COLS,
   MSK_RES_WRN_ANA_CLOSE_BOUNDS,
   MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS,
+  MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES,
   MSK_RES_WRN_NO_DUALIZER,
   MSK_RES_WRN_SYM_MAT_LARGE,
   MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER,
@@ -939,6 +940,19 @@ export
   MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE,
   MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE,
   MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT,
+  MSK_RES_ERR_OPF_SYNTAX,
+  MSK_RES_ERR_OPF_NEW_VARIABLE,
+  MSK_RES_ERR_OPF_PREMATURE_EOF,
+  MSK_RES_ERR_OPF_MISMATCHED_TAG,
+  MSK_RES_ERR_OPF_DUPLICATE_BOUND,
+  MSK_RES_ERR_OPF_DUPLICATE_CONSTRAINT_NAME,
+  MSK_RES_ERR_OPF_INVALID_CONE_TYPE,
+  MSK_RES_ERR_OPF_INCORRECT_TAG_PARAM,
+  MSK_RES_ERR_OPF_INVALID_TAG,
+  MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY,
+  MSK_RES_ERR_OPF_TOO_LARGE,
+  MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME,
+  MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION,
   MSK_RES_ERR_LP_INCOMPATIBLE,
   MSK_RES_ERR_LP_EMPTY,
   MSK_RES_ERR_LP_DUP_SLACK_NAME,
@@ -949,17 +963,14 @@ export
   MSK_RES_ERR_LP_FILE_FORMAT,
   MSK_RES_ERR_WRITE_LP_FORMAT,
   MSK_RES_ERR_READ_LP_MISSING_END_TAG,
-  MSK_RES_ERR_LP_FORMAT,
+  MSK_RES_ERR_LP_INDICATOR_VAR,
   MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME,
   MSK_RES_ERR_READ_LP_NONEXISTING_NAME,
   MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,
   MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,
   MSK_RES_ERR_WRITING_FILE,
-  MSK_RES_ERR_OPF_FORMAT,
-  MSK_RES_ERR_OPF_NEW_VARIABLE,
   MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,
   MSK_RES_ERR_LP_INVALID_CON_NAME,
-  MSK_RES_ERR_OPF_PREMATURE_EOF,
   MSK_RES_ERR_JSON_SYNTAX,
   MSK_RES_ERR_JSON_STRING,
   MSK_RES_ERR_JSON_NUMBER_OVERFLOW,
@@ -1290,8 +1301,6 @@ export
   MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH,
   MSK_RES_ERR_UNDEF_SOLUTION,
   MSK_RES_ERR_NO_DOTY,
-  MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES,
-  MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS,
   MSK_RES_TRM_MAX_ITERATIONS,
   MSK_RES_TRM_MAX_TIME,
   MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -8473,6 +8482,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_WRN_ANA_EMPTY_COLS`. Warn against empty columns.
 * `MSK_RES_WRN_ANA_CLOSE_BOUNDS`. Warn against close bounds.
 * `MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS`. Warn against almost integral bounds.
+* `MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES`. An infeasibility report is not available when the problem contains matrix variables.
 * `MSK_RES_WRN_NO_DUALIZER`. No automatic dualizer is available for the specified problem.
 * `MSK_RES_WRN_SYM_MAT_LARGE`. A numerically large value is specified for an element in E.
 * `MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER`. A double parameter related to solver tolerances has a non-default value.
@@ -8572,6 +8582,19 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE`. An invalid indicator variable is specfied. It must be a binary variable.
 * `MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE`. An invalid indicator value is specfied. It must be either 0 or 1.
 * `MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT`. A quadratic constraint can be be an indicator constraint.
+* `MSK_RES_ERR_OPF_SYNTAX`. Syntax error in an OPF file
+* `MSK_RES_ERR_OPF_NEW_VARIABLE`. Variable not previously defined.
+* `MSK_RES_ERR_OPF_PREMATURE_EOF`. Premature end of file in an OPF file.
+* `MSK_RES_ERR_OPF_MISMATCHED_TAG`. Mismatched end-tag in OPF file
+* `MSK_RES_ERR_OPF_DUPLICATE_BOUND`. Either upper or lower bound was specified twice in OPF file
+* `MSK_RES_ERR_OPF_DUPLICATE_CONSTRAINT_NAME`. Duplicate constraint name in OPF File
+* `MSK_RES_ERR_OPF_INVALID_CONE_TYPE`. Invalid cone type in OPF File
+* `MSK_RES_ERR_OPF_INCORRECT_TAG_PARAM`. Invalid number of parameters in start-tag in OPF File
+* `MSK_RES_ERR_OPF_INVALID_TAG`. Invalid start-tag in OPF File
+* `MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY`. Same variable appears in multiple cones in OPF File
+* `MSK_RES_ERR_OPF_TOO_LARGE`. The problem is too large to be correctly loaded
+* `MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME`. Same cone name used multiple times in OPF File
+* `MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION`. Dual solution values are not allowed in OPF File
 * `MSK_RES_ERR_LP_INCOMPATIBLE`. The problem cannot be written to an LP formatted file.
 * `MSK_RES_ERR_LP_EMPTY`. The problem cannot be written to an LP formatted file.
 * `MSK_RES_ERR_LP_DUP_SLACK_NAME`. The name of the slack variable added to a ranged constraint already exists.
@@ -8582,17 +8605,14 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_LP_FILE_FORMAT`. Syntax error in an LP file.
 * `MSK_RES_ERR_WRITE_LP_FORMAT`. Problem cannot be written as an LP file.
 * `MSK_RES_ERR_READ_LP_MISSING_END_TAG`. Syntax error in LP fil. Possibly missing End tag.
-* `MSK_RES_ERR_LP_FORMAT`. Syntax error in an LP file.
+* `MSK_RES_ERR_LP_INDICATOR_VAR`. An indicator variable was not declared binary
 * `MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME`. An auto-generated name is not unique.
 * `MSK_RES_ERR_READ_LP_NONEXISTING_NAME`. A variable never occurred in objective or constraints.
 * `MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM`. The problem contains cones that cannot be written to an LP formatted file.
 * `MSK_RES_ERR_LP_WRITE_GECO_PROBLEM`. The problem contains general convex terms that cannot be written to an LP formatted file.
 * `MSK_RES_ERR_WRITING_FILE`. An error occurred while writing file
-* `MSK_RES_ERR_OPF_FORMAT`. Syntax error in an OPF file
-* `MSK_RES_ERR_OPF_NEW_VARIABLE`. Variable not previously defined.
 * `MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE`. An invalid name occurred in a solution file.
 * `MSK_RES_ERR_LP_INVALID_CON_NAME`. A constraint name is invalid when used in an LP formatted file.
-* `MSK_RES_ERR_OPF_PREMATURE_EOF`. Premature end of file in an OPF file.
 * `MSK_RES_ERR_JSON_SYNTAX`. Syntax error in an JSON data
 * `MSK_RES_ERR_JSON_STRING`. Error in JSON string.
 * `MSK_RES_ERR_JSON_NUMBER_OVERFLOW`. Invalid number entry - wrong type or value overflow.
@@ -8923,8 +8943,6 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH`. There total number of terms in all domains does not match.
 * `MSK_RES_ERR_UNDEF_SOLUTION`. The required solution is not defined.
 * `MSK_RES_ERR_NO_DOTY`. No doty is available.
-* `MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES`. An infeasibility report is not available when the problem contains matrix variables.
-* `MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS`. An infeasibility report is not available when the problem contains affine conic constraints.
 * `MSK_RES_TRM_MAX_ITERATIONS`. The optimizer terminated at the maximum number of iterations.
 * `MSK_RES_TRM_MAX_TIME`. The optimizer terminated at the maximum amount of time.
 * `MSK_RES_TRM_OBJECTIVE_RANGE`. The optimizer terminated with an objective value outside the objective range.
@@ -9122,6 +9140,9 @@ const MSK_RES_WRN_ANA_CLOSE_BOUNDS = Rescode(903)
 
 "Warn against almost integral bounds."
 const MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS = Rescode(904)
+
+"An infeasibility report is not available when the problem contains matrix variables."
+const MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES = Rescode(930)
 
 "No automatic dualizer is available for the specified problem."
 const MSK_RES_WRN_NO_DUALIZER = Rescode(950)
@@ -9420,6 +9441,45 @@ const MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE = Rescode(1132)
 "A quadratic constraint can be be an indicator constraint."
 const MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT = Rescode(1133)
 
+"Syntax error in an OPF file"
+const MSK_RES_ERR_OPF_SYNTAX = Rescode(1134)
+
+"Variable not previously defined."
+const MSK_RES_ERR_OPF_NEW_VARIABLE = Rescode(1135)
+
+"Premature end of file in an OPF file."
+const MSK_RES_ERR_OPF_PREMATURE_EOF = Rescode(1136)
+
+"Mismatched end-tag in OPF file"
+const MSK_RES_ERR_OPF_MISMATCHED_TAG = Rescode(1137)
+
+"Either upper or lower bound was specified twice in OPF file"
+const MSK_RES_ERR_OPF_DUPLICATE_BOUND = Rescode(1138)
+
+"Duplicate constraint name in OPF File"
+const MSK_RES_ERR_OPF_DUPLICATE_CONSTRAINT_NAME = Rescode(1139)
+
+"Invalid cone type in OPF File"
+const MSK_RES_ERR_OPF_INVALID_CONE_TYPE = Rescode(1140)
+
+"Invalid number of parameters in start-tag in OPF File"
+const MSK_RES_ERR_OPF_INCORRECT_TAG_PARAM = Rescode(1141)
+
+"Invalid start-tag in OPF File"
+const MSK_RES_ERR_OPF_INVALID_TAG = Rescode(1142)
+
+"Same variable appears in multiple cones in OPF File"
+const MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY = Rescode(1143)
+
+"The problem is too large to be correctly loaded"
+const MSK_RES_ERR_OPF_TOO_LARGE = Rescode(1144)
+
+"Same cone name used multiple times in OPF File"
+const MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME = Rescode(1145)
+
+"Dual solution values are not allowed in OPF File"
+const MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION = Rescode(1146)
+
 "The problem cannot be written to an LP formatted file."
 const MSK_RES_ERR_LP_INCOMPATIBLE = Rescode(1150)
 
@@ -9450,8 +9510,8 @@ const MSK_RES_ERR_WRITE_LP_FORMAT = Rescode(1158)
 "Syntax error in LP fil. Possibly missing End tag."
 const MSK_RES_ERR_READ_LP_MISSING_END_TAG = Rescode(1159)
 
-"Syntax error in an LP file."
-const MSK_RES_ERR_LP_FORMAT = Rescode(1160)
+"An indicator variable was not declared binary"
+const MSK_RES_ERR_LP_INDICATOR_VAR = Rescode(1160)
 
 "An auto-generated name is not unique."
 const MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME = Rescode(1161)
@@ -9468,20 +9528,11 @@ const MSK_RES_ERR_LP_WRITE_GECO_PROBLEM = Rescode(1164)
 "An error occurred while writing file"
 const MSK_RES_ERR_WRITING_FILE = Rescode(1166)
 
-"Syntax error in an OPF file"
-const MSK_RES_ERR_OPF_FORMAT = Rescode(1168)
-
-"Variable not previously defined."
-const MSK_RES_ERR_OPF_NEW_VARIABLE = Rescode(1169)
-
 "An invalid name occurred in a solution file."
 const MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE = Rescode(1170)
 
 "A constraint name is invalid when used in an LP formatted file."
 const MSK_RES_ERR_LP_INVALID_CON_NAME = Rescode(1171)
-
-"Premature end of file in an OPF file."
-const MSK_RES_ERR_OPF_PREMATURE_EOF = Rescode(1172)
 
 "Syntax error in an JSON data"
 const MSK_RES_ERR_JSON_SYNTAX = Rescode(1175)
@@ -10473,12 +10524,6 @@ const MSK_RES_ERR_UNDEF_SOLUTION = Rescode(22000)
 "No doty is available."
 const MSK_RES_ERR_NO_DOTY = Rescode(22010)
 
-"An infeasibility report is not available when the problem contains matrix variables."
-const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES = Rescode(23000)
-
-"An infeasibility report is not available when the problem contains affine conic constraints."
-const MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS = Rescode(23005)
-
 "The optimizer terminated at the maximum number of iterations."
 const MSK_RES_TRM_MAX_ITERATIONS = Rescode(100000)
 
@@ -10577,6 +10622,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 902 "Mosek.MSK_RES_WRN_ANA_EMPTY_COLS"
   elseif v.value == 903 "Mosek.MSK_RES_WRN_ANA_CLOSE_BOUNDS"
   elseif v.value == 904 "Mosek.MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS"
+  elseif v.value == 930 "Mosek.MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES"
   elseif v.value == 950 "Mosek.MSK_RES_WRN_NO_DUALIZER"
   elseif v.value == 960 "Mosek.MSK_RES_WRN_SYM_MAT_LARGE"
   elseif v.value == 970 "Mosek.MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER"
@@ -10676,6 +10722,19 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1131 "Mosek.MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE"
   elseif v.value == 1132 "Mosek.MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE"
   elseif v.value == 1133 "Mosek.MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT"
+  elseif v.value == 1134 "Mosek.MSK_RES_ERR_OPF_SYNTAX"
+  elseif v.value == 1135 "Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE"
+  elseif v.value == 1136 "Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF"
+  elseif v.value == 1137 "Mosek.MSK_RES_ERR_OPF_MISMATCHED_TAG"
+  elseif v.value == 1138 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_BOUND"
+  elseif v.value == 1139 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_CONSTRAINT_NAME"
+  elseif v.value == 1140 "Mosek.MSK_RES_ERR_OPF_INVALID_CONE_TYPE"
+  elseif v.value == 1141 "Mosek.MSK_RES_ERR_OPF_INCORRECT_TAG_PARAM"
+  elseif v.value == 1142 "Mosek.MSK_RES_ERR_OPF_INVALID_TAG"
+  elseif v.value == 1143 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY"
+  elseif v.value == 1144 "Mosek.MSK_RES_ERR_OPF_TOO_LARGE"
+  elseif v.value == 1145 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME"
+  elseif v.value == 1146 "Mosek.MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION"
   elseif v.value == 1150 "Mosek.MSK_RES_ERR_LP_INCOMPATIBLE"
   elseif v.value == 1151 "Mosek.MSK_RES_ERR_LP_EMPTY"
   elseif v.value == 1152 "Mosek.MSK_RES_ERR_LP_DUP_SLACK_NAME"
@@ -10686,17 +10745,14 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1157 "Mosek.MSK_RES_ERR_LP_FILE_FORMAT"
   elseif v.value == 1158 "Mosek.MSK_RES_ERR_WRITE_LP_FORMAT"
   elseif v.value == 1159 "Mosek.MSK_RES_ERR_READ_LP_MISSING_END_TAG"
-  elseif v.value == 1160 "Mosek.MSK_RES_ERR_LP_FORMAT"
+  elseif v.value == 1160 "Mosek.MSK_RES_ERR_LP_INDICATOR_VAR"
   elseif v.value == 1161 "Mosek.MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME"
   elseif v.value == 1162 "Mosek.MSK_RES_ERR_READ_LP_NONEXISTING_NAME"
   elseif v.value == 1163 "Mosek.MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM"
   elseif v.value == 1164 "Mosek.MSK_RES_ERR_LP_WRITE_GECO_PROBLEM"
   elseif v.value == 1166 "Mosek.MSK_RES_ERR_WRITING_FILE"
-  elseif v.value == 1168 "Mosek.MSK_RES_ERR_OPF_FORMAT"
-  elseif v.value == 1169 "Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE"
   elseif v.value == 1170 "Mosek.MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE"
   elseif v.value == 1171 "Mosek.MSK_RES_ERR_LP_INVALID_CON_NAME"
-  elseif v.value == 1172 "Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF"
   elseif v.value == 1175 "Mosek.MSK_RES_ERR_JSON_SYNTAX"
   elseif v.value == 1176 "Mosek.MSK_RES_ERR_JSON_STRING"
   elseif v.value == 1177 "Mosek.MSK_RES_ERR_JSON_NUMBER_OVERFLOW"
@@ -11027,8 +11083,6 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 20705 "Mosek.MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH"
   elseif v.value == 22000 "Mosek.MSK_RES_ERR_UNDEF_SOLUTION"
   elseif v.value == 22010 "Mosek.MSK_RES_ERR_NO_DOTY"
-  elseif v.value == 23000 "Mosek.MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES"
-  elseif v.value == 23005 "Mosek.MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS"
   elseif v.value == 100000 "Mosek.MSK_RES_TRM_MAX_ITERATIONS"
   elseif v.value == 100001 "Mosek.MSK_RES_TRM_MAX_TIME"
   elseif v.value == 100002 "Mosek.MSK_RES_TRM_OBJECTIVE_RANGE"
@@ -11105,6 +11159,7 @@ const Rescode_members = Rescode[
     MSK_RES_WRN_ANA_EMPTY_COLS,
     MSK_RES_WRN_ANA_CLOSE_BOUNDS,
     MSK_RES_WRN_ANA_ALMOST_INT_BOUNDS,
+    MSK_RES_WRN_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES,
     MSK_RES_WRN_NO_DUALIZER,
     MSK_RES_WRN_SYM_MAT_LARGE,
     MSK_RES_WRN_MODIFIED_DOUBLE_PARAMETER,
@@ -11204,6 +11259,19 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_MPS_INVALID_INDICATOR_VARIABLE,
     MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE,
     MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT,
+    MSK_RES_ERR_OPF_SYNTAX,
+    MSK_RES_ERR_OPF_NEW_VARIABLE,
+    MSK_RES_ERR_OPF_PREMATURE_EOF,
+    MSK_RES_ERR_OPF_MISMATCHED_TAG,
+    MSK_RES_ERR_OPF_DUPLICATE_BOUND,
+    MSK_RES_ERR_OPF_DUPLICATE_CONSTRAINT_NAME,
+    MSK_RES_ERR_OPF_INVALID_CONE_TYPE,
+    MSK_RES_ERR_OPF_INCORRECT_TAG_PARAM,
+    MSK_RES_ERR_OPF_INVALID_TAG,
+    MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY,
+    MSK_RES_ERR_OPF_TOO_LARGE,
+    MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME,
+    MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION,
     MSK_RES_ERR_LP_INCOMPATIBLE,
     MSK_RES_ERR_LP_EMPTY,
     MSK_RES_ERR_LP_DUP_SLACK_NAME,
@@ -11214,17 +11282,14 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_LP_FILE_FORMAT,
     MSK_RES_ERR_WRITE_LP_FORMAT,
     MSK_RES_ERR_READ_LP_MISSING_END_TAG,
-    MSK_RES_ERR_LP_FORMAT,
+    MSK_RES_ERR_LP_INDICATOR_VAR,
     MSK_RES_ERR_WRITE_LP_NON_UNIQUE_NAME,
     MSK_RES_ERR_READ_LP_NONEXISTING_NAME,
     MSK_RES_ERR_LP_WRITE_CONIC_PROBLEM,
     MSK_RES_ERR_LP_WRITE_GECO_PROBLEM,
     MSK_RES_ERR_WRITING_FILE,
-    MSK_RES_ERR_OPF_FORMAT,
-    MSK_RES_ERR_OPF_NEW_VARIABLE,
     MSK_RES_ERR_INVALID_NAME_IN_SOL_FILE,
     MSK_RES_ERR_LP_INVALID_CON_NAME,
-    MSK_RES_ERR_OPF_PREMATURE_EOF,
     MSK_RES_ERR_JSON_SYNTAX,
     MSK_RES_ERR_JSON_STRING,
     MSK_RES_ERR_JSON_NUMBER_OVERFLOW,
@@ -11555,8 +11620,6 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_DJC_TOTAL_NUM_TERMS_MISMATCH,
     MSK_RES_ERR_UNDEF_SOLUTION,
     MSK_RES_ERR_NO_DOTY,
-    MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_MATRIX_VARIABLES,
-    MSK_RES_ERR_NO_INFEASIBILITY_REPORT_WHEN_AFFINE_CONIC_CONSTRAINTS,
     MSK_RES_TRM_MAX_ITERATIONS,
     MSK_RES_TRM_MAX_TIME,
     MSK_RES_TRM_OBJECTIVE_RANGE,
@@ -11571,7 +11634,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 525
+Base.length(::Type{Rescode}) = 534
 """
     Rescodetype
 

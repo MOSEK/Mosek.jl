@@ -12453,7 +12453,7 @@ function appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Vector{F
     throw(BoundsError())
   end
   b_ = b
-  @MSK_appendaccseq(task.task,domidx,numafeidx,afeidxfirst-Int64(1),b_)
+  @MSK_appendaccseq(task.task,domidx-Int64(1),numafeidx,afeidxfirst-Int64(1),b_)
   nothing
 end
 function appendaccseq(task::MSKtask,domidx::T0,afeidxfirst::T1,b::T2) where { T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number} }
