@@ -1465,6 +1465,7 @@ const Basindtype_members = Basindtype[
     MSK_BI_RESERVERED ]
 members(::Type{Basindtype}) = Basindtype_members
 Base.length(::Type{Basindtype}) = 5
+Base.convert(::Type{Int},x::Basindtype) = Int(x.value)
 """
     Boundkey
 
@@ -1509,6 +1510,7 @@ const Boundkey_members = Boundkey[
     MSK_BK_RA ]
 members(::Type{Boundkey}) = Boundkey_members
 Base.length(::Type{Boundkey}) = 5
+Base.convert(::Type{Int},x::Boundkey) = Int(x.value)
 """
     Mark
 
@@ -1535,6 +1537,7 @@ const Mark_members = Mark[
     MSK_MARK_UP ]
 members(::Type{Mark}) = Mark_members
 Base.length(::Type{Mark}) = 2
+Base.convert(::Type{Int},x::Mark) = Int(x.value)
 """
     Simdegen
 
@@ -1579,6 +1582,7 @@ const Simdegen_members = Simdegen[
     MSK_SIM_DEGEN_MINIMUM ]
 members(::Type{Simdegen}) = Simdegen_members
 Base.length(::Type{Simdegen}) = 5
+Base.convert(::Type{Int},x::Simdegen) = Int(x.value)
 """
     Transpose
 
@@ -1605,6 +1609,7 @@ const Transpose_members = Transpose[
     MSK_TRANSPOSE_YES ]
 members(::Type{Transpose}) = Transpose_members
 Base.length(::Type{Transpose}) = 2
+Base.convert(::Type{Int},x::Transpose) = Int(x.value)
 """
     Uplo
 
@@ -1631,6 +1636,7 @@ const Uplo_members = Uplo[
     MSK_UPLO_UP ]
 members(::Type{Uplo}) = Uplo_members
 Base.length(::Type{Uplo}) = 2
+Base.convert(::Type{Int},x::Uplo) = Int(x.value)
 """
     Simreform
 
@@ -1669,6 +1675,7 @@ const Simreform_members = Simreform[
     MSK_SIM_REFORMULATION_AGGRESSIVE ]
 members(::Type{Simreform}) = Simreform_members
 Base.length(::Type{Simreform}) = 4
+Base.convert(::Type{Int},x::Simreform) = Int(x.value)
 """
     Simdupvec
 
@@ -1701,6 +1708,7 @@ const Simdupvec_members = Simdupvec[
     MSK_SIM_EXPLOIT_DUPVEC_FREE ]
 members(::Type{Simdupvec}) = Simdupvec_members
 Base.length(::Type{Simdupvec}) = 3
+Base.convert(::Type{Int},x::Simdupvec) = Int(x.value)
 """
     Simhotstart
 
@@ -1733,6 +1741,7 @@ const Simhotstart_members = Simhotstart[
     MSK_SIM_HOTSTART_STATUS_KEYS ]
 members(::Type{Simhotstart}) = Simhotstart_members
 Base.length(::Type{Simhotstart}) = 3
+Base.convert(::Type{Int},x::Simhotstart) = Int(x.value)
 """
     Intpnthotstart
 
@@ -1771,6 +1780,7 @@ const Intpnthotstart_members = Intpnthotstart[
     MSK_INTPNT_HOTSTART_PRIMAL_DUAL ]
 members(::Type{Intpnthotstart}) = Intpnthotstart_members
 Base.length(::Type{Intpnthotstart}) = 4
+Base.convert(::Type{Int},x::Intpnthotstart) = Int(x.value)
 """
     Purify
 
@@ -1815,6 +1825,7 @@ const Purify_members = Purify[
     MSK_PURIFY_AUTO ]
 members(::Type{Purify}) = Purify_members
 Base.length(::Type{Purify}) = 5
+Base.convert(::Type{Int},x::Purify) = Int(x.value)
 """
     Callbackcode
 
@@ -2387,6 +2398,7 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_WRITE_OPF ]
 members(::Type{Callbackcode}) = Callbackcode_members
 Base.length(::Type{Callbackcode}) = 93
+Base.convert(::Type{Int},x::Callbackcode) = Int(x.value)
 """
     Checkconvexitytype
 
@@ -2419,6 +2431,7 @@ const Checkconvexitytype_members = Checkconvexitytype[
     MSK_CHECK_CONVEXITY_FULL ]
 members(::Type{Checkconvexitytype}) = Checkconvexitytype_members
 Base.length(::Type{Checkconvexitytype}) = 3
+Base.convert(::Type{Int},x::Checkconvexitytype) = Int(x.value)
 """
     Compresstype
 
@@ -2457,6 +2470,7 @@ const Compresstype_members = Compresstype[
     MSK_COMPRESS_ZSTD ]
 members(::Type{Compresstype}) = Compresstype_members
 Base.length(::Type{Compresstype}) = 4
+Base.convert(::Type{Int},x::Compresstype) = Int(x.value)
 """
     Conetype
 
@@ -2513,6 +2527,7 @@ const Conetype_members = Conetype[
     MSK_CT_ZERO ]
 members(::Type{Conetype}) = Conetype_members
 Base.length(::Type{Conetype}) = 7
+Base.convert(::Type{Int},x::Conetype) = Int(x.value)
 """
     Domaintype
 
@@ -2605,6 +2620,7 @@ const Domaintype_members = Domaintype[
     MSK_DOMAIN_SVEC_PSD_CONE ]
 members(::Type{Domaintype}) = Domaintype_members
 Base.length(::Type{Domaintype}) = 13
+Base.convert(::Type{Int},x::Domaintype) = Int(x.value)
 """
     Nametype
 
@@ -2637,6 +2653,7 @@ const Nametype_members = Nametype[
     MSK_NAME_TYPE_LP ]
 members(::Type{Nametype}) = Nametype_members
 Base.length(::Type{Nametype}) = 3
+Base.convert(::Type{Int},x::Nametype) = Int(x.value)
 """
     Symmattype
 
@@ -2657,6 +2674,7 @@ const Symmattype_members = Symmattype[
     MSK_SYMMAT_TYPE_SPARSE ]
 members(::Type{Symmattype}) = Symmattype_members
 Base.length(::Type{Symmattype}) = 1
+Base.convert(::Type{Int},x::Symmattype) = Int(x.value)
 """
     Dataformat
 
@@ -2725,6 +2743,7 @@ const Dataformat_members = Dataformat[
     MSK_DATA_FORMAT_JSON_TASK ]
 members(::Type{Dataformat}) = Dataformat_members
 Base.length(::Type{Dataformat}) = 9
+Base.convert(::Type{Int},x::Dataformat) = Int(x.value)
 """
     Solformat
 
@@ -2763,6 +2782,7 @@ const Solformat_members = Solformat[
     MSK_SOL_FORMAT_JSON_TASK ]
 members(::Type{Solformat}) = Solformat_members
 Base.length(::Type{Solformat}) = 4
+Base.convert(::Type{Int},x::Solformat) = Int(x.value)
 """
     Dinfitem
 
@@ -3371,6 +3391,7 @@ const Dinfitem_members = Dinfitem[
     MSK_DINF_TO_CONIC_TIME ]
 members(::Type{Dinfitem}) = Dinfitem_members
 Base.length(::Type{Dinfitem}) = 99
+Base.convert(::Type{Int},x::Dinfitem) = Int(x.value)
 """
     Feature
 
@@ -3397,6 +3418,7 @@ const Feature_members = Feature[
     MSK_FEATURE_PTON ]
 members(::Type{Feature}) = Feature_members
 Base.length(::Type{Feature}) = 2
+Base.convert(::Type{Int},x::Feature) = Int(x.value)
 """
     Dparam
 
@@ -4167,6 +4189,7 @@ const Dparam_members = Dparam[
     MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH ]
 members(::Type{Dparam}) = Dparam_members
 Base.length(::Type{Dparam}) = 61
+Base.convert(::Type{Int},x::Dparam) = Int(x.value)
 """
     Liinfitem
 
@@ -4289,6 +4312,7 @@ const Liinfitem_members = Liinfitem[
     MSK_LIINF_SIMPLEX_ITER ]
 members(::Type{Liinfitem}) = Liinfitem_members
 Base.length(::Type{Liinfitem}) = 18
+Base.convert(::Type{Int},x::Liinfitem) = Int(x.value)
 """
     Iinfitem
 
@@ -4939,6 +4963,7 @@ const Iinfitem_members = Iinfitem[
     MSK_IINF_STO_NUM_A_REALLOC ]
 members(::Type{Iinfitem}) = Iinfitem_members
 Base.length(::Type{Iinfitem}) = 106
+Base.convert(::Type{Int},x::Iinfitem) = Int(x.value)
 """
     Inftype
 
@@ -4971,6 +4996,7 @@ const Inftype_members = Inftype[
     MSK_INF_LINT_TYPE ]
 members(::Type{Inftype}) = Inftype_members
 Base.length(::Type{Inftype}) = 3
+Base.convert(::Type{Int},x::Inftype) = Int(x.value)
 """
     Iomode
 
@@ -5003,6 +5029,7 @@ const Iomode_members = Iomode[
     MSK_IOMODE_READWRITE ]
 members(::Type{Iomode}) = Iomode_members
 Base.length(::Type{Iomode}) = 3
+Base.convert(::Type{Int},x::Iomode) = Int(x.value)
 """
     Iparam
 
@@ -7735,6 +7762,7 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_XML_MODE ]
 members(::Type{Iparam}) = Iparam_members
 Base.length(::Type{Iparam}) = 190
+Base.convert(::Type{Int},x::Iparam) = Int(x.value)
 """
     Branchdir
 
@@ -7797,6 +7825,7 @@ const Branchdir_members = Branchdir[
     MSK_BRANCH_DIR_PSEUDOCOST ]
 members(::Type{Branchdir}) = Branchdir_members
 Base.length(::Type{Branchdir}) = 8
+Base.convert(::Type{Int},x::Branchdir) = Int(x.value)
 """
     Miqcqoreformmethod
 
@@ -7847,6 +7876,7 @@ const Miqcqoreformmethod_members = Miqcqoreformmethod[
     MSK_MIO_QCQO_REFORMULATION_METHOD_RELAX_SDP ]
 members(::Type{Miqcqoreformmethod}) = Miqcqoreformmethod_members
 Base.length(::Type{Miqcqoreformmethod}) = 6
+Base.convert(::Type{Int},x::Miqcqoreformmethod) = Int(x.value)
 """
     Miodatapermmethod
 
@@ -7879,6 +7909,7 @@ const Miodatapermmethod_members = Miodatapermmethod[
     MSK_MIO_DATA_PERMUTATION_METHOD_RANDOM ]
 members(::Type{Miodatapermmethod}) = Miodatapermmethod_members
 Base.length(::Type{Miodatapermmethod}) = 3
+Base.convert(::Type{Int},x::Miodatapermmethod) = Int(x.value)
 """
     Miocontsoltype
 
@@ -7917,6 +7948,7 @@ const Miocontsoltype_members = Miocontsoltype[
     MSK_MIO_CONT_SOL_ITG_REL ]
 members(::Type{Miocontsoltype}) = Miocontsoltype_members
 Base.length(::Type{Miocontsoltype}) = 4
+Base.convert(::Type{Int},x::Miocontsoltype) = Int(x.value)
 """
     Miomode
 
@@ -7943,6 +7975,7 @@ const Miomode_members = Miomode[
     MSK_MIO_MODE_SATISFIED ]
 members(::Type{Miomode}) = Miomode_members
 Base.length(::Type{Miomode}) = 2
+Base.convert(::Type{Int},x::Miomode) = Int(x.value)
 """
     Mionodeseltype
 
@@ -7981,6 +8014,7 @@ const Mionodeseltype_members = Mionodeseltype[
     MSK_MIO_NODE_SELECTION_PSEUDO ]
 members(::Type{Mionodeseltype}) = Mionodeseltype_members
 Base.length(::Type{Mionodeseltype}) = 4
+Base.convert(::Type{Int},x::Mionodeseltype) = Int(x.value)
 """
     Mpsformat
 
@@ -8019,6 +8053,7 @@ const Mpsformat_members = Mpsformat[
     MSK_MPS_FORMAT_CPLEX ]
 members(::Type{Mpsformat}) = Mpsformat_members
 Base.length(::Type{Mpsformat}) = 4
+Base.convert(::Type{Int},x::Mpsformat) = Int(x.value)
 """
     Objsense
 
@@ -8045,6 +8080,7 @@ const Objsense_members = Objsense[
     MSK_OBJECTIVE_SENSE_MAXIMIZE ]
 members(::Type{Objsense}) = Objsense_members
 Base.length(::Type{Objsense}) = 2
+Base.convert(::Type{Int},x::Objsense) = Int(x.value)
 """
     Onoffkey
 
@@ -8071,6 +8107,7 @@ const Onoffkey_members = Onoffkey[
     MSK_ON ]
 members(::Type{Onoffkey}) = Onoffkey_members
 Base.length(::Type{Onoffkey}) = 2
+Base.convert(::Type{Int},x::Onoffkey) = Int(x.value)
 """
     Optimizertype
 
@@ -8127,6 +8164,7 @@ const Optimizertype_members = Optimizertype[
     MSK_OPTIMIZER_PRIMAL_SIMPLEX ]
 members(::Type{Optimizertype}) = Optimizertype_members
 Base.length(::Type{Optimizertype}) = 7
+Base.convert(::Type{Int},x::Optimizertype) = Int(x.value)
 """
     Orderingtype
 
@@ -8177,6 +8215,7 @@ const Orderingtype_members = Orderingtype[
     MSK_ORDER_METHOD_NONE ]
 members(::Type{Orderingtype}) = Orderingtype_members
 Base.length(::Type{Orderingtype}) = 6
+Base.convert(::Type{Int},x::Orderingtype) = Int(x.value)
 """
     Presolvemode
 
@@ -8209,6 +8248,7 @@ const Presolvemode_members = Presolvemode[
     MSK_PRESOLVE_MODE_FREE ]
 members(::Type{Presolvemode}) = Presolvemode_members
 Base.length(::Type{Presolvemode}) = 3
+Base.convert(::Type{Int},x::Presolvemode) = Int(x.value)
 """
     Parametertype
 
@@ -8247,6 +8287,7 @@ const Parametertype_members = Parametertype[
     MSK_PAR_STR_TYPE ]
 members(::Type{Parametertype}) = Parametertype_members
 Base.length(::Type{Parametertype}) = 4
+Base.convert(::Type{Int},x::Parametertype) = Int(x.value)
 """
     Problemitem
 
@@ -8279,6 +8320,7 @@ const Problemitem_members = Problemitem[
     MSK_PI_CONE ]
 members(::Type{Problemitem}) = Problemitem_members
 Base.length(::Type{Problemitem}) = 3
+Base.convert(::Type{Int},x::Problemitem) = Int(x.value)
 """
     Problemtype
 
@@ -8323,6 +8365,7 @@ const Problemtype_members = Problemtype[
     MSK_PROBTYPE_MIXED ]
 members(::Type{Problemtype}) = Problemtype_members
 Base.length(::Type{Problemtype}) = 5
+Base.convert(::Type{Int},x::Problemtype) = Int(x.value)
 """
     Prosta
 
@@ -8391,6 +8434,7 @@ const Prosta_members = Prosta[
     MSK_PRO_STA_PRIM_INFEAS_OR_UNBOUNDED ]
 members(::Type{Prosta}) = Prosta_members
 Base.length(::Type{Prosta}) = 9
+Base.convert(::Type{Int},x::Prosta) = Int(x.value)
 """
     Xmlwriteroutputtype
 
@@ -8417,6 +8461,7 @@ const Xmlwriteroutputtype_members = Xmlwriteroutputtype[
     MSK_WRITE_XML_MODE_COL ]
 members(::Type{Xmlwriteroutputtype}) = Xmlwriteroutputtype_members
 Base.length(::Type{Xmlwriteroutputtype}) = 2
+Base.convert(::Type{Int},x::Xmlwriteroutputtype) = Int(x.value)
 """
     Rescode
 
@@ -11635,6 +11680,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
 Base.length(::Type{Rescode}) = 534
+Base.convert(::Type{Int},x::Rescode) = Int(x.value)
 """
     Rescodetype
 
@@ -11679,6 +11725,7 @@ const Rescodetype_members = Rescodetype[
     MSK_RESPONSE_UNK ]
 members(::Type{Rescodetype}) = Rescodetype_members
 Base.length(::Type{Rescodetype}) = 5
+Base.convert(::Type{Int},x::Rescodetype) = Int(x.value)
 """
     Scalingtype
 
@@ -11705,6 +11752,7 @@ const Scalingtype_members = Scalingtype[
     MSK_SCALING_NONE ]
 members(::Type{Scalingtype}) = Scalingtype_members
 Base.length(::Type{Scalingtype}) = 2
+Base.convert(::Type{Int},x::Scalingtype) = Int(x.value)
 """
     Scalingmethod
 
@@ -11731,6 +11779,7 @@ const Scalingmethod_members = Scalingmethod[
     MSK_SCALING_METHOD_FREE ]
 members(::Type{Scalingmethod}) = Scalingmethod_members
 Base.length(::Type{Scalingmethod}) = 2
+Base.convert(::Type{Int},x::Scalingmethod) = Int(x.value)
 """
     Sensitivitytype
 
@@ -11751,6 +11800,7 @@ const Sensitivitytype_members = Sensitivitytype[
     MSK_SENSITIVITY_TYPE_BASIS ]
 members(::Type{Sensitivitytype}) = Sensitivitytype_members
 Base.length(::Type{Sensitivitytype}) = 1
+Base.convert(::Type{Int},x::Sensitivitytype) = Int(x.value)
 """
     Simseltype
 
@@ -11801,6 +11851,7 @@ const Simseltype_members = Simseltype[
     MSK_SIM_SELECTION_PARTIAL ]
 members(::Type{Simseltype}) = Simseltype_members
 Base.length(::Type{Simseltype}) = 6
+Base.convert(::Type{Int},x::Simseltype) = Int(x.value)
 """
     Solitem
 
@@ -11863,6 +11914,7 @@ const Solitem_members = Solitem[
     MSK_SOL_ITEM_SNX ]
 members(::Type{Solitem}) = Solitem_members
 Base.length(::Type{Solitem}) = 8
+Base.convert(::Type{Int},x::Solitem) = Int(x.value)
 """
     Solsta
 
@@ -11937,6 +11989,7 @@ const Solsta_members = Solsta[
     MSK_SOL_STA_INTEGER_OPTIMAL ]
 members(::Type{Solsta}) = Solsta_members
 Base.length(::Type{Solsta}) = 10
+Base.convert(::Type{Int},x::Solsta) = Int(x.value)
 """
     Soltype
 
@@ -11969,6 +12022,7 @@ const Soltype_members = Soltype[
     MSK_SOL_ITG ]
 members(::Type{Soltype}) = Soltype_members
 Base.length(::Type{Soltype}) = 3
+Base.convert(::Type{Int},x::Soltype) = Int(x.value)
 """
     Solveform
 
@@ -12001,6 +12055,7 @@ const Solveform_members = Solveform[
     MSK_SOLVE_DUAL ]
 members(::Type{Solveform}) = Solveform_members
 Base.length(::Type{Solveform}) = 3
+Base.convert(::Type{Int},x::Solveform) = Int(x.value)
 """
     Sparam
 
@@ -12340,6 +12395,7 @@ const Sparam_members = Sparam[
     MSK_SPAR_WRITE_LP_GEN_VAR_NAME ]
 members(::Type{Sparam}) = Sparam_members
 Base.length(::Type{Sparam}) = 25
+Base.convert(::Type{Int},x::Sparam) = Int(x.value)
 """
     Stakey
 
@@ -12396,6 +12452,7 @@ const Stakey_members = Stakey[
     MSK_SK_INF ]
 members(::Type{Stakey}) = Stakey_members
 Base.length(::Type{Stakey}) = 7
+Base.convert(::Type{Int},x::Stakey) = Int(x.value)
 """
     Startpointtype
 
@@ -12434,6 +12491,7 @@ const Startpointtype_members = Startpointtype[
     MSK_STARTING_POINT_SATISFY_BOUNDS ]
 members(::Type{Startpointtype}) = Startpointtype_members
 Base.length(::Type{Startpointtype}) = 4
+Base.convert(::Type{Int},x::Startpointtype) = Int(x.value)
 """
     Streamtype
 
@@ -12472,6 +12530,7 @@ const Streamtype_members = Streamtype[
     MSK_STREAM_WRN ]
 members(::Type{Streamtype}) = Streamtype_members
 Base.length(::Type{Streamtype}) = 4
+Base.convert(::Type{Int},x::Streamtype) = Int(x.value)
 """
     Value
 
@@ -12498,6 +12557,7 @@ const Value_members = Value[
     MSK_MAX_STR_LEN ]
 members(::Type{Value}) = Value_members
 Base.length(::Type{Value}) = 2
+Base.convert(::Type{Int},x::Value) = Int(x.value)
 """
     Variabletype
 
@@ -12524,3 +12584,4 @@ const Variabletype_members = Variabletype[
     MSK_VAR_TYPE_INT ]
 members(::Type{Variabletype}) = Variabletype_members
 Base.length(::Type{Variabletype}) = 2
+Base.convert(::Type{Int},x::Variabletype) = Int(x.value)
