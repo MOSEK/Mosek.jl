@@ -37,26 +37,27 @@ maketask() do task
 
     appendafes(task,6)
     putafefentrylist(task,
-                     [0, 1, 2, 3, 5], # Rows
-                     [0, 1, 3, 2, 4],  #Columns
+                     [1, 2, 3, 4, 6], # Rows
+                     [1, 2, 4, 3, 5],  #Columns
                      [1.0, 1.0, 1.0, 1.0, 1.0])
-    putafeg(task,4,1.0)
+    putafeg(task,5,1.0)
 
     # Append the two conic constraints
     appendacc(task,
               pc1,           # Domain
-              [0, 1, 2],     # Rows from F
+              [1, 2, 3],     # Rows from F
               [0.0,0.0,0.0]) # rhs offset
     appendacc(task,
               pc2,           # Domain
-              [3, 4, 5],     # Rows from F
+              [4, 5, 6],     # Rows from F
               [0.0,0.0,0.0]) # rhs offset
 
     # Input the objective sense (minimize/maximize)
-    putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
+    putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
     # Optimize the task
     optimize(task,"mosek://solve.mosek.com:30080")
+    writedata(task,"pow1.ptf")
     # Print a summary containing information
     # about the solution for debugging purposes
     solutionsummary(task,MSK_STREAM_MSG)
@@ -66,7 +67,7 @@ maketask() do task
     if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
         x = getxx(task,MSK_SOL_ITR)
-        println("Optimal solution: $x")
+        println("Optimal solution: $(x[1:3])")
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
