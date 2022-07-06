@@ -10,8 +10,6 @@
 using Mosek
 using Printf, SparseArrays
 
-printstream(msg::String) = print(msg)
-
 ############################
 ## Define problem data
 
@@ -49,7 +47,7 @@ A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3],
 ############################
 
 maketask() do task
-    putstreamfunc(task,MSK_STREAM_LOG,printstream)
+    putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     putobjname(task,"lo1")
 

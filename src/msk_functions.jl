@@ -7991,7 +7991,7 @@ function getaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64)
   @MSK_getaccn(task.task,accidx-Int64(1),__tmp_245)
   __tmp_244 = __tmp_245[]
   doty_ = Vector{Float64}(undef,__tmp_244)
-  @MSK_getaccdoty(task.task,whichsol.value,accidx,doty_)
+  @MSK_getaccdoty(task.task,whichsol.value,accidx-Int64(1),doty_)
   doty = doty_;
   doty
 end
