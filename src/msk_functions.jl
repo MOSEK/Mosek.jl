@@ -8045,7 +8045,7 @@ function evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64)
   @MSK_getaccn(task.task,accidx-Int64(1),__tmp_251)
   __tmp_250 = __tmp_251[]
   activity_ = Vector{Float64}(undef,__tmp_250)
-  @MSK_evaluateacc(task.task,whichsol.value,accidx,activity_)
+  @MSK_evaluateacc(task.task,whichsol.value,accidx-Int64(1),activity_)
   activity = activity_;
   activity
 end
