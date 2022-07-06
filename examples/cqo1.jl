@@ -60,27 +60,27 @@ maketask() do task
     # Input the cones
     appendafes(task,6)
     putafefentrylist(task,
-                     [0, 1, 2, 3, 4, 5],         # Rows
-                     [3, 0, 1, 4, 5, 2],         # Columns */
+                     [1, 2, 3, 4, 5, 6],         # Rows
+                     [4, 1, 2, 5, 6, 3],         # Columns */
                      [1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 
     # Quadratic cone (x(3),x(0),x(1)) \in QUAD_3
     quadcone  = appendquadraticconedomain(task,3)
     appendacc(task,
               quadcone,  # Domain
-              [0, 1, 2], # Rows from F
+              [1, 2, 3], # Rows from F
               [0.0,0.0,0.0])
 
     # Rotated quadratic cone (x(4),x(5),x(2)) \in RQUAD_3
     rquadcone = appendrquadraticconedomain(task,3)
     appendacc(task,
               rquadcone, # Domain
-              [3, 4, 5], # Rows from F
+              [4, 5, 6], # Rows from F
               [0.0,0.0,0.0]);
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
-    
+
     # Optimize the task
     optimize(task,"mosek://solve.mosek.com:30080")
     # Print a summary containing information
