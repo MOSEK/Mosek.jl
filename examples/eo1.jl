@@ -44,7 +44,16 @@ maketask() do task
     putconbound(task,1,bkc[1],blc[1],buc[1])
 
     # Input the cones
-    appendcone(task,MSK_CT_PEXP, 0.0, [1, 2, 3 ])
+    dom = appendprimalexpconedomain(task);
+    appendafes(task,3);
+    appendaccseq(task,
+                 dom,
+                 0, # first afe
+                 [0.0,0.0,0.0]);
+    putafefentrylist(task,
+                     [1,2,3], # afe idxs
+                     [1,2,3], # var idxs
+                     [1.0,1.0,1.0]); # coefficients
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)

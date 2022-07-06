@@ -42,7 +42,7 @@ maketask() do task
     # Append 'numcon' empty constraints.
     # The constraints will initially have no bounds. 
     appendcons(task,numcon)
-    
+
     #Append 'numvar' variables.
     # The variables will initially be fixed at zero (x=0). 
     appendvars(task,numvar)
@@ -58,8 +58,25 @@ maketask() do task
     putconbound(task,1,bkc[1],blc[1],buc[1])
 
     # Input the cones
-    appendcone(task,MSK_CT_QUAD, 0.0, [ 4, 1, 2 ])
-    appendcone(task,MSK_CT_RQUAD, 0.0, [ 5, 6, 3 ])
+    appendafes(task,6)
+    putafefentrylist(task,
+                     [0, 1, 2, 3, 4, 5],         # Rows
+                     [3, 0, 1, 4, 5, 2],         # Columns */
+                     [1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+
+    # Quadratic cone (x(3),x(0),x(1)) \in QUAD_3
+    quadcone  = appendquadraticconedomain(task,3)
+    appendacc(task,
+              quadcone,  # Domain
+              [0, 1, 2], # Rows from F
+              [0.0,0.0,0.0])
+
+    # Rotated quadratic cone (x(4),x(5),x(2)) \in RQUAD_3
+    rquadcone = appendrquadraticconedomain(task,3)
+    appendacc(task,
+              rquadcone, # Domain
+              [3, 4, 5], # Rows from F
+              [0.0,0.0,0.0]);
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)

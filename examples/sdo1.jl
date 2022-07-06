@@ -72,7 +72,12 @@ maketask() do task
                  A.colptr[1:numvar], A.colptr[2:numvar+1],
                  A.rowval,A.nzval)
 
-    appendcone(task,MSK_CT_QUAD, 0.0, conesub)
+    appendafes(task,3)
+    appendquadraticconedomain(task,3)
+    putafefentrylist(task,
+                     [1,2,3], # afe idxs
+                     [1,2,3], # var idxs
+                     [1.0,1.0,1.0]) # coefficients
 
     symc  = appendsparsesymmat(task,barvardim[1], 
                                barci, 

@@ -14,7 +14,7 @@ csub = [ 4, 5, 1 ]
 cval = [ 1.0, 1.0, -1.0]
 asub = [ 1, 2, 3]
 aval = [ 1.0, 1.0, 0.5]
-numvar = 6
+numvar = 5
 numcon = 1
 
 # Create a task
@@ -27,15 +27,30 @@ maketask() do task
     # Set up the linear part of the problem
     putclist(task,csub, cval)
     putarow(task,1, asub, aval)
-    putvarboundslice(task,1, 6,
-                     [ MSK_BK_FR, MSK_BK_FR, MSK_BK_FR, MSK_BK_FR, MSK_BK_FR, MSK_BK_FX ],
-                     [ -Inf,      -Inf,      -Inf,      -Inf,      -Inf,      1.0],
-                     [  Inf,       Inf,       Inf,       Inf,       Inf,      1.0])
     putconbound(task,1, MSK_BK_FX, 2.0, 2.0)
 
+    putvarboundsliceconst(task,1, numvar+1,MSK_BK_FR,-Inf,Inf)
+
     # Input the cones
-    appendcone(task,MSK_CT_PPOW, 0.2, [1, 2, 4])
-    appendcone(task,MSK_CT_PPOW, 0.4, [3, 6, 5])
+    pc1 = appendprimalpowerconedomain(task,3,[0.2, 0.8])
+    pc2 = appendprimalpowerconedomain(task,3,[4.0, 6.0])
+
+    appendafes(task,6)
+    putafefentrylist(task,
+                     [0, 1, 2, 3, 5], # Rows
+                     [0, 1, 3, 2, 4],  #Columns
+                     [1.0, 1.0, 1.0, 1.0, 1.0])
+    putafeg(task,4,1.0)
+
+    # Append the two conic constraints
+    appendacc(task,
+              pc1,           # Domain
+              [0, 1, 2],     # Rows from F
+              [0.0,0.0,0.0]) # rhs offset
+    appendacc(task,
+              pc2,           # Domain
+              [3, 4, 5],     # Rows from F
+              [0.0,0.0,0.0]) # rhs offset
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
