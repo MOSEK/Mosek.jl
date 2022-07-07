@@ -5,8 +5,6 @@
 #
 # Description :  Implements a basic portfolio optimization model.
 
-include("portfolio_data.jl")
-
 using Mosek
 #TAG:begin-code
 #TAG:begin-basic-markowitz
@@ -103,8 +101,22 @@ end # portfolio()
 #TAG:end-code
 #TAG:end-basic-markowitz
 
-gamma = 0.36
-let (xx,expret) = portfolio(mu,x0,w,gamma,GT)
-    println("Expected return $(expret) for gamma $(gamma)")
-    println("Solution vector = $(xx)")
+let w      = 59.0,
+    mu     = [0.07197349, 0.15518171, 0.17535435, 0.0898094 , 0.42895777, 0.39291844, 0.32170722, 0.18378628],
+    x0     = [8.0, 5.0, 3.0, 5.0, 2.0, 9.0, 3.0, 6.0],
+    gamma  = 36.0,
+    GT     = [ 0.30758 0.12146 0.11341 0.11327 0.17625 0.11973 0.10435 0.10638
+               0.      0.25042 0.09946 0.09164 0.06692 0.08706 0.09173 0.08506
+               0.      0.      0.19914 0.05867 0.06453 0.07367 0.06468 0.01914
+               0.      0.      0.      0.20876 0.04933 0.03651 0.09381 0.07742
+               0.      0.      0.      0.      0.36096 0.12574 0.10157 0.0571
+               0.      0.      0.      0.      0.      0.21552 0.05663 0.06187
+               0.      0.      0.      0.      0.      0.      0.22514 0.03327
+               0.      0.      0.      0.      0.      0.      0.      0.2202 ],
+    (k,n) = size(GT)
+
+    let (xx,expret) = portfolio(mu,x0,w,gamma,GT)
+        println("Expected return $(expret) for gamma $(gamma)")
+        println("Solution vector = $(xx)")
+    end
 end

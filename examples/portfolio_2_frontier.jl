@@ -15,7 +15,7 @@ using Printf
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
                     w  :: Float64,
-                    gamma :: Vector{Float64},
+                    alphas :: Vector{Float64},
                     GT :: Array{Float64,2})
     (k,n) = size(GT)
     maketask() do task
@@ -57,10 +57,10 @@ function portfolio( mu :: Vector{Float64},
 
         putconbound(task, budget_ofs+1, MSK_BK_FX, totalBudget, totalBudget)
 
-        # Input (gamma, GTx) in the AFE (affine expression) storage
+        # Input (alpha, GTx) in the AFE (affine expression) storage
         # We need k+1 rows
         appendafes(task,k + 2)
-        # The first affine expression = gamma
+        # The first affine expression = alpha
         putafefentry(task,1,s_ofs+1,1.0)
         putafeg(task,2,0.5)
         # The remaining k expressions comprise GT*x, we add them row by row
@@ -71,7 +71,7 @@ function portfolio( mu :: Vector{Float64},
         end
 
         #TAG:begin-basic-markowitz-appendaccseq
-        # Input the affine conic constraint (gamma, GT*x) \in QCone
+        # Input the affine conic constraint (alpha, GT*x) \in QCone
         # Add the quadratic domain of dimension k+1
         qdom = appendrquadraticconedomain(task,k + 2)
         # Add the constraint
@@ -86,10 +86,10 @@ function portfolio( mu :: Vector{Float64},
 
         expret = Float64[]
         stddev = Float64[]
-        for gamma in gammas
-            putcj(task,s_ofs+1,-gamma)
+        for alpha in alphas
+            putcj(task,s_ofs+1,-alpha)
             optimize(task)
-            writedata(task,"pf-frontier-$gamma.ptf")
+            writedata(task,"portfolio_2_frontier-$alpha.ptf")
 
             #TAG:begin-solutionsummary
             # Display solution summary for quick inspection of results
@@ -109,10 +109,24 @@ end # portfolio()
 #TAG:end-code
 #TAG:end-basic-markowitz
 
-gammas = [0.0, 0.01, 0.1, 0.25, 0.30, 0.35, 0.4, 0.45, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 10.0]
-N = length(gammas)
-let (expret,stddev) = portfolio(mu,x0,w,gammas,GT)
-    for i in 1:N
-        @printf("gamma = %2.2e, exp. ret. = %2.3e, std. dev. = %2.3e\n",gammas[i],expret[i],stddev[i])
+let w    = 1.0,
+    mu   = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],
+    x0   = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    GT   = [0.30758 0.12146 0.11341 0.11327 0.17625 0.11973 0.10435 0.10638
+            0.      0.25042 0.09946 0.09164 0.06692 0.08706 0.09173 0.08506
+            0.      0.      0.19914 0.05867 0.06453 0.07367 0.06468 0.01914
+            0.      0.      0.      0.20876 0.04933 0.03651 0.09381 0.07742
+            0.      0.      0.      0.      0.36096 0.12574 0.10157 0.0571
+            0.      0.      0.      0.      0.      0.21552 0.05663 0.06187
+            0.      0.      0.      0.      0.      0.      0.22514 0.03327
+            0.      0.      0.      0.      0.      0.      0.      0.2202 ],
+    alphas = [0.0, 0.01, 0.1, 0.25, 0.30, 0.35, 0.4, 0.45, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 10.0],
+    (k,n) = size(GT),
+
+    N = length(alphas)
+    let (expret,stddev) = portfolio(mu,x0,w,alphas,GT)
+        for i in 1:N
+            @printf("alpha = %2.2e, exp. ret. = %2.3e, std. dev. = %2.3e\n",alphas[i],expret[i],stddev[i])
+        end
     end
 end

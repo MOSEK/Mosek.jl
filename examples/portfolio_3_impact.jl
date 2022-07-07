@@ -45,11 +45,11 @@ function portfolio( mu :: Vector{Float64},
             putvarname(task, x_ofs+j, "x[$(j)]");
             putvarname(task, c_ofs+j, "c[$(j)]");
             putvarname(task, z_ofs+j, "z[$(j)]");
-            # No short-selling - x^l = 0, x^u = inf
-            putvarbound(task,x_ofs+j, MSK_BK_LO, 0.0, Inf);
-            putvarbound(task,c_ofs+j, MSK_BK_FR, -Inf, Inf);
-            putvarbound(task,z_ofs+j, MSK_BK_FR, -Inf, Inf);
         end
+        # No short-selling - x^l = 0, x^u = inf
+        putvarboundsliceconst(task,x_ofs+1,x_ofs+n+1, MSK_BK_LO, 0.0, Inf);
+        putvarboundsliceconst(task,y_ofs+1,y_ofs+n+1, MSK_BK_RA, 0.0, 1.0);
+        putvarboundsliceconst(task,z_ofs+1,z_ofs+n+1, MSK_BK_FR, -Inf, Inf);
 
         # Linear constraint: total budget
         let budget_ofs = getnumcon(task)
@@ -158,8 +158,23 @@ end # portfolio()
 #TAG:end-code
 #TAG:end-basic-markowitz
 
-gamma = 0.36
-let (xx,expret) = portfolio(mu,x0,w,gamma,GT,market_impact)
-    println("Expected return $(expret) for gamma $(gamma)")
-    println("Solution vector = $(xx)")
+let w    = 1.0,
+    mu   = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],
+    x0   = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    GT   = [ 0.30758 0.12146 0.11341 0.11327 0.17625 0.11973 0.10435 0.10638
+             0.      0.25042 0.09946 0.09164 0.06692 0.08706 0.09173 0.08506
+             0.      0.      0.19914 0.05867 0.06453 0.07367 0.06468 0.01914
+             0.      0.      0.      0.20876 0.04933 0.03651 0.09381 0.07742
+             0.      0.      0.      0.      0.36096 0.12574 0.10157 0.0571
+             0.      0.      0.      0.      0.      0.21552 0.05663 0.06187
+             0.      0.      0.      0.      0.      0.      0.22514 0.03327
+             0.      0.      0.      0.      0.      0.      0.      0.2202 ],
+    gamma = 0.36,
+    (k,n) = size(GT),
+    m = 0.01 * ones(n)
+
+    let (xx,expret) = portfolio(mu,x0,w,gamma,GT,market_impact)
+        println("Expected return $(expret) for gamma $(gamma)")
+        println("Solution vector = $(xx)")
+    end
 end

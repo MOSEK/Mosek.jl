@@ -4,8 +4,6 @@
 #
 # Description :  Implements a basic portfolio optimization model.
 
-include("portfolio_data.jl")
-
 using Mosek
 #TAG:begin-code
 #TAG:begin-basic-markowitz
@@ -26,8 +24,8 @@ function portfolio( mu :: Vector{Float64},
         #TAG:begin-offsets
         #Offset of variables into the API variable.
         x_ofs = 0
-        z_ofs = n
-        y_ofs = 2*n
+        y_ofs = n
+        z_ofs = 2*n
 
         # Constraints offsets
         #TAG:end-offsets
@@ -40,14 +38,14 @@ function portfolio( mu :: Vector{Float64},
         for j in 1:n
             # Optionally we can give the variables names
             putvarname(task, x_ofs+j, "x[$(j)]");
-            putvarname(task, z_ofs+j, "z[$(j)]");
             putvarname(task, y_ofs+j, "y[$(j)]");
-            # No short-selling - x^l = 0, x^u = inf
-            putvarbound(task,x_ofs+j, MSK_BK_LO, 0.0, Inf);
-            putvarbound(task,z_ofs+j, MSK_BK_FR, -Inf, Inf);
-            putvarbound(task,y_ofs+j, MSK_BK_RA, 0.0, 1.0);
+            putvarname(task, z_ofs+j, "z[$(j)]");
             putvartype(task, y_ofs+j, MSK_VAR_TYPE_INT);
         end
+        # No short-selling - x^l = 0, x^u = inf
+        putvarboundsliceconst(task,x_ofs+1,x_ofs+n+1, MSK_BK_LO, 0.0, Inf);
+        putvarboundsliceconst(task,y_ofs+1,y_ofs+n+1, MSK_BK_RA, 0.0, 1.0);
+        putvarboundsliceconst(task,z_ofs+1,z_ofs+n+1, MSK_BK_FR, -Inf, Inf);
 
         # One linear constraint: total budget
         let coni = getnumcon(task)
@@ -145,12 +143,26 @@ end # portfolio()
 #TAG:end-code
 #TAG:end-basic-markowitz
 
-gamma = 0.25
-for K in 1:n
-    res = Float64[]
-    let (xx,expret) = portfolio(mu,x0,w,gamma,GT,K)
-        println("cardinality = $K")
-        println("\tExpected return $(expret) for gamma $(gamma)")
-        println("\tSolution vector = $(xx)")
+let w = 1.0,
+    mu = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],
+    x0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    GT = [ 0.30758 0.12146 0.11341 0.11327 0.17625 0.11973 0.10435 0.10638
+           0.      0.25042 0.09946 0.09164 0.06692 0.08706 0.09173 0.08506
+           0.      0.      0.19914 0.05867 0.06453 0.07367 0.06468 0.01914
+           0.      0.      0.      0.20876 0.04933 0.03651 0.09381 0.07742
+           0.      0.      0.      0.      0.36096 0.12574 0.10157 0.0571
+           0.      0.      0.      0.      0.      0.21552 0.05663 0.06187
+           0.      0.      0.      0.      0.      0.      0.22514 0.03327
+           0.      0.      0.      0.      0.      0.      0.      0.2202 ],
+    (k,n) = size(GT),
+    gamma  = 0.25
+
+    for K in 1:n
+        res = Float64[]
+        let (xx,expret) = portfolio(mu,x0,w,gamma,GT,K)
+            println("cardinality = $K")
+            println("\tExpected return $(expret) for gamma $(gamma)")
+            println("\tSolution vector = $(xx)")
+        end
     end
 end
