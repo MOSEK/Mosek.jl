@@ -1,9 +1,10 @@
-
-# File : portfolio_4_transcost
+# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# Copyright : Mosek ApS
+# File : portfolio_4_transcost.jl
 #
-# Description :  Implements a basic portfolio optimization model.
+#  Description :  Implements a basic portfolio optimization model
+#                 with fixed setup costs and transaction costs
+#                 as a mixed-integer problem.
 
 using Mosek
 #TAG:begin-code
