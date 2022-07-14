@@ -57,13 +57,13 @@ let numcon    = 2,              # Number of constraints.
         appendbarvars(task,dimbarvar)
 
         # Set objective (6 nonzeros).
-        putbarcblocktriplet(task,6, Cj, Ck, Cl, Cv)
+        putbarcblocktriplet(task,Cj, Ck, Cl, Cv)
 
         # Set the equality constraint (6 nonzeros).
-        putbarablocktriplet(task,6, Ai, Aj, Ak, Al, Av)
+        putbarablocktriplet(task,Ai, Aj, Ak, Al, Av)
 
         # Set the inequality constraint (1 nonzero).
-        putbarablocktriplet(task,1, A2i, A2j, A2k, A2l, A2v)
+        putbarablocktriplet(task,A2i, A2j, A2k, A2l, A2v)
 
         # Set constraint bounds
         putconboundslice(task,1, 3, bkc, blc, buc)
