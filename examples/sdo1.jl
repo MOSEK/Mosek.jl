@@ -26,7 +26,7 @@ barci = [1, 2, 2, 3, 3]
 barcj = [1, 1, 2, 2, 3]
 barcval = [2.0, 1.0, 2.0, 1.0, 2.0]
 
-barai   = Any[ [1, 2, 3], 
+barai   = Any[ [1, 2, 3],
                [1, 2, 3, 2, 3, 3] ]
 baraj   = Any[ [1, 2, 3],
                [1, 1, 1, 2, 2, 3] ]
@@ -42,56 +42,64 @@ maketask() do task
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
     # Append 'numvar' variables.
-    # The variables will initially be fixed at zero (x=0). 
+    # The variables will initially be fixed at zero (x=0).
     appendvars(task,numvar)
 
     # Append 'numcon' empty constraints.
-    # The constraints will initially have no bounds. 
+    # The constraints will initially have no bounds.
     appendcons(task,numcon)
 
     # Append matrix variables of sizes in 'BARVARDIM'.
-    # The variables will initially be fixed at zero. 
+    # The variables will initially be fixed at zero.
     appendbarvars(task,barvardim)
 
     # Set the linear term c_0 in the objective.
     putcj(task, 1, 1.0)
 
     # Set the bounds on variable j
-    # blx[j] <= x_j <= bux[j] 
-    putvarboundslice(task,1,numvar+1,
-                     [ MSK_BK_FR for i in 1:numvar ],
-                     [ -Inf      for i in 1:numvar ],
-                     [ +Inf      for i in 1:numvar ])
+    # blx[j] <= x_j <= bux[j]
+    putvarboundsliceconst(task,1,numvar+1,
+                          MSK_BK_FR,
+                          -Inf,
+                          +Inf)
 
     # Set the bounds on constraints.
     # blc[i] <= constraint_i <= buc[i]
     putconboundslice(task,1,numcon+1, bkc,blc,buc)
 
-    # Input row i of A 
+
+    
+    # Append the conic quadratic cone
+    let afei = getnumafe(task)+1,
+        dom = appendquadraticconedomain(task,3)
+        
+        appendafes(task,3)
+        putafefentrylist(task,[1,2,3],
+                              [1,2,3],
+                              [1.0,1.0,1.0])
+        appendaccseq(task,dom,afei,[0.0,0.0,0.0])
+    end
+
+    
+    # Input row i of A
     putacolslice(task,1,numvar+1,
                  A.colptr[1:numvar], A.colptr[2:numvar+1],
                  A.rowval,A.nzval)
 
-    appendafes(task,3)
-    appendquadraticconedomain(task,3)
-    putafefentrylist(task,
-                     [1,2,3], # afe idxs
-                     [1,2,3], # var idxs
-                     [1.0,1.0,1.0]) # coefficients
 
-    symc  = appendsparsesymmat(task,barvardim[1], 
-                               barci, 
-                               barcj, 
+    symc  = appendsparsesymmat(task,barvardim[1],
+                               barci,
+                               barcj,
                                barcval)
 
-    syma0 = appendsparsesymmat(task,barvardim[1], 
-                               barai[1], 
-                               baraj[1], 
+    syma0 = appendsparsesymmat(task,barvardim[1],
+                               barai[1],
+                               baraj[1],
                                baraval[1])
-    
-    syma1 = appendsparsesymmat(task,barvardim[1], 
-                               barai[2], 
-                               baraj[2], 
+
+    syma1 = appendsparsesymmat(task,barvardim[1],
+                               barai[2],
+                               baraj[2],
                                baraval[2])
 
     putbarcj(task,1, [symc], [1.0])
@@ -104,6 +112,7 @@ maketask() do task
 
     # Solve the problem and print summary
     optimize(task,"mosek://solve.mosek.com:30080")
+    writedata(task,"sdo1.ptf")
     solutionsummary(task,MSK_STREAM_MSG)
 
     # Get status information about the solution

@@ -8,8 +8,6 @@
 using Mosek
 using Printf, SparseArrays
 
-printstream(msg::String) = print(msg)
-
 # Define a stream printer to grab output from MOSEK
 
 bkc   = [ MSK_BK_LO ]
@@ -29,7 +27,7 @@ A     = sparse( [ 1, 1, 1 ],
                 numcon, numvar )
 
 maketask() do task
-    putstreamfunc(task,MSK_STREAM_LOG,printstream)
+    putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     # Append 'numcon' empty constraints.
     # The constraints will initially have no bounds.  
@@ -71,7 +69,7 @@ maketask() do task
     if solsta == MSK_SOL_STA_OPTIMAL
         xx = getxx(task,MSK_SOL_ITR)
         println("Optimal solution:")
-        print(xx)
+        println(xx)
     elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
                        MSK_SOL_STA_PRIM_INFEAS_CER ]
         println("Primal or dual infeasibility certificate found.\n")
