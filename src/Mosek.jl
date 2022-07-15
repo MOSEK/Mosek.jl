@@ -253,7 +253,7 @@ Destroy the task object.
 function deleteenv(e::Env)
     if e.env != C_NULL
         temp = Array{Ptr{Nothing}}(undef,1)
-        temp[1] = t.env
+        temp[1] = e.env
         @msk_ccall(deleteenv,Int32,(Ptr{Ptr{Nothing}},), temp)
         e.env = C_NULL
     end
