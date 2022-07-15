@@ -26,13 +26,9 @@
 using Mosek
 
 maketask() do task
-
-
     putobjname(task,"solvebasis")
-    
 
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
-    
     numcon = 2
     numvar = 2
 
@@ -101,7 +97,7 @@ maketask() do task
             # varsub the index of the non-zeros in x.
             nz = 2
 
-            nz = solvewithbasis(task,Int32(0), nz, varsub, w1)
+            nz = solvewithbasis(task,false, nz, varsub, w1)
             println("nz = $nz")
             println("Solution to Bx = $w1")
 
@@ -117,17 +113,16 @@ maketask() do task
             nz = 1
             varsub[1] = 1
 
-            
-            nz = solvewithbasis(task,1,nz,varsub,w2)
+            nz = solvewithbasis(task,true,nz,varsub,w2)
             println(nz)
 
             println("Solution to B^Tx = $(w2)")
 
             for i in 1:nz
                 if basis[varsub[i]] < numcon
-                    print("xc$(basis[varsub[i]]) = $(w2[varsub[i]])")
+                    println("xc$(basis[varsub[i]]) = $(w2[varsub[i]])")
                 else
-                    print("x$(basis[varsub[i]] - numcon) = $(w2[varsub[i]])")
+                    println("x$(basis[varsub[i]] - numcon) = $(w2[varsub[i]])")
                 end
             end
         end

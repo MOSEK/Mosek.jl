@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.16
+# Target: Mosek 10.0.17
 export
   analyzeproblem,
   analyzenames,
@@ -4847,19 +4847,20 @@ function initbasissolve(task::MSKtask)
   basis_ = Vector{Int32}(undef,__tmp_3)
   @MSK_initbasissolve(task.task,basis_)
   basis = basis_;
+  basis .+= 1
   basis
 end
 
 
 """
-  solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int32},val::Vector{Float64}) :: numnzout
-  solvewithbasis(task::MSKtask,transp::T0,numnz::T1,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer,T1<:Integer}  :: numnzout
+  solvewithbasis(task::MSKtask,transp::Bool,numnz::Int32,sub::Vector{Int32},val::Vector{Float64}) :: numnzout
+  solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer}  :: numnzout
 
   Solve a linear equation system involving a basis matrix.
 
   Arguments
     task::MSKtask An optimization task.
-    transp::Int32 Controls which problem formulation is solved.
+    transp::Bool Controls which problem formulation is solved.
     numnz::Int32 Input (number of non-zeros in right-hand side).
     sub::Vector{Int32} Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
     val::Vector{Float64} Input (right-hand side values) and output (solution vector values).
@@ -4867,7 +4868,7 @@ end
     numnzout::Int32 Output (number of non-zeros in solution vector).
 """
 function solvewithbasis end
-function solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int32},val::Vector{Float64})
+function solvewithbasis(task::MSKtask,transp::Bool,numnz::Int32,sub::Vector{Int32},val::Vector{Float64})
   __tmp_7 = Ref{Int32}()
   @MSK_getnumcon(task.task,__tmp_7)
   __tmp_6 = __tmp_7[]
@@ -4884,14 +4885,14 @@ function solvewithbasis(task::MSKtask,transp::Int32,numnz::Int32,sub::Vector{Int
   val_ = val
   numnzout_ = Ref{Int32}()
   @MSK_solvewithbasis(task.task,transp,numnz,sub_,val_,numnzout_)
-  sub = sub_ .+ Int32(1)
-  val = val_
+  sub[:] = sub_ .+ Int32(1)
+  val[:] = val_
   numnzout_[]
 end
-function solvewithbasis(task::MSKtask,transp::T0,numnz::T1,sub::Vector{Int32},val::Vector{Float64}) where { T0<:Integer,T1<:Integer }
+function solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},val::Vector{Float64}) where { T0<:Integer }
   solvewithbasis(
     task,
-    convert(Int32,transp),
+    transp,
     convert(Int32,numnz),
     sub,
     val)
@@ -11032,21 +11033,21 @@ end
 
 
 """
-  putbarcblocktriplet(task::MSKtask,num::Int64,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
-  putbarcblocktriplet(task::MSKtask,num::T0,subj::T1,subk::T2,subl::T3,valjkl::T4) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
+  putbarcblocktriplet(task::MSKtask,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
+  putbarcblocktriplet(task::MSKtask,subj::T0,subk::T1,subl::T2,valjkl::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
   Inputs barC in block triplet form.
 
   Arguments
     task::MSKtask An optimization task.
-    num::Int64 Number of elements in the block triplet form.
     subj::Vector{Int32} Symmetric matrix variable index.
     subk::Vector{Int32} Block row index.
     subl::Vector{Int32} Block column index.
     valjkl::Vector{Float64} The numerical value associated with each block triplet.
 """
 function putbarcblocktriplet end
-function putbarcblocktriplet(task::MSKtask,num::Int64,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
+function putbarcblocktriplet(task::MSKtask,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
+  num = Int64(min(length(subj),length(subk),length(subl),length(valjkl)))
   if length(subj) < num
     throw(BoundsError())
   end
@@ -11066,10 +11067,9 @@ function putbarcblocktriplet(task::MSKtask,num::Int64,subj::Vector{Int32},subk::
   @MSK_putbarcblocktriplet(task.task,num,subj_,subk_,subl_,valjkl_)
   nothing
 end
-function putbarcblocktriplet(task::MSKtask,num::T0,subj::T1,subk::T2,subl::T3,valjkl::T4) where { T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
+function putbarcblocktriplet(task::MSKtask,subj::T0,subk::T1,subl::T2,valjkl::T3) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
   putbarcblocktriplet(
     task,
-    convert(Int64,num),
     convert(Vector{Int32},subj),
     convert(Vector{Int32},subk),
     convert(Vector{Int32},subl),
@@ -11115,14 +11115,13 @@ end
 
 
 """
-  putbarablocktriplet(task::MSKtask,num::Int64,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
-  putbarablocktriplet(task::MSKtask,num::T0,subi::T1,subj::T2,subk::T3,subl::T4,valijkl::T5) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+  putbarablocktriplet(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
+  putbarablocktriplet(task::MSKtask,subi::T0,subj::T1,subk::T2,subl::T3,valijkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
 
   Inputs barA in block triplet form.
 
   Arguments
     task::MSKtask An optimization task.
-    num::Int64 Number of elements in the block triplet form.
     subi::Vector{Int32} Constraint index.
     subj::Vector{Int32} Symmetric matrix variable index.
     subk::Vector{Int32} Block row index.
@@ -11130,7 +11129,8 @@ end
     valijkl::Vector{Float64} The numerical value associated with each block triplet.
 """
 function putbarablocktriplet end
-function putbarablocktriplet(task::MSKtask,num::Int64,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
+function putbarablocktriplet(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
+  num = Int64(min(length(subj),length(subk),length(subl),length(valijkl)))
   if length(subi) < num
     throw(BoundsError())
   end
@@ -11154,10 +11154,9 @@ function putbarablocktriplet(task::MSKtask,num::Int64,subi::Vector{Int32},subj::
   @MSK_putbarablocktriplet(task.task,num,subi_,subj_,subk_,subl_,valijkl_)
   nothing
 end
-function putbarablocktriplet(task::MSKtask,num::T0,subi::T1,subj::T2,subk::T3,subl::T4,valijkl::T5) where { T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number} }
+function putbarablocktriplet(task::MSKtask,subi::T0,subj::T1,subk::T2,subl::T3,valijkl::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putbarablocktriplet(
     task,
-    convert(Int64,num),
     convert(Vector{Int32},subi),
     convert(Vector{Int32},subj),
     convert(Vector{Int32},subk),
@@ -11804,14 +11803,13 @@ end
 
 
 """
-  putafebarfblocktriplet(task::MSKtask,numtrip::Int64,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
-  putafebarfblocktriplet(task::MSKtask,numtrip::T0,afeidx::T1,barvaridx::T2,subk::T3,subl::T4,valkl::T5) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+  putafebarfblocktriplet(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
+  putafebarfblocktriplet(task::MSKtask,afeidx::T0,barvaridx::T1,subk::T2,subl::T3,valkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
 
   Inputs barF in block triplet form.
 
   Arguments
     task::MSKtask An optimization task.
-    numtrip::Int64 Number of elements in the block triplet form.
     afeidx::Vector{Int64} Constraint index.
     barvaridx::Vector{Int32} Symmetric matrix variable index.
     subk::Vector{Int32} Block row index.
@@ -11819,7 +11817,8 @@ end
     valkl::Vector{Float64} The numerical value associated with each block triplet.
 """
 function putafebarfblocktriplet end
-function putafebarfblocktriplet(task::MSKtask,numtrip::Int64,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
+function putafebarfblocktriplet(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
+  numtrip = Int64(min(length(afeidx),length(barvaridx),length(subk),length(subl),length(valkl)))
   if length(afeidx) < numtrip
     throw(BoundsError())
   end
@@ -11843,10 +11842,9 @@ function putafebarfblocktriplet(task::MSKtask,numtrip::Int64,afeidx::Vector{Int6
   @MSK_putafebarfblocktriplet(task.task,numtrip,afeidx_,barvaridx_,subk_,subl_,valkl_)
   nothing
 end
-function putafebarfblocktriplet(task::MSKtask,numtrip::T0,afeidx::T1,barvaridx::T2,subk::T3,subl::T4,valkl::T5) where { T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number} }
+function putafebarfblocktriplet(task::MSKtask,afeidx::T0,barvaridx::T1,subk::T2,subl::T3,valkl::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putafebarfblocktriplet(
     task,
-    convert(Int64,numtrip),
     convert(Vector{Int64},afeidx),
     convert(Vector{Int32},barvaridx),
     convert(Vector{Int32},subk),
@@ -15873,14 +15871,14 @@ end
 
 
 """
-  optimizebatch(env::MSKenv,israce::Int32,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask}) :: (trmcode,rcode)
-  optimizebatch(env::MSKenv,israce::T0,maxtime::T1,numthreads::T2,task::Vector{MSKtask}) where {T0<:Integer,T1<:Number,T2<:Integer}  :: (trmcode,rcode)
+  optimizebatch(env::MSKenv,israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask}) :: (trmcode,rcode)
+  optimizebatch(env::MSKenv,israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where {T0<:Number,T1<:Integer}  :: (trmcode,rcode)
 
   Optimize a number of tasks in parallel using a specified number of threads.
 
   Arguments
     env::MSKenv The MOSEK environment.
-    israce::Int32 If nonzero, then the function is terminated after the first task has been completed.
+    israce::Bool If nonzero, then the function is terminated after the first task has been completed.
     maxtime::Float64 Time limit for the function.
     numthreads::Int32 Number of threads to be employed.
     task::Vector{MSKtask} An array of tasks to optimize in parallel.
@@ -15889,7 +15887,7 @@ end
     rcode::Vector{Rescode} The response code for each task.
 """
 function optimizebatch end
-function optimizebatch(env::MSKenv,israce::Int32,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask})
+function optimizebatch(env::MSKenv,israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask})
   numtask = Int64(length(task))
   if length(task) < numtask
     throw(BoundsError())
@@ -15902,10 +15900,10 @@ function optimizebatch(env::MSKenv,israce::Int32,maxtime::Float64,numthreads::In
   rcode = Rescode[Rescode(item) for item in rcode_]
   trmcode,rcode
 end
-function optimizebatch(env::MSKenv,israce::T0,maxtime::T1,numthreads::T2,task::Vector{MSKtask}) where { T0<:Integer,T1<:Number,T2<:Integer }
+function optimizebatch(env::MSKenv,israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where { T0<:Number,T1<:Integer }
   optimizebatch(
     env,
-    convert(Int32,israce),
+    israce,
     convert(Float64,maxtime),
     convert(Int32,numthreads),
     task)
