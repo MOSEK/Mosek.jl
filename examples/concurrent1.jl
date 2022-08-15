@@ -1,7 +1,7 @@
 ##
-#  Copyright: $$copyright
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
-#  File:      $${file}
+#  File :   concurrent1.jl
 #
 #  Purpose: Demonstrates a simple implementation of a concurrent optimizer.
 #

@@ -5,7 +5,7 @@
 #- `blas_lapack.jl` 
 - `callback.jl` Example demonstrating the progress callback function
 - `ceo1.jl` Small exponential cone example
-#- `concurrent1.jl` Example demonstrating how to optimize in parallel and pass Tasks between threads
+- `concurrent1.jl` Example demonstrating how to optimize in parallel and pass Tasks between threads
 - `cqo1.jl` Small conic quadratic example
 - `djc1.jl` Small example demonstrating integer programming with disjunctive constraints
 - `feasrepairex1.jl` Small example demonstrating featibility repair
@@ -17,8 +17,8 @@
 - `mico1.jl` Small conic MIP example
 - `milo1.jl` Small linear MIP example
 - `mioinitsol.jl` Small example showing how to input an initial solution for a MIP
-#- `opt_server_async.jl`
-#- `opt_server_sync.jl`
+- `opt_server_async.jl`
+- `opt_server_sync.jl`
 - `parallel.jl` Small example showing the use of `optimize_batch()` to solve tasks in parallel
 - `parameters.jl`
 - `portfolio_1_basic.jl` Basic Markowitz portfolio example, maximizing expected return subject to a bound on compound risk
@@ -31,7 +31,7 @@
 - `qcqo1.jl` Small example with quadratic objective and constraints
 - `qo1.jl` Small example with quadratic objective
 - `reoptimization.jl` Small example demonstrating modifying and re-optimizing a task.
-#- `response.jl`
+- `response.jl`
 - `sdo1.jl` Small semidefinite example
 - `sdo2.jl` Small semidefinite example
 - `sdo_lmi.jl`
