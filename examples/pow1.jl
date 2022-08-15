@@ -1,3 +1,6 @@
+#   Copyright : Copyright (c) 2022 MOSEK ApS
+#
+#   File :      pow1.jl
 #
 #   Purpose: Demonstrates how to solve the problem
 #
@@ -6,6 +9,7 @@
 #              x,y,z >= 0
 #
 
+##TAG:begin-code
 using Mosek
 printstream(msg::AbstractString) = print(msg)
 
@@ -31,6 +35,7 @@ maketask() do task
 
     putvarboundsliceconst(task,1, numvar+1,MSK_BK_FR,-Inf,Inf)
 
+##TAG:begin-appendcone
     # Input the cones
     pc1 = appendprimalpowerconedomain(task,3,[0.2, 0.8])
     pc2 = appendprimalpowerconedomain(task,3,[4.0, 6.0])
@@ -52,6 +57,7 @@ maketask() do task
               [4, 5, 6],     # Rows from F
               [0.0,0.0,0.0]) # rhs offset
 
+##TAG:end-appendcone
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
@@ -66,8 +72,11 @@ maketask() do task
 
     if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
-        x = getxx(task,MSK_SOL_ITR)
-        println("Optimal solution: $(x[1:3])")
+        xx = getxx(task,MSK_SOL_ITR)
+        println("Optimal solution: $(xx[1:3])")
+        ##TAG:ASSERT:begin-check-solution
+        @assert maximum(abs.(xx[1:3]-[0.063938, 0.78328, 2.305562])) < 1e-4
+        ##TAG:ASSERT:end-check-solution
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
@@ -78,3 +87,4 @@ maketask() do task
         println("Other solution status")
     end
 end
+##TAG:end-code

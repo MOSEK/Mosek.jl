@@ -1,4 +1,4 @@
-# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+# Copyright : Copyright (c) 2022 MOSEK ApS
 #
 # File :      reoptimization.jl
 #
@@ -6,8 +6,10 @@
 #             optimization problem using the MOSEK API
 #             and modify and re-optimize the problem.
 
+##TAG:begin-code
 using Mosek
 
+##TAG:begin-setup-problem
 let numcon = 3,
     numvar = 3,
     c      = [1.5, 2.5, 3.0 ],
@@ -72,16 +74,22 @@ let numcon = 3,
         xx = getxx(task,MSK_SOL_BAS) # Request the basic solution.
 
         println("x = $xx")
+##TAG:end-setup-problem
 
         #***************** Make a change to the A matrix *****************
+##TAG:begin-putaij
         putaij(task,1,1, 3.0)
+##TAG:end-putaij
 
+##TAG:begin-reoptimize1
         optimize(task);
+##TAG:end-reoptimize1
         xx = getxx(task,MSK_SOL_BAS)
 
         println("x = $xx")
 
         #**************** Add a new variable *****************************
+##TAG:begin-addcol
         # Get index of new variable.
         varidx = getnumvar(task)+1
 
@@ -107,15 +115,19 @@ let numcon = 3,
                     acolsub,
                     acolval)
         end
+##TAG:end-addcol
 
+##TAG:begin-reoptimize2
         # Change optimizer to simplex free and reoptimize
         putintparam(task,MSK_IPAR_OPTIMIZER, MSK_OPTIMIZER_FREE_SIMPLEX)
         optimize(task)
+##TAG:end-reoptimize2
 
         xx = getxx(task,MSK_SOL_BAS) # Request the basic solution.
         println("x = $xx")
 
         #********************* Add a new constraint **************************
+##TAG:begin-addcon
         # Get index of new constraint.
         conidx = getnumcon(task)+1
 
@@ -139,13 +151,17 @@ let numcon = 3,
                     arowval)
         end
 
+##TAG:end-addcon
+##TAG:begin-reoptimize3
         optimize(task)
+##TAG:end-reoptimize3
 
         xx = getxx(task,MSK_SOL_BAS)
 
         println("x = $xx")
 
         #********************* Change constraint bounds *******************
+##TAG:begin-changebounds
         let newbkc  = [MSK_BK_UP,
                        MSK_BK_UP,
                        MSK_BK_UP,
@@ -158,6 +174,7 @@ let numcon = 3,
 
             putconboundslice(task,1, numcon+1, newbkc, newblc, newbuc)
         end
+##TAG:end-changebounds
         optimize(task)
 
         xx = getxx(task,MSK_SOL_BAS) # Request the basic solution.
@@ -165,3 +182,4 @@ let numcon = 3,
         println("x = $xx")
     end
 end
+##TAG:end-code

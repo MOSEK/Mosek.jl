@@ -1,5 +1,5 @@
 ##
-#  Copyright : MOSEK ApS
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
 #  File :      ceo1.jl
 #

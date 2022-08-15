@@ -1,5 +1,5 @@
 ##
-#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
 #  File :      opt_server_sync.jl
 #
@@ -7,6 +7,7 @@
 #              to solve optimization problem synchronously
 ##
 
+##TAG:begin-code
 using Mosek
 
 if length(ARGS) < 2
@@ -15,8 +16,6 @@ if length(ARGS) < 2
 else
     maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
-
-        
 
         inputfile  = ARGS[1]
         serveraddr = ARGS[2]
@@ -38,3 +37,7 @@ else
 
             # Print a summary of the solution
             solutionsummary(task,MSK_STREAM_LOG)
+        end
+    end
+end
+##TAG:end-code

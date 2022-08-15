@@ -1,7 +1,8 @@
-#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      solvelinear.java
+#   Copyright : Copyright (c) 2022 MOSEK ApS
 #
+#   File :      solvelinear.jl
+##
 #   Purpose :   To demonstrate the usage of MSK_solvewithbasis
 #               when solving the linear system:
 #
@@ -16,6 +17,7 @@
 #
 #               b = (7.0, 0.0)
 
+##TAG:begin-code
 using Mosek
 
 function setup(task   :: Mosek.Task,
@@ -102,3 +104,4 @@ let numcon = Int32(2),
         end
     end
 end
+##TAG:end-code

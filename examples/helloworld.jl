@@ -1,3 +1,5 @@
+##
+#  Copyright: Copyright (c) 2022 MOSEK ApS
 #
 #  File:    helloworld.jl
 #

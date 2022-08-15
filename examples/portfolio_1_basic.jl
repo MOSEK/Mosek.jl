@@ -1,13 +1,13 @@
 
-# File : portfolio_1_basic
+# Copyright : Copyright (c) 2022 MOSEK ApS
 #
-# Copyright : Mosek ApS
+# File :      portfolio_1_basic.jl
 #
 # Description :  Implements a basic portfolio optimization model.
 
 using Mosek
-#TAG:begin-code
-#TAG:begin-basic-markowitz
+##TAG:begin-code
+##TAG:begin-basic-markowitz
 
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
@@ -21,12 +21,12 @@ function portfolio( mu :: Vector{Float64},
 
         totalBudget = sum(x0)+w
 
-        #TAG:begin-offsets
+       ##TAG:begin-offsets
         #Offset of variables into the API variable.
         x_ofs = 0
 
         # Constraints offsets
-        #TAG:end-offsets
+       ##TAG:end-offsets
         budget_ofs = 0
 
         # Holding variable x of length n
@@ -65,13 +65,13 @@ function portfolio( mu :: Vector{Float64},
             putafefrow(task,i + 1, subj, GT[i,:])
         end
 
-        #TAG:begin-basic-markowitz-appendaccseq
+       ##TAG:begin-basic-markowitz-appendaccseq
         # Input the affine conic constraint (gamma, GT*x) \in QCone
         # Add the quadratic domain of dimension k+1
         qdom = appendquadraticconedomain(task,k + 1)
         # Add the constraint
         appendaccseq(task,qdom,1,zeros(k+1))
-        #TAG:end-basic-markowitz-appendaccseq
+       ##TAG:end-basic-markowitz-appendaccseq
         putaccname(task,1, "risk")
 
 
@@ -82,14 +82,14 @@ function portfolio( mu :: Vector{Float64},
 
         optimize(task)
 
-        #TAG:begin-solutionsummary
+       ##TAG:begin-solutionsummary
         # Display solution summary for quick inspection of results
         solutionsummary(task,MSK_STREAM_LOG)
-        #TAG:end-solutionsummary
+       ##TAG:end-solutionsummary
 
-        #TAG:begin-writedata
+       ##TAG:begin-writedata
         writedata(task,"portfolio_1_basic.ptf");
-        #TAG:end-writedata
+       ##TAG:end-writedata
 
         # Read the results
         xx = getxxslice(task,MSK_SOL_ITR, x_ofs+1,x_ofs+n+1)
@@ -98,8 +98,8 @@ function portfolio( mu :: Vector{Float64},
         (xx,expret)
     end
 end # portfolio()
-#TAG:end-code
-#TAG:end-basic-markowitz
+##TAG:end-code
+##TAG:end-basic-markowitz
 
 let w      = 59.0,
     mu     = [0.07197349, 0.15518171, 0.17535435, 0.0898094 , 0.42895777, 0.39291844, 0.32170722, 0.18378628],
@@ -118,5 +118,10 @@ let w      = 59.0,
     let (xx,expret) = portfolio(mu,x0,w,gamma,GT)
         println("Expected return $(expret) for gamma $(gamma)")
         println("Solution vector = $(xx)")
+
+            ##TAG:ASSERT:begin-check-solution
+            @assert abs(expret - 4.1922467685e+01) < 1e-7
+            @assert sum(abs.(xx - [7.7127e-08, 1.0252e-07, 9.9557e-08, 7.1640e-08, 7.2993e+01, 2.7007e+01, 1.8063e-07, 9.9400e-08])) < 1e-3
+            ##TAG:ASSERT:end-check-solution
     end
 end

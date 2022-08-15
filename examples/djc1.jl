@@ -1,16 +1,16 @@
 #
-#   Copyright: MOSEK ApS
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
-#   File:      djc1.jl
+#  File :      djc1.jl
 #
-#   Purpose: Demonstrates how to solve the problem with two disjunctions:
+#  Purpose: Demonstrates how to solve the problem with two disjunctions:
 #
 #      minimize    2x0 + x1 + 3x2 + x3
 #      subject to   x0 + x1 + x2 + x3 >= -10
 #                  (x0-2x1<=-1 and x2=x3=0) or (x2-3x3<=-2 and x1=x2=0)
 #                  x0=2.5 or x1=2.5 or x2=2.5 or x3=2.5
 #
-#TAG:begin-code
+##TAG:begin-code
 
 using Mosek
 
@@ -102,6 +102,7 @@ maketask() do task
     @assert maximum(abs.(xx - [0.0, 0.0, -12.5, 2.5])) < 1e-7
 
     ##TAG:ASSERT:begin-check-solution
+    @assert maximum(abs.(xx-[0.0, 0.0, -12.5, 2.5])) < 1e-7
     ##TAG:ASSERT:end-check-solution
 ##TAG:end-code
 end

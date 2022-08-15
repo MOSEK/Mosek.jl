@@ -1,10 +1,13 @@
 #
-#  File:    qcqo1.jl
+#  Copyright : Copyright (c) 2022 MOSEK ApS
+#
+#  File :      qcqo1.jl
 #
 #  Purpose: Demonstrates how to solve small quadratic and quadratically 
 #           constrained optimization problem using the MOSEK Python API.
 ##
 
+##TAG:begin-code
 using Mosek
 using Printf
 # Since the actual value of Infinity is ignores, we define it solely
@@ -67,6 +70,7 @@ maketask() do task
     # This corresponds to adding the term
     # - x0^2 - x1^2 - 0.1 x2^2 + 0.2 x0 x2
 
+##TAG:begin-putq0
     qsubi = [  1,    2,    3,   3   ]
     qsubj = [  1,    2,    3,   1   ]
     qval  = [ -2.0, -2.0, -0.2, 0.2 ]
@@ -74,10 +78,11 @@ maketask() do task
     # put Q^0 in constraint with index 0. 
 
     putqconk(task,1, qsubi,qsubj, qval) 
+##TAG:end-putq0
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
-    
+
     # Optimize the task
     optimize(task,"mosek://solve.mosek.com:30080")
     # Print a summary containing information
@@ -90,6 +95,9 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         @printf("Optimal solution: %s\n", xx')
+        ##TAG:ASSERT:begin-check-solution
+        @assert maximum(abs.(xx-[0.4487975139315276, 0.9319237725340505, 0.6741147034835338])) < 1e-5
+        ##TAG:ASSERT:end-check-solution
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
@@ -100,3 +108,4 @@ maketask() do task
         println("Other solution status")
     end
 end
+##TAG:end-code

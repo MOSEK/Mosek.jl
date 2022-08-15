@@ -1,6 +1,7 @@
-# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File : portfolio_4_transcost.jl
+#  Copyright : Copyright (c) 2022 MOSEK ApS
+#
+#  File :      portfolio_4_transcost.jl
 #
 #  Description :  Implements a basic portfolio optimization model
 #                 with fixed setup costs and transaction costs
@@ -10,6 +11,7 @@ using Mosek
 #TAG:begin-code
 #TAG:begin-basic-markowitz
 
+##TAG:begin-transactions-cost
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
                     w  :: Float64,
@@ -143,7 +145,7 @@ function portfolio( mu :: Vector{Float64},
     end
 end # portfolio()
 #TAG:end-code
-#TAG:end-basic-markowitz
+##TAG:end-transactions-cost
 
 let w = 1.0,
     mu = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],

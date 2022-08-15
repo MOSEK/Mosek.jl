@@ -1,11 +1,10 @@
-
-# File : portfolio_3_impact
+##
+# Copyright : Copyright (c) 2022 MOSEK ApS
 #
-# Copyright : Mosek ApS
+# File :      portfolio_3_impact.jl
 #
 # Description :  Implements a basic portfolio optimization model.
-
-include("portfolio_data.jl")
+##
 
 using Mosek
 #TAG:begin-code
@@ -171,7 +170,7 @@ let w    = 1.0,
           0.      0.      0.      0.      0.      0.      0.      0.22020],
     gamma = 0.36,
     (k,n) = size(GT),
-    m = 0.01 * ones(n)
+    market_impact = 0.01 * ones(n)
 
     let (xx,expret) = portfolio(mu,x0,w,gamma,GT,market_impact)
         println("Solution x = $(xx)")

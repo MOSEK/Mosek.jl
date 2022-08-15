@@ -1,15 +1,14 @@
-
-# File : portfolio_6_factor
 #
-# Copyright : Mosek ApS
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
-# Description :  Implements a portfolio optimization model using factor model
+#  File :      portfolio_6_factor.jl
+#
+#  Description :  Implements a portfolio optimization model using factor model
 
 using Mosek
 using LinearAlgebra
 #TAG:begin-code
-#TAG:begin-basic-markowitz
-
+##TAG:begin-factor-markowitz
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
                     w  :: Float64,
@@ -100,7 +99,7 @@ function portfolio( mu :: Vector{Float64},
     end
 end # portfolio()
 #TAG:end-code
-#TAG:end-basic-markowitz
+##TAG:begin-factor-markowitz
 
 let w  = 1.0,
     mu = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],

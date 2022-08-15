@@ -1,4 +1,4 @@
-#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#   Copyright : Copyright (c) 2022 MOSEK ApS
 #
 #   File :      sensitivity.jl
 #
@@ -19,6 +19,7 @@
 #
 #               The example uses basis type sensitivity analysis.
 
+##TAG:begin-code
 using Mosek
 
 prob_ptf = "Task ''
@@ -95,3 +96,4 @@ maketask() do task
         end
     end
 end
+##TAG:end-code

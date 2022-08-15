@@ -1,7 +1,8 @@
-# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-
+#
+# Copyright : Copyright (c) 2022 MOSEK ApS
+#
 # File :      mico1.jl
-
+#
 # Purpose :   Demonstrates how to solve a small mixed
 #             integer conic optimization problem.
 
@@ -11,6 +12,7 @@
 
 using Mosek
 
+##TAG:begin-mico1
 maketask() do task
     # Directs the log task stream to the user specified
     # method task_msg_obj.stream
@@ -50,4 +52,10 @@ maketask() do task
 
     xx = getxxslice(task,MSK_SOL_ITG, 1, 3)
     println("x = $(xx[1]) y = $(xx[2])")
+
+    ##TAG:ASSERT:begin-check-solution
+    @assert maximum(abs.(xx-[4.0, -2.0])) < 1e-7
+    ##TAG:ASSERT:end-check-solution
+    
 end
+##TAG:end-mico1

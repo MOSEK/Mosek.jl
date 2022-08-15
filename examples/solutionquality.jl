@@ -1,9 +1,10 @@
-#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#   Copyright : Copyright (c) 2022 MOSEK ApS
 #
 #   File :      solutionquality.jl
 #
 #   Purpose :   To demonstrate how to examine the quality of a solution.
 
+##TAG:begin-code
 using Mosek
 
 if length(ARGS) < 1
@@ -96,3 +97,4 @@ else
         end
     end
 end
+##TAG:end-code

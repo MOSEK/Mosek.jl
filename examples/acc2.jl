@@ -1,5 +1,5 @@
-##
-#  Copyright : MOSEK ApS
+#
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
 #  File :      acc2.jl
 #
@@ -107,3 +107,4 @@ maketask() do task
 
     ##TAG:ASSERT:end-check-solution
 end
+##TAG:end-code

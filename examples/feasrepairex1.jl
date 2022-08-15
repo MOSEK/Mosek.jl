@@ -1,20 +1,18 @@
 
-#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
-#   File :      feasrepairex1.jl
+#  File :      feasrepairex1.jl
 #
-#   Purpose :   To demonstrate how to use the MSK_relaxprimal function to
-#               locate the cause of an infeasibility.
+#  Purpose :   To demonstrate how to use the MSK_relaxprimal function to
+#              locate the cause of an infeasibility.
 #
-#   Syntax :     On command line
+#  Syntax :     On command line
 #
-#                   feasrepairex1.jl [ feasrepair.lp | - ]
+#                  feasrepairex1.jl [ feasrepair.lp | - ]
 #
-#                feasrepair.lp is located in mosek\<version>\tools\examples.
+#               feasrepair.lp is located in mosek\<version>\tools\examples.
 
-using Mosek
-
-
+##TAG:begin-code
 feasrepair_lp = """
 minimize
  obj: - 10 x1 - 9 x2
@@ -27,6 +25,8 @@ bounds
 x2 >= 650
 end
 """
+
+using Mosek
 
 if length(ARGS) < 1
     println("Syntax: feasrepairex1 [ FILENAME | - ]")
@@ -56,3 +56,4 @@ else
         solutionsummary(task,MSK_STREAM_LOG)
     end
 end
+##TAG:end-code

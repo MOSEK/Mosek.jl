@@ -23,6 +23,7 @@
 #                  xc1 <=  0 , xc2 <= 0
 ##
 
+##TAG:begin-code
 using Mosek
 
 maketask() do task
@@ -57,6 +58,7 @@ maketask() do task
     w1 = Float64[2.0, 6.0]
     w2 = Float64[1.0, 0.0]
 
+    ##TAG:begin-inputdata
     inputdata(task,
               Int32(numcon), Int32(numvar),
               c,
@@ -71,26 +73,27 @@ maketask() do task
               bkx,
               blx,
               bux)
-    
+    ##TAG:end-inputdata
+
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
-    
-    
+
+
     r = optimize(task,"mosek://solve.mosek.com:30080")
     if r != MSK_RES_OK
         println("Mosek warning: $r")
     end
-    
+
     basis = initbasissolve(task)
-    
+
     #List basis variables corresponding to columns of B
     varsub = Int32[1, 2]
-    
+
     for i in 1:numcon
         if basis[varsub[i]] < numcon
             println("Basis variable no $i is xc$(basis[i])")
         else
             println("Basis variable no $i is x$(basis[i]-numcon)")
-            
+
             # solve Bx = w1
             # varsub contains index of non-zeros in b.
             #  On return b contains the solution x and
@@ -129,3 +132,4 @@ maketask() do task
     end
 
 end
+##TAG:end-code

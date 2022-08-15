@@ -1,9 +1,10 @@
-#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-# 
-#   File :      sdo_lmi.jl
-# 
-#   Purpose :   To solve a problem with an LMI and an affine conic constrained problem with a PSD term
-#    
+#
+# Copyright : Copyright (c) 2022 MOSEK ApS
+#
+# File :      sdo_lmi.jl
+#
+# Purpose :   To solve a problem with an LMI and an affine conic constrained problem with a PSD term
+#
 #                 minimize    Tr [1, 0; 0, 1]*X + x(1) + x(2) + 1
 #
 #                 subject to  Tr [0, 1; 1, 0]*X - x(1) - x(2) >= 0
@@ -11,8 +12,8 @@
 #                             X >> 0
 #
 
+##TAG:begin-code
 using Mosek
-
 
 let numafe      = 4,  # Number of affine expressions.
     numvar      = 2,  # Number of scalar variables
@@ -42,8 +43,10 @@ let numafe      = 4,  # Number of affine expressions.
         # The variables will initially be fixed at zero (x=0).
         appendvars(task,numvar)
 
+##TAG:begin-appendbarvars
         # Append 'NUMBARVAR' semidefinite variables.
         appendbarvars(task,dimbarvar)
+##TAG:end-appendbarvars
 
         # Optionally add a constant term to the objective.
         putcfix(task,1.0)
@@ -55,24 +58,32 @@ let numafe      = 4,  # Number of affine expressions.
         for j in 1:numvar
             putvarbound(task,j, MSK_BK_FR, -0.0, 0.0)
         end
+##TAG:begin-putbarcblocktriplet
         # Set the linear term barc_j in the objective.
-        putbarcblocktriplet(task,2, barc_j, barc_k, barc_l, barc_v)
+        putbarcblocktriplet(task,barc_j, barc_k, barc_l, barc_v)
+##TAG:end-putbarcblocktriplet
 
         # Set up the affine conic constraints
 
+##TAG:begin-appendaffineexpressions
         # Construct the affine expressions
         # F matrix
         putafefentrylist(task,afeidx, varidx, f_val)
         # g vector
         putafegslice(task,1, 5, g)
+##TAG:end-appendaffineexpressions
 
+##TAG:begin-putbarF
         # barF block triplets
         putafebarfblocktriplet(task,barf_i, barf_j, barf_k, barf_l, barf_v)
+##TAG:end-putbarF
 
+##TAG:begin-putcones
         # Append R+ domain and the corresponding ACC
         appendacc(task,appendrplusdomain(task,1), [1],[0.0])
         # Append SVEC_PSD domain and the corresponding ACC
         appendacc(task,appendsvecpsdconedomain(task,3), [2,3,4], [0.0,0.0,0.0])
+##TAG:end-putcones
 
         # Run optimizer
         optimize(task)
@@ -84,9 +95,15 @@ let numafe      = 4,  # Number of affine expressions.
         solsta = getsolsta(task,MSK_SOL_ITR)
 
         if solsta == MSK_SOL_STA_OPTIMAL
+##TAG:begin-getsolution
             xx = getxx(task,MSK_SOL_ITR)
             barx = getbarxj(task,MSK_SOL_ITR,1);    # Request the interior solution.
+##TAG:end-getsolution
             println("Optimal primal solution, x = $xx, barx = $barx")
+            ##TAG:ASSERT:begin-check-solution
+            @assert maximum(abs.(xx-[1.0, 1.0])) < 1e-6
+            @assert maximum(abs.(barx- [1.0, 1.0, 1.0])) < 1e-6
+            ##TAG:ASSERT:end-check-solution
         elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER || solsta == MSK_SOL_STA_DUAL_INFEAS_CER
             println("Primal or dual infeasibility certificate found.")
         elseif solsta == MSK_SOL_STA_UNKNOWN
@@ -96,3 +113,4 @@ let numafe      = 4,  # Number of affine expressions.
         end
     end
 end
+##TAG:end-code

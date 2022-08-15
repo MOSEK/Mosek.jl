@@ -1,5 +1,5 @@
-##
-#  Copyright : MOSEK ApS
+#
+#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
 #  File :      acc1.jl
 #
@@ -111,3 +111,4 @@ let Gsubi = Int64[1, 1, 2, 2],
         ##TAG:ASSERT:end-check-solution
     end
 end
+##TAG:end-code
