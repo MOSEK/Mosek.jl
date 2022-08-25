@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.17
+# Target: Mosek 10.0.18
 export
   analyzeproblem,
   analyzenames,
@@ -369,6 +369,7 @@ export
   readdata,
   readparamfile,
   readsolution,
+  readjsonsol,
   readsummary,
   resizetask,
   checkmem,
@@ -4060,6 +4061,15 @@ end
 macro MSK_readsolution(task,whichsol,filename)
   quote
      local res = disable_sigint(()->ccall((:MSK_readsolution,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),$(esc(task)),$(esc(whichsol)),$(esc(filename))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_readjsonsol(task,filename)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_readjsonsol,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},),$(esc(task)),$(esc(filename))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -15177,6 +15187,23 @@ end
 
 
 """
+  readjsonsol(task::MSKtask,filename::AbstractString)
+
+  Reads a solution from a JSOL file.
+
+  Arguments
+    task::MSKtask An optimization task.
+    filename::AbstractString A valid file name.
+"""
+function readjsonsol end
+function readjsonsol(task::MSKtask,filename::AbstractString)
+  filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
+  @MSK_readjsonsol(task.task,filename_)
+  nothing
+end
+
+
+"""
   readsummary(task::MSKtask,whichstream::Streamtype)
 
   Prints information about last file read.
@@ -15812,10 +15839,10 @@ end
 function getlasterror end
 function getlasterror(task::MSKtask)
   lastrescode_ = Ref{Int32}()
-  __tmp_662 = Ref{Int64}()
-  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_662,C_NULL)
-  __tmp_661 = __tmp_662[]
-  sizelastmsg = Int64((__tmp_661 + Int64(1)))
+  __tmp_663 = Ref{Int64}()
+  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_663,C_NULL)
+  __tmp_662 = __tmp_663[]
+  sizelastmsg = Int64((__tmp_662 + Int64(1)))
   lastmsglen_ = Ref{Int64}()
   lastmsg_ = Array{UInt8}(undef,sizelastmsg)
   @MSK_getlasterror64(task.task,lastrescode_,sizelastmsg,lastmsglen_,lastmsg_)
@@ -16217,23 +16244,23 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_686 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_686))
-  @MSK_freeenv(env,perm_[])
   __tmp_687 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_687))
-  @MSK_freeenv(env,diag_[])
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_687))
+  @MSK_freeenv(env,perm_[])
   __tmp_688 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_688))
-  @MSK_freeenv(env,lnzc_[])
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_688))
+  @MSK_freeenv(env,diag_[])
   __tmp_689 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_689))
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_689))
+  @MSK_freeenv(env,lnzc_[])
+  __tmp_690 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_690))
   @MSK_freeenv(env,lptrc_[])
-  __tmp_690 = lensubnval
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_690))
-  @MSK_freeenv(env,lsubc_[])
   __tmp_691 = lensubnval
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_691))
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_691))
+  @MSK_freeenv(env,lsubc_[])
+  __tmp_692 = lensubnval
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_692))
   @MSK_freeenv(env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end

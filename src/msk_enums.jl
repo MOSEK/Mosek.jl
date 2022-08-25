@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.17
+# Target: Mosek 10.0.18
 export
   Basindtype,
   MSK_BI_NEVER,
@@ -244,7 +244,7 @@ export
   MSK_DINF_QCQO_REFORMULATE_TIME,
   MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING,
   MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING,
-  MSK_DINF_RD_TIME,
+  MSK_DINF_READ_DATA_TIME,
   MSK_DINF_REMOTE_TIME,
   MSK_DINF_SIM_DUAL_TIME,
   MSK_DINF_SIM_FEAS,
@@ -299,6 +299,7 @@ export
   MSK_DINF_SOL_ITR_PVIOLCONES,
   MSK_DINF_SOL_ITR_PVIOLVAR,
   MSK_DINF_TO_CONIC_TIME,
+  MSK_DINF_WRITE_DATA_TIME,
   Feature,
   MSK_FEATURE_PTS,
   MSK_FEATURE_PTON,
@@ -625,8 +626,6 @@ export
   MSK_IPAR_PTF_WRITE_TRANSFORM,
   MSK_IPAR_READ_DEBUG,
   MSK_IPAR_READ_KEEP_FREE_CON,
-  MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU,
-  MSK_IPAR_READ_LP_QUOTED_NAMES,
   MSK_IPAR_READ_MPS_FORMAT,
   MSK_IPAR_READ_MPS_WIDTH,
   MSK_IPAR_READ_TASK_IGNORE_PARAM,
@@ -682,9 +681,6 @@ export
   MSK_IPAR_WRITE_JSON_INDENTATION,
   MSK_IPAR_WRITE_LP_FULL_OBJ,
   MSK_IPAR_WRITE_LP_LINE_WIDTH,
-  MSK_IPAR_WRITE_LP_QUOTED_NAMES,
-  MSK_IPAR_WRITE_LP_STRICT_FORMAT,
-  MSK_IPAR_WRITE_LP_TERMS_PER_LINE,
   MSK_IPAR_WRITE_MPS_FORMAT,
   MSK_IPAR_WRITE_MPS_INT,
   MSK_IPAR_WRITE_SOL_BARVARIABLES,
@@ -947,7 +943,6 @@ export
   MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE,
   MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT,
   MSK_RES_ERR_OPF_SYNTAX,
-  MSK_RES_ERR_OPF_NEW_VARIABLE,
   MSK_RES_ERR_OPF_PREMATURE_EOF,
   MSK_RES_ERR_OPF_MISMATCHED_TAG,
   MSK_RES_ERR_OPF_DUPLICATE_BOUND,
@@ -957,7 +952,6 @@ export
   MSK_RES_ERR_OPF_INVALID_TAG,
   MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY,
   MSK_RES_ERR_OPF_TOO_LARGE,
-  MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME,
   MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION,
   MSK_RES_ERR_LP_INCOMPATIBLE,
   MSK_RES_ERR_LP_EMPTY,
@@ -2839,7 +2833,7 @@ Double information items
 * `MSK_DINF_QCQO_REFORMULATE_TIME`. Time spent with conic quadratic reformulation.
 * `MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING`. Worst Cholesky column scaling.
 * `MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING`. Worst Cholesky diagonal scaling.
-* `MSK_DINF_RD_TIME`. Time spent reading the data file.
+* `MSK_DINF_READ_DATA_TIME`. Time spent reading the data file.
 * `MSK_DINF_REMOTE_TIME`. The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server
 * `MSK_DINF_SIM_DUAL_TIME`. Time spent in the dual simplex optimizer since invoking it.
 * `MSK_DINF_SIM_FEAS`. Feasibility measure reported by the simplex optimizer.
@@ -2894,6 +2888,7 @@ Double information items
 * `MSK_DINF_SOL_ITR_PVIOLCONES`. Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_PVIOLVAR`. Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_TO_CONIC_TIME`. Time spent in the last to conic reformulation.
+* `MSK_DINF_WRITE_DATA_TIME`. Time spent writing the data file.
 """
 struct Dinfitem <: MosekEnum
   value :: Int32
@@ -3035,7 +3030,7 @@ const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING = Dinfitem(43)
 const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING = Dinfitem(44)
 
 "Time spent reading the data file."
-const MSK_DINF_RD_TIME = Dinfitem(45)
+const MSK_DINF_READ_DATA_TIME = Dinfitem(45)
 
 "The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server"
 const MSK_DINF_REMOTE_TIME = Dinfitem(46)
@@ -3198,6 +3193,9 @@ const MSK_DINF_SOL_ITR_PVIOLVAR = Dinfitem(98)
 
 "Time spent in the last to conic reformulation."
 const MSK_DINF_TO_CONIC_TIME = Dinfitem(99)
+
+"Time spent writing the data file."
+const MSK_DINF_WRITE_DATA_TIME = Dinfitem(100)
 tostr(v::Dinfitem) = if v.value == 0 "Mosek.MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY"
   elseif v.value == 1 "Mosek.MSK_DINF_BI_CLEAN_DUAL_TIME"
   elseif v.value == 2 "Mosek.MSK_DINF_BI_CLEAN_PRIMAL_TIME"
@@ -3243,7 +3241,7 @@ tostr(v::Dinfitem) = if v.value == 0 "Mosek.MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAI
   elseif v.value == 42 "Mosek.MSK_DINF_QCQO_REFORMULATE_TIME"
   elseif v.value == 43 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"
   elseif v.value == 44 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"
-  elseif v.value == 45 "Mosek.MSK_DINF_RD_TIME"
+  elseif v.value == 45 "Mosek.MSK_DINF_READ_DATA_TIME"
   elseif v.value == 46 "Mosek.MSK_DINF_REMOTE_TIME"
   elseif v.value == 47 "Mosek.MSK_DINF_SIM_DUAL_TIME"
   elseif v.value == 48 "Mosek.MSK_DINF_SIM_FEAS"
@@ -3298,6 +3296,7 @@ tostr(v::Dinfitem) = if v.value == 0 "Mosek.MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAI
   elseif v.value == 97 "Mosek.MSK_DINF_SOL_ITR_PVIOLCONES"
   elseif v.value == 98 "Mosek.MSK_DINF_SOL_ITR_PVIOLVAR"
   elseif v.value == 99 "Mosek.MSK_DINF_TO_CONIC_TIME"
+  elseif v.value == 100 "Mosek.MSK_DINF_WRITE_DATA_TIME"
   else "Mosek.Dinfitem(?)"
   end
 const Dinfitem_members = Dinfitem[
@@ -3346,7 +3345,7 @@ const Dinfitem_members = Dinfitem[
     MSK_DINF_QCQO_REFORMULATE_TIME,
     MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING,
     MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING,
-    MSK_DINF_RD_TIME,
+    MSK_DINF_READ_DATA_TIME,
     MSK_DINF_REMOTE_TIME,
     MSK_DINF_SIM_DUAL_TIME,
     MSK_DINF_SIM_FEAS,
@@ -3400,9 +3399,10 @@ const Dinfitem_members = Dinfitem[
     MSK_DINF_SOL_ITR_PVIOLCON,
     MSK_DINF_SOL_ITR_PVIOLCONES,
     MSK_DINF_SOL_ITR_PVIOLVAR,
-    MSK_DINF_TO_CONIC_TIME ]
+    MSK_DINF_TO_CONIC_TIME,
+    MSK_DINF_WRITE_DATA_TIME ]
 members(::Type{Dinfitem}) = Dinfitem_members
-Base.length(::Type{Dinfitem}) = 100
+Base.length(::Type{Dinfitem}) = 101
 Base.convert(::Type{Int},x::Dinfitem) = Int(x.value)
 """
     Feature
@@ -5188,8 +5188,6 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_PTF_WRITE_TRANSFORM`. Controls if simple transformation are done when writing PTF files.
 * `MSK_IPAR_READ_DEBUG`. Turns on additional debugging information when reading files.
 * `MSK_IPAR_READ_KEEP_FREE_CON`. Controls whether the free constraints are included in the problem.
-* `MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU`. Controls how the LP files are interpreted.
-* `MSK_IPAR_READ_LP_QUOTED_NAMES`. If a name is in quotes when reading an LP file, the quotes will be removed.
 * `MSK_IPAR_READ_MPS_FORMAT`. Controls how strictly the MPS file reader interprets the MPS format.
 * `MSK_IPAR_READ_MPS_WIDTH`. Controls the maximal number of characters allowed in one line of the MPS file.
 * `MSK_IPAR_READ_TASK_IGNORE_PARAM`. Controls what information is used from the task files.
@@ -5245,9 +5243,6 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_WRITE_JSON_INDENTATION`. When set, the JSON task and solution files are written with indentation for better readability.
 * `MSK_IPAR_WRITE_LP_FULL_OBJ`. Write full linear objective
 * `MSK_IPAR_WRITE_LP_LINE_WIDTH`. Controls the LP output file format.
-* `MSK_IPAR_WRITE_LP_QUOTED_NAMES`. Controls LP output file format.
-* `MSK_IPAR_WRITE_LP_STRICT_FORMAT`. Controls whether LP  output files satisfy the LP format strictly.
-* `MSK_IPAR_WRITE_LP_TERMS_PER_LINE`. Controls the LP output file format.
 * `MSK_IPAR_WRITE_MPS_FORMAT`. Controls in which format the MPS is written.
 * `MSK_IPAR_WRITE_MPS_INT`. Controls the output file data.
 * `MSK_IPAR_WRITE_SOL_BARVARIABLES`. Controls the solution file format.
@@ -6638,30 +6633,6 @@ Possible values:
 const MSK_IPAR_READ_KEEP_FREE_CON = Iparam(122)
 
 """
-Controls how the LP files are interpreted.
-
-Default value: `OFF`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU = Iparam(123)
-
-"""
-If a name is in quotes when reading an LP file, the quotes will be removed.
-
-Default value: `ON`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_READ_LP_QUOTED_NAMES = Iparam(124)
-
-"""
 Controls how strictly the MPS file reader interprets the MPS format.
 
 Default value: `FREE`
@@ -6673,7 +6644,7 @@ Possible values:
 * `MSK_MPS_FORMAT_FREE`. It is assumed that the input file satisfies the free MPS format. This implies that spaces are not allowed in names. Otherwise the format is free.
 * `MSK_MPS_FORMAT_CPLEX`. The CPLEX compatible version of the MPS format is employed.
 """
-const MSK_IPAR_READ_MPS_FORMAT = Iparam(125)
+const MSK_IPAR_READ_MPS_FORMAT = Iparam(123)
 
 """
 Controls the maximal number of characters allowed in one line of the MPS file.
@@ -6682,7 +6653,7 @@ Default value: `1024`
 
 Possible Values: Any number between 80 and +inf.
 """
-const MSK_IPAR_READ_MPS_WIDTH = Iparam(126)
+const MSK_IPAR_READ_MPS_WIDTH = Iparam(124)
 
 """
 Controls what information is used from the task files.
@@ -6694,7 +6665,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_READ_TASK_IGNORE_PARAM = Iparam(127)
+const MSK_IPAR_READ_TASK_IGNORE_PARAM = Iparam(125)
 
 """
 Use compression when sending data to an optimization server
@@ -6708,7 +6679,7 @@ Possible values:
 * `MSK_COMPRESS_GZIP`. The type of compression used is gzip compatible.
 * `MSK_COMPRESS_ZSTD`. The type of compression used is zstd compatible.
 """
-const MSK_IPAR_REMOTE_USE_COMPRESSION = Iparam(128)
+const MSK_IPAR_REMOTE_USE_COMPRESSION = Iparam(126)
 
 """
 Removes unused solutions before the optimization is performed.
@@ -6720,7 +6691,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS = Iparam(129)
+const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS = Iparam(127)
 
 """
 Controls sensitivity report behavior.
@@ -6732,7 +6703,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SENSITIVITY_ALL = Iparam(130)
+const MSK_IPAR_SENSITIVITY_ALL = Iparam(128)
 
 """
 Controls which optimizer is used for optimal partition sensitivity analysis.
@@ -6749,7 +6720,7 @@ Possible values:
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
 """
-const MSK_IPAR_SENSITIVITY_OPTIMIZER = Iparam(131)
+const MSK_IPAR_SENSITIVITY_OPTIMIZER = Iparam(129)
 
 """
 Controls which type of sensitivity analysis is to be performed.
@@ -6760,7 +6731,7 @@ Possible values:
 
 * `MSK_SENSITIVITY_TYPE_BASIS`. Basis sensitivity analysis is performed.
 """
-const MSK_IPAR_SENSITIVITY_TYPE = Iparam(132)
+const MSK_IPAR_SENSITIVITY_TYPE = Iparam(130)
 
 """
 Controls whether an LU factorization of the basis is used in a hot-start.
@@ -6772,7 +6743,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_BASIS_FACTOR_USE = Iparam(133)
+const MSK_IPAR_SIM_BASIS_FACTOR_USE = Iparam(131)
 
 """
 Controls how aggressively degeneration is handled.
@@ -6787,7 +6758,7 @@ Possible values:
 * `MSK_SIM_DEGEN_MODERATE`. The simplex optimizer should use a moderate degeneration strategy.
 * `MSK_SIM_DEGEN_MINIMUM`. The simplex optimizer should use a minimum degeneration strategy.
 """
-const MSK_IPAR_SIM_DEGEN = Iparam(134)
+const MSK_IPAR_SIM_DEGEN = Iparam(132)
 
 """
 Not in use.
@@ -6799,7 +6770,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_DETECT_PWL = Iparam(135)
+const MSK_IPAR_SIM_DETECT_PWL = Iparam(133)
 
 """
 Controls whether crashing is performed in the dual simplex optimizer.
@@ -6808,7 +6779,7 @@ Default value: `90`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_SIM_DUAL_CRASH = Iparam(136)
+const MSK_IPAR_SIM_DUAL_CRASH = Iparam(134)
 
 """
 An experimental feature.
@@ -6817,7 +6788,7 @@ Default value: `0`
 
 Possible Values: Any number between 0 and 10.
 """
-const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD = Iparam(137)
+const MSK_IPAR_SIM_DUAL_PHASEONE_METHOD = Iparam(135)
 
 """
 Controls how aggressively restricted selection is used.
@@ -6826,7 +6797,7 @@ Default value: `50`
 
 Possible Values: Any number between 0 and 100.
 """
-const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION = Iparam(138)
+const MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION = Iparam(136)
 
 """
 Controls the dual simplex strategy.
@@ -6842,7 +6813,7 @@ Possible values:
 * `MSK_SIM_SELECTION_SE`. The optimizer uses steepest-edge selection.
 * `MSK_SIM_SELECTION_PARTIAL`. The optimizer uses a partial selection approach.
 """
-const MSK_IPAR_SIM_DUAL_SELECTION = Iparam(139)
+const MSK_IPAR_SIM_DUAL_SELECTION = Iparam(137)
 
 """
 Controls if the simplex optimizers are allowed to exploit duplicated columns.
@@ -6855,7 +6826,7 @@ Possible values:
 * `MSK_SIM_EXPLOIT_DUPVEC_OFF`. Disallow the simplex optimizer to exploit duplicated columns.
 * `MSK_SIM_EXPLOIT_DUPVEC_FREE`. The simplex optimizer can choose freely.
 """
-const MSK_IPAR_SIM_EXPLOIT_DUPVEC = Iparam(140)
+const MSK_IPAR_SIM_EXPLOIT_DUPVEC = Iparam(138)
 
 """
 Controls the type of hot-start that the simplex optimizer perform.
@@ -6868,7 +6839,7 @@ Possible values:
 * `MSK_SIM_HOTSTART_FREE`. The simplex optimize chooses the hot-start type.
 * `MSK_SIM_HOTSTART_STATUS_KEYS`. Only the status keys of the constraints and variables are used to choose the type of hot-start.
 """
-const MSK_IPAR_SIM_HOTSTART = Iparam(141)
+const MSK_IPAR_SIM_HOTSTART = Iparam(139)
 
 """
 Determines if the simplex optimizer should exploit the initial factorization.
@@ -6880,7 +6851,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_HOTSTART_LU = Iparam(142)
+const MSK_IPAR_SIM_HOTSTART_LU = Iparam(140)
 
 """
 Maximum number of iterations that can be used by a simplex optimizer.
@@ -6889,7 +6860,7 @@ Default value: `10000000`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_SIM_MAX_ITERATIONS = Iparam(143)
+const MSK_IPAR_SIM_MAX_ITERATIONS = Iparam(141)
 
 """
 Controls how many set-backs that are allowed within a simplex optimizer.
@@ -6898,7 +6869,7 @@ Default value: `250`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_SIM_MAX_NUM_SETBACKS = Iparam(144)
+const MSK_IPAR_SIM_MAX_NUM_SETBACKS = Iparam(142)
 
 """
 Controls if the simplex optimizer ensures a non-singular basis, if possible.
@@ -6910,7 +6881,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_NON_SINGULAR = Iparam(145)
+const MSK_IPAR_SIM_NON_SINGULAR = Iparam(143)
 
 """
 Controls the simplex crash.
@@ -6919,7 +6890,7 @@ Default value: `90`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_SIM_PRIMAL_CRASH = Iparam(146)
+const MSK_IPAR_SIM_PRIMAL_CRASH = Iparam(144)
 
 """
 An experimental feature.
@@ -6928,7 +6899,7 @@ Default value: `0`
 
 Possible Values: Any number between 0 and 10.
 """
-const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD = Iparam(147)
+const MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD = Iparam(145)
 
 """
 Controls how aggressively restricted selection is used.
@@ -6937,7 +6908,7 @@ Default value: `50`
 
 Possible Values: Any number between 0 and 100.
 """
-const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION = Iparam(148)
+const MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION = Iparam(146)
 
 """
 Controls the primal simplex strategy.
@@ -6953,7 +6924,7 @@ Possible values:
 * `MSK_SIM_SELECTION_SE`. The optimizer uses steepest-edge selection.
 * `MSK_SIM_SELECTION_PARTIAL`. The optimizer uses a partial selection approach.
 """
-const MSK_IPAR_SIM_PRIMAL_SELECTION = Iparam(149)
+const MSK_IPAR_SIM_PRIMAL_SELECTION = Iparam(147)
 
 """
 Controls the basis refactoring frequency.
@@ -6962,7 +6933,7 @@ Default value: `0`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_SIM_REFACTOR_FREQ = Iparam(150)
+const MSK_IPAR_SIM_REFACTOR_FREQ = Iparam(148)
 
 """
 Controls if the simplex optimizers are allowed to reformulate the problem.
@@ -6976,7 +6947,7 @@ Possible values:
 * `MSK_SIM_REFORMULATION_FREE`. The simplex optimizer can choose freely.
 * `MSK_SIM_REFORMULATION_AGGRESSIVE`. The simplex optimizer should use an aggressive reformulation strategy.
 """
-const MSK_IPAR_SIM_REFORMULATION = Iparam(151)
+const MSK_IPAR_SIM_REFORMULATION = Iparam(149)
 
 """
 Controls if the LU factorization stored should be replaced with the LU factorization corresponding to the initial basis.
@@ -6988,7 +6959,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_SAVE_LU = Iparam(152)
+const MSK_IPAR_SIM_SAVE_LU = Iparam(150)
 
 """
 Controls how much effort is used in scaling the problem before a simplex optimizer is used.
@@ -7000,7 +6971,7 @@ Possible values:
 * `MSK_SCALING_FREE`. The optimizer chooses the scaling heuristic.
 * `MSK_SCALING_NONE`. No scaling is performed.
 """
-const MSK_IPAR_SIM_SCALING = Iparam(153)
+const MSK_IPAR_SIM_SCALING = Iparam(151)
 
 """
 Controls how the problem is scaled before a simplex optimizer is used.
@@ -7012,7 +6983,7 @@ Possible values:
 * `MSK_SCALING_METHOD_POW2`. Scales only with power of 2 leaving the mantissa untouched.
 * `MSK_SCALING_METHOD_FREE`. The optimizer chooses the scaling heuristic.
 """
-const MSK_IPAR_SIM_SCALING_METHOD = Iparam(154)
+const MSK_IPAR_SIM_SCALING_METHOD = Iparam(152)
 
 """
 Sets the random seed used for randomization in the simplex optimizers.
@@ -7021,7 +6992,7 @@ Default value: `23456`
 
 Possible Values: Any number between 0 and 32749.
 """
-const MSK_IPAR_SIM_SEED = Iparam(155)
+const MSK_IPAR_SIM_SEED = Iparam(153)
 
 """
 Controls whether the primal or the dual problem is solved by the primal-/dual-simplex optimizer.
@@ -7034,7 +7005,7 @@ Possible values:
 * `MSK_SOLVE_PRIMAL`. The optimizer should solve the primal problem.
 * `MSK_SOLVE_DUAL`. The optimizer should solve the dual problem.
 """
-const MSK_IPAR_SIM_SOLVE_FORM = Iparam(156)
+const MSK_IPAR_SIM_SOLVE_FORM = Iparam(154)
 
 """
 Controls how high priority the numerical stability should be given.
@@ -7043,7 +7014,7 @@ Default value: `50`
 
 Possible Values: Any number between 0 and 100.
 """
-const MSK_IPAR_SIM_STABILITY_PRIORITY = Iparam(157)
+const MSK_IPAR_SIM_STABILITY_PRIORITY = Iparam(155)
 
 """
 Controls the simplex behavior.
@@ -7055,7 +7026,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_SWITCH_OPTIMIZER = Iparam(158)
+const MSK_IPAR_SIM_SWITCH_OPTIMIZER = Iparam(156)
 
 """
 Control the contents of the solution files.
@@ -7067,7 +7038,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SOL_FILTER_KEEP_BASIC = Iparam(159)
+const MSK_IPAR_SOL_FILTER_KEEP_BASIC = Iparam(157)
 
 """
 Control the contents of the solution files.
@@ -7079,7 +7050,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SOL_FILTER_KEEP_RANGED = Iparam(160)
+const MSK_IPAR_SOL_FILTER_KEEP_RANGED = Iparam(158)
 
 """
 Controls the input solution file format.
@@ -7088,7 +7059,7 @@ Default value: `-1`
 
 Possible Values: Any number between -inf and +inf.
 """
-const MSK_IPAR_SOL_READ_NAME_WIDTH = Iparam(161)
+const MSK_IPAR_SOL_READ_NAME_WIDTH = Iparam(159)
 
 """
 Controls the input solution file format.
@@ -7097,7 +7068,7 @@ Default value: `1024`
 
 Possible Values: Any number between 80 and +inf.
 """
-const MSK_IPAR_SOL_READ_WIDTH = Iparam(162)
+const MSK_IPAR_SOL_READ_WIDTH = Iparam(160)
 
 """
 Indicates whether solution callbacks will be performed during the optimization.
@@ -7109,7 +7080,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SOLUTION_CALLBACK = Iparam(163)
+const MSK_IPAR_SOLUTION_CALLBACK = Iparam(161)
 
 """
 Controls the amount of timing performed inside MOSEK.
@@ -7118,7 +7089,7 @@ Default value: `1`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_TIMING_LEVEL = Iparam(164)
+const MSK_IPAR_TIMING_LEVEL = Iparam(162)
 
 """
 Controls the basic solution file format.
@@ -7130,7 +7101,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_BAS_CONSTRAINTS = Iparam(165)
+const MSK_IPAR_WRITE_BAS_CONSTRAINTS = Iparam(163)
 
 """
 Controls the basic solution file format.
@@ -7142,7 +7113,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_BAS_HEAD = Iparam(166)
+const MSK_IPAR_WRITE_BAS_HEAD = Iparam(164)
 
 """
 Controls the basic solution file format.
@@ -7154,7 +7125,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_BAS_VARIABLES = Iparam(167)
+const MSK_IPAR_WRITE_BAS_VARIABLES = Iparam(165)
 
 """
 Controls output file compression.
@@ -7163,7 +7134,7 @@ Default value: `9`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_WRITE_COMPRESSION = Iparam(168)
+const MSK_IPAR_WRITE_COMPRESSION = Iparam(166)
 
 """
 Controls output file data.
@@ -7175,7 +7146,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_DATA_PARAM = Iparam(169)
+const MSK_IPAR_WRITE_DATA_PARAM = Iparam(167)
 
 """
 Controls the output file data.
@@ -7187,7 +7158,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_FREE_CON = Iparam(170)
+const MSK_IPAR_WRITE_FREE_CON = Iparam(168)
 
 """
 Controls the output file data.
@@ -7199,7 +7170,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_GENERIC_NAMES = Iparam(171)
+const MSK_IPAR_WRITE_GENERIC_NAMES = Iparam(169)
 
 """
 Index origin used in  generic names.
@@ -7208,7 +7179,7 @@ Default value: `1`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_WRITE_GENERIC_NAMES_IO = Iparam(172)
+const MSK_IPAR_WRITE_GENERIC_NAMES_IO = Iparam(170)
 
 """
 Controls if the writer ignores incompatible problem items when writing files.
@@ -7220,7 +7191,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS = Iparam(173)
+const MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS = Iparam(171)
 
 """
 Controls the integer solution file format.
@@ -7232,7 +7203,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_INT_CONSTRAINTS = Iparam(174)
+const MSK_IPAR_WRITE_INT_CONSTRAINTS = Iparam(172)
 
 """
 Controls the integer solution file format.
@@ -7244,7 +7215,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_INT_HEAD = Iparam(175)
+const MSK_IPAR_WRITE_INT_HEAD = Iparam(173)
 
 """
 Controls the integer solution file format.
@@ -7256,7 +7227,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_INT_VARIABLES = Iparam(176)
+const MSK_IPAR_WRITE_INT_VARIABLES = Iparam(174)
 
 """
 When set, the JSON task and solution files are written with indentation for better readability.
@@ -7268,7 +7239,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_JSON_INDENTATION = Iparam(177)
+const MSK_IPAR_WRITE_JSON_INDENTATION = Iparam(175)
 
 """
 Write full linear objective
@@ -7280,7 +7251,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_LP_FULL_OBJ = Iparam(178)
+const MSK_IPAR_WRITE_LP_FULL_OBJ = Iparam(176)
 
 """
 Controls the LP output file format.
@@ -7289,40 +7260,7 @@ Default value: `80`
 
 Possible Values: Any number between 40 and +inf.
 """
-const MSK_IPAR_WRITE_LP_LINE_WIDTH = Iparam(179)
-
-"""
-Controls LP output file format.
-
-Default value: `ON`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_WRITE_LP_QUOTED_NAMES = Iparam(180)
-
-"""
-Controls whether LP  output files satisfy the LP format strictly.
-
-Default value: `OFF`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_WRITE_LP_STRICT_FORMAT = Iparam(181)
-
-"""
-Controls the LP output file format.
-
-Default value: `10`
-
-Possible Values: Any number between 0 and +inf.
-"""
-const MSK_IPAR_WRITE_LP_TERMS_PER_LINE = Iparam(182)
+const MSK_IPAR_WRITE_LP_LINE_WIDTH = Iparam(177)
 
 """
 Controls in which format the MPS is written.
@@ -7336,7 +7274,7 @@ Possible values:
 * `MSK_MPS_FORMAT_FREE`. It is assumed that the input file satisfies the free MPS format. This implies that spaces are not allowed in names. Otherwise the format is free.
 * `MSK_MPS_FORMAT_CPLEX`. The CPLEX compatible version of the MPS format is employed.
 """
-const MSK_IPAR_WRITE_MPS_FORMAT = Iparam(183)
+const MSK_IPAR_WRITE_MPS_FORMAT = Iparam(178)
 
 """
 Controls the output file data.
@@ -7348,7 +7286,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_MPS_INT = Iparam(184)
+const MSK_IPAR_WRITE_MPS_INT = Iparam(179)
 
 """
 Controls the solution file format.
@@ -7360,7 +7298,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_BARVARIABLES = Iparam(185)
+const MSK_IPAR_WRITE_SOL_BARVARIABLES = Iparam(180)
 
 """
 Controls the solution file format.
@@ -7372,7 +7310,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_CONSTRAINTS = Iparam(186)
+const MSK_IPAR_WRITE_SOL_CONSTRAINTS = Iparam(181)
 
 """
 Controls solution file format.
@@ -7384,7 +7322,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_HEAD = Iparam(187)
+const MSK_IPAR_WRITE_SOL_HEAD = Iparam(182)
 
 """
 Controls whether the user specified names are employed even if they are invalid names.
@@ -7396,7 +7334,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = Iparam(188)
+const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = Iparam(183)
 
 """
 Controls the solution file format.
@@ -7408,7 +7346,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(189)
+const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(184)
 
 """
 Controls whether the solutions are stored in the task file too.
@@ -7420,7 +7358,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_TASK_INC_SOL = Iparam(190)
+const MSK_IPAR_WRITE_TASK_INC_SOL = Iparam(185)
 
 """
 Controls if linear coefficients should be written by row or column when writing in the XML file format.
@@ -7432,7 +7370,7 @@ Possible values:
 * `MSK_WRITE_XML_MODE_ROW`. Write in row order.
 * `MSK_WRITE_XML_MODE_COL`. Write in column order.
 """
-const MSK_IPAR_WRITE_XML_MODE = Iparam(191)
+const MSK_IPAR_WRITE_XML_MODE = Iparam(186)
 tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 1 "Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED"
   elseif v.value == 2 "Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"
@@ -7556,75 +7494,70 @@ tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 120 "Mosek.MSK_IPAR_PTF_WRITE_TRANSFORM"
   elseif v.value == 121 "Mosek.MSK_IPAR_READ_DEBUG"
   elseif v.value == 122 "Mosek.MSK_IPAR_READ_KEEP_FREE_CON"
-  elseif v.value == 123 "Mosek.MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU"
-  elseif v.value == 124 "Mosek.MSK_IPAR_READ_LP_QUOTED_NAMES"
-  elseif v.value == 125 "Mosek.MSK_IPAR_READ_MPS_FORMAT"
-  elseif v.value == 126 "Mosek.MSK_IPAR_READ_MPS_WIDTH"
-  elseif v.value == 127 "Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM"
-  elseif v.value == 128 "Mosek.MSK_IPAR_REMOTE_USE_COMPRESSION"
-  elseif v.value == 129 "Mosek.MSK_IPAR_REMOVE_UNUSED_SOLUTIONS"
-  elseif v.value == 130 "Mosek.MSK_IPAR_SENSITIVITY_ALL"
-  elseif v.value == 131 "Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER"
-  elseif v.value == 132 "Mosek.MSK_IPAR_SENSITIVITY_TYPE"
-  elseif v.value == 133 "Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE"
-  elseif v.value == 134 "Mosek.MSK_IPAR_SIM_DEGEN"
-  elseif v.value == 135 "Mosek.MSK_IPAR_SIM_DETECT_PWL"
-  elseif v.value == 136 "Mosek.MSK_IPAR_SIM_DUAL_CRASH"
-  elseif v.value == 137 "Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"
-  elseif v.value == 138 "Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"
-  elseif v.value == 139 "Mosek.MSK_IPAR_SIM_DUAL_SELECTION"
-  elseif v.value == 140 "Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC"
-  elseif v.value == 141 "Mosek.MSK_IPAR_SIM_HOTSTART"
-  elseif v.value == 142 "Mosek.MSK_IPAR_SIM_HOTSTART_LU"
-  elseif v.value == 143 "Mosek.MSK_IPAR_SIM_MAX_ITERATIONS"
-  elseif v.value == 144 "Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS"
-  elseif v.value == 145 "Mosek.MSK_IPAR_SIM_NON_SINGULAR"
-  elseif v.value == 146 "Mosek.MSK_IPAR_SIM_PRIMAL_CRASH"
-  elseif v.value == 147 "Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"
-  elseif v.value == 148 "Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"
-  elseif v.value == 149 "Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION"
-  elseif v.value == 150 "Mosek.MSK_IPAR_SIM_REFACTOR_FREQ"
-  elseif v.value == 151 "Mosek.MSK_IPAR_SIM_REFORMULATION"
-  elseif v.value == 152 "Mosek.MSK_IPAR_SIM_SAVE_LU"
-  elseif v.value == 153 "Mosek.MSK_IPAR_SIM_SCALING"
-  elseif v.value == 154 "Mosek.MSK_IPAR_SIM_SCALING_METHOD"
-  elseif v.value == 155 "Mosek.MSK_IPAR_SIM_SEED"
-  elseif v.value == 156 "Mosek.MSK_IPAR_SIM_SOLVE_FORM"
-  elseif v.value == 157 "Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY"
-  elseif v.value == 158 "Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER"
-  elseif v.value == 159 "Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC"
-  elseif v.value == 160 "Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED"
-  elseif v.value == 161 "Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH"
-  elseif v.value == 162 "Mosek.MSK_IPAR_SOL_READ_WIDTH"
-  elseif v.value == 163 "Mosek.MSK_IPAR_SOLUTION_CALLBACK"
-  elseif v.value == 164 "Mosek.MSK_IPAR_TIMING_LEVEL"
-  elseif v.value == 165 "Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS"
-  elseif v.value == 166 "Mosek.MSK_IPAR_WRITE_BAS_HEAD"
-  elseif v.value == 167 "Mosek.MSK_IPAR_WRITE_BAS_VARIABLES"
-  elseif v.value == 168 "Mosek.MSK_IPAR_WRITE_COMPRESSION"
-  elseif v.value == 169 "Mosek.MSK_IPAR_WRITE_DATA_PARAM"
-  elseif v.value == 170 "Mosek.MSK_IPAR_WRITE_FREE_CON"
-  elseif v.value == 171 "Mosek.MSK_IPAR_WRITE_GENERIC_NAMES"
-  elseif v.value == 172 "Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO"
-  elseif v.value == 173 "Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"
-  elseif v.value == 174 "Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS"
-  elseif v.value == 175 "Mosek.MSK_IPAR_WRITE_INT_HEAD"
-  elseif v.value == 176 "Mosek.MSK_IPAR_WRITE_INT_VARIABLES"
-  elseif v.value == 177 "Mosek.MSK_IPAR_WRITE_JSON_INDENTATION"
-  elseif v.value == 178 "Mosek.MSK_IPAR_WRITE_LP_FULL_OBJ"
-  elseif v.value == 179 "Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH"
-  elseif v.value == 180 "Mosek.MSK_IPAR_WRITE_LP_QUOTED_NAMES"
-  elseif v.value == 181 "Mosek.MSK_IPAR_WRITE_LP_STRICT_FORMAT"
-  elseif v.value == 182 "Mosek.MSK_IPAR_WRITE_LP_TERMS_PER_LINE"
-  elseif v.value == 183 "Mosek.MSK_IPAR_WRITE_MPS_FORMAT"
-  elseif v.value == 184 "Mosek.MSK_IPAR_WRITE_MPS_INT"
-  elseif v.value == 185 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
-  elseif v.value == 186 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
-  elseif v.value == 187 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
-  elseif v.value == 188 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
-  elseif v.value == 189 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
-  elseif v.value == 190 "Mosek.MSK_IPAR_WRITE_TASK_INC_SOL"
-  elseif v.value == 191 "Mosek.MSK_IPAR_WRITE_XML_MODE"
+  elseif v.value == 123 "Mosek.MSK_IPAR_READ_MPS_FORMAT"
+  elseif v.value == 124 "Mosek.MSK_IPAR_READ_MPS_WIDTH"
+  elseif v.value == 125 "Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM"
+  elseif v.value == 126 "Mosek.MSK_IPAR_REMOTE_USE_COMPRESSION"
+  elseif v.value == 127 "Mosek.MSK_IPAR_REMOVE_UNUSED_SOLUTIONS"
+  elseif v.value == 128 "Mosek.MSK_IPAR_SENSITIVITY_ALL"
+  elseif v.value == 129 "Mosek.MSK_IPAR_SENSITIVITY_OPTIMIZER"
+  elseif v.value == 130 "Mosek.MSK_IPAR_SENSITIVITY_TYPE"
+  elseif v.value == 131 "Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE"
+  elseif v.value == 132 "Mosek.MSK_IPAR_SIM_DEGEN"
+  elseif v.value == 133 "Mosek.MSK_IPAR_SIM_DETECT_PWL"
+  elseif v.value == 134 "Mosek.MSK_IPAR_SIM_DUAL_CRASH"
+  elseif v.value == 135 "Mosek.MSK_IPAR_SIM_DUAL_PHASEONE_METHOD"
+  elseif v.value == 136 "Mosek.MSK_IPAR_SIM_DUAL_RESTRICT_SELECTION"
+  elseif v.value == 137 "Mosek.MSK_IPAR_SIM_DUAL_SELECTION"
+  elseif v.value == 138 "Mosek.MSK_IPAR_SIM_EXPLOIT_DUPVEC"
+  elseif v.value == 139 "Mosek.MSK_IPAR_SIM_HOTSTART"
+  elseif v.value == 140 "Mosek.MSK_IPAR_SIM_HOTSTART_LU"
+  elseif v.value == 141 "Mosek.MSK_IPAR_SIM_MAX_ITERATIONS"
+  elseif v.value == 142 "Mosek.MSK_IPAR_SIM_MAX_NUM_SETBACKS"
+  elseif v.value == 143 "Mosek.MSK_IPAR_SIM_NON_SINGULAR"
+  elseif v.value == 144 "Mosek.MSK_IPAR_SIM_PRIMAL_CRASH"
+  elseif v.value == 145 "Mosek.MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD"
+  elseif v.value == 146 "Mosek.MSK_IPAR_SIM_PRIMAL_RESTRICT_SELECTION"
+  elseif v.value == 147 "Mosek.MSK_IPAR_SIM_PRIMAL_SELECTION"
+  elseif v.value == 148 "Mosek.MSK_IPAR_SIM_REFACTOR_FREQ"
+  elseif v.value == 149 "Mosek.MSK_IPAR_SIM_REFORMULATION"
+  elseif v.value == 150 "Mosek.MSK_IPAR_SIM_SAVE_LU"
+  elseif v.value == 151 "Mosek.MSK_IPAR_SIM_SCALING"
+  elseif v.value == 152 "Mosek.MSK_IPAR_SIM_SCALING_METHOD"
+  elseif v.value == 153 "Mosek.MSK_IPAR_SIM_SEED"
+  elseif v.value == 154 "Mosek.MSK_IPAR_SIM_SOLVE_FORM"
+  elseif v.value == 155 "Mosek.MSK_IPAR_SIM_STABILITY_PRIORITY"
+  elseif v.value == 156 "Mosek.MSK_IPAR_SIM_SWITCH_OPTIMIZER"
+  elseif v.value == 157 "Mosek.MSK_IPAR_SOL_FILTER_KEEP_BASIC"
+  elseif v.value == 158 "Mosek.MSK_IPAR_SOL_FILTER_KEEP_RANGED"
+  elseif v.value == 159 "Mosek.MSK_IPAR_SOL_READ_NAME_WIDTH"
+  elseif v.value == 160 "Mosek.MSK_IPAR_SOL_READ_WIDTH"
+  elseif v.value == 161 "Mosek.MSK_IPAR_SOLUTION_CALLBACK"
+  elseif v.value == 162 "Mosek.MSK_IPAR_TIMING_LEVEL"
+  elseif v.value == 163 "Mosek.MSK_IPAR_WRITE_BAS_CONSTRAINTS"
+  elseif v.value == 164 "Mosek.MSK_IPAR_WRITE_BAS_HEAD"
+  elseif v.value == 165 "Mosek.MSK_IPAR_WRITE_BAS_VARIABLES"
+  elseif v.value == 166 "Mosek.MSK_IPAR_WRITE_COMPRESSION"
+  elseif v.value == 167 "Mosek.MSK_IPAR_WRITE_DATA_PARAM"
+  elseif v.value == 168 "Mosek.MSK_IPAR_WRITE_FREE_CON"
+  elseif v.value == 169 "Mosek.MSK_IPAR_WRITE_GENERIC_NAMES"
+  elseif v.value == 170 "Mosek.MSK_IPAR_WRITE_GENERIC_NAMES_IO"
+  elseif v.value == 171 "Mosek.MSK_IPAR_WRITE_IGNORE_INCOMPATIBLE_ITEMS"
+  elseif v.value == 172 "Mosek.MSK_IPAR_WRITE_INT_CONSTRAINTS"
+  elseif v.value == 173 "Mosek.MSK_IPAR_WRITE_INT_HEAD"
+  elseif v.value == 174 "Mosek.MSK_IPAR_WRITE_INT_VARIABLES"
+  elseif v.value == 175 "Mosek.MSK_IPAR_WRITE_JSON_INDENTATION"
+  elseif v.value == 176 "Mosek.MSK_IPAR_WRITE_LP_FULL_OBJ"
+  elseif v.value == 177 "Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH"
+  elseif v.value == 178 "Mosek.MSK_IPAR_WRITE_MPS_FORMAT"
+  elseif v.value == 179 "Mosek.MSK_IPAR_WRITE_MPS_INT"
+  elseif v.value == 180 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
+  elseif v.value == 181 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
+  elseif v.value == 182 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
+  elseif v.value == 183 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
+  elseif v.value == 184 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
+  elseif v.value == 185 "Mosek.MSK_IPAR_WRITE_TASK_INC_SOL"
+  elseif v.value == 186 "Mosek.MSK_IPAR_WRITE_XML_MODE"
   else "Mosek.Iparam(?)"
   end
 const Iparam_members = Iparam[
@@ -7751,8 +7684,6 @@ const Iparam_members = Iparam[
     MSK_IPAR_PTF_WRITE_TRANSFORM,
     MSK_IPAR_READ_DEBUG,
     MSK_IPAR_READ_KEEP_FREE_CON,
-    MSK_IPAR_READ_LP_DROP_NEW_VARS_IN_BOU,
-    MSK_IPAR_READ_LP_QUOTED_NAMES,
     MSK_IPAR_READ_MPS_FORMAT,
     MSK_IPAR_READ_MPS_WIDTH,
     MSK_IPAR_READ_TASK_IGNORE_PARAM,
@@ -7808,9 +7739,6 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_JSON_INDENTATION,
     MSK_IPAR_WRITE_LP_FULL_OBJ,
     MSK_IPAR_WRITE_LP_LINE_WIDTH,
-    MSK_IPAR_WRITE_LP_QUOTED_NAMES,
-    MSK_IPAR_WRITE_LP_STRICT_FORMAT,
-    MSK_IPAR_WRITE_LP_TERMS_PER_LINE,
     MSK_IPAR_WRITE_MPS_FORMAT,
     MSK_IPAR_WRITE_MPS_INT,
     MSK_IPAR_WRITE_SOL_BARVARIABLES,
@@ -7821,7 +7749,7 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_TASK_INC_SOL,
     MSK_IPAR_WRITE_XML_MODE ]
 members(::Type{Iparam}) = Iparam_members
-Base.length(::Type{Iparam}) = 192
+Base.length(::Type{Iparam}) = 187
 Base.convert(::Type{Int},x::Iparam) = Int(x.value)
 """
     Branchdir
@@ -8688,7 +8616,6 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE`. An invalid indicator value is specfied. It must be either 0 or 1.
 * `MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT`. A quadratic constraint can be be an indicator constraint.
 * `MSK_RES_ERR_OPF_SYNTAX`. Syntax error in an OPF file
-* `MSK_RES_ERR_OPF_NEW_VARIABLE`. Variable not previously defined.
 * `MSK_RES_ERR_OPF_PREMATURE_EOF`. Premature end of file in an OPF file.
 * `MSK_RES_ERR_OPF_MISMATCHED_TAG`. Mismatched end-tag in OPF file
 * `MSK_RES_ERR_OPF_DUPLICATE_BOUND`. Either upper or lower bound was specified twice in OPF file
@@ -8698,7 +8625,6 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_OPF_INVALID_TAG`. Invalid start-tag in OPF File
 * `MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY`. Same variable appears in multiple cones in OPF File
 * `MSK_RES_ERR_OPF_TOO_LARGE`. The problem is too large to be correctly loaded
-* `MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME`. Same cone name used multiple times in OPF File
 * `MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION`. Dual solution values are not allowed in OPF File
 * `MSK_RES_ERR_LP_INCOMPATIBLE`. The problem cannot be written to an LP formatted file.
 * `MSK_RES_ERR_LP_EMPTY`. The problem cannot be written to an LP formatted file.
@@ -9549,9 +9475,6 @@ const MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT = Rescode(1133)
 "Syntax error in an OPF file"
 const MSK_RES_ERR_OPF_SYNTAX = Rescode(1134)
 
-"Variable not previously defined."
-const MSK_RES_ERR_OPF_NEW_VARIABLE = Rescode(1135)
-
 "Premature end of file in an OPF file."
 const MSK_RES_ERR_OPF_PREMATURE_EOF = Rescode(1136)
 
@@ -9578,9 +9501,6 @@ const MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY = Rescode(1143)
 
 "The problem is too large to be correctly loaded"
 const MSK_RES_ERR_OPF_TOO_LARGE = Rescode(1144)
-
-"Same cone name used multiple times in OPF File"
-const MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME = Rescode(1145)
 
 "Dual solution values are not allowed in OPF File"
 const MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION = Rescode(1146)
@@ -10828,7 +10748,6 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1132 "Mosek.MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE"
   elseif v.value == 1133 "Mosek.MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT"
   elseif v.value == 1134 "Mosek.MSK_RES_ERR_OPF_SYNTAX"
-  elseif v.value == 1135 "Mosek.MSK_RES_ERR_OPF_NEW_VARIABLE"
   elseif v.value == 1136 "Mosek.MSK_RES_ERR_OPF_PREMATURE_EOF"
   elseif v.value == 1137 "Mosek.MSK_RES_ERR_OPF_MISMATCHED_TAG"
   elseif v.value == 1138 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_BOUND"
@@ -10838,7 +10757,6 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1142 "Mosek.MSK_RES_ERR_OPF_INVALID_TAG"
   elseif v.value == 1143 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY"
   elseif v.value == 1144 "Mosek.MSK_RES_ERR_OPF_TOO_LARGE"
-  elseif v.value == 1145 "Mosek.MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME"
   elseif v.value == 1146 "Mosek.MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION"
   elseif v.value == 1150 "Mosek.MSK_RES_ERR_LP_INCOMPATIBLE"
   elseif v.value == 1151 "Mosek.MSK_RES_ERR_LP_EMPTY"
@@ -11365,7 +11283,6 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_MPS_INVALID_INDICATOR_VALUE,
     MSK_RES_ERR_MPS_INVALID_INDICATOR_QUADRATIC_CONSTRAINT,
     MSK_RES_ERR_OPF_SYNTAX,
-    MSK_RES_ERR_OPF_NEW_VARIABLE,
     MSK_RES_ERR_OPF_PREMATURE_EOF,
     MSK_RES_ERR_OPF_MISMATCHED_TAG,
     MSK_RES_ERR_OPF_DUPLICATE_BOUND,
@@ -11375,7 +11292,6 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_OPF_INVALID_TAG,
     MSK_RES_ERR_OPF_DUPLICATE_CONE_ENTRY,
     MSK_RES_ERR_OPF_TOO_LARGE,
-    MSK_RES_ERR_OPF_DUPLICATE_CONE_NAME,
     MSK_RES_ERR_OPF_DUAL_INTEGER_SOLUTION,
     MSK_RES_ERR_LP_INCOMPATIBLE,
     MSK_RES_ERR_LP_EMPTY,
@@ -11739,7 +11655,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_INTERNAL,
     MSK_RES_TRM_INTERNAL_STOP ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 534
+Base.length(::Type{Rescode}) = 532
 Base.convert(::Type{Int},x::Rescode) = Int(x.value)
 """
     Rescodetype

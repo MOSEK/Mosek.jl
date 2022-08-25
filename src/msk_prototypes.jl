@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.17
+# Target: Mosek 10.0.18
 macro MSK_analyzeproblem(task,whichstream)
   quote
      local res = disable_sigint(()->ccall((:MSK_analyzeproblem,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(whichstream))))
@@ -3640,6 +3640,15 @@ end
 macro MSK_readsolution(task,whichsol,filename)
   quote
      local res = disable_sigint(()->ccall((:MSK_readsolution,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),$(esc(task)),$(esc(whichsol)),$(esc(filename))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_readjsonsol(task,filename)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_readjsonsol,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},),$(esc(task)),$(esc(filename))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
