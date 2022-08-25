@@ -1,7 +1,7 @@
 #
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      portfolio_4_transcost.jl
 #
 #  Description :  Implements a basic portfolio optimization model
 #                 with fixed setup costs and transaction costs

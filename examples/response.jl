@@ -1,7 +1,7 @@
 ##
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      response.jl
 #
 #  Purpose :   This example demonstrates proper response handling
 #              for problems solved with the interior-point optimizers.

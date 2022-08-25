@@ -1,6 +1,6 @@
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      sdo2.jl
 #
 #  Purpose :   Solves the semidefinite problem with two symmetric variables:
 #

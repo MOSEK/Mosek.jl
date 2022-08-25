@@ -1,6 +1,6 @@
 # Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      $${file}
+# File :      reoptimization.jl
 #
 # Purpose :   Demonstrates how to solve a  linear
 #             optimization problem using the MOSEK API

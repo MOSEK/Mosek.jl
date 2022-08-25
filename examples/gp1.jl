@@ -1,7 +1,7 @@
 #
 #   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File:      $${file}
+#   File:      gp1.jl
 #
 #   Purpose:   Demonstrates how to solve a simple Geometric Program (GP)
 #              cast into conic form with exponential cones and log-sum-exp.

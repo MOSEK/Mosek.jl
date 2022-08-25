@@ -1,7 +1,7 @@
 ##
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      sdo1.jl
 #
 #   Purpose:   Demonstrates how to solve a small mixed semidefinite and conic quadratic
 #              optimization problem using the MOSEK Julia API.

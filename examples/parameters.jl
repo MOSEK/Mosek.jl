@@ -1,7 +1,7 @@
 ##
 #   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      $${file}
+#   File :      parameters.jl
 #
 #   Purpose :   Demonstrates a very simple example about how to get/set
 #               parameters with MOSEK Java API

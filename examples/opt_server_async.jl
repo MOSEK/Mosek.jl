@@ -1,7 +1,7 @@
 ##
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      opt_server_async.jl
 #
 #  Purpose :   Demonstrates how to use MOSEK OptServer
 #              to solve optimization problem asynchronously

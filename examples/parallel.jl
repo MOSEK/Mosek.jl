@@ -1,7 +1,7 @@
 
 #   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File:      $${file}
+#   File:      parallel.jl
 #
 #   Purpose: Demonstrates parallel optimization using optimizebatch()
 

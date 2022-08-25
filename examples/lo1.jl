@@ -1,7 +1,7 @@
 ##
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      lo1.jl
 #
 #  Purpose :   Demonstrates how to solve small linear
 #              optimization problem using the MOSEK Python API.

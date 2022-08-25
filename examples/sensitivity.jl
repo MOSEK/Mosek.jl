@@ -1,6 +1,6 @@
 #   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      $${file}
+#   File :      sensitivity.jl
 #
 #   Purpose :   To demonstrate how to perform sensitivity
 #               analysis from the API on a small problem:

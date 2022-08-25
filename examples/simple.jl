@@ -1,6 +1,6 @@
 #   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      $${file}
+#   File :      simple.jl
 #
 #   Purpose :   Demonstrates a very simple example using MOSEK by
 #               reading a problem file, solving the problem and

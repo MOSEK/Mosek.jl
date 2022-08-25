@@ -1,7 +1,7 @@
 ##
 #   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      $${file}
+#   File :      qo1.jl
 #
 #   Purpose: Demonstrate how to solve a quadratic
 #            optimization problem using the MOSEK Python API.

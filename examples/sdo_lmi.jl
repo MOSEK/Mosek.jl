@@ -1,7 +1,7 @@
 #
 # Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      $${file}
+# File :      sdo_lmi.jl
 #
 # Purpose :   To solve a problem with an LMI and an affine conic constrained problem with a PSD term
 #

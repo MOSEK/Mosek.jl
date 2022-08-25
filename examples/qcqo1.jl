@@ -1,7 +1,7 @@
 #
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      qcqo1.jl
 #
 #  Purpose: Demonstrates how to solve small quadratic and quadratically 
 #           constrained optimization problem using the MOSEK Python API.

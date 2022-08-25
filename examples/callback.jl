@@ -4,7 +4,7 @@ using Mosek
 ##
 #  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      $${file}
+#  File :      callback.jl
 #
 #  Purpose :   To demonstrate how to use the progress
 #              callback.

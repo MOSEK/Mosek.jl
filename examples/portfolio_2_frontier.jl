@@ -1,7 +1,7 @@
 
 # Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      $${file}
+# File :      portfolio_2_frontier.jl
 #
 # Description :  Implements a basic portfolio optimization model.
 

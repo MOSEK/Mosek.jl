@@ -1,7 +1,7 @@
 ##
 # Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      $${file}
+# File :      portfolio_5_card.jl
 #
 # Description :  Implements a basic portfolio optimization model.
 

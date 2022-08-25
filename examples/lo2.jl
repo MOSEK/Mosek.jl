@@ -1,6 +1,6 @@
 # Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      $${file}
+# File :      lo2.jl
 #
 # Purpose :   Demonstrates how to solve a small linear
 #             optimization problem using the MOSEK Java API.

@@ -1,6 +1,6 @@
 #   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      $${file}
+#   File :      solutionquality.jl
 #
 #   Purpose :   To demonstrate how to examine the quality of a solution.
 
