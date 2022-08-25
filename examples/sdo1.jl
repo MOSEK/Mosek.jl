@@ -1,13 +1,12 @@
 ##
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      sdo1.jl
+#  File :      $${file}
 #
 #   Purpose:   Demonstrates how to solve a small mixed semidefinite and conic quadratic
 #              optimization problem using the MOSEK Julia API.
 ##
 
-##TAG:begin-code
 using Mosek
 using Printf, SparseArrays
 
@@ -52,11 +51,9 @@ maketask() do task
     # The constraints will initially have no bounds.
     appendcons(task,numcon)
 
-##TAG:begin-appendbarvars
     # Append matrix variables of sizes in 'BARVARDIM'.
     # The variables will initially be fixed at zero.
     appendbarvars(task,barvardim)
-##TAG:end-appendbarvars
 
     # Set the linear term c_0 in the objective.
     putcj(task, 1, 1.0)
@@ -92,7 +89,6 @@ maketask() do task
                  A.rowval,A.nzval)
 
 
-##TAG:begin-appendsparsesymmat
     symc  = appendsparsesymmat(task,barvardim[1],
                                barci,
                                barcj,
@@ -107,16 +103,11 @@ maketask() do task
                                barai[2],
                                baraj[2],
                                baraval[2])
-##TAG:end-appendsparsesymmat
 
-##TAG:begin-putbarcj*/
     putbarcj(task,1, [symc], [1.0])
-##TAG:end-putbarcj*/
 
-##TAG:begin-putbaraij*/
     putbaraij(task,1, 1, [syma0], [1.0])
     putbaraij(task,2, 1, [syma1], [1.0])
-##TAG:end-putbaraij*/
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
@@ -133,14 +124,10 @@ maketask() do task
 
     if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
-##TAG:begin-getsolution
         xx = getxx(task,MSK_SOL_ITR)
         barx = getbarxj(task,MSK_SOL_ITR, 1)
-##TAG:end-getsolution
-        ##TAG:ASSERT:begin-check-solution
         @assert maximum(abs.(xx-[0.254404851118613, 0.17989139511438135, 0.17989139511438135])) < 1e-6
         @assert maximum(abs.(barx-[0.21725335998058032, -0.25997116466128245, 0.21725335966506842, 0.3110884301498656, -0.2599711646612823, 0.21725335998058004])) < 1e-6
-        ##TAG:ASSERT:end-check-solution
 
         @printf("Optimal solution: \n  xx = %s\n  barx = %s\n", xx',barx')
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
@@ -153,4 +140,3 @@ maketask() do task
         println("Other solution status")
     end
 end
-##TAG:end-code

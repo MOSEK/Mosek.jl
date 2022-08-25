@@ -1,16 +1,15 @@
 #
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#   Copyright: MOSEK ApS
 #
-#  File :      djc1.jl
+#   File:      djc1.jl
 #
-#  Purpose: Demonstrates how to solve the problem with two disjunctions:
+#   Purpose: Demonstrates how to solve the problem with two disjunctions:
 #
 #      minimize    2x0 + x1 + 3x2 + x3
 #      subject to   x0 + x1 + x2 + x3 >= -10
 #                  (x0-2x1<=-1 and x2=x3=0) or (x2-3x3<=-2 and x1=x2=0)
 #                  x0=2.5 or x1=2.5 or x2=2.5 or x3=2.5
 #
-##TAG:begin-code
 
 using Mosek
 
@@ -31,12 +30,9 @@ maketask() do task
     putclist(task,[1:numvar...], Float64[2, 1, 3, 1])
 
     # Fill in the affine expression storage F, g
-    ##TAG:begin-appendafes
     numafe = 10
     appendafes(task,numafe)
-    ##TAG:end-appendafes
 
-    ##TAG:begin-putafe
     fafeidx = Int64[1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     fvaridx = Int32[1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]
     fval    = Float64[1.0, -2.0, 1.0, -3.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
@@ -44,38 +40,29 @@ maketask() do task
 
     putafefentrylist(task,fafeidx, fvaridx, fval)
     putafegslice(task,1, numafe+1, g)
-    ##TAG:end-putafe
 
     # Create domains
-    ##TAG:begin-appenddomain
     zero1   = appendrzerodomain(task,1)
     zero2   = appendrzerodomain(task,2)
     rminus1 = appendrminusdomain(task,1)
-    ##TAG:end-appenddomain
 
     # Append disjunctive constraints
-    ##TAG:begin-appenddjc
     numdjc = 2
     appenddjcs(task,numdjc)
-    ##TAG:end-appenddjc
 
     # First disjunctive constraint
-    ##TAG:begin-djc-first
     putdjc(task,1,                                        # DJC index
                 [rminus1, zero2, rminus1, zero2],         # Domains     (domidxlist)
                 [1, 5, 6, 2, 3, 4],                       # AFE indices (afeidxlist)
                 zeros(6),                                 # Unused
                 [2, 2] )                                  # Term sizes  (termsizelist)
-    ##TAG:end-djc-first
 
     # Second disjunctive constraint
-    ##TAG:begin-djc-second
     putdjc(task,2,                                        # DJC index
                 [zero1, zero1, zero1, zero1],             # Domains     (domidxlist)
                 [7, 8, 9, 10],                            # AFE indices (afeidxlist)
                 zeros(4),                                 # Unused
                 [1, 1, 1, 1] )                            # Term sizes  (termidxlist)
-    ##TAG:end-djc-second
 
     # Useful for debugging
     writedata(task,"djc1.ptf")                         # Write file in human-readable format
@@ -101,8 +88,5 @@ maketask() do task
     end
     @assert maximum(abs.(xx - [0.0, 0.0, -12.5, 2.5])) < 1e-7
 
-    ##TAG:ASSERT:begin-check-solution
     @assert maximum(abs.(xx-[0.0, 0.0, -12.5, 2.5])) < 1e-7
-    ##TAG:ASSERT:end-check-solution
-##TAG:end-code
 end

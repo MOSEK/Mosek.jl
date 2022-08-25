@@ -1,7 +1,7 @@
 ##
-#  Copyright: Copyright (c) 2022 MOSEK ApS
+#  Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File:    helloworld.jl
+#  File:    $${file}
 #
 #  The most basic example of how to get started with MOSEK.
 ##

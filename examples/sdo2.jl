@@ -1,6 +1,6 @@
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      sdo2.jl
+#  File :      $${file}
 #
 #  Purpose :   Solves the semidefinite problem with two symmetric variables:
 #
@@ -14,7 +14,6 @@
 #                 and b, k are constants.
 #
 
-##TAG:begin-code
 using Mosek
 
 # Input data
@@ -81,11 +80,9 @@ let numcon    = 2,              # Number of constraints.
             for i in 1:numbarvar
                 barx = getbarxj(task,MSK_SOL_ITR, i)
                 println("X$i: $barx")
-                ##TAG:ASSERT:begin-check-solution
                 Xexpect = [[21.04706098136004, 0.0, 4.077117604213827, 5.5337653353154215, 0.0, 0.7897961639459908],
                            [5.053657059322597, -2.9999999957221952, 0.0, 0.0, 1.7808885486033874, 0.0, 0.0, 1.1353820371132691e-08, 0.0, 4.3074656422047645e-09]]
-                @assert maximum(abs.(barx-Xexpect[i])) < 1e-3
-                ##TAG:ASSERT:end-check-solution
+                @assert maximum(abs.(X, Xexpect[i])) < 1e-3
             end
         elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER || if solsta == MSK_SOL_STA_PRIM_INFEAS_CER
             println("Primal or dual infeasibility certificate found.")
@@ -97,4 +94,3 @@ let numcon    = 2,              # Number of constraints.
         end
     end
 end
-##TAG:end-code

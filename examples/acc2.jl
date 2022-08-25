@@ -1,5 +1,5 @@
-#
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+##
+#  Copyright : MOSEK ApS
 #
 #  File :      acc2.jl
 #
@@ -12,7 +12,6 @@
 #
 #              This version inputs the linear constraint as an affine conic constraint.
 ##
-##TAG:begin-code
 using Mosek
 
 
@@ -34,7 +33,6 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
     putclist(task,[1:n...], c)
 
-    ##TAG:begin-putafe
     # Set AFE rows representing the linear constraint
     appendafes(task,1)
     putafefrow(task,1, [1:n...], ones(n))
@@ -53,27 +51,19 @@ maketask() do task
     gamma = 0.03
     putafeg(task,2, gamma)
     putafegslice(task,3, k+2+1, h)
-    ##TAG:end-putafe
 
-    ##TAG:begin-appenddomain
     # Define domains
     zeroDom = appendrzerodomain(task,1)
     quadDom = appendquadraticconedomain(task,k + 1)
-    ##TAG:end-appenddomain
 
     # Append affine conic constraints
-    ##TAG:begin-appendacc1
     appendacc(task,zeroDom,    # Domain index
               [1],        # Indices of AFE rows
               zeros(1))       # Ignored
-    ##TAG:end-appendacc1
-    ##TAG:begin-appendacc2
     appendacc(task,quadDom,    # Domain index
               [2,3,4],    # Indices of AFE rows
               zeros(3))       # Ignored
-    ##TAG:end-appendacc2
 
-    ##TAG:begin-solve
     # Solve and retrieve solution
     optimize(task)
     writedata(task,"acc2.ptf")
@@ -82,20 +72,15 @@ maketask() do task
     if getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL
         println("Solution: $xx")
     end
-    ##TAG:end-solve
-    ##TAG:end-code
 
     # Demonstrate retrieving activity of ACC
     activity = evaluateacc(task,MSK_SOL_ITR,2)
     println("Activity of quadratic ACC:: $activity")
 
-    ##TAG:begin-getdoty
     # Demonstrate retrieving the dual of ACC
     doty = getaccdoty(task,MSK_SOL_ITR,2)
     println("Dual of quadratic ACC:: $doty")
-    ##TAG:end-getdoty
 
-    ##TAG:ASSERT:begin-check-solution
     #maxgap = lambda a, b: max(abs(x-y) for x,y in zip(a,b))
     compl = sum(activity' * doty)
     println(doty)
@@ -105,6 +90,4 @@ maketask() do task
     @assert maximum(abs.(activity - [0.03, -0.004678877204190343, -0.029632888959872067])) < 1e-7
     println("Complementarity $compl")
 
-    ##TAG:ASSERT:end-check-solution
 end
-##TAG:end-code

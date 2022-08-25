@@ -2,9 +2,9 @@ using Mosek
 
 
 ##
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      callback.jl
+#  File :      $${file}
 #
 #  Purpose :   To demonstrate how to use the progress
 #              callback.
@@ -19,19 +19,15 @@ using Mosek
 #              i.e. psim is primal simplex, dsim is dual simplex
 #              and intpnt is interior-point.
 ##
-##TAG:begin-code
 using Mosek
 using Printf
 
-##TAG:begin-callback
-##TAG:begin-callback-signature
 function callback(task    :: Mosek.Task,
                   maxtime :: Float64,
                   caller  :: Callbackcode,
                   douinf  :: Vector{Float64},
                   intinf  :: Vector{Int32},
                   lintinf :: Vector{Int64})
-##TAG:end-callback-signature
         opttime = 0.0
 
         if caller == MSK_CALLBACK_BEGIN_INTPNT
@@ -88,7 +84,6 @@ function callback(task    :: Mosek.Task,
             0
         end
 end
-##TAG:end-callback
 
 
 # To run a continuous problem example
@@ -109,12 +104,9 @@ else
         elseif slvr == "intpnt"
             putintparam(task,MSK_IPAR_OPTIMIZER, MSK_OPTIMIZER_INTPNT)
         end
-        ##TAG:begin-callback-handler
         putcallbackfunc(task,(caller,dinf,iinf,linf) -> callback(task,0.05,caller,dinf,iinf,linf))
-        ##TAG:end-callback-handler
 
         optimize(task)
     end
 end
 
-##TAG:end-code

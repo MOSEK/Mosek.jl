@@ -1,7 +1,7 @@
 #
-#   Copyright : Copyright (c) 2022 MOSEK ApS
+#   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      gp1.jl
+#   File:      $${file}
 #
 #   Purpose:   Demonstrates how to solve a simple Geometric Program (GP)
 #              cast into conic form with exponential cones and log-sum-exp.
@@ -12,7 +12,6 @@
 
 using Mosek
 
-##TAG:begin-maxbox
 function max_volume_box(Aw    :: Float64,
                         Af    :: Float64,
                         alpha :: Float64,
@@ -36,7 +35,6 @@ function max_volume_box(Aw    :: Float64,
         putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
         putcslice(task,1, numvar+1, [1.0,1.0,1.0])
 
-        ##TAG:begin-logsumexp-axb
         putvarboundsliceconst(task,1, numvar+1, MSK_BK_FR, -Inf, Inf)
 
         appendcons(task,3)
@@ -54,7 +52,6 @@ function max_volume_box(Aw    :: Float64,
         let afei = getnumafe(task)+1,
             u1 = getnumvar(task)+1,
             u2 = u1+1,
-
             afeidx = [1, 2, 3, 3, 4, 4, 6, 6],
             varidx = [u1, u2, x, y, x, z, u1, u2],
             fval   = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
@@ -84,7 +81,6 @@ function max_volume_box(Aw    :: Float64,
                 appendacc(task,dom, [6], [0.0])
             end
         end
-        #TAG:end-logsumexp-axb
 
         optimize(task)
         writedata(task,"gp1.ptf")
@@ -92,7 +88,6 @@ function max_volume_box(Aw    :: Float64,
         exp.(getxxslice(task,MSK_SOL_ITR, 1, numvar+1))
     end # maketask
 end # max_volume_box
-##TAG:end-maxbox
 
 # maximize     h*w*d
 # subjecto to  2*(h*w + h*d) <= Awall
@@ -122,7 +117,6 @@ end # max_volume_box
 #
 #            (x,y,z) in pexp : x0 > x1 * exp(x2/x1)
 
-##TAG:begin-solvemaxbox
 hwd = let Aw    = 200.0,
     Af    = 50.0,
     alpha = 2.0,
@@ -133,9 +127,7 @@ hwd = let Aw    = 200.0,
     max_volume_box(Aw, Af, alpha, beta, gamma, delta)
 end
 println("h=$(hwd[1]) w=$(hwd[2]) d=$(hwd[3])\n");
-##TAG:end-solvemaxbox
 
-##TAG:ASSERT:begin-check-solution
+maxgap = lambda a, b: max(abs(x-y) for x,y in zip(a,b))
 @assert maximum(abs.(hwd-[8.164, 4.082, 8.167])) < 1e-3
-##TAG:ASSERT:end-check-solution
 

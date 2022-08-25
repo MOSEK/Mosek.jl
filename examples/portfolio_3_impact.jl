@@ -1,14 +1,12 @@
 ##
-# Copyright : Copyright (c) 2022 MOSEK ApS
+# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      portfolio_3_impact.jl
+# File :      $${file}
 #
 # Description :  Implements a basic portfolio optimization model.
 ##
 
 using Mosek
-#TAG:begin-code
-#TAG:begin-basic-markowitz
 
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
@@ -23,15 +21,12 @@ function portfolio( mu :: Vector{Float64},
 
         totalBudget = sum(x0)+w
 
-        #TAG:begin-offsets
         #Offset of variables into the API variable.
         x_ofs = 0
         c_ofs = n
         z_ofs = 2*n
 
-        
         # Constraints offsets
-        #TAG:end-offsets
         budget_ofs = 0
 
         # Holding variable x of length n
@@ -96,13 +91,11 @@ function portfolio( mu :: Vector{Float64},
                 putafefrow(task,afei+i+1, subj, GT[i,:])
             end
 
-            #TAG:begin-basic-markowitz-appendaccseq
             # Input the affine conic constraint (gamma, GT*x) \in QCone
             # Add the quadratic domain of dimension k+1
 
             # Add the constraint
             appendaccseq(task,qdom,1,zeros(k+1))
-            #TAG:end-basic-markowitz-appendaccseq
             putaccname(task,acci+1, "risk")
         end
 
@@ -138,14 +131,10 @@ function portfolio( mu :: Vector{Float64},
 
         optimize(task)
 
-        #TAG:begin-solutionsummary
         # Display solution summary for quick inspection of results
         solutionsummary(task,MSK_STREAM_LOG)
-        #TAG:end-solutionsummary
 
-        #TAG:begin-writedata
         writedata(task,"portfolio_3_impact.ptf");
-        #TAG:end-writedata
 
         # Read the results
         xx = getxxslice(task,MSK_SOL_ITR, x_ofs+1,x_ofs+n+1)
@@ -154,8 +143,6 @@ function portfolio( mu :: Vector{Float64},
         (xx,expret)
     end
 end # portfolio()
-#TAG:end-code
-#TAG:end-basic-markowitz
 
 let w    = 1.0,
     mu = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],

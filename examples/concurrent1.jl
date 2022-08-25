@@ -1,7 +1,5 @@
-##
-#  Copyright : Copyright (c) 2022 MOSEK ApS
 #
-#  File :   concurrent1.jl
+#  File:    concurrent1.jl
 #
 #  Purpose: Demonstrates a simple implementation of a concurrent optimizer.
 #
@@ -14,7 +12,6 @@
 
 using Mosek
 
-##TAG:begin-cb
 # Defines a Mosek callback function whose only function
 # is to indicate if the optimizer should be stopped.
 stop = false
@@ -29,7 +26,6 @@ function callback(caller  :: Callbackcode,
         0
     end
 end
-##TAG:end-cb
 
 # firstOK, res, trm = optimize(tasks)
 #
@@ -43,7 +39,6 @@ end
 # with rescode == ok. Whether or not this task contains the
 # most valuable answer, is for the caller to decide. If none
 # completed without error returns -1.
-##TAG:begin-setup
 function runTask(num, task)
     global stop
     global firstStop
@@ -94,7 +89,6 @@ function optimizeconcurrent(tasks::Vector{Mosek.Task})
 
   return firstStop, res, trm
 end
-##TAG:end-setup
 
 #
 # idx, winTask, winTrm, winRes = optimizeconcurrent(task, optimizers)
@@ -106,7 +100,6 @@ end
 # task that is returned as winTask. This is the task
 # with the best possible status of those that finished.
 # If none task is considered successful returns -1.
-##TAG:begin-linear
 function optimizeconcurrent(task, optimizers)
     # Choose various optimizers for cloned tasks
     tasks = Mosek.Task[ let t = maketask()
@@ -124,7 +117,6 @@ function optimizeconcurrent(task, optimizers)
         return 0, Nothing, Nothing, Nothing
     end
 end
-##TAG:end-linear
 
 #
 # idx, winTask, winTrm, winRes = optimizeconcurrent(task, optimizers)
@@ -142,7 +134,6 @@ end
 # major scenarios are:
 # 1. Some clone ends before time limit - then it has optimum.
 # 2. All clones reach time limit - pick the one with best objective.
-##TAG:begin-mio
 function optimizeconcurrentMIO(task, seeds)
     # Choose various seeds for cloned tasks
     tasks = Mosek.Task[ let t = maketask(task)
@@ -189,7 +180,6 @@ function optimizeconcurrentMIO(task, seeds)
         return 0, Nothing, Nothing, Nothing
     end
 end
-##TAG:end-mio
 
 # This is an example of how one can use the methods
 #       optimizeconcurrent
@@ -213,20 +203,16 @@ function main(fname::String,tlimit)
                 # If the problem is continuous
                 # optimize it with three continuous optimizers.
                 # (Simplex will fail for non-linear problems)
-                ##TAG:begin-demo-linear
                 optimizers = [ MSK_OPTIMIZER_CONIC,
                                MSK_OPTIMIZER_DUAL_SIMPLEX,
                                MSK_OPTIMIZER_PRIMAL_SIMPLEX ]
                 optimizeconcurrent(task, optimizers)
-                ##TAG:end-demo-linear
             else
                 # Mixed-integer problem.
                 # Try various seeds.
-                ##TAG:begin-demo-mio
                 seeds = [ 42, 13, 71749373 ]
 
                 optimizeconcurrentMIO(task, seeds)
-                ##TAG:end-demo-mio
             end )
 
             # Check results and print the best answer
@@ -244,7 +230,5 @@ end
 
 let fname = if length(ARGS) < 1 "../data/25fv47.mps" else ARGS[1] end,
     tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end
-
-    print("This example has been disabled since it causes memory issues")
-    #main(fname,tlimit)
+    main(fname,tlimit)
 end

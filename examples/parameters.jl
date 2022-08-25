@@ -1,19 +1,17 @@
 ##
-#   Copyright : Copyright (c) 2022 MOSEK ApS
+#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      parameters.jl
+#   File :      $${file}
 #
 #   Purpose :   Demonstrates a very simple example about how to get/set
 #               parameters with MOSEK Java API
 #
 
-##TAG:begin-code
 using Mosek
 
 maketask() do task
     println("Test MOSEK parameter get/set functions");
 
-##TAG:begin-set-parameter
     # Set log level (integer parameter)
     putintparam(task,MSK_IPAR_LOG, 1)
     # Select interior-point optimizer... (integer parameter)
@@ -33,13 +31,10 @@ maketask() do task
     catch
         println("Wrong parameter value")
     end
-##TAG:end-set-parameter
 
 
-##TAG:begin-get-parameter
     param = getdouparam(task,MSK_DPAR_INTPNT_CO_TOL_REL_GAP)
     println("Current value for parameter intpnt_co_tol_rel_gap = $param")
-##TAG:end-get-parameter
 
     # Define and solve an optimization problem here
     # optimize(task,)
@@ -47,13 +42,10 @@ maketask() do task
 
     println("Get MOSEK information items")
 
-##TAG:begin-infitems
     tm = getdouinf(task,MSK_DINF_OPTIMIZER_TIME)
     iter = getintinf(task,MSK_IINF_INTPNT_ITER)
-##TAG:end-infitems
 
     println("Time: $tm");
     println("Iterations: $iter");
 
 end
-##TAG:end-code

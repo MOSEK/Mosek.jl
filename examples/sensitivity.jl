@@ -1,6 +1,6 @@
-#   Copyright : Copyright (c) 2022 MOSEK ApS
+#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      sensitivity.jl
+#   File :      $${file}
 #
 #   Purpose :   To demonstrate how to perform sensitivity
 #               analysis from the API on a small problem:
@@ -19,7 +19,6 @@
 #
 #               The example uses basis type sensitivity analysis.
 
-##TAG:begin-code
 using Mosek
 
 prob_ptf = "Task ''
@@ -96,4 +95,3 @@ maketask() do task
         end
     end
 end
-##TAG:end-code

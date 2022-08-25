@@ -1,5 +1,5 @@
-#
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+##
+#  Copyright : MOSEK ApS
 #
 #  File :      acc1.jl
 #
@@ -10,7 +10,6 @@
 #              subject to  sum(x) = 1
 #                          gamma >= |Gx+h|_2
 ##
-##TAG:begin-code
 
 using Mosek
 
@@ -40,12 +39,9 @@ let Gsubi = Int64[1, 1, 2, 2],
         putarow(task,1, [1,2,3], [1.0,1.0,1.0])
         putconbound(task,1, MSK_BK_FX, 1.0, 1.0)
 
-        ##TAG:begin-appendafes
         # Append empty AFE rows for affine expression storage
         appendafes(task,k + 1)
-        ##TAG:end-appendafes
 
-        ##TAG:begin-putafe
         # G matrix in sparse form
         # Other data
         h     = Float64[0, 0.1]
@@ -62,27 +58,19 @@ let Gsubi = Int64[1, 1, 2, 2],
        # Fill in g storage
         putafeg(task,1, gamma)
         putafegslice(task,2, k+2, h)
-        ##TAG:end-putafe
 
-        ##TAG:begin-appenddomain
         # Define a conic quadratic domain
         quadDom = appendquadraticconedomain(task,k + 1)
-        ##TAG:end-appenddomain
 
-        ##TAG:begin-appendacc
         # Create the ACC
         appendaccseq(task,
                      quadDom,    # Domain index
                      1,          # Indices of AFE rows [0,...,k]
                      zeros(k+1)) # Ignored
-        ##TAG:end-appendacc
 
-        ##TAG:begin-solve
         # Solve and retrieve solution
         optimize(task)
         writedata(task,"acc1.ptf")
-        ##TAG:end-solve
-        ##TAG:end-code
         @assert getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL
 
         xx = getxx(task,MSK_SOL_ITR)
@@ -92,14 +80,11 @@ let Gsubi = Int64[1, 1, 2, 2],
                                1)     # ACC index
         println("Activity of ACC:: $activity")
 
-        ##TAG:begin-getdoty
         # Demonstrate retrieving the dual of ACC
         doty = getaccdoty(task,MSK_SOL_ITR,
                           1)          # ACC index
         println("Dual of ACC: $doty")
-        ##TAG:end-getdoty
 
-        ##TAG:ASSERT:begin-check-solution
         compl = sum(activity' * doty)
 
         @assert (abs(compl) < 1e-7) "Complementarity is invalid"
@@ -108,7 +93,5 @@ let Gsubi = Int64[1, 1, 2, 2],
         @assert (maximum(abs.(activity-[0.03, -0.004678877204190343, -0.029632888959872067])) < 1e-7) "Constraint level solution is incorrect"
         println("Complementarity $compl")
 
-        ##TAG:ASSERT:end-check-solution
     end
 end
-##TAG:end-code

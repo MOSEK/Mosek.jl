@@ -23,7 +23,6 @@
 #                  xc1 <=  0 , xc2 <= 0
 ##
 
-##TAG:begin-code
 using Mosek
 
 maketask() do task
@@ -58,7 +57,6 @@ maketask() do task
     w1 = Float64[2.0, 6.0]
     w2 = Float64[1.0, 0.0]
 
-    ##TAG:begin-inputdata
     inputdata(task,
               Int32(numcon), Int32(numvar),
               c,
@@ -73,7 +71,6 @@ maketask() do task
               bkx,
               blx,
               bux)
-    ##TAG:end-inputdata
 
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
@@ -132,4 +129,3 @@ maketask() do task
     end
 
 end
-##TAG:end-code

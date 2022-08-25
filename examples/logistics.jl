@@ -1,7 +1,6 @@
+# Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# Copyright : Copyright (c) 2022 MOSEK ApS
-#
-# File :      logistics.jl
+# File:      logistic.jl
 #
 # Purpose: Implements logistic regression with regulatization.
 #
@@ -9,7 +8,6 @@
 
 using Mosek
 
-##TAG:begin-logistic-lse
 """
 Adds ACCs for t_i >= log ( 1 + exp((1-2*y[i]) * theta' * X[i]) )
 Adds auxiliary variables, AFE rows and constraints
@@ -93,10 +91,8 @@ function softplus(task :: Mosek.Task, d::Int, n::Int, theta::Int, t::Int, X::Mat
         end
     end
 end # softplus
-##TAG:end-logistic-lse
 
 
-##TAG:begin-logistic-main
 """
 Model logistic regression (regularized with full 2-norm of theta)
 X - n x d matrix of data points
@@ -146,7 +142,6 @@ function logisticRegression(X    :: Matrix{Float64},
         getxxslice(task,MSK_SOL_ITR, theta+1, theta+d+1)
     end
 end # logisticRegression
-##TAG:end-logistic-main
 
 
 

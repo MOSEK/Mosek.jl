@@ -5,7 +5,6 @@
 #              integer linear optimization problem using the MOSEK Python API.
 ##
 
-##TAG:begin-code
 using Mosek
 using Printf, SparseArrays
 
@@ -25,8 +24,7 @@ c   = [       1.0,      0.64 ]
 
 A    = sparse( [ 1, 1, 2, 2],
                [ 1, 2, 1, 2],
-               [ 50.0, 31.0,
-                 3.0, -2.0] )
+               [ 50.0, 3.0, 31.0, -2.0] )
 
 numvar = length(bkx)
 numcon = length(bkc)
@@ -37,7 +35,6 @@ maketask() do task
     # Attach a printer to the task
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
-##TAG:begin-append
     # Append 'numcon' empty constraints.
     # The constraints will initially have no bounds.
     appendcons(task,numcon)
@@ -45,7 +42,6 @@ maketask() do task
     #Append 'numvar' variables.
     # The variables will initially be fixed at zero (x=0).
     appendvars(task,numvar)
-##TAG:end-append
 
     # Set the linear term c_j in the objective.
     putclist(task,[1:numvar;],c)
@@ -62,38 +58,28 @@ maketask() do task
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
-##TAG:begin-putvartype
     # Define variables to be integers
     putvartypelist(task,[ 1, 2 ],
                    [ MSK_VAR_TYPE_INT, MSK_VAR_TYPE_INT ])
-##TAG:end-putvartype
 
-##TAG:begin-set-parameters
     # Set max solution time
     putdouparam(task,MSK_DPAR_MIO_MAX_TIME, 60.0)
-##TAG:end-set-parameters
 
     # Optimize the task
     optimize(task,"mosek://solve.mosek.com:30080")
-
-    writedata(task,"milo1.ptf")
 
     # Print a summary containing information
     # about the solution for debugging purposes
     solutionsummary(task,MSK_STREAM_MSG)
 
-##TAG:begin-getsolutionstatus
     prosta = getprosta(task,MSK_SOL_ITG)
     solsta = getsolsta(task,MSK_SOL_ITG)
-##TAG:end-getsolutionstatus
 
     if solsta == MSK_SOL_STA_INTEGER_OPTIMAL
         # Output a solution
         xx = getxx(task,MSK_SOL_ITG)
         @printf("Optimal solution: %s\n", xx')
-        ##TAG:ASSERT:begin-check-solution
         @assert maximum(abs.(xx-[5.0, 0.0])) < 1e-7
-        ##TAG:ASSERT:end-check-solution
     elseif solsta == MSK_SOL_STA_UNKNOWN
         println("Unknown solution status")
     else
@@ -101,4 +87,3 @@ maketask() do task
     end
 
 end
-##TAG:end-code

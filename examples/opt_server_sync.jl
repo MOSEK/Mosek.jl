@@ -1,5 +1,5 @@
 ##
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
 #  File :      opt_server_sync.jl
 #
@@ -7,7 +7,6 @@
 #              to solve optimization problem synchronously
 ##
 
-##TAG:begin-code
 using Mosek
 
 if length(ARGS) < 2
@@ -40,4 +39,3 @@ else
         end
     end
 end
-##TAG:end-code

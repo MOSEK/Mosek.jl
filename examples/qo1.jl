@@ -1,13 +1,12 @@
 ##
-#   Copyright : Copyright (c) 2022 MOSEK ApS
+#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      qo1.jl
+#   File :      $${file}
 #
 #   Purpose: Demonstrate how to solve a quadratic
 #            optimization problem using the MOSEK Python API.
 ##
 
-##TAG:begin-code
 using Mosek
 using Printf, SparseArrays
 
@@ -51,16 +50,12 @@ maketask() do task
                  A.colptr[1:numvar],A.colptr[2:numvar+1],
                  A.rowval,A.nzval)
 
-##TAG:begin-sparseq
     # Set up and input quadratic objective
     qsubi = [ 1,   2,    3,   3   ]
     qsubj = [ 1,   2,    1,   3   ]
     qval  = [ 2.0, 0.2, -1.0, 2.0 ]
-##TAG:end-sparseq
 
-##TAG:begin-putqobj
     putqobj(task,qsubi,qsubj,qval)
-##TAG:end-putqobj
 
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
 
@@ -77,9 +72,7 @@ maketask() do task
         xx = getxx(task,MSK_SOL_ITR)
         println("Optimal solution:")
         println(xx)
-        ##TAG:ASSERT:begin-check-solution
         @assert maximum(abs.(xx-[0.00015777655846067916, 4.999999955843769, 0.00015779898859216525])) < 1e-5
-        ##TAG:ASSERT:end-check-solution
     elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
                        MSK_SOL_STA_PRIM_INFEAS_CER ]
         println("Primal or dual infeasibility certificate found.\n")
@@ -90,4 +83,3 @@ maketask() do task
     end
 
 end
-##TAG:end-code

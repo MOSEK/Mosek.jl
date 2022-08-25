@@ -1,12 +1,11 @@
 ##
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      opt_server_async.jl
+#  File :      $${file}
 #
 #  Purpose :   Demonstrates how to use MOSEK OptServer
 #              to solve optimization problem asynchronously
 ##
-##TAG:begin-code
 using Mosek
 
 if length(ARGS) < 2
@@ -57,12 +56,10 @@ else
 
             if respavailable
                 println("solution available!")
-                ##TAG:ASSERT:begin-solved-ok
                 if res!=MSK_RES_OK
                     println("Wrong response code from remote server: expected OK, got $res")
                     @assert false
                 end
-                ##TAG:ASSERT:end-solved-ok
 
                 respavailable, res, trm = asyncgetresult(task, addr, "", token)
 
@@ -78,4 +75,3 @@ else
         end
     end
 end
-##TAG:end-code

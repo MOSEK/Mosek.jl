@@ -1,14 +1,12 @@
 
-# Copyright : Copyright (c) 2022 MOSEK ApS
+# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      portfolio_2_frontier.jl
+# File :      $${file}
 #
 # Description :  Implements a basic portfolio optimization model.
 
 using Mosek
 using Printf
-##TAG:begin-code
-##TAG:begin-basic-markowitz
 
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
@@ -22,13 +20,11 @@ function portfolio( mu :: Vector{Float64},
 
         totalBudget = sum(x0)+w
 
-        ##TAG:begin-offsets
         #Offset of variables into the API variable.
         x_ofs = 0
         s_ofs = n
 
         # Constraints offsets
-        ##TAG:end-offsets
         budget_ofs = 0
 
         # Holding variable x of length n
@@ -68,13 +64,11 @@ function portfolio( mu :: Vector{Float64},
             putafefrow(task,i + 2, subj, GT[i,:])
         end
 
-        ##TAG:begin-basic-markowitz-appendaccseq
         # Input the affine conic constraint (alpha, GT*x) \in QCone
         # Add the quadratic domain of dimension k+1
         qdom = appendrquadraticconedomain(task,k + 2)
         # Add the constraint
         appendaccseq(task,qdom,1,zeros(k+2))
-        ##TAG:end-basic-markowitz-appendaccseq
         putaccname(task,1, "risk")
 
 
@@ -89,10 +83,8 @@ function portfolio( mu :: Vector{Float64},
             optimize(task)
             writedata(task,"portfolio_2_frontier-$alpha.ptf")
 
-            ##TAG:begin-solutionsummary
             # Display solution summary for quick inspection of results
             solutionsummary(task,MSK_STREAM_LOG)
-            ##TAG:end-solutionsummary
 
             # Read the results
             r = mu' * getxxslice(task,MSK_SOL_ITR, x_ofs+1,x_ofs+n+1)
@@ -104,8 +96,6 @@ function portfolio( mu :: Vector{Float64},
         (expret,stddev)
     end
 end # portfolio()
-##TAG:end-code
-##TAG:end-basic-markowitz
 
 let w    = 1.0,
     mu   = [0.07197, 0.15518, 0.17535, 0.08981, 0.42896, 0.39292, 0.32171, 0.18379],

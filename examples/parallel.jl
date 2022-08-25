@@ -1,12 +1,11 @@
 
-#   Copyright: Copyright (c) 2022 MOSEK ApS
+#   Copyright: Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File:      parallel.jl
+#   File:      $${file}
 #
 #   Purpose: Demonstrates parallel optimization using optimizebatch()
 
 
-##TAG:begin-paroptexample
 using Mosek
 
 # Example of how to use env.optimizebatch().
@@ -39,4 +38,3 @@ else
         end
     end
 end
-##TAG:end-paroptexample

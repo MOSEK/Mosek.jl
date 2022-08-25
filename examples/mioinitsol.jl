@@ -1,12 +1,10 @@
+# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  Copyright : Copyright (c) 2022 MOSEK ApS
-#
-#  File :      mioinitsol.jl
+# File :      mioinitsol.jl
 #
 # Purpose :   Demonstrates how to solve a MIP with a start guess.
 
 
-##TAG:begin-code
 using Mosek
 
 let numvar = 4,
@@ -46,25 +44,20 @@ let numvar = 4,
                   bkc, blc, buc,
                   bkx, blx, bux)
 
-##TAG:begin-putvartype
         putvartypelist(task,intsub, inttype)
-##TAG:end-putvartype
 
         # A maximization problem
         putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
-##TAG:begin-init-sol
         # Assign values to integer variables
         # We only set that slice of xx
         putxxslice(task,MSK_SOL_ITG, 1, 4, [1.0, 1.0, 0.0])
 
         # Request constructing the solution from integer variable values
         putintparam(task,MSK_IPAR_MIO_CONSTRUCT_SOL, MSK_ON)
-##TAG:end-init-sol
 
         # solve
         optimize(task)
-        writedata(task,"mioinitsol.ptf")
         solutionsummary(task,MSK_STREAM_LOG)
 
         # Read and print solution
@@ -77,18 +70,14 @@ let numvar = 4,
             end
 
             # Was the initial guess used?
-            ##TAG:begin-report-initsol
             constr = getintinf(task,MSK_IINF_MIO_CONSTRUCT_SOLUTION)
             constrVal = getdouinf(task,MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ)
             println("Construct solution utilization: $constr")
             println("Construct solution objective: $constrVal")
-            ##TAG:end-report-initsol
 
-            ##TAG:ASSERT:begin-check-solution
             @assert maximum(abs.(xx-[0.0, 2.0, 0.0, 0.5])) < 1e-7
             @assert abs(constrVal-19.5) < 1e-7
             @assert constr == 1
-            ##TAG:ASSERT:end-check-solution
         else
             println("No integer solution is available.")
         end
@@ -99,4 +88,3 @@ let numvar = 4,
         println("Construct solution objective: $constrVal")
     end
 end
-##TAG:end-code

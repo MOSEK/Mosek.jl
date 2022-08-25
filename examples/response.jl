@@ -1,13 +1,12 @@
 ##
-#  Copyright : Copyright (c) 2022 MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#  File :      response.jl
+#  File :      $${file}
 #
 #  Purpose :   This example demonstrates proper response handling
 #              for problems solved with the interior-point optimizers.
 #
 ##
-##TAG:begin-code
 
 using Mosek
 
@@ -75,4 +74,3 @@ maketask() do task
         println("An unexpected solution status $solsta is obtained.")
     end
 end
-##TAG:end-code

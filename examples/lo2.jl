@@ -1,11 +1,10 @@
-# Copyright : Copyright (c) 2022 MOSEK ApS
+# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      lo2.jl
+# File :      $${file}
 #
 # Purpose :   Demonstrates how to solve a small linear
 #             optimization problem using the MOSEK Java API.
 
-##TAG:begin-code
 using Mosek
 
 
@@ -14,7 +13,6 @@ let numcon = 3,
     NUMANZ = 9,
 
     c = [3.0, 1.0, 5.0, 1.0],
-##TAG:begin-A
     aptrb = [1,4,8],
     aptre = [4,8,10],
     asub = [ 1, 2, 3,
@@ -23,7 +21,6 @@ let numcon = 3,
     aval = [ 3.0, 1.0, 2.0 ,
              2.0, 1.0, 3.0, 1.0,
              2.0, 3.0 ],
-##TAG:end-A
     bkc  = [ MSK_BK_FX,
              MSK_BK_LO,
              MSK_BK_UP ],
@@ -35,7 +32,6 @@ let numcon = 3,
             +Inf,
             25.0
             ],
-##TAG:begin-bx
     bkx  = [ MSK_BK_LO,
              MSK_BK_RA,
              MSK_BK_LO,
@@ -48,12 +44,10 @@ let numcon = 3,
              10.0,
              Inf,
              Inf ]
-##TAG:end-bx
 
     maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
-##TAG:begin-append
         # Append 'numcon' empty constraints.
         # The constraints will initially have no bounds.
         appendcons(task,numcon)
@@ -61,7 +55,6 @@ let numcon = 3,
         # Append 'numvar' variables.
         # The variables will initially be fixed at zero (x=0).
         appendvars(task,numvar)
-##TAG:end-append
 
         for j in 1:numvar
             # Set the linear term c_j in the objective.
@@ -94,15 +87,11 @@ let numcon = 3,
         #   about the solution for debugging purposes
         solutionsummary(task,MSK_STREAM_MSG)
 
-##TAG:begin-getsolutionstatus
-        # Get status information about the solution 
+        # Get status information about the solution
         solsta = getsolsta(task,MSK_SOL_BAS)
-##TAG:end-getsolutionstatus
 
         x = getxx(task,MSK_SOL_BAS) # Basic solution.
-        ##TAG:ASSERT:begin-check-solution
         @assert maximum(abs.(x-[0.0, 0.0, 15.0, 8.333333333333334])) < 1e-7
-        ##TAG:ASSERT:end-check-solution
 
         if solsta == MSK_SOL_STA_OPTIMAL
             println("Optimal primal solution")

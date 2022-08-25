@@ -1,12 +1,11 @@
-#   Copyright : Copyright (c) 2022 MOSEK ApS
+#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      simple.jl
+#   File :      $${file}
 #
 #   Purpose :   Demonstrates a very simple example using MOSEK by
 #               reading a problem file, solving the problem and
 #               writing the problem+solution to a file.
 
-##TAG:begin-code
 using Mosek
 
 if length(ARGS) < 1
@@ -18,11 +17,9 @@ else
         maketask() do task
             putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
-##TAG:begin-readdata
             # We assume that a problem file was given as the first command
             # line argument (received in `args')
             readdata(task,filename)
-##TAG:end-readdata
 
             # Solve the problem
             optimize(task)
@@ -39,11 +36,8 @@ else
                 put_int_param(task,MSK_IPAR_OPF_WRITE_PARAMETERS, MSK_OFF)
                 put_int_param(task,MSK_IPAR_PTF_WRITE_SOLUTIONS,  MSK_ON)
 
-##TAG:begin-writedata
                 write_data(task,outfile)
-##TAG:end-writedata
             end
         end
     end
 end
-##TAG:end-code
