@@ -244,5 +244,7 @@ end
 
 let fname = if length(ARGS) < 1 "../data/25fv47.mps" else ARGS[1] end,
     tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end
-    main(fname,tlimit)
+
+    print("This example has been disabled since it causes memory issues")
+    #main(fname,tlimit)
 end
