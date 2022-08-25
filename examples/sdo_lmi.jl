@@ -56,7 +56,7 @@ let numafe      = 4,  # Number of affine expressions.
             putvarbound(task,j, MSK_BK_FR, -0.0, 0.0)
         end
         # Set the linear term barc_j in the objective.
-        putbarcblocktriplet(task,2, barc_j, barc_k, barc_l, barc_v)
+        putbarcblocktriplet(task,barc_j, barc_k, barc_l, barc_v)
 
         # Set up the affine conic constraints
 
