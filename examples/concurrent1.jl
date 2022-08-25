@@ -231,7 +231,7 @@ function main(fname::String,tlimit)
 end
 
 let fname = if length(ARGS) < 1 "../data/25fv47.mps" else ARGS[1] end,
+    tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end 
     println("Concurrent1 disabled as it causes memory faults")
-    #tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end
     #main(fname,tlimit)
 end

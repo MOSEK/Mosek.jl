@@ -6,7 +6,6 @@
 ##
 
 using Mosek
-using Printf
 
 printstream(msg::AbstractString) = print(msg)
 callback(where,dinf,iinf,liinf) = 0 
@@ -28,7 +27,7 @@ bux = [               Inf,              Inf,              Inf,
                       Inf,              Inf,              Inf ]
 
 asub  = [ 1 ,2, 3 ]
-aval  = [ 1.0, 1.0, 1.0 ]
+aval  = [ 1.0, 1.0, 2.0 ]
 
 numvar = length(bkx)
 numcon = length(bkc)
@@ -84,7 +83,6 @@ maketask() do task
     # Optimize the task
     #optimize(task,"mosek://solve.mosek.com:30080")
     optimize(task)
-    writedata(task,"cqo1.ptf")
     # Print a summary containing information
     # about the solution for debugging purposes
     solutionsummary(task,MSK_STREAM_MSG)
@@ -94,7 +92,7 @@ maketask() do task
     if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
-        printf("Optimal solution: $xx\n")
+        println("Optimal solution: $xx\n")
         @assert maximum(abs.(xx - [0.2609204081408032, 0.2609204081408032, 0.23907959185918956, 0.36899717989264824, 0.1690548006469457, 0.1690548006469457])) < 1e-7
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")

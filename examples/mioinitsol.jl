@@ -4,7 +4,6 @@
 #
 # Purpose :   Demonstrates how to solve a MIP with a start guess.
 
-
 using Mosek
 
 let numvar = 4,

@@ -8,6 +8,6 @@ using Test
 
 include("apitest.jl")
 include("testexamples.jl")
-include("testshow.jl")
+#include("testshow.jl")
 #include("test_mathprogbase.jl")
 include("issues.jl")

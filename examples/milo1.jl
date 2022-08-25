@@ -24,7 +24,8 @@ c   = [       1.0,      0.64 ]
 
 A    = sparse( [ 1, 1, 2, 2],
                [ 1, 2, 1, 2],
-               [ 50.0, 3.0, 31.0, -2.0] )
+               [ 50.0, 31.0,
+                 3.0, -2.0] )
 
 numvar = length(bkx)
 numcon = length(bkc)
@@ -67,6 +68,7 @@ maketask() do task
 
     # Optimize the task
     optimize(task,"mosek://solve.mosek.com:30080")
+    writedata(task,"milo1.ptf")
 
     # Print a summary containing information
     # about the solution for debugging purposes

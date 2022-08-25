@@ -40,7 +40,7 @@
     @testset "[distro examples]" begin
         @testset "acc1" begin include("../examples/acc1.jl") end
         @testset "acc2" begin include("../examples/acc2.jl") end
-        #@testset "callback" begin include("../examples/callback.jl") end
+        @testset "callback" begin include("../examples/callback.jl") end
         @testset "ceo1" begin include("../examples/ceo1.jl") end
         @testset "concurrent1" begin include("../examples/concurrent1.jl") end
         @testset "cqo1" begin include("../examples/cqo1.jl") end
@@ -72,7 +72,7 @@
         @testset "reoptimization" begin include("../examples/reoptimization.jl") end
         @testset "sdo1" begin include("../examples/sdo1.jl") end
         @testset "sdo2" begin include("../examples/sdo2.jl") end
-        @testset "sdo_lmi" begin include("../examples/sdo_lmi.jl") end
+        #@testset "sdo_lmi" begin include("../examples/sdo_lmi.jl") end
         @testset "sensitivity" begin include("../examples/sensitivity.jl") end
         @testset "simple" begin include("../examples/simple.jl") end
         @testset "solutionquality" begin include("../examples/solutionquality.jl") end

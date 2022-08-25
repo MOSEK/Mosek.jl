@@ -128,6 +128,5 @@ hwd = let Aw    = 200.0,
 end
 println("h=$(hwd[1]) w=$(hwd[2]) d=$(hwd[3])\n");
 
-maxgap = lambda a, b: max(abs(x-y) for x,y in zip(a,b))
 @assert maximum(abs.(hwd-[8.164, 4.082, 8.167])) < 1e-3
 
