@@ -34,6 +34,8 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     numbarvar = getnumbarvar(t)
     numcon    = getnumcon(t)
     numcone   = getnumcone(t)
+    numacc    = getnumacc(t)
+    numdjc    = getnumdjc(t)
     numanz    = getnumanz(t)
     numqobjnz = getnumqobjnz(t)
     numqconnz = if numcon > 0 sum(i -> getnumqconknz(t,i),1:numcon) else 0 end
@@ -49,10 +51,12 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
     if numvar == 0 && numcon == 0 && numbarvar == 0
         println(f,"Empty Task")
     else
-        varnames = String[ escapename(getvarname(t,i)) for i in 1:numvar]
+        varnames  = String[ escapename(getvarname(t,i)) for i in 1:numvar]
         barvarnames = String[ escapename(getbarvarname(t,i)) for i in 1:numbarvar]
-        connames = String[ escapename(getconname(t,i)) for i in 1:numcon]
+        connames  = String[ escapename(getconname(t,i)) for i in 1:numcon]
         conenames = String[ escapename(getconename(t,i)) for i in 1:numcone]
+        accnames  = String[ escapename(getaccname(t,i)) for i in 1:numacc]
+        djcnames  = String[ escapename(getdjcname(t,i)) for i in 1:numdjc]
 
         for i in 1:numvar
             if length(varnames[i]) == 0
@@ -75,6 +79,18 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
         for i in 1:numbarvar
             if length(barvarnames[i]) == 0
                 barvarnames[i] = "#X̄$i"
+            end
+        end
+
+        for i in 1:numacc
+            if length(accnames[i]) == 0
+                accnames[i] = "#C$i"
+            end
+        end
+
+        for i in 1:numdjc
+            if length(djcnames[i]) == 0
+                djcnames[i] = "#D$i"
             end
         end
 
@@ -133,7 +149,6 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
             end
         end
 
-
         for idx in barcidx
             if terms < termslimit
                 (barcj,num,sub,w) = getbarcidx(t,idx)
@@ -180,7 +195,7 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
         println(f)
 
         # Constraints
-        if numcon+numcone > 0
+        if numcon+numcone+numacc+numdjc > 0
             println(f,"    Subject to")
 
             for i in 1:limitnumcon
@@ -264,8 +279,8 @@ function showlimited(f::IO, t::Mosek.Task, limit :: Int)
                             elseif domtp == MSK_DOMAIN_RZERO "Zero"
                             elseif domtp == MSK_DOMAIN_RPLUS "Nonnegative"
                             elseif domtp == MSK_DOMAIN_RMINUS "Nonpositive"
-                            elseif domtp == MSK_DOMAIN_INF_NORM_CONE "K_inf"
-                            elseif domtp == MSK_DOMAIN_ONE_NORM_CONE "K_1"
+                            #elseif domtp == MSK_DOMAIN_INF_NORM_CONE "K_inf"
+                            #elseif domtp == MSK_DOMAIN_ONE_NORM_CONE "K_1"
                             elseif domtp == MSK_DOMAIN_QUADRATIC_CONE  "𝒞_q"
                             elseif domtp == MSK_DOMAIN_RQUADRATIC_CONE  "𝒞_qr"
                             elseif domtp == MSK_DOMAIN_PRIMAL_GEO_MEAN_CONE "GeoMean"
