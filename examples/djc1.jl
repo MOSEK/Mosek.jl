@@ -15,6 +15,7 @@ using Mosek
 
 
 maketask() do task
+    putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
     # Append free variables
     numvar = 4
     appendvars(task,numvar)

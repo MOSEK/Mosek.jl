@@ -45,7 +45,7 @@
         @testset "concurrent1" begin include("../examples/concurrent1.jl") end
         @testset "cqo1" begin include("../examples/cqo1.jl") end
         @testset "djc1" begin include("../examples/djc1.jl") end
-        @testset "feasrepairex1" begin include("../examples/feasrepairex1.jl") end
+        @testset "feasrepairex1" begin let ARGS = ["-"]; include("../examples/feasrepairex1.jl") end end
         @testset "gp1" begin include("../examples/gp1.jl") end
         @testset "helloworld" begin include("../examples/helloworld.jl") end
         @testset "lo1" begin include("../examples/lo1.jl") end
