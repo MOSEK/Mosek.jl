@@ -1,5 +1,6 @@
 include("liftedfrombindeps.jl")
 
+
 import WinReg
 
 # define current version:
@@ -80,7 +81,6 @@ function versionFromBindir(bindir ::AbstractString)
     try
         mosekbin = if Sys.iswindows() "mosek.exe" else "mosek" end
         txt = read(`$bindir/$mosekbin`,String)
-        @info(txt)
         m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9])",txt)
         if m == nothing
             return nothing
