@@ -79,5 +79,4 @@
         @testset "solvebasis" begin include("../examples/solvebasis.jl") end
         @testset "solvelinear" begin include("../examples/solvelinear.jl") end
     end
-
 end

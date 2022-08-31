@@ -69,7 +69,7 @@ maketask() do task
     writedata(task,"djc1.ptf")                         # Write file in human-readable format
 
     # Solve the problem
-    optimize(task,)
+    optimize(task)
 
     # Print a summary containing information
     # about the solution for debugging purposes
