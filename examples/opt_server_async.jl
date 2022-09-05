@@ -12,14 +12,16 @@ if length(ARGS) < 2
     println("Missing argument, syntax is:")
     println("  opt_server_async inputfile host:port numpolls [cert]")
 else
+    filename   = ARGS[1]
+    serveraddr = ARGS[2]
+    numpolls   = parse(Int,ARGS[3])
+    cert       = (if length(ARGS) > 3
+                      ARGS[4]
+                  else
+                      Nothing
+                  end)
     token = maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
-
-        inputfile  = ARGS[1]
-        serveraddr = ARGS[2]
-        numpolls   = Int(ARGS[3])
-
-        tlscert    = if length(ARGS) < 4 Nothing else ARGS[4] end
 
         token = Nothing
 
