@@ -33,7 +33,7 @@ else
         end
 
         println("Solve the problem remotely (async)")
-        asyncoptimize(task,addr,"")
+        asyncoptimize(task,serveraddr,"")
     end
 
     println("Task token: '$token'")
@@ -52,7 +52,7 @@ else
             sleep(0.1)
 
             println("poll $i...")
-            respavailable, res, trm = asyncpoll(task, addr, "", token)
+            respavailable, res, trm = asyncpoll(task, serveraddr, "", token)
 
             println("done!")
 
@@ -63,7 +63,7 @@ else
                     @assert false
                 end
 
-                respavailable, res, trm = asyncgetresult(task, addr, "", token)
+                respavailable, res, trm = asyncgetresult(task, serveraddr, "", token)
 
                 solutionsummary(task,MSK_STREAM_LOG)
                 break
@@ -72,7 +72,7 @@ else
 
             if i == numpolls
                 println("max number of polls reached, stopping host.")
-                asyncstop(task,addr,"", token)
+                asyncstop(task,serveraddr,"", token)
             end
         end
     end

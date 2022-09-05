@@ -406,6 +406,7 @@ export
   asyncoptimize,
   asyncstop,
   asyncpoll,
+  asyncgetresult,
   putoptserverhost,
   optimizebatch,
   checkoutlicense,
@@ -15963,6 +15964,36 @@ end
 
 
 """
+  asyncgetresult(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString) :: (respavailable,resp,trm)
+
+  Request a solution from a remote job.
+
+  Arguments
+    task::MSKtask An optimization task.
+    address::AbstractString Address of the OptServer.
+    accesstoken::AbstractString Access token.
+    token::AbstractString The task token.
+  Returns
+    respavailable::Bool Indicates if a remote response is available.
+    resp::Rescode Is the response code from the remote solver.
+    trm::Rescode Is either OK or a termination response code.
+"""
+function asyncgetresult end
+function asyncgetresult(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString)
+  address_ = Vector{UInt8}(address); push!(address_,UInt8(0))
+  accesstoken_ = Vector{UInt8}(accesstoken); push!(accesstoken_,UInt8(0))
+  token_ = Vector{UInt8}(token); push!(token_,UInt8(0))
+  respavailable_ = Ref{Int32}()
+  resp_ = Ref{Int32}()
+  trm_ = Ref{Int32}()
+  @MSK_asyncgetresult(task.task,address_,accesstoken_,token_,respavailable_,resp_,trm_)
+  resp = Rescode(resp_[])
+  trm = Rescode(trm_[])
+  respavailable_[] != 0,resp,trm
+end
+
+
+"""
   putoptserverhost(task::MSKtask,host::AbstractString)
 
   Specify an OptServer for remote calls.
@@ -16326,23 +16357,23 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_690 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_690))
-  @MSK_freeenv(env,perm_[])
   __tmp_691 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_691))
-  @MSK_freeenv(env,diag_[])
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_691))
+  @MSK_freeenv(env,perm_[])
   __tmp_692 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_692))
-  @MSK_freeenv(env,lnzc_[])
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_692))
+  @MSK_freeenv(env,diag_[])
   __tmp_693 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_693))
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_693))
+  @MSK_freeenv(env,lnzc_[])
+  __tmp_694 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_694))
   @MSK_freeenv(env,lptrc_[])
-  __tmp_694 = lensubnval
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_694))
-  @MSK_freeenv(env,lsubc_[])
   __tmp_695 = lensubnval
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_695))
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_695))
+  @MSK_freeenv(env,lsubc_[])
+  __tmp_696 = lensubnval
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_696))
   @MSK_freeenv(env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
