@@ -1,6 +1,8 @@
 export
   putstreamfunc,
-  putcallbackfunc
+  putcallbackfunc,
+  clearcallbackfunc,
+  clearstreamfunc
 
 function msk_stream_callback_wrapper(userdata::Ptr{Nothing}, msg :: Ptr{UInt8})
   f = unsafe_pointer_to_objref(userdata) :: Function
@@ -10,13 +12,14 @@ end
 
 """
     putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)
+    putstreamfunc(e::MSKenv,  whichstream:: Streamtype, f :: Function)
 
 Attach a log printing callback function to a task stream.
 
 - `whichstream` Defines the stream to attach to. `MSK_STREAM_LOG` will catch the combined output from error and message streams.
 - `f` is a function `function(msg::String)`
 """
-function putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)  
+function putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)
   cbfunc = @cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Nothing},Ptr{UInt8}))
   r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Nothing},Int32, Any, Ptr{Nothing}),t.task,whichstream.value,f,cbfunc)
   if r != MSK_RES_OK.value
@@ -26,6 +29,38 @@ function putstreamfunc(t::MSKtask, whichstream:: Streamtype, f :: Function)
   t.userstreamcallbackfunc = f
   nothing
 end
+
+function putstreamfunc(e::MSKenv, whichstream:: Streamtype, f :: Function)
+  cbfunc = @cfunction(msk_stream_callback_wrapper, Int32, (Ptr{Nothing},Ptr{UInt8}))
+  r = @msk_ccall(linkfunctoenvstream,Int32,(Ptr{Nothing},Int32, Any, Ptr{Nothing}),e.env,whichstream.value,f,cbfunc)
+  if r != MSK_RES_OK.value
+    throw(MosekError(r,""))
+  end
+  e.streamcallbackfunc = cbfunc
+  e.userstreamcallbackfunc = f
+  nothing
+end
+
+function clearstreamfunc(t::MSKtask, whichstream:: Streamtype)
+  r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Nothing},Int32, Any, Any),t.task,whichstream.value,Nothing,Nothing)
+  if r != MSK_RES_OK.value
+    throw(MosekError(r,getlasterror(t)))
+  end
+  t.streamcallbackfunc     = Nothing
+  t.userstreamcallbackfunc = Nothing
+  nothing
+end
+function clearstreamfunc(e::MSKenv, whichstream:: Streamtype)
+  r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Nothing},Int32, Any, Any),e.env,whichstream.value,Nothing,Nothing)
+  if r != MSK_RES_OK.value
+    throw(MosekError(r,""))
+  end
+  e.streamcallbackfunc     = Nothing
+  e.userstreamcallbackfunc = Nothing
+  nothing
+end
+
+
 
 
 # MSKcallbackfunc :: ( MSKtask_t, void *, Cint, double *, int32 *, int64 * -> int32 )
@@ -49,7 +84,6 @@ function msk_info_callback_wrapper(t::Ptr{Nothing}, userdata::Ptr{Nothing}, wher
                 task.usercallbackfunc(Callbackcode(where), dinfa, iinfa, liinfa)
             end
         end
-    
     convert(Cint,r)::Cint
 end
 

@@ -20,7 +20,8 @@ end
 
 export
     makeenv, maketask, maketask_ptr,
-    MosekError
+    MosekError,
+    writedatastream
 
 # A macro to make calling C API a little cleaner
 macro msk_ccall(func, args...)
@@ -45,6 +46,7 @@ end
 mutable struct Env
     env::Ptr{Nothing}
     streamcallbackfunc::Any
+    userstreamcallbackfunc:: Any
 end
 
 function msk_info_callback_wrapper end
@@ -128,9 +130,12 @@ const MSKenv  = Env
 # TODO: Support other argument
 """
     makeenv()
+    makeenv(func::Function)
 
-Create a MOSEK environment.
+Create a MOSEK environment, wither create direct for for use with  `do`-syntax.
 """
+function makenv end
+
 function makeenv()
     temp = Array{Ptr{Nothing}}(undef, 1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
@@ -138,14 +143,9 @@ function makeenv()
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
-    Env(temp[1],nothing)
+    Env(temp[1],nothing, nothing)
 end
 
-"""
-    makeenv(func::Function)
-
-Create a MOSEK environment for use with `do`-syntax.
-"""
 function makeenv(func::Function)
     temp = Array{Ptr{Nothing}}(undef,1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
@@ -153,7 +153,7 @@ function makeenv(func::Function)
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
-    env = Env(temp[1],nothing)
+    env = Env(temp[1],nothing, nothing)
 
     try
         func(env)
@@ -219,7 +219,7 @@ function maketask(func :: Function;env::Env = msk_global_env, filename::String =
         func(t)
     finally
         deletetask(t)
-    end    
+    end
 end
 
 maketask(task::Task) = Task(task)
@@ -317,5 +317,26 @@ end
 #export MosekSolver
 
 #include("MosekSolverInterface.jl")
+
+
+function writedatastreamcb(handle :: Ptr{Nothing},
+                           src    :: Ptr{UInt8},
+                           count  :: UInt64)
+    let io = unsafe_pointer_to_objref(handle) :: IO
+        write(io,unsafe_wrap(Vector{UInt8},src,count))
+    end
+    count
+end
+
+function writedatastream(task :: MSKtask, format :: Dataformat, compress :: Compresstype, stream :: IO)
+    let handle = stream,
+        cbfunc = @cfunction(writedatastreamcb, UInt64, (Ptr{Nothing},Ptr{UInt8},UInt64))
+        @MSK_writedatahandle(task.task,cbfunc,handle,format.value,compress.value)
+    end
+end
+
+
+
+
 
 end

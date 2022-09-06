@@ -153,15 +153,6 @@ macro MSK_bktostr(task,bk,str)
      nothing
   end
 end
-macro MSK_callbackcodetostr(code,callbackcodestr)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
-     if res != 0
-       throw(MosekError(res,""))
-     end
-     nothing
-  end
-end
 macro MSK_chgconbound(task,i,lower,finite,value)
   quote
      local res = disable_sigint(()->ccall((:MSK_chgconbound,libmosek),Int32,(Ptr{Nothing},Int32,Int32,Int32,Float64,),$(esc(task)),$(esc(i)),$(esc(lower)),$(esc(finite)),$(esc(value))))
@@ -4027,6 +4018,15 @@ end
 macro MSK_optimizebatch(env,israce,maxtime,numthreads,numtask,task,trmcode,rcode)
   quote
      local res = disable_sigint(()->ccall((:MSK_optimizebatch,libmosek),Int32,(Ptr{Nothing},Int32,Float64,Int32,Int64,Ptr{Ptr{Nothing}},Ptr{Int32},Ptr{Int32},),$(esc(env)),$(esc(israce)),$(esc(maxtime)),$(esc(numthreads)),$(esc(numtask)),$(esc(task)),$(esc(trmcode)),$(esc(rcode))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_callbackcodetostr(code,callbackcodestr)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
      if res != 0
        throw(MosekError(res,""))
      end
