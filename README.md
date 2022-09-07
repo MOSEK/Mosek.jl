@@ -20,8 +20,9 @@ Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Callbacks for information retrival and log output during optimization
 - Interface for the MOSEK general convex solver
 
-MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite),
-QP (quadratic objective, quadratic constraints), and MIP (mixed-integer problems). These can be mixed as follows:
+MOSEK can solve LP (linear), Conic (second order conic, power, exponential
+etc.), SDP (semi-definite), QP (quadratic objective, quadratic constraints),
+and MIP (mixed-integer problems). These can be mixed as follows:
 - LP+CONIC+SDP
 - LP+CONIC+MIP
 
@@ -45,8 +46,8 @@ install from the MOSEK website (www.mosek.com):
 2. If the current `Mosek.jl` installation uses a user-defined MOSEK and this is a valid version, this will be used.
 3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used.
 4. If no usable MOSEK installation is found here, the installer will
-  attempt to download and unpack the latest distro. In this case doing
-  `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
+   attempt to download and unpack the latest distro. In this case doing
+   `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
 
 If the MOSEK distro installation directory is moved it is necessary to rebuild the package using
 ```julia
@@ -91,7 +92,7 @@ is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f rea
 
 If you experience problems installing (in particular on Windows or OS X), you can try to pull the latest revision and see if that works
 ```julia
-Pkg.checkout("Mosek","master")
+Pkg.add(Pkg.PackageSpec(url="https://github.com/mosek/Mosek.jl",rev="master"))
 Pkg.build("Mosek")
 ```
 
@@ -116,8 +117,3 @@ using JuMP, MosekTools
 model = Model(Mosek.Optimizer)
 ```
 
-## `MathProgBase` interface
-
-The legacy [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) wrapper
-for MOSEK is implemented in the `MosekConicInterface.jl`, `MosekLPQCQPInterface.jl`
-and `MosekSolverInterface.jl` files in the `src` folder.
