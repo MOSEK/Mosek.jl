@@ -154,7 +154,7 @@ mskbindir =
         mosekbindir = ENV["MOSEKBINDIR"]
 
         if ! bindirIsCurrentVersion(mosekbindir)
-            error("MOSEKBINDIR ($mosekbindir) does not point to a MOSEK bin directory")
+            error("MOSEKBINDIR ($mosekbindir) does not point to a MOSEK $(mskvmajor).$(mskvminor) bin directory")
         end
         instmethod = "external"
 
