@@ -16042,7 +16042,6 @@ end
     trmcode::Vector{Rescode} The termination code for each task.
     rcode::Vector{Rescode} The response code for each task.
 """
-function optimizebatch end
 function optimizebatch(israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask})
   numtask = Int64(length(task))
   if length(task) < numtask
@@ -16113,7 +16112,6 @@ end
   Arguments
     feature::Feature Feature to check out from the license system.
 """
-function checkoutlicense end
 function checkoutlicense(feature::Feature)
   @MSK_checkoutlicense(Ptr{Nothing}(),feature.value)
   nothing
@@ -16144,7 +16142,6 @@ end
   Arguments
     feature::Feature Feature to check in to the license system.
 """
-function checkinlicense end
 function checkinlicense(feature::Feature)
   @MSK_checkinlicense(Ptr{Nothing}(),feature.value)
   nothing
@@ -16172,7 +16169,6 @@ end
   Check in all unused license features to the license token server.
 
 """
-function checkinall end
 function checkinall()
   @MSK_checkinall(Ptr{Nothing}())
   nothing
@@ -16205,7 +16201,6 @@ end
   Returns
     expiry::Int64 If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
 """
-function expirylicenses end
 function expirylicenses()
   expiry_ = Ref{Int64}()
   @MSK_expirylicenses(Ptr{Nothing}(),expiry_)
@@ -16234,7 +16229,6 @@ end
   Reset the license expiry reporting startpoint.
 
 """
-function resetexpirylicenses end
 function resetexpirylicenses()
   @MSK_resetexpirylicenses(Ptr{Nothing}())
   nothing
@@ -16272,7 +16266,6 @@ end
   Arguments
     longver::Int32 If non-zero, then the intro is slightly longer.
 """
-function echointro end
 function echointro(longver::Int32)
   @MSK_echointro(Ptr{Nothing}(),longver)
   nothing
@@ -16372,7 +16365,6 @@ end
     filename::AbstractString A valid file name.
     append::Int32 If this argument is 0 the file will be overwritten, otherwise it will be appended to.
 """
-function linkfiletostream end
 function linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::Int32)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_linkfiletoenvstream(Ptr{Nothing}(),whichstream.value,filename_,append)
@@ -16417,7 +16409,6 @@ end
   Arguments
     licdebug::Int32 Enable output of license check-out debug information.
 """
-function putlicensedebug end
 function putlicensedebug(licdebug::Int32)
   @MSK_putlicensedebug(Ptr{Nothing}(),licdebug)
   nothing
@@ -16462,7 +16453,6 @@ end
   Arguments
     code::Vector{Int32} A license key string.
 """
-function putlicensecode end
 function putlicensecode(code::Vector{Int32})
   if length(code) < MSK_LICENSE_BUFFER_LENGTH
     throw(BoundsError())
@@ -16507,7 +16497,6 @@ end
   Arguments
     licwait::Int32 Enable waiting for a license.
 """
-function putlicensewait end
 function putlicensewait(licwait::Int32)
   @MSK_putlicensewait(Ptr{Nothing}(),licwait)
   nothing
@@ -16542,7 +16531,6 @@ end
   Arguments
     licensepath::AbstractString A path specifying where to search for the license.
 """
-function putlicensepath end
 function putlicensepath(licensepath::AbstractString)
   licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
   @MSK_putlicensepath(Ptr{Nothing}(),licensepath_)
@@ -16648,7 +16636,6 @@ end
     lsubc::Int32 Row indexes for each column stored in increasing order.
     lvalc::Float64 The values corresponding to row indexed stored in lsubc.
 """
-function computesparsecholesky end
 function computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64})
   n = Int32(min(length(anzc),length(aptrc)))
   anzc_ = anzc
@@ -16767,7 +16754,6 @@ end
     lvalc::Vector{Float64} The value corresponding to row indexed stored lsubc.
     b::Vector{Float64} The right-hand side of linear equation system to be solved as a dense vector.
 """
-function sparsetriangularsolvedense end
 function sparsetriangularsolvedense(transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
   n = Int32(min(length(b),length(lnzc),length(lptrc)))
   if length(lnzc) < n
