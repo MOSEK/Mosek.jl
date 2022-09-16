@@ -1,5 +1,5 @@
 ##
-#  Copyright : MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
 #  File :      ceo1.jl
 #

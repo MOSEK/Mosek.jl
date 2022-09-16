@@ -4,7 +4,7 @@
 #   File :      parameters.jl
 #
 #   Purpose :   Demonstrates a very simple example about how to get/set
-#               parameters with MOSEK Java API
+#               parameters with MOSEK Julia API
 #
 
 using Mosek

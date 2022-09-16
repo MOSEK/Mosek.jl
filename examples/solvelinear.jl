@@ -1,7 +1,8 @@
+#
 #   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File :      solvelinear.java
-#
+#   File :      solvelinear.jl
+##
 #   Purpose :   To demonstrate the usage of MSK_solvewithbasis
 #               when solving the linear system:
 #

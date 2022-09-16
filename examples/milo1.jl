@@ -68,6 +68,7 @@ maketask() do task
 
     # Optimize the task
     optimize(task,"mosek://solve.mosek.com:30080")
+
     writedata(task,"milo1.ptf")
 
     # Print a summary containing information

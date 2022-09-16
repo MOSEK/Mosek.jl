@@ -20,6 +20,7 @@ else
                   else
                       Nothing
                   end)
+
     token = maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 

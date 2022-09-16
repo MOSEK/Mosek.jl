@@ -34,16 +34,16 @@ function portfolio( mu :: Vector{Float64},
         # Setting up variable x
         for j in 1:n
             # Optionally we can give the variables names
-            putvarname(task, x_ofs+j, "x[$(j)]");
+            putvarname(task, x_ofs+j, "x[$(j)]")
             # No short-selling - x^l = 0, x^u = inf
-            putvarbound(task,x_ofs+j, MSK_BK_LO, 0.0, Inf);
+            putvarbound(task,x_ofs+j, MSK_BK_LO, 0.0, Inf)
         end
-        putvarname(task, s_ofs+1, "s");
-        putvarbound(task,s_ofs+1, MSK_BK_FR, -Inf, Inf);
+        putvarname(task, s_ofs+1, "s")
+        putvarbound(task,s_ofs+1, MSK_BK_FR, -Inf, Inf)
 
         # One linear constraint: total budget
-        appendcons(task,1);
-        putconname(task,1,"budget");
+        appendcons(task,1)
+        putconname(task,1,"budget")
         for j in 1:n
             # Coefficients in the first row of A
             putaij(task,budget_ofs+1, x_ofs+j, 1.0)
@@ -51,8 +51,12 @@ function portfolio( mu :: Vector{Float64},
 
         putconbound(task, budget_ofs+1, MSK_BK_FX, totalBudget, totalBudget)
 
-        # Input (alpha, GTx) in the AFE (affine expression) storage
-        # We need k+1 rows
+        # Input (gamma, GTx) in the AFE (affine expression) storage
+        # We build the following F and g for variables [x, s]:
+        #     [0, 1]      [0  ]
+        # F = [0, 0], g = [0.5]
+        #     [GT,0]      [0  ]
+        # We need k+2 rows
         appendafes(task,k + 2)
         # The first affine expression = alpha
         putafefentry(task,1,s_ofs+1,1.0)

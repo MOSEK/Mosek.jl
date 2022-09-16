@@ -1,9 +1,9 @@
 #
-#   Copyright: MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File:      djc1.jl
+#  File :      djc1.jl
 #
-#   Purpose: Demonstrates how to solve the problem with two disjunctions:
+#  Purpose: Demonstrates how to solve the problem with two disjunctions:
 #
 #      minimize    2x0 + x1 + 3x2 + x3
 #      subject to   x0 + x1 + x2 + x3 >= -10
@@ -15,7 +15,6 @@ using Mosek
 
 
 maketask() do task
-    putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
     # Append free variables
     numvar = 4
     appendvars(task,numvar)
