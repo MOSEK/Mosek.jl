@@ -71,7 +71,7 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         println("Optimal solution: $(xx[1:3])")
-        @assert maximum(abs.(x[1:3]-[0.063938, 0.78328, 2.305562])) < 1e-4
+        @assert maximum(abs.(xx[1:3]-[0.063938, 0.78328, 2.305562])) < 1e-4
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
