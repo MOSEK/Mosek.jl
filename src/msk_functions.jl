@@ -16665,25 +16665,25 @@ function computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular:
   @MSK_computesparsecholesky(Ptr{Nothing}(),numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
   __tmp_716 = n
   perm = copy(unsafe_wrap(Array,perm_[],__tmp_716))
-  @MSK_freeenv(env.env,perm_[])
+  @MSK_freeenv(Ptr{Nothing}(),perm_[])
   perm .+= 1
   __tmp_717 = n
   diag = copy(unsafe_wrap(Array,diag_[],__tmp_717))
-  @MSK_freeenv(env.env,diag_[])
+  @MSK_freeenv(Ptr{Nothing}(),diag_[])
   __tmp_718 = n
   lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_718))
-  @MSK_freeenv(env.env,lnzc_[])
+  @MSK_freeenv(Ptr{Nothing}(),lnzc_[])
   __tmp_719 = n
   lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_719))
-  @MSK_freeenv(env.env,lptrc_[])
+  @MSK_freeenv(Ptr{Nothing}(),lptrc_[])
   lptrc .+= 1
   __tmp_720 = lensubnval_[]
   lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_720))
-  @MSK_freeenv(env.env,lsubc_[])
+  @MSK_freeenv(Ptr{Nothing}(),lsubc_[])
   lsubc .+= 1
   __tmp_721 = lensubnval_[]
   lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_721))
-  @MSK_freeenv(env.env,lvalc_[])
+  @MSK_freeenv(Ptr{Nothing}(),lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
 function computesparsecholesky(numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where { T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number} }
