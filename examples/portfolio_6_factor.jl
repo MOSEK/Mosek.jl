@@ -12,6 +12,7 @@ function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
                     w  :: Float64,
                     gammas :: Vector{Float64},
+                    theta :: Vector{Float64},
                     GT :: Array{Float64,2})
     (k,n) = size(GT)
     maketask() do task
@@ -118,7 +119,7 @@ let w  = 1.0,
     G = [ BP S_sqrt_theta ],
     GT = Matrix(G') # 10 x 8
 
-    for (gamma,expret) in portfolio(mu,x0,w,gammas,GT)
+    for (gamma,expret) in portfolio(mu,x0,w,gammas,theta,GT)
         println("Expected return $expret for gamma $gamma");
     end
 
