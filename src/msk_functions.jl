@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.18
+# Target: Mosek 10.1.0
 export
   analyzeproblem,
   analyzenames,
@@ -16028,6 +16028,44 @@ end
 
 
 """
+  optimizebatch(israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask}) :: (trmcode,rcode)
+  optimizebatch(israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where {T0<:Number,T1<:Integer}  :: (trmcode,rcode)
+
+  Optimize a number of tasks in parallel using a specified number of threads.
+
+  Arguments
+    israce::Bool If nonzero, then the function is terminated after the first task has been completed.
+    maxtime::Float64 Time limit for the function.
+    numthreads::Int32 Number of threads to be employed.
+    task::Vector{MSKtask} An array of tasks to optimize in parallel.
+  Returns
+    trmcode::Vector{Rescode} The termination code for each task.
+    rcode::Vector{Rescode} The response code for each task.
+"""
+function optimizebatch end
+function optimizebatch(israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask})
+  numtask = Int64(length(task))
+  if length(task) < numtask
+    throw(BoundsError())
+  end
+  task_ = Ptr{Nothing}[item.task for item in task]
+  trmcode_ = Vector{Int32}(undef,numtask)
+  rcode_ = Vector{Int32}(undef,numtask)
+  @MSK_optimizebatch(Ptr{Nothing}(),israce,maxtime,numthreads,numtask,task_,trmcode_,rcode_)
+  trmcode = Rescode[Rescode(item) for item in trmcode_]
+  rcode = Rescode[Rescode(item) for item in rcode_]
+  trmcode,rcode
+end
+function optimizebatch(israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where { T0<:Number,T1<:Integer }
+  optimizebatch(
+    israce,
+    convert(Float64,maxtime),
+    convert(Int32,numthreads),
+    task)
+end
+
+
+"""
   callbackcodetostr(code::Callbackcode) :: callbackcodestr
 
   Obtains a callback code string identifier.
@@ -16068,6 +16106,21 @@ end
 
 
 """
+  checkoutlicense(feature::Feature)
+
+  Check out a license feature from the license server ahead of time.
+
+  Arguments
+    feature::Feature Feature to check out from the license system.
+"""
+function checkoutlicense end
+function checkoutlicense(feature::Feature)
+  @MSK_checkoutlicense(Ptr{Nothing}(),feature.value)
+  nothing
+end
+
+
+"""
   checkinlicense(env::MSKenv,feature::Feature)
 
   Check in a license feature back to the license server ahead of time.
@@ -16084,6 +16137,21 @@ end
 
 
 """
+  checkinlicense(feature::Feature)
+
+  Check in a license feature back to the license server ahead of time.
+
+  Arguments
+    feature::Feature Feature to check in to the license system.
+"""
+function checkinlicense end
+function checkinlicense(feature::Feature)
+  @MSK_checkinlicense(Ptr{Nothing}(),feature.value)
+  nothing
+end
+
+
+"""
   checkinall(env::MSKenv)
 
   Check in all unused license features to the license token server.
@@ -16094,6 +16162,19 @@ end
 function checkinall end
 function checkinall(env::MSKenv)
   @MSK_checkinall(env.env)
+  nothing
+end
+
+
+"""
+  checkinall()
+
+  Check in all unused license features to the license token server.
+
+"""
+function checkinall end
+function checkinall()
+  @MSK_checkinall(Ptr{Nothing}())
   nothing
 end
 
@@ -16117,6 +16198,22 @@ end
 
 
 """
+  expirylicenses() :: expiry
+
+  Reports when the first license feature expires.
+
+  Returns
+    expiry::Int64 If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
+"""
+function expirylicenses end
+function expirylicenses()
+  expiry_ = Ref{Int64}()
+  @MSK_expirylicenses(Ptr{Nothing}(),expiry_)
+  expiry_[]
+end
+
+
+"""
   resetexpirylicenses(env::MSKenv)
 
   Reset the license expiry reporting startpoint.
@@ -16127,6 +16224,19 @@ end
 function resetexpirylicenses end
 function resetexpirylicenses(env::MSKenv)
   @MSK_resetexpirylicenses(env.env)
+  nothing
+end
+
+
+"""
+  resetexpirylicenses()
+
+  Reset the license expiry reporting startpoint.
+
+"""
+function resetexpirylicenses end
+function resetexpirylicenses()
+  @MSK_resetexpirylicenses(Ptr{Nothing}())
   nothing
 end
 
@@ -16150,6 +16260,25 @@ function echointro(env::MSKenv,longver::T0) where { T0<:Integer }
   echointro(
     env,
     convert(Int32,longver))
+end
+
+
+"""
+  echointro(longver::Int32)
+  echointro(longver::T0) where {T0<:Integer} 
+
+  Prints an intro to message stream.
+
+  Arguments
+    longver::Int32 If non-zero, then the intro is slightly longer.
+"""
+function echointro end
+function echointro(longver::Int32)
+  @MSK_echointro(Ptr{Nothing}(),longver)
+  nothing
+end
+function echointro(longver::T0) where { T0<:Integer }
+  echointro(convert(Int32,longver))
 end
 
 
@@ -16233,6 +16362,31 @@ end
 
 
 """
+  linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::Int32)
+  linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::T0) where {T0<:Integer} 
+
+  Directs all output from a stream to a file.
+
+  Arguments
+    whichstream::Streamtype Index of the stream.
+    filename::AbstractString A valid file name.
+    append::Int32 If this argument is 0 the file will be overwritten, otherwise it will be appended to.
+"""
+function linkfiletostream end
+function linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::Int32)
+  filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
+  @MSK_linkfiletoenvstream(Ptr{Nothing}(),whichstream.value,filename_,append)
+  nothing
+end
+function linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::T0) where { T0<:Integer }
+  linkfiletostream(
+    whichstream,
+    filename,
+    convert(Int32,append))
+end
+
+
+"""
   putlicensedebug(env::MSKenv,licdebug::Int32)
   putlicensedebug(env::MSKenv,licdebug::T0) where {T0<:Integer} 
 
@@ -16251,6 +16405,25 @@ function putlicensedebug(env::MSKenv,licdebug::T0) where { T0<:Integer }
   putlicensedebug(
     env,
     convert(Int32,licdebug))
+end
+
+
+"""
+  putlicensedebug(licdebug::Int32)
+  putlicensedebug(licdebug::T0) where {T0<:Integer} 
+
+  Enables debug information for the license system.
+
+  Arguments
+    licdebug::Int32 Enable output of license check-out debug information.
+"""
+function putlicensedebug end
+function putlicensedebug(licdebug::Int32)
+  @MSK_putlicensedebug(Ptr{Nothing}(),licdebug)
+  nothing
+end
+function putlicensedebug(licdebug::T0) where { T0<:Integer }
+  putlicensedebug(convert(Int32,licdebug))
 end
 
 
@@ -16281,6 +16454,29 @@ end
 
 
 """
+  putlicensecode(code::Vector{Int32})
+  putlicensecode(code::T0) where {T0<:AbstractVector{<:Integer}} 
+
+  Input a runtime license code.
+
+  Arguments
+    code::Vector{Int32} A license key string.
+"""
+function putlicensecode end
+function putlicensecode(code::Vector{Int32})
+  if length(code) < MSK_LICENSE_BUFFER_LENGTH
+    throw(BoundsError())
+  end
+  code_ = code
+  @MSK_putlicensecode(Ptr{Nothing}(),code_)
+  nothing
+end
+function putlicensecode(code::T0) where { T0<:AbstractVector{<:Integer} }
+  putlicensecode(convert(Vector{Int32},code))
+end
+
+
+"""
   putlicensewait(env::MSKenv,licwait::Int32)
   putlicensewait(env::MSKenv,licwait::T0) where {T0<:Integer} 
 
@@ -16303,6 +16499,25 @@ end
 
 
 """
+  putlicensewait(licwait::Int32)
+  putlicensewait(licwait::T0) where {T0<:Integer} 
+
+  Control whether mosek should wait for an available license if no license is available.
+
+  Arguments
+    licwait::Int32 Enable waiting for a license.
+"""
+function putlicensewait end
+function putlicensewait(licwait::Int32)
+  @MSK_putlicensewait(Ptr{Nothing}(),licwait)
+  nothing
+end
+function putlicensewait(licwait::T0) where { T0<:Integer }
+  putlicensewait(convert(Int32,licwait))
+end
+
+
+"""
   putlicensepath(env::MSKenv,licensepath::AbstractString)
 
   Set the path to the license file.
@@ -16315,6 +16530,22 @@ function putlicensepath end
 function putlicensepath(env::MSKenv,licensepath::AbstractString)
   licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
   @MSK_putlicensepath(env.env,licensepath_)
+  nothing
+end
+
+
+"""
+  putlicensepath(licensepath::AbstractString)
+
+  Set the path to the license file.
+
+  Arguments
+    licensepath::AbstractString A path specifying where to search for the license.
+"""
+function putlicensepath end
+function putlicensepath(licensepath::AbstractString)
+  licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
+  @MSK_putlicensepath(Ptr{Nothing}(),licensepath_)
   nothing
 end
 
@@ -16358,32 +16589,105 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_691 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_691))
+  __tmp_709 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_709))
   @MSK_freeenv(env.env,perm_[])
   perm .+= 1
-  __tmp_692 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_692))
+  __tmp_710 = n
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_710))
   @MSK_freeenv(env.env,diag_[])
-  __tmp_693 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_693))
+  __tmp_711 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_711))
   @MSK_freeenv(env.env,lnzc_[])
-  __tmp_694 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_694))
+  __tmp_712 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_712))
   @MSK_freeenv(env.env,lptrc_[])
   lptrc .+= 1
-  __tmp_695 = lensubnval_[]
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_695))
+  __tmp_713 = lensubnval_[]
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_713))
   @MSK_freeenv(env.env,lsubc_[])
   lsubc .+= 1
-  __tmp_696 = lensubnval_[]
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_696))
+  __tmp_714 = lensubnval_[]
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_714))
   @MSK_freeenv(env.env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
 function computesparsecholesky(env::MSKenv,numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where { T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number} }
   computesparsecholesky(
     env,
+    convert(Int32,numthreads),
+    convert(Int32,ordermethod),
+    convert(Float64,tolsingular),
+    convert(Vector{Int32},anzc),
+    convert(Vector{Int64},aptrc),
+    convert(Vector{Int32},asubc),
+    convert(Vector{Float64},avalc))
+end
+
+
+"""
+  computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64}) :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+  computesparsecholesky(numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}}  :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+
+  Computes a Cholesky factorization of sparse matrix.
+
+  Arguments
+    numthreads::Int32 The number threads that can be used to do the computation. 0 means the code makes the choice.
+    ordermethod::Int32 If nonzero, then a sparsity preserving ordering will be employed.
+    tolsingular::Float64 A positive parameter controlling when a pivot is declared zero.
+    anzc::Vector{Int32} anzc[j] is the number of nonzeros in the jth column of A.
+    aptrc::Vector{Int64} aptrc[j] is a pointer to the first element in column j.
+    asubc::Vector{Int32} Row indexes for each column stored in increasing order.
+    avalc::Vector{Float64} The value corresponding to row indexed stored in asubc.
+  Returns
+    perm::Int32 Permutation array used to specify the permutation matrix P computed by the function.
+    diag::Float64 The diagonal elements of matrix D.
+    lnzc::Int32 lnzc[j] is the number of non zero elements in column j.
+    lptrc::Int64 lptrc[j] is a pointer to the first row index and value in column j.
+    lensubnval::Int64 Number of elements in lsubc and lvalc.
+    lsubc::Int32 Row indexes for each column stored in increasing order.
+    lvalc::Float64 The values corresponding to row indexed stored in lsubc.
+"""
+function computesparsecholesky end
+function computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64})
+  n = Int32(min(length(anzc),length(aptrc)))
+  anzc_ = anzc
+  aptrc_ = aptrc
+  asubc_ = asubc
+  avalc_ = avalc
+  perm_ = Ref{Ptr{Int32}}()
+  diag_ = Ref{Ptr{Float64}}()
+  lnzc_ = Ref{Ptr{Int32}}()
+  lptrc_ = Ref{Ptr{Int64}}()
+  lensubnval_ = Ref{Int64}()
+  lsubc_ = Ref{Ptr{Int32}}()
+  lvalc_ = Ref{Ptr{Float64}}()
+  @MSK_computesparsecholesky(Ptr{Nothing}(),numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
+  __tmp_716 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_716))
+  @MSK_freeenv(env.env,perm_[])
+  perm .+= 1
+  __tmp_717 = n
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_717))
+  @MSK_freeenv(env.env,diag_[])
+  __tmp_718 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_718))
+  @MSK_freeenv(env.env,lnzc_[])
+  __tmp_719 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_719))
+  @MSK_freeenv(env.env,lptrc_[])
+  lptrc .+= 1
+  __tmp_720 = lensubnval_[]
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_720))
+  @MSK_freeenv(env.env,lsubc_[])
+  lsubc .+= 1
+  __tmp_721 = lensubnval_[]
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_721))
+  @MSK_freeenv(env.env,lvalc_[])
+  perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
+end
+function computesparsecholesky(numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where { T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number} }
+  computesparsecholesky(
     convert(Int32,numthreads),
     convert(Int32,ordermethod),
     convert(Float64,tolsingular),
@@ -16440,6 +16744,59 @@ end
 function sparsetriangularsolvedense(env::MSKenv,transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
   sparsetriangularsolvedense(
     env,
+    transposed,
+    convert(Vector{Int32},lnzc),
+    convert(Vector{Int64},lptrc),
+    convert(Vector{Int32},lsubc),
+    convert(Vector{Float64},lvalc),
+    b)
+end
+
+
+"""
+  sparsetriangularsolvedense(transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
+  sparsetriangularsolvedense(transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+  Solves a sparse triangular system of linear equations.
+
+  Arguments
+    transposed::Transpose Controls whether the solve is with L or the transposed L.
+    lnzc::Vector{Int32} lnzc[j] is the number of nonzeros in column j.
+    lptrc::Vector{Int64} lptrc[j] is a pointer to the first row index and value in column j.
+    lsubc::Vector{Int32} Row indexes for each column stored sequentially.
+    lvalc::Vector{Float64} The value corresponding to row indexed stored lsubc.
+    b::Vector{Float64} The right-hand side of linear equation system to be solved as a dense vector.
+"""
+function sparsetriangularsolvedense end
+function sparsetriangularsolvedense(transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
+  n = Int32(min(length(b),length(lnzc),length(lptrc)))
+  if length(lnzc) < n
+    throw(BoundsError())
+  end
+  lnzc_ = lnzc
+  if length(lptrc) < n
+    throw(BoundsError())
+  end
+  lptrc_ = lptrc
+  lensubnval = Int64(min(length(lsubc),length(lvalc)))
+  if length(lsubc) < lensubnval
+    throw(BoundsError())
+  end
+  lsubc_ = lsubc
+  if length(lvalc) < lensubnval
+    throw(BoundsError())
+  end
+  lvalc_ = lvalc
+  if length(b) < n
+    throw(BoundsError())
+  end
+  b_ = b
+  @MSK_sparsetriangularsolvedense(Ptr{Nothing}(),transposed.value,n,lnzc_,lptrc_,lensubnval,lsubc_,lvalc_,b_)
+  b[:] = b_
+  nothing
+end
+function sparsetriangularsolvedense(transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
+  sparsetriangularsolvedense(
     transposed,
     convert(Vector{Int32},lnzc),
     convert(Vector{Int64},lptrc),
