@@ -1,7 +1,7 @@
 #
 # Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      logistic.jl
+# File :      logistics.jl
 #
 # Purpose: Implements logistic regression with regulatization.
 #
