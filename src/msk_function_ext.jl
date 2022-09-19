@@ -10,24 +10,27 @@ function optimize(task:: MSKtask, fallback :: String)
                else
                  nothing
                end)
-    licfile = nothing
 
     if licfile == nothing
-        m = match(r"\(mosek\|http\|https\)://([a-zA-Z-]+(\.[a-zA-Z-]+)*)(:([0-9]+))?$",fallback)
+        m = match(r"((mosek|http|https)://)?([a-zA-Z-]+(\.[a-zA-Z-]+)*)(:([0-9]+))?$",fallback)
         if m == nothing
             error("Invalid server specification $fallback")
         else
-            protocol = m.captures[1]
-            server = m.captures[2]
-            port   = m.captures[5]
-
-            if protocol == "mosek"
-                protocol = "http"
+            protocol = if m[2] === nothing || m[2] == "mosek"
+                "http"
+            else
+                m[2]
+            end
+            server = m[3]
+            port   = if m[5] === nothing
+                "30080"
+            else
+                m[6]
             end
 
             putoptserverhost(task,"$protocol://$server:$port")
             try
-                optimizermt(task,server,port)
+                optimize(task)
             finally
                 clearoptserverhost(task)
             end
