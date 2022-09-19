@@ -2,8 +2,6 @@ __precompile__()
 module Mosek
 using SparseArrays
 
-
-
 if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
 else
