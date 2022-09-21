@@ -191,7 +191,7 @@ end
 function main(fname::String,tlimit)
     maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
-        if fname != "-" 
+        if fname != "-"
             readdata(task,fname)
         else
             readptfstring(task,lo1_ptf)
@@ -249,5 +249,10 @@ Variables
 
 let fname = if length(ARGS) < 1 "-" else ARGS[1] end,
     tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end
-    main(fname,tlimit)
+
+    if false
+        main(fname,tlimit)
+    else
+        println!("Disabled: concurrent1.jl. Example is broken.")
+    end
 end

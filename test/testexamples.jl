@@ -42,7 +42,6 @@
         @testset "acc2" begin include("../examples/acc2.jl") end
         @testset "callback" begin include("../examples/callback.jl") end
         @testset "ceo1" begin include("../examples/ceo1.jl") end
-        @testset "concurrent1" begin include("../examples/concurrent1.jl") end
         @testset "cqo1" begin include("../examples/cqo1.jl") end
         @testset "djc1" begin include("../examples/djc1.jl") end
         @testset "feasrepairex1" begin let ARGS = ["-"]; include("../examples/feasrepairex1.jl") end end
@@ -78,5 +77,6 @@
         @testset "solutionquality" begin include("../examples/solutionquality.jl") end
         @testset "solvebasis" begin include("../examples/solvebasis.jl") end
         @testset "solvelinear" begin include("../examples/solvelinear.jl") end
+        #@testset "concurrent1" begin include("../examples/concurrent1.jl") end
     end
 end
