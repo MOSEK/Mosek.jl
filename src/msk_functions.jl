@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.18
+# Target: Mosek 10.0.26
 export
   analyzeproblem,
   analyzenames,
@@ -6429,7 +6429,7 @@ end
 
 """
   putconname(task::MSKtask,i::Int32,name::AbstractString)
-  putconname(task::MSKtask,i::T0,name::AbstractString) where {T0<:Integer} 
+  putconname(task::MSKtask,i::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of a constraint.
 
@@ -6444,7 +6444,7 @@ function putconname(task::MSKtask,i::Int32,name::AbstractString)
   @MSK_putconname(task.task,i-Int32(1),name_)
   nothing
 end
-function putconname(task::MSKtask,i::T0,name::AbstractString) where { T0<:Integer }
+function putconname(task::MSKtask,i::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putconname(
     task,
     convert(Int32,i),
@@ -6454,7 +6454,7 @@ end
 
 """
   putvarname(task::MSKtask,j::Int32,name::AbstractString)
-  putvarname(task::MSKtask,j::T0,name::AbstractString) where {T0<:Integer} 
+  putvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of a variable.
 
@@ -6469,7 +6469,7 @@ function putvarname(task::MSKtask,j::Int32,name::AbstractString)
   @MSK_putvarname(task.task,j-Int32(1),name_)
   nothing
 end
-function putvarname(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integer }
+function putvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putvarname(
     task,
     convert(Int32,j),
@@ -6479,7 +6479,7 @@ end
 
 """
   putconename(task::MSKtask,j::Int32,name::AbstractString)
-  putconename(task::MSKtask,j::T0,name::AbstractString) where {T0<:Integer} 
+  putconename(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of a cone.
 
@@ -6494,7 +6494,7 @@ function putconename(task::MSKtask,j::Int32,name::AbstractString)
   @MSK_putconename(task.task,j-Int32(1),name_)
   nothing
 end
-function putconename(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integer }
+function putconename(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putconename(
     task,
     convert(Int32,j),
@@ -6504,7 +6504,7 @@ end
 
 """
   putbarvarname(task::MSKtask,j::Int32,name::AbstractString)
-  putbarvarname(task::MSKtask,j::T0,name::AbstractString) where {T0<:Integer} 
+  putbarvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of a semidefinite variable.
 
@@ -6519,7 +6519,7 @@ function putbarvarname(task::MSKtask,j::Int32,name::AbstractString)
   @MSK_putbarvarname(task.task,j-Int32(1),name_)
   nothing
 end
-function putbarvarname(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integer }
+function putbarvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putbarvarname(
     task,
     convert(Int32,j),
@@ -6529,7 +6529,7 @@ end
 
 """
   putdomainname(task::MSKtask,domidx::Int64,name::AbstractString)
-  putdomainname(task::MSKtask,domidx::T0,name::AbstractString) where {T0<:Integer} 
+  putdomainname(task::MSKtask,domidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of a domain.
 
@@ -6544,7 +6544,7 @@ function putdomainname(task::MSKtask,domidx::Int64,name::AbstractString)
   @MSK_putdomainname(task.task,domidx-Int64(1),name_)
   nothing
 end
-function putdomainname(task::MSKtask,domidx::T0,name::AbstractString) where { T0<:Integer }
+function putdomainname(task::MSKtask,domidx::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putdomainname(
     task,
     convert(Int64,domidx),
@@ -6554,7 +6554,7 @@ end
 
 """
   putdjcname(task::MSKtask,djcidx::Int64,name::AbstractString)
-  putdjcname(task::MSKtask,djcidx::T0,name::AbstractString) where {T0<:Integer} 
+  putdjcname(task::MSKtask,djcidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of a disjunctive constraint.
 
@@ -6569,7 +6569,7 @@ function putdjcname(task::MSKtask,djcidx::Int64,name::AbstractString)
   @MSK_putdjcname(task.task,djcidx-Int64(1),name_)
   nothing
 end
-function putdjcname(task::MSKtask,djcidx::T0,name::AbstractString) where { T0<:Integer }
+function putdjcname(task::MSKtask,djcidx::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putdjcname(
     task,
     convert(Int64,djcidx),
@@ -6579,7 +6579,7 @@ end
 
 """
   putaccname(task::MSKtask,accidx::Int64,name::AbstractString)
-  putaccname(task::MSKtask,accidx::T0,name::AbstractString) where {T0<:Integer} 
+  putaccname(task::MSKtask,accidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
   Sets the name of an affine conic constraint.
 
@@ -6594,7 +6594,7 @@ function putaccname(task::MSKtask,accidx::Int64,name::AbstractString)
   @MSK_putaccname(task.task,accidx-Int64(1),name_)
   nothing
 end
-function putaccname(task::MSKtask,accidx::T0,name::AbstractString) where { T0<:Integer }
+function putaccname(task::MSKtask,accidx::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putaccname(
     task,
     convert(Int64,accidx),
@@ -7030,7 +7030,7 @@ end
 
 """
   getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::Int32) :: (len,parvalue)
-  getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::T0) where {T0<:Integer}  :: (len,parvalue)
+  getnastrparam(task::MSKtask,paramname::Union{Nothing,AbstractString},sizeparamname::T0) where {T0<:Integer}  :: (len,parvalue)
 
   Obtains a string parameter.
 
@@ -7056,7 +7056,7 @@ function getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::In
   end
   len_[],parvalue
 end
-function getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::T0) where { T0<:Integer }
+function getnastrparam(task::MSKtask,paramname::Union{Nothing,AbstractString},sizeparamname::T0) where { T0<:Integer }
   getnastrparam(
     task,
     paramname,
@@ -10129,7 +10129,7 @@ end
 
 """
   linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::Int32)
-  linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::T0) where {T0<:Integer} 
+  linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where {T0<:Integer} 
 
   Directs all output from a task stream to a file.
 
@@ -10145,7 +10145,7 @@ function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::Abstra
   @MSK_linkfiletotaskstream(task.task,whichstream.value,filename_,append)
   nothing
 end
-function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::T0) where { T0<:Integer }
+function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where { T0<:Integer }
   linkfiletostream(
     task,
     whichstream,
@@ -10213,7 +10213,7 @@ end
 """
   infeasibilityreport(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
 
-  TBD
+  Prints the infeasibility report to an output stream.
 
   Arguments
     task::MSKtask An optimization task.
@@ -14588,7 +14588,7 @@ end
 
 """
   putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::Float64)
-  putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where {T0<:Number} 
+  putnadouparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where {T0<:Number} 
 
   Sets a double parameter.
 
@@ -14603,7 +14603,7 @@ function putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::Float64
   @MSK_putnadouparam(task.task,paramname_,parvalue)
   nothing
 end
-function putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where { T0<:Number }
+function putnadouparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where { T0<:Number }
   putnadouparam(
     task,
     paramname,
@@ -14613,7 +14613,7 @@ end
 
 """
   putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::Int32)
-  putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where {T0<:Integer} 
+  putnaintparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where {T0<:Integer} 
 
   Sets an integer parameter.
 
@@ -14628,7 +14628,7 @@ function putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::Int32)
   @MSK_putnaintparam(task.task,paramname_,parvalue)
   nothing
 end
-function putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where { T0<:Integer }
+function putnaintparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where { T0<:Integer }
   putnaintparam(
     task,
     paramname,
@@ -15251,7 +15251,7 @@ end
 
 """
   checkmem(task::MSKtask,file::AbstractString,line::Int32)
-  checkmem(task::MSKtask,file::AbstractString,line::T0) where {T0<:Integer} 
+  checkmem(task::MSKtask,file::Union{Nothing,AbstractString},line::T0) where {T0<:Integer} 
 
   Checks the memory allocated by the task.
 
@@ -15266,7 +15266,7 @@ function checkmem(task::MSKtask,file::AbstractString,line::Int32)
   @MSK_checkmemtask(task.task,file_,line)
   nothing
 end
-function checkmem(task::MSKtask,file::AbstractString,line::T0) where { T0<:Integer }
+function checkmem(task::MSKtask,file::Union{Nothing,AbstractString},line::T0) where { T0<:Integer }
   checkmem(
     task,
     file,
@@ -15493,7 +15493,7 @@ end
   Arguments
     task::MSKtask An optimization task.
     filename::AbstractString A valid file name.
-    compress::Compresstype 
+    compress::Compresstype Data compression type.
 """
 function writebsolution end
 function writebsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
@@ -15511,7 +15511,7 @@ end
   Arguments
     task::MSKtask An optimization task.
     filename::AbstractString A valid file name.
-    compress::Compresstype 
+    compress::Compresstype Data compression type.
 """
 function readbsolution end
 function readbsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
@@ -16093,7 +16093,7 @@ end
 
 """
   linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::Int32)
-  linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::T0) where {T0<:Integer} 
+  linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where {T0<:Integer} 
 
   Directs all output from a stream to a file.
 
@@ -16109,7 +16109,7 @@ function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::Abstract
   @MSK_linkfiletoenvstream(env.env,whichstream.value,filename_,append)
   nothing
 end
-function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::T0) where { T0<:Integer }
+function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where { T0<:Integer }
   linkfiletostream(
     env,
     whichstream,
