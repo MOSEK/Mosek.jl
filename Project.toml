@@ -1,7 +1,7 @@
 name = "Mosek"
 uuid = "6405355b-0ac2-5fba-af84-adbd65488c0e"
 repo = "https://github.com/JuliaOpt/Mosek.jl.git"
-version = "10.0.1"
+version = "10.0.2"
 
 [deps]
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
