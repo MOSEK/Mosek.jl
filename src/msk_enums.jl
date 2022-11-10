@@ -3487,7 +3487,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_OPTIMIZER_MAX_TIME`. Solver time limit.
 * `MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP`. Absolute tolerance employed by the linear dependency checker.
 * `MSK_DPAR_PRESOLVE_TOL_AIJ`. Absolute zero tolerance employed for constraint coefficients in the presolve.
-* `MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION`. The presolve is allowed to perturbe a bound on a constraint or variable by this amount if it removes an infeasibility.
+* `MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION`. The presolve is allowed to perturb a bound on a constraint or variable by this amount if it removes an infeasibility.
 * `MSK_DPAR_PRESOLVE_TOL_REL_LINDEP`. Relative tolerance employed by the linear dependency checker.
 * `MSK_DPAR_PRESOLVE_TOL_S`. Absolute zero tolerance employed for slack variables in the presolve.
 * `MSK_DPAR_PRESOLVE_TOL_X`. Absolute zero tolerance employed for variables in the presolve.
@@ -3983,7 +3983,7 @@ Possible Values: Any number between 1.0e-15 and +inf.
 const MSK_DPAR_PRESOLVE_TOL_AIJ = Dparam(50)
 
 """
-The presolve is allowed to perturbe a bound on a constraint or variable by this amount if it removes an infeasibility.
+The presolve is allowed to perturb a bound on a constraint or variable by this amount if it removes an infeasibility.
 
 Default value: `1.0e-6`
 
@@ -5553,7 +5553,7 @@ Possible values:
 * `MSK_ORDER_METHOD_EXPERIMENTAL`. This option should not be used.
 * `MSK_ORDER_METHOD_TRY_GRAPHPAR`. Always try the graph partitioning based ordering.
 * `MSK_ORDER_METHOD_FORCE_GRAPHPAR`. Always use the graph partitioning based ordering even if it is worse than the approximate minimum local fill ordering.
-* `MSK_ORDER_METHOD_NONE`. No ordering is used.
+* `MSK_ORDER_METHOD_NONE`. No ordering is used. Note using this value almost always leads to a significantly slow down.
 """
 const MSK_IPAR_INTPNT_ORDER_METHOD = Iparam(24)
 
@@ -8163,7 +8163,7 @@ Ordering strategies
 * `MSK_ORDER_METHOD_EXPERIMENTAL`. This option should not be used.
 * `MSK_ORDER_METHOD_TRY_GRAPHPAR`. Always try the graph partitioning based ordering.
 * `MSK_ORDER_METHOD_FORCE_GRAPHPAR`. Always use the graph partitioning based ordering even if it is worse than the approximate minimum local fill ordering.
-* `MSK_ORDER_METHOD_NONE`. No ordering is used.
+* `MSK_ORDER_METHOD_NONE`. No ordering is used. Note using this value almost always leads to a significantly slow down.
 """
 struct Orderingtype <: MosekEnum
   value :: Int32
@@ -8184,7 +8184,7 @@ const MSK_ORDER_METHOD_TRY_GRAPHPAR = Orderingtype(3)
 "Always use the graph partitioning based ordering even if it is worse than the approximate minimum local fill ordering."
 const MSK_ORDER_METHOD_FORCE_GRAPHPAR = Orderingtype(4)
 
-"No ordering is used."
+"No ordering is used. Note using this value almost always leads to a significantly slow down."
 const MSK_ORDER_METHOD_NONE = Orderingtype(5)
 tostr(v::Orderingtype) = if v.value == 0 "Mosek.MSK_ORDER_METHOD_FREE"
   elseif v.value == 1 "Mosek.MSK_ORDER_METHOD_APPMINLOC"
