@@ -144,6 +144,42 @@ macro MSK_appendconesseq(task,num,ct,conepar,nummem,j)
      nothing
   end
 end
+macro MSK_rescodetostr(res,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_rescodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(res)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_iinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_iinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_dinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_dinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_liinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_liinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
 macro MSK_bktostr(task,bk,str)
   quote
      local res = disable_sigint(()->ccall((:MSK_bktostr,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),$(esc(task)),$(esc(bk)),$(esc(str))))
@@ -3820,6 +3856,15 @@ end
 macro MSK_writebsolution(task,filename,compress)
   quote
      local res = disable_sigint(()->ccall((:MSK_writebsolution,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),$(esc(task)),$(esc(filename)),$(esc(compress))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_writebsolutionhandle(task,func,handle,compress)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_writebsolutionhandle,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,),$(esc(task)),$(esc(func)),$(esc(handle)),$(esc(compress))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
