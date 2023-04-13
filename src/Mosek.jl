@@ -272,6 +272,25 @@ end
 function getlasterrormsg(task::Task)
   lastrescode = Ref{Int32}()
   sizelastmsg = Ref{Int64}()
+  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,0,C_NULL))
+    ""
+  else
+    lastmsg = Array{UInt8}(undef,sizelastmsg[]+1)
+    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,length(lastmasg),lastmsg))
+      ""
+    else
+      lastmsg_len = findfirst(_c->_c==0,lastmsg)
+      if lastmsg_len === nothing 
+        String(lastmsg) 
+      else 
+        String(lastmsg[1:lastmsg_len-1]) 
+      end
+    end
+  end   
+end
+function getlasterrormsg(task::Ptr{Nothing})
+  lastrescode = Ref{Int32}()
+  sizelastmsg = Ref{Int64}()
   if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task,lastrescode,sizelastmsg,0,C_NULL))
     ""
   else
@@ -288,6 +307,7 @@ function getlasterrormsg(task::Task)
     end
   end   
 end
+
 
 using SparseArrays
 
