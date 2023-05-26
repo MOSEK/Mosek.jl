@@ -51,7 +51,7 @@ function clearstreamfunc(t::MSKtask, whichstream:: Streamtype)
   nothing
 end
 function clearstreamfunc(e::MSKenv, whichstream:: Streamtype)
-  r = @msk_ccall(linkfunctotaskstream,Int32,(Ptr{Nothing},Int32, Any, Any),e.env,whichstream.value,Nothing,Nothing)
+  r = @msk_ccall(linkfunctoenvstream,Int32,(Ptr{Nothing},Int32, Any, Any),e.env,whichstream.value,Nothing,Nothing)
   if r != MSK_RES_OK.value
     throw(MosekError(r,""))
   end
