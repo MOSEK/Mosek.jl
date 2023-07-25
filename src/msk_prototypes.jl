@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.1.0
+# Target: Mosek 10.1.5
 macro MSK_analyzeproblem(task,whichstream)
   quote
      local res = disable_sigint(()->ccall((:MSK_analyzeproblem,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(whichstream))))
@@ -144,56 +144,11 @@ macro MSK_appendconesseq(task,num,ct,conepar,nummem,j)
      nothing
   end
 end
-macro MSK_rescodetostr(res,str)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_rescodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(res)),$(esc(str))))
-     if res != 0
-       throw(MosekError(res,""))
-     end
-     nothing
-  end
-end
-macro MSK_iinfitemtostr(item,str)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_iinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
-     if res != 0
-       throw(MosekError(res,""))
-     end
-     nothing
-  end
-end
-macro MSK_dinfitemtostr(item,str)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_dinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
-     if res != 0
-       throw(MosekError(res,""))
-     end
-     nothing
-  end
-end
-macro MSK_liinfitemtostr(item,str)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_liinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
-     if res != 0
-       throw(MosekError(res,""))
-     end
-     nothing
-  end
-end
 macro MSK_bktostr(task,bk,str)
   quote
      local res = disable_sigint(()->ccall((:MSK_bktostr,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),$(esc(task)),$(esc(bk)),$(esc(str))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
-     end
-     nothing
-  end
-end
-macro MSK_callbackcodetostr(code,callbackcodestr)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
-     if res != 0
-       throw(MosekError(res,""))
      end
      nothing
   end
@@ -4078,6 +4033,15 @@ macro MSK_optimizebatch(env,israce,maxtime,numthreads,numtask,task,trmcode,rcode
      nothing
   end
 end
+macro MSK_callbackcodetostr(code,callbackcodestr)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
 macro MSK_checkoutlicense(env,feature)
   quote
      local res = disable_sigint(()->ccall((:MSK_checkoutlicense,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(env)),$(esc(feature))))
@@ -4181,6 +4145,42 @@ end
 macro MSK_getsymbcondim(env,num,maxlen)
   quote
      local res = disable_sigint(()->ccall((:MSK_getsymbcondim,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Ref{CSize},),$(esc(env)),$(esc(num)),$(esc(maxlen))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_rescodetostr(res,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_rescodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(res)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_iinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_iinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_dinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_dinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_liinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_liinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
      if res != 0
        throw(MosekError(res,""))
      end
