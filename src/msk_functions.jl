@@ -195,6 +195,8 @@ export
   infeasibilityreport,
   optimize,
   printparam,
+  probtypetostr,
+  prostatostr,
   commitchanges,
   getatruncatetol,
   putatruncatetol,
@@ -10320,6 +10322,56 @@ end
 
 
 """
+  probtypetostr(task::MSKtask,probtype::Problemtype) :: str
+
+  Obtains a string containing the name of a given problem type.
+
+  Arguments
+    task::MSKtask An optimization task.
+    probtype::Problemtype Problem type.
+  Returns
+    str::String String corresponding to the problem type key.
+"""
+function probtypetostr end
+function probtypetostr(task::MSKtask,probtype::Problemtype)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_probtypetostr(task.task,probtype.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
+
+
+"""
+  prostatostr(task::MSKtask,problemsta::Prosta) :: str
+
+  Obtains a string containing the name of a given problem status.
+
+  Arguments
+    task::MSKtask An optimization task.
+    problemsta::Prosta Problem status.
+  Returns
+    str::String String corresponding to the status key.
+"""
+function prostatostr end
+function prostatostr(task::MSKtask,problemsta::Prosta)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_prostatostr(task.task,problemsta.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
+
+
+"""
   commitchanges(task::MSKtask)
 
   Commits all cached problem changes.
@@ -10863,10 +10915,10 @@ end
 """
 function getbarcsparsity end
 function getbarcsparsity(task::MSKtask)
-  __tmp_395 = Ref{Int64}()
-  @MSK_getnumbarcnz(task.task,__tmp_395)
-  __tmp_394 = __tmp_395[]
-  maxnumnz = Int64(__tmp_394)
+  __tmp_397 = Ref{Int64}()
+  @MSK_getnumbarcnz(task.task,__tmp_397)
+  __tmp_396 = __tmp_397[]
+  maxnumnz = Int64(__tmp_396)
   numnz_ = Ref{Int64}()
   idxj_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarcsparsity(task.task,maxnumnz,numnz_,idxj_)
@@ -10889,10 +10941,10 @@ end
 """
 function getbarasparsity end
 function getbarasparsity(task::MSKtask)
-  __tmp_398 = Ref{Int64}()
-  @MSK_getnumbaranz(task.task,__tmp_398)
-  __tmp_397 = __tmp_398[]
-  maxnumnz = Int64(__tmp_397)
+  __tmp_400 = Ref{Int64}()
+  @MSK_getnumbaranz(task.task,__tmp_400)
+  __tmp_399 = __tmp_400[]
+  maxnumnz = Int64(__tmp_399)
   numnz_ = Ref{Int64}()
   idxij_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarasparsity(task.task,maxnumnz,numnz_,idxij_)
@@ -10969,10 +11021,10 @@ end
 """
 function getbarcidx end
 function getbarcidx(task::MSKtask,idx::Int64)
-  __tmp_403 = Ref{Int64}()
-  @MSK_getbarcidxinfo(task.task,idx-Int64(1),__tmp_403)
-  __tmp_402 = __tmp_403[]
-  maxnum = Int64(__tmp_402)
+  __tmp_405 = Ref{Int64}()
+  @MSK_getbarcidxinfo(task.task,idx-Int64(1),__tmp_405)
+  __tmp_404 = __tmp_405[]
+  maxnum = Int64(__tmp_404)
   j_ = Ref{Int32}()
   num_ = Ref{Int64}()
   sub_ = Vector{Int64}(undef,maxnum)
@@ -11060,10 +11112,10 @@ end
 """
 function getbaraidx end
 function getbaraidx(task::MSKtask,idx::Int64)
-  __tmp_408 = Ref{Int64}()
-  @MSK_getbaraidxinfo(task.task,idx-Int64(1),__tmp_408)
-  __tmp_407 = __tmp_408[]
-  maxnum = Int64(__tmp_407)
+  __tmp_410 = Ref{Int64}()
+  @MSK_getbaraidxinfo(task.task,idx-Int64(1),__tmp_410)
+  __tmp_409 = __tmp_410[]
+  maxnum = Int64(__tmp_409)
   i_ = Ref{Int32}()
   j_ = Ref{Int32}()
   num_ = Ref{Int64}()
@@ -11161,10 +11213,10 @@ end
 """
 function getbarcblocktriplet end
 function getbarcblocktriplet(task::MSKtask)
-  __tmp_413 = Ref{Int64}()
-  @MSK_getnumbarcblocktriplets(task.task,__tmp_413)
-  __tmp_412 = __tmp_413[]
-  maxnum = Int64(__tmp_412)
+  __tmp_415 = Ref{Int64}()
+  @MSK_getnumbarcblocktriplets(task.task,__tmp_415)
+  __tmp_414 = __tmp_415[]
+  maxnum = Int64(__tmp_414)
   num_ = Ref{Int64}()
   subj_ = Vector{Int32}(undef,maxnum)
   subk_ = Vector{Int32}(undef,maxnum)
@@ -11268,10 +11320,10 @@ end
 """
 function getbarablocktriplet end
 function getbarablocktriplet(task::MSKtask)
-  __tmp_418 = Ref{Int64}()
-  @MSK_getnumbarablocktriplets(task.task,__tmp_418)
-  __tmp_417 = __tmp_418[]
-  maxnum = Int64(__tmp_417)
+  __tmp_420 = Ref{Int64}()
+  @MSK_getnumbarablocktriplets(task.task,__tmp_420)
+  __tmp_419 = __tmp_420[]
+  maxnum = Int64(__tmp_419)
   num_ = Ref{Int64}()
   subi_ = Vector{Int32}(undef,maxnum)
   subj_ = Vector{Int32}(undef,maxnum)
@@ -11657,14 +11709,14 @@ end
 function getafefrow end
 function getafefrow(task::MSKtask,afeidx::Int64)
   numnz_ = Ref{Int32}()
-  __tmp_435 = Ref{Int32}()
-  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_435)
-  __tmp_434 = __tmp_435[]
-  varidx_ = Vector{Int32}(undef,__tmp_434)
   __tmp_437 = Ref{Int32}()
   @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_437)
   __tmp_436 = __tmp_437[]
-  val_ = Vector{Float64}(undef,__tmp_436)
+  varidx_ = Vector{Int32}(undef,__tmp_436)
+  __tmp_439 = Ref{Int32}()
+  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_439)
+  __tmp_438 = __tmp_439[]
+  val_ = Vector{Float64}(undef,__tmp_438)
   @MSK_getafefrow(task.task,afeidx-Int64(1),numnz_,varidx_,val_)
   varidx = varidx_;
   varidx .+= 1
@@ -11692,18 +11744,18 @@ end
 """
 function getafeftrip end
 function getafeftrip(task::MSKtask)
-  __tmp_440 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_440)
-  __tmp_439 = __tmp_440[]
-  afeidx_ = Vector{Int64}(undef,__tmp_439)
   __tmp_442 = Ref{Int64}()
   @MSK_getafefnumnz(task.task,__tmp_442)
   __tmp_441 = __tmp_442[]
-  varidx_ = Vector{Int32}(undef,__tmp_441)
+  afeidx_ = Vector{Int64}(undef,__tmp_441)
   __tmp_444 = Ref{Int64}()
   @MSK_getafefnumnz(task.task,__tmp_444)
   __tmp_443 = __tmp_444[]
-  val_ = Vector{Float64}(undef,__tmp_443)
+  varidx_ = Vector{Int32}(undef,__tmp_443)
+  __tmp_446 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_446)
+  __tmp_445 = __tmp_446[]
+  val_ = Vector{Float64}(undef,__tmp_445)
   @MSK_getafeftrip(task.task,afeidx_,varidx_,val_)
   afeidx = afeidx_;
   afeidx .+= 1
@@ -11765,7 +11817,7 @@ function putafebarfentrylist(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vect
   numafeidx = Int64(min(length(afeidx),length(barvaridx),length(numterm),length(ptrterm)))
   afeidx_ = afeidx .- Int64(1)
   barvaridx_ = barvaridx .- Int32(1)
-  numterm_ = numterm .- Int64(1)
+  numterm_ = numterm
   ptrterm_ = ptrterm .- Int64(1)
   lenterm = Int64(min(length(termidx),length(termweight)))
   termidx_ = termidx .- Int64(1)
@@ -11956,10 +12008,10 @@ end
 """
 function getafebarfblocktriplet end
 function getafebarfblocktriplet(task::MSKtask)
-  __tmp_454 = Ref{Int64}()
-  @MSK_getafebarfnumblocktriplets(task.task,__tmp_454)
-  __tmp_453 = __tmp_454[]
-  maxnumtrip = Int64(__tmp_453)
+  __tmp_456 = Ref{Int64}()
+  @MSK_getafebarfnumblocktriplets(task.task,__tmp_456)
+  __tmp_455 = __tmp_456[]
+  maxnumtrip = Int64(__tmp_455)
   numtrip_ = Ref{Int64}()
   afeidx_ = Vector{Int64}(undef,maxnumtrip)
   barvaridx_ = Vector{Int32}(undef,maxnumtrip)
@@ -12050,26 +12102,26 @@ end
 """
 function getafebarfrow end
 function getafebarfrow(task::MSKtask,afeidx::Int64)
-  __tmp_459 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_459,Ref{Int64}())
-  __tmp_458 = __tmp_459[]
-  barvaridx_ = Vector{Int32}(undef,__tmp_458)
   __tmp_461 = Ref{Int32}()
   @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_461,Ref{Int64}())
   __tmp_460 = __tmp_461[]
-  ptrterm_ = Vector{Int64}(undef,__tmp_460)
+  barvaridx_ = Vector{Int32}(undef,__tmp_460)
   __tmp_463 = Ref{Int32}()
   @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_463,Ref{Int64}())
   __tmp_462 = __tmp_463[]
-  numterm_ = Vector{Int64}(undef,__tmp_462)
-  __tmp_465 = Ref{Int64}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_465)
+  ptrterm_ = Vector{Int64}(undef,__tmp_462)
+  __tmp_465 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_465,Ref{Int64}())
   __tmp_464 = __tmp_465[]
-  termidx_ = Vector{Int64}(undef,__tmp_464)
+  numterm_ = Vector{Int64}(undef,__tmp_464)
   __tmp_467 = Ref{Int64}()
   @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_467)
   __tmp_466 = __tmp_467[]
-  termweight_ = Vector{Float64}(undef,__tmp_466)
+  termidx_ = Vector{Int64}(undef,__tmp_466)
+  __tmp_469 = Ref{Int64}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_469)
+  __tmp_468 = __tmp_469[]
+  termweight_ = Vector{Float64}(undef,__tmp_468)
   @MSK_getafebarfrow(task.task,afeidx-Int64(1),barvaridx_,ptrterm_,numterm_,termidx_,termweight_)
   barvaridx = barvaridx_;
   barvaridx .+= 1
@@ -12511,10 +12563,10 @@ end
 """
 function appendaccseq end
 function appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Union{Nothing,Vector{Float64}})
-  __tmp_487 = Ref{Int64}()
-  @MSK_getdomainn(task.task,domidx-Int64(1),__tmp_487)
-  __tmp_486 = __tmp_487[]
-  numafeidx = Int64(__tmp_486)
+  __tmp_489 = Ref{Int64}()
+  @MSK_getdomainn(task.task,domidx-Int64(1),__tmp_489)
+  __tmp_488 = __tmp_489[]
+  numafeidx = Int64(__tmp_488)
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
@@ -12770,10 +12822,10 @@ end
 """
 function getaccafeidxlist end
 function getaccafeidxlist(task::MSKtask,accidx::Int64)
-  __tmp_498 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_498)
-  __tmp_497 = __tmp_498[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_497)
+  __tmp_500 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_500)
+  __tmp_499 = __tmp_500[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_499)
   @MSK_getaccafeidxlist(task.task,accidx-Int64(1),afeidxlist_)
   afeidxlist = afeidxlist_;
   afeidxlist .+= 1
@@ -12800,10 +12852,10 @@ end
 """
 function getaccb end
 function getaccb(task::MSKtask,accidx::Int64)
-  __tmp_501 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_501)
-  __tmp_500 = __tmp_501[]
-  b_ = Vector{Float64}(undef,__tmp_500)
+  __tmp_503 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_503)
+  __tmp_502 = __tmp_503[]
+  b_ = Vector{Float64}(undef,__tmp_502)
   @MSK_getaccb(task.task,accidx-Int64(1),b_)
   b = b_;
   b
@@ -12829,18 +12881,18 @@ end
 """
 function getaccs end
 function getaccs(task::MSKtask)
-  __tmp_504 = Ref{Int64}()
-  @MSK_getnumacc(task.task,__tmp_504)
-  __tmp_503 = __tmp_504[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_503)
   __tmp_506 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_506)
+  @MSK_getnumacc(task.task,__tmp_506)
   __tmp_505 = __tmp_506[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_505)
+  domidxlist_ = Vector{Int64}(undef,__tmp_505)
   __tmp_508 = Ref{Int64}()
   @MSK_getaccntot(task.task,__tmp_508)
   __tmp_507 = __tmp_508[]
-  b_ = Vector{Float64}(undef,__tmp_507)
+  afeidxlist_ = Vector{Int64}(undef,__tmp_507)
+  __tmp_510 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_510)
+  __tmp_509 = __tmp_510[]
+  b_ = Vector{Float64}(undef,__tmp_509)
   @MSK_getaccs(task.task,domidxlist_,afeidxlist_,b_)
   domidxlist = domidxlist_;
   domidxlist .+= 1
@@ -12883,18 +12935,18 @@ end
 """
 function getaccftrip end
 function getaccftrip(task::MSKtask)
-  __tmp_512 = Ref{Int64}()
-  @MSK_getaccfnumnz(task.task,__tmp_512)
-  __tmp_511 = __tmp_512[]
-  frow_ = Vector{Int64}(undef,__tmp_511)
   __tmp_514 = Ref{Int64}()
   @MSK_getaccfnumnz(task.task,__tmp_514)
   __tmp_513 = __tmp_514[]
-  fcol_ = Vector{Int32}(undef,__tmp_513)
+  frow_ = Vector{Int64}(undef,__tmp_513)
   __tmp_516 = Ref{Int64}()
   @MSK_getaccfnumnz(task.task,__tmp_516)
   __tmp_515 = __tmp_516[]
-  fval_ = Vector{Float64}(undef,__tmp_515)
+  fcol_ = Vector{Int32}(undef,__tmp_515)
+  __tmp_518 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_518)
+  __tmp_517 = __tmp_518[]
+  fval_ = Vector{Float64}(undef,__tmp_517)
   @MSK_getaccftrip(task.task,frow_,fcol_,fval_)
   frow = frow_;
   frow .+= 1
@@ -12917,10 +12969,10 @@ end
 """
 function getaccgvector end
 function getaccgvector(task::MSKtask)
-  __tmp_519 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_519)
-  __tmp_518 = __tmp_519[]
-  g_ = Vector{Float64}(undef,__tmp_518)
+  __tmp_521 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_521)
+  __tmp_520 = __tmp_521[]
+  g_ = Vector{Float64}(undef,__tmp_520)
   @MSK_getaccgvector(task.task,g_)
   g = g_;
   g
@@ -12962,10 +13014,10 @@ end
 """
 function getaccbarfblocktriplet end
 function getaccbarfblocktriplet(task::MSKtask)
-  __tmp_523 = Ref{Int64}()
-  @MSK_getaccbarfnumblocktriplets(task.task,__tmp_523)
-  __tmp_522 = __tmp_523[]
-  maxnumtrip = Int64(__tmp_522)
+  __tmp_525 = Ref{Int64}()
+  @MSK_getaccbarfnumblocktriplets(task.task,__tmp_525)
+  __tmp_524 = __tmp_525[]
+  maxnumtrip = Int64(__tmp_524)
   numtrip_ = Ref{Int64}()
   acc_afe_ = Vector{Int64}(undef,maxnumtrip)
   bar_var_ = Vector{Int32}(undef,maxnumtrip)
@@ -13110,10 +13162,10 @@ end
 """
 function getdjcdomainidxlist end
 function getdjcdomainidxlist(task::MSKtask,djcidx::Int64)
-  __tmp_529 = Ref{Int64}()
-  @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),__tmp_529)
-  __tmp_528 = __tmp_529[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_528)
+  __tmp_531 = Ref{Int64}()
+  @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),__tmp_531)
+  __tmp_530 = __tmp_531[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_530)
   @MSK_getdjcdomainidxlist(task.task,djcidx-Int64(1),domidxlist_)
   domidxlist = domidxlist_;
   domidxlist .+= 1
@@ -13140,10 +13192,10 @@ end
 """
 function getdjcafeidxlist end
 function getdjcafeidxlist(task::MSKtask,djcidx::Int64)
-  __tmp_532 = Ref{Int64}()
-  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_532)
-  __tmp_531 = __tmp_532[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_531)
+  __tmp_534 = Ref{Int64}()
+  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_534)
+  __tmp_533 = __tmp_534[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_533)
   @MSK_getdjcafeidxlist(task.task,djcidx-Int64(1),afeidxlist_)
   afeidxlist = afeidxlist_;
   afeidxlist .+= 1
@@ -13170,10 +13222,10 @@ end
 """
 function getdjcb end
 function getdjcb(task::MSKtask,djcidx::Int64)
-  __tmp_535 = Ref{Int64}()
-  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_535)
-  __tmp_534 = __tmp_535[]
-  b_ = Vector{Float64}(undef,__tmp_534)
+  __tmp_537 = Ref{Int64}()
+  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_537)
+  __tmp_536 = __tmp_537[]
+  b_ = Vector{Float64}(undef,__tmp_536)
   @MSK_getdjcb(task.task,djcidx-Int64(1),b_)
   b = b_;
   b
@@ -13199,10 +13251,10 @@ end
 """
 function getdjctermsizelist end
 function getdjctermsizelist(task::MSKtask,djcidx::Int64)
-  __tmp_538 = Ref{Int64}()
-  @MSK_getdjcnumterm(task.task,djcidx-Int64(1),__tmp_538)
-  __tmp_537 = __tmp_538[]
-  termsizelist_ = Vector{Int64}(undef,__tmp_537)
+  __tmp_540 = Ref{Int64}()
+  @MSK_getdjcnumterm(task.task,djcidx-Int64(1),__tmp_540)
+  __tmp_539 = __tmp_540[]
+  termsizelist_ = Vector{Int64}(undef,__tmp_539)
   @MSK_getdjctermsizelist(task.task,djcidx-Int64(1),termsizelist_)
   termsizelist = termsizelist_;
   termsizelist
@@ -13230,26 +13282,26 @@ end
 """
 function getdjcs end
 function getdjcs(task::MSKtask)
-  __tmp_541 = Ref{Int64}()
-  @MSK_getdjcnumdomaintot(task.task,__tmp_541)
-  __tmp_540 = __tmp_541[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_540)
   __tmp_543 = Ref{Int64}()
-  @MSK_getdjcnumafetot(task.task,__tmp_543)
+  @MSK_getdjcnumdomaintot(task.task,__tmp_543)
   __tmp_542 = __tmp_543[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_542)
+  domidxlist_ = Vector{Int64}(undef,__tmp_542)
   __tmp_545 = Ref{Int64}()
   @MSK_getdjcnumafetot(task.task,__tmp_545)
   __tmp_544 = __tmp_545[]
-  b_ = Vector{Float64}(undef,__tmp_544)
+  afeidxlist_ = Vector{Int64}(undef,__tmp_544)
   __tmp_547 = Ref{Int64}()
-  @MSK_getdjcnumtermtot(task.task,__tmp_547)
+  @MSK_getdjcnumafetot(task.task,__tmp_547)
   __tmp_546 = __tmp_547[]
-  termsizelist_ = Vector{Int64}(undef,__tmp_546)
+  b_ = Vector{Float64}(undef,__tmp_546)
   __tmp_549 = Ref{Int64}()
-  @MSK_getnumdjc(task.task,__tmp_549)
+  @MSK_getdjcnumtermtot(task.task,__tmp_549)
   __tmp_548 = __tmp_549[]
-  numterms_ = Vector{Int64}(undef,__tmp_548)
+  termsizelist_ = Vector{Int64}(undef,__tmp_548)
+  __tmp_551 = Ref{Int64}()
+  @MSK_getnumdjc(task.task,__tmp_551)
+  __tmp_550 = __tmp_551[]
+  numterms_ = Vector{Int64}(undef,__tmp_550)
   @MSK_getdjcs(task.task,domidxlist_,afeidxlist_,b_,termsizelist_,numterms_)
   domidxlist = domidxlist_;
   domidxlist .+= 1
@@ -14236,10 +14288,10 @@ end
 """
 function getpowerdomainalpha end
 function getpowerdomainalpha(task::MSKtask,domidx::Int64)
-  __tmp_588 = Ref{Int64}()
-  @MSK_getpowerdomaininfo(task.task,domidx-Int64(1),Ref{Int64}(),__tmp_588)
-  __tmp_587 = __tmp_588[]
-  alpha_ = Vector{Float64}(undef,__tmp_587)
+  __tmp_590 = Ref{Int64}()
+  @MSK_getpowerdomaininfo(task.task,domidx-Int64(1),Ref{Int64}(),__tmp_590)
+  __tmp_589 = __tmp_590[]
+  alpha_ = Vector{Float64}(undef,__tmp_589)
   @MSK_getpowerdomainalpha(task.task,domidx-Int64(1),alpha_)
   alpha = alpha_;
   alpha
@@ -14406,10 +14458,10 @@ end
 """
 function getsparsesymmat end
 function getsparsesymmat(task::MSKtask,idx::Int64)
-  __tmp_595 = Ref{Int64}()
-  @MSK_getsymmatinfo(task.task,idx-Int64(1),Ref{Int32}(),__tmp_595,Ref{Int32}())
-  __tmp_594 = __tmp_595[]
-  maxlen = Int64(__tmp_594)
+  __tmp_597 = Ref{Int64}()
+  @MSK_getsymmatinfo(task.task,idx-Int64(1),Ref{Int32}(),__tmp_597,Ref{Int32}())
+  __tmp_596 = __tmp_597[]
+  maxlen = Int64(__tmp_596)
   subi_ = Vector{Int32}(undef,maxlen)
   subj_ = Vector{Int32}(undef,maxlen)
   valij_ = Vector{Float64}(undef,maxlen)
@@ -15897,10 +15949,10 @@ end
 function getlasterror end
 function getlasterror(task::MSKtask)
   lastrescode_ = Ref{Int32}()
-  __tmp_662 = Ref{Int64}()
-  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_662,C_NULL)
-  __tmp_661 = __tmp_662[]
-  sizelastmsg = Int64((__tmp_661 + Int64(1)))
+  __tmp_664 = Ref{Int64}()
+  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_664,C_NULL)
+  __tmp_663 = __tmp_664[]
+  sizelastmsg = Int64((__tmp_663 + Int64(1)))
   lastmsglen_ = Ref{Int64}()
   lastmsg_ = Array{UInt8}(undef,sizelastmsg)
   @MSK_getlasterror64(task.task,lastrescode_,sizelastmsg,lastmsglen_,lastmsg_)
@@ -16762,26 +16814,26 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_713 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_713))
+  __tmp_715 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_715))
   @MSK_freeenv(env.env,perm_[])
   perm .+= 1
-  __tmp_714 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_714))
-  @MSK_freeenv(env.env,diag_[])
-  __tmp_715 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_715))
-  @MSK_freeenv(env.env,lnzc_[])
   __tmp_716 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_716))
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_716))
+  @MSK_freeenv(env.env,diag_[])
+  __tmp_717 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_717))
+  @MSK_freeenv(env.env,lnzc_[])
+  __tmp_718 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_718))
   @MSK_freeenv(env.env,lptrc_[])
   lptrc .+= 1
-  __tmp_717 = lensubnval_[]
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_717))
+  __tmp_719 = lensubnval_[]
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_719))
   @MSK_freeenv(env.env,lsubc_[])
   lsubc .+= 1
-  __tmp_718 = lensubnval_[]
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_718))
+  __tmp_720 = lensubnval_[]
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_720))
   @MSK_freeenv(env.env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
@@ -16835,26 +16887,26 @@ function computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular:
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(C_NULL,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_720 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_720))
+  __tmp_722 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_722))
   @MSK_freeenv(Ptr{Nothing}(),perm_[])
   perm .+= 1
-  __tmp_721 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_721))
-  @MSK_freeenv(Ptr{Nothing}(),diag_[])
-  __tmp_722 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_722))
-  @MSK_freeenv(Ptr{Nothing}(),lnzc_[])
   __tmp_723 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_723))
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_723))
+  @MSK_freeenv(Ptr{Nothing}(),diag_[])
+  __tmp_724 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_724))
+  @MSK_freeenv(Ptr{Nothing}(),lnzc_[])
+  __tmp_725 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_725))
   @MSK_freeenv(Ptr{Nothing}(),lptrc_[])
   lptrc .+= 1
-  __tmp_724 = lensubnval_[]
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_724))
+  __tmp_726 = lensubnval_[]
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_726))
   @MSK_freeenv(Ptr{Nothing}(),lsubc_[])
   lsubc .+= 1
-  __tmp_725 = lensubnval_[]
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_725))
+  __tmp_727 = lensubnval_[]
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_727))
   @MSK_freeenv(Ptr{Nothing}(),lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
