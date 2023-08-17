@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.1.8
+# Target: Mosek 10.1.9
 export
   analyzeproblem,
   analyzenames,
@@ -6473,7 +6473,7 @@ end
 function putconname end
 function putconname(task::MSKtask,i::Int32,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -6502,7 +6502,7 @@ end
 function putvarname end
 function putvarname(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -6531,7 +6531,7 @@ end
 function putconename end
 function putconename(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -6560,7 +6560,7 @@ end
 function putbarvarname end
 function putbarvarname(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -6589,7 +6589,7 @@ end
 function putdomainname end
 function putdomainname(task::MSKtask,domidx::Int64,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -6618,7 +6618,7 @@ end
 function putdjcname end
 function putdjcname(task::MSKtask,djcidx::Int64,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -6647,7 +6647,7 @@ end
 function putaccname end
 function putaccname(task::MSKtask,accidx::Int64,name::Union{Nothing,AbstractString})
   if name === nothing
-      name_ = nothing
+      name_ = C_NULL
   else
       name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
   end
@@ -10083,7 +10083,7 @@ function inputdata end
 function inputdata(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,c::Union{Nothing,Vector{Float64}},cfix::Float64,aptrb::Vector{Int64},aptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
   numcon = Int32(min(length(buc),length(blc),length(bkc)))
   numvar = Int32(min(length(c),length(bux),length(blx),length(bkx),length(aptrb),length(aptre)))
-  c_ = c
+  c_ = if c === nothing; C_NULL; else c end
   aptrb_ = aptrb .- Int64(1)
   aptre_ = aptre .- Int64(1)
   asub_ = asub .- Int32(1)
@@ -10235,28 +10235,28 @@ function primalrepair(task::MSKtask,wlc::Union{Nothing,Vector{Float64}},wuc::Uni
   if wlc !== nothing && length(wlc) < __tmp_366
     throw(BoundsError())
   end
-  wlc_ = wlc
+  wlc_ = if wlc === nothing; C_NULL; else wlc end
   __tmp_369 = Ref{Int32}()
   @MSK_getnumcon(task.task,__tmp_369)
   __tmp_368 = __tmp_369[]
   if wuc !== nothing && length(wuc) < __tmp_368
     throw(BoundsError())
   end
-  wuc_ = wuc
+  wuc_ = if wuc === nothing; C_NULL; else wuc end
   __tmp_371 = Ref{Int32}()
   @MSK_getnumvar(task.task,__tmp_371)
   __tmp_370 = __tmp_371[]
   if wlx !== nothing && length(wlx) < __tmp_370
     throw(BoundsError())
   end
-  wlx_ = wlx
+  wlx_ = if wlx === nothing; C_NULL; else wlx end
   __tmp_373 = Ref{Int32}()
   @MSK_getnumvar(task.task,__tmp_373)
   __tmp_372 = __tmp_373[]
   if wux !== nothing && length(wux) < __tmp_372
     throw(BoundsError())
   end
-  wux_ = wux
+  wux_ = if wux === nothing; C_NULL; else wux end
   @MSK_primalrepair(task.task,wlc_,wuc_,wlx_,wux_)
   nothing
 end
@@ -12502,7 +12502,7 @@ function appendacc(task::MSKtask,domidx::Int64,afeidxlist::Vector{Int64},b::Unio
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendacc(task.task,domidx-Int64(1),numafeidx,afeidxlist_,b_)
   nothing
 end
@@ -12536,7 +12536,7 @@ function appendaccs(task::MSKtask,domidxs::Vector{Int64},afeidxlist::Vector{Int6
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendaccs(task.task,numaccs,domidxs_,numafeidx,afeidxlist_,b_)
   nothing
 end
@@ -12570,7 +12570,7 @@ function appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Union{No
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendaccseq(task.task,domidx-Int64(1),numafeidx,afeidxfirst-Int64(1),b_)
   nothing
 end
@@ -12603,7 +12603,7 @@ function appendaccsseq(task::MSKtask,domidxs::Vector{Int64},numafeidx::Int64,afe
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendaccsseq(task.task,numaccs,domidxs_,numafeidx,afeidxfirst-Int64(1),b_)
   nothing
 end
@@ -12637,7 +12637,7 @@ function putacc(task::MSKtask,accidx::Int64,domidx::Int64,afeidxlist::Vector{Int
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_putacc(task.task,accidx-Int64(1),domidx-Int64(1),numafeidx,afeidxlist_,b_)
   nothing
 end
@@ -12674,7 +12674,7 @@ function putacclist(task::MSKtask,accidxs::Vector{Int64},domidxs::Vector{Int64},
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_putacclist(task.task,numaccs,accidxs_,domidxs_,numafeidx,afeidxlist_,b_)
   nothing
 end
@@ -12702,7 +12702,7 @@ end
 function putaccb end
 function putaccb(task::MSKtask,accidx::Int64,b::Union{Nothing,Vector{Float64}})
   lengthb = Int64(length(b))
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_putaccb(task.task,accidx-Int64(1),lengthb,b_)
   nothing
 end
@@ -13083,7 +13083,7 @@ function putdjc(task::MSKtask,djcidx::Int64,domidxlist::Vector{Int64},afeidxlist
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   numterms = Int64(length(termsizelist))
   termsizelist_ = termsizelist
   @MSK_putdjc(task.task,djcidx-Int64(1),numdomidx,domidxlist_,numafeidx,afeidxlist_,b_,numterms,termsizelist_)
@@ -13125,7 +13125,7 @@ function putdjcslice(task::MSKtask,idxfirst::Int64,idxlast::Int64,domidxlist::Ve
   if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   numterms = Int64(length(termsizelist))
   termsizelist_ = termsizelist
   if termsindjc !== nothing && length(termsindjc) < (idxlast - idxfirst)
@@ -14960,14 +14960,14 @@ function putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Ve
   skc_ = Int32[item.value for item in skc]
   skx_ = Int32[item.value for item in skx]
   skn_ = Int32[item.value for item in skn]
-  xc_ = xc
-  xx_ = xx
-  y_ = y
-  slc_ = slc
-  suc_ = suc
-  slx_ = slx
-  sux_ = sux
-  snx_ = snx
+  xc_ = if xc === nothing; C_NULL; else xc end
+  xx_ = if xx === nothing; C_NULL; else xx end
+  y_ = if y === nothing; C_NULL; else y end
+  slc_ = if slc === nothing; C_NULL; else slc end
+  suc_ = if suc === nothing; C_NULL; else suc end
+  slx_ = if slx === nothing; C_NULL; else slx end
+  sux_ = if sux === nothing; C_NULL; else sux end
+  snx_ = if snx === nothing; C_NULL; else snx end
   @MSK_putsolution(task.task,whichsol.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
   nothing
 end
@@ -15016,15 +15016,15 @@ function putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx:
   skc_ = Int32[item.value for item in skc]
   skx_ = Int32[item.value for item in skx]
   skn_ = Int32[item.value for item in skn]
-  xc_ = xc
-  xx_ = xx
-  y_ = y
-  slc_ = slc
-  suc_ = suc
-  slx_ = slx
-  sux_ = sux
-  snx_ = snx
-  doty_ = doty
+  xc_ = if xc === nothing; C_NULL; else xc end
+  xx_ = if xx === nothing; C_NULL; else xx end
+  y_ = if y === nothing; C_NULL; else y end
+  slc_ = if slc === nothing; C_NULL; else slc end
+  suc_ = if suc === nothing; C_NULL; else suc end
+  slx_ = if slx === nothing; C_NULL; else slx end
+  sux_ = if sux === nothing; C_NULL; else sux end
+  snx_ = if snx === nothing; C_NULL; else snx end
+  doty_ = if doty === nothing; C_NULL; else doty end
   @MSK_putsolutionnew(task.task,whichsol.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_)
   nothing
 end
@@ -16111,7 +16111,7 @@ end
 function putoptserverhost end
 function putoptserverhost(task::MSKtask,host::Union{Nothing,AbstractString})
   if host === nothing
-      host_ = nothing
+      host_ = C_NULL
   else
       host_ = Vector{UInt8}(host); push!(host_,UInt8(0))
   end
@@ -16662,7 +16662,7 @@ function putlicensecode(env::MSKenv,code::Union{Nothing,Vector{Int32}})
   if code !== nothing && length(code) < MSK_LICENSE_BUFFER_LENGTH
     throw(BoundsError())
   end
-  code_ = code
+  code_ = if code === nothing; C_NULL; else code end
   @MSK_putlicensecode(env.env,code_)
   nothing
 end
@@ -16686,7 +16686,7 @@ function putlicensecode(code::Union{Nothing,Vector{Int32}})
   if code !== nothing && length(code) < MSK_LICENSE_BUFFER_LENGTH
     throw(BoundsError())
   end
-  code_ = code
+  code_ = if code === nothing; C_NULL; else code end
   @MSK_putlicensecode(C_NULL,code_)
   nothing
 end
@@ -16747,7 +16747,7 @@ end
 function putlicensepath end
 function putlicensepath(env::MSKenv,licensepath::Union{Nothing,AbstractString})
   if licensepath === nothing
-      licensepath_ = nothing
+      licensepath_ = C_NULL
   else
       licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
   end
@@ -16766,7 +16766,7 @@ end
 """
 function putlicensepath(licensepath::Union{Nothing,AbstractString})
   if licensepath === nothing
-      licensepath_ = nothing
+      licensepath_ = C_NULL
   else
       licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
   end
