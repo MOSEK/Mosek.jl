@@ -852,7 +852,7 @@ export
   MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK,
   MSK_RES_WRN_ELIMINATOR_SPACE,
   MSK_RES_WRN_PRESOLVE_OUTOFSPACE,
-  MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS,
+  MSK_RES_WRN_PRESOLVE_PRIMAL_PERTURBATIONS,
   MSK_RES_WRN_WRITE_CHANGED_NAMES,
   MSK_RES_WRN_WRITE_DISCARDED_CFIX,
   MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES,
@@ -1290,6 +1290,7 @@ export
   MSK_RES_ERR_CBF_INVALID_NUM_FCOORD,
   MSK_RES_ERR_CBF_INVALID_NUM_HCOORD,
   MSK_RES_ERR_CBF_INVALID_NUM_DCOORD,
+  MSK_RES_ERR_CBF_EXPECTED_A_KEYWORD,
   MSK_RES_ERR_CBF_INVALID_NUM_PSDCON,
   MSK_RES_ERR_CBF_DUPLICATE_PSDCON,
   MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON,
@@ -1314,6 +1315,7 @@ export
   MSK_RES_ERR_SERVER_TLS_CLIENT,
   MSK_RES_ERR_SERVER_ACCESS_TOKEN,
   MSK_RES_ERR_SERVER_PROBLEM_SIZE,
+  MSK_RES_ERR_SERVER_HARD_TIMEOUT,
   MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX,
   MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST,
   MSK_RES_ERR_DUPLICATE_FIJ,
@@ -1353,6 +1355,8 @@ export
   MSK_RES_TRM_LOST_RACE,
   MSK_RES_TRM_INTERNAL,
   MSK_RES_TRM_INTERNAL_STOP,
+  MSK_RES_TRM_SERVER_MAX_TIME,
+  MSK_RES_TRM_SERVER_MAX_MEMORY,
   Rescodetype,
   MSK_RESPONSE_OK,
   MSK_RESPONSE_WRN,
@@ -8719,7 +8723,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK`. The linear dependency check(s) is incomplete.
 * `MSK_RES_WRN_ELIMINATOR_SPACE`. The eliminator is skipped at least once due to lack of space.
 * `MSK_RES_WRN_PRESOLVE_OUTOFSPACE`. The presolve is incomplete due to lack of space.
-* `MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS`. The presolve perturbed the bounds of the primal problem. This is an indication that the problem is nearly infeasible.
+* `MSK_RES_WRN_PRESOLVE_PRIMAL_PERTURBATIONS`. The presolve perturbed the bounds of the primal problem. This is an indication that the problem is nearly infeasible.
 * `MSK_RES_WRN_WRITE_CHANGED_NAMES`. Some names were changed because they were invalid for the output file format.
 * `MSK_RES_WRN_WRITE_DISCARDED_CFIX`. The fixed objective term was discarded in the output file.
 * `MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES`. Two constraint names are identical.
@@ -9157,6 +9161,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_CBF_INVALID_NUM_FCOORD`. Invalid number of FCOORD.
 * `MSK_RES_ERR_CBF_INVALID_NUM_HCOORD`. Invalid number of HCOORD.
 * `MSK_RES_ERR_CBF_INVALID_NUM_DCOORD`. Invalid number of DCOORD.
+* `MSK_RES_ERR_CBF_EXPECTED_A_KEYWORD`. Expected a key word.
 * `MSK_RES_ERR_CBF_INVALID_NUM_PSDCON`. Invalid number of PSDCON.
 * `MSK_RES_ERR_CBF_DUPLICATE_PSDCON`. Duplicate CON keyword.
 * `MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON`. Invalid PSDCON dimension.
@@ -9181,6 +9186,7 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_SERVER_TLS_CLIENT`. Failed to create TLS client
 * `MSK_RES_ERR_SERVER_ACCESS_TOKEN`. Invalid access token
 * `MSK_RES_ERR_SERVER_PROBLEM_SIZE`. The problem is too large.
+* `MSK_RES_ERR_SERVER_HARD_TIMEOUT`. The hard timeout limit was reached on solver server
 * `MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX`. An element in a sparse matrix is specified twice.
 * `MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST`. An index is specified twice in an affine expression list.
 * `MSK_RES_ERR_DUPLICATE_FIJ`. An element in the F matrix is specified twice.
@@ -9220,6 +9226,8 @@ The enumeration type containing all response codes.
 * `MSK_RES_TRM_LOST_RACE`. Lost a race.
 * `MSK_RES_TRM_INTERNAL`. The optimizer terminated due to some internal reason.
 * `MSK_RES_TRM_INTERNAL_STOP`. The optimizer terminated for internal reasons.
+* `MSK_RES_TRM_SERVER_MAX_TIME`. remote server terminated mosek on time limit criteria.
+* `MSK_RES_TRM_SERVER_MAX_MEMORY`. remote server terminated mosek on memory limit criteria.
 """
 struct Rescode <: MosekEnum
   value :: Int32
@@ -9358,7 +9366,7 @@ const MSK_RES_WRN_ELIMINATOR_SPACE = Rescode(801)
 const MSK_RES_WRN_PRESOLVE_OUTOFSPACE = Rescode(802)
 
 "The presolve perturbed the bounds of the primal problem. This is an indication that the problem is nearly infeasible."
-const MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS = Rescode(803)
+const MSK_RES_WRN_PRESOLVE_PRIMAL_PERTURBATIONS = Rescode(803)
 
 "Some names were changed because they were invalid for the output file format."
 const MSK_RES_WRN_WRITE_CHANGED_NAMES = Rescode(830)
@@ -10671,6 +10679,9 @@ const MSK_RES_ERR_CBF_INVALID_NUM_HCOORD = Rescode(7156)
 "Invalid number of DCOORD."
 const MSK_RES_ERR_CBF_INVALID_NUM_DCOORD = Rescode(7157)
 
+"Expected a key word."
+const MSK_RES_ERR_CBF_EXPECTED_A_KEYWORD = Rescode(7158)
+
 "Invalid number of PSDCON."
 const MSK_RES_ERR_CBF_INVALID_NUM_PSDCON = Rescode(7200)
 
@@ -10742,6 +10753,9 @@ const MSK_RES_ERR_SERVER_ACCESS_TOKEN = Rescode(8007)
 
 "The problem is too large."
 const MSK_RES_ERR_SERVER_PROBLEM_SIZE = Rescode(8008)
+
+"The hard timeout limit was reached on solver server"
+const MSK_RES_ERR_SERVER_HARD_TIMEOUT = Rescode(8009)
 
 "An element in a sparse matrix is specified twice."
 const MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX = Rescode(20050)
@@ -10859,6 +10873,12 @@ const MSK_RES_TRM_INTERNAL = Rescode(100030)
 
 "The optimizer terminated for internal reasons."
 const MSK_RES_TRM_INTERNAL_STOP = Rescode(100031)
+
+"remote server terminated mosek on time limit criteria."
+const MSK_RES_TRM_SERVER_MAX_TIME = Rescode(100032)
+
+"remote server terminated mosek on memory limit criteria."
+const MSK_RES_TRM_SERVER_MAX_MEMORY = Rescode(100033)
 tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 50 "Mosek.MSK_RES_WRN_OPEN_PARAM_FILE"
   elseif v.value == 51 "Mosek.MSK_RES_WRN_LARGE_BOUND"
@@ -10903,7 +10923,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 800 "Mosek.MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK"
   elseif v.value == 801 "Mosek.MSK_RES_WRN_ELIMINATOR_SPACE"
   elseif v.value == 802 "Mosek.MSK_RES_WRN_PRESOLVE_OUTOFSPACE"
-  elseif v.value == 803 "Mosek.MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS"
+  elseif v.value == 803 "Mosek.MSK_RES_WRN_PRESOLVE_PRIMAL_PERTURBATIONS"
   elseif v.value == 830 "Mosek.MSK_RES_WRN_WRITE_CHANGED_NAMES"
   elseif v.value == 831 "Mosek.MSK_RES_WRN_WRITE_DISCARDED_CFIX"
   elseif v.value == 850 "Mosek.MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES"
@@ -11341,6 +11361,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 7155 "Mosek.MSK_RES_ERR_CBF_INVALID_NUM_FCOORD"
   elseif v.value == 7156 "Mosek.MSK_RES_ERR_CBF_INVALID_NUM_HCOORD"
   elseif v.value == 7157 "Mosek.MSK_RES_ERR_CBF_INVALID_NUM_DCOORD"
+  elseif v.value == 7158 "Mosek.MSK_RES_ERR_CBF_EXPECTED_A_KEYWORD"
   elseif v.value == 7200 "Mosek.MSK_RES_ERR_CBF_INVALID_NUM_PSDCON"
   elseif v.value == 7201 "Mosek.MSK_RES_ERR_CBF_DUPLICATE_PSDCON"
   elseif v.value == 7202 "Mosek.MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON"
@@ -11365,6 +11386,7 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 8006 "Mosek.MSK_RES_ERR_SERVER_TLS_CLIENT"
   elseif v.value == 8007 "Mosek.MSK_RES_ERR_SERVER_ACCESS_TOKEN"
   elseif v.value == 8008 "Mosek.MSK_RES_ERR_SERVER_PROBLEM_SIZE"
+  elseif v.value == 8009 "Mosek.MSK_RES_ERR_SERVER_HARD_TIMEOUT"
   elseif v.value == 20050 "Mosek.MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX"
   elseif v.value == 20060 "Mosek.MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST"
   elseif v.value == 20100 "Mosek.MSK_RES_ERR_DUPLICATE_FIJ"
@@ -11404,6 +11426,8 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 100027 "Mosek.MSK_RES_TRM_LOST_RACE"
   elseif v.value == 100030 "Mosek.MSK_RES_TRM_INTERNAL"
   elseif v.value == 100031 "Mosek.MSK_RES_TRM_INTERNAL_STOP"
+  elseif v.value == 100032 "Mosek.MSK_RES_TRM_SERVER_MAX_TIME"
+  elseif v.value == 100033 "Mosek.MSK_RES_TRM_SERVER_MAX_MEMORY"
   else "Mosek.Rescode(?)"
   end
 const Rescode_members = Rescode[
@@ -11451,7 +11475,7 @@ const Rescode_members = Rescode[
     MSK_RES_WRN_INCOMPLETE_LINEAR_DEPENDENCY_CHECK,
     MSK_RES_WRN_ELIMINATOR_SPACE,
     MSK_RES_WRN_PRESOLVE_OUTOFSPACE,
-    MSK_RES_WRN_PRESOLVE_PRIMAL_PERTUBATIONS,
+    MSK_RES_WRN_PRESOLVE_PRIMAL_PERTURBATIONS,
     MSK_RES_WRN_WRITE_CHANGED_NAMES,
     MSK_RES_WRN_WRITE_DISCARDED_CFIX,
     MSK_RES_WRN_DUPLICATE_CONSTRAINT_NAMES,
@@ -11889,6 +11913,7 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_CBF_INVALID_NUM_FCOORD,
     MSK_RES_ERR_CBF_INVALID_NUM_HCOORD,
     MSK_RES_ERR_CBF_INVALID_NUM_DCOORD,
+    MSK_RES_ERR_CBF_EXPECTED_A_KEYWORD,
     MSK_RES_ERR_CBF_INVALID_NUM_PSDCON,
     MSK_RES_ERR_CBF_DUPLICATE_PSDCON,
     MSK_RES_ERR_CBF_INVALID_DIMENSION_OF_PSDCON,
@@ -11913,6 +11938,7 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_SERVER_TLS_CLIENT,
     MSK_RES_ERR_SERVER_ACCESS_TOKEN,
     MSK_RES_ERR_SERVER_PROBLEM_SIZE,
+    MSK_RES_ERR_SERVER_HARD_TIMEOUT,
     MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX,
     MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST,
     MSK_RES_ERR_DUPLICATE_FIJ,
@@ -11951,9 +11977,11 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_NUMERICAL_PROBLEM,
     MSK_RES_TRM_LOST_RACE,
     MSK_RES_TRM_INTERNAL,
-    MSK_RES_TRM_INTERNAL_STOP ]
+    MSK_RES_TRM_INTERNAL_STOP,
+    MSK_RES_TRM_SERVER_MAX_TIME,
+    MSK_RES_TRM_SERVER_MAX_MEMORY ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 545
+Base.length(::Type{Rescode}) = 549
 Base.convert(::Type{Int},x::Rescode) = Int(x.value)
 """
     Rescodetype
