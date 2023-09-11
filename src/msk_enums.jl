@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.1.9
+# Target: Mosek 10.1.11
 export
   Basindtype,
   MSK_BI_NEVER,
@@ -5292,7 +5292,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_MIO_MAX_NUM_ROOT_CUT_ROUNDS`. Maximum number of cut separation rounds at the root node.
 * `MSK_IPAR_MIO_MAX_NUM_SOLUTIONS`. Controls how many feasible solutions the mixed-integer optimizer investigates.
 * `MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL`. Controls how much emphasis is put on reducing memory usage.
-* `MSK_IPAR_MIO_MIN_REL`. Number of times a variable must have been branched on for its pseudocost to be cosidered reliable.
+* `MSK_IPAR_MIO_MIN_REL`. Number of times a variable must have been branched on for its pseudocost to be considered reliable.
 * `MSK_IPAR_MIO_MODE`. Turns on/off the mixed-integer mode.
 * `MSK_IPAR_MIO_NODE_OPTIMIZER`. Controls which optimizer is employed at the non-root nodes in the mixed-integer optimizer.
 * `MSK_IPAR_MIO_NODE_SELECTION`. Controls the node selection strategy employed by the mixed-integer optimizer.
@@ -6264,7 +6264,7 @@ Possible Values: Any number between 0 and +1.
 const MSK_IPAR_MIO_MEMORY_EMPHASIS_LEVEL = Iparam(77)
 
 """
-Number of times a variable must have been branched on for its pseudocost to be cosidered reliable.
+Number of times a variable must have been branched on for its pseudocost to be considered reliable.
 
 Default value: `5`
 
