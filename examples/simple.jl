@@ -30,13 +30,13 @@ else
             # If an output file was specified, save problem to file
             if outfile != Nothing
                 # If using OPF format, these parameters will specify what to include in output
-                put_int_param(task,MSK_IPAR_OPF_WRITE_SOLUTIONS,  MSK_ON)
-                put_int_param(task,MSK_IPAR_OPF_WRITE_PROBLEM,    MSK_ON)
-                put_int_param(task,MSK_IPAR_OPF_WRITE_HINTS,      MSK_OFF)
-                put_int_param(task,MSK_IPAR_OPF_WRITE_PARAMETERS, MSK_OFF)
-                put_int_param(task,MSK_IPAR_PTF_WRITE_SOLUTIONS,  MSK_ON)
+                putintparam(task,MSK_IPAR_OPF_WRITE_SOLUTIONS,  MSK_ON)
+                putintparam(task,MSK_IPAR_OPF_WRITE_PROBLEM,    MSK_ON)
+                putintparam(task,MSK_IPAR_OPF_WRITE_HINTS,      MSK_OFF)
+                putintparam(task,MSK_IPAR_OPF_WRITE_PARAMETERS, MSK_OFF)
+                putintparam(task,MSK_IPAR_PTF_WRITE_SOLUTIONS,  MSK_ON)
 
-                write_data(task,outfile)
+                writedata(task,outfile)
             end
         end
     end

@@ -2,8 +2,6 @@ __precompile__()
 module Mosek
 using SparseArrays
 
-
-
 if isfile(joinpath(dirname(@__FILE__),"..","deps","deps.jl"))
     include("../deps/deps.jl")
 else
@@ -20,7 +18,8 @@ end
 
 export
     makeenv, maketask, maketask_ptr,
-    MosekError
+    MosekError,
+    writedatastream
 
 # A macro to make calling C API a little cleaner
 macro msk_ccall(func, args...)
@@ -45,6 +44,7 @@ end
 mutable struct Env
     env::Ptr{Nothing}
     streamcallbackfunc::Any
+    userstreamcallbackfunc:: Any
 end
 
 function msk_info_callback_wrapper end
@@ -128,9 +128,12 @@ const MSKenv  = Env
 # TODO: Support other argument
 """
     makeenv()
+    makeenv(func::Function)
 
-Create a MOSEK environment.
+Create a MOSEK environment, wither create direct for for use with  `do`-syntax.
 """
+function makenv end
+
 function makeenv()
     temp = Array{Ptr{Nothing}}(undef, 1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
@@ -138,14 +141,9 @@ function makeenv()
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
-    Env(temp[1],nothing)
+    Env(temp[1],nothing, nothing)
 end
 
-"""
-    makeenv(func::Function)
-
-Create a MOSEK environment for use with `do`-syntax.
-"""
 function makeenv(func::Function)
     temp = Array{Ptr{Nothing}}(undef,1)
     res = @msk_ccall(makeenv, Int32, (Ptr{Ptr{Nothing}}, Ptr{UInt8}), temp, C_NULL)
@@ -153,7 +151,7 @@ function makeenv(func::Function)
         # TODO: Actually use result code
         error("MOSEK: Error creating environment")
     end
-    env = Env(temp[1],nothing)
+    env = Env(temp[1],nothing, nothing)
 
     try
         func(env)
@@ -219,7 +217,7 @@ function maketask(func :: Function;env::Env = msk_global_env, filename::String =
         func(t)
     finally
         deletetask(t)
-    end    
+    end
 end
 
 maketask(task::Task) = Task(task)
@@ -271,11 +269,45 @@ end
 #     String(lastmsg[1:lastmsglen[1]-1])
 # end
 
-function getlasterrormsg(t::Task)
-    let _,_,lastmsg = getlasterror(t)
-        lastmsg
+function getlasterrormsg(task::Task)
+  lastrescode = Ref{Int32}()
+  sizelastmsg = Ref{Int64}()
+  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,0,C_NULL))
+    ""
+  else
+    lastmsg = Array{UInt8}(undef,sizelastmsg[]+1)
+    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,length(lastmasg),lastmsg))
+      ""
+    else
+      lastmsg_len = findfirst(_c->_c==0,lastmsg)
+      if lastmsg_len === nothing 
+        String(lastmsg) 
+      else 
+        String(lastmsg[1:lastmsg_len-1]) 
+      end
     end
+  end   
 end
+#function getlasterrormsg(task::Ptr{Nothing})
+#  lastrescode = Ref{Int32}()
+#  sizelastmsg = Ref{Int64}()
+#  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task,lastrescode,sizelastmsg,0,C_NULL))
+#    ""
+#  else
+#    lastmsg = Array{UInt8}(undef,sizelastmsg[]+1)
+#    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task,lastrescode,sizelastmsg,length(lastmasg),lastmsg))
+#      ""
+#    else
+#      lastmsg_len = findfirst(_c->_c==0,lastmsg)
+#      if lastmsg_len === nothing 
+#        String(lastmsg) 
+#      else 
+#        String(lastmsg[1:lastmsg_len-1]) 
+#      end
+#    end
+#  end   
+#end
+
 
 using SparseArrays
 
@@ -317,5 +349,26 @@ end
 #export MosekSolver
 
 #include("MosekSolverInterface.jl")
+
+
+function writedatastreamcb(handle :: Ptr{Nothing},
+                           src    :: Ptr{UInt8},
+                           count  :: UInt64)
+    let io = unsafe_pointer_to_objref(handle) :: IO
+        write(io,unsafe_wrap(Vector{UInt8},src,count))
+    end
+    count
+end
+
+function writedatastream(task :: MSKtask, format :: Dataformat, compress :: Compresstype, stream :: IO)
+    let handle = stream,
+        cbfunc = @cfunction(writedatastreamcb, UInt64, (Ptr{Nothing},Ptr{UInt8},UInt64))
+        @MSK_writedatahandle(task.task,cbfunc,handle,format.value,compress.value)
+    end
+end
+
+
+
+
 
 end

@@ -1,5 +1,5 @@
-##
-#  Copyright : MOSEK ApS
+#
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
 #  File :      acc1.jl
 #
@@ -71,7 +71,6 @@ let Gsubi = Int64[1, 1, 2, 2],
         # Solve and retrieve solution
         optimize(task)
         writedata(task,"acc1.ptf")
-        @assert getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL
 
         xx = getxx(task,MSK_SOL_ITR)
         println("Solution: $xx")

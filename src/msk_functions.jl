@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.0.18
+# Target: Mosek 10.1.11
 export
   analyzeproblem,
   analyzenames,
@@ -18,7 +18,6 @@ export
   appendconeseq,
   appendconesseq,
   bktostr,
-  callbackcodetostr,
   chgconbound,
   chgvarbound,
   conetypetostr,
@@ -196,6 +195,8 @@ export
   infeasibilityreport,
   optimize,
   printparam,
+  probtypetostr,
+  prostatostr,
   commitchanges,
   getatruncatetol,
   putatruncatetol,
@@ -403,8 +404,13 @@ export
   dualsensitivity,
   getlasterror,
   optimizermt,
+  asyncoptimize,
+  asyncstop,
+  asyncpoll,
+  asyncgetresult,
   putoptserverhost,
   optimizebatch,
+  callbackcodetostr,
   checkoutlicense,
   checkinlicense,
   checkinall,
@@ -412,6 +418,10 @@ export
   resetexpirylicenses,
   echointro,
   getcodedesc,
+  rescodetostr,
+  iinfitemtostr,
+  dinfitemtostr,
+  liinfitemtostr,
   getversion,
   linkfiletostream,
   putlicensedebug,
@@ -419,6 +429,7 @@ export
   putlicensewait,
   putlicensepath,
   computesparsecholesky,
+  sparsetriangularsolvedense,
   licensecleanup
 
 macro MSK_analyzeproblem(task,whichstream)
@@ -570,15 +581,6 @@ macro MSK_bktostr(task,bk,str)
      local res = disable_sigint(()->ccall((:MSK_bktostr,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),$(esc(task)),$(esc(bk)),$(esc(str))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
-     end
-     nothing
-  end
-end
-macro MSK_callbackcodetostr(code,callbackcodestr)
-  quote
-     local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
-     if res != 0
-       throw(MosekError(res,""))
      end
      nothing
   end
@@ -4247,6 +4249,15 @@ macro MSK_writebsolution(task,filename,compress)
      nothing
   end
 end
+macro MSK_writebsolutionhandle(task,func,handle,compress)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_writebsolutionhandle,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,),$(esc(task)),$(esc(func)),$(esc(handle)),$(esc(compress))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_readbsolution(task,filename,compress)
   quote
      local res = disable_sigint(()->ccall((:MSK_readbsolution,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},Int32,),$(esc(task)),$(esc(filename)),$(esc(compress))))
@@ -4454,6 +4465,15 @@ macro MSK_optimizebatch(env,israce,maxtime,numthreads,numtask,task,trmcode,rcode
      nothing
   end
 end
+macro MSK_callbackcodetostr(code,callbackcodestr)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
 macro MSK_checkoutlicense(env,feature)
   quote
      local res = disable_sigint(()->ccall((:MSK_checkoutlicense,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(env)),$(esc(feature))))
@@ -4557,6 +4577,42 @@ end
 macro MSK_getsymbcondim(env,num,maxlen)
   quote
      local res = disable_sigint(()->ccall((:MSK_getsymbcondim,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Ref{CSize},),$(esc(env)),$(esc(num)),$(esc(maxlen))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_rescodetostr(res,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_rescodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(res)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_iinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_iinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_dinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_dinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_liinfitemtostr(item,str)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_liinfitemtostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(item)),$(esc(str))))
      if res != 0
        throw(MosekError(res,""))
      end
@@ -4790,66 +4846,6284 @@ macro MSK_licensecleanup()
 end
 
 """
-  analyzeproblem(task::MSKtask,whichstream::Streamtype)
+Analyze the names and issue an error for the first invalid name.
 
-  Analyze the data of a task.
+    analyzenames(task::MSKtask,whichstream::Streamtype,nametype::Nametype)
 
-  Arguments
+Arguments:
+    nametype::Nametype The type of names e.g. valid in MPS or LP files.
+    task::MSKtask An optimization task.
+    whichstream::Streamtype Index of the stream.
+"""
+function analyzenames end
+
+"""
+Analyze the data of a task.
+
+    analyzeproblem(task::MSKtask,whichstream::Streamtype)
+
+Arguments:
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
 """
 function analyzeproblem end
+
+"""
+Print information related to the quality of the solution.
+
+    analyzesolution(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    whichstream::Streamtype Index of the stream.
+"""
+function analyzesolution end
+
+"""
+Appends an affine conic constraint to the task.
+
+    appendacc(task::MSKtask,domidx::Int64,afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
+    appendacc(task::MSKtask,domidx::T0,afeidxlist::T1,b::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidx::Int64 Domain index.
+    task::MSKtask An optimization task.
+"""
+function appendacc end
+
+"""
+Appends a number of affine conic constraint to the task.
+
+    appendaccs(task::MSKtask,domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
+    appendaccs(task::MSKtask,domidxs::T0,afeidxlist::T1,b::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidxs::Vector{Int64} Domain indices.
+    task::MSKtask An optimization task.
+"""
+function appendaccs end
+
+"""
+Appends an affine conic constraint to the task.
+
+    appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Union{Nothing,Vector{Float64}})
+    appendaccseq(task::MSKtask,domidx::T0,afeidxfirst::T1,b::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidxfirst::Int64 Index of the first affine expression.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidx::Int64 Domain index.
+    task::MSKtask An optimization task.
+"""
+function appendaccseq end
+
+"""
+Appends a number of affine conic constraint to the task.
+
+    appendaccsseq(task::MSKtask,domidxs::Vector{Int64},numafeidx::Int64,afeidxfirst::Int64,b::Union{Nothing,Vector{Float64}})
+    appendaccsseq(task::MSKtask,domidxs::T0,numafeidx::T1,afeidxfirst::T2,b::T3) where {T0<:AbstractVector{<:Integer},T1<:Integer,T2<:Integer,T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidxfirst::Int64 Index of the first affine expression.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidxs::Vector{Int64} Domain indices.
+    numafeidx::Int64 Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
+    task::MSKtask An optimization task.
+"""
+function appendaccsseq end
+
+"""
+Appends a number of empty affine expressions to the optimization task.
+
+    appendafes(task::MSKtask,num::Int64)
+    appendafes(task::MSKtask,num::T0) where {T0<:Integer} 
+
+Arguments:
+    num::Int64 Number of empty affine expressions which should be appended.
+    task::MSKtask An optimization task.
+"""
+function appendafes end
+
+"""
+Appends semidefinite variables to the problem.
+
+    appendbarvars(task::MSKtask,dim::Vector{Int32})
+    appendbarvars(task::MSKtask,dim::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    dim::Vector{Int32} Dimensions of symmetric matrix variables to be added.
+    task::MSKtask An optimization task.
+"""
+function appendbarvars end
+
+"""
+Appends a new conic constraint to the problem.
+
+    appendcone(task::MSKtask,ct::Conetype,conepar::Float64,submem::Vector{Int32})
+    appendcone(task::MSKtask,ct::Conetype,conepar::T0,submem::T1) where {T0<:Number,T1<:AbstractVector{<:Integer}} 
+
+Arguments:
+    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
+    ct::Conetype Specifies the type of the cone.
+    submem::Vector{Int32} Variable subscripts of the members in the cone.
+    task::MSKtask An optimization task.
+"""
+function appendcone end
+
+"""
+Appends a new conic constraint to the problem.
+
+    appendconeseq(task::MSKtask,ct::Conetype,conepar::Float64,nummem::Int32,j::Int32)
+    appendconeseq(task::MSKtask,ct::Conetype,conepar::T0,nummem::T1,j::T2) where {T0<:Number,T1<:Integer,T2<:Integer} 
+
+Arguments:
+    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
+    ct::Conetype Specifies the type of the cone.
+    j::Int32 Index of the first variable in the conic constraint.
+    nummem::Int32 Number of member variables in the cone.
+    task::MSKtask An optimization task.
+"""
+function appendconeseq end
+
+"""
+Appends multiple conic constraints to the problem.
+
+    appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::Vector{Float64},nummem::Vector{Int32},j::Int32)
+    appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::T0,nummem::T1,j::T2) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Integer},T2<:Integer} 
+
+Arguments:
+    conepar::Vector{Float64} For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
+    ct::Vector{Conetype} Specifies the type of the cone.
+    j::Int32 Index of the first variable in the first cone to be appended.
+    nummem::Vector{Int32} Numbers of member variables in the cones.
+    task::MSKtask An optimization task.
+"""
+function appendconesseq end
+
+"""
+Appends a number of constraints to the optimization task.
+
+    appendcons(task::MSKtask,num::Int32)
+    appendcons(task::MSKtask,num::T0) where {T0<:Integer} 
+
+Arguments:
+    num::Int32 Number of constraints which should be appended.
+    task::MSKtask An optimization task.
+"""
+function appendcons end
+
+"""
+Appends a number of empty disjunctive constraints to the task.
+
+    appenddjcs(task::MSKtask,num::Int64)
+    appenddjcs(task::MSKtask,num::T0) where {T0<:Integer} 
+
+Arguments:
+    num::Int64 Number of empty disjunctive constraints which should be appended.
+    task::MSKtask An optimization task.
+"""
+function appenddjcs end
+
+"""
+Appends the dual exponential cone domain.
+
+    appenddualexpconedomain(task::MSKtask) :: domidx
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appenddualexpconedomain end
+
+"""
+Appends the dual geometric mean cone domain.
+
+    appenddualgeomeanconedomain(task::MSKtask,n::Int64) :: domidx
+    appenddualgeomeanconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appenddualgeomeanconedomain end
+
+"""
+Appends the dual power cone domain.
+
+    appenddualpowerconedomain(task::MSKtask,n::Int64,alpha::Vector{Float64}) :: domidx
+    appenddualpowerconedomain(task::MSKtask,n::T0,alpha::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}}  :: domidx
+
+Arguments:
+    alpha::Vector{Float64} The sequence proportional to exponents. Must be positive.
+    n::Int64 Dimension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appenddualpowerconedomain end
+
+"""
+Appends the primal exponential cone domain.
+
+    appendprimalexpconedomain(task::MSKtask) :: domidx
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendprimalexpconedomain end
+
+"""
+Appends the primal geometric mean cone domain.
+
+    appendprimalgeomeanconedomain(task::MSKtask,n::Int64) :: domidx
+    appendprimalgeomeanconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendprimalgeomeanconedomain end
+
+"""
+Appends the primal power cone domain.
+
+    appendprimalpowerconedomain(task::MSKtask,n::Int64,alpha::Vector{Float64}) :: domidx
+    appendprimalpowerconedomain(task::MSKtask,n::T0,alpha::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}}  :: domidx
+
+Arguments:
+    alpha::Vector{Float64} The sequence proportional to exponents. Must be positive.
+    n::Int64 Dimension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendprimalpowerconedomain end
+
+"""
+Appends the n dimensional quadratic cone domain.
+
+    appendquadraticconedomain(task::MSKtask,n::Int64) :: domidx
+    appendquadraticconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendquadraticconedomain end
+
+"""
+Appends the n dimensional real number domain.
+
+    appendrdomain(task::MSKtask,n::Int64) :: domidx
+    appendrdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendrdomain end
+
+"""
+Appends the n dimensional negative orthant to the list of domains.
+
+    appendrminusdomain(task::MSKtask,n::Int64) :: domidx
+    appendrminusdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendrminusdomain end
+
+"""
+Appends the n dimensional positive orthant to the list of domains.
+
+    appendrplusdomain(task::MSKtask,n::Int64) :: domidx
+    appendrplusdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendrplusdomain end
+
+"""
+Appends the n dimensional rotated quadratic cone domain.
+
+    appendrquadraticconedomain(task::MSKtask,n::Int64) :: domidx
+    appendrquadraticconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendrquadraticconedomain end
+
+"""
+Appends the n dimensional 0 domain.
+
+    appendrzerodomain(task::MSKtask,n::Int64) :: domidx
+    appendrzerodomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimmension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendrzerodomain end
+
+"""
+Appends a general sparse symmetric matrix to the storage of symmetric matrices.
+
+    appendsparsesymmat(task::MSKtask,dim::Int32,subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64}) :: idx
+    appendsparsesymmat(task::MSKtask,dim::T0,subi::T1,subj::T2,valij::T3) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}}  :: idx
+    appendsparsesymmat(task::MSKtask,dim::T0,data:: SparseMatrixCSC{Float64}) :: idx
+
+Arguments:
+    dim::Int32 Dimension of the symmetric matrix that is appended.
+    subi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
+    subj::Vector{Int32} Column subscripts in the triplets.
+    task::MSKtask An optimization task.
+    valij::Vector{Float64} Values of each triplet.
+
+Returns:
+    idx::Int64 Unique index assigned to the inputted matrix.
+"""
+function appendsparsesymmat end
+
+"""
+Appends a general sparse symmetric matrix to the storage of symmetric matrices.
+
+    appendsparsesymmatlist(task::MSKtask,dims::Vector{Int32},nz::Vector{Int64},subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64}) :: idx
+    appendsparsesymmatlist(task::MSKtask,dims::T0,nz::T1,subi::T2,subj::T3,valij::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}}  :: idx
+
+Arguments:
+    dims::Vector{Int32} Dimensions of the symmetric matrixes.
+    nz::Vector{Int64} Number of nonzeros for each matrix.
+    subi::Vector{Int32} Row subscript in the triplets.
+    subj::Vector{Int32} Column subscripts in the triplets.
+    task::MSKtask An optimization task.
+    valij::Vector{Float64} Values of each triplet.
+
+Returns:
+    idx::Vector{Int64} Unique index assigned to the inputted matrix.
+"""
+function appendsparsesymmatlist end
+
+"""
+Appends the vectorized SVEC PSD cone domain.
+
+    appendsvecpsdconedomain(task::MSKtask,n::Int64) :: domidx
+    appendsvecpsdconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    n::Int64 Dimension of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 Index of the domain.
+"""
+function appendsvecpsdconedomain end
+
+"""
+Appends a number of variables to the optimization task.
+
+    appendvars(task::MSKtask,num::Int32)
+    appendvars(task::MSKtask,num::T0) where {T0<:Integer} 
+
+Arguments:
+    num::Int32 Number of variables which should be appended.
+    task::MSKtask An optimization task.
+"""
+function appendvars end
+
+"""
+Request a solution from a remote job.
+
+    asyncgetresult(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString) :: (respavailable,resp,trm)
+
+Arguments:
+    accesstoken::AbstractString Access token.
+    address::AbstractString Address of the OptServer.
+    task::MSKtask An optimization task.
+    token::AbstractString The task token.
+
+Returns:
+    resp::Rescode Is the response code from the remote solver.
+    respavailable::Bool Indicates if a remote response is available.
+    trm::Rescode Is either OK or a termination response code.
+"""
+function asyncgetresult end
+
+"""
+Offload the optimization task to a solver server in asynchronous mode.
+
+    asyncoptimize(task::MSKtask,address::AbstractString,accesstoken::AbstractString) :: token
+
+Arguments:
+    accesstoken::AbstractString Access token.
+    address::AbstractString Address of the OptServer.
+    task::MSKtask An optimization task.
+
+Returns:
+    token::String Returns the task token.
+"""
+function asyncoptimize end
+
+"""
+Requests information about the status of the remote job.
+
+    asyncpoll(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString) :: (respavailable,resp,trm)
+
+Arguments:
+    accesstoken::AbstractString Access token.
+    address::AbstractString Address of the OptServer.
+    task::MSKtask An optimization task.
+    token::AbstractString The task token.
+
+Returns:
+    resp::Rescode Is the response code from the remote solver.
+    respavailable::Bool Indicates if a remote response is available.
+    trm::Rescode Is either OK or a termination response code.
+"""
+function asyncpoll end
+
+"""
+Request that the job identified by the token is terminated.
+
+    asyncstop(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString)
+
+Arguments:
+    accesstoken::AbstractString Access token.
+    address::AbstractString Address of the OptServer.
+    task::MSKtask An optimization task.
+    token::AbstractString The task token.
+"""
+function asyncstop end
+
+"""
+Computes conditioning information for the basis matrix.
+
+    basiscond(task::MSKtask) :: (nrmbasis,nrminvbasis)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    nrmbasis::Float64 An estimate for the 1-norm of the basis.
+    nrminvbasis::Float64 An estimate for the 1-norm of the inverse of the basis.
+"""
+function basiscond end
+
+"""
+Obtains a bound key string identifier.
+
+    bktostr(task::MSKtask,bk::Boundkey) :: str
+
+Arguments:
+    bk::Boundkey Bound key.
+    task::MSKtask An optimization task.
+
+Returns:
+    str::String String corresponding to the bound key.
+"""
+function bktostr end
+
+"""
+Obtains a callback code string identifier.
+
+    callbackcodetostr(code::Callbackcode) :: callbackcodestr
+
+Arguments:
+    code::Callbackcode A callback code.
+
+Returns:
+    callbackcodestr::String String corresponding to the callback code.
+"""
+function callbackcodetostr end
+
+"""
+Check in all unused license features to the license token server.
+
+    checkinall(env::MSKenv)
+    checkinall()
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+"""
+function checkinall end
+
+"""
+Check in a license feature back to the license server ahead of time.
+
+    checkinlicense(env::MSKenv,feature::Feature)
+    checkinlicense(feature::Feature)
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    feature::Feature Feature to check in to the license system.
+"""
+function checkinlicense end
+
+"""
+Checks the memory allocated by the task.
+
+    checkmem(task::MSKtask,file::AbstractString,line::Int32)
+    checkmem(task::MSKtask,file::Union{Nothing,AbstractString},line::T0) where {T0<:Integer} 
+
+Arguments:
+    file::AbstractString File from which the function is called.
+    line::Int32 Line in the file from which the function is called.
+    task::MSKtask An optimization task.
+"""
+function checkmem end
+
+"""
+Check out a license feature from the license server ahead of time.
+
+    checkoutlicense(env::MSKenv,feature::Feature)
+    checkoutlicense(feature::Feature)
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    feature::Feature Feature to check out from the license system.
+"""
+function checkoutlicense end
+
+"""
+Changes the bounds for one constraint.
+
+    chgconbound(task::MSKtask,i::Int32,lower::Int32,finite::Int32,value::Float64)
+    chgconbound(task::MSKtask,i::T0,lower::T1,finite::T2,value::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Number} 
+
+Arguments:
+    finite::Int32 If non-zero, then the given value is assumed to be finite.
+    i::Int32 Index of the constraint for which the bounds should be changed.
+    lower::Int32 If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
+    task::MSKtask An optimization task.
+    value::Float64 New value for the bound.
+"""
+function chgconbound end
+
+"""
+Changes the bounds for one variable.
+
+    chgvarbound(task::MSKtask,j::Int32,lower::Int32,finite::Int32,value::Float64)
+    chgvarbound(task::MSKtask,j::T0,lower::T1,finite::T2,value::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Number} 
+
+Arguments:
+    finite::Int32 If non-zero, then the given value is assumed to be finite.
+    j::Int32 Index of the variable for which the bounds should be changed.
+    lower::Int32 If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
+    task::MSKtask An optimization task.
+    value::Float64 New value for the bound.
+"""
+function chgvarbound end
+
+"""
+Commits all cached problem changes.
+
+    commitchanges(task::MSKtask)
+
+Arguments:
+    task::MSKtask An optimization task.
+"""
+function commitchanges end
+
+"""
+Computes a Cholesky factorization of sparse matrix.
+
+    computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64}) :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+    computesparsecholesky(env::MSKenv,numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}}  :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+    computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64}) :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+    computesparsecholesky(numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}}  :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+
+Arguments:
+    anzc::Vector{Int32} anzc[j] is the number of nonzeros in the jth column of A.
+    aptrc::Vector{Int64} aptrc[j] is a pointer to the first element in column j.
+    asubc::Vector{Int32} Row indexes for each column stored in increasing order.
+    avalc::Vector{Float64} The value corresponding to row indexed stored in asubc.
+    env::MSKenv The MOSEK environment.
+    numthreads::Int32 The number threads that can be used to do the computation. 0 means the code makes the choice.
+    ordermethod::Int32 If nonzero, then a sparsity preserving ordering will be employed.
+    tolsingular::Float64 A positive parameter controlling when a pivot is declared zero.
+
+Returns:
+    diag::Float64 The diagonal elements of matrix D.
+    lensubnval::Int64 Number of elements in lsubc and lvalc.
+    lnzc::Int32 lnzc[j] is the number of non zero elements in column j.
+    lptrc::Int64 lptrc[j] is a pointer to the first row index and value in column j.
+    lsubc::Int32 Row indexes for each column stored in increasing order.
+    lvalc::Float64 The values corresponding to row indexed stored in lsubc.
+    perm::Int32 Permutation array used to specify the permutation matrix P computed by the function.
+"""
+function computesparsecholesky end
+
+"""
+Obtains a cone type string identifier.
+
+    conetypetostr(task::MSKtask,ct::Conetype) :: str
+
+Arguments:
+    ct::Conetype Specifies the type of the cone.
+    task::MSKtask An optimization task.
+
+Returns:
+    str::String String corresponding to the cone type.
+"""
+function conetypetostr end
+
+"""
+Undefine a solution and free the memory it uses.
+
+    deletesolution(task::MSKtask,whichsol::Soltype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function deletesolution end
+
+"""
+Obtains a information item string identifier.
+
+    dinfitemtostr(item::Dinfitem) :: str
+
+Arguments:
+    item::Dinfitem Information item.
+
+Returns:
+    str::String String corresponding to the information item.
+"""
+function dinfitemtostr end
+
+"""
+Performs sensitivity analysis on objective coefficients.
+
+    dualsensitivity(task::MSKtask,subj::Vector{Int32}) :: (leftpricej,rightpricej,leftrangej,rightrangej)
+    dualsensitivity(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: (leftpricej,rightpricej,leftrangej,rightrangej)
+
+Arguments:
+    subj::Vector{Int32} Indexes of objective coefficients to analyze.
+    task::MSKtask An optimization task.
+
+Returns:
+    leftpricej::Vector{Float64} Left shadow prices for requested coefficients.
+    leftrangej::Vector{Float64} Left range for requested coefficients.
+    rightpricej::Vector{Float64} Right shadow prices for requested coefficients.
+    rightrangej::Vector{Float64} Right range for requested coefficients.
+"""
+function dualsensitivity end
+
+"""
+Prints an intro to message stream.
+
+    echointro(env::MSKenv,longver::Int32)
+    echointro(env::MSKenv,longver::T0) where {T0<:Integer} 
+    echointro(longver::Int32)
+    echointro(longver::T0) where {T0<:Integer} 
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    longver::Int32 If non-zero, then the intro is slightly longer.
+"""
+function echointro end
+
+"""
+Clears a row in barF
+
+    emptyafebarfrow(task::MSKtask,afeidx::Int64)
+    emptyafebarfrow(task::MSKtask,afeidx::T0) where {T0<:Integer} 
+
+Arguments:
+    afeidx::Int64 Row index of barF.
+    task::MSKtask An optimization task.
+"""
+function emptyafebarfrow end
+
+"""
+Clears rows in barF.
+
+    emptyafebarfrowlist(task::MSKtask,afeidxlist::Vector{Int64})
+    emptyafebarfrowlist(task::MSKtask,afeidxlist::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    afeidxlist::Vector{Int64} Indices of rows in barF to clear.
+    task::MSKtask An optimization task.
+"""
+function emptyafebarfrowlist end
+
+"""
+Clears a column in F.
+
+    emptyafefcol(task::MSKtask,varidx::Int32)
+    emptyafefcol(task::MSKtask,varidx::T0) where {T0<:Integer} 
+
+Arguments:
+    task::MSKtask An optimization task.
+    varidx::Int32 Variable index.
+"""
+function emptyafefcol end
+
+"""
+Clears columns in F.
+
+    emptyafefcollist(task::MSKtask,varidx::Vector{Int32})
+    emptyafefcollist(task::MSKtask,varidx::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    task::MSKtask An optimization task.
+    varidx::Vector{Int32} Indices of variables in F to clear.
+"""
+function emptyafefcollist end
+
+"""
+Clears a row in F.
+
+    emptyafefrow(task::MSKtask,afeidx::Int64)
+    emptyafefrow(task::MSKtask,afeidx::T0) where {T0<:Integer} 
+
+Arguments:
+    afeidx::Int64 Row index.
+    task::MSKtask An optimization task.
+"""
+function emptyafefrow end
+
+"""
+Clears rows in F.
+
+    emptyafefrowlist(task::MSKtask,afeidx::Vector{Int64})
+    emptyafefrowlist(task::MSKtask,afeidx::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    afeidx::Vector{Int64} Indices of rows in F to clear.
+    task::MSKtask An optimization task.
+"""
+function emptyafefrowlist end
+
+"""
+Evaluates the activity of an affine conic constraint.
+
+    evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64) :: activity
+    evaluateacc(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: activity
+
+Arguments:
+    accidx::Int64 The index of the affine conic constraint.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    activity::Vector{Float64} The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
+"""
+function evaluateacc end
+
+"""
+Evaluates the activities of all affine conic constraints.
+
+    evaluateaccs(task::MSKtask,whichsol::Soltype) :: activity
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    activity::Vector{Float64} The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
+"""
+function evaluateaccs end
+
+"""
+Reports when the first license feature expires.
+
+    expirylicenses(env::MSKenv) :: expiry
+    expirylicenses() :: expiry
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+
+Returns:
+    expiry::Int64 If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
+"""
+function expirylicenses end
+
+"""
+Obtains the list of affine expressions appearing in the affine conic constraint.
+
+    getaccafeidxlist(task::MSKtask,accidx::Int64) :: afeidxlist
+    getaccafeidxlist(task::MSKtask,accidx::T0) where {T0<:Integer}  :: afeidxlist
+
+Arguments:
+    accidx::Int64 Index of the affine conic constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    afeidxlist::Vector{Int64} List of indexes of affine expressions appearing in the constraint.
+"""
+function getaccafeidxlist end
+
+"""
+Obtains the additional constant term vector appearing in the affine conic constraint.
+
+    getaccb(task::MSKtask,accidx::Int64) :: b
+    getaccb(task::MSKtask,accidx::T0) where {T0<:Integer}  :: b
+
+Arguments:
+    accidx::Int64 Index of the affine conic constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    b::Vector{Float64} The vector b appearing in the constraint.
+"""
+function getaccb end
+
+"""
+Obtains barF, implied by the ACCs, in block triplet form.
+
+    getaccbarfblocktriplet(task::MSKtask) :: (numtrip,acc_afe,bar_var,blk_row,blk_col,blk_val)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    acc_afe::Vector{Int64} Index of the AFE within the concatenated list of AFEs in ACCs.
+    bar_var::Vector{Int32} Symmetric matrix variable index.
+    blk_col::Vector{Int32} Block column index.
+    blk_row::Vector{Int32} Block row index.
+    blk_val::Vector{Float64} The numerical value associated with each block triplet.
+    numtrip::Int64 Number of elements in the block triplet form.
+"""
+function getaccbarfblocktriplet end
+
+"""
+Obtains an upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
+
+    getaccbarfnumblocktriplets(task::MSKtask) :: numtrip
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numtrip::Int64 An upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
+"""
+function getaccbarfnumblocktriplets end
+
+"""
+Obtains the domain appearing in the affine conic constraint.
+
+    getaccdomain(task::MSKtask,accidx::Int64) :: domidx
+    getaccdomain(task::MSKtask,accidx::T0) where {T0<:Integer}  :: domidx
+
+Arguments:
+    accidx::Int64 The index of the affine conic constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidx::Int64 The index of domain in the affine conic constraint.
+"""
+function getaccdomain end
+
+"""
+Obtains the doty vector for an affine conic constraint.
+
+    getaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64) :: doty
+    getaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
+
+Arguments:
+    accidx::Int64 The index of the affine conic constraint.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    doty::Vector{Float64} The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
+"""
+function getaccdoty end
+
+"""
+Obtains the doty vector for a solution.
+
+    getaccdotys(task::MSKtask,whichsol::Soltype) :: doty
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    doty::Vector{Float64} The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
+"""
+function getaccdotys end
+
+"""
+Obtains the total number of nonzeros in the ACC implied F matrix.
+
+    getaccfnumnz(task::MSKtask) :: accfnnz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    accfnnz::Int64 Number of nonzeros in the F matrix implied by ACCs.
+"""
+function getaccfnumnz end
+
+"""
+Obtains the F matrix (implied by the AFE ordering within the ACCs) in triplet format.
+
+    getaccftrip(task::MSKtask) :: (frow,fcol,fval)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    fcol::Vector{Int32} Column indices of nonzeros in the implied F matrix.
+    frow::Vector{Int64} Row indices of nonzeros in the implied F matrix.
+    fval::Vector{Float64} Values of nonzero entries in the implied F matrix.
+"""
+function getaccftrip end
+
+"""
+The g vector as used within the ACCs.
+
+    getaccgvector(task::MSKtask) :: g
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    g::Vector{Float64} The g vector as used within the ACCs.
+"""
+function getaccgvector end
+
+"""
+Obtains the dimension of the affine conic constraint.
+
+    getaccn(task::MSKtask,accidx::Int64) :: n
+    getaccn(task::MSKtask,accidx::T0) where {T0<:Integer}  :: n
+
+Arguments:
+    accidx::Int64 The index of the affine conic constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    n::Int64 The dimension of the affine conic constraint (equal to the dimension of its domain).
+"""
+function getaccn end
+
+"""
+Obtains the name of an affine conic constraint.
+
+    getaccname(task::MSKtask,accidx::Int64) :: name
+    getaccname(task::MSKtask,accidx::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    accidx::Int64 Index of an affine conic constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String Returns the required name.
+"""
+function getaccname end
+
+"""
+Obtains the length of the name of an affine conic constraint.
+
+    getaccnamelen(task::MSKtask,accidx::Int64) :: len
+    getaccnamelen(task::MSKtask,accidx::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    accidx::Int64 Index of an affine conic constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getaccnamelen end
+
+"""
+Obtains the total dimension of all affine conic constraints.
+
+    getaccntot(task::MSKtask) :: n
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    n::Int64 The total dimension of all affine conic constraints.
+"""
+function getaccntot end
+
+"""
+Obtains full data of all affine conic constraints.
+
+    getaccs(task::MSKtask) :: (domidxlist,afeidxlist,b)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    afeidxlist::Vector{Int64} The concatenation of index lists of affine expressions appearing in all affine conic constraints.
+    b::Vector{Float64} The concatenation of vectors b appearing in all affine conic constraints.
+    domidxlist::Vector{Int64} The list of domains appearing in all affine conic constraints.
+"""
+function getaccs end
+
+"""
+Obtains one column of the linear constraint matrix.
+
+    getacol(task::MSKtask,j::Int32) :: (nzj,subj,valj)
+    getacol(task::MSKtask,j::T0) where {T0<:Integer}  :: (nzj,subj,valj)
+
+Arguments:
+    j::Int32 Index of the column.
+    task::MSKtask An optimization task.
+
+Returns:
+    nzj::Int32 Number of non-zeros in the column obtained.
+    subj::Vector{Int32} Row indices of the non-zeros in the column obtained.
+    valj::Vector{Float64} Numerical values in the column obtained.
+"""
+function getacol end
+
+"""
+Obtains the number of non-zero elements in one column of the linear constraint matrix
+
+    getacolnumnz(task::MSKtask,i::Int32) :: nzj
+    getacolnumnz(task::MSKtask,i::T0) where {T0<:Integer}  :: nzj
+
+Arguments:
+    i::Int32 Index of the column.
+    task::MSKtask An optimization task.
+
+Returns:
+    nzj::Int32 Number of non-zeros in the j'th column of (A).
+"""
+function getacolnumnz end
+
+"""
+Obtains a sequence of columns from the coefficient matrix.
+
+    getacolslice(task::MSKtask,first::Int32,last::Int32) :: (ptrb,ptre,sub,val)
+    getacolslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (ptrb,ptre,sub,val)
+
+Arguments:
+    first::Int32 Index of the first column in the sequence.
+    last::Int32 Index of the last column in the sequence plus one.
+    task::MSKtask An optimization task.
+
+Returns:
+    ptrb::Vector{Int64} Column start pointers.
+    ptre::Vector{Int64} Column end pointers.
+    sub::Vector{Int32} Contains the row subscripts.
+    val::Vector{Float64} Contains the coefficient values.
+"""
+function getacolslice end
+
+"""
+Obtains the number of non-zeros in a slice of columns of the coefficient matrix.
+
+    getacolslicenumnz(task::MSKtask,first::Int32,last::Int32) :: numnz
+    getacolslicenumnz(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: numnz
+
+Arguments:
+    first::Int32 Index of the first column in the sequence.
+    last::Int32 Index of the last column plus one in the sequence.
+    task::MSKtask An optimization task.
+
+Returns:
+    numnz::Int64 Number of non-zeros in the slice.
+"""
+function getacolslicenumnz end
+
+"""
+Obtains a sequence of columns from the coefficient matrix in triplet format.
+
+    getacolslicetrip(task::MSKtask,first::Int32,last::Int32) :: (subi,subj,val)
+    getacolslicetrip(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (subi,subj,val)
+
+Arguments:
+    first::Int32 Index of the first column in the sequence.
+    last::Int32 Index of the last column in the sequence plus one.
+    task::MSKtask An optimization task.
+
+Returns:
+    subi::Vector{Int32} Constraint subscripts.
+    subj::Vector{Int32} Column subscripts.
+    val::Vector{Float64} Values.
+"""
+function getacolslicetrip end
+
+"""
+Obtains barF in block triplet form.
+
+    getafebarfblocktriplet(task::MSKtask) :: (numtrip,afeidx,barvaridx,subk,subl,valkl)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    afeidx::Vector{Int64} Constraint index.
+    barvaridx::Vector{Int32} Symmetric matrix variable index.
+    numtrip::Int64 Number of elements in the block triplet form.
+    subk::Vector{Int32} Block row index.
+    subl::Vector{Int32} Block column index.
+    valkl::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function getafebarfblocktriplet end
+
+"""
+Obtains an upper bound on the number of elements in the block triplet form of barf.
+
+    getafebarfnumblocktriplets(task::MSKtask) :: numtrip
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numtrip::Int64 An upper bound on the number of elements in the block triplet form of barf.
+"""
+function getafebarfnumblocktriplets end
+
+"""
+Obtains the number of nonzero entries in a row of barF.
+
+    getafebarfnumrowentries(task::MSKtask,afeidx::Int64) :: numentr
+    getafebarfnumrowentries(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: numentr
+
+Arguments:
+    afeidx::Int64 Row index of barF.
+    task::MSKtask An optimization task.
+
+Returns:
+    numentr::Int32 Number of nonzero entries in a row of barF.
+"""
+function getafebarfnumrowentries end
+
+"""
+Obtains nonzero entries in one row of barF.
+
+    getafebarfrow(task::MSKtask,afeidx::Int64) :: (barvaridx,ptrterm,numterm,termidx,termweight)
+    getafebarfrow(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (barvaridx,ptrterm,numterm,termidx,termweight)
+
+Arguments:
+    afeidx::Int64 Row index of barF.
+    task::MSKtask An optimization task.
+
+Returns:
+    barvaridx::Vector{Int32} Semidefinite variable indices.
+    numterm::Vector{Int64} Number of terms in each entry.
+    ptrterm::Vector{Int64} Pointers to the description of entries.
+    termidx::Vector{Int64} Indices of semidefinite matrices from E.
+    termweight::Vector{Float64} Weights appearing in the weighted sum representation.
+"""
+function getafebarfrow end
+
+"""
+Obtains information about one row of barF.
+
+    getafebarfrowinfo(task::MSKtask,afeidx::Int64) :: (numentr,numterm)
+    getafebarfrowinfo(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (numentr,numterm)
+
+Arguments:
+    afeidx::Int64 Row index of barF.
+    task::MSKtask An optimization task.
+
+Returns:
+    numentr::Int32 Number of nonzero entries in a row of barF.
+    numterm::Int64 Number of terms in the weighted sums representation of the row of barF.
+"""
+function getafebarfrowinfo end
+
+"""
+Obtains the total number of nonzeros in F.
+
+    getafefnumnz(task::MSKtask) :: numnz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numnz::Int64 Number of nonzeros in F.
+"""
+function getafefnumnz end
+
+"""
+Obtains one row of F in sparse format.
+
+    getafefrow(task::MSKtask,afeidx::Int64) :: (numnz,varidx,val)
+    getafefrow(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (numnz,varidx,val)
+
+Arguments:
+    afeidx::Int64 Row index.
+    task::MSKtask An optimization task.
+
+Returns:
+    numnz::Int32 Number of non-zeros in the row obtained.
+    val::Vector{Float64} Values of the non-zeros in the row obtained.
+    varidx::Vector{Int32} Column indices of the non-zeros in the row obtained.
+"""
+function getafefrow end
+
+"""
+Obtains the number of nonzeros in a row of F.
+
+    getafefrownumnz(task::MSKtask,afeidx::Int64) :: numnz
+    getafefrownumnz(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: numnz
+
+Arguments:
+    afeidx::Int64 Row index.
+    task::MSKtask An optimization task.
+
+Returns:
+    numnz::Int32 Number of non-zeros in the row.
+"""
+function getafefrownumnz end
+
+"""
+Obtains the F matrix in triplet format.
+
+    getafeftrip(task::MSKtask) :: (afeidx,varidx,val)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    afeidx::Vector{Int64} Row indices of nonzeros.
+    val::Vector{Float64} Values of nonzero entries.
+    varidx::Vector{Int32} Column indices of nonzeros.
+"""
+function getafeftrip end
+
+"""
+Obtains a single coefficient in g.
+
+    getafeg(task::MSKtask,afeidx::Int64) :: g
+    getafeg(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: g
+
+Arguments:
+    afeidx::Int64 Element index.
+    task::MSKtask An optimization task.
+
+Returns:
+    g::Float64 The entry in g.
+"""
+function getafeg end
+
+"""
+Obtains a sequence of coefficients from the vector g.
+
+    getafegslice(task::MSKtask,first::Int64,last::Int64) :: g
+    getafegslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: g
+
+Arguments:
+    first::Int64 First index in the sequence.
+    last::Int64 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+
+Returns:
+    g::Vector{Float64} The slice of g as a dense vector.
+"""
+function getafegslice end
+
+"""
+Obtains a single coefficient in linear constraint matrix.
+
+    getaij(task::MSKtask,i::Int32,j::Int32) :: aij
+    getaij(task::MSKtask,i::T0,j::T1) where {T0<:Integer,T1<:Integer}  :: aij
+
+Arguments:
+    i::Int32 Row index of the coefficient to be returned.
+    j::Int32 Column index of the coefficient to be returned.
+    task::MSKtask An optimization task.
+
+Returns:
+    aij::Float64 Returns the requested coefficient.
+"""
+function getaij end
+
+"""
+Obtains the number non-zeros in a rectangular piece of the linear constraint matrix.
+
+    getapiecenumnz(task::MSKtask,firsti::Int32,lasti::Int32,firstj::Int32,lastj::Int32) :: numnz
+    getapiecenumnz(task::MSKtask,firsti::T0,lasti::T1,firstj::T2,lastj::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Integer}  :: numnz
+
+Arguments:
+    firsti::Int32 Index of the first row in the rectangular piece.
+    firstj::Int32 Index of the first column in the rectangular piece.
+    lasti::Int32 Index of the last row plus one in the rectangular piece.
+    lastj::Int32 Index of the last column plus one in the rectangular piece.
+    task::MSKtask An optimization task.
+
+Returns:
+    numnz::Int32 Number of non-zero elements in the rectangular piece of the linear constraint matrix.
+"""
+function getapiecenumnz end
+
+"""
+Obtains one row of the linear constraint matrix.
+
+    getarow(task::MSKtask,i::Int32) :: (nzi,subi,vali)
+    getarow(task::MSKtask,i::T0) where {T0<:Integer}  :: (nzi,subi,vali)
+
+Arguments:
+    i::Int32 Index of the row.
+    task::MSKtask An optimization task.
+
+Returns:
+    nzi::Int32 Number of non-zeros in the row obtained.
+    subi::Vector{Int32} Column indices of the non-zeros in the row obtained.
+    vali::Vector{Float64} Numerical values of the row obtained.
+"""
+function getarow end
+
+"""
+Obtains the number of non-zero elements in one row of the linear constraint matrix
+
+    getarownumnz(task::MSKtask,i::Int32) :: nzi
+    getarownumnz(task::MSKtask,i::T0) where {T0<:Integer}  :: nzi
+
+Arguments:
+    i::Int32 Index of the row.
+    task::MSKtask An optimization task.
+
+Returns:
+    nzi::Int32 Number of non-zeros in the i'th row of `A`.
+"""
+function getarownumnz end
+
+"""
+Obtains a sequence of rows from the coefficient matrix.
+
+    getarowslice(task::MSKtask,first::Int32,last::Int32) :: (ptrb,ptre,sub,val)
+    getarowslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (ptrb,ptre,sub,val)
+
+Arguments:
+    first::Int32 Index of the first row in the sequence.
+    last::Int32 Index of the last row in the sequence plus one.
+    task::MSKtask An optimization task.
+
+Returns:
+    ptrb::Vector{Int64} Row start pointers.
+    ptre::Vector{Int64} Row end pointers.
+    sub::Vector{Int32} Contains the column subscripts.
+    val::Vector{Float64} Contains the coefficient values.
+"""
+function getarowslice end
+
+"""
+Obtains the number of non-zeros in a slice of rows of the coefficient matrix.
+
+    getarowslicenumnz(task::MSKtask,first::Int32,last::Int32) :: numnz
+    getarowslicenumnz(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: numnz
+
+Arguments:
+    first::Int32 Index of the first row in the sequence.
+    last::Int32 Index of the last row plus one in the sequence.
+    task::MSKtask An optimization task.
+
+Returns:
+    numnz::Int64 Number of non-zeros in the slice.
+"""
+function getarowslicenumnz end
+
+"""
+Obtains a sequence of rows from the coefficient matrix in sparse triplet format.
+
+    getarowslicetrip(task::MSKtask,first::Int32,last::Int32) :: (subi,subj,val)
+    getarowslicetrip(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (subi,subj,val)
+
+Arguments:
+    first::Int32 Index of the first row in the sequence.
+    last::Int32 Index of the last row in the sequence plus one.
+    task::MSKtask An optimization task.
+
+Returns:
+    subi::Vector{Int32} Constraint subscripts.
+    subj::Vector{Int32} Column subscripts.
+    val::Vector{Float64} Values.
+"""
+function getarowslicetrip end
+
+"""
+Obtains the A matrix in sparse triplet format.
+
+    getatrip(task::MSKtask) :: (subi,subj,val)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    subi::Vector{Int32} Constraint subscripts.
+    subj::Vector{Int32} Column subscripts.
+    val::Vector{Float64} Values.
+"""
+function getatrip end
+
+"""
+Gets the current A matrix truncation threshold.
+
+    getatruncatetol(task::MSKtask) :: tolzero
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    tolzero::Vector{Float64} Truncation tolerance.
+"""
+function getatruncatetol end
+
+"""
+Obtains barA in block triplet form.
+
+    getbarablocktriplet(task::MSKtask) :: (num,subi,subj,subk,subl,valijkl)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 Number of elements in the block triplet form.
+    subi::Vector{Int32} Constraint index.
+    subj::Vector{Int32} Symmetric matrix variable index.
+    subk::Vector{Int32} Block row index.
+    subl::Vector{Int32} Block column index.
+    valijkl::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function getbarablocktriplet end
+
+"""
+Obtains information about an element in barA.
+
+    getbaraidx(task::MSKtask,idx::Int64) :: (i,j,num,sub,weights)
+    getbaraidx(task::MSKtask,idx::T0) where {T0<:Integer}  :: (i,j,num,sub,weights)
+
+Arguments:
+    idx::Int64 Position of the element in the vectorized form.
+    task::MSKtask An optimization task.
+
+Returns:
+    i::Int32 Row index of the element at position idx.
+    j::Int32 Column index of the element at position idx.
+    num::Int64 Number of terms in weighted sum that forms the element.
+    sub::Vector{Int64} A list indexes of the elements from symmetric matrix storage that appear in the weighted sum.
+    weights::Vector{Float64} The weights associated with each term in the weighted sum.
+"""
+function getbaraidx end
+
+"""
+Obtains information about an element in barA.
+
+    getbaraidxij(task::MSKtask,idx::Int64) :: (i,j)
+    getbaraidxij(task::MSKtask,idx::T0) where {T0<:Integer}  :: (i,j)
+
+Arguments:
+    idx::Int64 Position of the element in the vectorized form.
+    task::MSKtask An optimization task.
+
+Returns:
+    i::Int32 Row index of the element at position idx.
+    j::Int32 Column index of the element at position idx.
+"""
+function getbaraidxij end
+
+"""
+Obtains the number of terms in the weighted sum that form a particular element in barA.
+
+    getbaraidxinfo(task::MSKtask,idx::Int64) :: num
+    getbaraidxinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: num
+
+Arguments:
+    idx::Int64 The internal position of the element for which information should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 Number of terms in the weighted sum that form the specified element in barA.
+"""
+function getbaraidxinfo end
+
+"""
+Obtains the sparsity pattern of the barA matrix.
+
+    getbarasparsity(task::MSKtask) :: (numnz,idxij)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    idxij::Vector{Int64} Position of each nonzero element in the vector representation of barA.
+    numnz::Int64 Number of nonzero elements in barA.
+"""
+function getbarasparsity end
+
+"""
+Obtains barC in block triplet form.
+
+    getbarcblocktriplet(task::MSKtask) :: (num,subj,subk,subl,valjkl)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 Number of elements in the block triplet form.
+    subj::Vector{Int32} Symmetric matrix variable index.
+    subk::Vector{Int32} Block row index.
+    subl::Vector{Int32} Block column index.
+    valjkl::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function getbarcblocktriplet end
+
+"""
+Obtains information about an element in barc.
+
+    getbarcidx(task::MSKtask,idx::Int64) :: (j,num,sub,weights)
+    getbarcidx(task::MSKtask,idx::T0) where {T0<:Integer}  :: (j,num,sub,weights)
+
+Arguments:
+    idx::Int64 Index of the element for which information should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    j::Int32 Row index in barc.
+    num::Int64 Number of terms in the weighted sum.
+    sub::Vector{Int64} Elements appearing the weighted sum.
+    weights::Vector{Float64} Weights of terms in the weighted sum.
+"""
+function getbarcidx end
+
+"""
+Obtains information about an element in barc.
+
+    getbarcidxinfo(task::MSKtask,idx::Int64) :: num
+    getbarcidxinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: num
+
+Arguments:
+    idx::Int64 Index of the element for which information should be obtained. The value is an index of a symmetric sparse variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 Number of terms that appear in the weighted sum that forms the requested element.
+"""
+function getbarcidxinfo end
+
+"""
+Obtains the row index of an element in barc.
+
+    getbarcidxj(task::MSKtask,idx::Int64) :: j
+    getbarcidxj(task::MSKtask,idx::T0) where {T0<:Integer}  :: j
+
+Arguments:
+    idx::Int64 Index of the element for which information should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    j::Int32 Row index in barc.
+"""
+function getbarcidxj end
+
+"""
+Get the positions of the nonzero elements in barc.
+
+    getbarcsparsity(task::MSKtask) :: (numnz,idxj)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    idxj::Vector{Int64} Internal positions of the nonzeros elements in barc.
+    numnz::Int64 Number of nonzero elements in barc.
+"""
+function getbarcsparsity end
+
+"""
+Obtains the dual solution for a semidefinite variable.
+
+    getbarsj(task::MSKtask,whichsol::Soltype,j::Int32) :: barsj
+    getbarsj(task::MSKtask,whichsol::Soltype,j::T0) where {T0<:Integer}  :: barsj
+
+Arguments:
+    j::Int32 Index of the semidefinite variable.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    barsj::Vector{Float64} Value of the j'th dual variable of barx.
+"""
+function getbarsj end
+
+"""
+Obtains the dual solution for a sequence of semidefinite variables.
+
+    getbarsslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64) :: barsslice
+    getbarsslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where {T0<:Integer,T1<:Integer,T2<:Integer}  :: barsslice
+
+Arguments:
+    first::Int32 Index of the first semidefinite variable in the slice.
+    last::Int32 Index of the last semidefinite variable in the slice plus one.
+    slicesize::Int64 Denotes the length of the array barsslice.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    barsslice::Vector{Float64} Dual solution values of symmetric matrix variables in the slice, stored sequentially.
+"""
+function getbarsslice end
+
+"""
+Obtains the name of a semidefinite variable.
+
+    getbarvarname(task::MSKtask,i::Int32) :: name
+    getbarvarname(task::MSKtask,i::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    i::Int32 Index of the variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String The requested name is copied to this buffer.
+"""
+function getbarvarname end
+
+"""
+Obtains the index of semidefinite variable from its name.
+
+    getbarvarnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
+
+Arguments:
+    somename::AbstractString The name of the variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    asgn::Int32 Non-zero if the name somename is assigned to some semidefinite variable.
+    index::Int32 The index of a semidefinite variable with the name somename (if one exists).
+"""
+function getbarvarnameindex end
+
+"""
+Obtains the length of the name of a semidefinite variable.
+
+    getbarvarnamelen(task::MSKtask,i::Int32) :: len
+    getbarvarnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    i::Int32 Index of the variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getbarvarnamelen end
+
+"""
+Obtains the primal solution for a semidefinite variable.
+
+    getbarxj(task::MSKtask,whichsol::Soltype,j::Int32) :: barxj
+    getbarxj(task::MSKtask,whichsol::Soltype,j::T0) where {T0<:Integer}  :: barxj
+
+Arguments:
+    j::Int32 Index of the semidefinite variable.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    barxj::Vector{Float64} Value of the j'th variable of barx.
+"""
+function getbarxj end
+
+"""
+Obtains the primal solution for a sequence of semidefinite variables.
+
+    getbarxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64) :: barxslice
+    getbarxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where {T0<:Integer,T1<:Integer,T2<:Integer}  :: barxslice
+
+Arguments:
+    first::Int32 Index of the first semidefinite variable in the slice.
+    last::Int32 Index of the last semidefinite variable in the slice plus one.
+    slicesize::Int64 Denotes the length of the array barxslice.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    barxslice::Vector{Float64} Solution values of symmetric matrix variables in the slice, stored sequentially.
+"""
+function getbarxslice end
+
+"""
+Obtains all objective coefficients.
+
+    getc(task::MSKtask) :: c
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    c::Vector{Float64} Linear terms of the objective as a dense vector. The length is the number of variables.
+"""
+function getc end
+
+"""
+Obtains the fixed term in the objective.
+
+    getcfix(task::MSKtask) :: cfix
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    cfix::Float64 Fixed term in the objective.
+"""
+function getcfix end
+
+"""
+Obtains one objective coefficient.
+
+    getcj(task::MSKtask,j::Int32) :: cj
+    getcj(task::MSKtask,j::T0) where {T0<:Integer}  :: cj
+
+Arguments:
+    j::Int32 Index of the variable for which the c coefficient should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    cj::Float64 The c coefficient value.
+"""
+function getcj end
+
+"""
+Obtains a sequence of coefficients from the objective.
+
+    getclist(task::MSKtask,subj::Vector{Int32}) :: c
+    getclist(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: c
+
+Arguments:
+    subj::Vector{Int32} A list of variable indexes.
+    task::MSKtask An optimization task.
+
+Returns:
+    c::Vector{Float64} Linear terms of the requested list of the objective as a dense vector.
+"""
+function getclist end
+
+"""
+Obtains a short description of a response code.
+
+    getcodedesc(code::Rescode) :: (symname,str)
+
+Arguments:
+    code::Rescode A valid response code.
+
+Returns:
+    str::String Obtains a short description of a response code.
+    symname::String Symbolic name corresponding to the code.
+"""
+function getcodedesc end
+
+"""
+Obtains bound information for one constraint.
+
+    getconbound(task::MSKtask,i::Int32) :: (bk,bl,bu)
+    getconbound(task::MSKtask,i::T0) where {T0<:Integer}  :: (bk,bl,bu)
+
+Arguments:
+    i::Int32 Index of the constraint for which the bound information should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    bk::Boundkey Bound keys.
+    bl::Float64 Values for lower bounds.
+    bu::Float64 Values for upper bounds.
+"""
+function getconbound end
+
+"""
+Obtains bounds information for a slice of the constraints.
+
+    getconboundslice(task::MSKtask,first::Int32,last::Int32) :: (bk,bl,bu)
+    getconboundslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (bk,bl,bu)
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+
+Returns:
+    bk::Vector{Boundkey} Bound keys.
+    bl::Vector{Float64} Values for lower bounds.
+    bu::Vector{Float64} Values for upper bounds.
+"""
+function getconboundslice end
+
+"""
+Obtains a cone.
+
+    getcone(task::MSKtask,k::Int32) :: (ct,conepar,nummem,submem)
+    getcone(task::MSKtask,k::T0) where {T0<:Integer}  :: (ct,conepar,nummem,submem)
+
+Arguments:
+    k::Int32 Index of the cone.
+    task::MSKtask An optimization task.
+
+Returns:
+    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
+    ct::Conetype Specifies the type of the cone.
+    nummem::Int32 Number of member variables in the cone.
+    submem::Vector{Int32} Variable subscripts of the members in the cone.
+"""
+function getcone end
+
+"""
+Obtains information about a cone.
+
+    getconeinfo(task::MSKtask,k::Int32) :: (ct,conepar,nummem)
+    getconeinfo(task::MSKtask,k::T0) where {T0<:Integer}  :: (ct,conepar,nummem)
+
+Arguments:
+    k::Int32 Index of the cone.
+    task::MSKtask An optimization task.
+
+Returns:
+    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
+    ct::Conetype Specifies the type of the cone.
+    nummem::Int32 Number of member variables in the cone.
+"""
+function getconeinfo end
+
+"""
+Obtains the name of a cone.
+
+    getconename(task::MSKtask,i::Int32) :: name
+    getconename(task::MSKtask,i::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    i::Int32 Index of the cone.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String The required name.
+"""
+function getconename end
+
+"""
+Checks whether the name has been assigned to any cone.
+
+    getconenameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
+
+Arguments:
+    somename::AbstractString The name which should be checked.
+    task::MSKtask An optimization task.
+
+Returns:
+    asgn::Int32 Is non-zero if the name somename is assigned to some cone.
+    index::Int32 If the name somename is assigned to some cone, this is the index of the cone.
+"""
+function getconenameindex end
+
+"""
+Obtains the length of the name of a cone.
+
+    getconenamelen(task::MSKtask,i::Int32) :: len
+    getconenamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    i::Int32 Index of the cone.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getconenamelen end
+
+"""
+Obtains the name of a constraint.
+
+    getconname(task::MSKtask,i::Int32) :: name
+    getconname(task::MSKtask,i::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    i::Int32 Index of the constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String The required name.
+"""
+function getconname end
+
+"""
+Checks whether the name has been assigned to any constraint.
+
+    getconnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
+
+Arguments:
+    somename::AbstractString The name which should be checked.
+    task::MSKtask An optimization task.
+
+Returns:
+    asgn::Int32 Is non-zero if the name somename is assigned to some constraint.
+    index::Int32 If the name somename is assigned to a constraint, then return the index of the constraint.
+"""
+function getconnameindex end
+
+"""
+Obtains the length of the name of a constraint.
+
+    getconnamelen(task::MSKtask,i::Int32) :: len
+    getconnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    i::Int32 Index of the constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getconnamelen end
+
+"""
+Obtains a sequence of coefficients from the objective.
+
+    getcslice(task::MSKtask,first::Int32,last::Int32) :: c
+    getcslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: c
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+
+Returns:
+    c::Vector{Float64} Linear terms of the requested slice of the objective as a dense vector.
+"""
+function getcslice end
+
+"""
+Obtains the dimension of a symmetric matrix variable.
+
+    getdimbarvarj(task::MSKtask,j::Int32) :: dimbarvarj
+    getdimbarvarj(task::MSKtask,j::T0) where {T0<:Integer}  :: dimbarvarj
+
+Arguments:
+    j::Int32 Index of the semidefinite variable whose dimension is requested.
+    task::MSKtask An optimization task.
+
+Returns:
+    dimbarvarj::Int32 The dimension of the j'th semidefinite variable.
+"""
+function getdimbarvarj end
+
+"""
+Obtains the list of affine expression indexes in a disjunctive constraint.
+
+    getdjcafeidxlist(task::MSKtask,djcidx::Int64) :: afeidxlist
+    getdjcafeidxlist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: afeidxlist
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+"""
+function getdjcafeidxlist end
+
+"""
+Obtains the optional constant term vector of a disjunctive constraint.
+
+    getdjcb(task::MSKtask,djcidx::Int64) :: b
+    getdjcb(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: b
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    b::Vector{Float64} The vector b.
+"""
+function getdjcb end
+
+"""
+Obtains the list of domain indexes in a disjunctive constraint.
+
+    getdjcdomainidxlist(task::MSKtask,djcidx::Int64) :: domidxlist
+    getdjcdomainidxlist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: domidxlist
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    domidxlist::Vector{Int64} List of term sizes.
+"""
+function getdjcdomainidxlist end
+
+"""
+Obtains the name of a disjunctive constraint.
+
+    getdjcname(task::MSKtask,djcidx::Int64) :: name
+    getdjcname(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    djcidx::Int64 Index of a disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String Returns the required name.
+"""
+function getdjcname end
+
+"""
+Obtains the length of the name of a disjunctive constraint.
+
+    getdjcnamelen(task::MSKtask,djcidx::Int64) :: len
+    getdjcnamelen(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    djcidx::Int64 Index of a disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getdjcnamelen end
+
+"""
+Obtains the number of affine expressions in the disjunctive constraint.
+
+    getdjcnumafe(task::MSKtask,djcidx::Int64) :: numafe
+    getdjcnumafe(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numafe
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    numafe::Int64 Number of affine expressions in the disjunctive constraint.
+"""
+function getdjcnumafe end
+
+"""
+Obtains the number of affine expressions in all disjunctive constraints.
+
+    getdjcnumafetot(task::MSKtask) :: numafetot
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numafetot::Int64 Number of affine expressions in all disjunctive constraints.
+"""
+function getdjcnumafetot end
+
+"""
+Obtains the number of domains in the disjunctive constraint.
+
+    getdjcnumdomain(task::MSKtask,djcidx::Int64) :: numdomain
+    getdjcnumdomain(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numdomain
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    numdomain::Int64 Number of domains in the disjunctive constraint.
+"""
+function getdjcnumdomain end
+
+"""
+Obtains the number of domains in all disjunctive constraints.
+
+    getdjcnumdomaintot(task::MSKtask) :: numdomaintot
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numdomaintot::Int64 Number of domains in all disjunctive constraints.
+"""
+function getdjcnumdomaintot end
+
+"""
+Obtains the number terms in the disjunctive constraint.
+
+    getdjcnumterm(task::MSKtask,djcidx::Int64) :: numterm
+    getdjcnumterm(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numterm
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    numterm::Int64 Number of terms in the disjunctive constraint.
+"""
+function getdjcnumterm end
+
+"""
+Obtains the number of terms in all disjunctive constraints.
+
+    getdjcnumtermtot(task::MSKtask) :: numtermtot
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numtermtot::Int64 Total number of terms in all disjunctive constraints.
+"""
+function getdjcnumtermtot end
+
+"""
+Obtains full data of all disjunctive constraints.
+
+    getdjcs(task::MSKtask) :: (domidxlist,afeidxlist,b,termsizelist,numterms)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    afeidxlist::Vector{Int64} The concatenation of index lists of affine expressions appearing in all disjunctive constraints.
+    b::Vector{Float64} The concatenation of vectors b appearing in all disjunctive constraints.
+    domidxlist::Vector{Int64} The concatenation of index lists of domains appearing in all disjunctive constraints.
+    numterms::Vector{Int64} The number of terms in each of the disjunctive constraints.
+    termsizelist::Vector{Int64} The concatenation of lists of term sizes appearing in all disjunctive constraints.
+"""
+function getdjcs end
+
+"""
+Obtains the list of term sizes in a disjunctive constraint.
+
+    getdjctermsizelist(task::MSKtask,djcidx::Int64) :: termsizelist
+    getdjctermsizelist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: termsizelist
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    termsizelist::Vector{Int64} List of term sizes.
+"""
+function getdjctermsizelist end
+
+"""
+Obtains the dimension of the domain.
+
+    getdomainn(task::MSKtask,domidx::Int64) :: n
+    getdomainn(task::MSKtask,domidx::T0) where {T0<:Integer}  :: n
+
+Arguments:
+    domidx::Int64 Index of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    n::Int64 Dimension of the domain.
+"""
+function getdomainn end
+
+"""
+Obtains the name of a domain.
+
+    getdomainname(task::MSKtask,domidx::Int64) :: name
+    getdomainname(task::MSKtask,domidx::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    domidx::Int64 Index of a domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String Returns the required name.
+"""
+function getdomainname end
+
+"""
+Obtains the length of the name of a domain.
+
+    getdomainnamelen(task::MSKtask,domidx::Int64) :: len
+    getdomainnamelen(task::MSKtask,domidx::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    domidx::Int64 Index of a domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getdomainnamelen end
+
+"""
+Returns the type of the domain.
+
+    getdomaintype(task::MSKtask,domidx::Int64) :: domtype
+    getdomaintype(task::MSKtask,domidx::T0) where {T0<:Integer}  :: domtype
+
+Arguments:
+    domidx::Int64 Index of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    domtype::Domaintype The type of the domain.
+"""
+function getdomaintype end
+
+"""
+Obtains a double information item.
+
+    getdouinf(task::MSKtask,whichdinf::Dinfitem) :: dvalue
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichdinf::Dinfitem Specifies a double information item.
+
+Returns:
+    dvalue::Float64 The value of the required double information item.
+"""
+function getdouinf end
+
+"""
+Obtains a double parameter.
+
+    getdouparam(task::MSKtask,param::Dparam) :: parvalue
+
+Arguments:
+    param::Dparam Which parameter.
+    task::MSKtask An optimization task.
+
+Returns:
+    parvalue::Float64 Parameter value.
+"""
+function getdouparam end
+
+"""
+Computes the dual objective value associated with the solution.
+
+    getdualobj(task::MSKtask,whichsol::Soltype) :: dualobj
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    dualobj::Float64 Objective value corresponding to the dual solution.
+"""
+function getdualobj end
+
+"""
+Compute norms of the dual solution.
+
+    getdualsolutionnorms(task::MSKtask,whichsol::Soltype) :: (nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    nrmbars::Float64 The norm of the bars vector.
+    nrmslc::Float64 The norm of the slc vector.
+    nrmslx::Float64 The norm of the slx vector.
+    nrmsnx::Float64 The norm of the snx vector.
+    nrmsuc::Float64 The norm of the suc vector.
+    nrmsux::Float64 The norm of the sux vector.
+    nrmy::Float64 The norm of the y vector.
+"""
+function getdualsolutionnorms end
+
+"""
+Computes the violation of the dual solution for set of affine conic constraints.
+
+    getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64}) :: viol
+    getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    accidxlist::Vector{Int64} An array of indexes of conic constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getdviolacc end
+
+"""
+Computes the violation of dual solution for a set of semidefinite variables.
+
+    getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of barx variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getdviolbarvar end
+
+"""
+Computes the violation of a dual solution associated with a set of constraints.
+
+    getdviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getdviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getdviolcon end
+
+"""
+Computes the violation of a solution for set of dual conic constraints.
+
+    getdviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getdviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of conic constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getdviolcones end
+
+"""
+Computes the violation of a dual solution associated with a set of scalar variables.
+
+    getdviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getdviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of x variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getdviolvar end
+
+"""
+Obtains an infeasible subproblem.
+
+    getinfeasiblesubproblem(task::MSKtask,whichsol::Soltype) :: inftask
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Which solution to use when determining the infeasible subproblem.
+
+Returns:
+    inftask::MSKtask A new task containing the infeasible subproblem.
+"""
+function getinfeasiblesubproblem end
+
+"""
+Obtains the name of an information item.
+
+    getinfname(task::MSKtask,inftype::Inftype,whichinf::Int32) :: infname
+    getinfname(task::MSKtask,inftype::Inftype,whichinf::T0) where {T0<:Integer}  :: infname
+
+Arguments:
+    inftype::Inftype Type of the information item.
+    task::MSKtask An optimization task.
+    whichinf::Int32 An information item.
+
+Returns:
+    infname::String Name of the information item.
+"""
+function getinfname end
+
+"""
+Obtains an integer information item.
+
+    getintinf(task::MSKtask,whichiinf::Iinfitem) :: ivalue
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichiinf::Iinfitem Specifies an integer information item.
+
+Returns:
+    ivalue::Int32 The value of the required integer information item.
+"""
+function getintinf end
+
+"""
+Obtains an integer parameter.
+
+    getintparam(task::MSKtask,param::Iparam) :: parvalue
+
+Arguments:
+    param::Iparam Which parameter.
+    task::MSKtask An optimization task.
+
+Returns:
+    parvalue::Int32 Parameter value.
+"""
+function getintparam end
+
+"""
+Obtains the last error code and error message reported in MOSEK.
+
+    getlasterror(task::MSKtask) :: (lastrescode,lastmsglen,lastmsg)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    lastmsg::String Returns the last error message reported in the task.
+    lastmsglen::Int64 Returns the length of the last error message reported in the task.
+    lastrescode::Rescode Returns the last error code reported in the task.
+"""
+function getlasterror end
+
+"""
+Obtains the length of one semidefinite variable.
+
+    getlenbarvarj(task::MSKtask,j::Int32) :: lenbarvarj
+    getlenbarvarj(task::MSKtask,j::T0) where {T0<:Integer}  :: lenbarvarj
+
+Arguments:
+    j::Int32 Index of the semidefinite variable whose length if requested.
+    task::MSKtask An optimization task.
+
+Returns:
+    lenbarvarj::Int64 Number of scalar elements in the lower triangular part of the semidefinite variable.
+"""
+function getlenbarvarj end
+
+"""
+Obtains a long integer information item.
+
+    getlintinf(task::MSKtask,whichliinf::Liinfitem) :: ivalue
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichliinf::Liinfitem Specifies a long information item.
+
+Returns:
+    ivalue::Int64 The value of the required long integer information item.
+"""
+function getlintinf end
+
+"""
+Obtains number of preallocated non-zeros in the linear constraint matrix.
+
+    getmaxnumanz(task::MSKtask) :: maxnumanz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxnumanz::Int64 Number of preallocated non-zero linear matrix elements.
+"""
+function getmaxnumanz end
+
+"""
+Obtains maximum number of symmetric matrix variables for which space is currently preallocated.
+
+    getmaxnumbarvar(task::MSKtask) :: maxnumbarvar
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxnumbarvar::Int32 Maximum number of symmetric matrix variables for which space is currently preallocated.
+"""
+function getmaxnumbarvar end
+
+"""
+Obtains the number of preallocated constraints in the optimization task.
+
+    getmaxnumcon(task::MSKtask) :: maxnumcon
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxnumcon::Int32 Number of preallocated constraints in the optimization task.
+"""
+function getmaxnumcon end
+
+"""
+Obtains the number of preallocated cones in the optimization task.
+
+    getmaxnumcone(task::MSKtask) :: maxnumcone
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxnumcone::Int32 Number of preallocated conic constraints in the optimization task.
+"""
+function getmaxnumcone end
+
+"""
+Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
+
+    getmaxnumqnz(task::MSKtask) :: maxnumqnz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxnumqnz::Int64 Number of non-zero elements preallocated in quadratic coefficient matrices.
+"""
+function getmaxnumqnz end
+
+"""
+Obtains the maximum number variables allowed.
+
+    getmaxnumvar(task::MSKtask) :: maxnumvar
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxnumvar::Int32 Number of preallocated variables in the optimization task.
+"""
+function getmaxnumvar end
+
+"""
+Obtains information about the amount of memory used by a task.
+
+    getmemusage(task::MSKtask) :: (meminuse,maxmemuse)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    maxmemuse::Int64 Maximum amount of memory used by the task until now.
+    meminuse::Int64 Amount of memory currently used by the task.
+"""
+function getmemusage end
+
+"""
+Obtains a named double information item.
+
+    getnadouinf(task::MSKtask,infitemname::AbstractString) :: dvalue
+
+Arguments:
+    infitemname::AbstractString The name of a double information item.
+    task::MSKtask An optimization task.
+
+Returns:
+    dvalue::Float64 The value of the required double information item.
+"""
+function getnadouinf end
+
+"""
+Obtains a double parameter.
+
+    getnadouparam(task::MSKtask,paramname::AbstractString) :: parvalue
+
+Arguments:
+    paramname::AbstractString Name of a parameter.
+    task::MSKtask An optimization task.
+
+Returns:
+    parvalue::Float64 Parameter value.
+"""
+function getnadouparam end
+
+"""
+Obtains a named integer information item.
+
+    getnaintinf(task::MSKtask,infitemname::AbstractString) :: ivalue
+
+Arguments:
+    infitemname::AbstractString The name of an integer information item.
+    task::MSKtask An optimization task.
+
+Returns:
+    ivalue::Int32 The value of the required integer information item.
+"""
+function getnaintinf end
+
+"""
+Obtains an integer parameter.
+
+    getnaintparam(task::MSKtask,paramname::AbstractString) :: parvalue
+
+Arguments:
+    paramname::AbstractString Name of a parameter.
+    task::MSKtask An optimization task.
+
+Returns:
+    parvalue::Int32 Parameter value.
+"""
+function getnaintparam end
+
+"""
+Obtains a string parameter.
+
+    getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::Int32) :: (len,parvalue)
+    getnastrparam(task::MSKtask,paramname::Union{Nothing,AbstractString},sizeparamname::T0) where {T0<:Integer}  :: (len,parvalue)
+
+Arguments:
+    paramname::AbstractString Name of a parameter.
+    sizeparamname::Int32 Size of the name buffer.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the parameter value.
+    parvalue::String Parameter value.
+"""
+function getnastrparam end
+
+"""
+Obtains the number of affine conic constraints.
+
+    getnumacc(task::MSKtask) :: num
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 The number of affine conic constraints.
+"""
+function getnumacc end
+
+"""
+Obtains the number of affine expressions.
+
+    getnumafe(task::MSKtask) :: numafe
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numafe::Int64 Number of affine expressions.
+"""
+function getnumafe end
+
+"""
+Obtains the number of non-zeros in the coefficient matrix.
+
+    getnumanz(task::MSKtask) :: numanz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numanz::Int32 Number of non-zero elements in the linear constraint matrix.
+"""
+function getnumanz end
+
+"""
+Obtains the number of non-zeros in the coefficient matrix.
+
+    getnumanz64(task::MSKtask) :: numanz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numanz::Int64 Number of non-zero elements in the linear constraint matrix.
+"""
+function getnumanz64 end
+
+"""
+Obtains an upper bound on the number of scalar elements in the block triplet form of bara.
+
+    getnumbarablocktriplets(task::MSKtask) :: num
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 An upper bound on the number of elements in the block triplet form of bara.
+"""
+function getnumbarablocktriplets end
+
+"""
+Get the number of nonzero elements in barA.
+
+    getnumbaranz(task::MSKtask) :: nz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    nz::Int64 The number of nonzero block elements in barA.
+"""
+function getnumbaranz end
+
+"""
+Obtains an upper bound on the number of elements in the block triplet form of barc.
+
+    getnumbarcblocktriplets(task::MSKtask) :: num
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 An upper bound on the number of elements in the block triplet form of barc.
+"""
+function getnumbarcblocktriplets end
+
+"""
+Obtains the number of nonzero elements in barc.
+
+    getnumbarcnz(task::MSKtask) :: nz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    nz::Int64 The number of nonzero elements in barc.
+"""
+function getnumbarcnz end
+
+"""
+Obtains the number of semidefinite variables.
+
+    getnumbarvar(task::MSKtask) :: numbarvar
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numbarvar::Int32 Number of semidefinite variables in the problem.
+"""
+function getnumbarvar end
+
+"""
+Obtains the number of constraints.
+
+    getnumcon(task::MSKtask) :: numcon
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numcon::Int32 Number of constraints.
+"""
+function getnumcon end
+
+"""
+Obtains the number of cones.
+
+    getnumcone(task::MSKtask) :: numcone
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numcone::Int32 Number of conic constraints.
+"""
+function getnumcone end
+
+"""
+Obtains the number of members in a cone.
+
+    getnumconemem(task::MSKtask,k::Int32) :: nummem
+    getnumconemem(task::MSKtask,k::T0) where {T0<:Integer}  :: nummem
+
+Arguments:
+    k::Int32 Index of the cone.
+    task::MSKtask An optimization task.
+
+Returns:
+    nummem::Int32 Number of member variables in the cone.
+"""
+function getnumconemem end
+
+"""
+Obtains the number of disjunctive constraints.
+
+    getnumdjc(task::MSKtask) :: num
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 The number of disjunctive constraints.
+"""
+function getnumdjc end
+
+"""
+Obtain the number of domains defined.
+
+    getnumdomain(task::MSKtask) :: numdomain
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numdomain::Int64 Number of domains in the task.
+"""
+function getnumdomain end
+
+"""
+Obtains the number of integer-constrained variables.
+
+    getnumintvar(task::MSKtask) :: numintvar
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numintvar::Int32 Number of integer variables.
+"""
+function getnumintvar end
+
+"""
+Obtains the number of parameters of a given type.
+
+    getnumparam(task::MSKtask,partype::Parametertype) :: numparam
+
+Arguments:
+    partype::Parametertype Parameter type.
+    task::MSKtask An optimization task.
+
+Returns:
+    numparam::Int32 Returns the number of parameters of the requested type.
+"""
+function getnumparam end
+
+"""
+Obtains the number of non-zero quadratic terms in a constraint.
+
+    getnumqconknz(task::MSKtask,k::Int32) :: numqcnz
+    getnumqconknz(task::MSKtask,k::T0) where {T0<:Integer}  :: numqcnz
+
+Arguments:
+    k::Int32 Index of the constraint for which the number quadratic terms should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    numqcnz::Int64 Number of quadratic terms.
+"""
+function getnumqconknz end
+
+"""
+Obtains the number of non-zero quadratic terms in the objective.
+
+    getnumqobjnz(task::MSKtask) :: numqonz
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numqonz::Int64 Number of non-zero elements in the quadratic objective terms.
+"""
+function getnumqobjnz end
+
+"""
+Obtains the number of symmetric matrices stored.
+
+    getnumsymmat(task::MSKtask) :: num
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    num::Int64 The number of symmetric sparse matrices.
+"""
+function getnumsymmat end
+
+"""
+Obtains the number of variables.
+
+    getnumvar(task::MSKtask) :: numvar
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numvar::Int32 Number of variables.
+"""
+function getnumvar end
+
+"""
+Obtains the name assigned to the objective function.
+
+    getobjname(task::MSKtask) :: objname
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    objname::String Assigned the objective name.
+"""
+function getobjname end
+
+"""
+Obtains the length of the name assigned to the objective function.
+
+    getobjnamelen(task::MSKtask) :: len
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Assigned the length of the objective name.
+"""
+function getobjnamelen end
+
+"""
+Gets the objective sense.
+
+    getobjsense(task::MSKtask) :: sense
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    sense::Objsense The returned objective sense.
+"""
+function getobjsense end
+
+"""
+Obtains the name of a parameter.
+
+    getparamname(task::MSKtask,partype::Parametertype,param::Int32) :: parname
+    getparamname(task::MSKtask,partype::Parametertype,param::T0) where {T0<:Integer}  :: parname
+
+Arguments:
+    param::Int32 Which parameter.
+    partype::Parametertype Parameter type.
+    task::MSKtask An optimization task.
+
+Returns:
+    parname::String Parameter name.
+"""
+function getparamname end
+
+"""
+Obtains the exponent vector of a power domain.
+
+    getpowerdomainalpha(task::MSKtask,domidx::Int64) :: alpha
+    getpowerdomainalpha(task::MSKtask,domidx::T0) where {T0<:Integer}  :: alpha
+
+Arguments:
+    domidx::Int64 Index of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    alpha::Vector{Float64} The exponent vector of the domain.
+"""
+function getpowerdomainalpha end
+
+"""
+Obtains structural information about a power domain.
+
+    getpowerdomaininfo(task::MSKtask,domidx::Int64) :: (n,nleft)
+    getpowerdomaininfo(task::MSKtask,domidx::T0) where {T0<:Integer}  :: (n,nleft)
+
+Arguments:
+    domidx::Int64 Index of the domain.
+    task::MSKtask An optimization task.
+
+Returns:
+    n::Int64 Dimension of the domain.
+    nleft::Int64 Number of variables on the left hand side.
+"""
+function getpowerdomaininfo end
+
+"""
+Computes the primal objective value for the desired solution.
+
+    getprimalobj(task::MSKtask,whichsol::Soltype) :: primalobj
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    primalobj::Float64 Objective value corresponding to the primal solution.
+"""
+function getprimalobj end
+
+"""
+Compute norms of the primal solution.
+
+    getprimalsolutionnorms(task::MSKtask,whichsol::Soltype) :: (nrmxc,nrmxx,nrmbarx)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    nrmbarx::Float64 The norm of the barX vector.
+    nrmxc::Float64 The norm of the xc vector.
+    nrmxx::Float64 The norm of the xx vector.
+"""
+function getprimalsolutionnorms end
+
+"""
+Obtains the problem type.
+
+    getprobtype(task::MSKtask) :: probtype
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    probtype::Problemtype The problem type.
+"""
+function getprobtype end
+
+"""
+Obtains the problem status.
+
+    getprosta(task::MSKtask,whichsol::Soltype) :: problemsta
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    problemsta::Prosta Problem status.
+"""
+function getprosta end
+
+"""
+Computes the violation of a solution for set of affine conic constraints.
+
+    getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64}) :: viol
+    getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    accidxlist::Vector{Int64} An array of indexes of conic constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getpviolacc end
+
+"""
+Computes the violation of a primal solution for a list of semidefinite variables.
+
+    getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of barX variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getpviolbarvar end
+
+"""
+Computes the violation of a primal solution associated to a constraint.
+
+    getpviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getpviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getpviolcon end
+
+"""
+Computes the violation of a solution for set of conic constraints.
+
+    getpviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getpviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of conic constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getpviolcones end
+
+"""
+Computes the violation of a solution for set of disjunctive constraints.
+
+    getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::Vector{Int64}) :: viol
+    getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    djcidxlist::Vector{Int64} An array of indexes of disjunctive constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getpvioldjc end
+
+"""
+Computes the violation of a primal solution for a list of scalar variables.
+
+    getpviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
+    getpviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
+
+Arguments:
+    sub::Vector{Int32} An array of indexes of x variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    viol::Vector{Float64} List of violations corresponding to sub.
+"""
+function getpviolvar end
+
+"""
+Obtains all the quadratic terms in a constraint.
+
+    getqconk(task::MSKtask,k::Int32) :: (numqcnz,qcsubi,qcsubj,qcval)
+    getqconk(task::MSKtask,k::T0) where {T0<:Integer}  :: (numqcnz,qcsubi,qcsubj,qcval)
+
+Arguments:
+    k::Int32 Which constraint.
+    task::MSKtask An optimization task.
+
+Returns:
+    numqcnz::Int64 Number of quadratic terms.
+    qcsubi::Vector{Int32} Row subscripts for quadratic constraint matrix.
+    qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
+    qcval::Vector{Float64} Quadratic constraint coefficient values.
+"""
+function getqconk end
+
+"""
+Obtains all the quadratic terms in the objective.
+
+    getqobj(task::MSKtask) :: (numqonz,qosubi,qosubj,qoval)
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    numqonz::Int64 Number of non-zero elements in the quadratic objective terms.
+    qosubi::Vector{Int32} Row subscripts for quadratic objective coefficients.
+    qosubj::Vector{Int32} Column subscripts for quadratic objective coefficients.
+    qoval::Vector{Float64} Quadratic objective coefficient values.
+"""
+function getqobj end
+
+"""
+Obtains one coefficient from the quadratic term of the objective
+
+    getqobjij(task::MSKtask,i::Int32,j::Int32) :: qoij
+    getqobjij(task::MSKtask,i::T0,j::T1) where {T0<:Integer,T1<:Integer}  :: qoij
+
+Arguments:
+    i::Int32 Row index of the coefficient.
+    j::Int32 Column index of coefficient.
+    task::MSKtask An optimization task.
+
+Returns:
+    qoij::Float64 The required coefficient.
+"""
+function getqobjij end
+
+"""
+Obtains the reduced costs for a sequence of variables.
+
+    getreducedcosts(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: redcosts
+    getreducedcosts(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: redcosts
+
+Arguments:
+    first::Int32 The index of the first variable in the sequence.
+    last::Int32 The index of the last variable in the sequence plus 1.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    redcosts::Vector{Float64} Returns the requested reduced costs.
+"""
+function getreducedcosts end
+
+"""
+Obtains the status keys for the constraints.
+
+    getskc(task::MSKtask,whichsol::Soltype) :: skc
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    skc::Vector{Stakey} Status keys for the constraints.
+"""
+function getskc end
+
+"""
+Obtains the status keys for a slice of the constraints.
+
+    getskcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: skc
+    getskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: skc
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    skc::Vector{Stakey} Status keys for the constraints.
+"""
+function getskcslice end
+
+"""
+Obtains the status keys for the conic constraints.
+
+    getskn(task::MSKtask,whichsol::Soltype) :: skn
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    skn::Vector{Stakey} Status keys for the conic constraints.
+"""
+function getskn end
+
+"""
+Obtains the status keys for the scalar variables.
+
+    getskx(task::MSKtask,whichsol::Soltype) :: skx
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    skx::Vector{Stakey} Status keys for the variables.
+"""
+function getskx end
+
+"""
+Obtains the status keys for a slice of the scalar variables.
+
+    getskxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: skx
+    getskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: skx
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    skx::Vector{Stakey} Status keys for the variables.
+"""
+function getskxslice end
+
+"""
+Obtains the slc vector for a solution.
+
+    getslc(task::MSKtask,whichsol::Soltype) :: slc
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
+"""
+function getslc end
+
+"""
+Obtains a slice of the slc vector for a solution.
+
+    getslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: slc
+    getslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: slc
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
+"""
+function getslcslice end
+
+"""
+Obtains the slx vector for a solution.
+
+    getslx(task::MSKtask,whichsol::Soltype) :: slx
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
+"""
+function getslx end
+
+"""
+Obtains a slice of the slx vector for a solution.
+
+    getslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: slx
+    getslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: slx
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
+"""
+function getslxslice end
+
+"""
+Obtains the snx vector for a solution.
+
+    getsnx(task::MSKtask,whichsol::Soltype) :: snx
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
+"""
+function getsnx end
+
+"""
+Obtains a slice of the snx vector for a solution.
+
+    getsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: snx
+    getsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: snx
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
+"""
+function getsnxslice end
+
+"""
+Obtains the solution status.
+
+    getsolsta(task::MSKtask,whichsol::Soltype) :: solutionsta
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    solutionsta::Solsta Solution status.
+"""
+function getsolsta end
+
+"""
+Obtains the complete solution.
+
+    getsolution(task::MSKtask,whichsol::Soltype) :: (problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    problemsta::Prosta Problem status.
+    skc::Vector{Stakey} Status keys for the constraints.
+    skn::Vector{Stakey} Status keys for the conic constraints.
+    skx::Vector{Stakey} Status keys for the variables.
+    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
+    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
+    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
+    solutionsta::Solsta Solution status.
+    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+    xc::Vector{Float64} Primal constraint solution.
+    xx::Vector{Float64} Primal variable solution.
+    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
+"""
+function getsolution end
+
+"""
+Obtains information about of a solution.
+
+    getsolutioninfo(task::MSKtask,whichsol::Soltype) :: (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    dobj::Float64 Dual objective value.
+    dviolbarvar::Float64 Maximal dual bound violation for a bars variable.
+    dviolcon::Float64 Maximal dual bound violation for a xc variable.
+    dviolcone::Float64 Maximum violation of the dual solution in the dual conic constraints.
+    dviolvar::Float64 Maximal dual bound violation for a xx variable.
+    pobj::Float64 The primal objective value.
+    pviolbarvar::Float64 Maximal primal bound violation for a barx variable.
+    pviolcon::Float64 Maximal primal bound violation for a xc variable.
+    pviolcone::Float64 Maximal primal violation of the solution with respect to the conic constraints.
+    pviolitg::Float64 Maximal violation in the integer constraints.
+    pviolvar::Float64 Maximal primal bound violation for a xx variable.
+"""
+function getsolutioninfo end
+
+"""
+Obtains information about of a solution.
+
+    getsolutioninfonew(task::MSKtask,whichsol::Soltype) :: (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolacc,pvioldjc,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone,dviolacc)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    dobj::Float64 Dual objective value.
+    dviolacc::Float64 Maximum violation of the dual solution in the dual affine conic constraints.
+    dviolbarvar::Float64 Maximal dual bound violation for a bars variable.
+    dviolcon::Float64 Maximal dual bound violation for a xc variable.
+    dviolcone::Float64 Maximum violation of the dual solution in the dual conic constraints.
+    dviolvar::Float64 Maximal dual bound violation for a xx variable.
+    pobj::Float64 The primal objective value.
+    pviolacc::Float64 Maximal primal violation of the solution with respect to the affine conic constraints.
+    pviolbarvar::Float64 Maximal primal bound violation for a barx variable.
+    pviolcon::Float64 Maximal primal bound violation for a xc variable.
+    pviolcone::Float64 Maximal primal violation of the solution with respect to the conic constraints.
+    pvioldjc::Float64 Maximal primal violation of the solution with respect to the disjunctive constraints.
+    pviolitg::Float64 Maximal violation in the integer constraints.
+    pviolvar::Float64 Maximal primal bound violation for a xx variable.
+"""
+function getsolutioninfonew end
+
+"""
+Obtains the complete solution.
+
+    getsolutionnew(task::MSKtask,whichsol::Soltype) :: (problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    doty::Vector{Float64} Dual variables corresponding to affine conic constraints.
+    problemsta::Prosta Problem status.
+    skc::Vector{Stakey} Status keys for the constraints.
+    skn::Vector{Stakey} Status keys for the conic constraints.
+    skx::Vector{Stakey} Status keys for the variables.
+    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
+    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
+    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
+    solutionsta::Solsta Solution status.
+    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+    xc::Vector{Float64} Primal constraint solution.
+    xx::Vector{Float64} Primal variable solution.
+    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
+"""
+function getsolutionnew end
+
+"""
+Obtains a slice of the solution.
+
+    getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::Int32,last::Int32) :: values
+    getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: values
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    solitem::Solitem Which part of the solution is required.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    values::Vector{Float64} The values of the requested solution elements.
+"""
+function getsolutionslice end
+
+"""
+Gets a single symmetric matrix from the matrix store.
+
+    getsparsesymmat(task::MSKtask,idx::Int64) :: (subi,subj,valij)
+    getsparsesymmat(task::MSKtask,idx::T0) where {T0<:Integer}  :: (subi,subj,valij)
+
+Arguments:
+    idx::Int64 Index of the matrix to retrieve.
+    task::MSKtask An optimization task.
+
+Returns:
+    subi::Vector{Int32} Row subscripts of the matrix non-zero elements.
+    subj::Vector{Int32} Column subscripts of the matrix non-zero elements.
+    valij::Vector{Float64} Coefficients of the matrix non-zero elements.
+"""
+function getsparsesymmat end
+
+"""
+Obtains the value of a string parameter.
+
+    getstrparam(task::MSKtask,param::Sparam) :: (len,parvalue)
+
+Arguments:
+    param::Sparam Which parameter.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 The length of the parameter value.
+    parvalue::String If this is not a null pointer, the parameter value is stored here.
+"""
+function getstrparam end
+
+"""
+Obtains the length of a string parameter.
+
+    getstrparamlen(task::MSKtask,param::Sparam) :: len
+
+Arguments:
+    param::Sparam Which parameter.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 The length of the parameter value.
+"""
+function getstrparamlen end
+
+"""
+Obtains the suc vector for a solution.
+
+    getsuc(task::MSKtask,whichsol::Soltype) :: suc
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
+"""
+function getsuc end
+
+"""
+Obtains a slice of the suc vector for a solution.
+
+    getsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: suc
+    getsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: suc
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
+"""
+function getsucslice end
+
+"""
+Obtains the sux vector for a solution.
+
+    getsux(task::MSKtask,whichsol::Soltype) :: sux
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+"""
+function getsux end
+
+"""
+Obtains a slice of the sux vector for a solution.
+
+    getsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: sux
+    getsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: sux
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+"""
+function getsuxslice end
+
+"""
+Obtains information about a matrix from the symmetric matrix storage.
+
+    getsymmatinfo(task::MSKtask,idx::Int64) :: (dim,nz,mattype)
+    getsymmatinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: (dim,nz,mattype)
+
+Arguments:
+    idx::Int64 Index of the matrix for which information is requested.
+    task::MSKtask An optimization task.
+
+Returns:
+    dim::Int32 Returns the dimension of the requested matrix.
+    mattype::Symmattype Returns the type of the requested matrix.
+    nz::Int64 Returns the number of non-zeros in the requested matrix.
+"""
+function getsymmatinfo end
+
+"""
+Obtains the task name.
+
+    gettaskname(task::MSKtask) :: taskname
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    taskname::String Returns the task name.
+"""
+function gettaskname end
+
+"""
+Obtains the length the task name.
+
+    gettasknamelen(task::MSKtask) :: len
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the task name.
+"""
+function gettasknamelen end
+
+"""
+Obtains bound information for one variable.
+
+    getvarbound(task::MSKtask,i::Int32) :: (bk,bl,bu)
+    getvarbound(task::MSKtask,i::T0) where {T0<:Integer}  :: (bk,bl,bu)
+
+Arguments:
+    i::Int32 Index of the variable for which the bound information should be obtained.
+    task::MSKtask An optimization task.
+
+Returns:
+    bk::Boundkey Bound keys.
+    bl::Float64 Values for lower bounds.
+    bu::Float64 Values for upper bounds.
+"""
+function getvarbound end
+
+"""
+Obtains bounds information for a slice of the variables.
+
+    getvarboundslice(task::MSKtask,first::Int32,last::Int32) :: (bk,bl,bu)
+    getvarboundslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (bk,bl,bu)
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+
+Returns:
+    bk::Vector{Boundkey} Bound keys.
+    bl::Vector{Float64} Values for lower bounds.
+    bu::Vector{Float64} Values for upper bounds.
+"""
+function getvarboundslice end
+
+"""
+Obtains the name of a variable.
+
+    getvarname(task::MSKtask,j::Int32) :: name
+    getvarname(task::MSKtask,j::T0) where {T0<:Integer}  :: name
+
+Arguments:
+    j::Int32 Index of a variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    name::String Returns the required name.
+"""
+function getvarname end
+
+"""
+Checks whether the name has been assigned to any variable.
+
+    getvarnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
+
+Arguments:
+    somename::AbstractString The name which should be checked.
+    task::MSKtask An optimization task.
+
+Returns:
+    asgn::Int32 Is non-zero if the name somename is assigned to a variable.
+    index::Int32 If the name somename is assigned to a variable, then return the index of the variable.
+"""
+function getvarnameindex end
+
+"""
+Obtains the length of the name of a variable.
+
+    getvarnamelen(task::MSKtask,i::Int32) :: len
+    getvarnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
+
+Arguments:
+    i::Int32 Index of a variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    len::Int32 Returns the length of the indicated name.
+"""
+function getvarnamelen end
+
+"""
+Gets the variable type of one variable.
+
+    getvartype(task::MSKtask,j::Int32) :: vartype
+    getvartype(task::MSKtask,j::T0) where {T0<:Integer}  :: vartype
+
+Arguments:
+    j::Int32 Index of the variable.
+    task::MSKtask An optimization task.
+
+Returns:
+    vartype::Variabletype Variable type of variable index j.
+"""
+function getvartype end
+
+"""
+Obtains the variable type for one or more variables.
+
+    getvartypelist(task::MSKtask,subj::Vector{Int32}) :: vartype
+    getvartypelist(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: vartype
+
+Arguments:
+    subj::Vector{Int32} A list of variable indexes.
+    task::MSKtask An optimization task.
+
+Returns:
+    vartype::Vector{Variabletype} Returns the variables types corresponding the variable indexes requested.
+"""
+function getvartypelist end
+
+"""
+Obtains MOSEK version information.
+
+    getversion() :: (major,minor,revision)
+
+Returns:
+    major::Int32 Major version number.
+    minor::Int32 Minor version number.
+    revision::Int32 Revision number.
+"""
+function getversion end
+
+"""
+Obtains the xc vector for a solution.
+
+    getxc(task::MSKtask,whichsol::Soltype) :: xc
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    xc::Vector{Float64} Primal constraint solution.
+"""
+function getxc end
+
+"""
+Obtains a slice of the xc vector for a solution.
+
+    getxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: xc
+    getxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: xc
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    xc::Vector{Float64} Primal constraint solution.
+"""
+function getxcslice end
+
+"""
+Obtains the xx vector for a solution.
+
+    getxx(task::MSKtask,whichsol::Soltype) :: xx
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    xx::Vector{Float64} Primal variable solution.
+"""
+function getxx end
+
+"""
+Obtains a slice of the xx vector for a solution.
+
+    getxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: xx
+    getxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: xx
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    xx::Vector{Float64} Primal variable solution.
+"""
+function getxxslice end
+
+"""
+Obtains the y vector for a solution.
+
+    gety(task::MSKtask,whichsol::Soltype) :: y
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
+"""
+function gety end
+
+"""
+Obtains a slice of the y vector for a solution.
+
+    getyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: y
+    getyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: y
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
+"""
+function getyslice end
+
+"""
+Obtains a information item string identifier.
+
+    iinfitemtostr(item::Iinfitem) :: str
+
+Arguments:
+    item::Iinfitem Information item.
+
+Returns:
+    str::String String corresponding to the information item.
+"""
+function iinfitemtostr end
+
+"""
+Prints the infeasibility report to an output stream.
+
+    infeasibilityreport(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    whichstream::Streamtype Index of the stream.
+"""
+function infeasibilityreport end
+
+"""
+Prepare a task for basis solver.
+
+    initbasissolve(task::MSKtask) :: basis
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    basis::Vector{Int32} The array of basis indexes to use.
+"""
+function initbasissolve end
+
+"""
+Input the linear part of an optimization task in one function call.
+
+    inputdata(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,c::Union{Nothing,Vector{Float64}},cfix::Float64,aptrb::Vector{Int64},aptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
+    inputdata(task::MSKtask,maxnumcon::T0,maxnumvar::T1,c::T2,cfix::T3,aptrb::T4,aptre::T5,asub::T6,aval::T7,bkc::Vector{Boundkey},blc::T8,buc::T9,bkx::Vector{Boundkey},blx::T10,bux::T11) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:Number,T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Integer},T7<:AbstractVector{<:Number},T8<:AbstractVector{<:Number},T9<:AbstractVector{<:Number},T10<:AbstractVector{<:Number},T11<:AbstractVector{<:Number}} 
+    inputdata(task::MSKtask,maxnumcon::T0,maxnumvar::T1,c::T2,cfix::T3,A:: SparseMatrixCSC{Float64},bkc::Vector{Boundkey},blc::T8,buc::T9,bkx::Vector{Boundkey},blx::T10,bux::T11)
+
+Arguments:
+    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
+    aptrb::Vector{Int64} Row or column start pointers.
+    aptre::Vector{Int64} Row or column end pointers.
+    asub::Vector{Int32} Coefficient subscripts.
+    aval::Vector{Float64} Coefficient values.
+    bkc::Vector{Boundkey} Bound keys for the constraints.
+    bkx::Vector{Boundkey} Bound keys for the variables.
+    blc::Vector{Float64} Lower bounds for the constraints.
+    blx::Vector{Float64} Lower bounds for the variables.
+    buc::Vector{Float64} Upper bounds for the constraints.
+    bux::Vector{Float64} Upper bounds for the variables.
+    c::Union{Nothing,Vector{Float64}} Linear terms of the objective as a dense vector. The length is the number of variables.
+    cfix::Float64 Fixed term in the objective.
+    maxnumcon::Int32 Number of preallocated constraints in the optimization task.
+    maxnumvar::Int32 Number of preallocated variables in the optimization task.
+    task::MSKtask An optimization task.
+"""
+function inputdata end
+
+"""
+Checks a double parameter name.
+
+    isdouparname(task::MSKtask,parname::AbstractString) :: param
+
+Arguments:
+    parname::AbstractString Parameter name.
+    task::MSKtask An optimization task.
+
+Returns:
+    param::Dparam Returns the parameter corresponding to the name, if one exists.
+"""
+function isdouparname end
+
+"""
+Checks an integer parameter name.
+
+    isintparname(task::MSKtask,parname::AbstractString) :: param
+
+Arguments:
+    parname::AbstractString Parameter name.
+    task::MSKtask An optimization task.
+
+Returns:
+    param::Iparam Returns the parameter corresponding to the name, if one exists.
+"""
+function isintparname end
+
+"""
+Checks a string parameter name.
+
+    isstrparname(task::MSKtask,parname::AbstractString) :: param
+
+Arguments:
+    parname::AbstractString Parameter name.
+    task::MSKtask An optimization task.
+
+Returns:
+    param::Sparam Returns the parameter corresponding to the name, if one exists.
+"""
+function isstrparname end
+
+"""
+Stops all threads and delete all handles used by the license system.
+
+    licensecleanup()
+"""
+function licensecleanup end
+
+"""
+Obtains a information item string identifier.
+
+    liinfitemtostr(item::Liinfitem) :: str
+
+Arguments:
+    item::Liinfitem Information item.
+
+Returns:
+    str::String String corresponding to the information item.
+"""
+function liinfitemtostr end
+
+"""
+Directs all output from a stream to a file.
+
+    linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::Int32)
+    linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where {T0<:Integer} 
+    linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::Int32)
+    linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where {T0<:Integer} 
+    linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::Int32)
+    linkfiletostream(whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where {T0<:Integer} 
+
+Arguments:
+    append::Int32 If this argument is 0 the file will be overwritten, otherwise it will be appended to.
+    env::MSKenv The MOSEK environment.
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+    whichstream::Streamtype Index of the stream.
+"""
+function linkfiletostream end
+
+"""
+Prints a short summary of a specified solution.
+
+    onesolutionsummary(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    whichstream::Streamtype Index of the stream.
+"""
+function onesolutionsummary end
+
+"""
+Optimizes the problem.
+
+    optimize(task::MSKtask) :: trmcode
+
+Arguments:
+    task::MSKtask An optimization task.
+
+Returns:
+    trmcode::Rescode Is either OK or a termination response code.
+"""
+function optimize end
+
+"""
+Optimize a number of tasks in parallel using a specified number of threads.
+
+    optimizebatch(env::MSKenv,israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask}) :: (trmcode,rcode)
+    optimizebatch(env::MSKenv,israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where {T0<:Number,T1<:Integer}  :: (trmcode,rcode)
+    optimizebatch(israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask}) :: (trmcode,rcode)
+    optimizebatch(israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where {T0<:Number,T1<:Integer}  :: (trmcode,rcode)
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    israce::Bool If nonzero, then the function is terminated after the first task has been completed.
+    maxtime::Float64 Time limit for the function.
+    numthreads::Int32 Number of threads to be employed.
+    task::Vector{MSKtask} An array of tasks to optimize in parallel.
+
+Returns:
+    rcode::Vector{Rescode} The response code for each task.
+    trmcode::Vector{Rescode} The termination code for each task.
+"""
+function optimizebatch end
+
+"""
+Offload the optimization task to a solver server and wait for the solution.
+
+    optimizermt(task::MSKtask,address::AbstractString,accesstoken::AbstractString) :: trmcode
+
+Arguments:
+    accesstoken::AbstractString Access token.
+    address::AbstractString Address of the OptServer.
+    task::MSKtask An optimization task.
+
+Returns:
+    trmcode::Rescode Is either OK or a termination response code.
+"""
+function optimizermt end
+
+"""
+Prints a short summary with optimizer statistics from last optimization.
+
+    optimizersummary(task::MSKtask,whichstream::Streamtype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichstream::Streamtype Index of the stream.
+"""
+function optimizersummary end
+
+"""
+Repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables.
+
+    primalrepair(task::MSKtask,wlc::Union{Nothing,Vector{Float64}},wuc::Union{Nothing,Vector{Float64}},wlx::Union{Nothing,Vector{Float64}},wux::Union{Nothing,Vector{Float64}})
+    primalrepair(task::MSKtask,wlc::T0,wuc::T1,wlx::T2,wux::T3) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    task::MSKtask An optimization task.
+    wlc::Union{Nothing,Vector{Float64}} Weights associated with relaxing lower bounds on the constraints.
+    wlx::Union{Nothing,Vector{Float64}} Weights associated with relaxing the lower bounds of the variables.
+    wuc::Union{Nothing,Vector{Float64}} Weights associated with relaxing the upper bound on the constraints.
+    wux::Union{Nothing,Vector{Float64}} Weights associated with relaxing the upper bounds of variables.
+"""
+function primalrepair end
+
+"""
+Perform sensitivity analysis on bounds.
+
+    primalsensitivity(task::MSKtask,subi::Vector{Int32},marki::Vector{Mark},subj::Vector{Int32},markj::Vector{Mark}) :: (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej)
+    primalsensitivity(task::MSKtask,subi::T0,marki::Vector{Mark},subj::T1,markj::Vector{Mark}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer}}  :: (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej)
+
+Arguments:
+    marki::Vector{Mark} Mark which constraint bounds to analyze.
+    markj::Vector{Mark} Mark which variable bounds to analyze.
+    subi::Vector{Int32} Indexes of constraints to analyze.
+    subj::Vector{Int32} Indexes of variables to analyze.
+    task::MSKtask An optimization task.
+
+Returns:
+    leftpricei::Vector{Float64} Left shadow price for constraints.
+    leftpricej::Vector{Float64} Left shadow price for variables.
+    leftrangei::Vector{Float64} Left range for constraints.
+    leftrangej::Vector{Float64} Left range for variables.
+    rightpricei::Vector{Float64} Right shadow price for constraints.
+    rightpricej::Vector{Float64} Right shadow price for variables.
+    rightrangei::Vector{Float64} Right range for constraints.
+    rightrangej::Vector{Float64} Right range for variables.
+"""
+function primalsensitivity end
+
+"""
+Prints the current parameter settings.
+
+    printparam(task::MSKtask)
+
+Arguments:
+    task::MSKtask An optimization task.
+"""
+function printparam end
+
+"""
+Obtains a string containing the name of a given problem type.
+
+    probtypetostr(task::MSKtask,probtype::Problemtype) :: str
+
+Arguments:
+    probtype::Problemtype Problem type.
+    task::MSKtask An optimization task.
+
+Returns:
+    str::String String corresponding to the problem type key.
+"""
+function probtypetostr end
+
+"""
+Obtains a string containing the name of a given problem status.
+
+    prostatostr(task::MSKtask,problemsta::Prosta) :: str
+
+Arguments:
+    problemsta::Prosta Problem status.
+    task::MSKtask An optimization task.
+
+Returns:
+    str::String String corresponding to the status key.
+"""
+function prostatostr end
+
+"""
+Puts an affine conic constraint.
+
+    putacc(task::MSKtask,accidx::Int64,domidx::Int64,afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
+    putacc(task::MSKtask,accidx::T0,domidx::T1,afeidxlist::T2,b::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    accidx::Int64 Affine conic constraint index.
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidx::Int64 Domain index.
+    task::MSKtask An optimization task.
+"""
+function putacc end
+
+"""
+Puts the constant vector b in an affine conic constraint.
+
+    putaccb(task::MSKtask,accidx::Int64,b::Union{Nothing,Vector{Float64}})
+    putaccb(task::MSKtask,accidx::T0,b::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
+
+Arguments:
+    accidx::Int64 Affine conic constraint index.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    task::MSKtask An optimization task.
+"""
+function putaccb end
+
+"""
+Sets one element in the b vector of an affine conic constraint.
+
+    putaccbj(task::MSKtask,accidx::Int64,j::Int64,bj::Float64)
+    putaccbj(task::MSKtask,accidx::T0,j::T1,bj::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
+
+Arguments:
+    accidx::Int64 Affine conic constraint index.
+    bj::Float64 The new value of b[j].
+    j::Int64 The index of an element in b to change.
+    task::MSKtask An optimization task.
+"""
+function putaccbj end
+
+"""
+Puts the doty vector for a solution.
+
+    putaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64) :: doty
+    putaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
+
+Arguments:
+    accidx::Int64 The index of the affine conic constraint.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    doty::Vector{Float64} The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
+"""
+function putaccdoty end
+
+"""
+Puts a number of affine conic constraints.
+
+    putacclist(task::MSKtask,accidxs::Vector{Int64},domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
+    putacclist(task::MSKtask,accidxs::T0,domidxs::T1,afeidxlist::T2,b::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    accidxs::Vector{Int64} Affine conic constraint indices.
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidxs::Vector{Int64} Domain indices.
+    task::MSKtask An optimization task.
+"""
+function putacclist end
+
+"""
+Sets the name of an affine conic constraint.
+
+    putaccname(task::MSKtask,accidx::Int64,name::Union{Nothing,AbstractString})
+    putaccname(task::MSKtask,accidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    accidx::Int64 Index of the affine conic constraint.
+    name::Union{Nothing,AbstractString} The name of the affine conic constraint.
+    task::MSKtask An optimization task.
+"""
+function putaccname end
+
+"""
+Replaces all elements in one column of the linear constraint matrix.
+
+    putacol(task::MSKtask,j::Int32,subj::Vector{Int32},valj::Vector{Float64})
+    putacol(task::MSKtask,j::T0,subj::T1,valj::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    j::Int32 Column index.
+    subj::Vector{Int32} Row indexes of non-zero values in column.
+    task::MSKtask An optimization task.
+    valj::Vector{Float64} New non-zero values of column.
+"""
+function putacol end
+
+"""
+Replaces all elements in several columns the linear constraint matrix.
+
+    putacollist(task::MSKtask,sub::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
+    putacollist(task::MSKtask,sub::T0,ptrb::T1,ptre::T2,asub::T3,aval::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
+    putacollist(task::MSKtask,sub::T0,A:: SparseMatrixCSC{Float64})
+
+Arguments:
+    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
+    asub::Vector{Int32} Row indexes
+    aval::Vector{Float64} Coefficient values.
+    ptrb::Vector{Int64} Array of pointers to the first element in the columns.
+    ptre::Vector{Int64} Array of pointers to the last element plus one in the columns.
+    sub::Vector{Int32} Indexes of columns that should be replaced.
+    task::MSKtask An optimization task.
+"""
+function putacollist end
+
+"""
+Replaces all elements in a sequence of columns the linear constraint matrix.
+
+    putacolslice(task::MSKtask,first::Int32,last::Int32,ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
+    putacolslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T4,aval::T5) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+    putacolslice(task::MSKtask,first::T0,last::T1,A:: SparseMatrixCSC{Float64})
+
+Arguments:
+    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
+    asub::Vector{Int32} Row indexes
+    aval::Vector{Float64} Coefficient values.
+    first::Int32 First column in the slice.
+    last::Int32 Last column plus one in the slice.
+    ptrb::Vector{Int64} Array of pointers to the first element in the columns.
+    ptre::Vector{Int64} Array of pointers to the last element plus one in the columns.
+    task::MSKtask An optimization task.
+"""
+function putacolslice end
+
+"""
+Inputs barF in block triplet form.
+
+    putafebarfblocktriplet(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
+    putafebarfblocktriplet(task::MSKtask,afeidx::T0,barvaridx::T1,subk::T2,subl::T3,valkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Vector{Int64} Constraint index.
+    barvaridx::Vector{Int32} Symmetric matrix variable index.
+    subk::Vector{Int32} Block row index.
+    subl::Vector{Int32} Block column index.
+    task::MSKtask An optimization task.
+    valkl::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function putafebarfblocktriplet end
+
+"""
+Inputs one entry in barF.
+
+    putafebarfentry(task::MSKtask,afeidx::Int64,barvaridx::Int32,termidx::Vector{Int64},termweight::Vector{Float64})
+    putafebarfentry(task::MSKtask,afeidx::T0,barvaridx::T1,termidx::T2,termweight::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Int64 Row index of barF.
+    barvaridx::Int32 Semidefinite variable index.
+    task::MSKtask An optimization task.
+    termidx::Vector{Int64} Element indices in matrix storage.
+    termweight::Vector{Float64} Weights in the weighted sum.
+"""
+function putafebarfentry end
+
+"""
+Inputs a list of entries in barF.
+
+    putafebarfentrylist(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},numterm::Vector{Int64},ptrterm::Vector{Int64},termidx::Vector{Int64},termweight::Vector{Float64})
+    putafebarfentrylist(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Vector{Int64} Row indexes of barF.
+    barvaridx::Vector{Int32} Semidefinite variable indexes.
+    numterm::Vector{Int64} Number of terms in the weighted sums.
+    ptrterm::Vector{Int64} Pointer to the terms forming each entry.
+    task::MSKtask An optimization task.
+    termidx::Vector{Int64} Concatenated element indexes in matrix storage.
+    termweight::Vector{Float64} Concatenated weights in the weighted sum.
+"""
+function putafebarfentrylist end
+
+"""
+Inputs a row of barF.
+
+    putafebarfrow(task::MSKtask,afeidx::Int64,barvaridx::Vector{Int32},numterm::Vector{Int64},ptrterm::Vector{Int64},termidx::Vector{Int64},termweight::Vector{Float64})
+    putafebarfrow(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Int64 Row index of barF.
+    barvaridx::Vector{Int32} Semidefinite variable indexes.
+    numterm::Vector{Int64} Number of terms in the weighted sums.
+    ptrterm::Vector{Int64} Pointer to the terms forming each entry.
+    task::MSKtask An optimization task.
+    termidx::Vector{Int64} Concatenated element indexes in matrix storage.
+    termweight::Vector{Float64} Concatenated weights in the weighted sum.
+"""
+function putafebarfrow end
+
+"""
+Replaces all elements in one column of the F matrix in the affine expressions.
+
+    putafefcol(task::MSKtask,varidx::Int32,afeidx::Vector{Int64},val::Vector{Float64})
+    putafefcol(task::MSKtask,varidx::T0,afeidx::T1,val::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Vector{Int64} Row indexes of non-zero values in the column.
+    task::MSKtask An optimization task.
+    val::Vector{Float64} New non-zero values in the column.
+    varidx::Int32 Column index.
+"""
+function putafefcol end
+
+"""
+Replaces one entry in F.
+
+    putafefentry(task::MSKtask,afeidx::Int64,varidx::Int32,value::Float64)
+    putafefentry(task::MSKtask,afeidx::T0,varidx::T1,value::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
+
+Arguments:
+    afeidx::Int64 Row index in F.
+    task::MSKtask An optimization task.
+    value::Float64 Value of the entry.
+    varidx::Int32 Column index in F.
+"""
+function putafefentry end
+
+"""
+Replaces a list of entries in F.
+
+    putafefentrylist(task::MSKtask,afeidx::Vector{Int64},varidx::Vector{Int32},val::Vector{Float64})
+    putafefentrylist(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Vector{Int64} Row indices in F.
+    task::MSKtask An optimization task.
+    val::Vector{Float64} Values of the entries in F.
+    varidx::Vector{Int32} Column indices in F.
+"""
+function putafefentrylist end
+
+"""
+Replaces all elements in one row of the F matrix in the affine expressions.
+
+    putafefrow(task::MSKtask,afeidx::Int64,varidx::Vector{Int32},val::Vector{Float64})
+    putafefrow(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Int64 Row index.
+    task::MSKtask An optimization task.
+    val::Vector{Float64} New non-zero values in the row.
+    varidx::Vector{Int32} Column indexes of non-zero values in the row.
+"""
+function putafefrow end
+
+"""
+Replaces all elements in a number of rows of the F matrix in the affine expressions.
+
+    putafefrowlist(task::MSKtask,afeidx::Vector{Int64},numnzrow::Vector{Int32},ptrrow::Vector{Int64},varidx::Vector{Int32},val::Vector{Float64})
+    putafefrowlist(task::MSKtask,afeidx::T0,numnzrow::T1,ptrrow::T2,varidx::T3,val::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Vector{Int64} Row indices.
+    numnzrow::Vector{Int32} Number of non-zeros in each row.
+    ptrrow::Vector{Int64} Pointer to the first nonzero in each row.
+    task::MSKtask An optimization task.
+    val::Vector{Float64} New non-zero values in the rows.
+    varidx::Vector{Int32} Column indexes of non-zero values.
+"""
+function putafefrowlist end
+
+"""
+Replaces one element in the g vector in the affine expressions.
+
+    putafeg(task::MSKtask,afeidx::Int64,g::Float64)
+    putafeg(task::MSKtask,afeidx::T0,g::T1) where {T0<:Integer,T1<:Number} 
+
+Arguments:
+    afeidx::Int64 Row index.
+    g::Float64 New value for the element of g.
+    task::MSKtask An optimization task.
+"""
+function putafeg end
+
+"""
+Replaces a list of elements in the g vector in the affine expressions.
+
+    putafeglist(task::MSKtask,afeidx::Vector{Int64},g::Vector{Float64})
+    putafeglist(task::MSKtask,afeidx::T0,g::T1) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number}} 
+
+Arguments:
+    afeidx::Vector{Int64} Indices of entries in g.
+    g::Vector{Float64} New values for the elements of g.
+    task::MSKtask An optimization task.
+"""
+function putafeglist end
+
+"""
+Modifies a slice of the vector g.
+
+    putafegslice(task::MSKtask,first::Int64,last::Int64,slice::Vector{Float64})
+    putafegslice(task::MSKtask,first::T0,last::T1,slice::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int64 First index in the sequence.
+    last::Int64 Last index plus 1 in the sequence.
+    slice::Vector{Float64} The slice of g as a dense vector.
+    task::MSKtask An optimization task.
+"""
+function putafegslice end
+
+"""
+Changes a single value in the linear coefficient matrix.
+
+    putaij(task::MSKtask,i::Int32,j::Int32,aij::Float64)
+    putaij(task::MSKtask,i::T0,j::T1,aij::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
+
+Arguments:
+    aij::Float64 New coefficient.
+    i::Int32 Constraint (row) index.
+    j::Int32 Variable (column) index.
+    task::MSKtask An optimization task.
+"""
+function putaij end
+
+"""
+Changes one or more coefficients in the linear constraint matrix.
+
+    putaijlist(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64})
+    putaijlist(task::MSKtask,subi::T0,subj::T1,valij::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    subi::Vector{Int32} Constraint (row) indices.
+    subj::Vector{Int32} Variable (column) indices.
+    task::MSKtask An optimization task.
+    valij::Vector{Float64} New coefficient values.
+"""
+function putaijlist end
+
+"""
+Replaces all elements in one row of the linear constraint matrix.
+
+    putarow(task::MSKtask,i::Int32,subi::Vector{Int32},vali::Vector{Float64})
+    putarow(task::MSKtask,i::T0,subi::T1,vali::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    i::Int32 Row index.
+    subi::Vector{Int32} Column indexes of non-zero values in row.
+    task::MSKtask An optimization task.
+    vali::Vector{Float64} New non-zero values of row.
+"""
+function putarow end
+
+"""
+Replaces all elements in several rows of the linear constraint matrix.
+
+    putarowlist(task::MSKtask,sub::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
+    putarowlist(task::MSKtask,sub::T0,ptrb::T1,ptre::T2,asub::T3,aval::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
+    putarowlist(task::MSKtask,sub::T0,At:: SparseMatrixCSC{Float64})
+
+Arguments:
+    At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
+    asub::Vector{Int32} Variable indexes.
+    aval::Vector{Float64} Coefficient values.
+    ptrb::Vector{Int64} Array of pointers to the first element in the rows.
+    ptre::Vector{Int64} Array of pointers to the last element plus one in the rows.
+    sub::Vector{Int32} Indexes of rows or columns that should be replaced.
+    task::MSKtask An optimization task.
+"""
+function putarowlist end
+
+"""
+Replaces all elements in several rows the linear constraint matrix.
+
+    putarowslice(task::MSKtask,first::Int32,last::Int32,ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
+    putarowslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T4,aval::T5) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+    putarowslice(task::MSKtask,first::T0,last::T1,At:: SparseMatrixCSC{Float64})
+
+Arguments:
+    At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
+    asub::Vector{Int32} Column indexes of new elements.
+    aval::Vector{Float64} Coefficient values.
+    first::Int32 First row in the slice.
+    last::Int32 Last row plus one in the slice.
+    ptrb::Vector{Int64} Array of pointers to the first element in the rows.
+    ptre::Vector{Int64} Array of pointers to the last element plus one in the rows.
+    task::MSKtask An optimization task.
+"""
+function putarowslice end
+
+"""
+Truncates all elements in A below a certain tolerance to zero.
+
+    putatruncatetol(task::MSKtask,tolzero::Float64)
+    putatruncatetol(task::MSKtask,tolzero::T0) where {T0<:Number} 
+
+Arguments:
+    task::MSKtask An optimization task.
+    tolzero::Float64 Truncation tolerance.
+"""
+function putatruncatetol end
+
+"""
+Inputs barA in block triplet form.
+
+    putbarablocktriplet(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
+    putbarablocktriplet(task::MSKtask,subi::T0,subj::T1,subk::T2,subl::T3,valijkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
+
+Arguments:
+    subi::Vector{Int32} Constraint index.
+    subj::Vector{Int32} Symmetric matrix variable index.
+    subk::Vector{Int32} Block row index.
+    subl::Vector{Int32} Block column index.
+    task::MSKtask An optimization task.
+    valijkl::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function putbarablocktriplet end
+
+"""
+Inputs an element of barA.
+
+    putbaraij(task::MSKtask,i::Int32,j::Int32,sub::Vector{Int64},weights::Vector{Float64})
+    putbaraij(task::MSKtask,i::T0,j::T1,sub::T2,weights::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    i::Int32 Row index of barA.
+    j::Int32 Column index of barA.
+    sub::Vector{Int64} Element indexes in matrix storage.
+    task::MSKtask An optimization task.
+    weights::Vector{Float64} Weights in the weighted sum.
+"""
+function putbaraij end
+
+"""
+Inputs list of elements of barA.
+
+    putbaraijlist(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},alphaptrb::Vector{Int64},alphaptre::Vector{Int64},matidx::Vector{Int64},weights::Vector{Float64})
+    putbaraijlist(task::MSKtask,subi::T0,subj::T1,alphaptrb::T2,alphaptre::T3,matidx::T4,weights::T5) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
+    putbaraijlist(task::MSKtask,subi::T0,subj::T1,A:: SparseMatrixCSC{Float64})
+
+Arguments:
+    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
+    alphaptrb::Vector{Int64} Start entries for terms in the weighted sum.
+    alphaptre::Vector{Int64} End entries for terms in the weighted sum.
+    matidx::Vector{Int64} Element indexes in matrix storage.
+    subi::Vector{Int32} Row index of barA.
+    subj::Vector{Int32} Column index of barA.
+    task::MSKtask An optimization task.
+    weights::Vector{Float64} Weights in the weighted sum.
+"""
+function putbaraijlist end
+
+"""
+Replace a set of rows of barA
+
+    putbararowlist(task::MSKtask,subi::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},subj::Vector{Int32},nummat::Vector{Int64},matidx::Vector{Int64},weights::Vector{Float64})
+    putbararowlist(task::MSKtask,subi::T0,ptrb::T1,ptre::T2,subj::T3,nummat::T4,matidx::T5,weights::T6) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}} 
+    putbararowlist(task::MSKtask,subi::T0,A:: SparseMatrixCSC{Float64},matidx::T5,weights::T6)
+
+Arguments:
+    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
+    matidx::Vector{Int64} Matrix indexes for weighted sum of matrixes.
+    nummat::Vector{Int64} Number of entries in weighted sum of matrixes.
+    ptrb::Vector{Int64} Start of rows in barA.
+    ptre::Vector{Int64} End of rows in barA.
+    subi::Vector{Int32} Row indexes of barA.
+    subj::Vector{Int32} Column index of barA.
+    task::MSKtask An optimization task.
+    weights::Vector{Float64} Weights for weighted sum of matrixes.
+"""
+function putbararowlist end
+
+"""
+Inputs barC in block triplet form.
+
+    putbarcblocktriplet(task::MSKtask,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
+    putbarcblocktriplet(task::MSKtask,subj::T0,subk::T1,subl::T2,valjkl::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    subj::Vector{Int32} Symmetric matrix variable index.
+    subk::Vector{Int32} Block row index.
+    subl::Vector{Int32} Block column index.
+    task::MSKtask An optimization task.
+    valjkl::Vector{Float64} The numerical value associated with each block triplet.
+"""
+function putbarcblocktriplet end
+
+"""
+Changes one element in barc.
+
+    putbarcj(task::MSKtask,j::Int32,sub::Vector{Int64},weights::Vector{Float64})
+    putbarcj(task::MSKtask,j::T0,sub::T1,weights::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    j::Int32 Index of the element in barc` that should be changed.
+    sub::Vector{Int64} sub is list of indexes of those symmetric matrices appearing in sum.
+    task::MSKtask An optimization task.
+    weights::Vector{Float64} The weights of the terms in the weighted sum.
+"""
+function putbarcj end
+
+"""
+Sets the dual solution for a semidefinite variable.
+
+    putbarsj(task::MSKtask,whichsol::Soltype,j::Int32,barsj::Vector{Float64})
+    putbarsj(task::MSKtask,whichsol::Soltype,j::T0,barsj::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
+
+Arguments:
+    barsj::Vector{Float64} Value of the j'th variable of barx.
+    j::Int32 Index of the semidefinite variable.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putbarsj end
+
+"""
+Sets the name of a semidefinite variable.
+
+    putbarvarname(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
+    putbarvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    j::Int32 Index of the variable.
+    name::Union{Nothing,AbstractString} The variable name.
+    task::MSKtask An optimization task.
+"""
+function putbarvarname end
+
+"""
+Sets the primal solution for a semidefinite variable.
+
+    putbarxj(task::MSKtask,whichsol::Soltype,j::Int32,barxj::Vector{Float64})
+    putbarxj(task::MSKtask,whichsol::Soltype,j::T0,barxj::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
+
+Arguments:
+    barxj::Vector{Float64} Value of the j'th variable of barx.
+    j::Int32 Index of the semidefinite variable.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putbarxj end
+
+"""
+Replaces the fixed term in the objective.
+
+    putcfix(task::MSKtask,cfix::Float64)
+    putcfix(task::MSKtask,cfix::T0) where {T0<:Number} 
+
+Arguments:
+    cfix::Float64 Fixed term in the objective.
+    task::MSKtask An optimization task.
+"""
+function putcfix end
+
+"""
+Modifies one linear coefficient in the objective.
+
+    putcj(task::MSKtask,j::Int32,cj::Float64)
+    putcj(task::MSKtask,j::T0,cj::T1) where {T0<:Integer,T1<:Number} 
+
+Arguments:
+    cj::Float64 New coefficient value.
+    j::Int32 Index of the variable whose objective coefficient should be changed.
+    task::MSKtask An optimization task.
+"""
+function putcj end
+
+"""
+Modifies a part of the linear objective coefficients.
+
+    putclist(task::MSKtask,subj::Vector{Int32},val::Vector{Float64})
+    putclist(task::MSKtask,subj::T0,val::T1) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number}} 
+
+Arguments:
+    subj::Vector{Int32} Indices of variables for which objective coefficients should be changed.
+    task::MSKtask An optimization task.
+    val::Vector{Float64} New numerical values for the objective coefficients that should be modified.
+"""
+function putclist end
+
+"""
+Changes the bound for one constraint.
+
+    putconbound(task::MSKtask,i::Int32,bkc::Boundkey,blc::Float64,buc::Float64)
+    putconbound(task::MSKtask,i::T0,bkc::Boundkey,blc::T1,buc::T2) where {T0<:Integer,T1<:Number,T2<:Number} 
+
+Arguments:
+    bkc::Boundkey New bound key.
+    blc::Float64 New lower bound.
+    buc::Float64 New upper bound.
+    i::Int32 Index of the constraint.
+    task::MSKtask An optimization task.
+"""
+function putconbound end
+
+"""
+Changes the bounds of a list of constraints.
+
+    putconboundlist(task::MSKtask,sub::Vector{Int32},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64})
+    putconboundlist(task::MSKtask,sub::T0,bkc::Vector{Boundkey},blc::T1,buc::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    bkc::Vector{Boundkey} Bound keys for the constraints.
+    blc::Vector{Float64} Lower bounds for the constraints.
+    buc::Vector{Float64} Upper bounds for the constraints.
+    sub::Vector{Int32} List of constraint indexes.
+    task::MSKtask An optimization task.
+"""
+function putconboundlist end
+
+"""
+Changes the bounds of a list of constraints.
+
+    putconboundlistconst(task::MSKtask,sub::Vector{Int32},bkc::Boundkey,blc::Float64,buc::Float64)
+    putconboundlistconst(task::MSKtask,sub::T0,bkc::Boundkey,blc::T1,buc::T2) where {T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number} 
+
+Arguments:
+    bkc::Boundkey New bound key for all constraints in the list.
+    blc::Float64 New lower bound for all constraints in the list.
+    buc::Float64 New upper bound for all constraints in the list.
+    sub::Vector{Int32} List of constraint indexes.
+    task::MSKtask An optimization task.
+"""
+function putconboundlistconst end
+
+"""
+Changes the bounds for a slice of the constraints.
+
+    putconboundslice(task::MSKtask,first::Int32,last::Int32,bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64})
+    putconboundslice(task::MSKtask,first::T0,last::T1,bkc::Vector{Boundkey},blc::T2,buc::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    bkc::Vector{Boundkey} Bound keys for the constraints.
+    blc::Vector{Float64} Lower bounds for the constraints.
+    buc::Vector{Float64} Upper bounds for the constraints.
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+"""
+function putconboundslice end
+
+"""
+Changes the bounds for a slice of the constraints.
+
+    putconboundsliceconst(task::MSKtask,first::Int32,last::Int32,bkc::Boundkey,blc::Float64,buc::Float64)
+    putconboundsliceconst(task::MSKtask,first::T0,last::T1,bkc::Boundkey,blc::T2,buc::T3) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:Number} 
+
+Arguments:
+    bkc::Boundkey New bound key for all constraints in the slice.
+    blc::Float64 New lower bound for all constraints in the slice.
+    buc::Float64 New upper bound for all constraints in the slice.
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+"""
+function putconboundsliceconst end
+
+"""
+Replaces a conic constraint.
+
+    putcone(task::MSKtask,k::Int32,ct::Conetype,conepar::Float64,submem::Vector{Int32})
+    putcone(task::MSKtask,k::T0,ct::Conetype,conepar::T1,submem::T2) where {T0<:Integer,T1<:Number,T2<:AbstractVector{<:Integer}} 
+
+Arguments:
+    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
+    ct::Conetype Specifies the type of the cone.
+    k::Int32 Index of the cone.
+    submem::Vector{Int32} Variable subscripts of the members in the cone.
+    task::MSKtask An optimization task.
+"""
+function putcone end
+
+"""
+Sets the name of a cone.
+
+    putconename(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
+    putconename(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    j::Int32 Index of the cone.
+    name::Union{Nothing,AbstractString} The name of the cone.
+    task::MSKtask An optimization task.
+"""
+function putconename end
+
+"""
+Sets the name of a constraint.
+
+    putconname(task::MSKtask,i::Int32,name::Union{Nothing,AbstractString})
+    putconname(task::MSKtask,i::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    i::Int32 Index of the constraint.
+    name::Union{Nothing,AbstractString} The name of the constraint.
+    task::MSKtask An optimization task.
+"""
+function putconname end
+
+"""
+Sets the primal and dual solution information for a single constraint.
+
+    putconsolutioni(task::MSKtask,i::Int32,whichsol::Soltype,sk::Stakey,x::Float64,sl::Float64,su::Float64)
+    putconsolutioni(task::MSKtask,i::T0,whichsol::Soltype,sk::Stakey,x::T1,sl::T2,su::T3) where {T0<:Integer,T1<:Number,T2<:Number,T3<:Number} 
+
+Arguments:
+    i::Int32 Index of the constraint.
+    sk::Stakey Status key of the constraint.
+    sl::Float64 Solution value of the dual variable associated with the lower bound.
+    su::Float64 Solution value of the dual variable associated with the upper bound.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    x::Float64 Primal solution value of the constraint.
+"""
+function putconsolutioni end
+
+"""
+Modifies a slice of the linear objective coefficients.
+
+    putcslice(task::MSKtask,first::Int32,last::Int32,slice::Vector{Float64})
+    putcslice(task::MSKtask,first::T0,last::T1,slice::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First element in the slice of c.
+    last::Int32 Last element plus 1 of the slice in c to be changed.
+    slice::Vector{Float64} New numerical values for the objective coefficients that should be modified.
+    task::MSKtask An optimization task.
+"""
+function putcslice end
+
+"""
+Inputs a disjunctive constraint.
+
+    putdjc(task::MSKtask,djcidx::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}},termsizelist::Vector{Int64})
+    putdjc(task::MSKtask,djcidx::T0,domidxlist::T1,afeidxlist::T2,b::T3,termsizelist::T4) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Integer}} 
+
+Arguments:
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions.
+    djcidx::Int64 Index of the disjunctive constraint.
+    domidxlist::Vector{Int64} List of domain indexes.
+    task::MSKtask An optimization task.
+    termsizelist::Vector{Int64} List of term sizes.
+"""
+function putdjc end
+
+"""
+Sets the name of a disjunctive constraint.
+
+    putdjcname(task::MSKtask,djcidx::Int64,name::Union{Nothing,AbstractString})
+    putdjcname(task::MSKtask,djcidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    djcidx::Int64 Index of the disjunctive constraint.
+    name::Union{Nothing,AbstractString} The name of the disjunctive constraint.
+    task::MSKtask An optimization task.
+"""
+function putdjcname end
+
+"""
+Inputs a slice of disjunctive constraints.
+
+    putdjcslice(task::MSKtask,idxfirst::Int64,idxlast::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}},termsizelist::Vector{Int64},termsindjc::Vector{Int64})
+    putdjcslice(task::MSKtask,idxfirst::T0,idxlast::T1,domidxlist::T2,afeidxlist::T3,b::T4,termsizelist::T5,termsindjc::T6) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Integer}} 
+
+Arguments:
+    afeidxlist::Vector{Int64} List of affine expression indexes.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    domidxlist::Vector{Int64} List of domain indexes.
+    idxfirst::Int64 Index of the first disjunctive constraint in the slice.
+    idxlast::Int64 Index of the last disjunctive constraint in the slice plus 1.
+    task::MSKtask An optimization task.
+    termsindjc::Vector{Int64} Number of terms in each of the disjunctive constraints in the slice.
+    termsizelist::Vector{Int64} List of term sizes.
+"""
+function putdjcslice end
+
+"""
+Sets the name of a domain.
+
+    putdomainname(task::MSKtask,domidx::Int64,name::Union{Nothing,AbstractString})
+    putdomainname(task::MSKtask,domidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    domidx::Int64 Index of the domain.
+    name::Union{Nothing,AbstractString} The name of the domain.
+    task::MSKtask An optimization task.
+"""
+function putdomainname end
+
+"""
+Sets a double parameter.
+
+    putdouparam(task::MSKtask,param::Dparam,parvalue::Float64)
+    putdouparam(task::MSKtask,param::Dparam,parvalue::T0) where {T0<:Number} 
+
+Arguments:
+    param::Dparam Which parameter.
+    parvalue::Float64 Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putdouparam end
+
+"""
+Sets an integer parameter.
+
+    putintparam(task::MSKtask,param::Iparam,parvalue::Int32)
+    putintparam(task::MSKtask,param::Iparam,parvalue::T0) where {T0<:Integer} 
+
+Arguments:
+    param::Iparam Which parameter.
+    parvalue::Int32 Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putintparam end
+
+"""
+Input a runtime license code.
+
+    putlicensecode(env::MSKenv,code::Union{Nothing,Vector{Int32}})
+    putlicensecode(env::MSKenv,code::T0) where {T0<:AbstractVector{<:Integer}} 
+    putlicensecode(code::Union{Nothing,Vector{Int32}})
+    putlicensecode(code::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    code::Union{Nothing,Vector{Int32}} A license key string.
+    env::MSKenv The MOSEK environment.
+"""
+function putlicensecode end
+
+"""
+Enables debug information for the license system.
+
+    putlicensedebug(env::MSKenv,licdebug::Int32)
+    putlicensedebug(env::MSKenv,licdebug::T0) where {T0<:Integer} 
+    putlicensedebug(licdebug::Int32)
+    putlicensedebug(licdebug::T0) where {T0<:Integer} 
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    licdebug::Int32 Enable output of license check-out debug information.
+"""
+function putlicensedebug end
+
+"""
+Set the path to the license file.
+
+    putlicensepath(env::MSKenv,licensepath::Union{Nothing,AbstractString})
+    putlicensepath(licensepath::Union{Nothing,AbstractString})
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    licensepath::Union{Nothing,AbstractString} A path specifying where to search for the license.
+"""
+function putlicensepath end
+
+"""
+Control whether mosek should wait for an available license if no license is available.
+
+    putlicensewait(env::MSKenv,licwait::Int32)
+    putlicensewait(env::MSKenv,licwait::T0) where {T0<:Integer} 
+    putlicensewait(licwait::Int32)
+    putlicensewait(licwait::T0) where {T0<:Integer} 
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+    licwait::Int32 Enable waiting for a license.
+"""
+function putlicensewait end
+
+"""
+Sets the number of preallocated affine conic constraints.
+
+    putmaxnumacc(task::MSKtask,maxnumacc::Int64)
+    putmaxnumacc(task::MSKtask,maxnumacc::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumacc::Int64 Number of preallocated affine conic constraints.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumacc end
+
+"""
+Sets the number of preallocated affine expressions in the optimization task.
+
+    putmaxnumafe(task::MSKtask,maxnumafe::Int64)
+    putmaxnumafe(task::MSKtask,maxnumafe::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumafe::Int64 Number of preallocated affine expressions.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumafe end
+
+"""
+Sets the number of preallocated non-zero entries in the linear coefficient matrix.
+
+    putmaxnumanz(task::MSKtask,maxnumanz::Int64)
+    putmaxnumanz(task::MSKtask,maxnumanz::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumanz::Int64 New size of the storage reserved for storing the linear coefficient matrix.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumanz end
+
+"""
+Sets the number of preallocated symmetric matrix variables.
+
+    putmaxnumbarvar(task::MSKtask,maxnumbarvar::Int32)
+    putmaxnumbarvar(task::MSKtask,maxnumbarvar::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumbarvar::Int32 Number of preallocated symmetric matrix variables.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumbarvar end
+
+"""
+Sets the number of preallocated constraints in the optimization task.
+
+    putmaxnumcon(task::MSKtask,maxnumcon::Int32)
+    putmaxnumcon(task::MSKtask,maxnumcon::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumcon::Int32 Number of preallocated constraints in the optimization task.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumcon end
+
+"""
+Sets the number of preallocated conic constraints in the optimization task.
+
+    putmaxnumcone(task::MSKtask,maxnumcone::Int32)
+    putmaxnumcone(task::MSKtask,maxnumcone::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumcone::Int32 Number of preallocated conic constraints in the optimization task.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumcone end
+
+"""
+Sets the number of preallocated disjunctive constraints.
+
+    putmaxnumdjc(task::MSKtask,maxnumdjc::Int64)
+    putmaxnumdjc(task::MSKtask,maxnumdjc::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumdjc::Int64 Number of preallocated disjunctive constraints in the task.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumdjc end
+
+"""
+Sets the number of preallocated domains in the optimization task.
+
+    putmaxnumdomain(task::MSKtask,maxnumdomain::Int64)
+    putmaxnumdomain(task::MSKtask,maxnumdomain::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumdomain::Int64 Number of preallocated domains.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumdomain end
+
+"""
+Sets the number of preallocated non-zero entries in quadratic terms.
+
+    putmaxnumqnz(task::MSKtask,maxnumqnz::Int64)
+    putmaxnumqnz(task::MSKtask,maxnumqnz::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumqnz::Int64 Number of non-zero elements preallocated in quadratic coefficient matrices.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumqnz end
+
+"""
+Sets the number of preallocated variables in the optimization task.
+
+    putmaxnumvar(task::MSKtask,maxnumvar::Int32)
+    putmaxnumvar(task::MSKtask,maxnumvar::T0) where {T0<:Integer} 
+
+Arguments:
+    maxnumvar::Int32 Number of preallocated variables in the optimization task.
+    task::MSKtask An optimization task.
+"""
+function putmaxnumvar end
+
+"""
+Sets a double parameter.
+
+    putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::Float64)
+    putnadouparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where {T0<:Number} 
+
+Arguments:
+    paramname::AbstractString Name of a parameter.
+    parvalue::Float64 Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putnadouparam end
+
+"""
+Sets an integer parameter.
+
+    putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::Int32)
+    putnaintparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where {T0<:Integer} 
+
+Arguments:
+    paramname::AbstractString Name of a parameter.
+    parvalue::Int32 Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putnaintparam end
+
+"""
+Sets a string parameter.
+
+    putnastrparam(task::MSKtask,paramname::AbstractString,parvalue::AbstractString)
+
+Arguments:
+    paramname::AbstractString Name of a parameter.
+    parvalue::AbstractString Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putnastrparam end
+
+"""
+Assigns a new name to the objective.
+
+    putobjname(task::MSKtask,objname::AbstractString)
+
+Arguments:
+    objname::AbstractString Name of the objective.
+    task::MSKtask An optimization task.
+"""
+function putobjname end
+
+"""
+Sets the objective sense.
+
+    putobjsense(task::MSKtask,sense::Objsense)
+
+Arguments:
+    sense::Objsense The objective sense of the task
+    task::MSKtask An optimization task.
+"""
+function putobjsense end
+
+"""
+Specify an OptServer for remote calls.
+
+    putoptserverhost(task::MSKtask,host::Union{Nothing,AbstractString})
+
+Arguments:
+    host::Union{Nothing,AbstractString} A URL specifying the optimization server to be used.
+    task::MSKtask An optimization task.
+"""
+function putoptserverhost end
+
+"""
+Modifies the value of parameter.
+
+    putparam(task::MSKtask,parname::AbstractString,parvalue::AbstractString)
+
+Arguments:
+    parname::AbstractString Parameter name.
+    parvalue::AbstractString Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putparam end
+
+"""
+Replaces all quadratic terms in constraints.
+
+    putqcon(task::MSKtask,qcsubk::Vector{Int32},qcsubi::Vector{Int32},qcsubj::Vector{Int32},qcval::Vector{Float64})
+    putqcon(task::MSKtask,qcsubk::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    qcsubi::Vector{Int32} Row subscripts for quadratic constraint matrix.
+    qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
+    qcsubk::Vector{Int32} Constraint subscripts for quadratic coefficients.
+    qcval::Vector{Float64} Quadratic constraint coefficient values.
+    task::MSKtask An optimization task.
+"""
+function putqcon end
+
+"""
+Replaces all quadratic terms in a single constraint.
+
+    putqconk(task::MSKtask,k::Int32,qcsubi::Vector{Int32},qcsubj::Vector{Int32},qcval::Vector{Float64})
+    putqconk(task::MSKtask,k::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+    putqconk(task::MSKtask,k::T0,Qk:: SparseMatrixCSC{Float64})
+
+Arguments:
+    k::Int32 The constraint in which the new quadratic elements are inserted.
+    qcsubi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
+    qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
+    qcval::Vector{Float64} Quadratic constraint coefficient values.
+    task::MSKtask An optimization task.
+"""
+function putqconk end
+
+"""
+Replaces all quadratic terms in the objective.
+
+    putqobj(task::MSKtask,qosubi::Vector{Int32},qosubj::Vector{Int32},qoval::Vector{Float64})
+    putqobj(task::MSKtask,qosubi::T0,qosubj::T1,qoval::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
+    putqobj(task::MSKtask,Qk:: SparseMatrixCSC{Float64})
+
+Arguments:
+    qosubi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
+    qosubj::Vector{Int32} Column subscripts for quadratic objective coefficients.
+    qoval::Vector{Float64} Quadratic objective coefficient values.
+    task::MSKtask An optimization task.
+"""
+function putqobj end
+
+"""
+Replaces one coefficient in the quadratic term in the objective.
+
+    putqobjij(task::MSKtask,i::Int32,j::Int32,qoij::Float64)
+    putqobjij(task::MSKtask,i::T0,j::T1,qoij::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
+
+Arguments:
+    i::Int32 Row index for the coefficient to be replaced.
+    j::Int32 Column index for the coefficient to be replaced.
+    qoij::Float64 The new coefficient value.
+    task::MSKtask An optimization task.
+"""
+function putqobjij end
+
+"""
+Sets the status keys for the constraints.
+
+    putskc(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey})
+
+Arguments:
+    skc::Vector{Stakey} Status keys for the constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putskc end
+
+"""
+Sets the status keys for a slice of the constraints.
+
+    putskcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,skc::Vector{Stakey})
+    putskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skc::Vector{Stakey}) where {T0<:Integer,T1<:Integer} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    skc::Vector{Stakey} Status keys for the constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putskcslice end
+
+"""
+Sets the status keys for the scalar variables.
+
+    putskx(task::MSKtask,whichsol::Soltype,skx::Vector{Stakey})
+
+Arguments:
+    skx::Vector{Stakey} Status keys for the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putskx end
+
+"""
+Sets the status keys for a slice of the variables.
+
+    putskxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,skx::Vector{Stakey})
+    putskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skx::Vector{Stakey}) where {T0<:Integer,T1<:Integer} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    skx::Vector{Stakey} Status keys for the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putskxslice end
+
+"""
+Sets the slc vector for a solution.
+
+    putslc(task::MSKtask,whichsol::Soltype,slc::Vector{Float64})
+    putslc(task::MSKtask,whichsol::Soltype,slc::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putslc end
+
+"""
+Sets a slice of the slc vector for a solution.
+
+    putslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slc::Vector{Float64})
+    putslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putslcslice end
+
+"""
+Sets the slx vector for a solution.
+
+    putslx(task::MSKtask,whichsol::Soltype,slx::Vector{Float64})
+    putslx(task::MSKtask,whichsol::Soltype,slx::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putslx end
+
+"""
+Sets a slice of the slx vector for a solution.
+
+    putslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slx::Vector{Float64})
+    putslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putslxslice end
+
+"""
+Sets the snx vector for a solution.
+
+    putsnx(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
+    putsnx(task::MSKtask,whichsol::Soltype,sux::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putsnx end
+
+"""
+Sets a slice of the snx vector for a solution.
+
+    putsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,snx::Vector{Float64})
+    putsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,snx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putsnxslice end
+
+"""
+Inserts a solution.
+
+    putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Union{Nothing,Vector{Float64}},xx::Union{Nothing,Vector{Float64}},y::Union{Nothing,Vector{Float64}},slc::Union{Nothing,Vector{Float64}},suc::Union{Nothing,Vector{Float64}},slx::Union{Nothing,Vector{Float64}},sux::Union{Nothing,Vector{Float64}},snx::Union{Nothing,Vector{Float64}})
+    putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::T0,xx::T1,y::T2,slc::T3,suc::T4,slx::T5,sux::T6,snx::T7) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Number},T6<:AbstractVector{<:Number},T7<:AbstractVector{<:Number}} 
+
+Arguments:
+    skc::Vector{Stakey} Status keys for the constraints.
+    skn::Vector{Stakey} Status keys for the conic constraints.
+    skx::Vector{Stakey} Status keys for the variables.
+    slc::Union{Nothing,Vector{Float64}} Dual variables corresponding to the lower bounds on the constraints.
+    slx::Union{Nothing,Vector{Float64}} Dual variables corresponding to the lower bounds on the variables.
+    snx::Union{Nothing,Vector{Float64}} Dual variables corresponding to the conic constraints on the variables.
+    suc::Union{Nothing,Vector{Float64}} Dual variables corresponding to the upper bounds on the constraints.
+    sux::Union{Nothing,Vector{Float64}} Dual variables corresponding to the upper bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    xc::Union{Nothing,Vector{Float64}} Primal constraint solution.
+    xx::Union{Nothing,Vector{Float64}} Primal variable solution.
+    y::Union{Nothing,Vector{Float64}} Vector of dual variables corresponding to the constraints.
+"""
+function putsolution end
+
+"""
+Inserts a solution.
+
+    putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Union{Nothing,Vector{Float64}},xx::Union{Nothing,Vector{Float64}},y::Union{Nothing,Vector{Float64}},slc::Union{Nothing,Vector{Float64}},suc::Union{Nothing,Vector{Float64}},slx::Union{Nothing,Vector{Float64}},sux::Union{Nothing,Vector{Float64}},snx::Union{Nothing,Vector{Float64}},doty::Union{Nothing,Vector{Float64}})
+    putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::T0,xx::T1,y::T2,slc::T3,suc::T4,slx::T5,sux::T6,snx::T7,doty::T8) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Number},T6<:AbstractVector{<:Number},T7<:AbstractVector{<:Number},T8<:AbstractVector{<:Number}} 
+
+Arguments:
+    doty::Union{Nothing,Vector{Float64}} Dual variables corresponding to affine conic constraints.
+    skc::Vector{Stakey} Status keys for the constraints.
+    skn::Vector{Stakey} Status keys for the conic constraints.
+    skx::Vector{Stakey} Status keys for the variables.
+    slc::Union{Nothing,Vector{Float64}} Dual variables corresponding to the lower bounds on the constraints.
+    slx::Union{Nothing,Vector{Float64}} Dual variables corresponding to the lower bounds on the variables.
+    snx::Union{Nothing,Vector{Float64}} Dual variables corresponding to the conic constraints on the variables.
+    suc::Union{Nothing,Vector{Float64}} Dual variables corresponding to the upper bounds on the constraints.
+    sux::Union{Nothing,Vector{Float64}} Dual variables corresponding to the upper bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    xc::Union{Nothing,Vector{Float64}} Primal constraint solution.
+    xx::Union{Nothing,Vector{Float64}} Primal variable solution.
+    y::Union{Nothing,Vector{Float64}} Vector of dual variables corresponding to the constraints.
+"""
+function putsolutionnew end
+
+"""
+Inputs the dual variable of a solution.
+
+    putsolutionyi(task::MSKtask,i::Int32,whichsol::Soltype,y::Float64)
+    putsolutionyi(task::MSKtask,i::T0,whichsol::Soltype,y::T1) where {T0<:Integer,T1<:Number} 
+
+Arguments:
+    i::Int32 Index of the dual variable.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    y::Float64 Solution value of the dual variable.
+"""
+function putsolutionyi end
+
+"""
+Sets a string parameter.
+
+    putstrparam(task::MSKtask,param::Sparam,parvalue::AbstractString)
+
+Arguments:
+    param::Sparam Which parameter.
+    parvalue::AbstractString Parameter value.
+    task::MSKtask An optimization task.
+"""
+function putstrparam end
+
+"""
+Sets the suc vector for a solution.
+
+    putsuc(task::MSKtask,whichsol::Soltype,suc::Vector{Float64})
+    putsuc(task::MSKtask,whichsol::Soltype,suc::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putsuc end
+
+"""
+Sets a slice of the suc vector for a solution.
+
+    putsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,suc::Vector{Float64})
+    putsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,suc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putsucslice end
+
+"""
+Sets the sux vector for a solution.
+
+    putsux(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
+    putsux(task::MSKtask,whichsol::Soltype,sux::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putsux end
+
+"""
+Sets a slice of the sux vector for a solution.
+
+    putsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,sux::Vector{Float64})
+    putsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,sux::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function putsuxslice end
+
+"""
+Assigns a new name to the task.
+
+    puttaskname(task::MSKtask,taskname::AbstractString)
+
+Arguments:
+    task::MSKtask An optimization task.
+    taskname::AbstractString Name assigned to the task.
+"""
+function puttaskname end
+
+"""
+Changes the bounds for one variable.
+
+    putvarbound(task::MSKtask,j::Int32,bkx::Boundkey,blx::Float64,bux::Float64)
+    putvarbound(task::MSKtask,j::T0,bkx::Boundkey,blx::T1,bux::T2) where {T0<:Integer,T1<:Number,T2<:Number} 
+
+Arguments:
+    bkx::Boundkey New bound key.
+    blx::Float64 New lower bound.
+    bux::Float64 New upper bound.
+    j::Int32 Index of the variable.
+    task::MSKtask An optimization task.
+"""
+function putvarbound end
+
+"""
+Changes the bounds of a list of variables.
+
+    putvarboundlist(task::MSKtask,sub::Vector{Int32},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
+    putvarboundlist(task::MSKtask,sub::T0,bkx::Vector{Boundkey},blx::T1,bux::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    bkx::Vector{Boundkey} Bound keys for the variables.
+    blx::Vector{Float64} Lower bounds for the variables.
+    bux::Vector{Float64} Upper bounds for the variables.
+    sub::Vector{Int32} List of variable indexes.
+    task::MSKtask An optimization task.
+"""
+function putvarboundlist end
+
+"""
+Changes the bounds of a list of variables.
+
+    putvarboundlistconst(task::MSKtask,sub::Vector{Int32},bkx::Boundkey,blx::Float64,bux::Float64)
+    putvarboundlistconst(task::MSKtask,sub::T0,bkx::Boundkey,blx::T1,bux::T2) where {T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number} 
+
+Arguments:
+    bkx::Boundkey New bound key for all variables in the list.
+    blx::Float64 New lower bound for all variables in the list.
+    bux::Float64 New upper bound for all variables in the list.
+    sub::Vector{Int32} List of variable indexes.
+    task::MSKtask An optimization task.
+"""
+function putvarboundlistconst end
+
+"""
+Changes the bounds for a slice of the variables.
+
+    putvarboundslice(task::MSKtask,first::Int32,last::Int32,bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
+    putvarboundslice(task::MSKtask,first::T0,last::T1,bkx::Vector{Boundkey},blx::T2,bux::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    bkx::Vector{Boundkey} Bound keys for the variables.
+    blx::Vector{Float64} Lower bounds for the variables.
+    bux::Vector{Float64} Upper bounds for the variables.
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+"""
+function putvarboundslice end
+
+"""
+Changes the bounds for a slice of the variables.
+
+    putvarboundsliceconst(task::MSKtask,first::Int32,last::Int32,bkx::Boundkey,blx::Float64,bux::Float64)
+    putvarboundsliceconst(task::MSKtask,first::T0,last::T1,bkx::Boundkey,blx::T2,bux::T3) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:Number} 
+
+Arguments:
+    bkx::Boundkey New bound key for all variables in the slice.
+    blx::Float64 New lower bound for all variables in the slice.
+    bux::Float64 New upper bound for all variables in the slice.
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+"""
+function putvarboundsliceconst end
+
+"""
+Sets the name of a variable.
+
+    putvarname(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
+    putvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
+
+Arguments:
+    j::Int32 Index of the variable.
+    name::Union{Nothing,AbstractString} The variable name.
+    task::MSKtask An optimization task.
+"""
+function putvarname end
+
+"""
+Sets the primal and dual solution information for a single variable.
+
+    putvarsolutionj(task::MSKtask,j::Int32,whichsol::Soltype,sk::Stakey,x::Float64,sl::Float64,su::Float64,sn::Float64)
+    putvarsolutionj(task::MSKtask,j::T0,whichsol::Soltype,sk::Stakey,x::T1,sl::T2,su::T3,sn::T4) where {T0<:Integer,T1<:Number,T2<:Number,T3<:Number,T4<:Number} 
+
+Arguments:
+    j::Int32 Index of the variable.
+    sk::Stakey Status key of the variable.
+    sl::Float64 Solution value of the dual variable associated with the lower bound.
+    sn::Float64 Solution value of the dual variable associated with the conic constraint.
+    su::Float64 Solution value of the dual variable associated with the upper bound.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    x::Float64 Primal solution value of the variable.
+"""
+function putvarsolutionj end
+
+"""
+Sets the variable type of one variable.
+
+    putvartype(task::MSKtask,j::Int32,vartype::Variabletype)
+    putvartype(task::MSKtask,j::T0,vartype::Variabletype) where {T0<:Integer} 
+
+Arguments:
+    j::Int32 Index of the variable.
+    task::MSKtask An optimization task.
+    vartype::Variabletype The new variable type.
+"""
+function putvartype end
+
+"""
+Sets the variable type for one or more variables.
+
+    putvartypelist(task::MSKtask,subj::Vector{Int32},vartype::Vector{Variabletype})
+    putvartypelist(task::MSKtask,subj::T0,vartype::Vector{Variabletype}) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    subj::Vector{Int32} A list of variable indexes for which the variable type should be changed.
+    task::MSKtask An optimization task.
+    vartype::Vector{Variabletype} A list of variable types.
+"""
+function putvartypelist end
+
+"""
+Sets the xc vector for a solution.
+
+    putxc(task::MSKtask,whichsol::Soltype) :: xc
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    xc::Vector{Float64} Primal constraint solution.
+"""
+function putxc end
+
+"""
+Sets a slice of the xc vector for a solution.
+
+    putxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,xc::Vector{Float64})
+    putxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    xc::Vector{Float64} Primal constraint solution.
+"""
+function putxcslice end
+
+"""
+Sets the xx vector for a solution.
+
+    putxx(task::MSKtask,whichsol::Soltype,xx::Vector{Float64})
+    putxx(task::MSKtask,whichsol::Soltype,xx::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    xx::Vector{Float64} Primal variable solution.
+"""
+function putxx end
+
+"""
+Sets a slice of the xx vector for a solution.
+
+    putxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,xx::Vector{Float64})
+    putxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    xx::Vector{Float64} Primal variable solution.
+"""
+function putxxslice end
+
+"""
+Sets the y vector for a solution.
+
+    puty(task::MSKtask,whichsol::Soltype,y::Vector{Float64})
+    puty(task::MSKtask,whichsol::Soltype,y::T0) where {T0<:AbstractVector{<:Number}} 
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
+"""
+function puty end
+
+"""
+Sets a slice of the y vector for a solution.
+
+    putyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,y::Vector{Float64})
+    putyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,y::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
+
+Arguments:
+    first::Int32 First index in the sequence.
+    last::Int32 Last index plus 1 in the sequence.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
+"""
+function putyslice end
+
+"""
+Read a binary dump of the task solution and information items.
+
+    readbsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
+
+Arguments:
+    compress::Compresstype Data compression type.
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function readbsolution end
+
+"""
+Reads problem data from a file.
+
+    readdata(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function readdata end
+
+"""
+Reads problem data from a file.
+
+    readdataformat(task::MSKtask,filename::AbstractString,format::Dataformat,compress::Compresstype)
+
+Arguments:
+    compress::Compresstype File compression type.
+    filename::AbstractString A valid file name.
+    format::Dataformat File data format.
+    task::MSKtask An optimization task.
+"""
+function readdataformat end
+
+"""
+Reads a solution from a JSOL file.
+
+    readjsonsol(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function readjsonsol end
+
+"""
+Load task data from a string in JSON format.
+
+    readjsonstring(task::MSKtask,data::AbstractString)
+
+Arguments:
+    data::AbstractString Problem data in text format.
+    task::MSKtask An optimization task.
+"""
+function readjsonstring end
+
+"""
+Load task data from a string in LP format.
+
+    readlpstring(task::MSKtask,data::AbstractString)
+
+Arguments:
+    data::AbstractString Problem data in text format.
+    task::MSKtask An optimization task.
+"""
+function readlpstring end
+
+"""
+Load task data from a string in OPF format.
+
+    readopfstring(task::MSKtask,data::AbstractString)
+
+Arguments:
+    data::AbstractString Problem data in text format.
+    task::MSKtask An optimization task.
+"""
+function readopfstring end
+
+"""
+Reads a parameter file.
+
+    readparamfile(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function readparamfile end
+
+"""
+Load task data from a string in PTF format.
+
+    readptfstring(task::MSKtask,data::AbstractString)
+
+Arguments:
+    data::AbstractString Problem data in text format.
+    task::MSKtask An optimization task.
+"""
+function readptfstring end
+
+"""
+Reads a solution from a file.
+
+    readsolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function readsolution end
+
+"""
+Read solution file in format determined by the filename
+
+    readsolutionfile(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function readsolutionfile end
+
+"""
+Prints information about last file read.
+
+    readsummary(task::MSKtask,whichstream::Streamtype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichstream::Streamtype Index of the stream.
+"""
+function readsummary end
+
+"""
+Load task data from a file.
+
+    readtask(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function readtask end
+
+"""
+Removes a number of symmetric matrices.
+
+    removebarvars(task::MSKtask,subset::Vector{Int32})
+    removebarvars(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    subset::Vector{Int32} Indexes of symmetric matrices which should be removed.
+    task::MSKtask An optimization task.
+"""
+function removebarvars end
+
+"""
+Removes a number of conic constraints from the problem.
+
+    removecones(task::MSKtask,subset::Vector{Int32})
+    removecones(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    subset::Vector{Int32} Indexes of cones which should be removed.
+    task::MSKtask An optimization task.
+"""
+function removecones end
+
+"""
+Removes a number of constraints.
+
+    removecons(task::MSKtask,subset::Vector{Int32})
+    removecons(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    subset::Vector{Int32} Indexes of constraints which should be removed.
+    task::MSKtask An optimization task.
+"""
+function removecons end
+
+"""
+Removes a number of variables.
+
+    removevars(task::MSKtask,subset::Vector{Int32})
+    removevars(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
+
+Arguments:
+    subset::Vector{Int32} Indexes of variables which should be removed.
+    task::MSKtask An optimization task.
+"""
+function removevars end
+
+"""
+Obtains a response code string identifier.
+
+    rescodetostr(res::Rescode) :: str
+
+Arguments:
+    res::Rescode Response code.
+
+Returns:
+    str::String String corresponding to the response code.
+"""
+function rescodetostr end
+
+"""
+Reset the license expiry reporting startpoint.
+
+    resetexpirylicenses(env::MSKenv)
+    resetexpirylicenses()
+
+Arguments:
+    env::MSKenv The MOSEK environment.
+"""
+function resetexpirylicenses end
+
+"""
+Resizes an optimization task.
+
+    resizetask(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,maxnumcone::Int32,maxnumanz::Int64,maxnumqnz::Int64)
+    resizetask(task::MSKtask,maxnumcon::T0,maxnumvar::T1,maxnumcone::T2,maxnumanz::T3,maxnumqnz::T4) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Integer,T4<:Integer} 
+
+Arguments:
+    maxnumanz::Int64 New maximum number of linear non-zero elements.
+    maxnumcon::Int32 New maximum number of constraints.
+    maxnumcone::Int32 New maximum number of cones.
+    maxnumqnz::Int64 New maximum number of quadratic non-zeros elements.
+    maxnumvar::Int32 New maximum number of variables.
+    task::MSKtask An optimization task.
+"""
+function resizetask end
+
+"""
+Creates a sensitivity report.
+
+    sensitivityreport(task::MSKtask,whichstream::Streamtype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichstream::Streamtype Index of the stream.
+"""
+function sensitivityreport end
+
+"""
+Resets all parameter values.
+
+    setdefaults(task::MSKtask)
+
+Arguments:
+    task::MSKtask An optimization task.
+"""
+function setdefaults end
+
+"""
+Checks whether a solution is defined.
+
+    solutiondef(task::MSKtask,whichsol::Soltype) :: isdef
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+
+Returns:
+    isdef::Bool Is non-zero if the requested solution is defined.
+"""
+function solutiondef end
+
+"""
+Prints a short summary of the current solutions.
+
+    solutionsummary(task::MSKtask,whichstream::Streamtype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichstream::Streamtype Index of the stream.
+"""
+function solutionsummary end
+
+"""
+Solve a linear equation system involving a basis matrix.
+
+    solvewithbasis(task::MSKtask,transp::Bool,numnz::Int32,sub::Vector{Int32},val::Vector{Float64}) :: numnzout
+    solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer}  :: numnzout
+
+Arguments:
+    numnz::Int32 Input (number of non-zeros in right-hand side).
+    sub::Vector{Int32} Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
+    task::MSKtask An optimization task.
+    transp::Bool Controls which problem formulation is solved.
+    val::Vector{Float64} Input (right-hand side values) and output (solution vector values).
+
+Returns:
+    numnzout::Int32 Output (number of non-zeros in solution vector).
+"""
+function solvewithbasis end
+
+"""
+Solves a sparse triangular system of linear equations.
+
+    sparsetriangularsolvedense(env::MSKenv,transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
+    sparsetriangularsolvedense(env::MSKenv,transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+    sparsetriangularsolvedense(transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
+    sparsetriangularsolvedense(transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
+
+Arguments:
+    b::Vector{Float64} The right-hand side of linear equation system to be solved as a dense vector.
+    env::MSKenv The MOSEK environment.
+    lnzc::Vector{Int32} lnzc[j] is the number of nonzeros in column j.
+    lptrc::Vector{Int64} lptrc[j] is a pointer to the first row index and value in column j.
+    lsubc::Vector{Int32} Row indexes for each column stored sequentially.
+    lvalc::Vector{Float64} The value corresponding to row indexed stored lsubc.
+    transposed::Transpose Controls whether the solve is with L or the transposed L.
+"""
+function sparsetriangularsolvedense end
+
+"""
+Obtains a cone type code.
+
+    strtoconetype(task::MSKtask,str::AbstractString) :: conetype
+
+Arguments:
+    str::AbstractString String corresponding to the cone type code.
+    task::MSKtask An optimization task.
+
+Returns:
+    conetype::Conetype The cone type corresponding to str.
+"""
+function strtoconetype end
+
+"""
+Obtains a status key.
+
+    strtosk(task::MSKtask,str::AbstractString) :: sk
+
+Arguments:
+    str::AbstractString A status key abbreviation string.
+    task::MSKtask An optimization task.
+
+Returns:
+    sk::Stakey Status key corresponding to the string.
+"""
+function strtosk end
+
+"""
+Update the information items related to the solution.
+
+    updatesolutioninfo(task::MSKtask,whichsol::Soltype)
+
+Arguments:
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function updatesolutioninfo end
+
+"""
+Write a binary dump of the task solution and information items.
+
+    writebsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
+
+Arguments:
+    compress::Compresstype Data compression type.
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function writebsolution end
+
+"""
+Writes problem data to a file.
+
+    writedata(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function writedata end
+
+"""
+Writes a solution to a JSON file.
+
+    writejsonsol(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function writejsonsol end
+
+"""
+Writes all the parameters to a parameter file.
+
+    writeparamfile(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function writeparamfile end
+
+"""
+Write a solution to a file.
+
+    writesolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+    whichsol::Soltype Selects a solution.
+"""
+function writesolution end
+
+"""
+Write solution file in format determined by the filename
+
+    writesolutionfile(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function writesolutionfile end
+
+"""
+Write a complete binary dump of the task data.
+
+    writetask(task::MSKtask,filename::AbstractString)
+
+Arguments:
+    filename::AbstractString A valid file name.
+    task::MSKtask An optimization task.
+"""
+function writetask end
+
+
 function analyzeproblem(task::MSKtask,whichstream::Streamtype)
   @MSK_analyzeproblem(task.task,whichstream.value)
   nothing
 end
 
 
-"""
-  analyzenames(task::MSKtask,whichstream::Streamtype,nametype::Nametype)
-
-  Analyze the names and issue an error for the first invalid name.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-    nametype::Nametype The type of names e.g. valid in MPS or LP files.
-"""
-function analyzenames end
 function analyzenames(task::MSKtask,whichstream::Streamtype,nametype::Nametype)
   @MSK_analyzenames(task.task,whichstream.value,nametype.value)
   nothing
 end
 
 
-"""
-  analyzesolution(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
-
-  Print information related to the quality of the solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-    whichsol::Soltype Selects a solution.
-"""
-function analyzesolution end
 function analyzesolution(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
   @MSK_analyzesolution(task.task,whichstream.value,whichsol.value)
   nothing
 end
 
 
-"""
-  initbasissolve(task::MSKtask) :: basis
-
-  Prepare a task for basis solver.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    basis::Vector{Int32} The array of basis indexes to use.
-"""
-function initbasissolve end
 function initbasissolve(task::MSKtask)
   __tmp_4 = Ref{Int32}()
   @MSK_getnumcon(task.task,__tmp_4)
@@ -4862,41 +11136,25 @@ function initbasissolve(task::MSKtask)
 end
 
 
-"""
-  solvewithbasis(task::MSKtask,transp::Bool,numnz::Int32,sub::Vector{Int32},val::Vector{Float64}) :: numnzout
-  solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer}  :: numnzout
-
-  Solve a linear equation system involving a basis matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    transp::Bool Controls which problem formulation is solved.
-    numnz::Int32 Input (number of non-zeros in right-hand side).
-    sub::Vector{Int32} Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
-    val::Vector{Float64} Input (right-hand side values) and output (solution vector values).
-  Returns
-    numnzout::Int32 Output (number of non-zeros in solution vector).
-"""
-function solvewithbasis end
 function solvewithbasis(task::MSKtask,transp::Bool,numnz::Int32,sub::Vector{Int32},val::Vector{Float64})
   __tmp_7 = Ref{Int32}()
   @MSK_getnumcon(task.task,__tmp_7)
   __tmp_6 = __tmp_7[]
-  if length(sub) < __tmp_6
+  if sub !== nothing && length(sub) < __tmp_6
     throw(BoundsError())
   end
   sub_ = sub .- Int32(1)
   __tmp_10 = Ref{Int32}()
   @MSK_getnumcon(task.task,__tmp_10)
   __tmp_9 = __tmp_10[]
-  if length(val) < __tmp_9
+  if val !== nothing && length(val) < __tmp_9
     throw(BoundsError())
   end
   val_ = val
   numnzout_ = Ref{Int32}()
   @MSK_solvewithbasis(task.task,transp,numnz,sub_,val_,numnzout_)
-  sub[:] = sub_ .+ Int32(1)
-  val[:] = val_
+  if sub !== nothing; sub[:] = sub_ .+ Int32(1); end
+  if val !== nothing; val[:] = val_; end
   numnzout_[]
 end
 function solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},val::Vector{Float64}) where { T0<:Integer }
@@ -4909,18 +11167,6 @@ function solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},
 end
 
 
-"""
-  basiscond(task::MSKtask) :: (nrmbasis,nrminvbasis)
-
-  Computes conditioning information for the basis matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    nrmbasis::Float64 An estimate for the 1-norm of the basis.
-    nrminvbasis::Float64 An estimate for the 1-norm of the inverse of the basis.
-"""
-function basiscond end
 function basiscond(task::MSKtask)
   nrmbasis_ = Ref{Float64}()
   nrminvbasis_ = Ref{Float64}()
@@ -4929,17 +11175,6 @@ function basiscond(task::MSKtask)
 end
 
 
-"""
-  appendcons(task::MSKtask,num::Int32)
-  appendcons(task::MSKtask,num::T0) where {T0<:Integer} 
-
-  Appends a number of constraints to the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    num::Int32 Number of constraints which should be appended.
-"""
-function appendcons end
 function appendcons(task::MSKtask,num::Int32)
   @MSK_appendcons(task.task,num)
   nothing
@@ -4951,17 +11186,6 @@ function appendcons(task::MSKtask,num::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendvars(task::MSKtask,num::Int32)
-  appendvars(task::MSKtask,num::T0) where {T0<:Integer} 
-
-  Appends a number of variables to the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    num::Int32 Number of variables which should be appended.
-"""
-function appendvars end
 function appendvars(task::MSKtask,num::Int32)
   @MSK_appendvars(task.task,num)
   nothing
@@ -4973,17 +11197,6 @@ function appendvars(task::MSKtask,num::T0) where { T0<:Integer }
 end
 
 
-"""
-  removecons(task::MSKtask,subset::Vector{Int32})
-  removecons(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Removes a number of constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subset::Vector{Int32} Indexes of constraints which should be removed.
-"""
-function removecons end
 function removecons(task::MSKtask,subset::Vector{Int32})
   num = Int32(length(subset))
   subset_ = subset
@@ -4993,21 +11206,10 @@ end
 function removecons(task::MSKtask,subset::T0) where { T0<:AbstractVector{<:Integer} }
   removecons(
     task,
-    convert(Vector{Int32},subset))
+    if subset === nothing; nothing; else convert(Vector{Int32},subset); end)
 end
 
 
-"""
-  removevars(task::MSKtask,subset::Vector{Int32})
-  removevars(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Removes a number of variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subset::Vector{Int32} Indexes of variables which should be removed.
-"""
-function removevars end
 function removevars(task::MSKtask,subset::Vector{Int32})
   num = Int32(length(subset))
   subset_ = subset
@@ -5017,21 +11219,10 @@ end
 function removevars(task::MSKtask,subset::T0) where { T0<:AbstractVector{<:Integer} }
   removevars(
     task,
-    convert(Vector{Int32},subset))
+    if subset === nothing; nothing; else convert(Vector{Int32},subset); end)
 end
 
 
-"""
-  removebarvars(task::MSKtask,subset::Vector{Int32})
-  removebarvars(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Removes a number of symmetric matrices.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subset::Vector{Int32} Indexes of symmetric matrices which should be removed.
-"""
-function removebarvars end
 function removebarvars(task::MSKtask,subset::Vector{Int32})
   num = Int32(length(subset))
   subset_ = subset
@@ -5041,21 +11232,10 @@ end
 function removebarvars(task::MSKtask,subset::T0) where { T0<:AbstractVector{<:Integer} }
   removebarvars(
     task,
-    convert(Vector{Int32},subset))
+    if subset === nothing; nothing; else convert(Vector{Int32},subset); end)
 end
 
 
-"""
-  removecones(task::MSKtask,subset::Vector{Int32})
-  removecones(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Removes a number of conic constraints from the problem.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subset::Vector{Int32} Indexes of cones which should be removed.
-"""
-function removecones end
 function removecones(task::MSKtask,subset::Vector{Int32})
   num = Int32(length(subset))
   subset_ = subset .- Int32(1)
@@ -5065,21 +11245,10 @@ end
 function removecones(task::MSKtask,subset::T0) where { T0<:AbstractVector{<:Integer} }
   removecones(
     task,
-    convert(Vector{Int32},subset))
+    if subset === nothing; nothing; else convert(Vector{Int32},subset); end)
 end
 
 
-"""
-  appendbarvars(task::MSKtask,dim::Vector{Int32})
-  appendbarvars(task::MSKtask,dim::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Appends semidefinite variables to the problem.
-
-  Arguments
-    task::MSKtask An optimization task.
-    dim::Vector{Int32} Dimensions of symmetric matrix variables to be added.
-"""
-function appendbarvars end
 function appendbarvars(task::MSKtask,dim::Vector{Int32})
   num = Int32(length(dim))
   dim_ = dim
@@ -5089,23 +11258,10 @@ end
 function appendbarvars(task::MSKtask,dim::T0) where { T0<:AbstractVector{<:Integer} }
   appendbarvars(
     task,
-    convert(Vector{Int32},dim))
+    if dim === nothing; nothing; else convert(Vector{Int32},dim); end)
 end
 
 
-"""
-  appendcone(task::MSKtask,ct::Conetype,conepar::Float64,submem::Vector{Int32})
-  appendcone(task::MSKtask,ct::Conetype,conepar::T0,submem::T1) where {T0<:Number,T1<:AbstractVector{<:Integer}} 
-
-  Appends a new conic constraint to the problem.
-
-  Arguments
-    task::MSKtask An optimization task.
-    ct::Conetype Specifies the type of the cone.
-    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
-    submem::Vector{Int32} Variable subscripts of the members in the cone.
-"""
-function appendcone end
 function appendcone(task::MSKtask,ct::Conetype,conepar::Float64,submem::Vector{Int32})
   nummem = Int32(length(submem))
   submem_ = submem .- Int32(1)
@@ -5117,24 +11273,10 @@ function appendcone(task::MSKtask,ct::Conetype,conepar::T0,submem::T1) where { T
     task,
     ct,
     convert(Float64,conepar),
-    convert(Vector{Int32},submem))
+    if submem === nothing; nothing; else convert(Vector{Int32},submem); end)
 end
 
 
-"""
-  appendconeseq(task::MSKtask,ct::Conetype,conepar::Float64,nummem::Int32,j::Int32)
-  appendconeseq(task::MSKtask,ct::Conetype,conepar::T0,nummem::T1,j::T2) where {T0<:Number,T1<:Integer,T2<:Integer} 
-
-  Appends a new conic constraint to the problem.
-
-  Arguments
-    task::MSKtask An optimization task.
-    ct::Conetype Specifies the type of the cone.
-    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
-    nummem::Int32 Number of member variables in the cone.
-    j::Int32 Index of the first variable in the conic constraint.
-"""
-function appendconeseq end
 function appendconeseq(task::MSKtask,ct::Conetype,conepar::Float64,nummem::Int32,j::Int32)
   @MSK_appendconeseq(task.task,ct.value,conepar,nummem,j-Int32(1))
   nothing
@@ -5149,20 +11291,6 @@ function appendconeseq(task::MSKtask,ct::Conetype,conepar::T0,nummem::T1,j::T2) 
 end
 
 
-"""
-  appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::Vector{Float64},nummem::Vector{Int32},j::Int32)
-  appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::T0,nummem::T1,j::T2) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Integer},T2<:Integer} 
-
-  Appends multiple conic constraints to the problem.
-
-  Arguments
-    task::MSKtask An optimization task.
-    ct::Vector{Conetype} Specifies the type of the cone.
-    conepar::Vector{Float64} For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
-    nummem::Vector{Int32} Numbers of member variables in the cones.
-    j::Int32 Index of the first variable in the first cone to be appended.
-"""
-function appendconesseq end
 function appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::Vector{Float64},nummem::Vector{Int32},j::Int32)
   num = Int32(min(length(ct),length(conepar),length(nummem)))
   ct_ = Int32[item.value for item in ct]
@@ -5175,24 +11303,12 @@ function appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::T0,nummem::T
   appendconesseq(
     task,
     ct,
-    convert(Vector{Float64},conepar),
-    convert(Vector{Int32},nummem),
+    if conepar === nothing; nothing; else convert(Vector{Float64},conepar); end,
+    if nummem === nothing; nothing; else convert(Vector{Int32},nummem); end,
     convert(Int32,j))
 end
 
 
-"""
-  bktostr(task::MSKtask,bk::Boundkey) :: str
-
-  Obtains a bound key string identifier.
-
-  Arguments
-    task::MSKtask An optimization task.
-    bk::Boundkey Bound key.
-  Returns
-    str::String String corresponding to the bound key.
-"""
-function bktostr end
 function bktostr(task::MSKtask,bk::Boundkey)
   str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
   @MSK_bktostr(task.task,bk.value,str_)
@@ -5206,44 +11322,6 @@ function bktostr(task::MSKtask,bk::Boundkey)
 end
 
 
-"""
-  callbackcodetostr(code::Callbackcode) :: callbackcodestr
-
-  Obtains a callback code string identifier.
-
-  Arguments
-    code::Callbackcode A callback code.
-  Returns
-    callbackcodestr::String String corresponding to the callback code.
-"""
-function callbackcodetostr end
-function callbackcodetostr(code::Callbackcode)
-  callbackcodestr_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
-  @MSK_callbackcodetostr(code.value,callbackcodestr_)
-  callbackcodestr_len = findfirst(_c->_c==0,callbackcodestr_)
-  callbackcodestr = if callbackcodestr_len === nothing
-    String(callbackcodestr_)
-  else
-    String(callbackcodestr_[1:callbackcodestr_len-1])
-  end
-  callbackcodestr
-end
-
-
-"""
-  chgconbound(task::MSKtask,i::Int32,lower::Int32,finite::Int32,value::Float64)
-  chgconbound(task::MSKtask,i::T0,lower::T1,finite::T2,value::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Number} 
-
-  Changes the bounds for one constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint for which the bounds should be changed.
-    lower::Int32 If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
-    finite::Int32 If non-zero, then the given value is assumed to be finite.
-    value::Float64 New value for the bound.
-"""
-function chgconbound end
 function chgconbound(task::MSKtask,i::Int32,lower::Int32,finite::Int32,value::Float64)
   @MSK_chgconbound(task.task,i-Int32(1),lower,finite,value)
   nothing
@@ -5258,20 +11336,6 @@ function chgconbound(task::MSKtask,i::T0,lower::T1,finite::T2,value::T3) where {
 end
 
 
-"""
-  chgvarbound(task::MSKtask,j::Int32,lower::Int32,finite::Int32,value::Float64)
-  chgvarbound(task::MSKtask,j::T0,lower::T1,finite::T2,value::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Number} 
-
-  Changes the bounds for one variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable for which the bounds should be changed.
-    lower::Int32 If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
-    finite::Int32 If non-zero, then the given value is assumed to be finite.
-    value::Float64 New value for the bound.
-"""
-function chgvarbound end
 function chgvarbound(task::MSKtask,j::Int32,lower::Int32,finite::Int32,value::Float64)
   @MSK_chgvarbound(task.task,j-Int32(1),lower,finite,value)
   nothing
@@ -5286,18 +11350,6 @@ function chgvarbound(task::MSKtask,j::T0,lower::T1,finite::T2,value::T3) where {
 end
 
 
-"""
-  conetypetostr(task::MSKtask,ct::Conetype) :: str
-
-  Obtains a cone type string identifier.
-
-  Arguments
-    task::MSKtask An optimization task.
-    ct::Conetype Specifies the type of the cone.
-  Returns
-    str::String String corresponding to the cone type.
-"""
-function conetypetostr end
 function conetypetostr(task::MSKtask,ct::Conetype)
   str_ = Array{UInt8}(undef,1024)
   @MSK_conetypetostr(task.task,ct.value,str_)
@@ -5311,20 +11363,6 @@ function conetypetostr(task::MSKtask,ct::Conetype)
 end
 
 
-"""
-  getaij(task::MSKtask,i::Int32,j::Int32) :: aij
-  getaij(task::MSKtask,i::T0,j::T1) where {T0<:Integer,T1<:Integer}  :: aij
-
-  Obtains a single coefficient in linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Row index of the coefficient to be returned.
-    j::Int32 Column index of the coefficient to be returned.
-  Returns
-    aij::Float64 Returns the requested coefficient.
-"""
-function getaij end
 function getaij(task::MSKtask,i::Int32,j::Int32)
   aij_ = Ref{Float64}()
   @MSK_getaij(task.task,i-Int32(1),j-Int32(1),aij_)
@@ -5338,22 +11376,6 @@ function getaij(task::MSKtask,i::T0,j::T1) where { T0<:Integer,T1<:Integer }
 end
 
 
-"""
-  getapiecenumnz(task::MSKtask,firsti::Int32,lasti::Int32,firstj::Int32,lastj::Int32) :: numnz
-  getapiecenumnz(task::MSKtask,firsti::T0,lasti::T1,firstj::T2,lastj::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Integer}  :: numnz
-
-  Obtains the number non-zeros in a rectangular piece of the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    firsti::Int32 Index of the first row in the rectangular piece.
-    lasti::Int32 Index of the last row plus one in the rectangular piece.
-    firstj::Int32 Index of the first column in the rectangular piece.
-    lastj::Int32 Index of the last column plus one in the rectangular piece.
-  Returns
-    numnz::Int32 Number of non-zero elements in the rectangular piece of the linear constraint matrix.
-"""
-function getapiecenumnz end
 function getapiecenumnz(task::MSKtask,firsti::Int32,lasti::Int32,firstj::Int32,lastj::Int32)
   numnz_ = Ref{Int32}()
   @MSK_getapiecenumnz(task.task,firsti-Int32(1),lasti-Int32(1),firstj-Int32(1),lastj-Int32(1),numnz_)
@@ -5369,19 +11391,6 @@ function getapiecenumnz(task::MSKtask,firsti::T0,lasti::T1,firstj::T2,lastj::T3)
 end
 
 
-"""
-  getacolnumnz(task::MSKtask,i::Int32) :: nzj
-  getacolnumnz(task::MSKtask,i::T0) where {T0<:Integer}  :: nzj
-
-  Obtains the number of non-zero elements in one column of the linear constraint matrix
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the column.
-  Returns
-    nzj::Int32 Number of non-zeros in the j'th column of (A).
-"""
-function getacolnumnz end
 function getacolnumnz(task::MSKtask,i::Int32)
   nzj_ = Ref{Int32}()
   @MSK_getacolnumnz(task.task,i-Int32(1),nzj_)
@@ -5394,31 +11403,16 @@ function getacolnumnz(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getacol(task::MSKtask,j::Int32) :: (nzj,subj,valj)
-  getacol(task::MSKtask,j::T0) where {T0<:Integer}  :: (nzj,subj,valj)
-
-  Obtains one column of the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the column.
-  Returns
-    nzj::Int32 Number of non-zeros in the column obtained.
-    subj::Vector{Int32} Row indices of the non-zeros in the column obtained.
-    valj::Vector{Float64} Numerical values in the column obtained.
-"""
-function getacol end
 function getacol(task::MSKtask,j::Int32)
   nzj_ = Ref{Int32}()
-  __tmp_35 = Ref{Int32}()
-  @MSK_getacolnumnz(task.task,j-Int32(1),__tmp_35)
-  __tmp_34 = __tmp_35[]
-  subj_ = Vector{Int32}(undef,__tmp_34)
-  __tmp_37 = Ref{Int32}()
-  @MSK_getacolnumnz(task.task,j-Int32(1),__tmp_37)
-  __tmp_36 = __tmp_37[]
-  valj_ = Vector{Float64}(undef,__tmp_36)
+  __tmp_34 = Ref{Int32}()
+  @MSK_getacolnumnz(task.task,j-Int32(1),__tmp_34)
+  __tmp_33 = __tmp_34[]
+  subj_ = Vector{Int32}(undef,__tmp_33)
+  __tmp_36 = Ref{Int32}()
+  @MSK_getacolnumnz(task.task,j-Int32(1),__tmp_36)
+  __tmp_35 = __tmp_36[]
+  valj_ = Vector{Float64}(undef,__tmp_35)
   @MSK_getacol(task.task,j-Int32(1),nzj_,subj_,valj_)
   subj = subj_;
   subj .+= 1
@@ -5432,28 +11426,11 @@ function getacol(task::MSKtask,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getacolslice(task::MSKtask,first::Int32,last::Int32) :: (ptrb,ptre,sub,val)
-  getacolslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (ptrb,ptre,sub,val)
-
-  Obtains a sequence of columns from the coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 Index of the first column in the sequence.
-    last::Int32 Index of the last column in the sequence plus one.
-  Returns
-    ptrb::Vector{Int64} Column start pointers.
-    ptre::Vector{Int64} Column end pointers.
-    sub::Vector{Int32} Contains the row subscripts.
-    val::Vector{Float64} Contains the coefficient values.
-"""
-function getacolslice end
 function getacolslice(task::MSKtask,first::Int32,last::Int32)
-  __tmp_42 = Ref{Int64}()
-  @MSK_getacolslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_42)
-  __tmp_41 = __tmp_42[]
-  maxnumnz = Int64(__tmp_41)
+  __tmp_41 = Ref{Int64}()
+  @MSK_getacolslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_41)
+  __tmp_40 = __tmp_41[]
+  maxnumnz = Int64(__tmp_40)
   ptrb_ = Vector{Int64}(undef,(last - first))
   ptre_ = Vector{Int64}(undef,(last - first))
   sub_ = Vector{Int32}(undef,maxnumnz)
@@ -5476,19 +11453,6 @@ function getacolslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:
 end
 
 
-"""
-  getarownumnz(task::MSKtask,i::Int32) :: nzi
-  getarownumnz(task::MSKtask,i::T0) where {T0<:Integer}  :: nzi
-
-  Obtains the number of non-zero elements in one row of the linear constraint matrix
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the row.
-  Returns
-    nzi::Int32 Number of non-zeros in the i'th row of `A`.
-"""
-function getarownumnz end
 function getarownumnz(task::MSKtask,i::Int32)
   nzi_ = Ref{Int32}()
   @MSK_getarownumnz(task.task,i-Int32(1),nzi_)
@@ -5501,31 +11465,16 @@ function getarownumnz(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getarow(task::MSKtask,i::Int32) :: (nzi,subi,vali)
-  getarow(task::MSKtask,i::T0) where {T0<:Integer}  :: (nzi,subi,vali)
-
-  Obtains one row of the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the row.
-  Returns
-    nzi::Int32 Number of non-zeros in the row obtained.
-    subi::Vector{Int32} Column indices of the non-zeros in the row obtained.
-    vali::Vector{Float64} Numerical values of the row obtained.
-"""
-function getarow end
 function getarow(task::MSKtask,i::Int32)
   nzi_ = Ref{Int32}()
-  __tmp_46 = Ref{Int32}()
-  @MSK_getarownumnz(task.task,i-Int32(1),__tmp_46)
-  __tmp_45 = __tmp_46[]
-  subi_ = Vector{Int32}(undef,__tmp_45)
-  __tmp_48 = Ref{Int32}()
-  @MSK_getarownumnz(task.task,i-Int32(1),__tmp_48)
-  __tmp_47 = __tmp_48[]
-  vali_ = Vector{Float64}(undef,__tmp_47)
+  __tmp_45 = Ref{Int32}()
+  @MSK_getarownumnz(task.task,i-Int32(1),__tmp_45)
+  __tmp_44 = __tmp_45[]
+  subi_ = Vector{Int32}(undef,__tmp_44)
+  __tmp_47 = Ref{Int32}()
+  @MSK_getarownumnz(task.task,i-Int32(1),__tmp_47)
+  __tmp_46 = __tmp_47[]
+  vali_ = Vector{Float64}(undef,__tmp_46)
   @MSK_getarow(task.task,i-Int32(1),nzi_,subi_,vali_)
   subi = subi_;
   subi .+= 1
@@ -5539,20 +11488,6 @@ function getarow(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getacolslicenumnz(task::MSKtask,first::Int32,last::Int32) :: numnz
-  getacolslicenumnz(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: numnz
-
-  Obtains the number of non-zeros in a slice of columns of the coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 Index of the first column in the sequence.
-    last::Int32 Index of the last column plus one in the sequence.
-  Returns
-    numnz::Int64 Number of non-zeros in the slice.
-"""
-function getacolslicenumnz end
 function getacolslicenumnz(task::MSKtask,first::Int32,last::Int32)
   numnz_ = Ref{Int64}()
   @MSK_getacolslicenumnz64(task.task,first-Int32(1),last-Int32(1),numnz_)
@@ -5566,20 +11501,6 @@ function getacolslicenumnz(task::MSKtask,first::T0,last::T1) where { T0<:Integer
 end
 
 
-"""
-  getarowslicenumnz(task::MSKtask,first::Int32,last::Int32) :: numnz
-  getarowslicenumnz(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: numnz
-
-  Obtains the number of non-zeros in a slice of rows of the coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 Index of the first row in the sequence.
-    last::Int32 Index of the last row plus one in the sequence.
-  Returns
-    numnz::Int64 Number of non-zeros in the slice.
-"""
-function getarowslicenumnz end
 function getarowslicenumnz(task::MSKtask,first::Int32,last::Int32)
   numnz_ = Ref{Int64}()
   @MSK_getarowslicenumnz64(task.task,first-Int32(1),last-Int32(1),numnz_)
@@ -5593,28 +11514,11 @@ function getarowslicenumnz(task::MSKtask,first::T0,last::T1) where { T0<:Integer
 end
 
 
-"""
-  getarowslice(task::MSKtask,first::Int32,last::Int32) :: (ptrb,ptre,sub,val)
-  getarowslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (ptrb,ptre,sub,val)
-
-  Obtains a sequence of rows from the coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 Index of the first row in the sequence.
-    last::Int32 Index of the last row in the sequence plus one.
-  Returns
-    ptrb::Vector{Int64} Row start pointers.
-    ptre::Vector{Int64} Row end pointers.
-    sub::Vector{Int32} Contains the column subscripts.
-    val::Vector{Float64} Contains the coefficient values.
-"""
-function getarowslice end
 function getarowslice(task::MSKtask,first::Int32,last::Int32)
-  __tmp_55 = Ref{Int64}()
-  @MSK_getarowslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_55)
-  __tmp_54 = __tmp_55[]
-  maxnumnz = Int64(__tmp_54)
+  __tmp_54 = Ref{Int64}()
+  @MSK_getarowslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_54)
+  __tmp_53 = __tmp_54[]
+  maxnumnz = Int64(__tmp_53)
   ptrb_ = Vector{Int64}(undef,(last - first))
   ptre_ = Vector{Int64}(undef,(last - first))
   sub_ = Vector{Int32}(undef,maxnumnz)
@@ -5637,24 +11541,11 @@ function getarowslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:
 end
 
 
-"""
-  getatrip(task::MSKtask) :: (subi,subj,val)
-
-  Obtains the A matrix in sparse triplet format.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    subi::Vector{Int32} Constraint subscripts.
-    subj::Vector{Int32} Column subscripts.
-    val::Vector{Float64} Values.
-"""
-function getatrip end
 function getatrip(task::MSKtask)
-  __tmp_58 = Ref{Int64}()
-  @MSK_getnumanz64(task.task,__tmp_58)
-  __tmp_57 = __tmp_58[]
-  maxnumnz = Int64(__tmp_57)
+  __tmp_57 = Ref{Int64}()
+  @MSK_getnumanz64(task.task,__tmp_57)
+  __tmp_56 = __tmp_57[]
+  maxnumnz = Int64(__tmp_56)
   subi_ = Vector{Int32}(undef,maxnumnz)
   subj_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
@@ -5668,27 +11559,11 @@ function getatrip(task::MSKtask)
 end
 
 
-"""
-  getarowslicetrip(task::MSKtask,first::Int32,last::Int32) :: (subi,subj,val)
-  getarowslicetrip(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (subi,subj,val)
-
-  Obtains a sequence of rows from the coefficient matrix in sparse triplet format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 Index of the first row in the sequence.
-    last::Int32 Index of the last row in the sequence plus one.
-  Returns
-    subi::Vector{Int32} Constraint subscripts.
-    subj::Vector{Int32} Column subscripts.
-    val::Vector{Float64} Values.
-"""
-function getarowslicetrip end
 function getarowslicetrip(task::MSKtask,first::Int32,last::Int32)
-  __tmp_61 = Ref{Int64}()
-  @MSK_getarowslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_61)
-  __tmp_60 = __tmp_61[]
-  maxnumnz = Int64(__tmp_60)
+  __tmp_60 = Ref{Int64}()
+  @MSK_getarowslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_60)
+  __tmp_59 = __tmp_60[]
+  maxnumnz = Int64(__tmp_59)
   subi_ = Vector{Int32}(undef,maxnumnz)
   subj_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
@@ -5708,27 +11583,11 @@ function getarowslicetrip(task::MSKtask,first::T0,last::T1) where { T0<:Integer,
 end
 
 
-"""
-  getacolslicetrip(task::MSKtask,first::Int32,last::Int32) :: (subi,subj,val)
-  getacolslicetrip(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (subi,subj,val)
-
-  Obtains a sequence of columns from the coefficient matrix in triplet format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 Index of the first column in the sequence.
-    last::Int32 Index of the last column in the sequence plus one.
-  Returns
-    subi::Vector{Int32} Constraint subscripts.
-    subj::Vector{Int32} Column subscripts.
-    val::Vector{Float64} Values.
-"""
-function getacolslicetrip end
 function getacolslicetrip(task::MSKtask,first::Int32,last::Int32)
-  __tmp_64 = Ref{Int64}()
-  @MSK_getacolslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_64)
-  __tmp_63 = __tmp_64[]
-  maxnumnz = Int64(__tmp_63)
+  __tmp_63 = Ref{Int64}()
+  @MSK_getacolslicenumnz64(task.task,first-Int32(1),last-Int32(1),__tmp_63)
+  __tmp_62 = __tmp_63[]
+  maxnumnz = Int64(__tmp_62)
   subi_ = Vector{Int32}(undef,maxnumnz)
   subj_ = Vector{Int32}(undef,maxnumnz)
   val_ = Vector{Float64}(undef,maxnumnz)
@@ -5748,21 +11607,6 @@ function getacolslicetrip(task::MSKtask,first::T0,last::T1) where { T0<:Integer,
 end
 
 
-"""
-  getconbound(task::MSKtask,i::Int32) :: (bk,bl,bu)
-  getconbound(task::MSKtask,i::T0) where {T0<:Integer}  :: (bk,bl,bu)
-
-  Obtains bound information for one constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint for which the bound information should be obtained.
-  Returns
-    bk::Boundkey Bound keys.
-    bl::Float64 Values for lower bounds.
-    bu::Float64 Values for upper bounds.
-"""
-function getconbound end
 function getconbound(task::MSKtask,i::Int32)
   bk_ = Ref{Int32}()
   bl_ = Ref{Float64}()
@@ -5778,21 +11622,6 @@ function getconbound(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getvarbound(task::MSKtask,i::Int32) :: (bk,bl,bu)
-  getvarbound(task::MSKtask,i::T0) where {T0<:Integer}  :: (bk,bl,bu)
-
-  Obtains bound information for one variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the variable for which the bound information should be obtained.
-  Returns
-    bk::Boundkey Bound keys.
-    bl::Float64 Values for lower bounds.
-    bu::Float64 Values for upper bounds.
-"""
-function getvarbound end
 function getvarbound(task::MSKtask,i::Int32)
   bk_ = Ref{Int32}()
   bl_ = Ref{Float64}()
@@ -5808,22 +11637,6 @@ function getvarbound(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconboundslice(task::MSKtask,first::Int32,last::Int32) :: (bk,bl,bu)
-  getconboundslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (bk,bl,bu)
-
-  Obtains bounds information for a slice of the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    bk::Vector{Boundkey} Bound keys.
-    bl::Vector{Float64} Values for lower bounds.
-    bu::Vector{Float64} Values for upper bounds.
-"""
-function getconboundslice end
 function getconboundslice(task::MSKtask,first::Int32,last::Int32)
   bk_ = Vector{Int32}(undef,(last - first))
   bl_ = Vector{Float64}(undef,(last - first))
@@ -5842,22 +11655,6 @@ function getconboundslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,
 end
 
 
-"""
-  getvarboundslice(task::MSKtask,first::Int32,last::Int32) :: (bk,bl,bu)
-  getvarboundslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (bk,bl,bu)
-
-  Obtains bounds information for a slice of the variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    bk::Vector{Boundkey} Bound keys.
-    bl::Vector{Float64} Values for lower bounds.
-    bu::Vector{Float64} Values for upper bounds.
-"""
-function getvarboundslice end
 function getvarboundslice(task::MSKtask,first::Int32,last::Int32)
   bk_ = Vector{Int32}(undef,(last - first))
   bl_ = Vector{Float64}(undef,(last - first))
@@ -5876,19 +11673,6 @@ function getvarboundslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,
 end
 
 
-"""
-  getcj(task::MSKtask,j::Int32) :: cj
-  getcj(task::MSKtask,j::T0) where {T0<:Integer}  :: cj
-
-  Obtains one objective coefficient.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable for which the c coefficient should be obtained.
-  Returns
-    cj::Float64 The c coefficient value.
-"""
-function getcj end
 function getcj(task::MSKtask,j::Int32)
   cj_ = Ref{Float64}()
   @MSK_getcj(task.task,j-Int32(1),cj_)
@@ -5901,39 +11685,17 @@ function getcj(task::MSKtask,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getc(task::MSKtask) :: c
-
-  Obtains all objective coefficients.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    c::Vector{Float64} Linear terms of the objective as a dense vector. The length is the number of variables.
-"""
-function getc end
 function getc(task::MSKtask)
-  __tmp_72 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_72)
-  __tmp_71 = __tmp_72[]
-  c_ = Vector{Float64}(undef,__tmp_71)
+  __tmp_71 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_71)
+  __tmp_70 = __tmp_71[]
+  c_ = Vector{Float64}(undef,__tmp_70)
   @MSK_getc(task.task,c_)
   c = c_;
   c
 end
 
 
-"""
-  getcfix(task::MSKtask) :: cfix
-
-  Obtains the fixed term in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    cfix::Float64 Fixed term in the objective.
-"""
-function getcfix end
 function getcfix(task::MSKtask)
   cfix_ = Ref{Float64}()
   @MSK_getcfix(task.task,cfix_)
@@ -5941,30 +11703,14 @@ function getcfix(task::MSKtask)
 end
 
 
-"""
-  getcone(task::MSKtask,k::Int32) :: (ct,conepar,nummem,submem)
-  getcone(task::MSKtask,k::T0) where {T0<:Integer}  :: (ct,conepar,nummem,submem)
-
-  Obtains a cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 Index of the cone.
-  Returns
-    ct::Conetype Specifies the type of the cone.
-    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
-    nummem::Int32 Number of member variables in the cone.
-    submem::Vector{Int32} Variable subscripts of the members in the cone.
-"""
-function getcone end
 function getcone(task::MSKtask,k::Int32)
   ct_ = Ref{Int32}()
   conepar_ = Ref{Float64}()
   nummem_ = Ref{Int32}()
-  __tmp_76 = Ref{Int32}()
-  @MSK_getconeinfo(task.task,k-Int32(1),Ref{Int32}(),Ref{Float64}(),__tmp_76)
-  __tmp_75 = __tmp_76[]
-  submem_ = Vector{Int32}(undef,__tmp_75)
+  __tmp_75 = Ref{Int32}()
+  @MSK_getconeinfo(task.task,k-Int32(1),Ref{Int32}(),Ref{Float64}(),__tmp_75)
+  __tmp_74 = __tmp_75[]
+  submem_ = Vector{Int32}(undef,__tmp_74)
   @MSK_getcone(task.task,k-Int32(1),ct_,conepar_,nummem_,submem_)
   ct = Conetype(ct_[])
   submem = submem_;
@@ -5978,21 +11724,6 @@ function getcone(task::MSKtask,k::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconeinfo(task::MSKtask,k::Int32) :: (ct,conepar,nummem)
-  getconeinfo(task::MSKtask,k::T0) where {T0<:Integer}  :: (ct,conepar,nummem)
-
-  Obtains information about a cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 Index of the cone.
-  Returns
-    ct::Conetype Specifies the type of the cone.
-    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
-    nummem::Int32 Number of member variables in the cone.
-"""
-function getconeinfo end
 function getconeinfo(task::MSKtask,k::Int32)
   ct_ = Ref{Int32}()
   conepar_ = Ref{Float64}()
@@ -6008,19 +11739,6 @@ function getconeinfo(task::MSKtask,k::T0) where { T0<:Integer }
 end
 
 
-"""
-  getclist(task::MSKtask,subj::Vector{Int32}) :: c
-  getclist(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: c
-
-  Obtains a sequence of coefficients from the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subj::Vector{Int32} A list of variable indexes.
-  Returns
-    c::Vector{Float64} Linear terms of the requested list of the objective as a dense vector.
-"""
-function getclist end
 function getclist(task::MSKtask,subj::Vector{Int32})
   num = Int32(length(subj))
   subj_ = subj .- Int32(1)
@@ -6032,24 +11750,10 @@ end
 function getclist(task::MSKtask,subj::T0) where { T0<:AbstractVector{<:Integer} }
   getclist(
     task,
-    convert(Vector{Int32},subj))
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end)
 end
 
 
-"""
-  getcslice(task::MSKtask,first::Int32,last::Int32) :: c
-  getcslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: c
-
-  Obtains a sequence of coefficients from the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    c::Vector{Float64} Linear terms of the requested slice of the objective as a dense vector.
-"""
-function getcslice end
 function getcslice(task::MSKtask,first::Int32,last::Int32)
   c_ = Vector{Float64}(undef,(last - first))
   @MSK_getcslice(task.task,first-Int32(1),last-Int32(1),c_)
@@ -6064,18 +11768,6 @@ function getcslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:Int
 end
 
 
-"""
-  getdouinf(task::MSKtask,whichdinf::Dinfitem) :: dvalue
-
-  Obtains a double information item.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichdinf::Dinfitem Specifies a double information item.
-  Returns
-    dvalue::Float64 The value of the required double information item.
-"""
-function getdouinf end
 function getdouinf(task::MSKtask,whichdinf::Dinfitem)
   dvalue_ = Ref{Float64}()
   @MSK_getdouinf(task.task,whichdinf.value,dvalue_)
@@ -6083,18 +11775,6 @@ function getdouinf(task::MSKtask,whichdinf::Dinfitem)
 end
 
 
-"""
-  getdouparam(task::MSKtask,param::Dparam) :: parvalue
-
-  Obtains a double parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Dparam Which parameter.
-  Returns
-    parvalue::Float64 Parameter value.
-"""
-function getdouparam end
 function getdouparam(task::MSKtask,param::Dparam)
   parvalue_ = Ref{Float64}()
   @MSK_getdouparam(task.task,param.value,parvalue_)
@@ -6102,18 +11782,6 @@ function getdouparam(task::MSKtask,param::Dparam)
 end
 
 
-"""
-  getdualobj(task::MSKtask,whichsol::Soltype) :: dualobj
-
-  Computes the dual objective value associated with the solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    dualobj::Float64 Objective value corresponding to the dual solution.
-"""
-function getdualobj end
 function getdualobj(task::MSKtask,whichsol::Soltype)
   dualobj_ = Ref{Float64}()
   @MSK_getdualobj(task.task,whichsol.value,dualobj_)
@@ -6121,20 +11789,6 @@ function getdualobj(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getinfname(task::MSKtask,inftype::Inftype,whichinf::Int32) :: infname
-  getinfname(task::MSKtask,inftype::Inftype,whichinf::T0) where {T0<:Integer}  :: infname
-
-  Obtains the name of an information item.
-
-  Arguments
-    task::MSKtask An optimization task.
-    inftype::Inftype Type of the information item.
-    whichinf::Int32 An information item.
-  Returns
-    infname::String Name of the information item.
-"""
-function getinfname end
 function getinfname(task::MSKtask,inftype::Inftype,whichinf::Int32)
   infname_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
   @MSK_getinfname(task.task,inftype.value,whichinf,infname_)
@@ -6154,18 +11808,6 @@ function getinfname(task::MSKtask,inftype::Inftype,whichinf::T0) where { T0<:Int
 end
 
 
-"""
-  getintinf(task::MSKtask,whichiinf::Iinfitem) :: ivalue
-
-  Obtains an integer information item.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichiinf::Iinfitem Specifies an integer information item.
-  Returns
-    ivalue::Int32 The value of the required integer information item.
-"""
-function getintinf end
 function getintinf(task::MSKtask,whichiinf::Iinfitem)
   ivalue_ = Ref{Int32}()
   @MSK_getintinf(task.task,whichiinf.value,ivalue_)
@@ -6173,18 +11815,6 @@ function getintinf(task::MSKtask,whichiinf::Iinfitem)
 end
 
 
-"""
-  getlintinf(task::MSKtask,whichliinf::Liinfitem) :: ivalue
-
-  Obtains a long integer information item.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichliinf::Liinfitem Specifies a long information item.
-  Returns
-    ivalue::Int64 The value of the required long integer information item.
-"""
-function getlintinf end
 function getlintinf(task::MSKtask,whichliinf::Liinfitem)
   ivalue_ = Ref{Int64}()
   @MSK_getlintinf(task.task,whichliinf.value,ivalue_)
@@ -6192,18 +11822,6 @@ function getlintinf(task::MSKtask,whichliinf::Liinfitem)
 end
 
 
-"""
-  getintparam(task::MSKtask,param::Iparam) :: parvalue
-
-  Obtains an integer parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Iparam Which parameter.
-  Returns
-    parvalue::Int32 Parameter value.
-"""
-function getintparam end
 function getintparam(task::MSKtask,param::Iparam)
   parvalue_ = Ref{Int32}()
   @MSK_getintparam(task.task,param.value,parvalue_)
@@ -6211,17 +11829,6 @@ function getintparam(task::MSKtask,param::Iparam)
 end
 
 
-"""
-  getmaxnumanz(task::MSKtask) :: maxnumanz
-
-  Obtains number of preallocated non-zeros in the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    maxnumanz::Int64 Number of preallocated non-zero linear matrix elements.
-"""
-function getmaxnumanz end
 function getmaxnumanz(task::MSKtask)
   maxnumanz_ = Ref{Int64}()
   @MSK_getmaxnumanz64(task.task,maxnumanz_)
@@ -6229,17 +11836,6 @@ function getmaxnumanz(task::MSKtask)
 end
 
 
-"""
-  getmaxnumcon(task::MSKtask) :: maxnumcon
-
-  Obtains the number of preallocated constraints in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    maxnumcon::Int32 Number of preallocated constraints in the optimization task.
-"""
-function getmaxnumcon end
 function getmaxnumcon(task::MSKtask)
   maxnumcon_ = Ref{Int32}()
   @MSK_getmaxnumcon(task.task,maxnumcon_)
@@ -6247,17 +11843,6 @@ function getmaxnumcon(task::MSKtask)
 end
 
 
-"""
-  getmaxnumvar(task::MSKtask) :: maxnumvar
-
-  Obtains the maximum number variables allowed.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    maxnumvar::Int32 Number of preallocated variables in the optimization task.
-"""
-function getmaxnumvar end
 function getmaxnumvar(task::MSKtask)
   maxnumvar_ = Ref{Int32}()
   @MSK_getmaxnumvar(task.task,maxnumvar_)
@@ -6265,18 +11850,6 @@ function getmaxnumvar(task::MSKtask)
 end
 
 
-"""
-  getnadouinf(task::MSKtask,infitemname::AbstractString) :: dvalue
-
-  Obtains a named double information item.
-
-  Arguments
-    task::MSKtask An optimization task.
-    infitemname::AbstractString The name of a double information item.
-  Returns
-    dvalue::Float64 The value of the required double information item.
-"""
-function getnadouinf end
 function getnadouinf(task::MSKtask,infitemname::AbstractString)
   infitemname_ = Vector{UInt8}(infitemname); push!(infitemname_,UInt8(0))
   dvalue_ = Ref{Float64}()
@@ -6285,18 +11858,6 @@ function getnadouinf(task::MSKtask,infitemname::AbstractString)
 end
 
 
-"""
-  getnadouparam(task::MSKtask,paramname::AbstractString) :: parvalue
-
-  Obtains a double parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    paramname::AbstractString Name of a parameter.
-  Returns
-    parvalue::Float64 Parameter value.
-"""
-function getnadouparam end
 function getnadouparam(task::MSKtask,paramname::AbstractString)
   paramname_ = Vector{UInt8}(paramname); push!(paramname_,UInt8(0))
   parvalue_ = Ref{Float64}()
@@ -6305,18 +11866,6 @@ function getnadouparam(task::MSKtask,paramname::AbstractString)
 end
 
 
-"""
-  getnaintinf(task::MSKtask,infitemname::AbstractString) :: ivalue
-
-  Obtains a named integer information item.
-
-  Arguments
-    task::MSKtask An optimization task.
-    infitemname::AbstractString The name of an integer information item.
-  Returns
-    ivalue::Int32 The value of the required integer information item.
-"""
-function getnaintinf end
 function getnaintinf(task::MSKtask,infitemname::AbstractString)
   infitemname_ = Vector{UInt8}(infitemname); push!(infitemname_,UInt8(0))
   ivalue_ = Ref{Int32}()
@@ -6325,18 +11874,6 @@ function getnaintinf(task::MSKtask,infitemname::AbstractString)
 end
 
 
-"""
-  getnaintparam(task::MSKtask,paramname::AbstractString) :: parvalue
-
-  Obtains an integer parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    paramname::AbstractString Name of a parameter.
-  Returns
-    parvalue::Int32 Parameter value.
-"""
-function getnaintparam end
 function getnaintparam(task::MSKtask,paramname::AbstractString)
   paramname_ = Vector{UInt8}(paramname); push!(paramname_,UInt8(0))
   parvalue_ = Ref{Int32}()
@@ -6345,19 +11882,6 @@ function getnaintparam(task::MSKtask,paramname::AbstractString)
 end
 
 
-"""
-  getbarvarnamelen(task::MSKtask,i::Int32) :: len
-  getbarvarnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the variable.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getbarvarnamelen end
 function getbarvarnamelen(task::MSKtask,i::Int32)
   len_ = Ref{Int32}()
   @MSK_getbarvarnamelen(task.task,i-Int32(1),len_)
@@ -6370,24 +11894,11 @@ function getbarvarnamelen(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbarvarname(task::MSKtask,i::Int32) :: name
-  getbarvarname(task::MSKtask,i::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the variable.
-  Returns
-    name::String The requested name is copied to this buffer.
-"""
-function getbarvarname end
 function getbarvarname(task::MSKtask,i::Int32)
-  __tmp_97 = Ref{Int32}()
-  @MSK_getbarvarnamelen(task.task,i-Int32(1),__tmp_97)
-  __tmp_96 = __tmp_97[]
-  sizename = Int32((1 + __tmp_96))
+  __tmp_96 = Ref{Int32}()
+  @MSK_getbarvarnamelen(task.task,i-Int32(1),__tmp_96)
+  __tmp_95 = __tmp_96[]
+  sizename = Int32((1 + __tmp_95))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getbarvarname(task.task,i-Int32(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -6405,19 +11916,6 @@ function getbarvarname(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbarvarnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
-
-  Obtains the index of semidefinite variable from its name.
-
-  Arguments
-    task::MSKtask An optimization task.
-    somename::AbstractString The name of the variable.
-  Returns
-    asgn::Int32 Non-zero if the name somename is assigned to some semidefinite variable.
-    index::Int32 The index of a semidefinite variable with the name somename (if one exists).
-"""
-function getbarvarnameindex end
 function getbarvarnameindex(task::MSKtask,somename::AbstractString)
   somename_ = Vector{UInt8}(somename); push!(somename_,UInt8(0))
   asgn_ = Ref{Int32}()
@@ -6427,24 +11925,16 @@ function getbarvarnameindex(task::MSKtask,somename::AbstractString)
 end
 
 
-"""
-  putconname(task::MSKtask,i::Int32,name::AbstractString)
-  putconname(task::MSKtask,i::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of a constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint.
-    name::AbstractString The name of the constraint.
-"""
-function putconname end
-function putconname(task::MSKtask,i::Int32,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putconname(task::MSKtask,i::Int32,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putconname(task.task,i-Int32(1),name_)
   nothing
 end
-function putconname(task::MSKtask,i::T0,name::AbstractString) where { T0<:Integer }
+function putconname(task::MSKtask,i::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putconname(
     task,
     convert(Int32,i),
@@ -6452,24 +11942,16 @@ function putconname(task::MSKtask,i::T0,name::AbstractString) where { T0<:Intege
 end
 
 
-"""
-  putvarname(task::MSKtask,j::Int32,name::AbstractString)
-  putvarname(task::MSKtask,j::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of a variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable.
-    name::AbstractString The variable name.
-"""
-function putvarname end
-function putvarname(task::MSKtask,j::Int32,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putvarname(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putvarname(task.task,j-Int32(1),name_)
   nothing
 end
-function putvarname(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integer }
+function putvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putvarname(
     task,
     convert(Int32,j),
@@ -6477,24 +11959,16 @@ function putvarname(task::MSKtask,j::T0,name::AbstractString) where { T0<:Intege
 end
 
 
-"""
-  putconename(task::MSKtask,j::Int32,name::AbstractString)
-  putconename(task::MSKtask,j::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of a cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the cone.
-    name::AbstractString The name of the cone.
-"""
-function putconename end
-function putconename(task::MSKtask,j::Int32,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putconename(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putconename(task.task,j-Int32(1),name_)
   nothing
 end
-function putconename(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integer }
+function putconename(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putconename(
     task,
     convert(Int32,j),
@@ -6502,24 +11976,16 @@ function putconename(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integ
 end
 
 
-"""
-  putbarvarname(task::MSKtask,j::Int32,name::AbstractString)
-  putbarvarname(task::MSKtask,j::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable.
-    name::AbstractString The variable name.
-"""
-function putbarvarname end
-function putbarvarname(task::MSKtask,j::Int32,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putbarvarname(task::MSKtask,j::Int32,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putbarvarname(task.task,j-Int32(1),name_)
   nothing
 end
-function putbarvarname(task::MSKtask,j::T0,name::AbstractString) where { T0<:Integer }
+function putbarvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putbarvarname(
     task,
     convert(Int32,j),
@@ -6527,24 +11993,16 @@ function putbarvarname(task::MSKtask,j::T0,name::AbstractString) where { T0<:Int
 end
 
 
-"""
-  putdomainname(task::MSKtask,domidx::Int64,name::AbstractString)
-  putdomainname(task::MSKtask,domidx::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of a domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of the domain.
-    name::AbstractString The name of the domain.
-"""
-function putdomainname end
-function putdomainname(task::MSKtask,domidx::Int64,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putdomainname(task::MSKtask,domidx::Int64,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putdomainname(task.task,domidx-Int64(1),name_)
   nothing
 end
-function putdomainname(task::MSKtask,domidx::T0,name::AbstractString) where { T0<:Integer }
+function putdomainname(task::MSKtask,domidx::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putdomainname(
     task,
     convert(Int64,domidx),
@@ -6552,24 +12010,16 @@ function putdomainname(task::MSKtask,domidx::T0,name::AbstractString) where { T0
 end
 
 
-"""
-  putdjcname(task::MSKtask,djcidx::Int64,name::AbstractString)
-  putdjcname(task::MSKtask,djcidx::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-    name::AbstractString The name of the disjunctive constraint.
-"""
-function putdjcname end
-function putdjcname(task::MSKtask,djcidx::Int64,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putdjcname(task::MSKtask,djcidx::Int64,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putdjcname(task.task,djcidx-Int64(1),name_)
   nothing
 end
-function putdjcname(task::MSKtask,djcidx::T0,name::AbstractString) where { T0<:Integer }
+function putdjcname(task::MSKtask,djcidx::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putdjcname(
     task,
     convert(Int64,djcidx),
@@ -6577,24 +12027,16 @@ function putdjcname(task::MSKtask,djcidx::T0,name::AbstractString) where { T0<:I
 end
 
 
-"""
-  putaccname(task::MSKtask,accidx::Int64,name::AbstractString)
-  putaccname(task::MSKtask,accidx::T0,name::AbstractString) where {T0<:Integer} 
-
-  Sets the name of an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Index of the affine conic constraint.
-    name::AbstractString The name of the affine conic constraint.
-"""
-function putaccname end
-function putaccname(task::MSKtask,accidx::Int64,name::AbstractString)
-  name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+function putaccname(task::MSKtask,accidx::Int64,name::Union{Nothing,AbstractString})
+  if name === nothing
+      name_ = C_NULL
+  else
+      name_ = Vector{UInt8}(name); push!(name_,UInt8(0))
+  end
   @MSK_putaccname(task.task,accidx-Int64(1),name_)
   nothing
 end
-function putaccname(task::MSKtask,accidx::T0,name::AbstractString) where { T0<:Integer }
+function putaccname(task::MSKtask,accidx::T0,name::Union{Nothing,AbstractString}) where { T0<:Integer }
   putaccname(
     task,
     convert(Int64,accidx),
@@ -6602,19 +12044,6 @@ function putaccname(task::MSKtask,accidx::T0,name::AbstractString) where { T0<:I
 end
 
 
-"""
-  getvarnamelen(task::MSKtask,i::Int32) :: len
-  getvarnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of a variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of a variable.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getvarnamelen end
 function getvarnamelen(task::MSKtask,i::Int32)
   len_ = Ref{Int32}()
   @MSK_getvarnamelen(task.task,i-Int32(1),len_)
@@ -6627,24 +12056,11 @@ function getvarnamelen(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getvarname(task::MSKtask,j::Int32) :: name
-  getvarname(task::MSKtask,j::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of a variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of a variable.
-  Returns
-    name::String Returns the required name.
-"""
-function getvarname end
 function getvarname(task::MSKtask,j::Int32)
-  __tmp_109 = Ref{Int32}()
-  @MSK_getvarnamelen(task.task,j-Int32(1),__tmp_109)
-  __tmp_108 = __tmp_109[]
-  sizename = Int32((1 + __tmp_108))
+  __tmp_108 = Ref{Int32}()
+  @MSK_getvarnamelen(task.task,j-Int32(1),__tmp_108)
+  __tmp_107 = __tmp_108[]
+  sizename = Int32((1 + __tmp_107))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getvarname(task.task,j-Int32(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -6662,19 +12078,6 @@ function getvarname(task::MSKtask,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconnamelen(task::MSKtask,i::Int32) :: len
-  getconnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of a constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getconnamelen end
 function getconnamelen(task::MSKtask,i::Int32)
   len_ = Ref{Int32}()
   @MSK_getconnamelen(task.task,i-Int32(1),len_)
@@ -6687,24 +12090,11 @@ function getconnamelen(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconname(task::MSKtask,i::Int32) :: name
-  getconname(task::MSKtask,i::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of a constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint.
-  Returns
-    name::String The required name.
-"""
-function getconname end
 function getconname(task::MSKtask,i::Int32)
-  __tmp_113 = Ref{Int32}()
-  @MSK_getconnamelen(task.task,i-Int32(1),__tmp_113)
-  __tmp_112 = __tmp_113[]
-  sizename = Int32((1 + __tmp_112))
+  __tmp_112 = Ref{Int32}()
+  @MSK_getconnamelen(task.task,i-Int32(1),__tmp_112)
+  __tmp_111 = __tmp_112[]
+  sizename = Int32((1 + __tmp_111))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getconname(task.task,i-Int32(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -6722,19 +12112,6 @@ function getconname(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
-
-  Checks whether the name has been assigned to any constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    somename::AbstractString The name which should be checked.
-  Returns
-    asgn::Int32 Is non-zero if the name somename is assigned to some constraint.
-    index::Int32 If the name somename is assigned to a constraint, then return the index of the constraint.
-"""
-function getconnameindex end
 function getconnameindex(task::MSKtask,somename::AbstractString)
   somename_ = Vector{UInt8}(somename); push!(somename_,UInt8(0))
   asgn_ = Ref{Int32}()
@@ -6744,19 +12121,6 @@ function getconnameindex(task::MSKtask,somename::AbstractString)
 end
 
 
-"""
-  getvarnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
-
-  Checks whether the name has been assigned to any variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    somename::AbstractString The name which should be checked.
-  Returns
-    asgn::Int32 Is non-zero if the name somename is assigned to a variable.
-    index::Int32 If the name somename is assigned to a variable, then return the index of the variable.
-"""
-function getvarnameindex end
 function getvarnameindex(task::MSKtask,somename::AbstractString)
   somename_ = Vector{UInt8}(somename); push!(somename_,UInt8(0))
   asgn_ = Ref{Int32}()
@@ -6766,19 +12130,6 @@ function getvarnameindex(task::MSKtask,somename::AbstractString)
 end
 
 
-"""
-  getconenamelen(task::MSKtask,i::Int32) :: len
-  getconenamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of a cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the cone.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getconenamelen end
 function getconenamelen(task::MSKtask,i::Int32)
   len_ = Ref{Int32}()
   @MSK_getconenamelen(task.task,i-Int32(1),len_)
@@ -6791,24 +12142,11 @@ function getconenamelen(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconename(task::MSKtask,i::Int32) :: name
-  getconename(task::MSKtask,i::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of a cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the cone.
-  Returns
-    name::String The required name.
-"""
-function getconename end
 function getconename(task::MSKtask,i::Int32)
-  __tmp_119 = Ref{Int32}()
-  @MSK_getconenamelen(task.task,i-Int32(1),__tmp_119)
-  __tmp_118 = __tmp_119[]
-  sizename = Int32((1 + __tmp_118))
+  __tmp_118 = Ref{Int32}()
+  @MSK_getconenamelen(task.task,i-Int32(1),__tmp_118)
+  __tmp_117 = __tmp_118[]
+  sizename = Int32((1 + __tmp_117))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getconename(task.task,i-Int32(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -6826,19 +12164,6 @@ function getconename(task::MSKtask,i::T0) where { T0<:Integer }
 end
 
 
-"""
-  getconenameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
-
-  Checks whether the name has been assigned to any cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    somename::AbstractString The name which should be checked.
-  Returns
-    asgn::Int32 Is non-zero if the name somename is assigned to some cone.
-    index::Int32 If the name somename is assigned to some cone, this is the index of the cone.
-"""
-function getconenameindex end
 function getconenameindex(task::MSKtask,somename::AbstractString)
   somename_ = Vector{UInt8}(somename); push!(somename_,UInt8(0))
   asgn_ = Ref{Int32}()
@@ -6848,19 +12173,6 @@ function getconenameindex(task::MSKtask,somename::AbstractString)
 end
 
 
-"""
-  getdomainnamelen(task::MSKtask,domidx::Int64) :: len
-  getdomainnamelen(task::MSKtask,domidx::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of a domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of a domain.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getdomainnamelen end
 function getdomainnamelen(task::MSKtask,domidx::Int64)
   len_ = Ref{Int32}()
   @MSK_getdomainnamelen(task.task,domidx-Int64(1),len_)
@@ -6873,24 +12185,11 @@ function getdomainnamelen(task::MSKtask,domidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdomainname(task::MSKtask,domidx::Int64) :: name
-  getdomainname(task::MSKtask,domidx::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of a domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of a domain.
-  Returns
-    name::String Returns the required name.
-"""
-function getdomainname end
 function getdomainname(task::MSKtask,domidx::Int64)
-  __tmp_124 = Ref{Int32}()
-  @MSK_getdomainnamelen(task.task,domidx-Int64(1),__tmp_124)
-  __tmp_123 = __tmp_124[]
-  sizename = Int32((1 + __tmp_123))
+  __tmp_123 = Ref{Int32}()
+  @MSK_getdomainnamelen(task.task,domidx-Int64(1),__tmp_123)
+  __tmp_122 = __tmp_123[]
+  sizename = Int32((1 + __tmp_122))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getdomainname(task.task,domidx-Int64(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -6908,19 +12207,6 @@ function getdomainname(task::MSKtask,domidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcnamelen(task::MSKtask,djcidx::Int64) :: len
-  getdjcnamelen(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of a disjunctive constraint.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getdjcnamelen end
 function getdjcnamelen(task::MSKtask,djcidx::Int64)
   len_ = Ref{Int32}()
   @MSK_getdjcnamelen(task.task,djcidx-Int64(1),len_)
@@ -6933,24 +12219,11 @@ function getdjcnamelen(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcname(task::MSKtask,djcidx::Int64) :: name
-  getdjcname(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of a disjunctive constraint.
-  Returns
-    name::String Returns the required name.
-"""
-function getdjcname end
 function getdjcname(task::MSKtask,djcidx::Int64)
-  __tmp_128 = Ref{Int32}()
-  @MSK_getdjcnamelen(task.task,djcidx-Int64(1),__tmp_128)
-  __tmp_127 = __tmp_128[]
-  sizename = Int32((1 + __tmp_127))
+  __tmp_127 = Ref{Int32}()
+  @MSK_getdjcnamelen(task.task,djcidx-Int64(1),__tmp_127)
+  __tmp_126 = __tmp_127[]
+  sizename = Int32((1 + __tmp_126))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getdjcname(task.task,djcidx-Int64(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -6968,19 +12241,6 @@ function getdjcname(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getaccnamelen(task::MSKtask,accidx::Int64) :: len
-  getaccnamelen(task::MSKtask,accidx::T0) where {T0<:Integer}  :: len
-
-  Obtains the length of the name of an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Index of an affine conic constraint.
-  Returns
-    len::Int32 Returns the length of the indicated name.
-"""
-function getaccnamelen end
 function getaccnamelen(task::MSKtask,accidx::Int64)
   len_ = Ref{Int32}()
   @MSK_getaccnamelen(task.task,accidx-Int64(1),len_)
@@ -6993,24 +12253,11 @@ function getaccnamelen(task::MSKtask,accidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getaccname(task::MSKtask,accidx::Int64) :: name
-  getaccname(task::MSKtask,accidx::T0) where {T0<:Integer}  :: name
-
-  Obtains the name of an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Index of an affine conic constraint.
-  Returns
-    name::String Returns the required name.
-"""
-function getaccname end
 function getaccname(task::MSKtask,accidx::Int64)
-  __tmp_132 = Ref{Int32}()
-  @MSK_getaccnamelen(task.task,accidx-Int64(1),__tmp_132)
-  __tmp_131 = __tmp_132[]
-  sizename = Int32((1 + __tmp_131))
+  __tmp_131 = Ref{Int32}()
+  @MSK_getaccnamelen(task.task,accidx-Int64(1),__tmp_131)
+  __tmp_130 = __tmp_131[]
+  sizename = Int32((1 + __tmp_130))
   name_ = Array{UInt8}(undef,sizename)
   @MSK_getaccname(task.task,accidx-Int64(1),sizename,name_)
   name_len = findfirst(_c->_c==0,name_)
@@ -7028,21 +12275,6 @@ function getaccname(task::MSKtask,accidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::Int32) :: (len,parvalue)
-  getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::T0) where {T0<:Integer}  :: (len,parvalue)
-
-  Obtains a string parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    paramname::AbstractString Name of a parameter.
-    sizeparamname::Int32 Size of the name buffer.
-  Returns
-    len::Int32 Returns the length of the parameter value.
-    parvalue::String Parameter value.
-"""
-function getnastrparam end
 function getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::Int32)
   paramname_ = Vector{UInt8}(paramname); push!(paramname_,UInt8(0))
   len_ = Ref{Int32}()
@@ -7056,7 +12288,7 @@ function getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::In
   end
   len_[],parvalue
 end
-function getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::T0) where { T0<:Integer }
+function getnastrparam(task::MSKtask,paramname::Union{Nothing,AbstractString},sizeparamname::T0) where { T0<:Integer }
   getnastrparam(
     task,
     paramname,
@@ -7064,17 +12296,6 @@ function getnastrparam(task::MSKtask,paramname::AbstractString,sizeparamname::T0
 end
 
 
-"""
-  getnumanz(task::MSKtask) :: numanz
-
-  Obtains the number of non-zeros in the coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numanz::Int32 Number of non-zero elements in the linear constraint matrix.
-"""
-function getnumanz end
 function getnumanz(task::MSKtask)
   numanz_ = Ref{Int32}()
   @MSK_getnumanz(task.task,numanz_)
@@ -7082,17 +12303,6 @@ function getnumanz(task::MSKtask)
 end
 
 
-"""
-  getnumanz64(task::MSKtask) :: numanz
-
-  Obtains the number of non-zeros in the coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numanz::Int64 Number of non-zero elements in the linear constraint matrix.
-"""
-function getnumanz64 end
 function getnumanz64(task::MSKtask)
   numanz_ = Ref{Int64}()
   @MSK_getnumanz64(task.task,numanz_)
@@ -7100,17 +12310,6 @@ function getnumanz64(task::MSKtask)
 end
 
 
-"""
-  getnumcon(task::MSKtask) :: numcon
-
-  Obtains the number of constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numcon::Int32 Number of constraints.
-"""
-function getnumcon end
 function getnumcon(task::MSKtask)
   numcon_ = Ref{Int32}()
   @MSK_getnumcon(task.task,numcon_)
@@ -7118,17 +12317,6 @@ function getnumcon(task::MSKtask)
 end
 
 
-"""
-  getnumcone(task::MSKtask) :: numcone
-
-  Obtains the number of cones.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numcone::Int32 Number of conic constraints.
-"""
-function getnumcone end
 function getnumcone(task::MSKtask)
   numcone_ = Ref{Int32}()
   @MSK_getnumcone(task.task,numcone_)
@@ -7136,19 +12324,6 @@ function getnumcone(task::MSKtask)
 end
 
 
-"""
-  getnumconemem(task::MSKtask,k::Int32) :: nummem
-  getnumconemem(task::MSKtask,k::T0) where {T0<:Integer}  :: nummem
-
-  Obtains the number of members in a cone.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 Index of the cone.
-  Returns
-    nummem::Int32 Number of member variables in the cone.
-"""
-function getnumconemem end
 function getnumconemem(task::MSKtask,k::Int32)
   nummem_ = Ref{Int32}()
   @MSK_getnumconemem(task.task,k-Int32(1),nummem_)
@@ -7161,17 +12336,6 @@ function getnumconemem(task::MSKtask,k::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumintvar(task::MSKtask) :: numintvar
-
-  Obtains the number of integer-constrained variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numintvar::Int32 Number of integer variables.
-"""
-function getnumintvar end
 function getnumintvar(task::MSKtask)
   numintvar_ = Ref{Int32}()
   @MSK_getnumintvar(task.task,numintvar_)
@@ -7179,18 +12343,6 @@ function getnumintvar(task::MSKtask)
 end
 
 
-"""
-  getnumparam(task::MSKtask,partype::Parametertype) :: numparam
-
-  Obtains the number of parameters of a given type.
-
-  Arguments
-    task::MSKtask An optimization task.
-    partype::Parametertype Parameter type.
-  Returns
-    numparam::Int32 Returns the number of parameters of the requested type.
-"""
-function getnumparam end
 function getnumparam(task::MSKtask,partype::Parametertype)
   numparam_ = Ref{Int32}()
   @MSK_getnumparam(task.task,partype.value,numparam_)
@@ -7198,19 +12350,6 @@ function getnumparam(task::MSKtask,partype::Parametertype)
 end
 
 
-"""
-  getnumqconknz(task::MSKtask,k::Int32) :: numqcnz
-  getnumqconknz(task::MSKtask,k::T0) where {T0<:Integer}  :: numqcnz
-
-  Obtains the number of non-zero quadratic terms in a constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 Index of the constraint for which the number quadratic terms should be obtained.
-  Returns
-    numqcnz::Int64 Number of quadratic terms.
-"""
-function getnumqconknz end
 function getnumqconknz(task::MSKtask,k::Int32)
   numqcnz_ = Ref{Int64}()
   @MSK_getnumqconknz64(task.task,k-Int32(1),numqcnz_)
@@ -7223,17 +12362,6 @@ function getnumqconknz(task::MSKtask,k::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumqobjnz(task::MSKtask) :: numqonz
-
-  Obtains the number of non-zero quadratic terms in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numqonz::Int64 Number of non-zero elements in the quadratic objective terms.
-"""
-function getnumqobjnz end
 function getnumqobjnz(task::MSKtask)
   numqonz_ = Ref{Int64}()
   @MSK_getnumqobjnz64(task.task,numqonz_)
@@ -7241,17 +12369,6 @@ function getnumqobjnz(task::MSKtask)
 end
 
 
-"""
-  getnumvar(task::MSKtask) :: numvar
-
-  Obtains the number of variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numvar::Int32 Number of variables.
-"""
-function getnumvar end
 function getnumvar(task::MSKtask)
   numvar_ = Ref{Int32}()
   @MSK_getnumvar(task.task,numvar_)
@@ -7259,17 +12376,6 @@ function getnumvar(task::MSKtask)
 end
 
 
-"""
-  getnumbarvar(task::MSKtask) :: numbarvar
-
-  Obtains the number of semidefinite variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numbarvar::Int32 Number of semidefinite variables in the problem.
-"""
-function getnumbarvar end
 function getnumbarvar(task::MSKtask)
   numbarvar_ = Ref{Int32}()
   @MSK_getnumbarvar(task.task,numbarvar_)
@@ -7277,17 +12383,6 @@ function getnumbarvar(task::MSKtask)
 end
 
 
-"""
-  getmaxnumbarvar(task::MSKtask) :: maxnumbarvar
-
-  Obtains maximum number of symmetric matrix variables for which space is currently preallocated.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    maxnumbarvar::Int32 Maximum number of symmetric matrix variables for which space is currently preallocated.
-"""
-function getmaxnumbarvar end
 function getmaxnumbarvar(task::MSKtask)
   maxnumbarvar_ = Ref{Int32}()
   @MSK_getmaxnumbarvar(task.task,maxnumbarvar_)
@@ -7295,19 +12390,6 @@ function getmaxnumbarvar(task::MSKtask)
 end
 
 
-"""
-  getdimbarvarj(task::MSKtask,j::Int32) :: dimbarvarj
-  getdimbarvarj(task::MSKtask,j::T0) where {T0<:Integer}  :: dimbarvarj
-
-  Obtains the dimension of a symmetric matrix variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the semidefinite variable whose dimension is requested.
-  Returns
-    dimbarvarj::Int32 The dimension of the j'th semidefinite variable.
-"""
-function getdimbarvarj end
 function getdimbarvarj(task::MSKtask,j::Int32)
   dimbarvarj_ = Ref{Int32}()
   @MSK_getdimbarvarj(task.task,j-Int32(1),dimbarvarj_)
@@ -7320,19 +12402,6 @@ function getdimbarvarj(task::MSKtask,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getlenbarvarj(task::MSKtask,j::Int32) :: lenbarvarj
-  getlenbarvarj(task::MSKtask,j::T0) where {T0<:Integer}  :: lenbarvarj
-
-  Obtains the length of one semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the semidefinite variable whose length if requested.
-  Returns
-    lenbarvarj::Int64 Number of scalar elements in the lower triangular part of the semidefinite variable.
-"""
-function getlenbarvarj end
 function getlenbarvarj(task::MSKtask,j::Int32)
   lenbarvarj_ = Ref{Int64}()
   @MSK_getlenbarvarj(task.task,j-Int32(1),lenbarvarj_)
@@ -7345,22 +12414,11 @@ function getlenbarvarj(task::MSKtask,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getobjname(task::MSKtask) :: objname
-
-  Obtains the name assigned to the objective function.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    objname::String Assigned the objective name.
-"""
-function getobjname end
 function getobjname(task::MSKtask)
-  __tmp_150 = Ref{Int32}()
-  @MSK_getobjnamelen(task.task,__tmp_150)
-  __tmp_149 = __tmp_150[]
-  sizeobjname = Int32((1 + __tmp_149))
+  __tmp_149 = Ref{Int32}()
+  @MSK_getobjnamelen(task.task,__tmp_149)
+  __tmp_148 = __tmp_149[]
+  sizeobjname = Int32((1 + __tmp_148))
   objname_ = Array{UInt8}(undef,sizeobjname)
   @MSK_getobjname(task.task,sizeobjname,objname_)
   objname_len = findfirst(_c->_c==0,objname_)
@@ -7373,17 +12431,6 @@ function getobjname(task::MSKtask)
 end
 
 
-"""
-  getobjnamelen(task::MSKtask) :: len
-
-  Obtains the length of the name assigned to the objective function.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    len::Int32 Assigned the length of the objective name.
-"""
-function getobjnamelen end
 function getobjnamelen(task::MSKtask)
   len_ = Ref{Int32}()
   @MSK_getobjnamelen(task.task,len_)
@@ -7391,20 +12438,6 @@ function getobjnamelen(task::MSKtask)
 end
 
 
-"""
-  getparamname(task::MSKtask,partype::Parametertype,param::Int32) :: parname
-  getparamname(task::MSKtask,partype::Parametertype,param::T0) where {T0<:Integer}  :: parname
-
-  Obtains the name of a parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    partype::Parametertype Parameter type.
-    param::Int32 Which parameter.
-  Returns
-    parname::String Parameter name.
-"""
-function getparamname end
 function getparamname(task::MSKtask,partype::Parametertype,param::Int32)
   parname_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
   @MSK_getparamname(task.task,partype.value,param,parname_)
@@ -7424,18 +12457,6 @@ function getparamname(task::MSKtask,partype::Parametertype,param::T0) where { T0
 end
 
 
-"""
-  getprimalobj(task::MSKtask,whichsol::Soltype) :: primalobj
-
-  Computes the primal objective value for the desired solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    primalobj::Float64 Objective value corresponding to the primal solution.
-"""
-function getprimalobj end
 function getprimalobj(task::MSKtask,whichsol::Soltype)
   primalobj_ = Ref{Float64}()
   @MSK_getprimalobj(task.task,whichsol.value,primalobj_)
@@ -7443,17 +12464,6 @@ function getprimalobj(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getprobtype(task::MSKtask) :: probtype
-
-  Obtains the problem type.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    probtype::Problemtype The problem type.
-"""
-function getprobtype end
 function getprobtype(task::MSKtask)
   probtype_ = Ref{Int32}()
   @MSK_getprobtype(task.task,probtype_)
@@ -7462,40 +12472,24 @@ function getprobtype(task::MSKtask)
 end
 
 
-"""
-  getqconk(task::MSKtask,k::Int32) :: (numqcnz,qcsubi,qcsubj,qcval)
-  getqconk(task::MSKtask,k::T0) where {T0<:Integer}  :: (numqcnz,qcsubi,qcsubj,qcval)
-
-  Obtains all the quadratic terms in a constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 Which constraint.
-  Returns
-    numqcnz::Int64 Number of quadratic terms.
-    qcsubi::Vector{Int32} Row subscripts for quadratic constraint matrix.
-    qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
-    qcval::Vector{Float64} Quadratic constraint coefficient values.
-"""
-function getqconk end
 function getqconk(task::MSKtask,k::Int32)
-  __tmp_157 = Ref{Int64}()
-  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_157)
-  __tmp_156 = __tmp_157[]
-  maxnumqcnz = Int64(__tmp_156)
+  __tmp_156 = Ref{Int64}()
+  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_156)
+  __tmp_155 = __tmp_156[]
+  maxnumqcnz = Int64(__tmp_155)
   numqcnz_ = Ref{Int64}()
-  __tmp_159 = Ref{Int64}()
-  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_159)
-  __tmp_158 = __tmp_159[]
-  qcsubi_ = Vector{Int32}(undef,__tmp_158)
-  __tmp_161 = Ref{Int64}()
-  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_161)
-  __tmp_160 = __tmp_161[]
-  qcsubj_ = Vector{Int32}(undef,__tmp_160)
-  __tmp_163 = Ref{Int64}()
-  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_163)
-  __tmp_162 = __tmp_163[]
-  qcval_ = Vector{Float64}(undef,__tmp_162)
+  __tmp_158 = Ref{Int64}()
+  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_158)
+  __tmp_157 = __tmp_158[]
+  qcsubi_ = Vector{Int32}(undef,__tmp_157)
+  __tmp_160 = Ref{Int64}()
+  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_160)
+  __tmp_159 = __tmp_160[]
+  qcsubj_ = Vector{Int32}(undef,__tmp_159)
+  __tmp_162 = Ref{Int64}()
+  @MSK_getnumqconknz64(task.task,k-Int32(1),__tmp_162)
+  __tmp_161 = __tmp_162[]
+  qcval_ = Vector{Float64}(undef,__tmp_161)
   @MSK_getqconk64(task.task,k-Int32(1),maxnumqcnz,numqcnz_,qcsubi_,qcsubj_,qcval_)
   qcsubi = qcsubi_;
   qcsubi .+= 1
@@ -7511,25 +12505,11 @@ function getqconk(task::MSKtask,k::T0) where { T0<:Integer }
 end
 
 
-"""
-  getqobj(task::MSKtask) :: (numqonz,qosubi,qosubj,qoval)
-
-  Obtains all the quadratic terms in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numqonz::Int64 Number of non-zero elements in the quadratic objective terms.
-    qosubi::Vector{Int32} Row subscripts for quadratic objective coefficients.
-    qosubj::Vector{Int32} Column subscripts for quadratic objective coefficients.
-    qoval::Vector{Float64} Quadratic objective coefficient values.
-"""
-function getqobj end
 function getqobj(task::MSKtask)
-  __tmp_170 = Ref{Int64}()
-  @MSK_getnumqobjnz64(task.task,__tmp_170)
-  __tmp_169 = __tmp_170[]
-  maxnumqonz = Int64(__tmp_169)
+  __tmp_169 = Ref{Int64}()
+  @MSK_getnumqobjnz64(task.task,__tmp_169)
+  __tmp_168 = __tmp_169[]
+  maxnumqonz = Int64(__tmp_168)
   numqonz_ = Ref{Int64}()
   qosubi_ = Vector{Int32}(undef,maxnumqonz)
   qosubj_ = Vector{Int32}(undef,maxnumqonz)
@@ -7544,20 +12524,6 @@ function getqobj(task::MSKtask)
 end
 
 
-"""
-  getqobjij(task::MSKtask,i::Int32,j::Int32) :: qoij
-  getqobjij(task::MSKtask,i::T0,j::T1) where {T0<:Integer,T1<:Integer}  :: qoij
-
-  Obtains one coefficient from the quadratic term of the objective
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Row index of the coefficient.
-    j::Int32 Column index of coefficient.
-  Returns
-    qoij::Float64 The required coefficient.
-"""
-function getqobjij end
 function getqobjij(task::MSKtask,i::Int32,j::Int32)
   qoij_ = Ref{Float64}()
   @MSK_getqobjij(task.task,i-Int32(1),j-Int32(1),qoij_)
@@ -7571,86 +12537,62 @@ function getqobjij(task::MSKtask,i::T0,j::T1) where { T0<:Integer,T1<:Integer }
 end
 
 
-"""
-  getsolution(task::MSKtask,whichsol::Soltype) :: (problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx)
-
-  Obtains the complete solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    problemsta::Prosta Problem status.
-    solutionsta::Solsta Solution status.
-    skc::Vector{Stakey} Status keys for the constraints.
-    skx::Vector{Stakey} Status keys for the variables.
-    skn::Vector{Stakey} Status keys for the conic constraints.
-    xc::Vector{Float64} Primal constraint solution.
-    xx::Vector{Float64} Primal variable solution.
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-"""
-function getsolution end
 function getsolution(task::MSKtask,whichsol::Soltype)
   problemsta_ = Ref{Int32}()
   solutionsta_ = Ref{Int32}()
-  __tmp_174 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_174)
-  __tmp_173 = __tmp_174[]
-  __tmp_174 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_174)
-  __tmp_173 = __tmp_174[]
-  skc_ = Vector{Int32}(undef,__tmp_173)
-  __tmp_176 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_176)
-  __tmp_175 = __tmp_176[]
-  __tmp_176 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_176)
-  __tmp_175 = __tmp_176[]
-  skx_ = Vector{Int32}(undef,__tmp_175)
-  __tmp_178 = Ref{Int32}()
-  @MSK_getnumcone(task.task,__tmp_178)
-  __tmp_177 = __tmp_178[]
-  __tmp_178 = Ref{Int32}()
-  @MSK_getnumcone(task.task,__tmp_178)
-  __tmp_177 = __tmp_178[]
-  skn_ = Vector{Int32}(undef,__tmp_177)
-  __tmp_180 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_180)
-  __tmp_179 = __tmp_180[]
-  xc_ = Vector{Float64}(undef,__tmp_179)
-  __tmp_182 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_182)
-  __tmp_181 = __tmp_182[]
-  xx_ = Vector{Float64}(undef,__tmp_181)
-  __tmp_184 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_184)
-  __tmp_183 = __tmp_184[]
-  y_ = Vector{Float64}(undef,__tmp_183)
-  __tmp_186 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_186)
-  __tmp_185 = __tmp_186[]
-  slc_ = Vector{Float64}(undef,__tmp_185)
-  __tmp_188 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_188)
-  __tmp_187 = __tmp_188[]
-  suc_ = Vector{Float64}(undef,__tmp_187)
-  __tmp_190 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_190)
-  __tmp_189 = __tmp_190[]
-  slx_ = Vector{Float64}(undef,__tmp_189)
-  __tmp_192 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_192)
-  __tmp_191 = __tmp_192[]
-  sux_ = Vector{Float64}(undef,__tmp_191)
-  __tmp_194 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_194)
-  __tmp_193 = __tmp_194[]
-  snx_ = Vector{Float64}(undef,__tmp_193)
+  __tmp_173 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_173)
+  __tmp_172 = __tmp_173[]
+  __tmp_173 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_173)
+  __tmp_172 = __tmp_173[]
+  skc_ = Vector{Int32}(undef,__tmp_172)
+  __tmp_175 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_175)
+  __tmp_174 = __tmp_175[]
+  __tmp_175 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_175)
+  __tmp_174 = __tmp_175[]
+  skx_ = Vector{Int32}(undef,__tmp_174)
+  __tmp_177 = Ref{Int32}()
+  @MSK_getnumcone(task.task,__tmp_177)
+  __tmp_176 = __tmp_177[]
+  __tmp_177 = Ref{Int32}()
+  @MSK_getnumcone(task.task,__tmp_177)
+  __tmp_176 = __tmp_177[]
+  skn_ = Vector{Int32}(undef,__tmp_176)
+  __tmp_179 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_179)
+  __tmp_178 = __tmp_179[]
+  xc_ = Vector{Float64}(undef,__tmp_178)
+  __tmp_181 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_181)
+  __tmp_180 = __tmp_181[]
+  xx_ = Vector{Float64}(undef,__tmp_180)
+  __tmp_183 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_183)
+  __tmp_182 = __tmp_183[]
+  y_ = Vector{Float64}(undef,__tmp_182)
+  __tmp_185 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_185)
+  __tmp_184 = __tmp_185[]
+  slc_ = Vector{Float64}(undef,__tmp_184)
+  __tmp_187 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_187)
+  __tmp_186 = __tmp_187[]
+  suc_ = Vector{Float64}(undef,__tmp_186)
+  __tmp_189 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_189)
+  __tmp_188 = __tmp_189[]
+  slx_ = Vector{Float64}(undef,__tmp_188)
+  __tmp_191 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_191)
+  __tmp_190 = __tmp_191[]
+  sux_ = Vector{Float64}(undef,__tmp_190)
+  __tmp_193 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_193)
+  __tmp_192 = __tmp_193[]
+  snx_ = Vector{Float64}(undef,__tmp_192)
   @MSK_getsolution(task.task,whichsol.value,problemsta_,solutionsta_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
   problemsta = Prosta(problemsta_[])
   solutionsta = Solsta(solutionsta_[])
@@ -7669,91 +12611,66 @@ function getsolution(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getsolutionnew(task::MSKtask,whichsol::Soltype) :: (problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty)
-
-  Obtains the complete solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    problemsta::Prosta Problem status.
-    solutionsta::Solsta Solution status.
-    skc::Vector{Stakey} Status keys for the constraints.
-    skx::Vector{Stakey} Status keys for the variables.
-    skn::Vector{Stakey} Status keys for the conic constraints.
-    xc::Vector{Float64} Primal constraint solution.
-    xx::Vector{Float64} Primal variable solution.
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-    doty::Vector{Float64} Dual variables corresponding to affine conic constraints.
-"""
-function getsolutionnew end
 function getsolutionnew(task::MSKtask,whichsol::Soltype)
   problemsta_ = Ref{Int32}()
   solutionsta_ = Ref{Int32}()
-  __tmp_197 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_197)
-  __tmp_196 = __tmp_197[]
-  __tmp_197 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_197)
-  __tmp_196 = __tmp_197[]
-  skc_ = Vector{Int32}(undef,__tmp_196)
-  __tmp_199 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_199)
-  __tmp_198 = __tmp_199[]
-  __tmp_199 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_199)
-  __tmp_198 = __tmp_199[]
-  skx_ = Vector{Int32}(undef,__tmp_198)
-  __tmp_201 = Ref{Int32}()
-  @MSK_getnumcone(task.task,__tmp_201)
-  __tmp_200 = __tmp_201[]
-  __tmp_201 = Ref{Int32}()
-  @MSK_getnumcone(task.task,__tmp_201)
-  __tmp_200 = __tmp_201[]
-  skn_ = Vector{Int32}(undef,__tmp_200)
-  __tmp_203 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_203)
-  __tmp_202 = __tmp_203[]
-  xc_ = Vector{Float64}(undef,__tmp_202)
-  __tmp_205 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_205)
-  __tmp_204 = __tmp_205[]
-  xx_ = Vector{Float64}(undef,__tmp_204)
-  __tmp_207 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_207)
-  __tmp_206 = __tmp_207[]
-  y_ = Vector{Float64}(undef,__tmp_206)
-  __tmp_209 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_209)
-  __tmp_208 = __tmp_209[]
-  slc_ = Vector{Float64}(undef,__tmp_208)
-  __tmp_211 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_211)
-  __tmp_210 = __tmp_211[]
-  suc_ = Vector{Float64}(undef,__tmp_210)
-  __tmp_213 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_213)
-  __tmp_212 = __tmp_213[]
-  slx_ = Vector{Float64}(undef,__tmp_212)
-  __tmp_215 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_215)
-  __tmp_214 = __tmp_215[]
-  sux_ = Vector{Float64}(undef,__tmp_214)
-  __tmp_217 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_217)
-  __tmp_216 = __tmp_217[]
-  snx_ = Vector{Float64}(undef,__tmp_216)
-  __tmp_219 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_219)
-  __tmp_218 = __tmp_219[]
-  doty_ = Vector{Float64}(undef,__tmp_218)
+  __tmp_196 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_196)
+  __tmp_195 = __tmp_196[]
+  __tmp_196 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_196)
+  __tmp_195 = __tmp_196[]
+  skc_ = Vector{Int32}(undef,__tmp_195)
+  __tmp_198 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_198)
+  __tmp_197 = __tmp_198[]
+  __tmp_198 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_198)
+  __tmp_197 = __tmp_198[]
+  skx_ = Vector{Int32}(undef,__tmp_197)
+  __tmp_200 = Ref{Int32}()
+  @MSK_getnumcone(task.task,__tmp_200)
+  __tmp_199 = __tmp_200[]
+  __tmp_200 = Ref{Int32}()
+  @MSK_getnumcone(task.task,__tmp_200)
+  __tmp_199 = __tmp_200[]
+  skn_ = Vector{Int32}(undef,__tmp_199)
+  __tmp_202 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_202)
+  __tmp_201 = __tmp_202[]
+  xc_ = Vector{Float64}(undef,__tmp_201)
+  __tmp_204 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_204)
+  __tmp_203 = __tmp_204[]
+  xx_ = Vector{Float64}(undef,__tmp_203)
+  __tmp_206 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_206)
+  __tmp_205 = __tmp_206[]
+  y_ = Vector{Float64}(undef,__tmp_205)
+  __tmp_208 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_208)
+  __tmp_207 = __tmp_208[]
+  slc_ = Vector{Float64}(undef,__tmp_207)
+  __tmp_210 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_210)
+  __tmp_209 = __tmp_210[]
+  suc_ = Vector{Float64}(undef,__tmp_209)
+  __tmp_212 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_212)
+  __tmp_211 = __tmp_212[]
+  slx_ = Vector{Float64}(undef,__tmp_211)
+  __tmp_214 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_214)
+  __tmp_213 = __tmp_214[]
+  sux_ = Vector{Float64}(undef,__tmp_213)
+  __tmp_216 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_216)
+  __tmp_215 = __tmp_216[]
+  snx_ = Vector{Float64}(undef,__tmp_215)
+  __tmp_218 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_218)
+  __tmp_217 = __tmp_218[]
+  doty_ = Vector{Float64}(undef,__tmp_217)
   @MSK_getsolutionnew(task.task,whichsol.value,problemsta_,solutionsta_,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_)
   problemsta = Prosta(problemsta_[])
   solutionsta = Solsta(solutionsta_[])
@@ -7773,18 +12690,6 @@ function getsolutionnew(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getsolsta(task::MSKtask,whichsol::Soltype) :: solutionsta
-
-  Obtains the solution status.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    solutionsta::Solsta Solution status.
-"""
-function getsolsta end
 function getsolsta(task::MSKtask,whichsol::Soltype)
   solutionsta_ = Ref{Int32}()
   @MSK_getsolsta(task.task,whichsol.value,solutionsta_)
@@ -7793,18 +12698,6 @@ function getsolsta(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getprosta(task::MSKtask,whichsol::Soltype) :: problemsta
-
-  Obtains the problem status.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    problemsta::Prosta Problem status.
-"""
-function getprosta end
 function getprosta(task::MSKtask,whichsol::Soltype)
   problemsta_ = Ref{Int32}()
   @MSK_getprosta(task.task,whichsol.value,problemsta_)
@@ -7813,195 +12706,97 @@ function getprosta(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getskc(task::MSKtask,whichsol::Soltype) :: skc
-
-  Obtains the status keys for the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    skc::Vector{Stakey} Status keys for the constraints.
-"""
-function getskc end
 function getskc(task::MSKtask,whichsol::Soltype)
-  __tmp_224 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_224)
-  __tmp_223 = __tmp_224[]
-  __tmp_224 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_224)
-  __tmp_223 = __tmp_224[]
-  skc_ = Vector{Int32}(undef,__tmp_223)
+  __tmp_223 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_223)
+  __tmp_222 = __tmp_223[]
+  __tmp_223 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_223)
+  __tmp_222 = __tmp_223[]
+  skc_ = Vector{Int32}(undef,__tmp_222)
   @MSK_getskc(task.task,whichsol.value,skc_)
   skc = Stakey[Stakey(item) for item in skc_]
   skc
 end
 
 
-"""
-  getskx(task::MSKtask,whichsol::Soltype) :: skx
-
-  Obtains the status keys for the scalar variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    skx::Vector{Stakey} Status keys for the variables.
-"""
-function getskx end
 function getskx(task::MSKtask,whichsol::Soltype)
-  __tmp_227 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_227)
-  __tmp_226 = __tmp_227[]
-  __tmp_227 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_227)
-  __tmp_226 = __tmp_227[]
-  skx_ = Vector{Int32}(undef,__tmp_226)
+  __tmp_226 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_226)
+  __tmp_225 = __tmp_226[]
+  __tmp_226 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_226)
+  __tmp_225 = __tmp_226[]
+  skx_ = Vector{Int32}(undef,__tmp_225)
   @MSK_getskx(task.task,whichsol.value,skx_)
   skx = Stakey[Stakey(item) for item in skx_]
   skx
 end
 
 
-"""
-  getskn(task::MSKtask,whichsol::Soltype) :: skn
-
-  Obtains the status keys for the conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    skn::Vector{Stakey} Status keys for the conic constraints.
-"""
-function getskn end
 function getskn(task::MSKtask,whichsol::Soltype)
-  __tmp_230 = Ref{Int32}()
-  @MSK_getnumcone(task.task,__tmp_230)
-  __tmp_229 = __tmp_230[]
-  __tmp_230 = Ref{Int32}()
-  @MSK_getnumcone(task.task,__tmp_230)
-  __tmp_229 = __tmp_230[]
-  skn_ = Vector{Int32}(undef,__tmp_229)
+  __tmp_229 = Ref{Int32}()
+  @MSK_getnumcone(task.task,__tmp_229)
+  __tmp_228 = __tmp_229[]
+  __tmp_229 = Ref{Int32}()
+  @MSK_getnumcone(task.task,__tmp_229)
+  __tmp_228 = __tmp_229[]
+  skn_ = Vector{Int32}(undef,__tmp_228)
   @MSK_getskn(task.task,whichsol.value,skn_)
   skn = Stakey[Stakey(item) for item in skn_]
   skn
 end
 
 
-"""
-  getxc(task::MSKtask,whichsol::Soltype) :: xc
-
-  Obtains the xc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    xc::Vector{Float64} Primal constraint solution.
-"""
-function getxc end
 function getxc(task::MSKtask,whichsol::Soltype)
-  __tmp_233 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_233)
-  __tmp_232 = __tmp_233[]
-  xc_ = Vector{Float64}(undef,__tmp_232)
+  __tmp_232 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_232)
+  __tmp_231 = __tmp_232[]
+  xc_ = Vector{Float64}(undef,__tmp_231)
   @MSK_getxc(task.task,whichsol.value,xc_)
   xc = xc_;
   xc
 end
 
 
-"""
-  getxx(task::MSKtask,whichsol::Soltype) :: xx
-
-  Obtains the xx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    xx::Vector{Float64} Primal variable solution.
-"""
-function getxx end
 function getxx(task::MSKtask,whichsol::Soltype)
-  __tmp_236 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_236)
-  __tmp_235 = __tmp_236[]
-  xx_ = Vector{Float64}(undef,__tmp_235)
+  __tmp_235 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_235)
+  __tmp_234 = __tmp_235[]
+  xx_ = Vector{Float64}(undef,__tmp_234)
   @MSK_getxx(task.task,whichsol.value,xx_)
   xx = xx_;
   xx
 end
 
 
-"""
-  gety(task::MSKtask,whichsol::Soltype) :: y
-
-  Obtains the y vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-"""
-function gety end
 function gety(task::MSKtask,whichsol::Soltype)
-  __tmp_239 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_239)
-  __tmp_238 = __tmp_239[]
-  y_ = Vector{Float64}(undef,__tmp_238)
+  __tmp_238 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_238)
+  __tmp_237 = __tmp_238[]
+  y_ = Vector{Float64}(undef,__tmp_237)
   @MSK_gety(task.task,whichsol.value,y_)
   y = y_;
   y
 end
 
 
-"""
-  getslc(task::MSKtask,whichsol::Soltype) :: slc
-
-  Obtains the slc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-"""
-function getslc end
 function getslc(task::MSKtask,whichsol::Soltype)
-  __tmp_242 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_242)
-  __tmp_241 = __tmp_242[]
-  slc_ = Vector{Float64}(undef,__tmp_241)
+  __tmp_241 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_241)
+  __tmp_240 = __tmp_241[]
+  slc_ = Vector{Float64}(undef,__tmp_240)
   @MSK_getslc(task.task,whichsol.value,slc_)
   slc = slc_;
   slc
 end
 
 
-"""
-  getaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64) :: doty
-  getaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
-
-  Obtains the doty vector for an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    accidx::Int64 The index of the affine conic constraint.
-  Returns
-    doty::Vector{Float64} The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
-"""
-function getaccdoty end
 function getaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64)
-  __tmp_245 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_245)
-  __tmp_244 = __tmp_245[]
-  doty_ = Vector{Float64}(undef,__tmp_244)
+  __tmp_244 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_244)
+  __tmp_243 = __tmp_244[]
+  doty_ = Vector{Float64}(undef,__tmp_243)
   @MSK_getaccdoty(task.task,whichsol.value,accidx-Int64(1),doty_)
   doty = doty_;
   doty
@@ -8014,48 +12809,22 @@ function getaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where { T0<:Inte
 end
 
 
-"""
-  getaccdotys(task::MSKtask,whichsol::Soltype) :: doty
-
-  Obtains the doty vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    doty::Vector{Float64} The dual values of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
-"""
-function getaccdotys end
 function getaccdotys(task::MSKtask,whichsol::Soltype)
-  __tmp_248 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_248)
-  __tmp_247 = __tmp_248[]
-  doty_ = Vector{Float64}(undef,__tmp_247)
+  __tmp_247 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_247)
+  __tmp_246 = __tmp_247[]
+  doty_ = Vector{Float64}(undef,__tmp_246)
   @MSK_getaccdotys(task.task,whichsol.value,doty_)
   doty = doty_;
   doty
 end
 
 
-"""
-  evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64) :: activity
-  evaluateacc(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: activity
-
-  Evaluates the activity of an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    accidx::Int64 The index of the affine conic constraint.
-  Returns
-    activity::Vector{Float64} The activity of the affine conic constraint. The array should have length equal to the dimension of the constraint.
-"""
-function evaluateacc end
 function evaluateacc(task::MSKtask,whichsol::Soltype,accidx::Int64)
-  __tmp_251 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_251)
-  __tmp_250 = __tmp_251[]
-  activity_ = Vector{Float64}(undef,__tmp_250)
+  __tmp_250 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_250)
+  __tmp_249 = __tmp_250[]
+  activity_ = Vector{Float64}(undef,__tmp_249)
   @MSK_evaluateacc(task.task,whichsol.value,accidx-Int64(1),activity_)
   activity = activity_;
   activity
@@ -8068,136 +12837,61 @@ function evaluateacc(task::MSKtask,whichsol::Soltype,accidx::T0) where { T0<:Int
 end
 
 
-"""
-  evaluateaccs(task::MSKtask,whichsol::Soltype) :: activity
-
-  Evaluates the activities of all affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    activity::Vector{Float64} The activity of affine conic constraints. The array should have length equal to the sum of dimensions of all affine conic constraints.
-"""
-function evaluateaccs end
 function evaluateaccs(task::MSKtask,whichsol::Soltype)
-  __tmp_254 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_254)
-  __tmp_253 = __tmp_254[]
-  activity_ = Vector{Float64}(undef,__tmp_253)
+  __tmp_253 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_253)
+  __tmp_252 = __tmp_253[]
+  activity_ = Vector{Float64}(undef,__tmp_252)
   @MSK_evaluateaccs(task.task,whichsol.value,activity_)
   activity = activity_;
   activity
 end
 
 
-"""
-  getsuc(task::MSKtask,whichsol::Soltype) :: suc
-
-  Obtains the suc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-"""
-function getsuc end
 function getsuc(task::MSKtask,whichsol::Soltype)
-  __tmp_257 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_257)
-  __tmp_256 = __tmp_257[]
-  suc_ = Vector{Float64}(undef,__tmp_256)
+  __tmp_256 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_256)
+  __tmp_255 = __tmp_256[]
+  suc_ = Vector{Float64}(undef,__tmp_255)
   @MSK_getsuc(task.task,whichsol.value,suc_)
   suc = suc_;
   suc
 end
 
 
-"""
-  getslx(task::MSKtask,whichsol::Soltype) :: slx
-
-  Obtains the slx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-"""
-function getslx end
 function getslx(task::MSKtask,whichsol::Soltype)
-  __tmp_260 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_260)
-  __tmp_259 = __tmp_260[]
-  slx_ = Vector{Float64}(undef,__tmp_259)
+  __tmp_259 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_259)
+  __tmp_258 = __tmp_259[]
+  slx_ = Vector{Float64}(undef,__tmp_258)
   @MSK_getslx(task.task,whichsol.value,slx_)
   slx = slx_;
   slx
 end
 
 
-"""
-  getsux(task::MSKtask,whichsol::Soltype) :: sux
-
-  Obtains the sux vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-"""
-function getsux end
 function getsux(task::MSKtask,whichsol::Soltype)
-  __tmp_263 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_263)
-  __tmp_262 = __tmp_263[]
-  sux_ = Vector{Float64}(undef,__tmp_262)
+  __tmp_262 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_262)
+  __tmp_261 = __tmp_262[]
+  sux_ = Vector{Float64}(undef,__tmp_261)
   @MSK_getsux(task.task,whichsol.value,sux_)
   sux = sux_;
   sux
 end
 
 
-"""
-  getsnx(task::MSKtask,whichsol::Soltype) :: snx
-
-  Obtains the snx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-"""
-function getsnx end
 function getsnx(task::MSKtask,whichsol::Soltype)
-  __tmp_266 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_266)
-  __tmp_265 = __tmp_266[]
-  snx_ = Vector{Float64}(undef,__tmp_265)
+  __tmp_265 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_265)
+  __tmp_264 = __tmp_265[]
+  snx_ = Vector{Float64}(undef,__tmp_264)
   @MSK_getsnx(task.task,whichsol.value,snx_)
   snx = snx_;
   snx
 end
 
 
-"""
-  getskcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: skc
-  getskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: skc
-
-  Obtains the status keys for a slice of the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    skc::Vector{Stakey} Status keys for the constraints.
-"""
-function getskcslice end
 function getskcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   skc_ = Vector{Int32}(undef,(last - first))
   @MSK_getskcslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),skc_)
@@ -8213,21 +12907,6 @@ function getskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getskxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: skx
-  getskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: skx
-
-  Obtains the status keys for a slice of the scalar variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    skx::Vector{Stakey} Status keys for the variables.
-"""
-function getskxslice end
 function getskxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   skx_ = Vector{Int32}(undef,(last - first))
   @MSK_getskxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),skx_)
@@ -8243,21 +12922,6 @@ function getskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: xc
-  getxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: xc
-
-  Obtains a slice of the xc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    xc::Vector{Float64} Primal constraint solution.
-"""
-function getxcslice end
 function getxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   xc_ = Vector{Float64}(undef,(last - first))
   @MSK_getxcslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),xc_)
@@ -8273,21 +12937,6 @@ function getxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { 
 end
 
 
-"""
-  getxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: xx
-  getxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: xx
-
-  Obtains a slice of the xx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    xx::Vector{Float64} Primal variable solution.
-"""
-function getxxslice end
 function getxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   xx_ = Vector{Float64}(undef,(last - first))
   @MSK_getxxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),xx_)
@@ -8303,21 +12952,6 @@ function getxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { 
 end
 
 
-"""
-  getyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: y
-  getyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: y
-
-  Obtains a slice of the y vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-"""
-function getyslice end
 function getyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   y_ = Vector{Float64}(undef,(last - first))
   @MSK_getyslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),y_)
@@ -8333,21 +12967,6 @@ function getyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where { T
 end
 
 
-"""
-  getslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: slc
-  getslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: slc
-
-  Obtains a slice of the slc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-"""
-function getslcslice end
 function getslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   slc_ = Vector{Float64}(undef,(last - first))
   @MSK_getslcslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slc_)
@@ -8363,21 +12982,6 @@ function getslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: suc
-  getsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: suc
-
-  Obtains a slice of the suc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-"""
-function getsucslice end
 function getsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   suc_ = Vector{Float64}(undef,(last - first))
   @MSK_getsucslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),suc_)
@@ -8393,21 +12997,6 @@ function getsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: slx
-  getslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: slx
-
-  Obtains a slice of the slx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-"""
-function getslxslice end
 function getslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   slx_ = Vector{Float64}(undef,(last - first))
   @MSK_getslxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slx_)
@@ -8423,21 +13012,6 @@ function getslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: sux
-  getsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: sux
-
-  Obtains a slice of the sux vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-"""
-function getsuxslice end
 function getsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   sux_ = Vector{Float64}(undef,(last - first))
   @MSK_getsuxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),sux_)
@@ -8453,21 +13027,6 @@ function getsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: snx
-  getsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: snx
-
-  Obtains a slice of the snx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-"""
-function getsnxslice end
 function getsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   snx_ = Vector{Float64}(undef,(last - first))
   @MSK_getsnxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),snx_)
@@ -8483,25 +13042,11 @@ function getsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {
 end
 
 
-"""
-  getbarxj(task::MSKtask,whichsol::Soltype,j::Int32) :: barxj
-  getbarxj(task::MSKtask,whichsol::Soltype,j::T0) where {T0<:Integer}  :: barxj
-
-  Obtains the primal solution for a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    j::Int32 Index of the semidefinite variable.
-  Returns
-    barxj::Vector{Float64} Value of the j'th variable of barx.
-"""
-function getbarxj end
 function getbarxj(task::MSKtask,whichsol::Soltype,j::Int32)
-  __tmp_279 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_279)
-  __tmp_278 = __tmp_279[]
-  barxj_ = Vector{Float64}(undef,__tmp_278)
+  __tmp_278 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_278)
+  __tmp_277 = __tmp_278[]
+  barxj_ = Vector{Float64}(undef,__tmp_277)
   @MSK_getbarxj(task.task,whichsol.value,j-Int32(1),barxj_)
   barxj = barxj_;
   barxj
@@ -8514,22 +13059,6 @@ function getbarxj(task::MSKtask,whichsol::Soltype,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbarxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64) :: barxslice
-  getbarxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where {T0<:Integer,T1<:Integer,T2<:Integer}  :: barxslice
-
-  Obtains the primal solution for a sequence of semidefinite variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 Index of the first semidefinite variable in the slice.
-    last::Int32 Index of the last semidefinite variable in the slice plus one.
-    slicesize::Int64 Denotes the length of the array barxslice.
-  Returns
-    barxslice::Vector{Float64} Solution values of symmetric matrix variables in the slice, stored sequentially.
-"""
-function getbarxslice end
 function getbarxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64)
   barxslice_ = Vector{Float64}(undef,slicesize)
   @MSK_getbarxslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slicesize,barxslice_)
@@ -8546,25 +13075,11 @@ function getbarxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesi
 end
 
 
-"""
-  getbarsj(task::MSKtask,whichsol::Soltype,j::Int32) :: barsj
-  getbarsj(task::MSKtask,whichsol::Soltype,j::T0) where {T0<:Integer}  :: barsj
-
-  Obtains the dual solution for a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    j::Int32 Index of the semidefinite variable.
-  Returns
-    barsj::Vector{Float64} Value of the j'th dual variable of barx.
-"""
-function getbarsj end
 function getbarsj(task::MSKtask,whichsol::Soltype,j::Int32)
-  __tmp_283 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_283)
-  __tmp_282 = __tmp_283[]
-  barsj_ = Vector{Float64}(undef,__tmp_282)
+  __tmp_282 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_282)
+  __tmp_281 = __tmp_282[]
+  barsj_ = Vector{Float64}(undef,__tmp_281)
   @MSK_getbarsj(task.task,whichsol.value,j-Int32(1),barsj_)
   barsj = barsj_;
   barsj
@@ -8577,22 +13092,6 @@ function getbarsj(task::MSKtask,whichsol::Soltype,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbarsslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64) :: barsslice
-  getbarsslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where {T0<:Integer,T1<:Integer,T2<:Integer}  :: barsslice
-
-  Obtains the dual solution for a sequence of semidefinite variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 Index of the first semidefinite variable in the slice.
-    last::Int32 Index of the last semidefinite variable in the slice plus one.
-    slicesize::Int64 Denotes the length of the array barsslice.
-  Returns
-    barsslice::Vector{Float64} Dual solution values of symmetric matrix variables in the slice, stored sequentially.
-"""
-function getbarsslice end
 function getbarsslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slicesize::Int64)
   barsslice_ = Vector{Float64}(undef,slicesize)
   @MSK_getbarsslice(task.task,whichsol.value,first-Int32(1),last-Int32(1),slicesize,barsslice_)
@@ -8609,22 +13108,11 @@ function getbarsslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesi
 end
 
 
-"""
-  putskc(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey})
-
-  Sets the status keys for the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    skc::Vector{Stakey} Status keys for the constraints.
-"""
-function putskc end
 function putskc(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey})
-  __tmp_287 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_287)
-  __tmp_286 = __tmp_287[]
-  if length(skc) < __tmp_286
+  __tmp_286 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_286)
+  __tmp_285 = __tmp_286[]
+  if length(skc) < __tmp_285
     throw(BoundsError())
   end
   skc_ = Int32[item.value for item in skc]
@@ -8633,22 +13121,11 @@ function putskc(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey})
 end
 
 
-"""
-  putskx(task::MSKtask,whichsol::Soltype,skx::Vector{Stakey})
-
-  Sets the status keys for the scalar variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    skx::Vector{Stakey} Status keys for the variables.
-"""
-function putskx end
 function putskx(task::MSKtask,whichsol::Soltype,skx::Vector{Stakey})
-  __tmp_290 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_290)
-  __tmp_289 = __tmp_290[]
-  if length(skx) < __tmp_289
+  __tmp_289 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_289)
+  __tmp_288 = __tmp_289[]
+  if length(skx) < __tmp_288
     throw(BoundsError())
   end
   skx_ = Int32[item.value for item in skx]
@@ -8657,46 +13134,22 @@ function putskx(task::MSKtask,whichsol::Soltype,skx::Vector{Stakey})
 end
 
 
-"""
-  putxc(task::MSKtask,whichsol::Soltype) :: xc
-
-  Sets the xc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    xc::Vector{Float64} Primal constraint solution.
-"""
-function putxc end
 function putxc(task::MSKtask,whichsol::Soltype)
-  __tmp_293 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_293)
-  __tmp_292 = __tmp_293[]
-  xc_ = Vector{Float64}(undef,__tmp_292)
+  __tmp_292 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_292)
+  __tmp_291 = __tmp_292[]
+  xc_ = Vector{Float64}(undef,__tmp_291)
   @MSK_putxc(task.task,whichsol.value,xc_)
   xc = xc_;
   xc
 end
 
 
-"""
-  putxx(task::MSKtask,whichsol::Soltype,xx::Vector{Float64})
-  putxx(task::MSKtask,whichsol::Soltype,xx::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the xx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    xx::Vector{Float64} Primal variable solution.
-"""
-function putxx end
 function putxx(task::MSKtask,whichsol::Soltype,xx::Vector{Float64})
-  __tmp_296 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_296)
-  __tmp_295 = __tmp_296[]
-  if length(xx) < __tmp_295
+  __tmp_295 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_295)
+  __tmp_294 = __tmp_295[]
+  if xx !== nothing && length(xx) < __tmp_294
     throw(BoundsError())
   end
   xx_ = xx
@@ -8707,27 +13160,15 @@ function putxx(task::MSKtask,whichsol::Soltype,xx::T0) where { T0<:AbstractVecto
   putxx(
     task,
     whichsol,
-    convert(Vector{Float64},xx))
+    if xx === nothing; nothing; else convert(Vector{Float64},xx); end)
 end
 
 
-"""
-  puty(task::MSKtask,whichsol::Soltype,y::Vector{Float64})
-  puty(task::MSKtask,whichsol::Soltype,y::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the y vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-"""
-function puty end
 function puty(task::MSKtask,whichsol::Soltype,y::Vector{Float64})
-  __tmp_299 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_299)
-  __tmp_298 = __tmp_299[]
-  if length(y) < __tmp_298
+  __tmp_298 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_298)
+  __tmp_297 = __tmp_298[]
+  if y !== nothing && length(y) < __tmp_297
     throw(BoundsError())
   end
   y_ = y
@@ -8738,27 +13179,15 @@ function puty(task::MSKtask,whichsol::Soltype,y::T0) where { T0<:AbstractVector{
   puty(
     task,
     whichsol,
-    convert(Vector{Float64},y))
+    if y === nothing; nothing; else convert(Vector{Float64},y); end)
 end
 
 
-"""
-  putslc(task::MSKtask,whichsol::Soltype,slc::Vector{Float64})
-  putslc(task::MSKtask,whichsol::Soltype,slc::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the slc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-"""
-function putslc end
 function putslc(task::MSKtask,whichsol::Soltype,slc::Vector{Float64})
-  __tmp_302 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_302)
-  __tmp_301 = __tmp_302[]
-  if length(slc) < __tmp_301
+  __tmp_301 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_301)
+  __tmp_300 = __tmp_301[]
+  if slc !== nothing && length(slc) < __tmp_300
     throw(BoundsError())
   end
   slc_ = slc
@@ -8769,27 +13198,15 @@ function putslc(task::MSKtask,whichsol::Soltype,slc::T0) where { T0<:AbstractVec
   putslc(
     task,
     whichsol,
-    convert(Vector{Float64},slc))
+    if slc === nothing; nothing; else convert(Vector{Float64},slc); end)
 end
 
 
-"""
-  putsuc(task::MSKtask,whichsol::Soltype,suc::Vector{Float64})
-  putsuc(task::MSKtask,whichsol::Soltype,suc::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the suc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-"""
-function putsuc end
 function putsuc(task::MSKtask,whichsol::Soltype,suc::Vector{Float64})
-  __tmp_305 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_305)
-  __tmp_304 = __tmp_305[]
-  if length(suc) < __tmp_304
+  __tmp_304 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_304)
+  __tmp_303 = __tmp_304[]
+  if suc !== nothing && length(suc) < __tmp_303
     throw(BoundsError())
   end
   suc_ = suc
@@ -8800,27 +13217,15 @@ function putsuc(task::MSKtask,whichsol::Soltype,suc::T0) where { T0<:AbstractVec
   putsuc(
     task,
     whichsol,
-    convert(Vector{Float64},suc))
+    if suc === nothing; nothing; else convert(Vector{Float64},suc); end)
 end
 
 
-"""
-  putslx(task::MSKtask,whichsol::Soltype,slx::Vector{Float64})
-  putslx(task::MSKtask,whichsol::Soltype,slx::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the slx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-"""
-function putslx end
 function putslx(task::MSKtask,whichsol::Soltype,slx::Vector{Float64})
-  __tmp_308 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_308)
-  __tmp_307 = __tmp_308[]
-  if length(slx) < __tmp_307
+  __tmp_307 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_307)
+  __tmp_306 = __tmp_307[]
+  if slx !== nothing && length(slx) < __tmp_306
     throw(BoundsError())
   end
   slx_ = slx
@@ -8831,27 +13236,15 @@ function putslx(task::MSKtask,whichsol::Soltype,slx::T0) where { T0<:AbstractVec
   putslx(
     task,
     whichsol,
-    convert(Vector{Float64},slx))
+    if slx === nothing; nothing; else convert(Vector{Float64},slx); end)
 end
 
 
-"""
-  putsux(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
-  putsux(task::MSKtask,whichsol::Soltype,sux::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the sux vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-"""
-function putsux end
 function putsux(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
-  __tmp_311 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_311)
-  __tmp_310 = __tmp_311[]
-  if length(sux) < __tmp_310
+  __tmp_310 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_310)
+  __tmp_309 = __tmp_310[]
+  if sux !== nothing && length(sux) < __tmp_309
     throw(BoundsError())
   end
   sux_ = sux
@@ -8862,27 +13255,15 @@ function putsux(task::MSKtask,whichsol::Soltype,sux::T0) where { T0<:AbstractVec
   putsux(
     task,
     whichsol,
-    convert(Vector{Float64},sux))
+    if sux === nothing; nothing; else convert(Vector{Float64},sux); end)
 end
 
 
-"""
-  putsnx(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
-  putsnx(task::MSKtask,whichsol::Soltype,sux::T0) where {T0<:AbstractVector{<:Number}} 
-
-  Sets the snx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-"""
-function putsnx end
 function putsnx(task::MSKtask,whichsol::Soltype,sux::Vector{Float64})
-  __tmp_314 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_314)
-  __tmp_313 = __tmp_314[]
-  if length(sux) < __tmp_313
+  __tmp_313 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_313)
+  __tmp_312 = __tmp_313[]
+  if sux !== nothing && length(sux) < __tmp_312
     throw(BoundsError())
   end
   sux_ = sux
@@ -8893,29 +13274,15 @@ function putsnx(task::MSKtask,whichsol::Soltype,sux::T0) where { T0<:AbstractVec
   putsnx(
     task,
     whichsol,
-    convert(Vector{Float64},sux))
+    if sux === nothing; nothing; else convert(Vector{Float64},sux); end)
 end
 
 
-"""
-  putaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64) :: doty
-  putaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
-
-  Puts the doty vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    accidx::Int64 The index of the affine conic constraint.
-  Returns
-    doty::Vector{Float64} The dual values for this affine conic constraint. The array should have length equal to the dimension of the constraint.
-"""
-function putaccdoty end
 function putaccdoty(task::MSKtask,whichsol::Soltype,accidx::Int64)
-  __tmp_317 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_317)
-  __tmp_316 = __tmp_317[]
-  doty_ = Vector{Float64}(undef,__tmp_316)
+  __tmp_316 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_316)
+  __tmp_315 = __tmp_316[]
+  doty_ = Vector{Float64}(undef,__tmp_315)
   @MSK_putaccdoty(task.task,whichsol.value,accidx,doty_)
   doty = doty_;
   doty
@@ -8928,20 +13295,6 @@ function putaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where { T0<:Inte
 end
 
 
-"""
-  putskcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,skc::Vector{Stakey})
-  putskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skc::Vector{Stakey}) where {T0<:Integer,T1<:Integer} 
-
-  Sets the status keys for a slice of the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    skc::Vector{Stakey} Status keys for the constraints.
-"""
-function putskcslice end
 function putskcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,skc::Vector{Stakey})
   if length(skc) < (last - first)
     throw(BoundsError())
@@ -8960,20 +13313,6 @@ function putskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skc::Vec
 end
 
 
-"""
-  putskxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,skx::Vector{Stakey})
-  putskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skx::Vector{Stakey}) where {T0<:Integer,T1<:Integer} 
-
-  Sets the status keys for a slice of the variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    skx::Vector{Stakey} Status keys for the variables.
-"""
-function putskxslice end
 function putskxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,skx::Vector{Stakey})
   if length(skx) < (last - first)
     throw(BoundsError())
@@ -8992,22 +13331,8 @@ function putskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skx::Vec
 end
 
 
-"""
-  putxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,xc::Vector{Float64})
-  putxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the xc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    xc::Vector{Float64} Primal constraint solution.
-"""
-function putxcslice end
 function putxcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,xc::Vector{Float64})
-  if length(xc) < (last - first)
+  if xc !== nothing && length(xc) < (last - first)
     throw(BoundsError())
   end
   xc_ = xc
@@ -9020,26 +13345,12 @@ function putxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xc::T2) w
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},xc))
+    if xc === nothing; nothing; else convert(Vector{Float64},xc); end)
 end
 
 
-"""
-  putxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,xx::Vector{Float64})
-  putxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the xx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    xx::Vector{Float64} Primal variable solution.
-"""
-function putxxslice end
 function putxxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,xx::Vector{Float64})
-  if length(xx) < (last - first)
+  if xx !== nothing && length(xx) < (last - first)
     throw(BoundsError())
   end
   xx_ = xx
@@ -9052,26 +13363,12 @@ function putxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xx::T2) w
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},xx))
+    if xx === nothing; nothing; else convert(Vector{Float64},xx); end)
 end
 
 
-"""
-  putyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,y::Vector{Float64})
-  putyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,y::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the y vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-"""
-function putyslice end
 function putyslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,y::Vector{Float64})
-  if length(y) < (last - first)
+  if y !== nothing && length(y) < (last - first)
     throw(BoundsError())
   end
   y_ = y
@@ -9084,26 +13381,12 @@ function putyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,y::T2) whe
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},y))
+    if y === nothing; nothing; else convert(Vector{Float64},y); end)
 end
 
 
-"""
-  putslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slc::Vector{Float64})
-  putslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the slc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-"""
-function putslcslice end
 function putslcslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slc::Vector{Float64})
-  if length(slc) < (last - first)
+  if slc !== nothing && length(slc) < (last - first)
     throw(BoundsError())
   end
   slc_ = slc
@@ -9116,26 +13399,12 @@ function putslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slc::T2)
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},slc))
+    if slc === nothing; nothing; else convert(Vector{Float64},slc); end)
 end
 
 
-"""
-  putsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,suc::Vector{Float64})
-  putsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,suc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the suc vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-"""
-function putsucslice end
 function putsucslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,suc::Vector{Float64})
-  if length(suc) < (last - first)
+  if suc !== nothing && length(suc) < (last - first)
     throw(BoundsError())
   end
   suc_ = suc
@@ -9148,26 +13417,12 @@ function putsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,suc::T2)
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},suc))
+    if suc === nothing; nothing; else convert(Vector{Float64},suc); end)
 end
 
 
-"""
-  putslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slx::Vector{Float64})
-  putslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the slx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-"""
-function putslxslice end
 function putslxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,slx::Vector{Float64})
-  if length(slx) < (last - first)
+  if slx !== nothing && length(slx) < (last - first)
     throw(BoundsError())
   end
   slx_ = slx
@@ -9180,26 +13435,12 @@ function putslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slx::T2)
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},slx))
+    if slx === nothing; nothing; else convert(Vector{Float64},slx); end)
 end
 
 
-"""
-  putsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,sux::Vector{Float64})
-  putsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,sux::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the sux vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-"""
-function putsuxslice end
 function putsuxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,sux::Vector{Float64})
-  if length(sux) < (last - first)
+  if sux !== nothing && length(sux) < (last - first)
     throw(BoundsError())
   end
   sux_ = sux
@@ -9212,26 +13453,12 @@ function putsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,sux::T2)
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},sux))
+    if sux === nothing; nothing; else convert(Vector{Float64},sux); end)
 end
 
 
-"""
-  putsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,snx::Vector{Float64})
-  putsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,snx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Sets a slice of the snx vector for a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-"""
-function putsnxslice end
 function putsnxslice(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32,snx::Vector{Float64})
-  if length(snx) < (last - first)
+  if snx !== nothing && length(snx) < (last - first)
     throw(BoundsError())
   end
   snx_ = snx
@@ -9244,28 +13471,15 @@ function putsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,snx::T2)
     whichsol,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},snx))
+    if snx === nothing; nothing; else convert(Vector{Float64},snx); end)
 end
 
 
-"""
-  putbarxj(task::MSKtask,whichsol::Soltype,j::Int32,barxj::Vector{Float64})
-  putbarxj(task::MSKtask,whichsol::Soltype,j::T0,barxj::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
-
-  Sets the primal solution for a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    j::Int32 Index of the semidefinite variable.
-    barxj::Vector{Float64} Value of the j'th variable of barx.
-"""
-function putbarxj end
 function putbarxj(task::MSKtask,whichsol::Soltype,j::Int32,barxj::Vector{Float64})
-  __tmp_330 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_330)
-  __tmp_329 = __tmp_330[]
-  if length(barxj) < __tmp_329
+  __tmp_329 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_329)
+  __tmp_328 = __tmp_329[]
+  if barxj !== nothing && length(barxj) < __tmp_328
     throw(BoundsError())
   end
   barxj_ = barxj
@@ -9277,28 +13491,15 @@ function putbarxj(task::MSKtask,whichsol::Soltype,j::T0,barxj::T1) where { T0<:I
     task,
     whichsol,
     convert(Int32,j),
-    convert(Vector{Float64},barxj))
+    if barxj === nothing; nothing; else convert(Vector{Float64},barxj); end)
 end
 
 
-"""
-  putbarsj(task::MSKtask,whichsol::Soltype,j::Int32,barsj::Vector{Float64})
-  putbarsj(task::MSKtask,whichsol::Soltype,j::T0,barsj::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
-
-  Sets the dual solution for a semidefinite variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    j::Int32 Index of the semidefinite variable.
-    barsj::Vector{Float64} Value of the j'th variable of barx.
-"""
-function putbarsj end
 function putbarsj(task::MSKtask,whichsol::Soltype,j::Int32,barsj::Vector{Float64})
-  __tmp_333 = Ref{Int64}()
-  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_333)
-  __tmp_332 = __tmp_333[]
-  if length(barsj) < __tmp_332
+  __tmp_332 = Ref{Int64}()
+  @MSK_getlenbarvarj(task.task,j-Int32(1),__tmp_332)
+  __tmp_331 = __tmp_332[]
+  if barsj !== nothing && length(barsj) < __tmp_331
     throw(BoundsError())
   end
   barsj_ = barsj
@@ -9310,24 +13511,10 @@ function putbarsj(task::MSKtask,whichsol::Soltype,j::T0,barsj::T1) where { T0<:I
     task,
     whichsol,
     convert(Int32,j),
-    convert(Vector{Float64},barsj))
+    if barsj === nothing; nothing; else convert(Vector{Float64},barsj); end)
 end
 
 
-"""
-  getpviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getpviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a primal solution associated to a constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getpviolcon end
 function getpviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9340,24 +13527,10 @@ function getpviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abstra
   getpviolcon(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getpviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getpviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a primal solution for a list of scalar variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of x variables.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getpviolvar end
 function getpviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9370,24 +13543,10 @@ function getpviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abstra
   getpviolvar(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a primal solution for a list of semidefinite variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of barX variables.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getpviolbarvar end
 function getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9400,24 +13559,10 @@ function getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abs
   getpviolbarvar(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getpviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getpviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a solution for set of conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of conic constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getpviolcones end
 function getpviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9430,24 +13575,10 @@ function getpviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abst
   getpviolcones(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64}) :: viol
-  getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a solution for set of affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    accidxlist::Vector{Int64} An array of indexes of conic constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getpviolacc end
 function getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64})
   numaccidx = Int64(length(accidxlist))
   accidxlist_ = accidxlist .- Int64(1)
@@ -9460,24 +13591,10 @@ function getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where { T0<
   getpviolacc(
     task,
     whichsol,
-    convert(Vector{Int64},accidxlist))
+    if accidxlist === nothing; nothing; else convert(Vector{Int64},accidxlist); end)
 end
 
 
-"""
-  getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::Vector{Int64}) :: viol
-  getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a solution for set of disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    djcidxlist::Vector{Int64} An array of indexes of disjunctive constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getpvioldjc end
 function getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::Vector{Int64})
   numdjcidx = Int64(length(djcidxlist))
   djcidxlist_ = djcidxlist .- Int64(1)
@@ -9490,24 +13607,10 @@ function getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::T0) where { T0<
   getpvioldjc(
     task,
     whichsol,
-    convert(Vector{Int64},djcidxlist))
+    if djcidxlist === nothing; nothing; else convert(Vector{Int64},djcidxlist); end)
 end
 
 
-"""
-  getdviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getdviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a dual solution associated with a set of constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getdviolcon end
 function getdviolcon(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9520,24 +13623,10 @@ function getdviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abstra
   getdviolcon(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getdviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getdviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a dual solution associated with a set of scalar variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of x variables.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getdviolvar end
 function getdviolvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9550,24 +13639,10 @@ function getdviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abstra
   getdviolvar(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of dual solution for a set of semidefinite variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of barx variables.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getdviolbarvar end
 function getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9580,24 +13655,10 @@ function getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abs
   getdviolbarvar(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getdviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32}) :: viol
-  getdviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of a solution for set of dual conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    sub::Vector{Int32} An array of indexes of conic constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getdviolcones end
 function getdviolcones(task::MSKtask,whichsol::Soltype,sub::Vector{Int32})
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -9610,24 +13671,10 @@ function getdviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where { T0<:Abst
   getdviolcones(
     task,
     whichsol,
-    convert(Vector{Int32},sub))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end)
 end
 
 
-"""
-  getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64}) :: viol
-  getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
-
-  Computes the violation of the dual solution for set of affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    accidxlist::Vector{Int64} An array of indexes of conic constraints.
-  Returns
-    viol::Vector{Float64} List of violations corresponding to sub.
-"""
-function getdviolacc end
 function getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::Vector{Int64})
   numaccidx = Int64(length(accidxlist))
   accidxlist_ = accidxlist .- Int64(1)
@@ -9640,32 +13687,10 @@ function getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where { T0<
   getdviolacc(
     task,
     whichsol,
-    convert(Vector{Int64},accidxlist))
+    if accidxlist === nothing; nothing; else convert(Vector{Int64},accidxlist); end)
 end
 
 
-"""
-  getsolutioninfo(task::MSKtask,whichsol::Soltype) :: (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone)
-
-  Obtains information about of a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    pobj::Float64 The primal objective value.
-    pviolcon::Float64 Maximal primal bound violation for a xc variable.
-    pviolvar::Float64 Maximal primal bound violation for a xx variable.
-    pviolbarvar::Float64 Maximal primal bound violation for a barx variable.
-    pviolcone::Float64 Maximal primal violation of the solution with respect to the conic constraints.
-    pviolitg::Float64 Maximal violation in the integer constraints.
-    dobj::Float64 Dual objective value.
-    dviolcon::Float64 Maximal dual bound violation for a xc variable.
-    dviolvar::Float64 Maximal dual bound violation for a xx variable.
-    dviolbarvar::Float64 Maximal dual bound violation for a bars variable.
-    dviolcone::Float64 Maximum violation of the dual solution in the dual conic constraints.
-"""
-function getsolutioninfo end
 function getsolutioninfo(task::MSKtask,whichsol::Soltype)
   pobj_ = Ref{Float64}()
   pviolcon_ = Ref{Float64}()
@@ -9683,31 +13708,6 @@ function getsolutioninfo(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getsolutioninfonew(task::MSKtask,whichsol::Soltype) :: (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolacc,pvioldjc,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone,dviolacc)
-
-  Obtains information about of a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    pobj::Float64 The primal objective value.
-    pviolcon::Float64 Maximal primal bound violation for a xc variable.
-    pviolvar::Float64 Maximal primal bound violation for a xx variable.
-    pviolbarvar::Float64 Maximal primal bound violation for a barx variable.
-    pviolcone::Float64 Maximal primal violation of the solution with respect to the conic constraints.
-    pviolacc::Float64 Maximal primal violation of the solution with respect to the affine conic constraints.
-    pvioldjc::Float64 Maximal primal violation of the solution with respect to the disjunctive constraints.
-    pviolitg::Float64 Maximal violation in the integer constraints.
-    dobj::Float64 Dual objective value.
-    dviolcon::Float64 Maximal dual bound violation for a xc variable.
-    dviolvar::Float64 Maximal dual bound violation for a xx variable.
-    dviolbarvar::Float64 Maximal dual bound violation for a bars variable.
-    dviolcone::Float64 Maximum violation of the dual solution in the dual conic constraints.
-    dviolacc::Float64 Maximum violation of the dual solution in the dual affine conic constraints.
-"""
-function getsolutioninfonew end
 function getsolutioninfonew(task::MSKtask,whichsol::Soltype)
   pobj_ = Ref{Float64}()
   pviolcon_ = Ref{Float64}()
@@ -9728,24 +13728,6 @@ function getsolutioninfonew(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getdualsolutionnorms(task::MSKtask,whichsol::Soltype) :: (nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars)
-
-  Compute norms of the dual solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    nrmy::Float64 The norm of the y vector.
-    nrmslc::Float64 The norm of the slc vector.
-    nrmsuc::Float64 The norm of the suc vector.
-    nrmslx::Float64 The norm of the slx vector.
-    nrmsux::Float64 The norm of the sux vector.
-    nrmsnx::Float64 The norm of the snx vector.
-    nrmbars::Float64 The norm of the bars vector.
-"""
-function getdualsolutionnorms end
 function getdualsolutionnorms(task::MSKtask,whichsol::Soltype)
   nrmy_ = Ref{Float64}()
   nrmslc_ = Ref{Float64}()
@@ -9759,20 +13741,6 @@ function getdualsolutionnorms(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getprimalsolutionnorms(task::MSKtask,whichsol::Soltype) :: (nrmxc,nrmxx,nrmbarx)
-
-  Compute norms of the primal solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    nrmxc::Float64 The norm of the xc vector.
-    nrmxx::Float64 The norm of the xx vector.
-    nrmbarx::Float64 The norm of the barX vector.
-"""
-function getprimalsolutionnorms end
 function getprimalsolutionnorms(task::MSKtask,whichsol::Soltype)
   nrmxc_ = Ref{Float64}()
   nrmxx_ = Ref{Float64}()
@@ -9782,22 +13750,6 @@ function getprimalsolutionnorms(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::Int32,last::Int32) :: values
-  getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: values
-
-  Obtains a slice of the solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    solitem::Solitem Which part of the solution is required.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-  Returns
-    values::Vector{Float64} The values of the requested solution elements.
-"""
-function getsolutionslice end
 function getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::Int32,last::Int32)
   values_ = Vector{Float64}(undef,(last - first))
   @MSK_getsolutionslice(task.task,whichsol.value,solitem.value,first-Int32(1),last-Int32(1),values_)
@@ -9814,21 +13766,6 @@ function getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first
 end
 
 
-"""
-  getreducedcosts(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32) :: redcosts
-  getreducedcosts(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: redcosts
-
-  Obtains the reduced costs for a sequence of variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    first::Int32 The index of the first variable in the sequence.
-    last::Int32 The index of the last variable in the sequence plus 1.
-  Returns
-    redcosts::Vector{Float64} Returns the requested reduced costs.
-"""
-function getreducedcosts end
 function getreducedcosts(task::MSKtask,whichsol::Soltype,first::Int32,last::Int32)
   redcosts_ = Vector{Float64}(undef,(last - first))
   @MSK_getreducedcosts(task.task,whichsol.value,first-Int32(1),last-Int32(1),redcosts_)
@@ -9844,24 +13781,11 @@ function getreducedcosts(task::MSKtask,whichsol::Soltype,first::T0,last::T1) whe
 end
 
 
-"""
-  getstrparam(task::MSKtask,param::Sparam) :: (len,parvalue)
-
-  Obtains the value of a string parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Sparam Which parameter.
-  Returns
-    len::Int32 The length of the parameter value.
-    parvalue::String If this is not a null pointer, the parameter value is stored here.
-"""
-function getstrparam end
 function getstrparam(task::MSKtask,param::Sparam)
-  __tmp_353 = Ref{Int32}()
-  @MSK_getstrparamlen(task.task,param,__tmp_353)
-  __tmp_352 = __tmp_353[]
-  maxlen = Int32((1 + __tmp_352))
+  __tmp_352 = Ref{Int32}()
+  @MSK_getstrparamlen(task.task,param,__tmp_352)
+  __tmp_351 = __tmp_352[]
+  maxlen = Int32((1 + __tmp_351))
   len_ = Ref{Int32}()
   parvalue_ = Array{UInt8}(undef,maxlen)
   @MSK_getstrparam(task.task,param.value,maxlen,len_,parvalue_)
@@ -9875,18 +13799,6 @@ function getstrparam(task::MSKtask,param::Sparam)
 end
 
 
-"""
-  getstrparamlen(task::MSKtask,param::Sparam) :: len
-
-  Obtains the length of a string parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Sparam Which parameter.
-  Returns
-    len::Int32 The length of the parameter value.
-"""
-function getstrparamlen end
 function getstrparamlen(task::MSKtask,param::Sparam)
   len_ = Ref{Int32}()
   @MSK_getstrparamlen(task.task,param.value,len_)
@@ -9894,17 +13806,6 @@ function getstrparamlen(task::MSKtask,param::Sparam)
 end
 
 
-"""
-  gettasknamelen(task::MSKtask) :: len
-
-  Obtains the length the task name.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    len::Int32 Returns the length of the task name.
-"""
-function gettasknamelen end
 function gettasknamelen(task::MSKtask)
   len_ = Ref{Int32}()
   @MSK_gettasknamelen(task.task,len_)
@@ -9912,22 +13813,11 @@ function gettasknamelen(task::MSKtask)
 end
 
 
-"""
-  gettaskname(task::MSKtask) :: taskname
-
-  Obtains the task name.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    taskname::String Returns the task name.
-"""
-function gettaskname end
 function gettaskname(task::MSKtask)
-  __tmp_358 = Ref{Int32}()
-  @MSK_gettasknamelen(task.task,__tmp_358)
-  __tmp_357 = __tmp_358[]
-  sizetaskname = Int32((1 + __tmp_357))
+  __tmp_357 = Ref{Int32}()
+  @MSK_gettasknamelen(task.task,__tmp_357)
+  __tmp_356 = __tmp_357[]
+  sizetaskname = Int32((1 + __tmp_356))
   taskname_ = Array{UInt8}(undef,sizetaskname)
   @MSK_gettaskname(task.task,sizetaskname,taskname_)
   taskname_len = findfirst(_c->_c==0,taskname_)
@@ -9940,19 +13830,6 @@ function gettaskname(task::MSKtask)
 end
 
 
-"""
-  getvartype(task::MSKtask,j::Int32) :: vartype
-  getvartype(task::MSKtask,j::T0) where {T0<:Integer}  :: vartype
-
-  Gets the variable type of one variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable.
-  Returns
-    vartype::Variabletype Variable type of variable index j.
-"""
-function getvartype end
 function getvartype(task::MSKtask,j::Int32)
   vartype_ = Ref{Int32}()
   @MSK_getvartype(task.task,j-Int32(1),vartype_)
@@ -9966,19 +13843,6 @@ function getvartype(task::MSKtask,j::T0) where { T0<:Integer }
 end
 
 
-"""
-  getvartypelist(task::MSKtask,subj::Vector{Int32}) :: vartype
-  getvartypelist(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: vartype
-
-  Obtains the variable type for one or more variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subj::Vector{Int32} A list of variable indexes.
-  Returns
-    vartype::Vector{Variabletype} Returns the variables types corresponding the variable indexes requested.
-"""
-function getvartypelist end
 function getvartypelist(task::MSKtask,subj::Vector{Int32})
   num = Int32(length(subj))
   subj_ = subj .- Int32(1)
@@ -9990,40 +13854,14 @@ end
 function getvartypelist(task::MSKtask,subj::T0) where { T0<:AbstractVector{<:Integer} }
   getvartypelist(
     task,
-    convert(Vector{Int32},subj))
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end)
 end
 
 
-"""
-  inputdata(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,c::Vector{Float64},cfix::Float64,aptrb::Vector{Int64},aptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
-  inputdata(task::MSKtask,maxnumcon::T0,maxnumvar::T1,c::T2,cfix::T3,aptrb::T4,aptre::T5,asub::T6,aval::T7,bkc::Vector{Boundkey},blc::T8,buc::T9,bkx::Vector{Boundkey},blx::T10,bux::T11) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:Number,T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Integer},T7<:AbstractVector{<:Number},T8<:AbstractVector{<:Number},T9<:AbstractVector{<:Number},T10<:AbstractVector{<:Number},T11<:AbstractVector{<:Number}} 
-  inputdata(task::MSKtask,maxnumcon::T0,maxnumvar::T1,c::T2,cfix::T3,A:: SparseMatrixCSC{Float64},bkc::Vector{Boundkey},blc::T8,buc::T9,bkx::Vector{Boundkey},blx::T10,bux::T11)
-
-  Input the linear part of an optimization task in one function call.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumcon::Int32 Number of preallocated constraints in the optimization task.
-    maxnumvar::Int32 Number of preallocated variables in the optimization task.
-    c::Vector{Float64} Linear terms of the objective as a dense vector. The length is the number of variables.
-    cfix::Float64 Fixed term in the objective.
-    aptrb::Vector{Int64} Row or column start pointers.
-    aptre::Vector{Int64} Row or column end pointers.
-    asub::Vector{Int32} Coefficient subscripts.
-    aval::Vector{Float64} Coefficient values.
-    bkc::Vector{Boundkey} Bound keys for the constraints.
-    blc::Vector{Float64} Lower bounds for the constraints.
-    buc::Vector{Float64} Upper bounds for the constraints.
-    bkx::Vector{Boundkey} Bound keys for the variables.
-    blx::Vector{Float64} Lower bounds for the variables.
-    bux::Vector{Float64} Upper bounds for the variables.
-    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
-"""
-function inputdata end
-function inputdata(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,c::Vector{Float64},cfix::Float64,aptrb::Vector{Int64},aptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
+function inputdata(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,c::Union{Nothing,Vector{Float64}},cfix::Float64,aptrb::Vector{Int64},aptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
   numcon = Int32(min(length(buc),length(blc),length(bkc)))
   numvar = Int32(min(length(c),length(bux),length(blx),length(bkx),length(aptrb),length(aptre)))
-  c_ = c
+  c_ = if c === nothing; C_NULL; else c end
   aptrb_ = aptrb .- Int64(1)
   aptre_ = aptre .- Int64(1)
   asub_ = asub .- Int32(1)
@@ -10049,33 +13887,21 @@ function inputdata(task::MSKtask,maxnumcon::T0,maxnumvar::T1,c::T2,cfix::T3,aptr
     task,
     convert(Int32,maxnumcon),
     convert(Int32,maxnumvar),
-    convert(Vector{Float64},c),
+    if c === nothing; nothing; else convert(Vector{Float64},c); end,
     convert(Float64,cfix),
-    convert(Vector{Int64},aptrb),
-    convert(Vector{Int64},aptre),
-    convert(Vector{Int32},asub),
-    convert(Vector{Float64},aval),
+    if aptrb === nothing; nothing; else convert(Vector{Int64},aptrb); end,
+    if aptre === nothing; nothing; else convert(Vector{Int64},aptre); end,
+    if asub === nothing; nothing; else convert(Vector{Int32},asub); end,
+    if aval === nothing; nothing; else convert(Vector{Float64},aval); end,
     bkc,
-    convert(Vector{Float64},blc),
-    convert(Vector{Float64},buc),
+    if blc === nothing; nothing; else convert(Vector{Float64},blc); end,
+    if buc === nothing; nothing; else convert(Vector{Float64},buc); end,
     bkx,
-    convert(Vector{Float64},blx),
-    convert(Vector{Float64},bux))
+    if blx === nothing; nothing; else convert(Vector{Float64},blx); end,
+    if bux === nothing; nothing; else convert(Vector{Float64},bux); end)
 end
 
 
-"""
-  isdouparname(task::MSKtask,parname::AbstractString) :: param
-
-  Checks a double parameter name.
-
-  Arguments
-    task::MSKtask An optimization task.
-    parname::AbstractString Parameter name.
-  Returns
-    param::Dparam Returns the parameter corresponding to the name, if one exists.
-"""
-function isdouparname end
 function isdouparname(task::MSKtask,parname::AbstractString)
   parname_ = Vector{UInt8}(parname); push!(parname_,UInt8(0))
   param_ = Ref{Int32}()
@@ -10085,18 +13911,6 @@ function isdouparname(task::MSKtask,parname::AbstractString)
 end
 
 
-"""
-  isintparname(task::MSKtask,parname::AbstractString) :: param
-
-  Checks an integer parameter name.
-
-  Arguments
-    task::MSKtask An optimization task.
-    parname::AbstractString Parameter name.
-  Returns
-    param::Iparam Returns the parameter corresponding to the name, if one exists.
-"""
-function isintparname end
 function isintparname(task::MSKtask,parname::AbstractString)
   parname_ = Vector{UInt8}(parname); push!(parname_,UInt8(0))
   param_ = Ref{Int32}()
@@ -10106,18 +13920,6 @@ function isintparname(task::MSKtask,parname::AbstractString)
 end
 
 
-"""
-  isstrparname(task::MSKtask,parname::AbstractString) :: param
-
-  Checks a string parameter name.
-
-  Arguments
-    task::MSKtask An optimization task.
-    parname::AbstractString Parameter name.
-  Returns
-    param::Sparam Returns the parameter corresponding to the name, if one exists.
-"""
-function isstrparname end
 function isstrparname(task::MSKtask,parname::AbstractString)
   parname_ = Vector{UInt8}(parname); push!(parname_,UInt8(0))
   param_ = Ref{Int32}()
@@ -10127,25 +13929,12 @@ function isstrparname(task::MSKtask,parname::AbstractString)
 end
 
 
-"""
-  linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::Int32)
-  linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::T0) where {T0<:Integer} 
-
-  Directs all output from a task stream to a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-    filename::AbstractString A valid file name.
-    append::Int32 If this argument is 0 the output file will be overwritten, otherwise it will be appended to.
-"""
-function linkfiletostream end
 function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::Int32)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_linkfiletotaskstream(task.task,whichstream.value,filename_,append)
   nothing
 end
-function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::AbstractString,append::T0) where { T0<:Integer }
+function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where { T0<:Integer }
   linkfiletostream(
     task,
     whichstream,
@@ -10154,90 +13943,54 @@ function linkfiletostream(task::MSKtask,whichstream::Streamtype,filename::Abstra
 end
 
 
-"""
-  primalrepair(task::MSKtask,wlc::Vector{Float64},wuc::Vector{Float64},wlx::Vector{Float64},wux::Vector{Float64})
-  primalrepair(task::MSKtask,wlc::T0,wuc::T1,wlx::T2,wux::T3) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
-
-  Repairs a primal infeasible optimization problem by adjusting the bounds on the constraints and variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    wlc::Vector{Float64} Weights associated with relaxing lower bounds on the constraints.
-    wuc::Vector{Float64} Weights associated with relaxing the upper bound on the constraints.
-    wlx::Vector{Float64} Weights associated with relaxing the lower bounds of the variables.
-    wux::Vector{Float64} Weights associated with relaxing the upper bounds of variables.
-"""
-function primalrepair end
-function primalrepair(task::MSKtask,wlc::Vector{Float64},wuc::Vector{Float64},wlx::Vector{Float64},wux::Vector{Float64})
-  __tmp_368 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_368)
-  __tmp_367 = __tmp_368[]
-  if length(wlc) < __tmp_367
+function primalrepair(task::MSKtask,wlc::Union{Nothing,Vector{Float64}},wuc::Union{Nothing,Vector{Float64}},wlx::Union{Nothing,Vector{Float64}},wux::Union{Nothing,Vector{Float64}})
+  __tmp_367 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_367)
+  __tmp_366 = __tmp_367[]
+  if wlc !== nothing && length(wlc) < __tmp_366
     throw(BoundsError())
   end
-  wlc_ = wlc
-  __tmp_370 = Ref{Int32}()
-  @MSK_getnumcon(task.task,__tmp_370)
-  __tmp_369 = __tmp_370[]
-  if length(wuc) < __tmp_369
+  wlc_ = if wlc === nothing; C_NULL; else wlc end
+  __tmp_369 = Ref{Int32}()
+  @MSK_getnumcon(task.task,__tmp_369)
+  __tmp_368 = __tmp_369[]
+  if wuc !== nothing && length(wuc) < __tmp_368
     throw(BoundsError())
   end
-  wuc_ = wuc
-  __tmp_372 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_372)
-  __tmp_371 = __tmp_372[]
-  if length(wlx) < __tmp_371
+  wuc_ = if wuc === nothing; C_NULL; else wuc end
+  __tmp_371 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_371)
+  __tmp_370 = __tmp_371[]
+  if wlx !== nothing && length(wlx) < __tmp_370
     throw(BoundsError())
   end
-  wlx_ = wlx
-  __tmp_374 = Ref{Int32}()
-  @MSK_getnumvar(task.task,__tmp_374)
-  __tmp_373 = __tmp_374[]
-  if length(wux) < __tmp_373
+  wlx_ = if wlx === nothing; C_NULL; else wlx end
+  __tmp_373 = Ref{Int32}()
+  @MSK_getnumvar(task.task,__tmp_373)
+  __tmp_372 = __tmp_373[]
+  if wux !== nothing && length(wux) < __tmp_372
     throw(BoundsError())
   end
-  wux_ = wux
+  wux_ = if wux === nothing; C_NULL; else wux end
   @MSK_primalrepair(task.task,wlc_,wuc_,wlx_,wux_)
   nothing
 end
 function primalrepair(task::MSKtask,wlc::T0,wuc::T1,wlx::T2,wux::T3) where { T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number} }
   primalrepair(
     task,
-    convert(Vector{Float64},wlc),
-    convert(Vector{Float64},wuc),
-    convert(Vector{Float64},wlx),
-    convert(Vector{Float64},wux))
+    if wlc === nothing; nothing; else convert(Vector{Float64},wlc); end,
+    if wuc === nothing; nothing; else convert(Vector{Float64},wuc); end,
+    if wlx === nothing; nothing; else convert(Vector{Float64},wlx); end,
+    if wux === nothing; nothing; else convert(Vector{Float64},wux); end)
 end
 
 
-"""
-  infeasibilityreport(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
-
-  TBD
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-    whichsol::Soltype Selects a solution.
-"""
-function infeasibilityreport end
 function infeasibilityreport(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
   @MSK_infeasibilityreport(task.task,whichstream.value,whichsol.value)
   nothing
 end
 
 
-"""
-  optimize(task::MSKtask) :: trmcode
-
-  Optimizes the problem.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    trmcode::Rescode Is either OK or a termination response code.
-"""
-function optimize end
 function optimize(task::MSKtask)
   trmcode_ = Ref{Int32}()
   @MSK_optimizetrm(task.task,trmcode_)
@@ -10246,47 +13999,44 @@ function optimize(task::MSKtask)
 end
 
 
-"""
-  printparam(task::MSKtask)
-
-  Prints the current parameter settings.
-
-  Arguments
-    task::MSKtask An optimization task.
-"""
-function printparam end
 function printparam(task::MSKtask)
   @MSK_printparam(task.task)
   nothing
 end
 
 
-"""
-  commitchanges(task::MSKtask)
+function probtypetostr(task::MSKtask,probtype::Problemtype)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_probtypetostr(task.task,probtype.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
 
-  Commits all cached problem changes.
 
-  Arguments
-    task::MSKtask An optimization task.
-"""
-function commitchanges end
+function prostatostr(task::MSKtask,problemsta::Prosta)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_prostatostr(task.task,problemsta.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
+
+
 function commitchanges(task::MSKtask)
   @MSK_commitchanges(task.task)
   nothing
 end
 
 
-"""
-  getatruncatetol(task::MSKtask) :: tolzero
-
-  Gets the current A matrix truncation threshold.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    tolzero::Vector{Float64} Truncation tolerance.
-"""
-function getatruncatetol end
 function getatruncatetol(task::MSKtask)
   tolzero_ = Vector{Float64}(undef,1)
   @MSK_getatruncatetol(task.task,tolzero_)
@@ -10295,17 +14045,6 @@ function getatruncatetol(task::MSKtask)
 end
 
 
-"""
-  putatruncatetol(task::MSKtask,tolzero::Float64)
-  putatruncatetol(task::MSKtask,tolzero::T0) where {T0<:Number} 
-
-  Truncates all elements in A below a certain tolerance to zero.
-
-  Arguments
-    task::MSKtask An optimization task.
-    tolzero::Float64 Truncation tolerance.
-"""
-function putatruncatetol end
 function putatruncatetol(task::MSKtask,tolzero::Float64)
   @MSK_putatruncatetol(task.task,tolzero)
   nothing
@@ -10317,19 +14056,6 @@ function putatruncatetol(task::MSKtask,tolzero::T0) where { T0<:Number }
 end
 
 
-"""
-  putaij(task::MSKtask,i::Int32,j::Int32,aij::Float64)
-  putaij(task::MSKtask,i::T0,j::T1,aij::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
-
-  Changes a single value in the linear coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Constraint (row) index.
-    j::Int32 Variable (column) index.
-    aij::Float64 New coefficient.
-"""
-function putaij end
 function putaij(task::MSKtask,i::Int32,j::Int32,aij::Float64)
   @MSK_putaij(task.task,i-Int32(1),j-Int32(1),aij)
   nothing
@@ -10343,19 +14069,6 @@ function putaij(task::MSKtask,i::T0,j::T1,aij::T2) where { T0<:Integer,T1<:Integ
 end
 
 
-"""
-  putaijlist(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64})
-  putaijlist(task::MSKtask,subi::T0,subj::T1,valij::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Changes one or more coefficients in the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subi::Vector{Int32} Constraint (row) indices.
-    subj::Vector{Int32} Variable (column) indices.
-    valij::Vector{Float64} New coefficient values.
-"""
-function putaijlist end
 function putaijlist(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64})
   num = Int64(min(length(subi),length(subj),length(valij)))
   subi_ = subi .- Int32(1)
@@ -10367,25 +14080,12 @@ end
 function putaijlist(task::MSKtask,subi::T0,subj::T1,valij::T2) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number} }
   putaijlist(
     task,
-    convert(Vector{Int32},subi),
-    convert(Vector{Int32},subj),
-    convert(Vector{Float64},valij))
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if valij === nothing; nothing; else convert(Vector{Float64},valij); end)
 end
 
 
-"""
-  putacol(task::MSKtask,j::Int32,subj::Vector{Int32},valj::Vector{Float64})
-  putacol(task::MSKtask,j::T0,subj::T1,valj::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Replaces all elements in one column of the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Column index.
-    subj::Vector{Int32} Row indexes of non-zero values in column.
-    valj::Vector{Float64} New non-zero values of column.
-"""
-function putacol end
 function putacol(task::MSKtask,j::Int32,subj::Vector{Int32},valj::Vector{Float64})
   nzj = Int32(min(length(subj),length(valj)))
   subj_ = subj .- Int32(1)
@@ -10397,24 +14097,11 @@ function putacol(task::MSKtask,j::T0,subj::T1,valj::T2) where { T0<:Integer,T1<:
   putacol(
     task,
     convert(Int32,j),
-    convert(Vector{Int32},subj),
-    convert(Vector{Float64},valj))
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if valj === nothing; nothing; else convert(Vector{Float64},valj); end)
 end
 
 
-"""
-  putarow(task::MSKtask,i::Int32,subi::Vector{Int32},vali::Vector{Float64})
-  putarow(task::MSKtask,i::T0,subi::T1,vali::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Replaces all elements in one row of the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Row index.
-    subi::Vector{Int32} Column indexes of non-zero values in row.
-    vali::Vector{Float64} New non-zero values of row.
-"""
-function putarow end
 function putarow(task::MSKtask,i::Int32,subi::Vector{Int32},vali::Vector{Float64})
   nzi = Int32(min(length(subi),length(vali)))
   subi_ = subi .- Int32(1)
@@ -10426,35 +14113,17 @@ function putarow(task::MSKtask,i::T0,subi::T1,vali::T2) where { T0<:Integer,T1<:
   putarow(
     task,
     convert(Int32,i),
-    convert(Vector{Int32},subi),
-    convert(Vector{Float64},vali))
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if vali === nothing; nothing; else convert(Vector{Float64},vali); end)
 end
 
 
-"""
-  putarowslice(task::MSKtask,first::Int32,last::Int32,ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
-  putarowslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T4,aval::T5) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
-  putarowslice(task::MSKtask,first::T0,last::T1,At:: SparseMatrixCSC{Float64})
-
-  Replaces all elements in several rows the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First row in the slice.
-    last::Int32 Last row plus one in the slice.
-    ptrb::Vector{Int64} Array of pointers to the first element in the rows.
-    ptre::Vector{Int64} Array of pointers to the last element plus one in the rows.
-    asub::Vector{Int32} Column indexes of new elements.
-    aval::Vector{Float64} Coefficient values.
-    At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
-"""
-function putarowslice end
 function putarowslice(task::MSKtask,first::Int32,last::Int32,ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
-  if length(ptrb) < (last - first)
+  if ptrb !== nothing && length(ptrb) < (last - first)
     throw(BoundsError())
   end
   ptrb_ = ptrb .- Int64(1)
-  if length(ptre) < (last - first)
+  if ptre !== nothing && length(ptre) < (last - first)
     throw(BoundsError())
   end
   ptre_ = ptre .- Int64(1)
@@ -10475,30 +14144,13 @@ function putarowslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T
     task,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Int64},ptrb),
-    convert(Vector{Int64},ptre),
-    convert(Vector{Int32},asub),
-    convert(Vector{Float64},aval))
+    if ptrb === nothing; nothing; else convert(Vector{Int64},ptrb); end,
+    if ptre === nothing; nothing; else convert(Vector{Int64},ptre); end,
+    if asub === nothing; nothing; else convert(Vector{Int32},asub); end,
+    if aval === nothing; nothing; else convert(Vector{Float64},aval); end)
 end
 
 
-"""
-  putarowlist(task::MSKtask,sub::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
-  putarowlist(task::MSKtask,sub::T0,ptrb::T1,ptre::T2,asub::T3,aval::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
-  putarowlist(task::MSKtask,sub::T0,At:: SparseMatrixCSC{Float64})
-
-  Replaces all elements in several rows of the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sub::Vector{Int32} Indexes of rows or columns that should be replaced.
-    ptrb::Vector{Int64} Array of pointers to the first element in the rows.
-    ptre::Vector{Int64} Array of pointers to the last element plus one in the rows.
-    asub::Vector{Int32} Variable indexes.
-    aval::Vector{Float64} Coefficient values.
-    At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
-"""
-function putarowlist end
 function putarowlist(task::MSKtask,sub::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
   num = Int32(min(length(sub),length(ptrb),length(ptre)))
   sub_ = sub .- Int32(1)
@@ -10519,32 +14171,14 @@ end
 function putarowlist(task::MSKtask,sub::T0,ptrb::T1,ptre::T2,asub::T3,aval::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putarowlist(
     task,
-    convert(Vector{Int32},sub),
-    convert(Vector{Int64},ptrb),
-    convert(Vector{Int64},ptre),
-    convert(Vector{Int32},asub),
-    convert(Vector{Float64},aval))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end,
+    if ptrb === nothing; nothing; else convert(Vector{Int64},ptrb); end,
+    if ptre === nothing; nothing; else convert(Vector{Int64},ptre); end,
+    if asub === nothing; nothing; else convert(Vector{Int32},asub); end,
+    if aval === nothing; nothing; else convert(Vector{Float64},aval); end)
 end
 
 
-"""
-  putacolslice(task::MSKtask,first::Int32,last::Int32,ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
-  putacolslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T4,aval::T5) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
-  putacolslice(task::MSKtask,first::T0,last::T1,A:: SparseMatrixCSC{Float64})
-
-  Replaces all elements in a sequence of columns the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First column in the slice.
-    last::Int32 Last column plus one in the slice.
-    ptrb::Vector{Int64} Array of pointers to the first element in the columns.
-    ptre::Vector{Int64} Array of pointers to the last element plus one in the columns.
-    asub::Vector{Int32} Row indexes
-    aval::Vector{Float64} Coefficient values.
-    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
-"""
-function putacolslice end
 function putacolslice(task::MSKtask,first::Int32,last::Int32,ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
   ptrb_ = ptrb .- Int64(1)
   ptre_ = ptre .- Int64(1)
@@ -10565,30 +14199,13 @@ function putacolslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T
     task,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Int64},ptrb),
-    convert(Vector{Int64},ptre),
-    convert(Vector{Int32},asub),
-    convert(Vector{Float64},aval))
+    if ptrb === nothing; nothing; else convert(Vector{Int64},ptrb); end,
+    if ptre === nothing; nothing; else convert(Vector{Int64},ptre); end,
+    if asub === nothing; nothing; else convert(Vector{Int32},asub); end,
+    if aval === nothing; nothing; else convert(Vector{Float64},aval); end)
 end
 
 
-"""
-  putacollist(task::MSKtask,sub::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
-  putacollist(task::MSKtask,sub::T0,ptrb::T1,ptre::T2,asub::T3,aval::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
-  putacollist(task::MSKtask,sub::T0,A:: SparseMatrixCSC{Float64})
-
-  Replaces all elements in several columns the linear constraint matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sub::Vector{Int32} Indexes of columns that should be replaced.
-    ptrb::Vector{Int64} Array of pointers to the first element in the columns.
-    ptre::Vector{Int64} Array of pointers to the last element plus one in the columns.
-    asub::Vector{Int32} Row indexes
-    aval::Vector{Float64} Coefficient values.
-    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
-"""
-function putacollist end
 function putacollist(task::MSKtask,sub::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},asub::Vector{Int32},aval::Vector{Float64})
   num = Int32(min(length(sub),length(ptrb),length(ptre)))
   sub_ = sub .- Int32(1)
@@ -10609,28 +14226,14 @@ end
 function putacollist(task::MSKtask,sub::T0,ptrb::T1,ptre::T2,asub::T3,aval::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putacollist(
     task,
-    convert(Vector{Int32},sub),
-    convert(Vector{Int64},ptrb),
-    convert(Vector{Int64},ptre),
-    convert(Vector{Int32},asub),
-    convert(Vector{Float64},aval))
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end,
+    if ptrb === nothing; nothing; else convert(Vector{Int64},ptrb); end,
+    if ptre === nothing; nothing; else convert(Vector{Int64},ptre); end,
+    if asub === nothing; nothing; else convert(Vector{Int32},asub); end,
+    if aval === nothing; nothing; else convert(Vector{Float64},aval); end)
 end
 
 
-"""
-  putbaraij(task::MSKtask,i::Int32,j::Int32,sub::Vector{Int64},weights::Vector{Float64})
-  putbaraij(task::MSKtask,i::T0,j::T1,sub::T2,weights::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-
-  Inputs an element of barA.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Row index of barA.
-    j::Int32 Column index of barA.
-    sub::Vector{Int64} Element indexes in matrix storage.
-    weights::Vector{Float64} Weights in the weighted sum.
-"""
-function putbaraij end
 function putbaraij(task::MSKtask,i::Int32,j::Int32,sub::Vector{Int64},weights::Vector{Float64})
   num = Int64(min(length(sub),length(weights)))
   sub_ = sub .- Int64(1)
@@ -10643,29 +14246,11 @@ function putbaraij(task::MSKtask,i::T0,j::T1,sub::T2,weights::T3) where { T0<:In
     task,
     convert(Int32,i),
     convert(Int32,j),
-    convert(Vector{Int64},sub),
-    convert(Vector{Float64},weights))
+    if sub === nothing; nothing; else convert(Vector{Int64},sub); end,
+    if weights === nothing; nothing; else convert(Vector{Float64},weights); end)
 end
 
 
-"""
-  putbaraijlist(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},alphaptrb::Vector{Int64},alphaptre::Vector{Int64},matidx::Vector{Int64},weights::Vector{Float64})
-  putbaraijlist(task::MSKtask,subi::T0,subj::T1,alphaptrb::T2,alphaptre::T3,matidx::T4,weights::T5) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
-  putbaraijlist(task::MSKtask,subi::T0,subj::T1,A:: SparseMatrixCSC{Float64})
-
-  Inputs list of elements of barA.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subi::Vector{Int32} Row index of barA.
-    subj::Vector{Int32} Column index of barA.
-    alphaptrb::Vector{Int64} Start entries for terms in the weighted sum.
-    alphaptre::Vector{Int64} End entries for terms in the weighted sum.
-    matidx::Vector{Int64} Element indexes in matrix storage.
-    weights::Vector{Float64} Weights in the weighted sum.
-    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
-"""
-function putbaraijlist end
 function putbaraijlist(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},alphaptrb::Vector{Int64},alphaptre::Vector{Int64},matidx::Vector{Int64},weights::Vector{Float64})
   num = Int32(min(length(subi),length(subj),length(alphaptrb),length(alphaptre)))
   subi_ = subi .- Int32(1)
@@ -10687,49 +14272,30 @@ end
 function putbaraijlist(task::MSKtask,subi::T0,subj::T1,alphaptrb::T2,alphaptre::T3,matidx::T4,weights::T5) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number} }
   putbaraijlist(
     task,
-    convert(Vector{Int32},subi),
-    convert(Vector{Int32},subj),
-    convert(Vector{Int64},alphaptrb),
-    convert(Vector{Int64},alphaptre),
-    convert(Vector{Int64},matidx),
-    convert(Vector{Float64},weights))
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if alphaptrb === nothing; nothing; else convert(Vector{Int64},alphaptrb); end,
+    if alphaptre === nothing; nothing; else convert(Vector{Int64},alphaptre); end,
+    if matidx === nothing; nothing; else convert(Vector{Int64},matidx); end,
+    if weights === nothing; nothing; else convert(Vector{Float64},weights); end)
 end
 
 
-"""
-  putbararowlist(task::MSKtask,subi::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},subj::Vector{Int32},nummat::Vector{Int64},matidx::Vector{Int64},weights::Vector{Float64})
-  putbararowlist(task::MSKtask,subi::T0,ptrb::T1,ptre::T2,subj::T3,nummat::T4,matidx::T5,weights::T6) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}} 
-  putbararowlist(task::MSKtask,subi::T0,A:: SparseMatrixCSC{Float64},matidx::T5,weights::T6)
-
-  Replace a set of rows of barA
-
-  Arguments
-    task::MSKtask An optimization task.
-    subi::Vector{Int32} Row indexes of barA.
-    ptrb::Vector{Int64} Start of rows in barA.
-    ptre::Vector{Int64} End of rows in barA.
-    subj::Vector{Int32} Column index of barA.
-    nummat::Vector{Int64} Number of entries in weighted sum of matrixes.
-    matidx::Vector{Int64} Matrix indexes for weighted sum of matrixes.
-    weights::Vector{Float64} Weights for weighted sum of matrixes.
-    A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
-"""
-function putbararowlist end
 function putbararowlist(task::MSKtask,subi::Vector{Int32},ptrb::Vector{Int64},ptre::Vector{Int64},subj::Vector{Int32},nummat::Vector{Int64},matidx::Vector{Int64},weights::Vector{Float64})
   num = Int32(min(length(subi),length(ptrb),length(ptre)))
   subi_ = subi .- Int32(1)
   ptrb_ = ptrb .- Int64(1)
   ptre_ = ptre .- Int64(1)
   subj_ = subj .- Int32(1)
-  if length(nummat) < length(subj)
+  if nummat !== nothing && length(nummat) < length(subj)
     throw(BoundsError())
   end
   nummat_ = nummat .- Int64(1)
-  if length(matidx) < sum(nummat)
+  if matidx !== nothing && length(matidx) < sum(nummat)
     throw(BoundsError())
   end
   matidx_ = matidx .- Int64(1)
-  if length(weights) < sum(nummat)
+  if weights !== nothing && length(weights) < sum(nummat)
     throw(BoundsError())
   end
   weights_ = weights .- Float64(1)
@@ -10746,27 +14312,16 @@ end
 function putbararowlist(task::MSKtask,subi::T0,ptrb::T1,ptre::T2,subj::T3,nummat::T4,matidx::T5,weights::T6) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number} }
   putbararowlist(
     task,
-    convert(Vector{Int32},subi),
-    convert(Vector{Int64},ptrb),
-    convert(Vector{Int64},ptre),
-    convert(Vector{Int32},subj),
-    convert(Vector{Int64},nummat),
-    convert(Vector{Int64},matidx),
-    convert(Vector{Float64},weights))
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if ptrb === nothing; nothing; else convert(Vector{Int64},ptrb); end,
+    if ptre === nothing; nothing; else convert(Vector{Int64},ptre); end,
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if nummat === nothing; nothing; else convert(Vector{Int64},nummat); end,
+    if matidx === nothing; nothing; else convert(Vector{Int64},matidx); end,
+    if weights === nothing; nothing; else convert(Vector{Float64},weights); end)
 end
 
 
-"""
-  getnumbarcnz(task::MSKtask) :: nz
-
-  Obtains the number of nonzero elements in barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    nz::Int64 The number of nonzero elements in barc.
-"""
-function getnumbarcnz end
 function getnumbarcnz(task::MSKtask)
   nz_ = Ref{Int64}()
   @MSK_getnumbarcnz(task.task,nz_)
@@ -10774,17 +14329,6 @@ function getnumbarcnz(task::MSKtask)
 end
 
 
-"""
-  getnumbaranz(task::MSKtask) :: nz
-
-  Get the number of nonzero elements in barA.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    nz::Int64 The number of nonzero block elements in barA.
-"""
-function getnumbaranz end
 function getnumbaranz(task::MSKtask)
   nz_ = Ref{Int64}()
   @MSK_getnumbaranz(task.task,nz_)
@@ -10792,23 +14336,11 @@ function getnumbaranz(task::MSKtask)
 end
 
 
-"""
-  getbarcsparsity(task::MSKtask) :: (numnz,idxj)
-
-  Get the positions of the nonzero elements in barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numnz::Int64 Number of nonzero elements in barc.
-    idxj::Vector{Int64} Internal positions of the nonzeros elements in barc.
-"""
-function getbarcsparsity end
 function getbarcsparsity(task::MSKtask)
-  __tmp_396 = Ref{Int64}()
-  @MSK_getnumbarcnz(task.task,__tmp_396)
-  __tmp_395 = __tmp_396[]
-  maxnumnz = Int64(__tmp_395)
+  __tmp_397 = Ref{Int64}()
+  @MSK_getnumbarcnz(task.task,__tmp_397)
+  __tmp_396 = __tmp_397[]
+  maxnumnz = Int64(__tmp_396)
   numnz_ = Ref{Int64}()
   idxj_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarcsparsity(task.task,maxnumnz,numnz_,idxj_)
@@ -10818,23 +14350,11 @@ function getbarcsparsity(task::MSKtask)
 end
 
 
-"""
-  getbarasparsity(task::MSKtask) :: (numnz,idxij)
-
-  Obtains the sparsity pattern of the barA matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numnz::Int64 Number of nonzero elements in barA.
-    idxij::Vector{Int64} Position of each nonzero element in the vector representation of barA.
-"""
-function getbarasparsity end
 function getbarasparsity(task::MSKtask)
-  __tmp_399 = Ref{Int64}()
-  @MSK_getnumbaranz(task.task,__tmp_399)
-  __tmp_398 = __tmp_399[]
-  maxnumnz = Int64(__tmp_398)
+  __tmp_400 = Ref{Int64}()
+  @MSK_getnumbaranz(task.task,__tmp_400)
+  __tmp_399 = __tmp_400[]
+  maxnumnz = Int64(__tmp_399)
   numnz_ = Ref{Int64}()
   idxij_ = Vector{Int64}(undef,maxnumnz)
   @MSK_getbarasparsity(task.task,maxnumnz,numnz_,idxij_)
@@ -10844,19 +14364,6 @@ function getbarasparsity(task::MSKtask)
 end
 
 
-"""
-  getbarcidxinfo(task::MSKtask,idx::Int64) :: num
-  getbarcidxinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: num
-
-  Obtains information about an element in barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Index of the element for which information should be obtained. The value is an index of a symmetric sparse variable.
-  Returns
-    num::Int64 Number of terms that appear in the weighted sum that forms the requested element.
-"""
-function getbarcidxinfo end
 function getbarcidxinfo(task::MSKtask,idx::Int64)
   num_ = Ref{Int64}()
   @MSK_getbarcidxinfo(task.task,idx-Int64(1),num_)
@@ -10869,19 +14376,6 @@ function getbarcidxinfo(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbarcidxj(task::MSKtask,idx::Int64) :: j
-  getbarcidxj(task::MSKtask,idx::T0) where {T0<:Integer}  :: j
-
-  Obtains the row index of an element in barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Index of the element for which information should be obtained.
-  Returns
-    j::Int32 Row index in barc.
-"""
-function getbarcidxj end
 function getbarcidxj(task::MSKtask,idx::Int64)
   j_ = Ref{Int32}()
   @MSK_getbarcidxj(task.task,idx-Int64(1),j_)
@@ -10894,27 +14388,11 @@ function getbarcidxj(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbarcidx(task::MSKtask,idx::Int64) :: (j,num,sub,weights)
-  getbarcidx(task::MSKtask,idx::T0) where {T0<:Integer}  :: (j,num,sub,weights)
-
-  Obtains information about an element in barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Index of the element for which information should be obtained.
-  Returns
-    j::Int32 Row index in barc.
-    num::Int64 Number of terms in the weighted sum.
-    sub::Vector{Int64} Elements appearing the weighted sum.
-    weights::Vector{Float64} Weights of terms in the weighted sum.
-"""
-function getbarcidx end
 function getbarcidx(task::MSKtask,idx::Int64)
-  __tmp_404 = Ref{Int64}()
-  @MSK_getbarcidxinfo(task.task,idx-Int64(1),__tmp_404)
-  __tmp_403 = __tmp_404[]
-  maxnum = Int64(__tmp_403)
+  __tmp_405 = Ref{Int64}()
+  @MSK_getbarcidxinfo(task.task,idx-Int64(1),__tmp_405)
+  __tmp_404 = __tmp_405[]
+  maxnum = Int64(__tmp_404)
   j_ = Ref{Int32}()
   num_ = Ref{Int64}()
   sub_ = Vector{Int64}(undef,maxnum)
@@ -10932,19 +14410,6 @@ function getbarcidx(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbaraidxinfo(task::MSKtask,idx::Int64) :: num
-  getbaraidxinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: num
-
-  Obtains the number of terms in the weighted sum that form a particular element in barA.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 The internal position of the element for which information should be obtained.
-  Returns
-    num::Int64 Number of terms in the weighted sum that form the specified element in barA.
-"""
-function getbaraidxinfo end
 function getbaraidxinfo(task::MSKtask,idx::Int64)
   num_ = Ref{Int64}()
   @MSK_getbaraidxinfo(task.task,idx-Int64(1),num_)
@@ -10957,20 +14422,6 @@ function getbaraidxinfo(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbaraidxij(task::MSKtask,idx::Int64) :: (i,j)
-  getbaraidxij(task::MSKtask,idx::T0) where {T0<:Integer}  :: (i,j)
-
-  Obtains information about an element in barA.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Position of the element in the vectorized form.
-  Returns
-    i::Int32 Row index of the element at position idx.
-    j::Int32 Column index of the element at position idx.
-"""
-function getbaraidxij end
 function getbaraidxij(task::MSKtask,idx::Int64)
   i_ = Ref{Int32}()
   j_ = Ref{Int32}()
@@ -10984,28 +14435,11 @@ function getbaraidxij(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getbaraidx(task::MSKtask,idx::Int64) :: (i,j,num,sub,weights)
-  getbaraidx(task::MSKtask,idx::T0) where {T0<:Integer}  :: (i,j,num,sub,weights)
-
-  Obtains information about an element in barA.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Position of the element in the vectorized form.
-  Returns
-    i::Int32 Row index of the element at position idx.
-    j::Int32 Column index of the element at position idx.
-    num::Int64 Number of terms in weighted sum that forms the element.
-    sub::Vector{Int64} A list indexes of the elements from symmetric matrix storage that appear in the weighted sum.
-    weights::Vector{Float64} The weights associated with each term in the weighted sum.
-"""
-function getbaraidx end
 function getbaraidx(task::MSKtask,idx::Int64)
-  __tmp_409 = Ref{Int64}()
-  @MSK_getbaraidxinfo(task.task,idx-Int64(1),__tmp_409)
-  __tmp_408 = __tmp_409[]
-  maxnum = Int64(__tmp_408)
+  __tmp_410 = Ref{Int64}()
+  @MSK_getbaraidxinfo(task.task,idx-Int64(1),__tmp_410)
+  __tmp_409 = __tmp_410[]
+  maxnum = Int64(__tmp_409)
   i_ = Ref{Int32}()
   j_ = Ref{Int32}()
   num_ = Ref{Int64}()
@@ -11024,17 +14458,6 @@ function getbaraidx(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumbarcblocktriplets(task::MSKtask) :: num
-
-  Obtains an upper bound on the number of elements in the block triplet form of barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 An upper bound on the number of elements in the block triplet form of barc.
-"""
-function getnumbarcblocktriplets end
 function getnumbarcblocktriplets(task::MSKtask)
   num_ = Ref{Int64}()
   @MSK_getnumbarcblocktriplets(task.task,num_)
@@ -11042,35 +14465,21 @@ function getnumbarcblocktriplets(task::MSKtask)
 end
 
 
-"""
-  putbarcblocktriplet(task::MSKtask,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
-  putbarcblocktriplet(task::MSKtask,subj::T0,subk::T1,subl::T2,valjkl::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-
-  Inputs barC in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subj::Vector{Int32} Symmetric matrix variable index.
-    subk::Vector{Int32} Block row index.
-    subl::Vector{Int32} Block column index.
-    valjkl::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function putbarcblocktriplet end
 function putbarcblocktriplet(task::MSKtask,subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valjkl::Vector{Float64})
   num = Int64(min(length(subj),length(subk),length(subl),length(valjkl)))
-  if length(subj) < num
+  if subj !== nothing && length(subj) < num
     throw(BoundsError())
   end
   subj_ = subj .- Int32(1)
-  if length(subk) < num
+  if subk !== nothing && length(subk) < num
     throw(BoundsError())
   end
   subk_ = subk .- Int32(1)
-  if length(subl) < num
+  if subl !== nothing && length(subl) < num
     throw(BoundsError())
   end
   subl_ = subl .- Int32(1)
-  if length(valjkl) < num
+  if valjkl !== nothing && length(valjkl) < num
     throw(BoundsError())
   end
   valjkl_ = valjkl
@@ -11080,33 +14489,18 @@ end
 function putbarcblocktriplet(task::MSKtask,subj::T0,subk::T1,subl::T2,valjkl::T3) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
   putbarcblocktriplet(
     task,
-    convert(Vector{Int32},subj),
-    convert(Vector{Int32},subk),
-    convert(Vector{Int32},subl),
-    convert(Vector{Float64},valjkl))
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if subk === nothing; nothing; else convert(Vector{Int32},subk); end,
+    if subl === nothing; nothing; else convert(Vector{Int32},subl); end,
+    if valjkl === nothing; nothing; else convert(Vector{Float64},valjkl); end)
 end
 
 
-"""
-  getbarcblocktriplet(task::MSKtask) :: (num,subj,subk,subl,valjkl)
-
-  Obtains barC in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 Number of elements in the block triplet form.
-    subj::Vector{Int32} Symmetric matrix variable index.
-    subk::Vector{Int32} Block row index.
-    subl::Vector{Int32} Block column index.
-    valjkl::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function getbarcblocktriplet end
 function getbarcblocktriplet(task::MSKtask)
-  __tmp_414 = Ref{Int64}()
-  @MSK_getnumbarcblocktriplets(task.task,__tmp_414)
-  __tmp_413 = __tmp_414[]
-  maxnum = Int64(__tmp_413)
+  __tmp_415 = Ref{Int64}()
+  @MSK_getnumbarcblocktriplets(task.task,__tmp_415)
+  __tmp_414 = __tmp_415[]
+  maxnum = Int64(__tmp_414)
   num_ = Ref{Int64}()
   subj_ = Vector{Int32}(undef,maxnum)
   subk_ = Vector{Int32}(undef,maxnum)
@@ -11124,40 +14518,25 @@ function getbarcblocktriplet(task::MSKtask)
 end
 
 
-"""
-  putbarablocktriplet(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
-  putbarablocktriplet(task::MSKtask,subi::T0,subj::T1,subk::T2,subl::T3,valijkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
-
-  Inputs barA in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subi::Vector{Int32} Constraint index.
-    subj::Vector{Int32} Symmetric matrix variable index.
-    subk::Vector{Int32} Block row index.
-    subl::Vector{Int32} Block column index.
-    valijkl::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function putbarablocktriplet end
 function putbarablocktriplet(task::MSKtask,subi::Vector{Int32},subj::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valijkl::Vector{Float64})
   num = Int64(min(length(subj),length(subk),length(subl),length(valijkl)))
-  if length(subi) < num
+  if subi !== nothing && length(subi) < num
     throw(BoundsError())
   end
   subi_ = subi .- Int32(1)
-  if length(subj) < num
+  if subj !== nothing && length(subj) < num
     throw(BoundsError())
   end
   subj_ = subj .- Int32(1)
-  if length(subk) < num
+  if subk !== nothing && length(subk) < num
     throw(BoundsError())
   end
   subk_ = subk .- Int32(1)
-  if length(subl) < num
+  if subl !== nothing && length(subl) < num
     throw(BoundsError())
   end
   subl_ = subl .- Int32(1)
-  if length(valijkl) < num
+  if valijkl !== nothing && length(valijkl) < num
     throw(BoundsError())
   end
   valijkl_ = valijkl
@@ -11167,25 +14546,14 @@ end
 function putbarablocktriplet(task::MSKtask,subi::T0,subj::T1,subk::T2,subl::T3,valijkl::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putbarablocktriplet(
     task,
-    convert(Vector{Int32},subi),
-    convert(Vector{Int32},subj),
-    convert(Vector{Int32},subk),
-    convert(Vector{Int32},subl),
-    convert(Vector{Float64},valijkl))
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if subk === nothing; nothing; else convert(Vector{Int32},subk); end,
+    if subl === nothing; nothing; else convert(Vector{Int32},subl); end,
+    if valijkl === nothing; nothing; else convert(Vector{Float64},valijkl); end)
 end
 
 
-"""
-  getnumbarablocktriplets(task::MSKtask) :: num
-
-  Obtains an upper bound on the number of scalar elements in the block triplet form of bara.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 An upper bound on the number of elements in the block triplet form of bara.
-"""
-function getnumbarablocktriplets end
 function getnumbarablocktriplets(task::MSKtask)
   num_ = Ref{Int64}()
   @MSK_getnumbarablocktriplets(task.task,num_)
@@ -11193,27 +14561,11 @@ function getnumbarablocktriplets(task::MSKtask)
 end
 
 
-"""
-  getbarablocktriplet(task::MSKtask) :: (num,subi,subj,subk,subl,valijkl)
-
-  Obtains barA in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 Number of elements in the block triplet form.
-    subi::Vector{Int32} Constraint index.
-    subj::Vector{Int32} Symmetric matrix variable index.
-    subk::Vector{Int32} Block row index.
-    subl::Vector{Int32} Block column index.
-    valijkl::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function getbarablocktriplet end
 function getbarablocktriplet(task::MSKtask)
-  __tmp_419 = Ref{Int64}()
-  @MSK_getnumbarablocktriplets(task.task,__tmp_419)
-  __tmp_418 = __tmp_419[]
-  maxnum = Int64(__tmp_418)
+  __tmp_420 = Ref{Int64}()
+  @MSK_getnumbarablocktriplets(task.task,__tmp_420)
+  __tmp_419 = __tmp_420[]
+  maxnum = Int64(__tmp_419)
   num_ = Ref{Int64}()
   subi_ = Vector{Int32}(undef,maxnum)
   subj_ = Vector{Int32}(undef,maxnum)
@@ -11234,17 +14586,6 @@ function getbarablocktriplet(task::MSKtask)
 end
 
 
-"""
-  putmaxnumafe(task::MSKtask,maxnumafe::Int64)
-  putmaxnumafe(task::MSKtask,maxnumafe::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated affine expressions in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumafe::Int64 Number of preallocated affine expressions.
-"""
-function putmaxnumafe end
 function putmaxnumafe(task::MSKtask,maxnumafe::Int64)
   @MSK_putmaxnumafe(task.task,maxnumafe)
   nothing
@@ -11256,17 +14597,6 @@ function putmaxnumafe(task::MSKtask,maxnumafe::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumafe(task::MSKtask) :: numafe
-
-  Obtains the number of affine expressions.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numafe::Int64 Number of affine expressions.
-"""
-function getnumafe end
 function getnumafe(task::MSKtask)
   numafe_ = Ref{Int64}()
   @MSK_getnumafe(task.task,numafe_)
@@ -11274,17 +14604,6 @@ function getnumafe(task::MSKtask)
 end
 
 
-"""
-  appendafes(task::MSKtask,num::Int64)
-  appendafes(task::MSKtask,num::T0) where {T0<:Integer} 
-
-  Appends a number of empty affine expressions to the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    num::Int64 Number of empty affine expressions which should be appended.
-"""
-function appendafes end
 function appendafes(task::MSKtask,num::Int64)
   @MSK_appendafes(task.task,num)
   nothing
@@ -11296,19 +14615,6 @@ function appendafes(task::MSKtask,num::T0) where { T0<:Integer }
 end
 
 
-"""
-  putafefentry(task::MSKtask,afeidx::Int64,varidx::Int32,value::Float64)
-  putafefentry(task::MSKtask,afeidx::T0,varidx::T1,value::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
-
-  Replaces one entry in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index in F.
-    varidx::Int32 Column index in F.
-    value::Float64 Value of the entry.
-"""
-function putafefentry end
 function putafefentry(task::MSKtask,afeidx::Int64,varidx::Int32,value::Float64)
   @MSK_putafefentry(task.task,afeidx-Int64(1),varidx-Int32(1),value)
   nothing
@@ -11322,19 +14628,6 @@ function putafefentry(task::MSKtask,afeidx::T0,varidx::T1,value::T2) where { T0<
 end
 
 
-"""
-  putafefentrylist(task::MSKtask,afeidx::Vector{Int64},varidx::Vector{Int32},val::Vector{Float64})
-  putafefentrylist(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Replaces a list of entries in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Vector{Int64} Row indices in F.
-    varidx::Vector{Int32} Column indices in F.
-    val::Vector{Float64} Values of the entries in F.
-"""
-function putafefentrylist end
 function putafefentrylist(task::MSKtask,afeidx::Vector{Int64},varidx::Vector{Int32},val::Vector{Float64})
   numentr = Int64(min(length(afeidx),length(varidx),length(val)))
   afeidx_ = afeidx .- Int64(1)
@@ -11346,23 +14639,12 @@ end
 function putafefentrylist(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number} }
   putafefentrylist(
     task,
-    convert(Vector{Int64},afeidx),
-    convert(Vector{Int32},varidx),
-    convert(Vector{Float64},val))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end,
+    if varidx === nothing; nothing; else convert(Vector{Int32},varidx); end,
+    if val === nothing; nothing; else convert(Vector{Float64},val); end)
 end
 
 
-"""
-  emptyafefrow(task::MSKtask,afeidx::Int64)
-  emptyafefrow(task::MSKtask,afeidx::T0) where {T0<:Integer} 
-
-  Clears a row in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index.
-"""
-function emptyafefrow end
 function emptyafefrow(task::MSKtask,afeidx::Int64)
   @MSK_emptyafefrow(task.task,afeidx-Int64(1))
   nothing
@@ -11374,17 +14656,6 @@ function emptyafefrow(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  emptyafefcol(task::MSKtask,varidx::Int32)
-  emptyafefcol(task::MSKtask,varidx::T0) where {T0<:Integer} 
-
-  Clears a column in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    varidx::Int32 Variable index.
-"""
-function emptyafefcol end
 function emptyafefcol(task::MSKtask,varidx::Int32)
   @MSK_emptyafefcol(task.task,varidx-Int32(1))
   nothing
@@ -11396,17 +14667,6 @@ function emptyafefcol(task::MSKtask,varidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  emptyafefrowlist(task::MSKtask,afeidx::Vector{Int64})
-  emptyafefrowlist(task::MSKtask,afeidx::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Clears rows in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Vector{Int64} Indices of rows in F to clear.
-"""
-function emptyafefrowlist end
 function emptyafefrowlist(task::MSKtask,afeidx::Vector{Int64})
   numafeidx = Int64(length(afeidx))
   afeidx_ = afeidx .- Int64(1)
@@ -11416,21 +14676,10 @@ end
 function emptyafefrowlist(task::MSKtask,afeidx::T0) where { T0<:AbstractVector{<:Integer} }
   emptyafefrowlist(
     task,
-    convert(Vector{Int64},afeidx))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end)
 end
 
 
-"""
-  emptyafefcollist(task::MSKtask,varidx::Vector{Int32})
-  emptyafefcollist(task::MSKtask,varidx::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Clears columns in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    varidx::Vector{Int32} Indices of variables in F to clear.
-"""
-function emptyafefcollist end
 function emptyafefcollist(task::MSKtask,varidx::Vector{Int32})
   numvaridx = Int64(length(varidx))
   varidx_ = varidx .- Int32(1)
@@ -11440,23 +14689,10 @@ end
 function emptyafefcollist(task::MSKtask,varidx::T0) where { T0<:AbstractVector{<:Integer} }
   emptyafefcollist(
     task,
-    convert(Vector{Int32},varidx))
+    if varidx === nothing; nothing; else convert(Vector{Int32},varidx); end)
 end
 
 
-"""
-  putafefrow(task::MSKtask,afeidx::Int64,varidx::Vector{Int32},val::Vector{Float64})
-  putafefrow(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Replaces all elements in one row of the F matrix in the affine expressions.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index.
-    varidx::Vector{Int32} Column indexes of non-zero values in the row.
-    val::Vector{Float64} New non-zero values in the row.
-"""
-function putafefrow end
 function putafefrow(task::MSKtask,afeidx::Int64,varidx::Vector{Int32},val::Vector{Float64})
   numnz = Int32(min(length(varidx),length(val)))
   varidx_ = varidx .- Int32(1)
@@ -11468,26 +14704,11 @@ function putafefrow(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where { T0<:Int
   putafefrow(
     task,
     convert(Int64,afeidx),
-    convert(Vector{Int32},varidx),
-    convert(Vector{Float64},val))
+    if varidx === nothing; nothing; else convert(Vector{Int32},varidx); end,
+    if val === nothing; nothing; else convert(Vector{Float64},val); end)
 end
 
 
-"""
-  putafefrowlist(task::MSKtask,afeidx::Vector{Int64},numnzrow::Vector{Int32},ptrrow::Vector{Int64},varidx::Vector{Int32},val::Vector{Float64})
-  putafefrowlist(task::MSKtask,afeidx::T0,numnzrow::T1,ptrrow::T2,varidx::T3,val::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
-
-  Replaces all elements in a number of rows of the F matrix in the affine expressions.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Vector{Int64} Row indices.
-    numnzrow::Vector{Int32} Number of non-zeros in each row.
-    ptrrow::Vector{Int64} Pointer to the first nonzero in each row.
-    varidx::Vector{Int32} Column indexes of non-zero values.
-    val::Vector{Float64} New non-zero values in the rows.
-"""
-function putafefrowlist end
 function putafefrowlist(task::MSKtask,afeidx::Vector{Int64},numnzrow::Vector{Int32},ptrrow::Vector{Int64},varidx::Vector{Int32},val::Vector{Float64})
   numafeidx = Int64(min(length(afeidx),length(numnzrow),length(ptrrow)))
   afeidx_ = afeidx .- Int64(1)
@@ -11502,27 +14723,14 @@ end
 function putafefrowlist(task::MSKtask,afeidx::T0,numnzrow::T1,ptrrow::T2,varidx::T3,val::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putafefrowlist(
     task,
-    convert(Vector{Int64},afeidx),
-    convert(Vector{Int32},numnzrow),
-    convert(Vector{Int64},ptrrow),
-    convert(Vector{Int32},varidx),
-    convert(Vector{Float64},val))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end,
+    if numnzrow === nothing; nothing; else convert(Vector{Int32},numnzrow); end,
+    if ptrrow === nothing; nothing; else convert(Vector{Int64},ptrrow); end,
+    if varidx === nothing; nothing; else convert(Vector{Int32},varidx); end,
+    if val === nothing; nothing; else convert(Vector{Float64},val); end)
 end
 
 
-"""
-  putafefcol(task::MSKtask,varidx::Int32,afeidx::Vector{Int64},val::Vector{Float64})
-  putafefcol(task::MSKtask,varidx::T0,afeidx::T1,val::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Replaces all elements in one column of the F matrix in the affine expressions.
-
-  Arguments
-    task::MSKtask An optimization task.
-    varidx::Int32 Column index.
-    afeidx::Vector{Int64} Row indexes of non-zero values in the column.
-    val::Vector{Float64} New non-zero values in the column.
-"""
-function putafefcol end
 function putafefcol(task::MSKtask,varidx::Int32,afeidx::Vector{Int64},val::Vector{Float64})
   numnz = Int64(min(length(afeidx),length(val)))
   afeidx_ = afeidx .- Int64(1)
@@ -11534,24 +14742,11 @@ function putafefcol(task::MSKtask,varidx::T0,afeidx::T1,val::T2) where { T0<:Int
   putafefcol(
     task,
     convert(Int32,varidx),
-    convert(Vector{Int64},afeidx),
-    convert(Vector{Float64},val))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end,
+    if val === nothing; nothing; else convert(Vector{Float64},val); end)
 end
 
 
-"""
-  getafefrownumnz(task::MSKtask,afeidx::Int64) :: numnz
-  getafefrownumnz(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: numnz
-
-  Obtains the number of nonzeros in a row of F.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index.
-  Returns
-    numnz::Int32 Number of non-zeros in the row.
-"""
-function getafefrownumnz end
 function getafefrownumnz(task::MSKtask,afeidx::Int64)
   numnz_ = Ref{Int32}()
   @MSK_getafefrownumnz(task.task,afeidx-Int64(1),numnz_)
@@ -11564,17 +14759,6 @@ function getafefrownumnz(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getafefnumnz(task::MSKtask) :: numnz
-
-  Obtains the total number of nonzeros in F.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numnz::Int64 Number of nonzeros in F.
-"""
-function getafefnumnz end
 function getafefnumnz(task::MSKtask)
   numnz_ = Ref{Int64}()
   @MSK_getafefnumnz(task.task,numnz_)
@@ -11582,31 +14766,16 @@ function getafefnumnz(task::MSKtask)
 end
 
 
-"""
-  getafefrow(task::MSKtask,afeidx::Int64) :: (numnz,varidx,val)
-  getafefrow(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (numnz,varidx,val)
-
-  Obtains one row of F in sparse format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index.
-  Returns
-    numnz::Int32 Number of non-zeros in the row obtained.
-    varidx::Vector{Int32} Column indices of the non-zeros in the row obtained.
-    val::Vector{Float64} Values of the non-zeros in the row obtained.
-"""
-function getafefrow end
 function getafefrow(task::MSKtask,afeidx::Int64)
   numnz_ = Ref{Int32}()
-  __tmp_436 = Ref{Int32}()
-  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_436)
-  __tmp_435 = __tmp_436[]
-  varidx_ = Vector{Int32}(undef,__tmp_435)
-  __tmp_438 = Ref{Int32}()
-  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_438)
-  __tmp_437 = __tmp_438[]
-  val_ = Vector{Float64}(undef,__tmp_437)
+  __tmp_437 = Ref{Int32}()
+  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_437)
+  __tmp_436 = __tmp_437[]
+  varidx_ = Vector{Int32}(undef,__tmp_436)
+  __tmp_439 = Ref{Int32}()
+  @MSK_getafefrownumnz(task.task,afeidx-Int64(1),__tmp_439)
+  __tmp_438 = __tmp_439[]
+  val_ = Vector{Float64}(undef,__tmp_438)
   @MSK_getafefrow(task.task,afeidx-Int64(1),numnz_,varidx_,val_)
   varidx = varidx_;
   varidx .+= 1
@@ -11620,32 +14789,19 @@ function getafefrow(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getafeftrip(task::MSKtask) :: (afeidx,varidx,val)
-
-  Obtains the F matrix in triplet format.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    afeidx::Vector{Int64} Row indices of nonzeros.
-    varidx::Vector{Int32} Column indices of nonzeros.
-    val::Vector{Float64} Values of nonzero entries.
-"""
-function getafeftrip end
 function getafeftrip(task::MSKtask)
-  __tmp_441 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_441)
-  __tmp_440 = __tmp_441[]
-  afeidx_ = Vector{Int64}(undef,__tmp_440)
-  __tmp_443 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_443)
-  __tmp_442 = __tmp_443[]
-  varidx_ = Vector{Int32}(undef,__tmp_442)
-  __tmp_445 = Ref{Int64}()
-  @MSK_getafefnumnz(task.task,__tmp_445)
-  __tmp_444 = __tmp_445[]
-  val_ = Vector{Float64}(undef,__tmp_444)
+  __tmp_442 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_442)
+  __tmp_441 = __tmp_442[]
+  afeidx_ = Vector{Int64}(undef,__tmp_441)
+  __tmp_444 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_444)
+  __tmp_443 = __tmp_444[]
+  varidx_ = Vector{Int32}(undef,__tmp_443)
+  __tmp_446 = Ref{Int64}()
+  @MSK_getafefnumnz(task.task,__tmp_446)
+  __tmp_445 = __tmp_446[]
+  val_ = Vector{Float64}(undef,__tmp_445)
   @MSK_getafeftrip(task.task,afeidx_,varidx_,val_)
   afeidx = afeidx_;
   afeidx .+= 1
@@ -11656,20 +14812,6 @@ function getafeftrip(task::MSKtask)
 end
 
 
-"""
-  putafebarfentry(task::MSKtask,afeidx::Int64,barvaridx::Int32,termidx::Vector{Int64},termweight::Vector{Float64})
-  putafebarfentry(task::MSKtask,afeidx::T0,barvaridx::T1,termidx::T2,termweight::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-
-  Inputs one entry in barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index of barF.
-    barvaridx::Int32 Semidefinite variable index.
-    termidx::Vector{Int64} Element indices in matrix storage.
-    termweight::Vector{Float64} Weights in the weighted sum.
-"""
-function putafebarfentry end
 function putafebarfentry(task::MSKtask,afeidx::Int64,barvaridx::Int32,termidx::Vector{Int64},termweight::Vector{Float64})
   numterm = Int64(min(length(termidx),length(termweight)))
   termidx_ = termidx .- Int64(1)
@@ -11682,32 +14824,16 @@ function putafebarfentry(task::MSKtask,afeidx::T0,barvaridx::T1,termidx::T2,term
     task,
     convert(Int64,afeidx),
     convert(Int32,barvaridx),
-    convert(Vector{Int64},termidx),
-    convert(Vector{Float64},termweight))
+    if termidx === nothing; nothing; else convert(Vector{Int64},termidx); end,
+    if termweight === nothing; nothing; else convert(Vector{Float64},termweight); end)
 end
 
 
-"""
-  putafebarfentrylist(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},numterm::Vector{Int64},ptrterm::Vector{Int64},termidx::Vector{Int64},termweight::Vector{Float64})
-  putafebarfentrylist(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
-
-  Inputs a list of entries in barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Vector{Int64} Row indexes of barF.
-    barvaridx::Vector{Int32} Semidefinite variable indexes.
-    numterm::Vector{Int64} Number of terms in the weighted sums.
-    ptrterm::Vector{Int64} Pointer to the terms forming each entry.
-    termidx::Vector{Int64} Concatenated element indexes in matrix storage.
-    termweight::Vector{Float64} Concatenated weights in the weighted sum.
-"""
-function putafebarfentrylist end
 function putafebarfentrylist(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},numterm::Vector{Int64},ptrterm::Vector{Int64},termidx::Vector{Int64},termweight::Vector{Float64})
   numafeidx = Int64(min(length(afeidx),length(barvaridx),length(numterm),length(ptrterm)))
   afeidx_ = afeidx .- Int64(1)
   barvaridx_ = barvaridx .- Int32(1)
-  numterm_ = numterm .- Int64(1)
+  numterm_ = numterm
   ptrterm_ = ptrterm .- Int64(1)
   lenterm = Int64(min(length(termidx),length(termweight)))
   termidx_ = termidx .- Int64(1)
@@ -11718,31 +14844,15 @@ end
 function putafebarfentrylist(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number} }
   putafebarfentrylist(
     task,
-    convert(Vector{Int64},afeidx),
-    convert(Vector{Int32},barvaridx),
-    convert(Vector{Int64},numterm),
-    convert(Vector{Int64},ptrterm),
-    convert(Vector{Int64},termidx),
-    convert(Vector{Float64},termweight))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end,
+    if barvaridx === nothing; nothing; else convert(Vector{Int32},barvaridx); end,
+    if numterm === nothing; nothing; else convert(Vector{Int64},numterm); end,
+    if ptrterm === nothing; nothing; else convert(Vector{Int64},ptrterm); end,
+    if termidx === nothing; nothing; else convert(Vector{Int64},termidx); end,
+    if termweight === nothing; nothing; else convert(Vector{Float64},termweight); end)
 end
 
 
-"""
-  putafebarfrow(task::MSKtask,afeidx::Int64,barvaridx::Vector{Int32},numterm::Vector{Int64},ptrterm::Vector{Int64},termidx::Vector{Int64},termweight::Vector{Float64})
-  putafebarfrow(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
-
-  Inputs a row of barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index of barF.
-    barvaridx::Vector{Int32} Semidefinite variable indexes.
-    numterm::Vector{Int64} Number of terms in the weighted sums.
-    ptrterm::Vector{Int64} Pointer to the terms forming each entry.
-    termidx::Vector{Int64} Concatenated element indexes in matrix storage.
-    termweight::Vector{Float64} Concatenated weights in the weighted sum.
-"""
-function putafebarfrow end
 function putafebarfrow(task::MSKtask,afeidx::Int64,barvaridx::Vector{Int32},numterm::Vector{Int64},ptrterm::Vector{Int64},termidx::Vector{Int64},termweight::Vector{Float64})
   numentr = Int32(min(length(barvaridx),length(numterm),length(ptrterm)))
   barvaridx_ = barvaridx .- Int32(1)
@@ -11758,25 +14868,14 @@ function putafebarfrow(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrter
   putafebarfrow(
     task,
     convert(Int64,afeidx),
-    convert(Vector{Int32},barvaridx),
-    convert(Vector{Int64},numterm),
-    convert(Vector{Int64},ptrterm),
-    convert(Vector{Int64},termidx),
-    convert(Vector{Float64},termweight))
+    if barvaridx === nothing; nothing; else convert(Vector{Int32},barvaridx); end,
+    if numterm === nothing; nothing; else convert(Vector{Int64},numterm); end,
+    if ptrterm === nothing; nothing; else convert(Vector{Int64},ptrterm); end,
+    if termidx === nothing; nothing; else convert(Vector{Int64},termidx); end,
+    if termweight === nothing; nothing; else convert(Vector{Float64},termweight); end)
 end
 
 
-"""
-  emptyafebarfrow(task::MSKtask,afeidx::Int64)
-  emptyafebarfrow(task::MSKtask,afeidx::T0) where {T0<:Integer} 
-
-  Clears a row in barF
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index of barF.
-"""
-function emptyafebarfrow end
 function emptyafebarfrow(task::MSKtask,afeidx::Int64)
   @MSK_emptyafebarfrow(task.task,afeidx-Int64(1))
   nothing
@@ -11788,17 +14887,6 @@ function emptyafebarfrow(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  emptyafebarfrowlist(task::MSKtask,afeidxlist::Vector{Int64})
-  emptyafebarfrowlist(task::MSKtask,afeidxlist::T0) where {T0<:AbstractVector{<:Integer}} 
-
-  Clears rows in barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidxlist::Vector{Int64} Indices of rows in barF to clear.
-"""
-function emptyafebarfrowlist end
 function emptyafebarfrowlist(task::MSKtask,afeidxlist::Vector{Int64})
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
@@ -11808,44 +14896,29 @@ end
 function emptyafebarfrowlist(task::MSKtask,afeidxlist::T0) where { T0<:AbstractVector{<:Integer} }
   emptyafebarfrowlist(
     task,
-    convert(Vector{Int64},afeidxlist))
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end)
 end
 
 
-"""
-  putafebarfblocktriplet(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
-  putafebarfblocktriplet(task::MSKtask,afeidx::T0,barvaridx::T1,subk::T2,subl::T3,valkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
-
-  Inputs barF in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Vector{Int64} Constraint index.
-    barvaridx::Vector{Int32} Symmetric matrix variable index.
-    subk::Vector{Int32} Block row index.
-    subl::Vector{Int32} Block column index.
-    valkl::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function putafebarfblocktriplet end
 function putafebarfblocktriplet(task::MSKtask,afeidx::Vector{Int64},barvaridx::Vector{Int32},subk::Vector{Int32},subl::Vector{Int32},valkl::Vector{Float64})
   numtrip = Int64(min(length(afeidx),length(barvaridx),length(subk),length(subl),length(valkl)))
-  if length(afeidx) < numtrip
+  if afeidx !== nothing && length(afeidx) < numtrip
     throw(BoundsError())
   end
   afeidx_ = afeidx .- Int64(1)
-  if length(barvaridx) < numtrip
+  if barvaridx !== nothing && length(barvaridx) < numtrip
     throw(BoundsError())
   end
   barvaridx_ = barvaridx .- Int32(1)
-  if length(subk) < numtrip
+  if subk !== nothing && length(subk) < numtrip
     throw(BoundsError())
   end
   subk_ = subk .- Int32(1)
-  if length(subl) < numtrip
+  if subl !== nothing && length(subl) < numtrip
     throw(BoundsError())
   end
   subl_ = subl .- Int32(1)
-  if length(valkl) < numtrip
+  if valkl !== nothing && length(valkl) < numtrip
     throw(BoundsError())
   end
   valkl_ = valkl
@@ -11855,25 +14928,14 @@ end
 function putafebarfblocktriplet(task::MSKtask,afeidx::T0,barvaridx::T1,subk::T2,subl::T3,valkl::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   putafebarfblocktriplet(
     task,
-    convert(Vector{Int64},afeidx),
-    convert(Vector{Int32},barvaridx),
-    convert(Vector{Int32},subk),
-    convert(Vector{Int32},subl),
-    convert(Vector{Float64},valkl))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end,
+    if barvaridx === nothing; nothing; else convert(Vector{Int32},barvaridx); end,
+    if subk === nothing; nothing; else convert(Vector{Int32},subk); end,
+    if subl === nothing; nothing; else convert(Vector{Int32},subl); end,
+    if valkl === nothing; nothing; else convert(Vector{Float64},valkl); end)
 end
 
 
-"""
-  getafebarfnumblocktriplets(task::MSKtask) :: numtrip
-
-  Obtains an upper bound on the number of elements in the block triplet form of barf.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numtrip::Int64 An upper bound on the number of elements in the block triplet form of barf.
-"""
-function getafebarfnumblocktriplets end
 function getafebarfnumblocktriplets(task::MSKtask)
   numtrip_ = Ref{Int64}()
   @MSK_getafebarfnumblocktriplets(task.task,numtrip_)
@@ -11881,27 +14943,11 @@ function getafebarfnumblocktriplets(task::MSKtask)
 end
 
 
-"""
-  getafebarfblocktriplet(task::MSKtask) :: (numtrip,afeidx,barvaridx,subk,subl,valkl)
-
-  Obtains barF in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numtrip::Int64 Number of elements in the block triplet form.
-    afeidx::Vector{Int64} Constraint index.
-    barvaridx::Vector{Int32} Symmetric matrix variable index.
-    subk::Vector{Int32} Block row index.
-    subl::Vector{Int32} Block column index.
-    valkl::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function getafebarfblocktriplet end
 function getafebarfblocktriplet(task::MSKtask)
-  __tmp_455 = Ref{Int64}()
-  @MSK_getafebarfnumblocktriplets(task.task,__tmp_455)
-  __tmp_454 = __tmp_455[]
-  maxnumtrip = Int64(__tmp_454)
+  __tmp_456 = Ref{Int64}()
+  @MSK_getafebarfnumblocktriplets(task.task,__tmp_456)
+  __tmp_455 = __tmp_456[]
+  maxnumtrip = Int64(__tmp_455)
   numtrip_ = Ref{Int64}()
   afeidx_ = Vector{Int64}(undef,maxnumtrip)
   barvaridx_ = Vector{Int32}(undef,maxnumtrip)
@@ -11922,19 +14968,6 @@ function getafebarfblocktriplet(task::MSKtask)
 end
 
 
-"""
-  getafebarfnumrowentries(task::MSKtask,afeidx::Int64) :: numentr
-  getafebarfnumrowentries(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: numentr
-
-  Obtains the number of nonzero entries in a row of barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index of barF.
-  Returns
-    numentr::Int32 Number of nonzero entries in a row of barF.
-"""
-function getafebarfnumrowentries end
 function getafebarfnumrowentries(task::MSKtask,afeidx::Int64)
   numentr_ = Ref{Int32}()
   @MSK_getafebarfnumrowentries(task.task,afeidx-Int64(1),numentr_)
@@ -11947,20 +14980,6 @@ function getafebarfnumrowentries(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getafebarfrowinfo(task::MSKtask,afeidx::Int64) :: (numentr,numterm)
-  getafebarfrowinfo(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (numentr,numterm)
-
-  Obtains information about one row of barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index of barF.
-  Returns
-    numentr::Int32 Number of nonzero entries in a row of barF.
-    numterm::Int64 Number of terms in the weighted sums representation of the row of barF.
-"""
-function getafebarfrowinfo end
 function getafebarfrowinfo(task::MSKtask,afeidx::Int64)
   numentr_ = Ref{Int32}()
   numterm_ = Ref{Int64}()
@@ -11974,44 +14993,27 @@ function getafebarfrowinfo(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getafebarfrow(task::MSKtask,afeidx::Int64) :: (barvaridx,ptrterm,numterm,termidx,termweight)
-  getafebarfrow(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (barvaridx,ptrterm,numterm,termidx,termweight)
-
-  Obtains nonzero entries in one row of barF.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index of barF.
-  Returns
-    barvaridx::Vector{Int32} Semidefinite variable indices.
-    ptrterm::Vector{Int64} Pointers to the description of entries.
-    numterm::Vector{Int64} Number of terms in each entry.
-    termidx::Vector{Int64} Indices of semidefinite matrices from E.
-    termweight::Vector{Float64} Weights appearing in the weighted sum representation.
-"""
-function getafebarfrow end
 function getafebarfrow(task::MSKtask,afeidx::Int64)
-  __tmp_460 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_460,Ref{Int64}())
-  __tmp_459 = __tmp_460[]
-  barvaridx_ = Vector{Int32}(undef,__tmp_459)
-  __tmp_462 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_462,Ref{Int64}())
-  __tmp_461 = __tmp_462[]
-  ptrterm_ = Vector{Int64}(undef,__tmp_461)
-  __tmp_464 = Ref{Int32}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_464,Ref{Int64}())
-  __tmp_463 = __tmp_464[]
-  numterm_ = Vector{Int64}(undef,__tmp_463)
-  __tmp_466 = Ref{Int64}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_466)
-  __tmp_465 = __tmp_466[]
-  termidx_ = Vector{Int64}(undef,__tmp_465)
-  __tmp_468 = Ref{Int64}()
-  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_468)
-  __tmp_467 = __tmp_468[]
-  termweight_ = Vector{Float64}(undef,__tmp_467)
+  __tmp_461 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_461,Ref{Int64}())
+  __tmp_460 = __tmp_461[]
+  barvaridx_ = Vector{Int32}(undef,__tmp_460)
+  __tmp_463 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_463,Ref{Int64}())
+  __tmp_462 = __tmp_463[]
+  ptrterm_ = Vector{Int64}(undef,__tmp_462)
+  __tmp_465 = Ref{Int32}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),__tmp_465,Ref{Int64}())
+  __tmp_464 = __tmp_465[]
+  numterm_ = Vector{Int64}(undef,__tmp_464)
+  __tmp_467 = Ref{Int64}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_467)
+  __tmp_466 = __tmp_467[]
+  termidx_ = Vector{Int64}(undef,__tmp_466)
+  __tmp_469 = Ref{Int64}()
+  @MSK_getafebarfrowinfo(task.task,afeidx-Int64(1),Ref{Int32}(),__tmp_469)
+  __tmp_468 = __tmp_469[]
+  termweight_ = Vector{Float64}(undef,__tmp_468)
   @MSK_getafebarfrow(task.task,afeidx-Int64(1),barvaridx_,ptrterm_,numterm_,termidx_,termweight_)
   barvaridx = barvaridx_;
   barvaridx .+= 1
@@ -12030,18 +15032,6 @@ function getafebarfrow(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  putafeg(task::MSKtask,afeidx::Int64,g::Float64)
-  putafeg(task::MSKtask,afeidx::T0,g::T1) where {T0<:Integer,T1<:Number} 
-
-  Replaces one element in the g vector in the affine expressions.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Row index.
-    g::Float64 New value for the element of g.
-"""
-function putafeg end
 function putafeg(task::MSKtask,afeidx::Int64,g::Float64)
   @MSK_putafeg(task.task,afeidx-Int64(1),g)
   nothing
@@ -12054,18 +15044,6 @@ function putafeg(task::MSKtask,afeidx::T0,g::T1) where { T0<:Integer,T1<:Number 
 end
 
 
-"""
-  putafeglist(task::MSKtask,afeidx::Vector{Int64},g::Vector{Float64})
-  putafeglist(task::MSKtask,afeidx::T0,g::T1) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number}} 
-
-  Replaces a list of elements in the g vector in the affine expressions.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Vector{Int64} Indices of entries in g.
-    g::Vector{Float64} New values for the elements of g.
-"""
-function putafeglist end
 function putafeglist(task::MSKtask,afeidx::Vector{Int64},g::Vector{Float64})
   numafeidx = Int64(min(length(afeidx),length(g)))
   afeidx_ = afeidx .- Int64(1)
@@ -12076,24 +15054,11 @@ end
 function putafeglist(task::MSKtask,afeidx::T0,g::T1) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number} }
   putafeglist(
     task,
-    convert(Vector{Int64},afeidx),
-    convert(Vector{Float64},g))
+    if afeidx === nothing; nothing; else convert(Vector{Int64},afeidx); end,
+    if g === nothing; nothing; else convert(Vector{Float64},g); end)
 end
 
 
-"""
-  getafeg(task::MSKtask,afeidx::Int64) :: g
-  getafeg(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: g
-
-  Obtains a single coefficient in g.
-
-  Arguments
-    task::MSKtask An optimization task.
-    afeidx::Int64 Element index.
-  Returns
-    g::Float64 The entry in g.
-"""
-function getafeg end
 function getafeg(task::MSKtask,afeidx::Int64)
   g_ = Ref{Float64}()
   @MSK_getafeg(task.task,afeidx-Int64(1),g_)
@@ -12106,20 +15071,6 @@ function getafeg(task::MSKtask,afeidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getafegslice(task::MSKtask,first::Int64,last::Int64) :: g
-  getafegslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: g
-
-  Obtains a sequence of coefficients from the vector g.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int64 First index in the sequence.
-    last::Int64 Last index plus 1 in the sequence.
-  Returns
-    g::Vector{Float64} The slice of g as a dense vector.
-"""
-function getafegslice end
 function getafegslice(task::MSKtask,first::Int64,last::Int64)
   g_ = Vector{Float64}(undef,(last - first))
   @MSK_getafegslice(task.task,first-Int64(1),last-Int64(1),g_)
@@ -12134,21 +15085,8 @@ function getafegslice(task::MSKtask,first::T0,last::T1) where { T0<:Integer,T1<:
 end
 
 
-"""
-  putafegslice(task::MSKtask,first::Int64,last::Int64,slice::Vector{Float64})
-  putafegslice(task::MSKtask,first::T0,last::T1,slice::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Modifies a slice of the vector g.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int64 First index in the sequence.
-    last::Int64 Last index plus 1 in the sequence.
-    slice::Vector{Float64} The slice of g as a dense vector.
-"""
-function putafegslice end
 function putafegslice(task::MSKtask,first::Int64,last::Int64,slice::Vector{Float64})
-  if length(slice) < (last - first)
+  if slice !== nothing && length(slice) < (last - first)
     throw(BoundsError())
   end
   slice_ = slice
@@ -12160,21 +15098,10 @@ function putafegslice(task::MSKtask,first::T0,last::T1,slice::T2) where { T0<:In
     task,
     convert(Int64,first),
     convert(Int64,last),
-    convert(Vector{Float64},slice))
+    if slice === nothing; nothing; else convert(Vector{Float64},slice); end)
 end
 
 
-"""
-  putmaxnumdjc(task::MSKtask,maxnumdjc::Int64)
-  putmaxnumdjc(task::MSKtask,maxnumdjc::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumdjc::Int64 Number of preallocated disjunctive constraints in the task.
-"""
-function putmaxnumdjc end
 function putmaxnumdjc(task::MSKtask,maxnumdjc::Int64)
   @MSK_putmaxnumdjc(task.task,maxnumdjc)
   nothing
@@ -12186,17 +15113,6 @@ function putmaxnumdjc(task::MSKtask,maxnumdjc::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumdjc(task::MSKtask) :: num
-
-  Obtains the number of disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 The number of disjunctive constraints.
-"""
-function getnumdjc end
 function getnumdjc(task::MSKtask)
   num_ = Ref{Int64}()
   @MSK_getnumdjc(task.task,num_)
@@ -12204,19 +15120,6 @@ function getnumdjc(task::MSKtask)
 end
 
 
-"""
-  getdjcnumdomain(task::MSKtask,djcidx::Int64) :: numdomain
-  getdjcnumdomain(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numdomain
-
-  Obtains the number of domains in the disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    numdomain::Int64 Number of domains in the disjunctive constraint.
-"""
-function getdjcnumdomain end
 function getdjcnumdomain(task::MSKtask,djcidx::Int64)
   numdomain_ = Ref{Int64}()
   @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),numdomain_)
@@ -12229,17 +15132,6 @@ function getdjcnumdomain(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcnumdomaintot(task::MSKtask) :: numdomaintot
-
-  Obtains the number of domains in all disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numdomaintot::Int64 Number of domains in all disjunctive constraints.
-"""
-function getdjcnumdomaintot end
 function getdjcnumdomaintot(task::MSKtask)
   numdomaintot_ = Ref{Int64}()
   @MSK_getdjcnumdomaintot(task.task,numdomaintot_)
@@ -12247,19 +15139,6 @@ function getdjcnumdomaintot(task::MSKtask)
 end
 
 
-"""
-  getdjcnumafe(task::MSKtask,djcidx::Int64) :: numafe
-  getdjcnumafe(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numafe
-
-  Obtains the number of affine expressions in the disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    numafe::Int64 Number of affine expressions in the disjunctive constraint.
-"""
-function getdjcnumafe end
 function getdjcnumafe(task::MSKtask,djcidx::Int64)
   numafe_ = Ref{Int64}()
   @MSK_getdjcnumafe(task.task,djcidx-Int64(1),numafe_)
@@ -12272,17 +15151,6 @@ function getdjcnumafe(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcnumafetot(task::MSKtask) :: numafetot
-
-  Obtains the number of affine expressions in all disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numafetot::Int64 Number of affine expressions in all disjunctive constraints.
-"""
-function getdjcnumafetot end
 function getdjcnumafetot(task::MSKtask)
   numafetot_ = Ref{Int64}()
   @MSK_getdjcnumafetot(task.task,numafetot_)
@@ -12290,19 +15158,6 @@ function getdjcnumafetot(task::MSKtask)
 end
 
 
-"""
-  getdjcnumterm(task::MSKtask,djcidx::Int64) :: numterm
-  getdjcnumterm(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numterm
-
-  Obtains the number terms in the disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    numterm::Int64 Number of terms in the disjunctive constraint.
-"""
-function getdjcnumterm end
 function getdjcnumterm(task::MSKtask,djcidx::Int64)
   numterm_ = Ref{Int64}()
   @MSK_getdjcnumterm(task.task,djcidx-Int64(1),numterm_)
@@ -12315,17 +15170,6 @@ function getdjcnumterm(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcnumtermtot(task::MSKtask) :: numtermtot
-
-  Obtains the number of terms in all disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numtermtot::Int64 Total number of terms in all disjunctive constraints.
-"""
-function getdjcnumtermtot end
 function getdjcnumtermtot(task::MSKtask)
   numtermtot_ = Ref{Int64}()
   @MSK_getdjcnumtermtot(task.task,numtermtot_)
@@ -12333,17 +15177,6 @@ function getdjcnumtermtot(task::MSKtask)
 end
 
 
-"""
-  putmaxnumacc(task::MSKtask,maxnumacc::Int64)
-  putmaxnumacc(task::MSKtask,maxnumacc::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumacc::Int64 Number of preallocated affine conic constraints.
-"""
-function putmaxnumacc end
 function putmaxnumacc(task::MSKtask,maxnumacc::Int64)
   @MSK_putmaxnumacc(task.task,maxnumacc)
   nothing
@@ -12355,17 +15188,6 @@ function putmaxnumacc(task::MSKtask,maxnumacc::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumacc(task::MSKtask) :: num
-
-  Obtains the number of affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 The number of affine conic constraints.
-"""
-function getnumacc end
 function getnumacc(task::MSKtask)
   num_ = Ref{Int64}()
   @MSK_getnumacc(task.task,num_)
@@ -12373,26 +15195,13 @@ function getnumacc(task::MSKtask)
 end
 
 
-"""
-  appendacc(task::MSKtask,domidx::Int64,afeidxlist::Vector{Int64},b::Vector{Float64})
-  appendacc(task::MSKtask,domidx::T0,afeidxlist::T1,b::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Appends an affine conic constraint to the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Domain index.
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function appendacc end
-function appendacc(task::MSKtask,domidx::Int64,afeidxlist::Vector{Int64},b::Vector{Float64})
+function appendacc(task::MSKtask,domidx::Int64,afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendacc(task.task,domidx-Int64(1),numafeidx,afeidxlist_,b_)
   nothing
 end
@@ -12400,67 +15209,41 @@ function appendacc(task::MSKtask,domidx::T0,afeidxlist::T1,b::T2) where { T0<:In
   appendacc(
     task,
     convert(Int64,domidx),
-    convert(Vector{Int64},afeidxlist),
-    convert(Vector{Float64},b))
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end,
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  appendaccs(task::MSKtask,domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64})
-  appendaccs(task::MSKtask,domidxs::T0,afeidxlist::T1,b::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Appends a number of affine conic constraint to the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidxs::Vector{Int64} Domain indices.
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function appendaccs end
-function appendaccs(task::MSKtask,domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64})
+function appendaccs(task::MSKtask,domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
   numaccs = Int64(length(domidxs))
   domidxs_ = domidxs .- Int64(1)
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendaccs(task.task,numaccs,domidxs_,numafeidx,afeidxlist_,b_)
   nothing
 end
 function appendaccs(task::MSKtask,domidxs::T0,afeidxlist::T1,b::T2) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number} }
   appendaccs(
     task,
-    convert(Vector{Int64},domidxs),
-    convert(Vector{Int64},afeidxlist),
-    convert(Vector{Float64},b))
+    if domidxs === nothing; nothing; else convert(Vector{Int64},domidxs); end,
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end,
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Vector{Float64})
-  appendaccseq(task::MSKtask,domidx::T0,afeidxfirst::T1,b::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Appends an affine conic constraint to the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Domain index.
-    afeidxfirst::Int64 Index of the first affine expression.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function appendaccseq end
-function appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Vector{Float64})
-  __tmp_488 = Ref{Int64}()
-  @MSK_getdomainn(task.task,domidx-Int64(1),__tmp_488)
-  __tmp_487 = __tmp_488[]
-  numafeidx = Int64(__tmp_487)
-  if length(b) < numafeidx
+function appendaccseq(task::MSKtask,domidx::Int64,afeidxfirst::Int64,b::Union{Nothing,Vector{Float64}})
+  __tmp_489 = Ref{Int64}()
+  @MSK_getdomainn(task.task,domidx-Int64(1),__tmp_489)
+  __tmp_488 = __tmp_489[]
+  numafeidx = Int64(__tmp_488)
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendaccseq(task.task,domidx-Int64(1),numafeidx,afeidxfirst-Int64(1),b_)
   nothing
 end
@@ -12469,65 +15252,37 @@ function appendaccseq(task::MSKtask,domidx::T0,afeidxfirst::T1,b::T2) where { T0
     task,
     convert(Int64,domidx),
     convert(Int64,afeidxfirst),
-    convert(Vector{Float64},b))
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  appendaccsseq(task::MSKtask,domidxs::Vector{Int64},numafeidx::Int64,afeidxfirst::Int64,b::Vector{Float64})
-  appendaccsseq(task::MSKtask,domidxs::T0,numafeidx::T1,afeidxfirst::T2,b::T3) where {T0<:AbstractVector{<:Integer},T1<:Integer,T2<:Integer,T3<:AbstractVector{<:Number}} 
-
-  Appends a number of affine conic constraint to the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidxs::Vector{Int64} Domain indices.
-    numafeidx::Int64 Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
-    afeidxfirst::Int64 Index of the first affine expression.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function appendaccsseq end
-function appendaccsseq(task::MSKtask,domidxs::Vector{Int64},numafeidx::Int64,afeidxfirst::Int64,b::Vector{Float64})
+function appendaccsseq(task::MSKtask,domidxs::Vector{Int64},numafeidx::Int64,afeidxfirst::Int64,b::Union{Nothing,Vector{Float64}})
   numaccs = Int64(length(domidxs))
   domidxs_ = domidxs .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_appendaccsseq(task.task,numaccs,domidxs_,numafeidx,afeidxfirst-Int64(1),b_)
   nothing
 end
 function appendaccsseq(task::MSKtask,domidxs::T0,numafeidx::T1,afeidxfirst::T2,b::T3) where { T0<:AbstractVector{<:Integer},T1<:Integer,T2<:Integer,T3<:AbstractVector{<:Number} }
   appendaccsseq(
     task,
-    convert(Vector{Int64},domidxs),
+    if domidxs === nothing; nothing; else convert(Vector{Int64},domidxs); end,
     convert(Int64,numafeidx),
     convert(Int64,afeidxfirst),
-    convert(Vector{Float64},b))
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  putacc(task::MSKtask,accidx::Int64,domidx::Int64,afeidxlist::Vector{Int64},b::Vector{Float64})
-  putacc(task::MSKtask,accidx::T0,domidx::T1,afeidxlist::T2,b::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-
-  Puts an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Affine conic constraint index.
-    domidx::Int64 Domain index.
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function putacc end
-function putacc(task::MSKtask,accidx::Int64,domidx::Int64,afeidxlist::Vector{Int64},b::Vector{Float64})
+function putacc(task::MSKtask,accidx::Int64,domidx::Int64,afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_putacc(task.task,accidx-Int64(1),domidx-Int64(1),numafeidx,afeidxlist_,b_)
   nothing
 end
@@ -12536,63 +15291,37 @@ function putacc(task::MSKtask,accidx::T0,domidx::T1,afeidxlist::T2,b::T3) where 
     task,
     convert(Int64,accidx),
     convert(Int64,domidx),
-    convert(Vector{Int64},afeidxlist),
-    convert(Vector{Float64},b))
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end,
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  putacclist(task::MSKtask,accidxs::Vector{Int64},domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64})
-  putacclist(task::MSKtask,accidxs::T0,domidxs::T1,afeidxlist::T2,b::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-
-  Puts a number of affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidxs::Vector{Int64} Affine conic constraint indices.
-    domidxs::Vector{Int64} Domain indices.
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function putacclist end
-function putacclist(task::MSKtask,accidxs::Vector{Int64},domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64})
+function putacclist(task::MSKtask,accidxs::Vector{Int64},domidxs::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}})
   numaccs = Int64(min(length(domidxs),length(accidxs)))
   accidxs_ = accidxs .- Int64(1)
   domidxs_ = domidxs .- Int64(1)
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_putacclist(task.task,numaccs,accidxs_,domidxs_,numafeidx,afeidxlist_,b_)
   nothing
 end
 function putacclist(task::MSKtask,accidxs::T0,domidxs::T1,afeidxlist::T2,b::T3) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
   putacclist(
     task,
-    convert(Vector{Int64},accidxs),
-    convert(Vector{Int64},domidxs),
-    convert(Vector{Int64},afeidxlist),
-    convert(Vector{Float64},b))
+    if accidxs === nothing; nothing; else convert(Vector{Int64},accidxs); end,
+    if domidxs === nothing; nothing; else convert(Vector{Int64},domidxs); end,
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end,
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  putaccb(task::MSKtask,accidx::Int64,b::Vector{Float64})
-  putaccb(task::MSKtask,accidx::T0,b::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
-
-  Puts the constant vector b in an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Affine conic constraint index.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, can be NULL.
-"""
-function putaccb end
-function putaccb(task::MSKtask,accidx::Int64,b::Vector{Float64})
+function putaccb(task::MSKtask,accidx::Int64,b::Union{Nothing,Vector{Float64}})
   lengthb = Int64(length(b))
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   @MSK_putaccb(task.task,accidx-Int64(1),lengthb,b_)
   nothing
 end
@@ -12600,23 +15329,10 @@ function putaccb(task::MSKtask,accidx::T0,b::T1) where { T0<:Integer,T1<:Abstrac
   putaccb(
     task,
     convert(Int64,accidx),
-    convert(Vector{Float64},b))
+    if b === nothing; nothing; else convert(Vector{Float64},b); end)
 end
 
 
-"""
-  putaccbj(task::MSKtask,accidx::Int64,j::Int64,bj::Float64)
-  putaccbj(task::MSKtask,accidx::T0,j::T1,bj::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
-
-  Sets one element in the b vector of an affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Affine conic constraint index.
-    j::Int64 The index of an element in b to change.
-    bj::Float64 The new value of b[j].
-"""
-function putaccbj end
 function putaccbj(task::MSKtask,accidx::Int64,j::Int64,bj::Float64)
   @MSK_putaccbj(task.task,accidx-Int64(1),j-Int64(1),bj)
   nothing
@@ -12630,19 +15346,6 @@ function putaccbj(task::MSKtask,accidx::T0,j::T1,bj::T2) where { T0<:Integer,T1<
 end
 
 
-"""
-  getaccdomain(task::MSKtask,accidx::Int64) :: domidx
-  getaccdomain(task::MSKtask,accidx::T0) where {T0<:Integer}  :: domidx
-
-  Obtains the domain appearing in the affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 The index of the affine conic constraint.
-  Returns
-    domidx::Int64 The index of domain in the affine conic constraint.
-"""
-function getaccdomain end
 function getaccdomain(task::MSKtask,accidx::Int64)
   domidx_ = Ref{Int64}()
   @MSK_getaccdomain(task.task,accidx-Int64(1),domidx_)
@@ -12655,19 +15358,6 @@ function getaccdomain(task::MSKtask,accidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getaccn(task::MSKtask,accidx::Int64) :: n
-  getaccn(task::MSKtask,accidx::T0) where {T0<:Integer}  :: n
-
-  Obtains the dimension of the affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 The index of the affine conic constraint.
-  Returns
-    n::Int64 The dimension of the affine conic constraint (equal to the dimension of its domain).
-"""
-function getaccn end
 function getaccn(task::MSKtask,accidx::Int64)
   n_ = Ref{Int64}()
   @MSK_getaccn(task.task,accidx-Int64(1),n_)
@@ -12680,17 +15370,6 @@ function getaccn(task::MSKtask,accidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getaccntot(task::MSKtask) :: n
-
-  Obtains the total dimension of all affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    n::Int64 The total dimension of all affine conic constraints.
-"""
-function getaccntot end
 function getaccntot(task::MSKtask)
   n_ = Ref{Int64}()
   @MSK_getaccntot(task.task,n_)
@@ -12698,24 +15377,11 @@ function getaccntot(task::MSKtask)
 end
 
 
-"""
-  getaccafeidxlist(task::MSKtask,accidx::Int64) :: afeidxlist
-  getaccafeidxlist(task::MSKtask,accidx::T0) where {T0<:Integer}  :: afeidxlist
-
-  Obtains the list of affine expressions appearing in the affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Index of the affine conic constraint.
-  Returns
-    afeidxlist::Vector{Int64} List of indexes of affine expressions appearing in the constraint.
-"""
-function getaccafeidxlist end
 function getaccafeidxlist(task::MSKtask,accidx::Int64)
-  __tmp_499 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_499)
-  __tmp_498 = __tmp_499[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_498)
+  __tmp_500 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_500)
+  __tmp_499 = __tmp_500[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_499)
   @MSK_getaccafeidxlist(task.task,accidx-Int64(1),afeidxlist_)
   afeidxlist = afeidxlist_;
   afeidxlist .+= 1
@@ -12728,24 +15394,11 @@ function getaccafeidxlist(task::MSKtask,accidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getaccb(task::MSKtask,accidx::Int64) :: b
-  getaccb(task::MSKtask,accidx::T0) where {T0<:Integer}  :: b
-
-  Obtains the additional constant term vector appearing in the affine conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    accidx::Int64 Index of the affine conic constraint.
-  Returns
-    b::Vector{Float64} The vector b appearing in the constraint.
-"""
-function getaccb end
 function getaccb(task::MSKtask,accidx::Int64)
-  __tmp_502 = Ref{Int64}()
-  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_502)
-  __tmp_501 = __tmp_502[]
-  b_ = Vector{Float64}(undef,__tmp_501)
+  __tmp_503 = Ref{Int64}()
+  @MSK_getaccn(task.task,accidx-Int64(1),__tmp_503)
+  __tmp_502 = __tmp_503[]
+  b_ = Vector{Float64}(undef,__tmp_502)
   @MSK_getaccb(task.task,accidx-Int64(1),b_)
   b = b_;
   b
@@ -12757,32 +15410,19 @@ function getaccb(task::MSKtask,accidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getaccs(task::MSKtask) :: (domidxlist,afeidxlist,b)
-
-  Obtains full data of all affine conic constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    domidxlist::Vector{Int64} The list of domains appearing in all affine conic constraints.
-    afeidxlist::Vector{Int64} The concatenation of index lists of affine expressions appearing in all affine conic constraints.
-    b::Vector{Float64} The concatenation of vectors b appearing in all affine conic constraints.
-"""
-function getaccs end
 function getaccs(task::MSKtask)
-  __tmp_505 = Ref{Int64}()
-  @MSK_getnumacc(task.task,__tmp_505)
-  __tmp_504 = __tmp_505[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_504)
-  __tmp_507 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_507)
-  __tmp_506 = __tmp_507[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_506)
-  __tmp_509 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_509)
-  __tmp_508 = __tmp_509[]
-  b_ = Vector{Float64}(undef,__tmp_508)
+  __tmp_506 = Ref{Int64}()
+  @MSK_getnumacc(task.task,__tmp_506)
+  __tmp_505 = __tmp_506[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_505)
+  __tmp_508 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_508)
+  __tmp_507 = __tmp_508[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_507)
+  __tmp_510 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_510)
+  __tmp_509 = __tmp_510[]
+  b_ = Vector{Float64}(undef,__tmp_509)
   @MSK_getaccs(task.task,domidxlist_,afeidxlist_,b_)
   domidxlist = domidxlist_;
   domidxlist .+= 1
@@ -12793,17 +15433,6 @@ function getaccs(task::MSKtask)
 end
 
 
-"""
-  getaccfnumnz(task::MSKtask) :: accfnnz
-
-  Obtains the total number of nonzeros in the ACC implied F matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    accfnnz::Int64 Number of nonzeros in the F matrix implied by ACCs.
-"""
-function getaccfnumnz end
 function getaccfnumnz(task::MSKtask)
   accfnnz_ = Ref{Int64}()
   @MSK_getaccfnumnz(task.task,accfnnz_)
@@ -12811,32 +15440,19 @@ function getaccfnumnz(task::MSKtask)
 end
 
 
-"""
-  getaccftrip(task::MSKtask) :: (frow,fcol,fval)
-
-  Obtains the F matrix (implied by the AFE ordering within the ACCs) in triplet format.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    frow::Vector{Int64} Row indices of nonzeros in the implied F matrix.
-    fcol::Vector{Int32} Column indices of nonzeros in the implied F matrix.
-    fval::Vector{Float64} Values of nonzero entries in the implied F matrix.
-"""
-function getaccftrip end
 function getaccftrip(task::MSKtask)
-  __tmp_513 = Ref{Int64}()
-  @MSK_getaccfnumnz(task.task,__tmp_513)
-  __tmp_512 = __tmp_513[]
-  frow_ = Vector{Int64}(undef,__tmp_512)
-  __tmp_515 = Ref{Int64}()
-  @MSK_getaccfnumnz(task.task,__tmp_515)
-  __tmp_514 = __tmp_515[]
-  fcol_ = Vector{Int32}(undef,__tmp_514)
-  __tmp_517 = Ref{Int64}()
-  @MSK_getaccfnumnz(task.task,__tmp_517)
-  __tmp_516 = __tmp_517[]
-  fval_ = Vector{Float64}(undef,__tmp_516)
+  __tmp_514 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_514)
+  __tmp_513 = __tmp_514[]
+  frow_ = Vector{Int64}(undef,__tmp_513)
+  __tmp_516 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_516)
+  __tmp_515 = __tmp_516[]
+  fcol_ = Vector{Int32}(undef,__tmp_515)
+  __tmp_518 = Ref{Int64}()
+  @MSK_getaccfnumnz(task.task,__tmp_518)
+  __tmp_517 = __tmp_518[]
+  fval_ = Vector{Float64}(undef,__tmp_517)
   @MSK_getaccftrip(task.task,frow_,fcol_,fval_)
   frow = frow_;
   frow .+= 1
@@ -12847,39 +15463,17 @@ function getaccftrip(task::MSKtask)
 end
 
 
-"""
-  getaccgvector(task::MSKtask) :: g
-
-  The g vector as used within the ACCs.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    g::Vector{Float64} The g vector as used within the ACCs.
-"""
-function getaccgvector end
 function getaccgvector(task::MSKtask)
-  __tmp_520 = Ref{Int64}()
-  @MSK_getaccntot(task.task,__tmp_520)
-  __tmp_519 = __tmp_520[]
-  g_ = Vector{Float64}(undef,__tmp_519)
+  __tmp_521 = Ref{Int64}()
+  @MSK_getaccntot(task.task,__tmp_521)
+  __tmp_520 = __tmp_521[]
+  g_ = Vector{Float64}(undef,__tmp_520)
   @MSK_getaccgvector(task.task,g_)
   g = g_;
   g
 end
 
 
-"""
-  getaccbarfnumblocktriplets(task::MSKtask) :: numtrip
-
-  Obtains an upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numtrip::Int64 An upper bound on the number of elements in the block triplet form of barf, as used within the ACCs.
-"""
-function getaccbarfnumblocktriplets end
 function getaccbarfnumblocktriplets(task::MSKtask)
   numtrip_ = Ref{Int64}()
   @MSK_getaccbarfnumblocktriplets(task.task,numtrip_)
@@ -12887,27 +15481,11 @@ function getaccbarfnumblocktriplets(task::MSKtask)
 end
 
 
-"""
-  getaccbarfblocktriplet(task::MSKtask) :: (numtrip,acc_afe,bar_var,blk_row,blk_col,blk_val)
-
-  Obtains barF, implied by the ACCs, in block triplet form.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numtrip::Int64 Number of elements in the block triplet form.
-    acc_afe::Vector{Int64} Index of the AFE within the concatenated list of AFEs in ACCs.
-    bar_var::Vector{Int32} Symmetric matrix variable index.
-    blk_row::Vector{Int32} Block row index.
-    blk_col::Vector{Int32} Block column index.
-    blk_val::Vector{Float64} The numerical value associated with each block triplet.
-"""
-function getaccbarfblocktriplet end
 function getaccbarfblocktriplet(task::MSKtask)
-  __tmp_524 = Ref{Int64}()
-  @MSK_getaccbarfnumblocktriplets(task.task,__tmp_524)
-  __tmp_523 = __tmp_524[]
-  maxnumtrip = Int64(__tmp_523)
+  __tmp_525 = Ref{Int64}()
+  @MSK_getaccbarfnumblocktriplets(task.task,__tmp_525)
+  __tmp_524 = __tmp_525[]
+  maxnumtrip = Int64(__tmp_524)
   numtrip_ = Ref{Int64}()
   acc_afe_ = Vector{Int64}(undef,maxnumtrip)
   bar_var_ = Vector{Int32}(undef,maxnumtrip)
@@ -12928,17 +15506,6 @@ function getaccbarfblocktriplet(task::MSKtask)
 end
 
 
-"""
-  appenddjcs(task::MSKtask,num::Int64)
-  appenddjcs(task::MSKtask,num::T0) where {T0<:Integer} 
-
-  Appends a number of empty disjunctive constraints to the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    num::Int64 Number of empty disjunctive constraints which should be appended.
-"""
-function appenddjcs end
 function appenddjcs(task::MSKtask,num::Int64)
   @MSK_appenddjcs(task.task,num)
   nothing
@@ -12950,30 +15517,15 @@ function appenddjcs(task::MSKtask,num::T0) where { T0<:Integer }
 end
 
 
-"""
-  putdjc(task::MSKtask,djcidx::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64},termsizelist::Vector{Int64})
-  putdjc(task::MSKtask,djcidx::T0,domidxlist::T1,afeidxlist::T2,b::T3,termsizelist::T4) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Integer}} 
-
-  Inputs a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-    domidxlist::Vector{Int64} List of domain indexes.
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Vector{Float64} The vector of constant terms added to affine expressions.
-    termsizelist::Vector{Int64} List of term sizes.
-"""
-function putdjc end
-function putdjc(task::MSKtask,djcidx::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64},termsizelist::Vector{Int64})
+function putdjc(task::MSKtask,djcidx::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}},termsizelist::Vector{Int64})
   numdomidx = Int64(length(domidxlist))
   domidxlist_ = domidxlist .- Int64(1)
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   numterms = Int64(length(termsizelist))
   termsizelist_ = termsizelist
   @MSK_putdjc(task.task,djcidx-Int64(1),numdomidx,domidxlist_,numafeidx,afeidxlist_,b_,numterms,termsizelist_)
@@ -12983,42 +15535,25 @@ function putdjc(task::MSKtask,djcidx::T0,domidxlist::T1,afeidxlist::T2,b::T3,ter
   putdjc(
     task,
     convert(Int64,djcidx),
-    convert(Vector{Int64},domidxlist),
-    convert(Vector{Int64},afeidxlist),
-    convert(Vector{Float64},b),
-    convert(Vector{Int64},termsizelist))
+    if domidxlist === nothing; nothing; else convert(Vector{Int64},domidxlist); end,
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end,
+    if b === nothing; nothing; else convert(Vector{Float64},b); end,
+    if termsizelist === nothing; nothing; else convert(Vector{Int64},termsizelist); end)
 end
 
 
-"""
-  putdjcslice(task::MSKtask,idxfirst::Int64,idxlast::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64},termsizelist::Vector{Int64},termsindjc::Vector{Int64})
-  putdjcslice(task::MSKtask,idxfirst::T0,idxlast::T1,domidxlist::T2,afeidxlist::T3,b::T4,termsizelist::T5,termsindjc::T6) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Integer}} 
-
-  Inputs a slice of disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idxfirst::Int64 Index of the first disjunctive constraint in the slice.
-    idxlast::Int64 Index of the last disjunctive constraint in the slice plus 1.
-    domidxlist::Vector{Int64} List of domain indexes.
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Vector{Float64} The vector of constant terms added to affine expressions. Optional, may be NULL.
-    termsizelist::Vector{Int64} List of term sizes.
-    termsindjc::Vector{Int64} Number of terms in each of the disjunctive constraints in the slice.
-"""
-function putdjcslice end
-function putdjcslice(task::MSKtask,idxfirst::Int64,idxlast::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Vector{Float64},termsizelist::Vector{Int64},termsindjc::Vector{Int64})
+function putdjcslice(task::MSKtask,idxfirst::Int64,idxlast::Int64,domidxlist::Vector{Int64},afeidxlist::Vector{Int64},b::Union{Nothing,Vector{Float64}},termsizelist::Vector{Int64},termsindjc::Vector{Int64})
   numdomidx = Int64(length(domidxlist))
   domidxlist_ = domidxlist .- Int64(1)
   numafeidx = Int64(length(afeidxlist))
   afeidxlist_ = afeidxlist .- Int64(1)
-  if length(b) < numafeidx
+  if b !== nothing && length(b) < numafeidx
     throw(BoundsError())
   end
-  b_ = b
+  b_ = if b === nothing; C_NULL; else b end
   numterms = Int64(length(termsizelist))
   termsizelist_ = termsizelist
-  if length(termsindjc) < (idxlast - idxfirst)
+  if termsindjc !== nothing && length(termsindjc) < (idxlast - idxfirst)
     throw(BoundsError())
   end
   termsindjc_ = termsindjc
@@ -13030,32 +15565,19 @@ function putdjcslice(task::MSKtask,idxfirst::T0,idxlast::T1,domidxlist::T2,afeid
     task,
     convert(Int64,idxfirst),
     convert(Int64,idxlast),
-    convert(Vector{Int64},domidxlist),
-    convert(Vector{Int64},afeidxlist),
-    convert(Vector{Float64},b),
-    convert(Vector{Int64},termsizelist),
-    convert(Vector{Int64},termsindjc))
+    if domidxlist === nothing; nothing; else convert(Vector{Int64},domidxlist); end,
+    if afeidxlist === nothing; nothing; else convert(Vector{Int64},afeidxlist); end,
+    if b === nothing; nothing; else convert(Vector{Float64},b); end,
+    if termsizelist === nothing; nothing; else convert(Vector{Int64},termsizelist); end,
+    if termsindjc === nothing; nothing; else convert(Vector{Int64},termsindjc); end)
 end
 
 
-"""
-  getdjcdomainidxlist(task::MSKtask,djcidx::Int64) :: domidxlist
-  getdjcdomainidxlist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: domidxlist
-
-  Obtains the list of domain indexes in a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    domidxlist::Vector{Int64} List of term sizes.
-"""
-function getdjcdomainidxlist end
 function getdjcdomainidxlist(task::MSKtask,djcidx::Int64)
-  __tmp_530 = Ref{Int64}()
-  @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),__tmp_530)
-  __tmp_529 = __tmp_530[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_529)
+  __tmp_531 = Ref{Int64}()
+  @MSK_getdjcnumdomain(task.task,djcidx-Int64(1),__tmp_531)
+  __tmp_530 = __tmp_531[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_530)
   @MSK_getdjcdomainidxlist(task.task,djcidx-Int64(1),domidxlist_)
   domidxlist = domidxlist_;
   domidxlist .+= 1
@@ -13068,24 +15590,11 @@ function getdjcdomainidxlist(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcafeidxlist(task::MSKtask,djcidx::Int64) :: afeidxlist
-  getdjcafeidxlist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: afeidxlist
-
-  Obtains the list of affine expression indexes in a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    afeidxlist::Vector{Int64} List of affine expression indexes.
-"""
-function getdjcafeidxlist end
 function getdjcafeidxlist(task::MSKtask,djcidx::Int64)
-  __tmp_533 = Ref{Int64}()
-  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_533)
-  __tmp_532 = __tmp_533[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_532)
+  __tmp_534 = Ref{Int64}()
+  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_534)
+  __tmp_533 = __tmp_534[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_533)
   @MSK_getdjcafeidxlist(task.task,djcidx-Int64(1),afeidxlist_)
   afeidxlist = afeidxlist_;
   afeidxlist .+= 1
@@ -13098,24 +15607,11 @@ function getdjcafeidxlist(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcb(task::MSKtask,djcidx::Int64) :: b
-  getdjcb(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: b
-
-  Obtains the optional constant term vector of a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    b::Vector{Float64} The vector b.
-"""
-function getdjcb end
 function getdjcb(task::MSKtask,djcidx::Int64)
-  __tmp_536 = Ref{Int64}()
-  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_536)
-  __tmp_535 = __tmp_536[]
-  b_ = Vector{Float64}(undef,__tmp_535)
+  __tmp_537 = Ref{Int64}()
+  @MSK_getdjcnumafe(task.task,djcidx-Int64(1),__tmp_537)
+  __tmp_536 = __tmp_537[]
+  b_ = Vector{Float64}(undef,__tmp_536)
   @MSK_getdjcb(task.task,djcidx-Int64(1),b_)
   b = b_;
   b
@@ -13127,24 +15623,11 @@ function getdjcb(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjctermsizelist(task::MSKtask,djcidx::Int64) :: termsizelist
-  getdjctermsizelist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: termsizelist
-
-  Obtains the list of term sizes in a disjunctive constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    djcidx::Int64 Index of the disjunctive constraint.
-  Returns
-    termsizelist::Vector{Int64} List of term sizes.
-"""
-function getdjctermsizelist end
 function getdjctermsizelist(task::MSKtask,djcidx::Int64)
-  __tmp_539 = Ref{Int64}()
-  @MSK_getdjcnumterm(task.task,djcidx-Int64(1),__tmp_539)
-  __tmp_538 = __tmp_539[]
-  termsizelist_ = Vector{Int64}(undef,__tmp_538)
+  __tmp_540 = Ref{Int64}()
+  @MSK_getdjcnumterm(task.task,djcidx-Int64(1),__tmp_540)
+  __tmp_539 = __tmp_540[]
+  termsizelist_ = Vector{Int64}(undef,__tmp_539)
   @MSK_getdjctermsizelist(task.task,djcidx-Int64(1),termsizelist_)
   termsizelist = termsizelist_;
   termsizelist
@@ -13156,42 +15639,27 @@ function getdjctermsizelist(task::MSKtask,djcidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdjcs(task::MSKtask) :: (domidxlist,afeidxlist,b,termsizelist,numterms)
-
-  Obtains full data of all disjunctive constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    domidxlist::Vector{Int64} The concatenation of index lists of domains appearing in all disjunctive constraints.
-    afeidxlist::Vector{Int64} The concatenation of index lists of affine expressions appearing in all disjunctive constraints.
-    b::Vector{Float64} The concatenation of vectors b appearing in all disjunctive constraints.
-    termsizelist::Vector{Int64} The concatenation of lists of term sizes appearing in all disjunctive constraints.
-    numterms::Vector{Int64} The number of terms in each of the disjunctive constraints.
-"""
-function getdjcs end
 function getdjcs(task::MSKtask)
-  __tmp_542 = Ref{Int64}()
-  @MSK_getdjcnumdomaintot(task.task,__tmp_542)
-  __tmp_541 = __tmp_542[]
-  domidxlist_ = Vector{Int64}(undef,__tmp_541)
-  __tmp_544 = Ref{Int64}()
-  @MSK_getdjcnumafetot(task.task,__tmp_544)
-  __tmp_543 = __tmp_544[]
-  afeidxlist_ = Vector{Int64}(undef,__tmp_543)
-  __tmp_546 = Ref{Int64}()
-  @MSK_getdjcnumafetot(task.task,__tmp_546)
-  __tmp_545 = __tmp_546[]
-  b_ = Vector{Float64}(undef,__tmp_545)
-  __tmp_548 = Ref{Int64}()
-  @MSK_getdjcnumtermtot(task.task,__tmp_548)
-  __tmp_547 = __tmp_548[]
-  termsizelist_ = Vector{Int64}(undef,__tmp_547)
-  __tmp_550 = Ref{Int64}()
-  @MSK_getnumdjc(task.task,__tmp_550)
-  __tmp_549 = __tmp_550[]
-  numterms_ = Vector{Int64}(undef,__tmp_549)
+  __tmp_543 = Ref{Int64}()
+  @MSK_getdjcnumdomaintot(task.task,__tmp_543)
+  __tmp_542 = __tmp_543[]
+  domidxlist_ = Vector{Int64}(undef,__tmp_542)
+  __tmp_545 = Ref{Int64}()
+  @MSK_getdjcnumafetot(task.task,__tmp_545)
+  __tmp_544 = __tmp_545[]
+  afeidxlist_ = Vector{Int64}(undef,__tmp_544)
+  __tmp_547 = Ref{Int64}()
+  @MSK_getdjcnumafetot(task.task,__tmp_547)
+  __tmp_546 = __tmp_547[]
+  b_ = Vector{Float64}(undef,__tmp_546)
+  __tmp_549 = Ref{Int64}()
+  @MSK_getdjcnumtermtot(task.task,__tmp_549)
+  __tmp_548 = __tmp_549[]
+  termsizelist_ = Vector{Int64}(undef,__tmp_548)
+  __tmp_551 = Ref{Int64}()
+  @MSK_getnumdjc(task.task,__tmp_551)
+  __tmp_550 = __tmp_551[]
+  numterms_ = Vector{Int64}(undef,__tmp_550)
   @MSK_getdjcs(task.task,domidxlist_,afeidxlist_,b_,termsizelist_,numterms_)
   domidxlist = domidxlist_;
   domidxlist .+= 1
@@ -13204,20 +15672,6 @@ function getdjcs(task::MSKtask)
 end
 
 
-"""
-  putconbound(task::MSKtask,i::Int32,bkc::Boundkey,blc::Float64,buc::Float64)
-  putconbound(task::MSKtask,i::T0,bkc::Boundkey,blc::T1,buc::T2) where {T0<:Integer,T1<:Number,T2<:Number} 
-
-  Changes the bound for one constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint.
-    bkc::Boundkey New bound key.
-    blc::Float64 New lower bound.
-    buc::Float64 New upper bound.
-"""
-function putconbound end
 function putconbound(task::MSKtask,i::Int32,bkc::Boundkey,blc::Float64,buc::Float64)
   @MSK_putconbound(task.task,i-Int32(1),bkc.value,blc,buc)
   nothing
@@ -13232,20 +15686,6 @@ function putconbound(task::MSKtask,i::T0,bkc::Boundkey,blc::T1,buc::T2) where { 
 end
 
 
-"""
-  putconboundlist(task::MSKtask,sub::Vector{Int32},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64})
-  putconboundlist(task::MSKtask,sub::T0,bkc::Vector{Boundkey},blc::T1,buc::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number}} 
-
-  Changes the bounds of a list of constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sub::Vector{Int32} List of constraint indexes.
-    bkc::Vector{Boundkey} Bound keys for the constraints.
-    blc::Vector{Float64} Lower bounds for the constraints.
-    buc::Vector{Float64} Upper bounds for the constraints.
-"""
-function putconboundlist end
 function putconboundlist(task::MSKtask,sub::Vector{Int32},bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64})
   num = Int32(min(length(sub),length(bkc),length(blc),length(buc)))
   sub_ = sub .- Int32(1)
@@ -13258,27 +15698,13 @@ end
 function putconboundlist(task::MSKtask,sub::T0,bkc::Vector{Boundkey},blc::T1,buc::T2) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number} }
   putconboundlist(
     task,
-    convert(Vector{Int32},sub),
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end,
     bkc,
-    convert(Vector{Float64},blc),
-    convert(Vector{Float64},buc))
+    if blc === nothing; nothing; else convert(Vector{Float64},blc); end,
+    if buc === nothing; nothing; else convert(Vector{Float64},buc); end)
 end
 
 
-"""
-  putconboundlistconst(task::MSKtask,sub::Vector{Int32},bkc::Boundkey,blc::Float64,buc::Float64)
-  putconboundlistconst(task::MSKtask,sub::T0,bkc::Boundkey,blc::T1,buc::T2) where {T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number} 
-
-  Changes the bounds of a list of constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sub::Vector{Int32} List of constraint indexes.
-    bkc::Boundkey New bound key for all constraints in the list.
-    blc::Float64 New lower bound for all constraints in the list.
-    buc::Float64 New upper bound for all constraints in the list.
-"""
-function putconboundlistconst end
 function putconboundlistconst(task::MSKtask,sub::Vector{Int32},bkc::Boundkey,blc::Float64,buc::Float64)
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -13288,38 +15714,23 @@ end
 function putconboundlistconst(task::MSKtask,sub::T0,bkc::Boundkey,blc::T1,buc::T2) where { T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number }
   putconboundlistconst(
     task,
-    convert(Vector{Int32},sub),
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end,
     bkc,
     convert(Float64,blc),
     convert(Float64,buc))
 end
 
 
-"""
-  putconboundslice(task::MSKtask,first::Int32,last::Int32,bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64})
-  putconboundslice(task::MSKtask,first::T0,last::T1,bkc::Vector{Boundkey},blc::T2,buc::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
-
-  Changes the bounds for a slice of the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    bkc::Vector{Boundkey} Bound keys for the constraints.
-    blc::Vector{Float64} Lower bounds for the constraints.
-    buc::Vector{Float64} Upper bounds for the constraints.
-"""
-function putconboundslice end
 function putconboundslice(task::MSKtask,first::Int32,last::Int32,bkc::Vector{Boundkey},blc::Vector{Float64},buc::Vector{Float64})
   if length(bkc) < (last - first)
     throw(BoundsError())
   end
   bkc_ = Int32[item.value for item in bkc]
-  if length(blc) < (last - first)
+  if blc !== nothing && length(blc) < (last - first)
     throw(BoundsError())
   end
   blc_ = blc
-  if length(buc) < (last - first)
+  if buc !== nothing && length(buc) < (last - first)
     throw(BoundsError())
   end
   buc_ = buc
@@ -13332,26 +15743,11 @@ function putconboundslice(task::MSKtask,first::T0,last::T1,bkc::Vector{Boundkey}
     convert(Int32,first),
     convert(Int32,last),
     bkc,
-    convert(Vector{Float64},blc),
-    convert(Vector{Float64},buc))
+    if blc === nothing; nothing; else convert(Vector{Float64},blc); end,
+    if buc === nothing; nothing; else convert(Vector{Float64},buc); end)
 end
 
 
-"""
-  putconboundsliceconst(task::MSKtask,first::Int32,last::Int32,bkc::Boundkey,blc::Float64,buc::Float64)
-  putconboundsliceconst(task::MSKtask,first::T0,last::T1,bkc::Boundkey,blc::T2,buc::T3) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:Number} 
-
-  Changes the bounds for a slice of the constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    bkc::Boundkey New bound key for all constraints in the slice.
-    blc::Float64 New lower bound for all constraints in the slice.
-    buc::Float64 New upper bound for all constraints in the slice.
-"""
-function putconboundsliceconst end
 function putconboundsliceconst(task::MSKtask,first::Int32,last::Int32,bkc::Boundkey,blc::Float64,buc::Float64)
   @MSK_putconboundsliceconst(task.task,first-Int32(1),last-Int32(1),bkc.value,blc,buc)
   nothing
@@ -13367,20 +15763,6 @@ function putconboundsliceconst(task::MSKtask,first::T0,last::T1,bkc::Boundkey,bl
 end
 
 
-"""
-  putvarbound(task::MSKtask,j::Int32,bkx::Boundkey,blx::Float64,bux::Float64)
-  putvarbound(task::MSKtask,j::T0,bkx::Boundkey,blx::T1,bux::T2) where {T0<:Integer,T1<:Number,T2<:Number} 
-
-  Changes the bounds for one variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable.
-    bkx::Boundkey New bound key.
-    blx::Float64 New lower bound.
-    bux::Float64 New upper bound.
-"""
-function putvarbound end
 function putvarbound(task::MSKtask,j::Int32,bkx::Boundkey,blx::Float64,bux::Float64)
   @MSK_putvarbound(task.task,j-Int32(1),bkx.value,blx,bux)
   nothing
@@ -13395,20 +15777,6 @@ function putvarbound(task::MSKtask,j::T0,bkx::Boundkey,blx::T1,bux::T2) where { 
 end
 
 
-"""
-  putvarboundlist(task::MSKtask,sub::Vector{Int32},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
-  putvarboundlist(task::MSKtask,sub::T0,bkx::Vector{Boundkey},blx::T1,bux::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number}} 
-
-  Changes the bounds of a list of variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sub::Vector{Int32} List of variable indexes.
-    bkx::Vector{Boundkey} Bound keys for the variables.
-    blx::Vector{Float64} Lower bounds for the variables.
-    bux::Vector{Float64} Upper bounds for the variables.
-"""
-function putvarboundlist end
 function putvarboundlist(task::MSKtask,sub::Vector{Int32},bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
   num = Int32(min(length(sub),length(bkx),length(blx),length(bux)))
   sub_ = sub .- Int32(1)
@@ -13421,27 +15789,13 @@ end
 function putvarboundlist(task::MSKtask,sub::T0,bkx::Vector{Boundkey},blx::T1,bux::T2) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number} }
   putvarboundlist(
     task,
-    convert(Vector{Int32},sub),
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end,
     bkx,
-    convert(Vector{Float64},blx),
-    convert(Vector{Float64},bux))
+    if blx === nothing; nothing; else convert(Vector{Float64},blx); end,
+    if bux === nothing; nothing; else convert(Vector{Float64},bux); end)
 end
 
 
-"""
-  putvarboundlistconst(task::MSKtask,sub::Vector{Int32},bkx::Boundkey,blx::Float64,bux::Float64)
-  putvarboundlistconst(task::MSKtask,sub::T0,bkx::Boundkey,blx::T1,bux::T2) where {T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number} 
-
-  Changes the bounds of a list of variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sub::Vector{Int32} List of variable indexes.
-    bkx::Boundkey New bound key for all variables in the list.
-    blx::Float64 New lower bound for all variables in the list.
-    bux::Float64 New upper bound for all variables in the list.
-"""
-function putvarboundlistconst end
 function putvarboundlistconst(task::MSKtask,sub::Vector{Int32},bkx::Boundkey,blx::Float64,bux::Float64)
   num = Int32(length(sub))
   sub_ = sub .- Int32(1)
@@ -13451,38 +15805,23 @@ end
 function putvarboundlistconst(task::MSKtask,sub::T0,bkx::Boundkey,blx::T1,bux::T2) where { T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number }
   putvarboundlistconst(
     task,
-    convert(Vector{Int32},sub),
+    if sub === nothing; nothing; else convert(Vector{Int32},sub); end,
     bkx,
     convert(Float64,blx),
     convert(Float64,bux))
 end
 
 
-"""
-  putvarboundslice(task::MSKtask,first::Int32,last::Int32,bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
-  putvarboundslice(task::MSKtask,first::T0,last::T1,bkx::Vector{Boundkey},blx::T2,bux::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
-
-  Changes the bounds for a slice of the variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    bkx::Vector{Boundkey} Bound keys for the variables.
-    blx::Vector{Float64} Lower bounds for the variables.
-    bux::Vector{Float64} Upper bounds for the variables.
-"""
-function putvarboundslice end
 function putvarboundslice(task::MSKtask,first::Int32,last::Int32,bkx::Vector{Boundkey},blx::Vector{Float64},bux::Vector{Float64})
   if length(bkx) < (last - first)
     throw(BoundsError())
   end
   bkx_ = Int32[item.value for item in bkx]
-  if length(blx) < (last - first)
+  if blx !== nothing && length(blx) < (last - first)
     throw(BoundsError())
   end
   blx_ = blx
-  if length(bux) < (last - first)
+  if bux !== nothing && length(bux) < (last - first)
     throw(BoundsError())
   end
   bux_ = bux
@@ -13495,26 +15834,11 @@ function putvarboundslice(task::MSKtask,first::T0,last::T1,bkx::Vector{Boundkey}
     convert(Int32,first),
     convert(Int32,last),
     bkx,
-    convert(Vector{Float64},blx),
-    convert(Vector{Float64},bux))
+    if blx === nothing; nothing; else convert(Vector{Float64},blx); end,
+    if bux === nothing; nothing; else convert(Vector{Float64},bux); end)
 end
 
 
-"""
-  putvarboundsliceconst(task::MSKtask,first::Int32,last::Int32,bkx::Boundkey,blx::Float64,bux::Float64)
-  putvarboundsliceconst(task::MSKtask,first::T0,last::T1,bkx::Boundkey,blx::T2,bux::T3) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:Number} 
-
-  Changes the bounds for a slice of the variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First index in the sequence.
-    last::Int32 Last index plus 1 in the sequence.
-    bkx::Boundkey New bound key for all variables in the slice.
-    blx::Float64 New lower bound for all variables in the slice.
-    bux::Float64 New upper bound for all variables in the slice.
-"""
-function putvarboundsliceconst end
 function putvarboundsliceconst(task::MSKtask,first::Int32,last::Int32,bkx::Boundkey,blx::Float64,bux::Float64)
   @MSK_putvarboundsliceconst(task.task,first-Int32(1),last-Int32(1),bkx.value,blx,bux)
   nothing
@@ -13530,17 +15854,6 @@ function putvarboundsliceconst(task::MSKtask,first::T0,last::T1,bkx::Boundkey,bl
 end
 
 
-"""
-  putcfix(task::MSKtask,cfix::Float64)
-  putcfix(task::MSKtask,cfix::T0) where {T0<:Number} 
-
-  Replaces the fixed term in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    cfix::Float64 Fixed term in the objective.
-"""
-function putcfix end
 function putcfix(task::MSKtask,cfix::Float64)
   @MSK_putcfix(task.task,cfix)
   nothing
@@ -13552,18 +15865,6 @@ function putcfix(task::MSKtask,cfix::T0) where { T0<:Number }
 end
 
 
-"""
-  putcj(task::MSKtask,j::Int32,cj::Float64)
-  putcj(task::MSKtask,j::T0,cj::T1) where {T0<:Integer,T1<:Number} 
-
-  Modifies one linear coefficient in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable whose objective coefficient should be changed.
-    cj::Float64 New coefficient value.
-"""
-function putcj end
 function putcj(task::MSKtask,j::Int32,cj::Float64)
   @MSK_putcj(task.task,j-Int32(1),cj)
   nothing
@@ -13576,33 +15877,12 @@ function putcj(task::MSKtask,j::T0,cj::T1) where { T0<:Integer,T1<:Number }
 end
 
 
-"""
-  putobjsense(task::MSKtask,sense::Objsense)
-
-  Sets the objective sense.
-
-  Arguments
-    task::MSKtask An optimization task.
-    sense::Objsense The objective sense of the task
-"""
-function putobjsense end
 function putobjsense(task::MSKtask,sense::Objsense)
   @MSK_putobjsense(task.task,sense.value)
   nothing
 end
 
 
-"""
-  getobjsense(task::MSKtask) :: sense
-
-  Gets the objective sense.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    sense::Objsense The returned objective sense.
-"""
-function getobjsense end
 function getobjsense(task::MSKtask)
   sense_ = Ref{Int32}()
   @MSK_getobjsense(task.task,sense_)
@@ -13611,18 +15891,6 @@ function getobjsense(task::MSKtask)
 end
 
 
-"""
-  putclist(task::MSKtask,subj::Vector{Int32},val::Vector{Float64})
-  putclist(task::MSKtask,subj::T0,val::T1) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number}} 
-
-  Modifies a part of the linear objective coefficients.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subj::Vector{Int32} Indices of variables for which objective coefficients should be changed.
-    val::Vector{Float64} New numerical values for the objective coefficients that should be modified.
-"""
-function putclist end
 function putclist(task::MSKtask,subj::Vector{Int32},val::Vector{Float64})
   num = Int32(min(length(subj),length(val)))
   subj_ = subj .- Int32(1)
@@ -13633,26 +15901,13 @@ end
 function putclist(task::MSKtask,subj::T0,val::T1) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number} }
   putclist(
     task,
-    convert(Vector{Int32},subj),
-    convert(Vector{Float64},val))
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if val === nothing; nothing; else convert(Vector{Float64},val); end)
 end
 
 
-"""
-  putcslice(task::MSKtask,first::Int32,last::Int32,slice::Vector{Float64})
-  putcslice(task::MSKtask,first::T0,last::T1,slice::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
-
-  Modifies a slice of the linear objective coefficients.
-
-  Arguments
-    task::MSKtask An optimization task.
-    first::Int32 First element in the slice of c.
-    last::Int32 Last element plus 1 of the slice in c to be changed.
-    slice::Vector{Float64} New numerical values for the objective coefficients that should be modified.
-"""
-function putcslice end
 function putcslice(task::MSKtask,first::Int32,last::Int32,slice::Vector{Float64})
-  if length(slice) < (last - first)
+  if slice !== nothing && length(slice) < (last - first)
     throw(BoundsError())
   end
   slice_ = slice
@@ -13664,23 +15919,10 @@ function putcslice(task::MSKtask,first::T0,last::T1,slice::T2) where { T0<:Integ
     task,
     convert(Int32,first),
     convert(Int32,last),
-    convert(Vector{Float64},slice))
+    if slice === nothing; nothing; else convert(Vector{Float64},slice); end)
 end
 
 
-"""
-  putbarcj(task::MSKtask,j::Int32,sub::Vector{Int64},weights::Vector{Float64})
-  putbarcj(task::MSKtask,j::T0,sub::T1,weights::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-
-  Changes one element in barc.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the element in barc` that should be changed.
-    sub::Vector{Int64} sub is list of indexes of those symmetric matrices appearing in sum.
-    weights::Vector{Float64} The weights of the terms in the weighted sum.
-"""
-function putbarcj end
 function putbarcj(task::MSKtask,j::Int32,sub::Vector{Int64},weights::Vector{Float64})
   num = Int64(min(length(sub),length(weights)))
   sub_ = sub .- Int64(1)
@@ -13692,25 +15934,11 @@ function putbarcj(task::MSKtask,j::T0,sub::T1,weights::T2) where { T0<:Integer,T
   putbarcj(
     task,
     convert(Int32,j),
-    convert(Vector{Int64},sub),
-    convert(Vector{Float64},weights))
+    if sub === nothing; nothing; else convert(Vector{Int64},sub); end,
+    if weights === nothing; nothing; else convert(Vector{Float64},weights); end)
 end
 
 
-"""
-  putcone(task::MSKtask,k::Int32,ct::Conetype,conepar::Float64,submem::Vector{Int32})
-  putcone(task::MSKtask,k::T0,ct::Conetype,conepar::T1,submem::T2) where {T0<:Integer,T1<:Number,T2<:AbstractVector{<:Integer}} 
-
-  Replaces a conic constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 Index of the cone.
-    ct::Conetype Specifies the type of the cone.
-    conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
-    submem::Vector{Int32} Variable subscripts of the members in the cone.
-"""
-function putcone end
 function putcone(task::MSKtask,k::Int32,ct::Conetype,conepar::Float64,submem::Vector{Int32})
   nummem = Int32(length(submem))
   submem_ = submem .- Int32(1)
@@ -13723,21 +15951,10 @@ function putcone(task::MSKtask,k::T0,ct::Conetype,conepar::T1,submem::T2) where 
     convert(Int32,k),
     ct,
     convert(Float64,conepar),
-    convert(Vector{Int32},submem))
+    if submem === nothing; nothing; else convert(Vector{Int32},submem); end)
 end
 
 
-"""
-  putmaxnumdomain(task::MSKtask,maxnumdomain::Int64)
-  putmaxnumdomain(task::MSKtask,maxnumdomain::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated domains in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumdomain::Int64 Number of preallocated domains.
-"""
-function putmaxnumdomain end
 function putmaxnumdomain(task::MSKtask,maxnumdomain::Int64)
   @MSK_putmaxnumdomain(task.task,maxnumdomain)
   nothing
@@ -13749,17 +15966,6 @@ function putmaxnumdomain(task::MSKtask,maxnumdomain::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumdomain(task::MSKtask) :: numdomain
-
-  Obtain the number of domains defined.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    numdomain::Int64 Number of domains in the task.
-"""
-function getnumdomain end
 function getnumdomain(task::MSKtask)
   numdomain_ = Ref{Int64}()
   @MSK_getnumdomain(task.task,numdomain_)
@@ -13767,19 +15973,6 @@ function getnumdomain(task::MSKtask)
 end
 
 
-"""
-  appendrplusdomain(task::MSKtask,n::Int64) :: domidx
-  appendrplusdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the n dimensional positive orthant to the list of domains.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendrplusdomain end
 function appendrplusdomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendrplusdomain(task.task,n,domidx_)
@@ -13792,19 +15985,6 @@ function appendrplusdomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendrminusdomain(task::MSKtask,n::Int64) :: domidx
-  appendrminusdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the n dimensional negative orthant to the list of domains.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendrminusdomain end
 function appendrminusdomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendrminusdomain(task.task,n,domidx_)
@@ -13817,19 +15997,6 @@ function appendrminusdomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendrdomain(task::MSKtask,n::Int64) :: domidx
-  appendrdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the n dimensional real number domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendrdomain end
 function appendrdomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendrdomain(task.task,n,domidx_)
@@ -13842,19 +16009,6 @@ function appendrdomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendrzerodomain(task::MSKtask,n::Int64) :: domidx
-  appendrzerodomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the n dimensional 0 domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendrzerodomain end
 function appendrzerodomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendrzerodomain(task.task,n,domidx_)
@@ -13867,19 +16021,6 @@ function appendrzerodomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendquadraticconedomain(task::MSKtask,n::Int64) :: domidx
-  appendquadraticconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the n dimensional quadratic cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendquadraticconedomain end
 function appendquadraticconedomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendquadraticconedomain(task.task,n,domidx_)
@@ -13892,19 +16033,6 @@ function appendquadraticconedomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendrquadraticconedomain(task::MSKtask,n::Int64) :: domidx
-  appendrquadraticconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the n dimensional rotated quadratic cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendrquadraticconedomain end
 function appendrquadraticconedomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendrquadraticconedomain(task.task,n,domidx_)
@@ -13917,17 +16045,6 @@ function appendrquadraticconedomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendprimalexpconedomain(task::MSKtask) :: domidx
-
-  Appends the primal exponential cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendprimalexpconedomain end
 function appendprimalexpconedomain(task::MSKtask)
   domidx_ = Ref{Int64}()
   @MSK_appendprimalexpconedomain(task.task,domidx_)
@@ -13935,17 +16052,6 @@ function appendprimalexpconedomain(task::MSKtask)
 end
 
 
-"""
-  appenddualexpconedomain(task::MSKtask) :: domidx
-
-  Appends the dual exponential cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appenddualexpconedomain end
 function appenddualexpconedomain(task::MSKtask)
   domidx_ = Ref{Int64}()
   @MSK_appenddualexpconedomain(task.task,domidx_)
@@ -13953,19 +16059,6 @@ function appenddualexpconedomain(task::MSKtask)
 end
 
 
-"""
-  appendprimalgeomeanconedomain(task::MSKtask,n::Int64) :: domidx
-  appendprimalgeomeanconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the primal geometric mean cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendprimalgeomeanconedomain end
 function appendprimalgeomeanconedomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendprimalgeomeanconedomain(task.task,n,domidx_)
@@ -13978,19 +16071,6 @@ function appendprimalgeomeanconedomain(task::MSKtask,n::T0) where { T0<:Integer 
 end
 
 
-"""
-  appenddualgeomeanconedomain(task::MSKtask,n::Int64) :: domidx
-  appenddualgeomeanconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the dual geometric mean cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimmension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appenddualgeomeanconedomain end
 function appenddualgeomeanconedomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appenddualgeomeanconedomain(task.task,n,domidx_)
@@ -14003,20 +16083,6 @@ function appenddualgeomeanconedomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendprimalpowerconedomain(task::MSKtask,n::Int64,alpha::Vector{Float64}) :: domidx
-  appendprimalpowerconedomain(task::MSKtask,n::T0,alpha::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}}  :: domidx
-
-  Appends the primal power cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimension of the domain.
-    alpha::Vector{Float64} The sequence proportional to exponents. Must be positive.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendprimalpowerconedomain end
 function appendprimalpowerconedomain(task::MSKtask,n::Int64,alpha::Vector{Float64})
   nleft = Int64(length(alpha))
   alpha_ = alpha
@@ -14028,24 +16094,10 @@ function appendprimalpowerconedomain(task::MSKtask,n::T0,alpha::T1) where { T0<:
   appendprimalpowerconedomain(
     task,
     convert(Int64,n),
-    convert(Vector{Float64},alpha))
+    if alpha === nothing; nothing; else convert(Vector{Float64},alpha); end)
 end
 
 
-"""
-  appenddualpowerconedomain(task::MSKtask,n::Int64,alpha::Vector{Float64}) :: domidx
-  appenddualpowerconedomain(task::MSKtask,n::T0,alpha::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}}  :: domidx
-
-  Appends the dual power cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimension of the domain.
-    alpha::Vector{Float64} The sequence proportional to exponents. Must be positive.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appenddualpowerconedomain end
 function appenddualpowerconedomain(task::MSKtask,n::Int64,alpha::Vector{Float64})
   nleft = Int64(length(alpha))
   alpha_ = alpha
@@ -14057,23 +16109,10 @@ function appenddualpowerconedomain(task::MSKtask,n::T0,alpha::T1) where { T0<:In
   appenddualpowerconedomain(
     task,
     convert(Int64,n),
-    convert(Vector{Float64},alpha))
+    if alpha === nothing; nothing; else convert(Vector{Float64},alpha); end)
 end
 
 
-"""
-  appendsvecpsdconedomain(task::MSKtask,n::Int64) :: domidx
-  appendsvecpsdconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
-
-  Appends the vectorized SVEC PSD cone domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    n::Int64 Dimension of the domain.
-  Returns
-    domidx::Int64 Index of the domain.
-"""
-function appendsvecpsdconedomain end
 function appendsvecpsdconedomain(task::MSKtask,n::Int64)
   domidx_ = Ref{Int64}()
   @MSK_appendsvecpsdconedomain(task.task,n,domidx_)
@@ -14086,19 +16125,6 @@ function appendsvecpsdconedomain(task::MSKtask,n::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdomaintype(task::MSKtask,domidx::Int64) :: domtype
-  getdomaintype(task::MSKtask,domidx::T0) where {T0<:Integer}  :: domtype
-
-  Returns the type of the domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of the domain.
-  Returns
-    domtype::Domaintype The type of the domain.
-"""
-function getdomaintype end
 function getdomaintype(task::MSKtask,domidx::Int64)
   domtype_ = Ref{Int32}()
   @MSK_getdomaintype(task.task,domidx-Int64(1),domtype_)
@@ -14112,19 +16138,6 @@ function getdomaintype(task::MSKtask,domidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getdomainn(task::MSKtask,domidx::Int64) :: n
-  getdomainn(task::MSKtask,domidx::T0) where {T0<:Integer}  :: n
-
-  Obtains the dimension of the domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of the domain.
-  Returns
-    n::Int64 Dimension of the domain.
-"""
-function getdomainn end
 function getdomainn(task::MSKtask,domidx::Int64)
   n_ = Ref{Int64}()
   @MSK_getdomainn(task.task,domidx-Int64(1),n_)
@@ -14137,20 +16150,6 @@ function getdomainn(task::MSKtask,domidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getpowerdomaininfo(task::MSKtask,domidx::Int64) :: (n,nleft)
-  getpowerdomaininfo(task::MSKtask,domidx::T0) where {T0<:Integer}  :: (n,nleft)
-
-  Obtains structural information about a power domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of the domain.
-  Returns
-    n::Int64 Dimension of the domain.
-    nleft::Int64 Number of variables on the left hand side.
-"""
-function getpowerdomaininfo end
 function getpowerdomaininfo(task::MSKtask,domidx::Int64)
   n_ = Ref{Int64}()
   nleft_ = Ref{Int64}()
@@ -14164,24 +16163,11 @@ function getpowerdomaininfo(task::MSKtask,domidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getpowerdomainalpha(task::MSKtask,domidx::Int64) :: alpha
-  getpowerdomainalpha(task::MSKtask,domidx::T0) where {T0<:Integer}  :: alpha
-
-  Obtains the exponent vector of a power domain.
-
-  Arguments
-    task::MSKtask An optimization task.
-    domidx::Int64 Index of the domain.
-  Returns
-    alpha::Vector{Float64} The exponent vector of the domain.
-"""
-function getpowerdomainalpha end
 function getpowerdomainalpha(task::MSKtask,domidx::Int64)
-  __tmp_589 = Ref{Int64}()
-  @MSK_getpowerdomaininfo(task.task,domidx-Int64(1),Ref{Int64}(),__tmp_589)
-  __tmp_588 = __tmp_589[]
-  alpha_ = Vector{Float64}(undef,__tmp_588)
+  __tmp_590 = Ref{Int64}()
+  @MSK_getpowerdomaininfo(task.task,domidx-Int64(1),Ref{Int64}(),__tmp_590)
+  __tmp_589 = __tmp_590[]
+  alpha_ = Vector{Float64}(undef,__tmp_589)
   @MSK_getpowerdomainalpha(task.task,domidx-Int64(1),alpha_)
   alpha = alpha_;
   alpha
@@ -14193,24 +16179,6 @@ function getpowerdomainalpha(task::MSKtask,domidx::T0) where { T0<:Integer }
 end
 
 
-"""
-  appendsparsesymmat(task::MSKtask,dim::Int32,subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64}) :: idx
-  appendsparsesymmat(task::MSKtask,dim::T0,subi::T1,subj::T2,valij::T3) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}}  :: idx
-  appendsparsesymmat(task::MSKtask,dim::T0,data:: SparseMatrixCSC{Float64}) :: idx
-
-  Appends a general sparse symmetric matrix to the storage of symmetric matrices.
-
-  Arguments
-    task::MSKtask An optimization task.
-    dim::Int32 Dimension of the symmetric matrix that is appended.
-    subi::Vector{Int32} Row subscript in the triplets.
-    subj::Vector{Int32} Column subscripts in the triplets.
-    valij::Vector{Float64} Values of each triplet.
-    subi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
-  Returns
-    idx::Int64 Unique index assigned to the inputted matrix.
-"""
-function appendsparsesymmat end
 function appendsparsesymmat(task::MSKtask,dim::Int32,subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64})
   nz = Int64(min(length(subi),length(subj),length(valij)))
   subi_ = subi .- Int32(1)
@@ -14228,42 +16196,25 @@ function appendsparsesymmat(task::MSKtask,dim::T0,subi::T1,subj::T2,valij::T3) w
   appendsparsesymmat(
     task,
     convert(Int32,dim),
-    convert(Vector{Int32},subi),
-    convert(Vector{Int32},subj),
-    convert(Vector{Float64},valij))
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if valij === nothing; nothing; else convert(Vector{Float64},valij); end)
 end
 
 
-"""
-  appendsparsesymmatlist(task::MSKtask,dims::Vector{Int32},nz::Vector{Int64},subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64}) :: idx
-  appendsparsesymmatlist(task::MSKtask,dims::T0,nz::T1,subi::T2,subj::T3,valij::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}}  :: idx
-
-  Appends a general sparse symmetric matrix to the storage of symmetric matrices.
-
-  Arguments
-    task::MSKtask An optimization task.
-    dims::Vector{Int32} Dimensions of the symmetric matrixes.
-    nz::Vector{Int64} Number of nonzeros for each matrix.
-    subi::Vector{Int32} Row subscript in the triplets.
-    subj::Vector{Int32} Column subscripts in the triplets.
-    valij::Vector{Float64} Values of each triplet.
-  Returns
-    idx::Vector{Int64} Unique index assigned to the inputted matrix.
-"""
-function appendsparsesymmatlist end
 function appendsparsesymmatlist(task::MSKtask,dims::Vector{Int32},nz::Vector{Int64},subi::Vector{Int32},subj::Vector{Int32},valij::Vector{Float64})
   num = Int32(min(length(dims),length(nz)))
   dims_ = dims
   nz_ = nz
-  if length(subi) < sum(nz)
+  if subi !== nothing && length(subi) < sum(nz)
     throw(BoundsError())
   end
   subi_ = subi .- Int32(1)
-  if length(subj) < sum(nz)
+  if subj !== nothing && length(subj) < sum(nz)
     throw(BoundsError())
   end
   subj_ = subj .- Int32(1)
-  if length(valij) < sum(nz)
+  if valij !== nothing && length(valij) < sum(nz)
     throw(BoundsError())
   end
   valij_ = valij
@@ -14276,29 +16227,14 @@ end
 function appendsparsesymmatlist(task::MSKtask,dims::T0,nz::T1,subi::T2,subj::T3,valij::T4) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number} }
   appendsparsesymmatlist(
     task,
-    convert(Vector{Int32},dims),
-    convert(Vector{Int64},nz),
-    convert(Vector{Int32},subi),
-    convert(Vector{Int32},subj),
-    convert(Vector{Float64},valij))
+    if dims === nothing; nothing; else convert(Vector{Int32},dims); end,
+    if nz === nothing; nothing; else convert(Vector{Int64},nz); end,
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
+    if valij === nothing; nothing; else convert(Vector{Float64},valij); end)
 end
 
 
-"""
-  getsymmatinfo(task::MSKtask,idx::Int64) :: (dim,nz,mattype)
-  getsymmatinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: (dim,nz,mattype)
-
-  Obtains information about a matrix from the symmetric matrix storage.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Index of the matrix for which information is requested.
-  Returns
-    dim::Int32 Returns the dimension of the requested matrix.
-    nz::Int64 Returns the number of non-zeros in the requested matrix.
-    mattype::Symmattype Returns the type of the requested matrix.
-"""
-function getsymmatinfo end
 function getsymmatinfo(task::MSKtask,idx::Int64)
   dim_ = Ref{Int32}()
   nz_ = Ref{Int64}()
@@ -14314,17 +16250,6 @@ function getsymmatinfo(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  getnumsymmat(task::MSKtask) :: num
-
-  Obtains the number of symmetric matrices stored.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    num::Int64 The number of symmetric sparse matrices.
-"""
-function getnumsymmat end
 function getnumsymmat(task::MSKtask)
   num_ = Ref{Int64}()
   @MSK_getnumsymmat(task.task,num_)
@@ -14332,26 +16257,11 @@ function getnumsymmat(task::MSKtask)
 end
 
 
-"""
-  getsparsesymmat(task::MSKtask,idx::Int64) :: (subi,subj,valij)
-  getsparsesymmat(task::MSKtask,idx::T0) where {T0<:Integer}  :: (subi,subj,valij)
-
-  Gets a single symmetric matrix from the matrix store.
-
-  Arguments
-    task::MSKtask An optimization task.
-    idx::Int64 Index of the matrix to retrieve.
-  Returns
-    subi::Vector{Int32} Row subscripts of the matrix non-zero elements.
-    subj::Vector{Int32} Column subscripts of the matrix non-zero elements.
-    valij::Vector{Float64} Coefficients of the matrix non-zero elements.
-"""
-function getsparsesymmat end
 function getsparsesymmat(task::MSKtask,idx::Int64)
-  __tmp_596 = Ref{Int64}()
-  @MSK_getsymmatinfo(task.task,idx-Int64(1),Ref{Int32}(),__tmp_596,Ref{Int32}())
-  __tmp_595 = __tmp_596[]
-  maxlen = Int64(__tmp_595)
+  __tmp_597 = Ref{Int64}()
+  @MSK_getsymmatinfo(task.task,idx-Int64(1),Ref{Int32}(),__tmp_597,Ref{Int32}())
+  __tmp_596 = __tmp_597[]
+  maxlen = Int64(__tmp_596)
   subi_ = Vector{Int32}(undef,maxlen)
   subj_ = Vector{Int32}(undef,maxlen)
   valij_ = Vector{Float64}(undef,maxlen)
@@ -14370,18 +16280,6 @@ function getsparsesymmat(task::MSKtask,idx::T0) where { T0<:Integer }
 end
 
 
-"""
-  putdouparam(task::MSKtask,param::Dparam,parvalue::Float64)
-  putdouparam(task::MSKtask,param::Dparam,parvalue::T0) where {T0<:Number} 
-
-  Sets a double parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Dparam Which parameter.
-    parvalue::Float64 Parameter value.
-"""
-function putdouparam end
 function putdouparam(task::MSKtask,param::Dparam,parvalue::Float64)
   @MSK_putdouparam(task.task,param.value,parvalue)
   nothing
@@ -14394,18 +16292,6 @@ function putdouparam(task::MSKtask,param::Dparam,parvalue::T0) where { T0<:Numbe
 end
 
 
-"""
-  putintparam(task::MSKtask,param::Iparam,parvalue::Int32)
-  putintparam(task::MSKtask,param::Iparam,parvalue::T0) where {T0<:Integer} 
-
-  Sets an integer parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Iparam Which parameter.
-    parvalue::Int32 Parameter value.
-"""
-function putintparam end
 function putintparam(task::MSKtask,param::Iparam,parvalue::Int32)
   @MSK_putintparam(task.task,param.value,parvalue)
   nothing
@@ -14418,17 +16304,6 @@ function putintparam(task::MSKtask,param::Iparam,parvalue::T0) where { T0<:Integ
 end
 
 
-"""
-  putmaxnumcon(task::MSKtask,maxnumcon::Int32)
-  putmaxnumcon(task::MSKtask,maxnumcon::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated constraints in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumcon::Int32 Number of preallocated constraints in the optimization task.
-"""
-function putmaxnumcon end
 function putmaxnumcon(task::MSKtask,maxnumcon::Int32)
   @MSK_putmaxnumcon(task.task,maxnumcon)
   nothing
@@ -14440,17 +16315,6 @@ function putmaxnumcon(task::MSKtask,maxnumcon::T0) where { T0<:Integer }
 end
 
 
-"""
-  putmaxnumcone(task::MSKtask,maxnumcone::Int32)
-  putmaxnumcone(task::MSKtask,maxnumcone::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated conic constraints in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumcone::Int32 Number of preallocated conic constraints in the optimization task.
-"""
-function putmaxnumcone end
 function putmaxnumcone(task::MSKtask,maxnumcone::Int32)
   @MSK_putmaxnumcone(task.task,maxnumcone)
   nothing
@@ -14462,17 +16326,6 @@ function putmaxnumcone(task::MSKtask,maxnumcone::T0) where { T0<:Integer }
 end
 
 
-"""
-  getmaxnumcone(task::MSKtask) :: maxnumcone
-
-  Obtains the number of preallocated cones in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    maxnumcone::Int32 Number of preallocated conic constraints in the optimization task.
-"""
-function getmaxnumcone end
 function getmaxnumcone(task::MSKtask)
   maxnumcone_ = Ref{Int32}()
   @MSK_getmaxnumcone(task.task,maxnumcone_)
@@ -14480,17 +16333,6 @@ function getmaxnumcone(task::MSKtask)
 end
 
 
-"""
-  putmaxnumvar(task::MSKtask,maxnumvar::Int32)
-  putmaxnumvar(task::MSKtask,maxnumvar::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated variables in the optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumvar::Int32 Number of preallocated variables in the optimization task.
-"""
-function putmaxnumvar end
 function putmaxnumvar(task::MSKtask,maxnumvar::Int32)
   @MSK_putmaxnumvar(task.task,maxnumvar)
   nothing
@@ -14502,17 +16344,6 @@ function putmaxnumvar(task::MSKtask,maxnumvar::T0) where { T0<:Integer }
 end
 
 
-"""
-  putmaxnumbarvar(task::MSKtask,maxnumbarvar::Int32)
-  putmaxnumbarvar(task::MSKtask,maxnumbarvar::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated symmetric matrix variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumbarvar::Int32 Number of preallocated symmetric matrix variables.
-"""
-function putmaxnumbarvar end
 function putmaxnumbarvar(task::MSKtask,maxnumbarvar::Int32)
   @MSK_putmaxnumbarvar(task.task,maxnumbarvar)
   nothing
@@ -14524,17 +16355,6 @@ function putmaxnumbarvar(task::MSKtask,maxnumbarvar::T0) where { T0<:Integer }
 end
 
 
-"""
-  putmaxnumanz(task::MSKtask,maxnumanz::Int64)
-  putmaxnumanz(task::MSKtask,maxnumanz::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated non-zero entries in the linear coefficient matrix.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumanz::Int64 New size of the storage reserved for storing the linear coefficient matrix.
-"""
-function putmaxnumanz end
 function putmaxnumanz(task::MSKtask,maxnumanz::Int64)
   @MSK_putmaxnumanz(task.task,maxnumanz)
   nothing
@@ -14546,17 +16366,6 @@ function putmaxnumanz(task::MSKtask,maxnumanz::T0) where { T0<:Integer }
 end
 
 
-"""
-  putmaxnumqnz(task::MSKtask,maxnumqnz::Int64)
-  putmaxnumqnz(task::MSKtask,maxnumqnz::T0) where {T0<:Integer} 
-
-  Sets the number of preallocated non-zero entries in quadratic terms.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumqnz::Int64 Number of non-zero elements preallocated in quadratic coefficient matrices.
-"""
-function putmaxnumqnz end
 function putmaxnumqnz(task::MSKtask,maxnumqnz::Int64)
   @MSK_putmaxnumqnz(task.task,maxnumqnz)
   nothing
@@ -14568,17 +16377,6 @@ function putmaxnumqnz(task::MSKtask,maxnumqnz::T0) where { T0<:Integer }
 end
 
 
-"""
-  getmaxnumqnz(task::MSKtask) :: maxnumqnz
-
-  Obtains the number of preallocated non-zeros for all quadratic terms in objective and constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    maxnumqnz::Int64 Number of non-zero elements preallocated in quadratic coefficient matrices.
-"""
-function getmaxnumqnz end
 function getmaxnumqnz(task::MSKtask)
   maxnumqnz_ = Ref{Int64}()
   @MSK_getmaxnumqnz64(task.task,maxnumqnz_)
@@ -14586,24 +16384,12 @@ function getmaxnumqnz(task::MSKtask)
 end
 
 
-"""
-  putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::Float64)
-  putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where {T0<:Number} 
-
-  Sets a double parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    paramname::AbstractString Name of a parameter.
-    parvalue::Float64 Parameter value.
-"""
-function putnadouparam end
 function putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::Float64)
   paramname_ = Vector{UInt8}(paramname); push!(paramname_,UInt8(0))
   @MSK_putnadouparam(task.task,paramname_,parvalue)
   nothing
 end
-function putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where { T0<:Number }
+function putnadouparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where { T0<:Number }
   putnadouparam(
     task,
     paramname,
@@ -14611,24 +16397,12 @@ function putnadouparam(task::MSKtask,paramname::AbstractString,parvalue::T0) whe
 end
 
 
-"""
-  putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::Int32)
-  putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where {T0<:Integer} 
-
-  Sets an integer parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    paramname::AbstractString Name of a parameter.
-    parvalue::Int32 Parameter value.
-"""
-function putnaintparam end
 function putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::Int32)
   paramname_ = Vector{UInt8}(paramname); push!(paramname_,UInt8(0))
   @MSK_putnaintparam(task.task,paramname_,parvalue)
   nothing
 end
-function putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::T0) where { T0<:Integer }
+function putnaintparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where { T0<:Integer }
   putnaintparam(
     task,
     paramname,
@@ -14636,17 +16410,6 @@ function putnaintparam(task::MSKtask,paramname::AbstractString,parvalue::T0) whe
 end
 
 
-"""
-  putnastrparam(task::MSKtask,paramname::AbstractString,parvalue::AbstractString)
-
-  Sets a string parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    paramname::AbstractString Name of a parameter.
-    parvalue::AbstractString Parameter value.
-"""
-function putnastrparam end
 function putnastrparam(task::MSKtask,paramname::AbstractString,parvalue::AbstractString)
   paramname_ = Vector{UInt8}(paramname); push!(paramname_,UInt8(0))
   parvalue_ = Vector{UInt8}(parvalue); push!(parvalue_,UInt8(0))
@@ -14655,16 +16418,6 @@ function putnastrparam(task::MSKtask,paramname::AbstractString,parvalue::Abstrac
 end
 
 
-"""
-  putobjname(task::MSKtask,objname::AbstractString)
-
-  Assigns a new name to the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    objname::AbstractString Name of the objective.
-"""
-function putobjname end
 function putobjname(task::MSKtask,objname::AbstractString)
   objname_ = Vector{UInt8}(objname); push!(objname_,UInt8(0))
   @MSK_putobjname(task.task,objname_)
@@ -14672,17 +16425,6 @@ function putobjname(task::MSKtask,objname::AbstractString)
 end
 
 
-"""
-  putparam(task::MSKtask,parname::AbstractString,parvalue::AbstractString)
-
-  Modifies the value of parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    parname::AbstractString Parameter name.
-    parvalue::AbstractString Parameter value.
-"""
-function putparam end
 function putparam(task::MSKtask,parname::AbstractString,parvalue::AbstractString)
   parname_ = Vector{UInt8}(parname); push!(parname_,UInt8(0))
   parvalue_ = Vector{UInt8}(parvalue); push!(parvalue_,UInt8(0))
@@ -14691,20 +16433,6 @@ function putparam(task::MSKtask,parname::AbstractString,parvalue::AbstractString
 end
 
 
-"""
-  putqcon(task::MSKtask,qcsubk::Vector{Int32},qcsubi::Vector{Int32},qcsubj::Vector{Int32},qcval::Vector{Float64})
-  putqcon(task::MSKtask,qcsubk::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-
-  Replaces all quadratic terms in constraints.
-
-  Arguments
-    task::MSKtask An optimization task.
-    qcsubk::Vector{Int32} Constraint subscripts for quadratic coefficients.
-    qcsubi::Vector{Int32} Row subscripts for quadratic constraint matrix.
-    qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
-    qcval::Vector{Float64} Quadratic constraint coefficient values.
-"""
-function putqcon end
 function putqcon(task::MSKtask,qcsubk::Vector{Int32},qcsubi::Vector{Int32},qcsubj::Vector{Int32},qcval::Vector{Float64})
   numqcnz = Int32(min(length(qcsubi),length(qcsubj),length(qcval)))
   qcsubk_ = qcsubk .- Int32(1)
@@ -14717,29 +16445,13 @@ end
 function putqcon(task::MSKtask,qcsubk::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
   putqcon(
     task,
-    convert(Vector{Int32},qcsubk),
-    convert(Vector{Int32},qcsubi),
-    convert(Vector{Int32},qcsubj),
-    convert(Vector{Float64},qcval))
+    if qcsubk === nothing; nothing; else convert(Vector{Int32},qcsubk); end,
+    if qcsubi === nothing; nothing; else convert(Vector{Int32},qcsubi); end,
+    if qcsubj === nothing; nothing; else convert(Vector{Int32},qcsubj); end,
+    if qcval === nothing; nothing; else convert(Vector{Float64},qcval); end)
 end
 
 
-"""
-  putqconk(task::MSKtask,k::Int32,qcsubi::Vector{Int32},qcsubj::Vector{Int32},qcval::Vector{Float64})
-  putqconk(task::MSKtask,k::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
-  putqconk(task::MSKtask,k::T0,Qk:: SparseMatrixCSC{Float64})
-
-  Replaces all quadratic terms in a single constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    k::Int32 The constraint in which the new quadratic elements are inserted.
-    qcsubi::Vector{Int32} Row subscripts for quadratic constraint matrix.
-    qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
-    qcval::Vector{Float64} Quadratic constraint coefficient values.
-    qcsubi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
-"""
-function putqconk end
 function putqconk(task::MSKtask,k::Int32,qcsubi::Vector{Int32},qcsubj::Vector{Int32},qcval::Vector{Float64})
   numqcnz = Int32(min(length(qcsubi),length(qcsubj),length(qcval)))
   qcsubi_ = qcsubi .- Int32(1)
@@ -14756,27 +16468,12 @@ function putqconk(task::MSKtask,k::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where { T
   putqconk(
     task,
     convert(Int32,k),
-    convert(Vector{Int32},qcsubi),
-    convert(Vector{Int32},qcsubj),
-    convert(Vector{Float64},qcval))
+    if qcsubi === nothing; nothing; else convert(Vector{Int32},qcsubi); end,
+    if qcsubj === nothing; nothing; else convert(Vector{Int32},qcsubj); end,
+    if qcval === nothing; nothing; else convert(Vector{Float64},qcval); end)
 end
 
 
-"""
-  putqobj(task::MSKtask,qosubi::Vector{Int32},qosubj::Vector{Int32},qoval::Vector{Float64})
-  putqobj(task::MSKtask,qosubi::T0,qosubj::T1,qoval::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
-  putqobj(task::MSKtask,Qk:: SparseMatrixCSC{Float64})
-
-  Replaces all quadratic terms in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    qosubi::Vector{Int32} Row subscripts for quadratic objective coefficients.
-    qosubj::Vector{Int32} Column subscripts for quadratic objective coefficients.
-    qoval::Vector{Float64} Quadratic objective coefficient values.
-    qosubi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
-"""
-function putqobj end
 function putqobj(task::MSKtask,qosubi::Vector{Int32},qosubj::Vector{Int32},qoval::Vector{Float64})
   numqonz = Int32(min(length(qosubi),length(qosubj),length(qoval)))
   qosubi_ = qosubi .- Int32(1)
@@ -14792,25 +16489,12 @@ end
 function putqobj(task::MSKtask,qosubi::T0,qosubj::T1,qoval::T2) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number} }
   putqobj(
     task,
-    convert(Vector{Int32},qosubi),
-    convert(Vector{Int32},qosubj),
-    convert(Vector{Float64},qoval))
+    if qosubi === nothing; nothing; else convert(Vector{Int32},qosubi); end,
+    if qosubj === nothing; nothing; else convert(Vector{Int32},qosubj); end,
+    if qoval === nothing; nothing; else convert(Vector{Float64},qoval); end)
 end
 
 
-"""
-  putqobjij(task::MSKtask,i::Int32,j::Int32,qoij::Float64)
-  putqobjij(task::MSKtask,i::T0,j::T1,qoij::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
-
-  Replaces one coefficient in the quadratic term in the objective.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Row index for the coefficient to be replaced.
-    j::Int32 Column index for the coefficient to be replaced.
-    qoij::Float64 The new coefficient value.
-"""
-function putqobjij end
 function putqobjij(task::MSKtask,i::Int32,j::Int32,qoij::Float64)
   @MSK_putqobjij(task.task,i-Int32(1),j-Int32(1),qoij)
   nothing
@@ -14824,40 +16508,18 @@ function putqobjij(task::MSKtask,i::T0,j::T1,qoij::T2) where { T0<:Integer,T1<:I
 end
 
 
-"""
-  putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Vector{Float64},xx::Vector{Float64},y::Vector{Float64},slc::Vector{Float64},suc::Vector{Float64},slx::Vector{Float64},sux::Vector{Float64},snx::Vector{Float64})
-  putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::T0,xx::T1,y::T2,slc::T3,suc::T4,slx::T5,sux::T6,snx::T7) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Number},T6<:AbstractVector{<:Number},T7<:AbstractVector{<:Number}} 
-
-  Inserts a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    skc::Vector{Stakey} Status keys for the constraints.
-    skx::Vector{Stakey} Status keys for the variables.
-    skn::Vector{Stakey} Status keys for the conic constraints.
-    xc::Vector{Float64} Primal constraint solution.
-    xx::Vector{Float64} Primal variable solution.
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-"""
-function putsolution end
-function putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Vector{Float64},xx::Vector{Float64},y::Vector{Float64},slc::Vector{Float64},suc::Vector{Float64},slx::Vector{Float64},sux::Vector{Float64},snx::Vector{Float64})
+function putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Union{Nothing,Vector{Float64}},xx::Union{Nothing,Vector{Float64}},y::Union{Nothing,Vector{Float64}},slc::Union{Nothing,Vector{Float64}},suc::Union{Nothing,Vector{Float64}},slx::Union{Nothing,Vector{Float64}},sux::Union{Nothing,Vector{Float64}},snx::Union{Nothing,Vector{Float64}})
   skc_ = Int32[item.value for item in skc]
   skx_ = Int32[item.value for item in skx]
   skn_ = Int32[item.value for item in skn]
-  xc_ = xc
-  xx_ = xx
-  y_ = y
-  slc_ = slc
-  suc_ = suc
-  slx_ = slx
-  sux_ = sux
-  snx_ = snx
+  xc_ = if xc === nothing; C_NULL; else xc end
+  xx_ = if xx === nothing; C_NULL; else xx end
+  y_ = if y === nothing; C_NULL; else y end
+  slc_ = if slc === nothing; C_NULL; else slc end
+  suc_ = if suc === nothing; C_NULL; else suc end
+  slx_ = if slx === nothing; C_NULL; else slx end
+  sux_ = if sux === nothing; C_NULL; else sux end
+  snx_ = if snx === nothing; C_NULL; else snx end
   @MSK_putsolution(task.task,whichsol.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_)
   nothing
 end
@@ -14868,53 +16530,30 @@ function putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Ve
     skc,
     skx,
     skn,
-    convert(Vector{Float64},xc),
-    convert(Vector{Float64},xx),
-    convert(Vector{Float64},y),
-    convert(Vector{Float64},slc),
-    convert(Vector{Float64},suc),
-    convert(Vector{Float64},slx),
-    convert(Vector{Float64},sux),
-    convert(Vector{Float64},snx))
+    if xc === nothing; nothing; else convert(Vector{Float64},xc); end,
+    if xx === nothing; nothing; else convert(Vector{Float64},xx); end,
+    if y === nothing; nothing; else convert(Vector{Float64},y); end,
+    if slc === nothing; nothing; else convert(Vector{Float64},slc); end,
+    if suc === nothing; nothing; else convert(Vector{Float64},suc); end,
+    if slx === nothing; nothing; else convert(Vector{Float64},slx); end,
+    if sux === nothing; nothing; else convert(Vector{Float64},sux); end,
+    if snx === nothing; nothing; else convert(Vector{Float64},snx); end)
 end
 
 
-"""
-  putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Vector{Float64},xx::Vector{Float64},y::Vector{Float64},slc::Vector{Float64},suc::Vector{Float64},slx::Vector{Float64},sux::Vector{Float64},snx::Vector{Float64},doty::Vector{Float64})
-  putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::T0,xx::T1,y::T2,slc::T3,suc::T4,slx::T5,sux::T6,snx::T7,doty::T8) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Number},T6<:AbstractVector{<:Number},T7<:AbstractVector{<:Number},T8<:AbstractVector{<:Number}} 
-
-  Inserts a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    skc::Vector{Stakey} Status keys for the constraints.
-    skx::Vector{Stakey} Status keys for the variables.
-    skn::Vector{Stakey} Status keys for the conic constraints.
-    xc::Vector{Float64} Primal constraint solution.
-    xx::Vector{Float64} Primal variable solution.
-    y::Vector{Float64} Vector of dual variables corresponding to the constraints.
-    slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
-    suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
-    slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
-    sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
-    snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
-    doty::Vector{Float64} Dual variables corresponding to affine conic constraints.
-"""
-function putsolutionnew end
-function putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Vector{Float64},xx::Vector{Float64},y::Vector{Float64},slc::Vector{Float64},suc::Vector{Float64},slx::Vector{Float64},sux::Vector{Float64},snx::Vector{Float64},doty::Vector{Float64})
+function putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::Union{Nothing,Vector{Float64}},xx::Union{Nothing,Vector{Float64}},y::Union{Nothing,Vector{Float64}},slc::Union{Nothing,Vector{Float64}},suc::Union{Nothing,Vector{Float64}},slx::Union{Nothing,Vector{Float64}},sux::Union{Nothing,Vector{Float64}},snx::Union{Nothing,Vector{Float64}},doty::Union{Nothing,Vector{Float64}})
   skc_ = Int32[item.value for item in skc]
   skx_ = Int32[item.value for item in skx]
   skn_ = Int32[item.value for item in skn]
-  xc_ = xc
-  xx_ = xx
-  y_ = y
-  slc_ = slc
-  suc_ = suc
-  slx_ = slx
-  sux_ = sux
-  snx_ = snx
-  doty_ = doty
+  xc_ = if xc === nothing; C_NULL; else xc end
+  xx_ = if xx === nothing; C_NULL; else xx end
+  y_ = if y === nothing; C_NULL; else y end
+  slc_ = if slc === nothing; C_NULL; else slc end
+  suc_ = if suc === nothing; C_NULL; else suc end
+  slx_ = if slx === nothing; C_NULL; else slx end
+  sux_ = if sux === nothing; C_NULL; else sux end
+  snx_ = if snx === nothing; C_NULL; else snx end
+  doty_ = if doty === nothing; C_NULL; else doty end
   @MSK_putsolutionnew(task.task,whichsol.value,skc_,skx_,skn_,xc_,xx_,y_,slc_,suc_,slx_,sux_,snx_,doty_)
   nothing
 end
@@ -14925,34 +16564,18 @@ function putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx:
     skc,
     skx,
     skn,
-    convert(Vector{Float64},xc),
-    convert(Vector{Float64},xx),
-    convert(Vector{Float64},y),
-    convert(Vector{Float64},slc),
-    convert(Vector{Float64},suc),
-    convert(Vector{Float64},slx),
-    convert(Vector{Float64},sux),
-    convert(Vector{Float64},snx),
-    convert(Vector{Float64},doty))
+    if xc === nothing; nothing; else convert(Vector{Float64},xc); end,
+    if xx === nothing; nothing; else convert(Vector{Float64},xx); end,
+    if y === nothing; nothing; else convert(Vector{Float64},y); end,
+    if slc === nothing; nothing; else convert(Vector{Float64},slc); end,
+    if suc === nothing; nothing; else convert(Vector{Float64},suc); end,
+    if slx === nothing; nothing; else convert(Vector{Float64},slx); end,
+    if sux === nothing; nothing; else convert(Vector{Float64},sux); end,
+    if snx === nothing; nothing; else convert(Vector{Float64},snx); end,
+    if doty === nothing; nothing; else convert(Vector{Float64},doty); end)
 end
 
 
-"""
-  putconsolutioni(task::MSKtask,i::Int32,whichsol::Soltype,sk::Stakey,x::Float64,sl::Float64,su::Float64)
-  putconsolutioni(task::MSKtask,i::T0,whichsol::Soltype,sk::Stakey,x::T1,sl::T2,su::T3) where {T0<:Integer,T1<:Number,T2<:Number,T3<:Number} 
-
-  Sets the primal and dual solution information for a single constraint.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the constraint.
-    whichsol::Soltype Selects a solution.
-    sk::Stakey Status key of the constraint.
-    x::Float64 Primal solution value of the constraint.
-    sl::Float64 Solution value of the dual variable associated with the lower bound.
-    su::Float64 Solution value of the dual variable associated with the upper bound.
-"""
-function putconsolutioni end
 function putconsolutioni(task::MSKtask,i::Int32,whichsol::Soltype,sk::Stakey,x::Float64,sl::Float64,su::Float64)
   @MSK_putconsolutioni(task.task,i-Int32(1),whichsol.value,sk.value,x,sl,su)
   nothing
@@ -14969,23 +16592,6 @@ function putconsolutioni(task::MSKtask,i::T0,whichsol::Soltype,sk::Stakey,x::T1,
 end
 
 
-"""
-  putvarsolutionj(task::MSKtask,j::Int32,whichsol::Soltype,sk::Stakey,x::Float64,sl::Float64,su::Float64,sn::Float64)
-  putvarsolutionj(task::MSKtask,j::T0,whichsol::Soltype,sk::Stakey,x::T1,sl::T2,su::T3,sn::T4) where {T0<:Integer,T1<:Number,T2<:Number,T3<:Number,T4<:Number} 
-
-  Sets the primal and dual solution information for a single variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable.
-    whichsol::Soltype Selects a solution.
-    sk::Stakey Status key of the variable.
-    x::Float64 Primal solution value of the variable.
-    sl::Float64 Solution value of the dual variable associated with the lower bound.
-    su::Float64 Solution value of the dual variable associated with the upper bound.
-    sn::Float64 Solution value of the dual variable associated with the conic constraint.
-"""
-function putvarsolutionj end
 function putvarsolutionj(task::MSKtask,j::Int32,whichsol::Soltype,sk::Stakey,x::Float64,sl::Float64,su::Float64,sn::Float64)
   @MSK_putvarsolutionj(task.task,j-Int32(1),whichsol.value,sk.value,x,sl,su,sn)
   nothing
@@ -15003,19 +16609,6 @@ function putvarsolutionj(task::MSKtask,j::T0,whichsol::Soltype,sk::Stakey,x::T1,
 end
 
 
-"""
-  putsolutionyi(task::MSKtask,i::Int32,whichsol::Soltype,y::Float64)
-  putsolutionyi(task::MSKtask,i::T0,whichsol::Soltype,y::T1) where {T0<:Integer,T1<:Number} 
-
-  Inputs the dual variable of a solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    i::Int32 Index of the dual variable.
-    whichsol::Soltype Selects a solution.
-    y::Float64 Solution value of the dual variable.
-"""
-function putsolutionyi end
 function putsolutionyi(task::MSKtask,i::Int32,whichsol::Soltype,y::Float64)
   @MSK_putsolutionyi(task.task,i-Int32(1),whichsol.value,y)
   nothing
@@ -15029,17 +16622,6 @@ function putsolutionyi(task::MSKtask,i::T0,whichsol::Soltype,y::T1) where { T0<:
 end
 
 
-"""
-  putstrparam(task::MSKtask,param::Sparam,parvalue::AbstractString)
-
-  Sets a string parameter.
-
-  Arguments
-    task::MSKtask An optimization task.
-    param::Sparam Which parameter.
-    parvalue::AbstractString Parameter value.
-"""
-function putstrparam end
 function putstrparam(task::MSKtask,param::Sparam,parvalue::AbstractString)
   parvalue_ = Vector{UInt8}(parvalue); push!(parvalue_,UInt8(0))
   @MSK_putstrparam(task.task,param.value,parvalue_)
@@ -15047,16 +16629,6 @@ function putstrparam(task::MSKtask,param::Sparam,parvalue::AbstractString)
 end
 
 
-"""
-  puttaskname(task::MSKtask,taskname::AbstractString)
-
-  Assigns a new name to the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    taskname::AbstractString Name assigned to the task.
-"""
-function puttaskname end
 function puttaskname(task::MSKtask,taskname::AbstractString)
   taskname_ = Vector{UInt8}(taskname); push!(taskname_,UInt8(0))
   @MSK_puttaskname(task.task,taskname_)
@@ -15064,18 +16636,6 @@ function puttaskname(task::MSKtask,taskname::AbstractString)
 end
 
 
-"""
-  putvartype(task::MSKtask,j::Int32,vartype::Variabletype)
-  putvartype(task::MSKtask,j::T0,vartype::Variabletype) where {T0<:Integer} 
-
-  Sets the variable type of one variable.
-
-  Arguments
-    task::MSKtask An optimization task.
-    j::Int32 Index of the variable.
-    vartype::Variabletype The new variable type.
-"""
-function putvartype end
 function putvartype(task::MSKtask,j::Int32,vartype::Variabletype)
   @MSK_putvartype(task.task,j-Int32(1),vartype.value)
   nothing
@@ -15088,18 +16648,6 @@ function putvartype(task::MSKtask,j::T0,vartype::Variabletype) where { T0<:Integ
 end
 
 
-"""
-  putvartypelist(task::MSKtask,subj::Vector{Int32},vartype::Vector{Variabletype})
-  putvartypelist(task::MSKtask,subj::T0,vartype::Vector{Variabletype}) where {T0<:AbstractVector{<:Integer}} 
-
-  Sets the variable type for one or more variables.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subj::Vector{Int32} A list of variable indexes for which the variable type should be changed.
-    vartype::Vector{Variabletype} A list of variable types.
-"""
-function putvartypelist end
 function putvartypelist(task::MSKtask,subj::Vector{Int32},vartype::Vector{Variabletype})
   num = Int32(min(length(subj),length(vartype)))
   subj_ = subj .- Int32(1)
@@ -15110,23 +16658,11 @@ end
 function putvartypelist(task::MSKtask,subj::T0,vartype::Vector{Variabletype}) where { T0<:AbstractVector{<:Integer} }
   putvartypelist(
     task,
-    convert(Vector{Int32},subj),
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
     vartype)
 end
 
 
-"""
-  readdataformat(task::MSKtask,filename::AbstractString,format::Dataformat,compress::Compresstype)
-
-  Reads problem data from a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-    format::Dataformat File data format.
-    compress::Compresstype File compression type.
-"""
-function readdataformat end
 function readdataformat(task::MSKtask,filename::AbstractString,format::Dataformat,compress::Compresstype)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readdataformat(task.task,filename_,format.value,compress.value)
@@ -15134,16 +16670,6 @@ function readdataformat(task::MSKtask,filename::AbstractString,format::Dataforma
 end
 
 
-"""
-  readdata(task::MSKtask,filename::AbstractString)
-
-  Reads problem data from a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function readdata end
 function readdata(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readdataautoformat(task.task,filename_)
@@ -15151,16 +16677,6 @@ function readdata(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  readparamfile(task::MSKtask,filename::AbstractString)
-
-  Reads a parameter file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function readparamfile end
 function readparamfile(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readparamfile(task.task,filename_)
@@ -15168,17 +16684,6 @@ function readparamfile(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  readsolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
-
-  Reads a solution from a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    filename::AbstractString A valid file name.
-"""
-function readsolution end
 function readsolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readsolution(task.task,whichsol.value,filename_)
@@ -15186,16 +16691,6 @@ function readsolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
 end
 
 
-"""
-  readjsonsol(task::MSKtask,filename::AbstractString)
-
-  Reads a solution from a JSOL file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function readjsonsol end
 function readjsonsol(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readjsonsol(task.task,filename_)
@@ -15203,37 +16698,12 @@ function readjsonsol(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  readsummary(task::MSKtask,whichstream::Streamtype)
-
-  Prints information about last file read.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-"""
-function readsummary end
 function readsummary(task::MSKtask,whichstream::Streamtype)
   @MSK_readsummary(task.task,whichstream.value)
   nothing
 end
 
 
-"""
-  resizetask(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,maxnumcone::Int32,maxnumanz::Int64,maxnumqnz::Int64)
-  resizetask(task::MSKtask,maxnumcon::T0,maxnumvar::T1,maxnumcone::T2,maxnumanz::T3,maxnumqnz::T4) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Integer,T4<:Integer} 
-
-  Resizes an optimization task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    maxnumcon::Int32 New maximum number of constraints.
-    maxnumvar::Int32 New maximum number of variables.
-    maxnumcone::Int32 New maximum number of cones.
-    maxnumanz::Int64 New maximum number of linear non-zero elements.
-    maxnumqnz::Int64 New maximum number of quadratic non-zeros elements.
-"""
-function resizetask end
 function resizetask(task::MSKtask,maxnumcon::Int32,maxnumvar::Int32,maxnumcone::Int32,maxnumanz::Int64,maxnumqnz::Int64)
   @MSK_resizetask(task.task,maxnumcon,maxnumvar,maxnumcone,maxnumanz,maxnumqnz)
   nothing
@@ -15249,24 +16719,12 @@ function resizetask(task::MSKtask,maxnumcon::T0,maxnumvar::T1,maxnumcone::T2,max
 end
 
 
-"""
-  checkmem(task::MSKtask,file::AbstractString,line::Int32)
-  checkmem(task::MSKtask,file::AbstractString,line::T0) where {T0<:Integer} 
-
-  Checks the memory allocated by the task.
-
-  Arguments
-    task::MSKtask An optimization task.
-    file::AbstractString File from which the function is called.
-    line::Int32 Line in the file from which the function is called.
-"""
-function checkmem end
 function checkmem(task::MSKtask,file::AbstractString,line::Int32)
   file_ = Vector{UInt8}(file); push!(file_,UInt8(0))
   @MSK_checkmemtask(task.task,file_,line)
   nothing
 end
-function checkmem(task::MSKtask,file::AbstractString,line::T0) where { T0<:Integer }
+function checkmem(task::MSKtask,file::Union{Nothing,AbstractString},line::T0) where { T0<:Integer }
   checkmem(
     task,
     file,
@@ -15274,18 +16732,6 @@ function checkmem(task::MSKtask,file::AbstractString,line::T0) where { T0<:Integ
 end
 
 
-"""
-  getmemusage(task::MSKtask) :: (meminuse,maxmemuse)
-
-  Obtains information about the amount of memory used by a task.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    meminuse::Int64 Amount of memory currently used by the task.
-    maxmemuse::Int64 Maximum amount of memory used by the task until now.
-"""
-function getmemusage end
 function getmemusage(task::MSKtask)
   meminuse_ = Ref{Int64}()
   maxmemuse_ = Ref{Int64}()
@@ -15294,33 +16740,12 @@ function getmemusage(task::MSKtask)
 end
 
 
-"""
-  setdefaults(task::MSKtask)
-
-  Resets all parameter values.
-
-  Arguments
-    task::MSKtask An optimization task.
-"""
-function setdefaults end
 function setdefaults(task::MSKtask)
   @MSK_setdefaults(task.task)
   nothing
 end
 
 
-"""
-  solutiondef(task::MSKtask,whichsol::Soltype) :: isdef
-
-  Checks whether a solution is defined.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-  Returns
-    isdef::Bool Is non-zero if the requested solution is defined.
-"""
-function solutiondef end
 function solutiondef(task::MSKtask,whichsol::Soltype)
   isdef_ = Ref{Int32}()
   @MSK_solutiondef(task.task,whichsol.value,isdef_)
@@ -15328,99 +16753,36 @@ function solutiondef(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  deletesolution(task::MSKtask,whichsol::Soltype)
-
-  Undefine a solution and free the memory it uses.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-"""
-function deletesolution end
 function deletesolution(task::MSKtask,whichsol::Soltype)
   @MSK_deletesolution(task.task,whichsol.value)
   nothing
 end
 
 
-"""
-  onesolutionsummary(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
-
-  Prints a short summary of a specified solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-    whichsol::Soltype Selects a solution.
-"""
-function onesolutionsummary end
 function onesolutionsummary(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
   @MSK_onesolutionsummary(task.task,whichstream.value,whichsol.value)
   nothing
 end
 
 
-"""
-  solutionsummary(task::MSKtask,whichstream::Streamtype)
-
-  Prints a short summary of the current solutions.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-"""
-function solutionsummary end
 function solutionsummary(task::MSKtask,whichstream::Streamtype)
   @MSK_solutionsummary(task.task,whichstream.value)
   nothing
 end
 
 
-"""
-  updatesolutioninfo(task::MSKtask,whichsol::Soltype)
-
-  Update the information items related to the solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-"""
-function updatesolutioninfo end
 function updatesolutioninfo(task::MSKtask,whichsol::Soltype)
   @MSK_updatesolutioninfo(task.task,whichsol.value)
   nothing
 end
 
 
-"""
-  optimizersummary(task::MSKtask,whichstream::Streamtype)
-
-  Prints a short summary with optimizer statistics from last optimization.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-"""
-function optimizersummary end
 function optimizersummary(task::MSKtask,whichstream::Streamtype)
   @MSK_optimizersummary(task.task,whichstream.value)
   nothing
 end
 
 
-"""
-  strtoconetype(task::MSKtask,str::AbstractString) :: conetype
-
-  Obtains a cone type code.
-
-  Arguments
-    task::MSKtask An optimization task.
-    str::AbstractString String corresponding to the cone type code.
-  Returns
-    conetype::Conetype The cone type corresponding to str.
-"""
-function strtoconetype end
 function strtoconetype(task::MSKtask,str::AbstractString)
   str_ = Vector{UInt8}(str); push!(str_,UInt8(0))
   conetype_ = Ref{Int32}()
@@ -15430,18 +16792,6 @@ function strtoconetype(task::MSKtask,str::AbstractString)
 end
 
 
-"""
-  strtosk(task::MSKtask,str::AbstractString) :: sk
-
-  Obtains a status key.
-
-  Arguments
-    task::MSKtask An optimization task.
-    str::AbstractString A status key abbreviation string.
-  Returns
-    sk::Stakey Status key corresponding to the string.
-"""
-function strtosk end
 function strtosk(task::MSKtask,str::AbstractString)
   str_ = Vector{UInt8}(str); push!(str_,UInt8(0))
   sk_ = Ref{Int32}()
@@ -15451,16 +16801,6 @@ function strtosk(task::MSKtask,str::AbstractString)
 end
 
 
-"""
-  writedata(task::MSKtask,filename::AbstractString)
-
-  Writes problem data to a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function writedata end
 function writedata(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writedata(task.task,filename_)
@@ -15468,16 +16808,6 @@ function writedata(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  writetask(task::MSKtask,filename::AbstractString)
-
-  Write a complete binary dump of the task data.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function writetask end
 function writetask(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writetask(task.task,filename_)
@@ -15485,17 +16815,6 @@ function writetask(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  writebsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
-
-  Write a binary dump of the task solution and information items.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-    compress::Compresstype 
-"""
-function writebsolution end
 function writebsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writebsolution(task.task,filename_,compress.value)
@@ -15503,17 +16822,6 @@ function writebsolution(task::MSKtask,filename::AbstractString,compress::Compres
 end
 
 
-"""
-  readbsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
-
-  Read a binary dump of the task solution and information items.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-    compress::Compresstype 
-"""
-function readbsolution end
 function readbsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readbsolution(task.task,filename_,compress.value)
@@ -15521,16 +16829,6 @@ function readbsolution(task::MSKtask,filename::AbstractString,compress::Compress
 end
 
 
-"""
-  writesolutionfile(task::MSKtask,filename::AbstractString)
-
-  Write solution file in format determined by the filename
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function writesolutionfile end
 function writesolutionfile(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writesolutionfile(task.task,filename_)
@@ -15538,16 +16836,6 @@ function writesolutionfile(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  readsolutionfile(task::MSKtask,filename::AbstractString)
-
-  Read solution file in format determined by the filename
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function readsolutionfile end
 function readsolutionfile(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readsolutionfile(task.task,filename_)
@@ -15555,16 +16843,6 @@ function readsolutionfile(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  readtask(task::MSKtask,filename::AbstractString)
-
-  Load task data from a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function readtask end
 function readtask(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_readtask(task.task,filename_)
@@ -15572,16 +16850,6 @@ function readtask(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  readopfstring(task::MSKtask,data::AbstractString)
-
-  Load task data from a string in OPF format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    data::AbstractString Problem data in text format.
-"""
-function readopfstring end
 function readopfstring(task::MSKtask,data::AbstractString)
   data_ = Vector{UInt8}(data); push!(data_,UInt8(0))
   @MSK_readopfstring(task.task,data_)
@@ -15589,16 +16857,6 @@ function readopfstring(task::MSKtask,data::AbstractString)
 end
 
 
-"""
-  readlpstring(task::MSKtask,data::AbstractString)
-
-  Load task data from a string in LP format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    data::AbstractString Problem data in text format.
-"""
-function readlpstring end
 function readlpstring(task::MSKtask,data::AbstractString)
   data_ = Vector{UInt8}(data); push!(data_,UInt8(0))
   @MSK_readlpstring(task.task,data_)
@@ -15606,16 +16864,6 @@ function readlpstring(task::MSKtask,data::AbstractString)
 end
 
 
-"""
-  readjsonstring(task::MSKtask,data::AbstractString)
-
-  Load task data from a string in JSON format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    data::AbstractString Problem data in text format.
-"""
-function readjsonstring end
 function readjsonstring(task::MSKtask,data::AbstractString)
   data_ = Vector{UInt8}(data); push!(data_,UInt8(0))
   @MSK_readjsonstring(task.task,data_)
@@ -15623,16 +16871,6 @@ function readjsonstring(task::MSKtask,data::AbstractString)
 end
 
 
-"""
-  readptfstring(task::MSKtask,data::AbstractString)
-
-  Load task data from a string in PTF format.
-
-  Arguments
-    task::MSKtask An optimization task.
-    data::AbstractString Problem data in text format.
-"""
-function readptfstring end
 function readptfstring(task::MSKtask,data::AbstractString)
   data_ = Vector{UInt8}(data); push!(data_,UInt8(0))
   @MSK_readptfstring(task.task,data_)
@@ -15640,16 +16878,6 @@ function readptfstring(task::MSKtask,data::AbstractString)
 end
 
 
-"""
-  writeparamfile(task::MSKtask,filename::AbstractString)
-
-  Writes all the parameters to a parameter file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function writeparamfile end
 function writeparamfile(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writeparamfile(task.task,filename_)
@@ -15657,18 +16885,6 @@ function writeparamfile(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  getinfeasiblesubproblem(task::MSKtask,whichsol::Soltype) :: inftask
-
-  Obtains an infeasible subproblem.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Which solution to use when determining the infeasible subproblem.
-  Returns
-    inftask::MSKtask A new task containing the infeasible subproblem.
-"""
-function getinfeasiblesubproblem end
 function getinfeasiblesubproblem(task::MSKtask,whichsol::Soltype)
   inftask_ = Ref{Ptr{Nothing}}()
   @MSK_getinfeasiblesubproblem(task.task,whichsol.value,inftask_)
@@ -15677,17 +16893,6 @@ function getinfeasiblesubproblem(task::MSKtask,whichsol::Soltype)
 end
 
 
-"""
-  writesolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
-
-  Write a solution to a file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichsol::Soltype Selects a solution.
-    filename::AbstractString A valid file name.
-"""
-function writesolution end
 function writesolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writesolution(task.task,whichsol.value,filename_)
@@ -15695,16 +16900,6 @@ function writesolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
 end
 
 
-"""
-  writejsonsol(task::MSKtask,filename::AbstractString)
-
-  Writes a solution to a JSON file.
-
-  Arguments
-    task::MSKtask An optimization task.
-    filename::AbstractString A valid file name.
-"""
-function writejsonsol end
 function writejsonsol(task::MSKtask,filename::AbstractString)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_writejsonsol(task.task,filename_)
@@ -15712,29 +16907,6 @@ function writejsonsol(task::MSKtask,filename::AbstractString)
 end
 
 
-"""
-  primalsensitivity(task::MSKtask,subi::Vector{Int32},marki::Vector{Mark},subj::Vector{Int32},markj::Vector{Mark}) :: (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej)
-  primalsensitivity(task::MSKtask,subi::T0,marki::Vector{Mark},subj::T1,markj::Vector{Mark}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer}}  :: (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej)
-
-  Perform sensitivity analysis on bounds.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subi::Vector{Int32} Indexes of constraints to analyze.
-    marki::Vector{Mark} Mark which constraint bounds to analyze.
-    subj::Vector{Int32} Indexes of variables to analyze.
-    markj::Vector{Mark} Mark which variable bounds to analyze.
-  Returns
-    leftpricei::Vector{Float64} Left shadow price for constraints.
-    rightpricei::Vector{Float64} Right shadow price for constraints.
-    leftrangei::Vector{Float64} Left range for constraints.
-    rightrangei::Vector{Float64} Right range for constraints.
-    leftpricej::Vector{Float64} Left shadow price for variables.
-    rightpricej::Vector{Float64} Right shadow price for variables.
-    leftrangej::Vector{Float64} Left range for variables.
-    rightrangej::Vector{Float64} Right range for variables.
-"""
-function primalsensitivity end
 function primalsensitivity(task::MSKtask,subi::Vector{Int32},marki::Vector{Mark},subj::Vector{Int32},markj::Vector{Mark})
   numi = Int32(min(length(subi),length(marki)))
   subi_ = subi .- Int32(1)
@@ -15764,45 +16936,19 @@ end
 function primalsensitivity(task::MSKtask,subi::T0,marki::Vector{Mark},subj::T1,markj::Vector{Mark}) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer} }
   primalsensitivity(
     task,
-    convert(Vector{Int32},subi),
+    if subi === nothing; nothing; else convert(Vector{Int32},subi); end,
     marki,
-    convert(Vector{Int32},subj),
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end,
     markj)
 end
 
 
-"""
-  sensitivityreport(task::MSKtask,whichstream::Streamtype)
-
-  Creates a sensitivity report.
-
-  Arguments
-    task::MSKtask An optimization task.
-    whichstream::Streamtype Index of the stream.
-"""
-function sensitivityreport end
 function sensitivityreport(task::MSKtask,whichstream::Streamtype)
   @MSK_sensitivityreport(task.task,whichstream.value)
   nothing
 end
 
 
-"""
-  dualsensitivity(task::MSKtask,subj::Vector{Int32}) :: (leftpricej,rightpricej,leftrangej,rightrangej)
-  dualsensitivity(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: (leftpricej,rightpricej,leftrangej,rightrangej)
-
-  Performs sensitivity analysis on objective coefficients.
-
-  Arguments
-    task::MSKtask An optimization task.
-    subj::Vector{Int32} Indexes of objective coefficients to analyze.
-  Returns
-    leftpricej::Vector{Float64} Left shadow prices for requested coefficients.
-    rightpricej::Vector{Float64} Right shadow prices for requested coefficients.
-    leftrangej::Vector{Float64} Left range for requested coefficients.
-    rightrangej::Vector{Float64} Right range for requested coefficients.
-"""
-function dualsensitivity end
 function dualsensitivity(task::MSKtask,subj::Vector{Int32})
   numj = Int32(length(subj))
   subj_ = subj .- Int32(1)
@@ -15820,29 +16966,16 @@ end
 function dualsensitivity(task::MSKtask,subj::T0) where { T0<:AbstractVector{<:Integer} }
   dualsensitivity(
     task,
-    convert(Vector{Int32},subj))
+    if subj === nothing; nothing; else convert(Vector{Int32},subj); end)
 end
 
 
-"""
-  getlasterror(task::MSKtask) :: (lastrescode,lastmsglen,lastmsg)
-
-  Obtains the last error code and error message reported in MOSEK.
-
-  Arguments
-    task::MSKtask An optimization task.
-  Returns
-    lastrescode::Rescode Returns the last error code reported in the task.
-    lastmsglen::Int64 Returns the length of the last error message reported in the task.
-    lastmsg::String Returns the last error message reported in the task.
-"""
-function getlasterror end
 function getlasterror(task::MSKtask)
   lastrescode_ = Ref{Int32}()
-  __tmp_663 = Ref{Int64}()
-  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_663,C_NULL)
-  __tmp_662 = __tmp_663[]
-  sizelastmsg = Int64((__tmp_662 + Int64(1)))
+  __tmp_664 = Ref{Int64}()
+  @MSK_getlasterror64(task.task,Ref{Int32}(),0,__tmp_664,C_NULL)
+  __tmp_663 = __tmp_664[]
+  sizelastmsg = Int64((__tmp_663 + Int64(1)))
   lastmsglen_ = Ref{Int64}()
   lastmsg_ = Array{UInt8}(undef,sizelastmsg)
   @MSK_getlasterror64(task.task,lastrescode_,sizelastmsg,lastmsglen_,lastmsg_)
@@ -15857,19 +16990,6 @@ function getlasterror(task::MSKtask)
 end
 
 
-"""
-  optimizermt(task::MSKtask,address::AbstractString,accesstoken::AbstractString) :: trmcode
-
-  Offload the optimization task to a solver server and wait for the solution.
-
-  Arguments
-    task::MSKtask An optimization task.
-    address::AbstractString Address of the OptServer.
-    accesstoken::AbstractString Access token.
-  Returns
-    trmcode::Rescode Is either OK or a termination response code.
-"""
-function optimizermt end
 function optimizermt(task::MSKtask,address::AbstractString,accesstoken::AbstractString)
   address_ = Vector{UInt8}(address); push!(address_,UInt8(0))
   accesstoken_ = Vector{UInt8}(accesstoken); push!(accesstoken_,UInt8(0))
@@ -15880,40 +17000,69 @@ function optimizermt(task::MSKtask,address::AbstractString,accesstoken::Abstract
 end
 
 
-"""
-  putoptserverhost(task::MSKtask,host::AbstractString)
+function asyncoptimize(task::MSKtask,address::AbstractString,accesstoken::AbstractString)
+  address_ = Vector{UInt8}(address); push!(address_,UInt8(0))
+  accesstoken_ = Vector{UInt8}(accesstoken); push!(accesstoken_,UInt8(0))
+  token_ = Array{UInt8}(undef,65)
+  @MSK_asyncoptimize(task.task,address_,accesstoken_,token_)
+  token_len = findfirst(_c->_c==0,token_)
+  token = if token_len === nothing
+    String(token_)
+  else
+    String(token_[1:token_len-1])
+  end
+  token
+end
 
-  Specify an OptServer for remote calls.
 
-  Arguments
-    task::MSKtask An optimization task.
-    host::AbstractString A URL specifying the optimization server to be used.
-"""
-function putoptserverhost end
-function putoptserverhost(task::MSKtask,host::AbstractString)
-  host_ = Vector{UInt8}(host); push!(host_,UInt8(0))
+function asyncstop(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString)
+  address_ = Vector{UInt8}(address); push!(address_,UInt8(0))
+  accesstoken_ = Vector{UInt8}(accesstoken); push!(accesstoken_,UInt8(0))
+  token_ = Vector{UInt8}(token); push!(token_,UInt8(0))
+  @MSK_asyncstop(task.task,address_,accesstoken_,token_)
+  nothing
+end
+
+
+function asyncpoll(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString)
+  address_ = Vector{UInt8}(address); push!(address_,UInt8(0))
+  accesstoken_ = Vector{UInt8}(accesstoken); push!(accesstoken_,UInt8(0))
+  token_ = Vector{UInt8}(token); push!(token_,UInt8(0))
+  respavailable_ = Ref{Int32}()
+  resp_ = Ref{Int32}()
+  trm_ = Ref{Int32}()
+  @MSK_asyncpoll(task.task,address_,accesstoken_,token_,respavailable_,resp_,trm_)
+  resp = Rescode(resp_[])
+  trm = Rescode(trm_[])
+  respavailable_[] != 0,resp,trm
+end
+
+
+function asyncgetresult(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString)
+  address_ = Vector{UInt8}(address); push!(address_,UInt8(0))
+  accesstoken_ = Vector{UInt8}(accesstoken); push!(accesstoken_,UInt8(0))
+  token_ = Vector{UInt8}(token); push!(token_,UInt8(0))
+  respavailable_ = Ref{Int32}()
+  resp_ = Ref{Int32}()
+  trm_ = Ref{Int32}()
+  @MSK_asyncgetresult(task.task,address_,accesstoken_,token_,respavailable_,resp_,trm_)
+  resp = Rescode(resp_[])
+  trm = Rescode(trm_[])
+  respavailable_[] != 0,resp,trm
+end
+
+
+function putoptserverhost(task::MSKtask,host::Union{Nothing,AbstractString})
+  if host === nothing
+      host_ = C_NULL
+  else
+      host_ = Vector{UInt8}(host); push!(host_,UInt8(0))
+  end
   @MSK_putoptserverhost(task.task,host_)
   nothing
 end
 
 
-"""
-  optimizebatch(env::MSKenv,israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask}) :: (trmcode,rcode)
-  optimizebatch(env::MSKenv,israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where {T0<:Number,T1<:Integer}  :: (trmcode,rcode)
-
-  Optimize a number of tasks in parallel using a specified number of threads.
-
-  Arguments
-    env::MSKenv The MOSEK environment.
-    israce::Bool If nonzero, then the function is terminated after the first task has been completed.
-    maxtime::Float64 Time limit for the function.
-    numthreads::Int32 Number of threads to be employed.
-    task::Vector{MSKtask} An array of tasks to optimize in parallel.
-  Returns
-    trmcode::Vector{Rescode} The termination code for each task.
-    rcode::Vector{Rescode} The response code for each task.
-"""
-function optimizebatch end
 function optimizebatch(env::MSKenv,israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask})
   numtask = Int64(length(task))
   if length(task) < numtask
@@ -15937,64 +17086,77 @@ function optimizebatch(env::MSKenv,israce::Bool,maxtime::T0,numthreads::T1,task:
 end
 
 
-"""
-  checkoutlicense(env::MSKenv,feature::Feature)
+function optimizebatch(israce::Bool,maxtime::Float64,numthreads::Int32,task::Vector{MSKtask})
+  numtask = Int64(length(task))
+  if length(task) < numtask
+    throw(BoundsError())
+  end
+  task_ = Ptr{Nothing}[item.task for item in task]
+  trmcode_ = Vector{Int32}(undef,numtask)
+  rcode_ = Vector{Int32}(undef,numtask)
+  @MSK_optimizebatch(C_NULL,israce,maxtime,numthreads,numtask,task_,trmcode_,rcode_)
+  trmcode = Rescode[Rescode(item) for item in trmcode_]
+  rcode = Rescode[Rescode(item) for item in rcode_]
+  trmcode,rcode
+end
+function optimizebatch(israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where { T0<:Number,T1<:Integer }
+  optimizebatch(
+    israce,
+    convert(Float64,maxtime),
+    convert(Int32,numthreads),
+    task)
+end
 
-  Check out a license feature from the license server ahead of time.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    feature::Feature Feature to check out from the license system.
-"""
-function checkoutlicense end
+function callbackcodetostr(code::Callbackcode)
+  callbackcodestr_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_callbackcodetostr(code.value,callbackcodestr_)
+  callbackcodestr_len = findfirst(_c->_c==0,callbackcodestr_)
+  callbackcodestr = if callbackcodestr_len === nothing
+    String(callbackcodestr_)
+  else
+    String(callbackcodestr_[1:callbackcodestr_len-1])
+  end
+  callbackcodestr
+end
+
+
 function checkoutlicense(env::MSKenv,feature::Feature)
   @MSK_checkoutlicense(env.env,feature.value)
   nothing
 end
 
 
-"""
-  checkinlicense(env::MSKenv,feature::Feature)
+function checkoutlicense(feature::Feature)
+  @MSK_checkoutlicense(C_NULL,feature.value)
+  nothing
+end
 
-  Check in a license feature back to the license server ahead of time.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    feature::Feature Feature to check in to the license system.
-"""
-function checkinlicense end
 function checkinlicense(env::MSKenv,feature::Feature)
   @MSK_checkinlicense(env.env,feature.value)
   nothing
 end
 
 
-"""
-  checkinall(env::MSKenv)
+function checkinlicense(feature::Feature)
+  @MSK_checkinlicense(C_NULL,feature.value)
+  nothing
+end
 
-  Check in all unused license features to the license token server.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-"""
-function checkinall end
 function checkinall(env::MSKenv)
   @MSK_checkinall(env.env)
   nothing
 end
 
 
-"""
-  expirylicenses(env::MSKenv) :: expiry
+function checkinall()
+  @MSK_checkinall(C_NULL)
+  nothing
+end
 
-  Reports when the first license feature expires.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-  Returns
-    expiry::Int64 If nonnegative, then it is the minimum number days to expiry of any feature that has been checked out.
-"""
-function expirylicenses end
 function expirylicenses(env::MSKenv)
   expiry_ = Ref{Int64}()
   @MSK_expirylicenses(env.env,expiry_)
@@ -16002,32 +17164,25 @@ function expirylicenses(env::MSKenv)
 end
 
 
-"""
-  resetexpirylicenses(env::MSKenv)
+function expirylicenses()
+  expiry_ = Ref{Int64}()
+  @MSK_expirylicenses(C_NULL,expiry_)
+  expiry_[]
+end
 
-  Reset the license expiry reporting startpoint.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-"""
-function resetexpirylicenses end
 function resetexpirylicenses(env::MSKenv)
   @MSK_resetexpirylicenses(env.env)
   nothing
 end
 
 
-"""
-  echointro(env::MSKenv,longver::Int32)
-  echointro(env::MSKenv,longver::T0) where {T0<:Integer} 
+function resetexpirylicenses()
+  @MSK_resetexpirylicenses(C_NULL)
+  nothing
+end
 
-  Prints an intro to message stream.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    longver::Int32 If non-zero, then the intro is slightly longer.
-"""
-function echointro end
 function echointro(env::MSKenv,longver::Int32)
   @MSK_echointro(env.env,longver)
   nothing
@@ -16039,18 +17194,15 @@ function echointro(env::MSKenv,longver::T0) where { T0<:Integer }
 end
 
 
-"""
-  getcodedesc(code::Rescode) :: (symname,str)
+function echointro(longver::Int32)
+  @MSK_echointro(C_NULL,longver)
+  nothing
+end
+function echointro(longver::T0) where { T0<:Integer }
+  echointro(convert(Int32,longver))
+end
 
-  Obtains a short description of a response code.
 
-  Arguments
-    code::Rescode A valid response code.
-  Returns
-    symname::String Symbolic name corresponding to the code.
-    str::String Obtains a short description of a response code.
-"""
-function getcodedesc end
 function getcodedesc(code::Rescode)
   symname_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
   str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
@@ -16071,17 +17223,58 @@ function getcodedesc(code::Rescode)
 end
 
 
-"""
-  getversion() :: (major,minor,revision)
+function rescodetostr(res::Rescode)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_rescodetostr(res.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
 
-  Obtains MOSEK version information.
 
-  Returns
-    major::Int32 Major version number.
-    minor::Int32 Minor version number.
-    revision::Int32 Revision number.
-"""
-function getversion end
+function iinfitemtostr(item::Iinfitem)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_iinfitemtostr(item.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
+
+
+function dinfitemtostr(item::Dinfitem)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_dinfitemtostr(item.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
+
+
+function liinfitemtostr(item::Liinfitem)
+  str_ = Array{UInt8}(undef,MSK_MAX_STR_LEN)
+  @MSK_liinfitemtostr(item.value,str_)
+  str_len = findfirst(_c->_c==0,str_)
+  str = if str_len === nothing
+    String(str_)
+  else
+    String(str_[1:str_len-1])
+  end
+  str
+end
+
+
 function getversion()
   major_ = Ref{Int32}()
   minor_ = Ref{Int32}()
@@ -16091,25 +17284,12 @@ function getversion()
 end
 
 
-"""
-  linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::Int32)
-  linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::T0) where {T0<:Integer} 
-
-  Directs all output from a stream to a file.
-
-  Arguments
-    env::MSKenv The MOSEK environment.
-    whichstream::Streamtype Index of the stream.
-    filename::AbstractString A valid file name.
-    append::Int32 If this argument is 0 the file will be overwritten, otherwise it will be appended to.
-"""
-function linkfiletostream end
 function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::Int32)
   filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
   @MSK_linkfiletoenvstream(env.env,whichstream.value,filename_,append)
   nothing
 end
-function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::AbstractString,append::T0) where { T0<:Integer }
+function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where { T0<:Integer }
   linkfiletostream(
     env,
     whichstream,
@@ -16118,17 +17298,19 @@ function linkfiletostream(env::MSKenv,whichstream::Streamtype,filename::Abstract
 end
 
 
-"""
-  putlicensedebug(env::MSKenv,licdebug::Int32)
-  putlicensedebug(env::MSKenv,licdebug::T0) where {T0<:Integer} 
+function linkfiletostream(whichstream::Streamtype,filename::AbstractString,append::Int32)
+  filename_ = Vector{UInt8}(filename); push!(filename_,UInt8(0))
+  @MSK_linkfiletoenvstream(C_NULL,whichstream.value,filename_,append)
+  nothing
+end
+function linkfiletostream(whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where { T0<:Integer }
+  linkfiletostream(
+    whichstream,
+    filename,
+    convert(Int32,append))
+end
 
-  Enables debug information for the license system.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    licdebug::Int32 Enable output of license check-out debug information.
-"""
-function putlicensedebug end
 function putlicensedebug(env::MSKenv,licdebug::Int32)
   @MSK_putlicensedebug(env.env,licdebug)
   nothing
@@ -16140,43 +17322,43 @@ function putlicensedebug(env::MSKenv,licdebug::T0) where { T0<:Integer }
 end
 
 
-"""
-  putlicensecode(env::MSKenv,code::Vector{Int32})
-  putlicensecode(env::MSKenv,code::T0) where {T0<:AbstractVector{<:Integer}} 
+function putlicensedebug(licdebug::Int32)
+  @MSK_putlicensedebug(C_NULL,licdebug)
+  nothing
+end
+function putlicensedebug(licdebug::T0) where { T0<:Integer }
+  putlicensedebug(convert(Int32,licdebug))
+end
 
-  Input a runtime license code.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    code::Vector{Int32} A license key string.
-"""
-function putlicensecode end
-function putlicensecode(env::MSKenv,code::Vector{Int32})
-  if length(code) < MSK_LICENSE_BUFFER_LENGTH
+function putlicensecode(env::MSKenv,code::Union{Nothing,Vector{Int32}})
+  if code !== nothing && length(code) < MSK_LICENSE_BUFFER_LENGTH
     throw(BoundsError())
   end
-  code_ = code
+  code_ = if code === nothing; C_NULL; else code end
   @MSK_putlicensecode(env.env,code_)
   nothing
 end
 function putlicensecode(env::MSKenv,code::T0) where { T0<:AbstractVector{<:Integer} }
   putlicensecode(
     env,
-    convert(Vector{Int32},code))
+    if code === nothing; nothing; else convert(Vector{Int32},code); end)
 end
 
 
-"""
-  putlicensewait(env::MSKenv,licwait::Int32)
-  putlicensewait(env::MSKenv,licwait::T0) where {T0<:Integer} 
+function putlicensecode(code::Union{Nothing,Vector{Int32}})
+  if code !== nothing && length(code) < MSK_LICENSE_BUFFER_LENGTH
+    throw(BoundsError())
+  end
+  code_ = if code === nothing; C_NULL; else code end
+  @MSK_putlicensecode(C_NULL,code_)
+  nothing
+end
+function putlicensecode(code::T0) where { T0<:AbstractVector{<:Integer} }
+  putlicensecode(if code === nothing; nothing; else convert(Vector{Int32},code); end)
+end
 
-  Control whether mosek should wait for an available license if no license is available.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    licwait::Int32 Enable waiting for a license.
-"""
-function putlicensewait end
 function putlicensewait(env::MSKenv,licwait::Int32)
   @MSK_putlicensewait(env.env,licwait)
   nothing
@@ -16188,53 +17370,42 @@ function putlicensewait(env::MSKenv,licwait::T0) where { T0<:Integer }
 end
 
 
-"""
-  putlicensepath(env::MSKenv,licensepath::AbstractString)
+function putlicensewait(licwait::Int32)
+  @MSK_putlicensewait(C_NULL,licwait)
+  nothing
+end
+function putlicensewait(licwait::T0) where { T0<:Integer }
+  putlicensewait(convert(Int32,licwait))
+end
 
-  Set the path to the license file.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    licensepath::AbstractString A path specifying where to search for the license.
-"""
-function putlicensepath end
-function putlicensepath(env::MSKenv,licensepath::AbstractString)
-  licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
+function putlicensepath(env::MSKenv,licensepath::Union{Nothing,AbstractString})
+  if licensepath === nothing
+      licensepath_ = C_NULL
+  else
+      licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
+  end
   @MSK_putlicensepath(env.env,licensepath_)
   nothing
 end
 
 
-"""
-  computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64}) :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
-  computesparsecholesky(env::MSKenv,numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}}  :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
+function putlicensepath(licensepath::Union{Nothing,AbstractString})
+  if licensepath === nothing
+      licensepath_ = C_NULL
+  else
+      licensepath_ = Vector{UInt8}(licensepath); push!(licensepath_,UInt8(0))
+  end
+  @MSK_putlicensepath(C_NULL,licensepath_)
+  nothing
+end
 
-  Computes a Cholesky factorization of sparse matrix.
 
-  Arguments
-    env::MSKenv The MOSEK environment.
-    numthreads::Int32 The number threads that can be used to do the computation. 0 means the code makes the choice.
-    ordermethod::Int32 If nonzero, then a sparsity preserving ordering will be employed.
-    tolsingular::Float64 A positive parameter controlling when a pivot is declared zero.
-    anzc::Vector{Int32} anzc[j] is the number of nonzeros in the jth column of A.
-    aptrc::Vector{Int64} aptrc[j] is a pointer to the first element in column j.
-    asubc::Vector{Int32} Row indexes for each column stored in increasing order.
-    avalc::Vector{Float64} The value corresponding to row indexed stored in asubc.
-  Returns
-    perm::Int32 Permutation array used to specify the permutation matrix P computed by the function.
-    diag::Float64 The diagonal elements of matrix D.
-    lnzc::Int32 lnzc[j] is the number of non zero elements in column j.
-    lptrc::Int64 lptrc[j] is a pointer to the first row index and value in column j.
-    lensubnval::Int64 Number of elements in lsubc and lvalc.
-    lsubc::Int32 Row indexes for each column stored in increasing order.
-    lvalc::Float64 The values corresponding to row indexed stored in lsubc.
-"""
-function computesparsecholesky end
 function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64})
   n = Int32(min(length(anzc),length(aptrc)))
   anzc_ = anzc
-  aptrc_ = aptrc
-  asubc_ = asubc
+  aptrc_ = aptrc .- Int64(1)
+  asubc_ = asubc .- Int32(1)
   avalc_ = avalc
   perm_ = Ref{Ptr{Int32}}()
   diag_ = Ref{Ptr{Float64}}()
@@ -16244,24 +17415,27 @@ function computesparsecholesky(env::MSKenv,numthreads::Int32,ordermethod::Int32,
   lsubc_ = Ref{Ptr{Int32}}()
   lvalc_ = Ref{Ptr{Float64}}()
   @MSK_computesparsecholesky(env.env,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
-  __tmp_687 = n
-  perm = copy(unsafe_wrap(Array,perm_[],__tmp_687))
-  @MSK_freeenv(env,perm_[])
-  __tmp_688 = n
-  diag = copy(unsafe_wrap(Array,diag_[],__tmp_688))
-  @MSK_freeenv(env,diag_[])
-  __tmp_689 = n
-  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_689))
-  @MSK_freeenv(env,lnzc_[])
-  __tmp_690 = n
-  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_690))
-  @MSK_freeenv(env,lptrc_[])
-  __tmp_691 = lensubnval
-  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_691))
-  @MSK_freeenv(env,lsubc_[])
-  __tmp_692 = lensubnval
-  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_692))
-  @MSK_freeenv(env,lvalc_[])
+  __tmp_715 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_715))
+  @MSK_freeenv(env.env,perm_[])
+  perm .+= 1
+  __tmp_716 = n
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_716))
+  @MSK_freeenv(env.env,diag_[])
+  __tmp_717 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_717))
+  @MSK_freeenv(env.env,lnzc_[])
+  __tmp_718 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_718))
+  @MSK_freeenv(env.env,lptrc_[])
+  lptrc .+= 1
+  __tmp_719 = lensubnval_[]
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_719))
+  @MSK_freeenv(env.env,lsubc_[])
+  lsubc .+= 1
+  __tmp_720 = lensubnval_[]
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_720))
+  @MSK_freeenv(env.env,lvalc_[])
   perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
 end
 function computesparsecholesky(env::MSKenv,numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where { T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number} }
@@ -16270,20 +17444,139 @@ function computesparsecholesky(env::MSKenv,numthreads::T0,ordermethod::T1,tolsin
     convert(Int32,numthreads),
     convert(Int32,ordermethod),
     convert(Float64,tolsingular),
-    convert(Vector{Int32},anzc),
-    convert(Vector{Int64},aptrc),
-    convert(Vector{Int32},asubc),
-    convert(Vector{Float64},avalc))
+    if anzc === nothing; nothing; else convert(Vector{Int32},anzc); end,
+    if aptrc === nothing; nothing; else convert(Vector{Int64},aptrc); end,
+    if asubc === nothing; nothing; else convert(Vector{Int32},asubc); end,
+    if avalc === nothing; nothing; else convert(Vector{Float64},avalc); end)
 end
 
 
-"""
-  licensecleanup()
+function computesparsecholesky(numthreads::Int32,ordermethod::Int32,tolsingular::Float64,anzc::Vector{Int32},aptrc::Vector{Int64},asubc::Vector{Int32},avalc::Vector{Float64})
+  n = Int32(min(length(anzc),length(aptrc)))
+  anzc_ = anzc
+  aptrc_ = aptrc .- Int64(1)
+  asubc_ = asubc .- Int32(1)
+  avalc_ = avalc
+  perm_ = Ref{Ptr{Int32}}()
+  diag_ = Ref{Ptr{Float64}}()
+  lnzc_ = Ref{Ptr{Int32}}()
+  lptrc_ = Ref{Ptr{Int64}}()
+  lensubnval_ = Ref{Int64}()
+  lsubc_ = Ref{Ptr{Int32}}()
+  lvalc_ = Ref{Ptr{Float64}}()
+  @MSK_computesparsecholesky(C_NULL,numthreads,ordermethod,tolsingular,n,anzc_,aptrc_,asubc_,avalc_,perm_,diag_,lnzc_,lptrc_,lensubnval_,lsubc_,lvalc_)
+  __tmp_722 = n
+  perm = copy(unsafe_wrap(Array,perm_[],__tmp_722))
+  @MSK_freeenv(Ptr{Nothing}(),perm_[])
+  perm .+= 1
+  __tmp_723 = n
+  diag = copy(unsafe_wrap(Array,diag_[],__tmp_723))
+  @MSK_freeenv(Ptr{Nothing}(),diag_[])
+  __tmp_724 = n
+  lnzc = copy(unsafe_wrap(Array,lnzc_[],__tmp_724))
+  @MSK_freeenv(Ptr{Nothing}(),lnzc_[])
+  __tmp_725 = n
+  lptrc = copy(unsafe_wrap(Array,lptrc_[],__tmp_725))
+  @MSK_freeenv(Ptr{Nothing}(),lptrc_[])
+  lptrc .+= 1
+  __tmp_726 = lensubnval_[]
+  lsubc = copy(unsafe_wrap(Array,lsubc_[],__tmp_726))
+  @MSK_freeenv(Ptr{Nothing}(),lsubc_[])
+  lsubc .+= 1
+  __tmp_727 = lensubnval_[]
+  lvalc = copy(unsafe_wrap(Array,lvalc_[],__tmp_727))
+  @MSK_freeenv(Ptr{Nothing}(),lvalc_[])
+  perm,diag,lnzc,lptrc,lensubnval_[],lsubc,lvalc
+end
+function computesparsecholesky(numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where { T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number} }
+  computesparsecholesky(
+    convert(Int32,numthreads),
+    convert(Int32,ordermethod),
+    convert(Float64,tolsingular),
+    if anzc === nothing; nothing; else convert(Vector{Int32},anzc); end,
+    if aptrc === nothing; nothing; else convert(Vector{Int64},aptrc); end,
+    if asubc === nothing; nothing; else convert(Vector{Int32},asubc); end,
+    if avalc === nothing; nothing; else convert(Vector{Float64},avalc); end)
+end
 
-  Stops all threads and delete all handles used by the license system.
 
-"""
-function licensecleanup end
+function sparsetriangularsolvedense(env::MSKenv,transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
+  n = Int32(min(length(b),length(lnzc),length(lptrc)))
+  if lnzc !== nothing && length(lnzc) < n
+    throw(BoundsError())
+  end
+  lnzc_ = lnzc
+  if lptrc !== nothing && length(lptrc) < n
+    throw(BoundsError())
+  end
+  lptrc_ = lptrc .- Int64(1)
+  lensubnval = Int64(min(length(lsubc),length(lvalc)))
+  if lsubc !== nothing && length(lsubc) < lensubnval
+    throw(BoundsError())
+  end
+  lsubc_ = lsubc .- Int32(1)
+  if lvalc !== nothing && length(lvalc) < lensubnval
+    throw(BoundsError())
+  end
+  lvalc_ = lvalc
+  if b !== nothing && length(b) < n
+    throw(BoundsError())
+  end
+  b_ = b
+  @MSK_sparsetriangularsolvedense(env.env,transposed.value,n,lnzc_,lptrc_,lensubnval,lsubc_,lvalc_,b_)
+  if b !== nothing; b[:] = b_; end
+  nothing
+end
+function sparsetriangularsolvedense(env::MSKenv,transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
+  sparsetriangularsolvedense(
+    env,
+    transposed,
+    if lnzc === nothing; nothing; else convert(Vector{Int32},lnzc); end,
+    if lptrc === nothing; nothing; else convert(Vector{Int64},lptrc); end,
+    if lsubc === nothing; nothing; else convert(Vector{Int32},lsubc); end,
+    if lvalc === nothing; nothing; else convert(Vector{Float64},lvalc); end,
+    b)
+end
+
+
+function sparsetriangularsolvedense(transposed::Transpose,lnzc::Vector{Int32},lptrc::Vector{Int64},lsubc::Vector{Int32},lvalc::Vector{Float64},b::Vector{Float64})
+  n = Int32(min(length(b),length(lnzc),length(lptrc)))
+  if lnzc !== nothing && length(lnzc) < n
+    throw(BoundsError())
+  end
+  lnzc_ = lnzc
+  if lptrc !== nothing && length(lptrc) < n
+    throw(BoundsError())
+  end
+  lptrc_ = lptrc .- Int64(1)
+  lensubnval = Int64(min(length(lsubc),length(lvalc)))
+  if lsubc !== nothing && length(lsubc) < lensubnval
+    throw(BoundsError())
+  end
+  lsubc_ = lsubc .- Int32(1)
+  if lvalc !== nothing && length(lvalc) < lensubnval
+    throw(BoundsError())
+  end
+  lvalc_ = lvalc
+  if b !== nothing && length(b) < n
+    throw(BoundsError())
+  end
+  b_ = b
+  @MSK_sparsetriangularsolvedense(C_NULL,transposed.value,n,lnzc_,lptrc_,lensubnval,lsubc_,lvalc_,b_)
+  if b !== nothing; b[:] = b_; end
+  nothing
+end
+function sparsetriangularsolvedense(transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where { T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number} }
+  sparsetriangularsolvedense(
+    transposed,
+    if lnzc === nothing; nothing; else convert(Vector{Int32},lnzc); end,
+    if lptrc === nothing; nothing; else convert(Vector{Int64},lptrc); end,
+    if lsubc === nothing; nothing; else convert(Vector{Int32},lsubc); end,
+    if lvalc === nothing; nothing; else convert(Vector{Float64},lvalc); end,
+    b)
+end
+
+
 function licensecleanup()
   @MSK_licensecleanup()
   nothing

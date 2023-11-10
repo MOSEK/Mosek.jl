@@ -12,14 +12,17 @@ if length(ARGS) < 2
     println("Missing argument, syntax is:")
     println("  opt_server_async inputfile host:port numpolls [cert]")
 else
+    filename   = ARGS[1]
+    serveraddr = ARGS[2]
+    numpolls   = parse(Int,ARGS[3])
+    cert       = (if length(ARGS) > 3
+                      ARGS[4]
+                  else
+                      Nothing
+                  end)
+
     token = maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
-
-        inputfile  = ARGS[1]
-        serveraddr = ARGS[2]
-        numpolls   = Int(ARGS[3])
-
-        tlscert    = if length(ARGS) < 4 Nothing else ARGS[4] end
 
         token = Nothing
 
@@ -31,7 +34,7 @@ else
         end
 
         println("Solve the problem remotely (async)")
-        asyncoptimize(task,addr,"")
+        asyncoptimize(task,serveraddr,"")
     end
 
     println("Task token: '$token'")
@@ -50,7 +53,7 @@ else
             sleep(0.1)
 
             println("poll $i...")
-            respavailable, res, trm = asyncpoll(task, addr, "", token)
+            respavailable, res, trm = asyncpoll(task, serveraddr, "", token)
 
             println("done!")
 
@@ -61,7 +64,7 @@ else
                     @assert false
                 end
 
-                respavailable, res, trm = asyncgetresult(task, addr, "", token)
+                respavailable, res, trm = asyncgetresult(task, serveraddr, "", token)
 
                 solutionsummary(task,MSK_STREAM_LOG)
                 break
@@ -70,7 +73,7 @@ else
 
             if i == numpolls
                 println("max number of polls reached, stopping host.")
-                asyncstop(task,addr,"", token)
+                asyncstop(task,serveraddr,"", token)
             end
         end
     end

@@ -6,10 +6,9 @@ Since the `Mosek.jl` package is designed to match a specific MOSEK version (majo
 - Branch `b1.1-msk9.1` is compatible with MOSEK 9.1. Not actively updated.
 - Branch `b1.1-msk9.2` is compatible with MOSEK 9.2. Not actively updated.
 - Branch `b1.1-msk9.3` is compatible with MOSEK 9.3. Currently updated only for bugfixes.
-- Branch `b10.0` is compatible with MOSE 10.0, at the time of writing in beta. Since MOSEK 10.0 the branch names of Mosek.jl will follow Mosek, so the branch compatible with MOSEK 10.0 will be called b10.0. Release will be called `MAJORVER.MINORVER.N`, where `N` is incremented independently of MOSEK. This means that since MOSEK 10.0, Mosek.jl vX.Y.Z will require MOSEK version X.Y
-- The `master` branch. This is more or less kept compatible with the latest MOSEK release, either latest stable release or, if available, the latest alpha or beta.
-
-`Mosek.jl` releases are taken from the `b*.*` branches.
+- From MOSEK 10.0 and forward, `Mosek.jl` branch `bX.Y` is compatible with MOSEK version X.Y.
+- For MOSEK beta releases, there will be a corresponding branch, but there will not be releases of `Mosek.jl` for MOSEK beta releases. 
+`Mosek.jl` release vX.Y.Z will be taken from branch `bX.Y`.
 
 # Mosek.jl
 
@@ -20,8 +19,9 @@ Mosek.jl is a more or less complete mapping of the MOSEK functionality:
 - Callbacks for information retrival and log output during optimization
 - Interface for the MOSEK general convex solver
 
-MOSEK can solve LP (linear), SOCP (second order conic), SDP (semi-definite),
-QP (quadratic objective, quadratic constraints), and MIP (mixed-integer problems). These can be mixed as follows:
+MOSEK can solve LP (linear), Conic (second order conic, power, exponential
+etc.), SDP (semi-definite), QP (quadratic objective, quadratic constraints),
+and MIP (mixed-integer problems). These can be mixed as follows:
 - LP+CONIC+SDP
 - LP+CONIC+MIP
 
@@ -45,8 +45,8 @@ install from the MOSEK website (www.mosek.com):
 2. If the current `Mosek.jl` installation uses a user-defined MOSEK and this is a valid version, this will be used.
 3. If MOSEK is installed in the default location in the users HOME directory, and this installation has the correct version, this will be used.
 4. If no usable MOSEK installation is found here, the installer will
-  attempt to download and unpack the latest distro. In this case doing
-  `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
+   attempt to download and unpack the latest distro. In this case doing
+   `Pkg.build("Mosek")` will update the MOSEK distro if possible.`
 
 If the MOSEK distro installation directory is moved it is necessary to rebuild the package using
 ```julia
@@ -91,7 +91,7 @@ is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f rea
 
 If you experience problems installing (in particular on Windows or OS X), you can try to pull the latest revision and see if that works
 ```julia
-Pkg.checkout("Mosek","master")
+Pkg.add(Pkg.PackageSpec(url="https://github.com/mosek/Mosek.jl",rev="master"))
 Pkg.build("Mosek")
 ```
 
@@ -116,8 +116,3 @@ using JuMP, MosekTools
 model = Model(Mosek.Optimizer)
 ```
 
-## `MathProgBase` interface
-
-The legacy [MathProgBase](https://github.com/JuliaOpt/MathProgBase.jl) wrapper
-for MOSEK is implemented in the `MosekConicInterface.jl`, `MosekLPQCQPInterface.jl`
-and `MosekSolverInterface.jl` files in the `src` folder.

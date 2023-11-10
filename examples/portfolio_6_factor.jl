@@ -1,9 +1,10 @@
-
-# File : portfolio_6_factor
 #
-# Copyright : Mosek ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# Description :  Implements a portfolio optimization model using factor model
+#  File :      portfolio_6_factor.jl
+#
+#  Description :  Implements a portfolio optimization model using factor model
+#
 
 using Mosek
 using LinearAlgebra
@@ -11,6 +12,7 @@ function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
                     w  :: Float64,
                     gammas :: Vector{Float64},
+                    theta :: Vector{Float64},
                     GT :: Array{Float64,2})
     (k,n) = size(GT)
     maketask() do task
@@ -46,31 +48,33 @@ function portfolio( mu :: Vector{Float64},
         end
 
         putconbound(task, budget_ofs+1, MSK_BK_FX, totalBudget, totalBudget)
-
-        # Input (gamma, GTx) in the AFE (affine expression) storage
-        # We need k+1 rows
-        appendafes(task,k + 1)
-        # The first affine expression = gamma
-        # The remaining k expressions comprise GT*x, we add them row by row
-        # In more realisic scenarios it would be better to extract nonzeros and input in sparse form
-
+        # Input (gamma, G_factor_T x, diag(sqrt(theta))*x) in the AFE (affine expression) storage
+        # We need k+n+1 rows and we fill them in in three parts
+        appendafes(task,n+k+1)
+        # 1. The first affine expression = gamma, will be specified later
+        # 2. The next k expressions comprise G_factor_T*x, we add them row by row
+        #    transposing the matrix G_factor on the fly
 
         subj = [1:n...]
         for i in 1:k
             putafefrow(task,i + 1, subj, GT[i,:])
         end
+        # 3. The remaining n rows contain sqrt(theta) on the diagonal
+
+        for i in 1:n
+            putafefentry(task,k + 1 + i, subj[i], sqrt(theta[i]))
+        end
 
         # Input the affine conic constraint (gamma, GT*x) \in QCone
         # Add the quadratic domain of dimension k+1
-        qdom = appendquadraticconedomain(task,k + 1)
+        qdom = appendquadraticconedomain(task,n + k + 1)
         # Add the constraint
-        appendaccseq(task,qdom,1,zeros(k+1))
+        appendaccseq(task,qdom,1,zeros(n+k+1))
         putaccname(task,1, "risk")
 
         # Objective: maximize expected return mu^T x
         putclist(task,[x_ofs+1:x_ofs+n...],mu)
         putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
-
 
         res = Tuple{Float64,Float64}[]
         for gamma in gammas
@@ -86,7 +90,7 @@ function portfolio( mu :: Vector{Float64},
 
             push!(res,(gamma,expret))
         end
-        
+
         res
     end
 end # portfolio()
@@ -110,15 +114,12 @@ let w  = 1.0,
     # Specific risk components
     theta = [0.0720, 0.0508, 0.0377, 0.0394, 0.0663, 0.0224, 0.0417, 0.0459],
     S_sqrt_theta = Matrix(Diagonal(sqrt.(theta))),
-    
     P = Matrix(cholesky(S_F).L),
     BP = B * P,
     G = [ BP S_sqrt_theta ],
     GT = Matrix(G') # 10 x 8
 
-    
-    
-    for (gamma,expret) in portfolio(mu,x0,w,gammas,GT)
+    for (gamma,expret) in portfolio(mu,x0,w,gammas,theta,GT)
         println("Expected return $expret for gamma $gamma");
     end
 

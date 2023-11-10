@@ -1,9 +1,9 @@
 #
-#   Copyright: MOSEK ApS
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-#   File:      djc1.jl
+#  File :      djc1.jl
 #
-#   Purpose: Demonstrates how to solve the problem with two disjunctions:
+#  Purpose: Demonstrates how to solve the problem with two disjunctions:
 #
 #      minimize    2x0 + x1 + 3x2 + x3
 #      subject to   x0 + x1 + x2 + x3 >= -10
@@ -68,7 +68,7 @@ maketask() do task
     writedata(task,"djc1.ptf")                         # Write file in human-readable format
 
     # Solve the problem
-    optimize(task,)
+    optimize(task)
 
     # Print a summary containing information
     # about the solution for debugging purposes

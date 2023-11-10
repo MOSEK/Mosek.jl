@@ -120,7 +120,7 @@ function portfolio( mu :: Vector{Float64},
         optimize(task)
 
         writedata(task,"portfolio_4_transcost.ptf")
-        
+
         # Display solution summary for quick inspection of results
         solutionsummary(task,MSK_STREAM_LOG)
 

@@ -1,5 +1,7 @@
 #
-#  File:    cqo1.jl
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#
+#  File :      cqo1.jl
 #
 #  Purpose: Demonstrates how to solve small conic
 #           optimization problem using the MOSEK Python API.
@@ -39,18 +41,18 @@ maketask() do task
     putcallbackfunc(task,callback)
 
     # Append 'numcon' empty constraints.
-    # The constraints will initially have no bounds. 
+    # The constraints will initially have no bounds.
     appendcons(task,numcon)
 
     #Append 'numvar' variables.
-    # The variables will initially be fixed at zero (x=0). 
+    # The variables will initially be fixed at zero (x=0).
     appendvars(task,numvar)
 
     # Set the linear term c_j in the objective.
     putclist(task,[1:6;],c)
 
     # Set the bounds on variable j
-    # blx[j] <= x_j <= bux[j] 
+    # blx[j] <= x_j <= bux[j]
     putvarboundslice(task,1,numvar+1,bkx,blx,bux)
 
     putarow(task,1,asub,aval)
@@ -83,6 +85,7 @@ maketask() do task
     # Optimize the task
     #optimize(task,"mosek://solve.mosek.com:30080")
     optimize(task)
+    writedata(task,"cqo1.ptf")
     # Print a summary containing information
     # about the solution for debugging purposes
     solutionsummary(task,MSK_STREAM_MSG)
@@ -92,7 +95,7 @@ maketask() do task
     if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
-        println("Optimal solution: $xx\n")
+        println("Optimal solution: $xx")
         @assert maximum(abs.(xx - [0.2609204081408032, 0.2609204081408032, 0.23907959185918956, 0.36899717989264824, 0.1690548006469457, 0.1690548006469457])) < 1e-7
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")

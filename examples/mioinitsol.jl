@@ -1,8 +1,10 @@
-# Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
 #
-# File :      mioinitsol.jl
+#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#
+#  File :      mioinitsol.jl
 #
 # Purpose :   Demonstrates how to solve a MIP with a start guess.
+
 
 using Mosek
 
@@ -57,6 +59,7 @@ let numvar = 4,
 
         # solve
         optimize(task)
+        writedata(task,"mioinitsol.ptf")
         solutionsummary(task,MSK_STREAM_LOG)
 
         # Read and print solution

@@ -1,6 +1,4 @@
 #
-#  Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
-#
 #  File:    concurrent1.jl
 #
 #  Purpose: Demonstrates a simple implementation of a concurrent optimizer.
@@ -11,6 +9,7 @@
 #
 #           This example also demonstrates how to define a simple callback handler
 #           that stops the optimizer when requested.
+
 
 using Mosek
 
@@ -192,7 +191,11 @@ end
 function main(fname::String,tlimit)
     maketask() do task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
-        readdata(task,fname)
+        if fname != "-"
+            readdata(task,fname)
+        else
+            readptfstring(task,lo1_ptf)
+        end
 
         putobjname(task,"concurrent1")
         # Optional time limit
@@ -230,8 +233,26 @@ function main(fname::String,tlimit)
     end
 end
 
-let fname = if length(ARGS) < 1 "../data/25fv47.mps" else ARGS[1] end,
-    tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end 
-    println("Concurrent1 disabled as it causes memory faults")
-    #main(fname,tlimit)
+const lo1_ptf = """Task
+Objective
+    Maximize + 3 @x0 + @x1 + 5 @x2 + @x3
+Constraints
+    @c0 [30] + 3 @x0 + @x1 + 2 @x2
+    @c1 [15;+inf] + 2 @x0 + @x1 + 3 @x2 + @x3
+    @c2 [-inf;25] + 2 @x1 + 3 @x3
+Variables
+    @x0 [0;+inf]
+    @x1 [0;10]
+    @x2 [0;+inf]
+    @x3 [0;+inf]
+"""
+
+let fname = if length(ARGS) < 1 "-" else ARGS[1] end,
+    tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end
+
+    if false
+        main(fname,tlimit)
+    else
+        println!("Disabled: concurrent1.jl. Example is broken.")
+    end
 end

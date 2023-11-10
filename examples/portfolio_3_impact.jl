@@ -7,7 +7,6 @@
 ##
 
 using Mosek
-
 function portfolio( mu :: Vector{Float64},
                     x0 :: Vector{Float64},
                     w  :: Float64,
@@ -25,7 +24,6 @@ function portfolio( mu :: Vector{Float64},
         x_ofs = 0
         c_ofs = n
         z_ofs = 2*n
-
         # Constraints offsets
         budget_ofs = 0
 

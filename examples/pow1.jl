@@ -1,3 +1,6 @@
+#   Copyright : Copyright (c) MOSEK ApS, Denmark. All rights reserved.
+#
+#   File :      pow1.jl
 #
 #   Purpose: Demonstrates how to solve the problem
 #
@@ -66,9 +69,9 @@ maketask() do task
 
     if solsta == MSK_SOL_STA_OPTIMAL
         # Output a solution
-        x = getxx(task,MSK_SOL_ITR)
-        println("Optimal solution: $(x[1:3])")
-        @assert maximum(abs.(x[1:3]-[0.063938, 0.78328, 2.305562])) < 1e-4
+        xx = getxx(task,MSK_SOL_ITR)
+        println("Optimal solution: $(xx[1:3])")
+        @assert maximum(abs.(xx[1:3]-[0.063938, 0.78328, 2.305562])) < 1e-4
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
