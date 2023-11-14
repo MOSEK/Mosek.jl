@@ -74,7 +74,7 @@ function msk_info_callback_wrapper(t::Ptr{Nothing}, userdata::Ptr{Nothing}, wher
             1
         else
             task = unsafe_pointer_to_objref(userdata) :: MSKtask
-            if task.usercallbackfunc == nothing
+            if task.usercallbackfunc === nothing
                 0
             else
                 dinfa  = unsafe_wrap(Vector{Float64},douinf,(length(Dinfitem),),own=false)
