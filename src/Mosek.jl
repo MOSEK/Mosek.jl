@@ -76,7 +76,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterrormsg(r)))
+            throw(MosekError(r,getlasterrormsg(task)))
         end
 
         task
@@ -173,13 +173,13 @@ __init__() = (global msk_global_env = makeenv())
 
 """
     maketask(;env::Env = msk_global_env, filename::String = "")
-    
+
 Create a task. If `filename` is not 0-length, initialize the task from this file.
 
     maketask(func :: Function;env::Env = msk_global_env, filename::String = "")
 
 Create a task. If `filename` is not 0-length, initialize the task from
-this file. The `func` parameter is a function 
+this file. The `func` parameter is a function
 
 ```julia
 func(task :: Task) :: Any
@@ -280,13 +280,13 @@ function getlasterrormsg(task::Task)
       ""
     else
       lastmsg_len = findfirst(_c->_c==0,lastmsg)
-      if lastmsg_len === nothing 
-        String(lastmsg) 
-      else 
-        String(lastmsg[1:lastmsg_len-1]) 
+      if lastmsg_len === nothing
+        String(lastmsg)
+      else
+        String(lastmsg[1:lastmsg_len-1])
       end
     end
-  end   
+  end
 end
 #function getlasterrormsg(task::Ptr{Nothing})
 #  lastrescode = Ref{Int32}()
@@ -299,13 +299,13 @@ end
 #      ""
 #    else
 #      lastmsg_len = findfirst(_c->_c==0,lastmsg)
-#      if lastmsg_len === nothing 
-#        String(lastmsg) 
-#      else 
-#        String(lastmsg[1:lastmsg_len-1]) 
+#      if lastmsg_len === nothing
+#        String(lastmsg)
+#      else
+#        String(lastmsg[1:lastmsg_len-1])
 #      end
 #    end
-#  end   
+#  end
 #end
 
 
