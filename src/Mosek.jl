@@ -76,7 +76,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterrormsg(t)))
+            throw(MosekError(r,getlasterrormsg(r)))
         end
 
         task
@@ -272,11 +272,11 @@ end
 function getlasterrormsg(task::Task)
   lastrescode = Ref{Int32}()
   sizelastmsg = Ref{Int64}()
-  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,0,C_NULL))
+  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,0,sizelastmsg,C_NULL))
     ""
   else
     lastmsg = Array{UInt8}(undef,sizelastmsg[]+1)
-    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,length(lastmasg),lastmsg))
+    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,length(lastmsg),sizelastmsg,lastmsg))
       ""
     else
       lastmsg_len = findfirst(_c->_c==0,lastmsg)
