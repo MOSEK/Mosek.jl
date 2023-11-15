@@ -102,7 +102,7 @@ If this also fails, please post an issue in Github.
 All functions and constants in the Mosek.jl are briefly documented in docs strings, and an HTML reference can be built using `Documenter.jl`.
 
 For a more complete description of functions, please refer to
-[the MOSEK C API documentation](https://www.mosek.com/documentation/).
+[the MOSEK Julia API documentation](https://docs.mosek.com/latest/juliaapi/index.html).
 
 ## Use with JuMP
 
