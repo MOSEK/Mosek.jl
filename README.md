@@ -87,16 +87,6 @@ You can see if the MOSEK distro was installed internally this way:
 is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f readstring(f) == "internal" end
 ```
 
-### When installation does not work
-
-If you experience problems installing (in particular on Windows or OS X), you can try to pull the latest revision and see if that works
-```julia
-Pkg.add(Pkg.PackageSpec(url="https://github.com/mosek/Mosek.jl",rev="master"))
-Pkg.build("Mosek")
-```
-
-If this also fails, please post an issue in Github.
-
 ## Documentation
 
 All functions and constants in the Mosek.jl are briefly documented in docs strings, and an HTML reference can be built using `Documenter.jl`.
