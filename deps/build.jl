@@ -81,7 +81,7 @@ function versionFromBindir(bindir ::AbstractString)
     try
         mosekbin = if Sys.iswindows() "mosek.exe" else "mosek" end
         txt = read(`$bindir/$mosekbin`,String)
-        m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9])",txt)
+        m = match(r"\s*MOSEK Version ([0-9]+\.[0-9]+\.[0-9]+)",txt)
         if m == nothing
             return nothing
         else
