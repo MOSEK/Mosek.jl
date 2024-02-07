@@ -30,8 +30,16 @@ julia> ?Mosek.putarowslice
   putarowslice(task::MSKtask,first::T0,last::T1,ptrb::T2,ptre::T3,asub::T4,aval::T5) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
   putarowslice(task::MSKtask,first::T0,last::T1,At:: SparseMatrixCSC{Float64})
 
-  Arguments: At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the columns of this matrix defines the rows to be replaced asub::Vector{Int32} Column indexes of new elements. aval::Vector{Float64} Coefficient values. first::Int32 First row in the slice. last::Int32 Last row plus one in the slice. ptrb::Vector{Int64} Array of pointers to the first element in the
-  rows. ptre::Vector{Int64} Array of pointers to the last element plus one in the rows. task::MSKtask An optimization task.
+  Arguments: 
+
+  At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
+  asub::Vector{Int32} Column indexes of new elements.
+  aval::Vector{Float64} Coefficient values.
+  first::Int32 First row in the slice.
+  last::Int32 Last row plus one in the slice.
+  ptrb::Vector{Int64} Array of pointers to the first element in the rows.
+  ptre::Vector{Int64} Array of pointers to the last element plus one in the rows.
+  task::MSKtask An optimization task.
 ```
 
 For a more complete manual and full API reference, please refer to
