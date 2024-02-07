@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.1.11
+# Target: Mosek 10.1.24
 export
   analyzeproblem,
   analyzenames,
@@ -4851,6 +4851,7 @@ Analyze the names and issue an error for the first invalid name.
     analyzenames(task::MSKtask,whichstream::Streamtype,nametype::Nametype)
 
 Arguments:
+
     nametype::Nametype The type of names e.g. valid in MPS or LP files.
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
@@ -4863,6 +4864,7 @@ Analyze the data of a task.
     analyzeproblem(task::MSKtask,whichstream::Streamtype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
 """
@@ -4874,6 +4876,7 @@ Print information related to the quality of the solution.
     analyzesolution(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
     whichstream::Streamtype Index of the stream.
@@ -4887,8 +4890,9 @@ Appends an affine conic constraint to the task.
     appendacc(task::MSKtask,domidx::T0,afeidxlist::T1,b::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidx::Int64 Domain index.
     task::MSKtask An optimization task.
 """
@@ -4901,8 +4905,9 @@ Appends a number of affine conic constraint to the task.
     appendaccs(task::MSKtask,domidxs::T0,afeidxlist::T1,b::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidxs::Vector{Int64} Domain indices.
     task::MSKtask An optimization task.
 """
@@ -4915,8 +4920,9 @@ Appends an affine conic constraint to the task.
     appendaccseq(task::MSKtask,domidx::T0,afeidxfirst::T1,b::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidxfirst::Int64 Index of the first affine expression.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidx::Int64 Domain index.
     task::MSKtask An optimization task.
 """
@@ -4929,8 +4935,9 @@ Appends a number of affine conic constraint to the task.
     appendaccsseq(task::MSKtask,domidxs::T0,numafeidx::T1,afeidxfirst::T2,b::T3) where {T0<:AbstractVector{<:Integer},T1<:Integer,T2<:Integer,T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidxfirst::Int64 Index of the first affine expression.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidxs::Vector{Int64} Domain indices.
     numafeidx::Int64 Number of affine expressions in the affine expression list (must equal the sum of dimensions of the domains).
     task::MSKtask An optimization task.
@@ -4944,6 +4951,7 @@ Appends a number of empty affine expressions to the optimization task.
     appendafes(task::MSKtask,num::T0) where {T0<:Integer} 
 
 Arguments:
+
     num::Int64 Number of empty affine expressions which should be appended.
     task::MSKtask An optimization task.
 """
@@ -4956,6 +4964,7 @@ Appends semidefinite variables to the problem.
     appendbarvars(task::MSKtask,dim::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     dim::Vector{Int32} Dimensions of symmetric matrix variables to be added.
     task::MSKtask An optimization task.
 """
@@ -4968,6 +4977,7 @@ Appends a new conic constraint to the problem.
     appendcone(task::MSKtask,ct::Conetype,conepar::T0,submem::T1) where {T0<:Number,T1<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     ct::Conetype Specifies the type of the cone.
     submem::Vector{Int32} Variable subscripts of the members in the cone.
@@ -4982,6 +4992,7 @@ Appends a new conic constraint to the problem.
     appendconeseq(task::MSKtask,ct::Conetype,conepar::T0,nummem::T1,j::T2) where {T0<:Number,T1<:Integer,T2<:Integer} 
 
 Arguments:
+
     conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     ct::Conetype Specifies the type of the cone.
     j::Int32 Index of the first variable in the conic constraint.
@@ -4997,6 +5008,7 @@ Appends multiple conic constraints to the problem.
     appendconesseq(task::MSKtask,ct::Vector{Conetype},conepar::T0,nummem::T1,j::T2) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Integer},T2<:Integer} 
 
 Arguments:
+
     conepar::Vector{Float64} For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     ct::Vector{Conetype} Specifies the type of the cone.
     j::Int32 Index of the first variable in the first cone to be appended.
@@ -5012,6 +5024,7 @@ Appends a number of constraints to the optimization task.
     appendcons(task::MSKtask,num::T0) where {T0<:Integer} 
 
 Arguments:
+
     num::Int32 Number of constraints which should be appended.
     task::MSKtask An optimization task.
 """
@@ -5024,6 +5037,7 @@ Appends a number of empty disjunctive constraints to the task.
     appenddjcs(task::MSKtask,num::T0) where {T0<:Integer} 
 
 Arguments:
+
     num::Int64 Number of empty disjunctive constraints which should be appended.
     task::MSKtask An optimization task.
 """
@@ -5035,6 +5049,7 @@ Appends the dual exponential cone domain.
     appenddualexpconedomain(task::MSKtask) :: domidx
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5049,6 +5064,7 @@ Appends the dual geometric mean cone domain.
     appenddualgeomeanconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5064,6 +5080,7 @@ Appends the dual power cone domain.
     appenddualpowerconedomain(task::MSKtask,n::T0,alpha::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}}  :: domidx
 
 Arguments:
+
     alpha::Vector{Float64} The sequence proportional to exponents. Must be positive.
     n::Int64 Dimension of the domain.
     task::MSKtask An optimization task.
@@ -5079,6 +5096,7 @@ Appends the primal exponential cone domain.
     appendprimalexpconedomain(task::MSKtask) :: domidx
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5093,6 +5111,7 @@ Appends the primal geometric mean cone domain.
     appendprimalgeomeanconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5108,6 +5127,7 @@ Appends the primal power cone domain.
     appendprimalpowerconedomain(task::MSKtask,n::T0,alpha::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}}  :: domidx
 
 Arguments:
+
     alpha::Vector{Float64} The sequence proportional to exponents. Must be positive.
     n::Int64 Dimension of the domain.
     task::MSKtask An optimization task.
@@ -5124,6 +5144,7 @@ Appends the n dimensional quadratic cone domain.
     appendquadraticconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5139,6 +5160,7 @@ Appends the n dimensional real number domain.
     appendrdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5154,6 +5176,7 @@ Appends the n dimensional negative orthant to the list of domains.
     appendrminusdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5169,6 +5192,7 @@ Appends the n dimensional positive orthant to the list of domains.
     appendrplusdomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5184,6 +5208,7 @@ Appends the n dimensional rotated quadratic cone domain.
     appendrquadraticconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5199,6 +5224,7 @@ Appends the n dimensional 0 domain.
     appendrzerodomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimmension of the domain.
     task::MSKtask An optimization task.
 
@@ -5215,6 +5241,7 @@ Appends a general sparse symmetric matrix to the storage of symmetric matrices.
     appendsparsesymmat(task::MSKtask,dim::T0,data:: SparseMatrixCSC{Float64}) :: idx
 
 Arguments:
+
     dim::Int32 Dimension of the symmetric matrix that is appended.
     subi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
     subj::Vector{Int32} Column subscripts in the triplets.
@@ -5233,6 +5260,7 @@ Appends a general sparse symmetric matrix to the storage of symmetric matrices.
     appendsparsesymmatlist(task::MSKtask,dims::T0,nz::T1,subi::T2,subj::T3,valij::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}}  :: idx
 
 Arguments:
+
     dims::Vector{Int32} Dimensions of the symmetric matrixes.
     nz::Vector{Int64} Number of nonzeros for each matrix.
     subi::Vector{Int32} Row subscript in the triplets.
@@ -5252,6 +5280,7 @@ Appends the vectorized SVEC PSD cone domain.
     appendsvecpsdconedomain(task::MSKtask,n::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     n::Int64 Dimension of the domain.
     task::MSKtask An optimization task.
 
@@ -5267,6 +5296,7 @@ Appends a number of variables to the optimization task.
     appendvars(task::MSKtask,num::T0) where {T0<:Integer} 
 
 Arguments:
+
     num::Int32 Number of variables which should be appended.
     task::MSKtask An optimization task.
 """
@@ -5278,6 +5308,7 @@ Request a solution from a remote job.
     asyncgetresult(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString) :: (respavailable,resp,trm)
 
 Arguments:
+
     accesstoken::AbstractString Access token.
     address::AbstractString Address of the OptServer.
     task::MSKtask An optimization task.
@@ -5296,6 +5327,7 @@ Offload the optimization task to a solver server in asynchronous mode.
     asyncoptimize(task::MSKtask,address::AbstractString,accesstoken::AbstractString) :: token
 
 Arguments:
+
     accesstoken::AbstractString Access token.
     address::AbstractString Address of the OptServer.
     task::MSKtask An optimization task.
@@ -5311,6 +5343,7 @@ Requests information about the status of the remote job.
     asyncpoll(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString) :: (respavailable,resp,trm)
 
 Arguments:
+
     accesstoken::AbstractString Access token.
     address::AbstractString Address of the OptServer.
     task::MSKtask An optimization task.
@@ -5329,6 +5362,7 @@ Request that the job identified by the token is terminated.
     asyncstop(task::MSKtask,address::AbstractString,accesstoken::AbstractString,token::AbstractString)
 
 Arguments:
+
     accesstoken::AbstractString Access token.
     address::AbstractString Address of the OptServer.
     task::MSKtask An optimization task.
@@ -5342,6 +5376,7 @@ Computes conditioning information for the basis matrix.
     basiscond(task::MSKtask) :: (nrmbasis,nrminvbasis)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5356,6 +5391,7 @@ Obtains a bound key string identifier.
     bktostr(task::MSKtask,bk::Boundkey) :: str
 
 Arguments:
+
     bk::Boundkey Bound key.
     task::MSKtask An optimization task.
 
@@ -5370,6 +5406,7 @@ Obtains a callback code string identifier.
     callbackcodetostr(code::Callbackcode) :: callbackcodestr
 
 Arguments:
+
     code::Callbackcode A callback code.
 
 Returns:
@@ -5384,6 +5421,7 @@ Check in all unused license features to the license token server.
     checkinall()
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
 """
 function checkinall end
@@ -5395,6 +5433,7 @@ Check in a license feature back to the license server ahead of time.
     checkinlicense(feature::Feature)
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     feature::Feature Feature to check in to the license system.
 """
@@ -5407,6 +5446,7 @@ Checks the memory allocated by the task.
     checkmem(task::MSKtask,file::Union{Nothing,AbstractString},line::T0) where {T0<:Integer} 
 
 Arguments:
+
     file::AbstractString File from which the function is called.
     line::Int32 Line in the file from which the function is called.
     task::MSKtask An optimization task.
@@ -5420,6 +5460,7 @@ Check out a license feature from the license server ahead of time.
     checkoutlicense(feature::Feature)
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     feature::Feature Feature to check out from the license system.
 """
@@ -5432,6 +5473,7 @@ Changes the bounds for one constraint.
     chgconbound(task::MSKtask,i::T0,lower::T1,finite::T2,value::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Number} 
 
 Arguments:
+
     finite::Int32 If non-zero, then the given value is assumed to be finite.
     i::Int32 Index of the constraint for which the bounds should be changed.
     lower::Int32 If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
@@ -5447,6 +5489,7 @@ Changes the bounds for one variable.
     chgvarbound(task::MSKtask,j::T0,lower::T1,finite::T2,value::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Number} 
 
 Arguments:
+
     finite::Int32 If non-zero, then the given value is assumed to be finite.
     j::Int32 Index of the variable for which the bounds should be changed.
     lower::Int32 If non-zero, then the lower bound is changed, otherwise the upper bound is changed.
@@ -5461,6 +5504,7 @@ Commits all cached problem changes.
     commitchanges(task::MSKtask)
 
 Arguments:
+
     task::MSKtask An optimization task.
 """
 function commitchanges end
@@ -5474,6 +5518,7 @@ Computes a Cholesky factorization of sparse matrix.
     computesparsecholesky(numthreads::T0,ordermethod::T1,tolsingular::T2,anzc::T3,aptrc::T4,asubc::T5,avalc::T6) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Number}}  :: (perm,diag,lnzc,lptrc,lensubnval,lsubc,lvalc)
 
 Arguments:
+
     anzc::Vector{Int32} anzc[j] is the number of nonzeros in the jth column of A.
     aptrc::Vector{Int64} aptrc[j] is a pointer to the first element in column j.
     asubc::Vector{Int32} Row indexes for each column stored in increasing order.
@@ -5500,6 +5545,7 @@ Obtains a cone type string identifier.
     conetypetostr(task::MSKtask,ct::Conetype) :: str
 
 Arguments:
+
     ct::Conetype Specifies the type of the cone.
     task::MSKtask An optimization task.
 
@@ -5514,6 +5560,7 @@ Undefine a solution and free the memory it uses.
     deletesolution(task::MSKtask,whichsol::Soltype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 """
@@ -5525,6 +5572,7 @@ Obtains a information item string identifier.
     dinfitemtostr(item::Dinfitem) :: str
 
 Arguments:
+
     item::Dinfitem Information item.
 
 Returns:
@@ -5539,6 +5587,7 @@ Performs sensitivity analysis on objective coefficients.
     dualsensitivity(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: (leftpricej,rightpricej,leftrangej,rightrangej)
 
 Arguments:
+
     subj::Vector{Int32} Indexes of objective coefficients to analyze.
     task::MSKtask An optimization task.
 
@@ -5559,6 +5608,7 @@ Prints an intro to message stream.
     echointro(longver::T0) where {T0<:Integer} 
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     longver::Int32 If non-zero, then the intro is slightly longer.
 """
@@ -5571,6 +5621,7 @@ Clears a row in barF
     emptyafebarfrow(task::MSKtask,afeidx::T0) where {T0<:Integer} 
 
 Arguments:
+
     afeidx::Int64 Row index of barF.
     task::MSKtask An optimization task.
 """
@@ -5583,6 +5634,7 @@ Clears rows in barF.
     emptyafebarfrowlist(task::MSKtask,afeidxlist::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     afeidxlist::Vector{Int64} Indices of rows in barF to clear.
     task::MSKtask An optimization task.
 """
@@ -5595,6 +5647,7 @@ Clears a column in F.
     emptyafefcol(task::MSKtask,varidx::T0) where {T0<:Integer} 
 
 Arguments:
+
     task::MSKtask An optimization task.
     varidx::Int32 Variable index.
 """
@@ -5607,6 +5660,7 @@ Clears columns in F.
     emptyafefcollist(task::MSKtask,varidx::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     task::MSKtask An optimization task.
     varidx::Vector{Int32} Indices of variables in F to clear.
 """
@@ -5619,6 +5673,7 @@ Clears a row in F.
     emptyafefrow(task::MSKtask,afeidx::T0) where {T0<:Integer} 
 
 Arguments:
+
     afeidx::Int64 Row index.
     task::MSKtask An optimization task.
 """
@@ -5631,6 +5686,7 @@ Clears rows in F.
     emptyafefrowlist(task::MSKtask,afeidx::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Indices of rows in F to clear.
     task::MSKtask An optimization task.
 """
@@ -5643,6 +5699,7 @@ Evaluates the activity of an affine conic constraint.
     evaluateacc(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: activity
 
 Arguments:
+
     accidx::Int64 The index of the affine conic constraint.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -5658,6 +5715,7 @@ Evaluates the activities of all affine conic constraints.
     evaluateaccs(task::MSKtask,whichsol::Soltype) :: activity
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -5673,6 +5731,7 @@ Reports when the first license feature expires.
     expirylicenses() :: expiry
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
 
 Returns:
@@ -5687,6 +5746,7 @@ Obtains the list of affine expressions appearing in the affine conic constraint.
     getaccafeidxlist(task::MSKtask,accidx::T0) where {T0<:Integer}  :: afeidxlist
 
 Arguments:
+
     accidx::Int64 Index of the affine conic constraint.
     task::MSKtask An optimization task.
 
@@ -5702,6 +5762,7 @@ Obtains the additional constant term vector appearing in the affine conic constr
     getaccb(task::MSKtask,accidx::T0) where {T0<:Integer}  :: b
 
 Arguments:
+
     accidx::Int64 Index of the affine conic constraint.
     task::MSKtask An optimization task.
 
@@ -5716,6 +5777,7 @@ Obtains barF, implied by the ACCs, in block triplet form.
     getaccbarfblocktriplet(task::MSKtask) :: (numtrip,acc_afe,bar_var,blk_row,blk_col,blk_val)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5734,6 +5796,7 @@ Obtains an upper bound on the number of elements in the block triplet form of ba
     getaccbarfnumblocktriplets(task::MSKtask) :: numtrip
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5748,6 +5811,7 @@ Obtains the domain appearing in the affine conic constraint.
     getaccdomain(task::MSKtask,accidx::T0) where {T0<:Integer}  :: domidx
 
 Arguments:
+
     accidx::Int64 The index of the affine conic constraint.
     task::MSKtask An optimization task.
 
@@ -5763,6 +5827,7 @@ Obtains the doty vector for an affine conic constraint.
     getaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
 
 Arguments:
+
     accidx::Int64 The index of the affine conic constraint.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -5778,6 +5843,7 @@ Obtains the doty vector for a solution.
     getaccdotys(task::MSKtask,whichsol::Soltype) :: doty
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -5792,6 +5858,7 @@ Obtains the total number of nonzeros in the ACC implied F matrix.
     getaccfnumnz(task::MSKtask) :: accfnnz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5805,6 +5872,7 @@ Obtains the F matrix (implied by the AFE ordering within the ACCs) in triplet fo
     getaccftrip(task::MSKtask) :: (frow,fcol,fval)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5820,6 +5888,7 @@ The g vector as used within the ACCs.
     getaccgvector(task::MSKtask) :: g
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5834,6 +5903,7 @@ Obtains the dimension of the affine conic constraint.
     getaccn(task::MSKtask,accidx::T0) where {T0<:Integer}  :: n
 
 Arguments:
+
     accidx::Int64 The index of the affine conic constraint.
     task::MSKtask An optimization task.
 
@@ -5849,6 +5919,7 @@ Obtains the name of an affine conic constraint.
     getaccname(task::MSKtask,accidx::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     accidx::Int64 Index of an affine conic constraint.
     task::MSKtask An optimization task.
 
@@ -5864,6 +5935,7 @@ Obtains the length of the name of an affine conic constraint.
     getaccnamelen(task::MSKtask,accidx::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     accidx::Int64 Index of an affine conic constraint.
     task::MSKtask An optimization task.
 
@@ -5878,6 +5950,7 @@ Obtains the total dimension of all affine conic constraints.
     getaccntot(task::MSKtask) :: n
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5891,6 +5964,7 @@ Obtains full data of all affine conic constraints.
     getaccs(task::MSKtask) :: (domidxlist,afeidxlist,b)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -5907,6 +5981,7 @@ Obtains one column of the linear constraint matrix.
     getacol(task::MSKtask,j::T0) where {T0<:Integer}  :: (nzj,subj,valj)
 
 Arguments:
+
     j::Int32 Index of the column.
     task::MSKtask An optimization task.
 
@@ -5924,6 +5999,7 @@ Obtains the number of non-zero elements in one column of the linear constraint m
     getacolnumnz(task::MSKtask,i::T0) where {T0<:Integer}  :: nzj
 
 Arguments:
+
     i::Int32 Index of the column.
     task::MSKtask An optimization task.
 
@@ -5939,6 +6015,7 @@ Obtains a sequence of columns from the coefficient matrix.
     getacolslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (ptrb,ptre,sub,val)
 
 Arguments:
+
     first::Int32 Index of the first column in the sequence.
     last::Int32 Index of the last column in the sequence plus one.
     task::MSKtask An optimization task.
@@ -5958,6 +6035,7 @@ Obtains the number of non-zeros in a slice of columns of the coefficient matrix.
     getacolslicenumnz(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: numnz
 
 Arguments:
+
     first::Int32 Index of the first column in the sequence.
     last::Int32 Index of the last column plus one in the sequence.
     task::MSKtask An optimization task.
@@ -5974,6 +6052,7 @@ Obtains a sequence of columns from the coefficient matrix in triplet format.
     getacolslicetrip(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (subi,subj,val)
 
 Arguments:
+
     first::Int32 Index of the first column in the sequence.
     last::Int32 Index of the last column in the sequence plus one.
     task::MSKtask An optimization task.
@@ -5991,6 +6070,7 @@ Obtains barF in block triplet form.
     getafebarfblocktriplet(task::MSKtask) :: (numtrip,afeidx,barvaridx,subk,subl,valkl)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6009,6 +6089,7 @@ Obtains an upper bound on the number of elements in the block triplet form of ba
     getafebarfnumblocktriplets(task::MSKtask) :: numtrip
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6023,6 +6104,7 @@ Obtains the number of nonzero entries in a row of barF.
     getafebarfnumrowentries(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: numentr
 
 Arguments:
+
     afeidx::Int64 Row index of barF.
     task::MSKtask An optimization task.
 
@@ -6038,6 +6120,7 @@ Obtains nonzero entries in one row of barF.
     getafebarfrow(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (barvaridx,ptrterm,numterm,termidx,termweight)
 
 Arguments:
+
     afeidx::Int64 Row index of barF.
     task::MSKtask An optimization task.
 
@@ -6057,6 +6140,7 @@ Obtains information about one row of barF.
     getafebarfrowinfo(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (numentr,numterm)
 
 Arguments:
+
     afeidx::Int64 Row index of barF.
     task::MSKtask An optimization task.
 
@@ -6072,6 +6156,7 @@ Obtains the total number of nonzeros in F.
     getafefnumnz(task::MSKtask) :: numnz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6086,6 +6171,7 @@ Obtains one row of F in sparse format.
     getafefrow(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: (numnz,varidx,val)
 
 Arguments:
+
     afeidx::Int64 Row index.
     task::MSKtask An optimization task.
 
@@ -6103,6 +6189,7 @@ Obtains the number of nonzeros in a row of F.
     getafefrownumnz(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: numnz
 
 Arguments:
+
     afeidx::Int64 Row index.
     task::MSKtask An optimization task.
 
@@ -6117,6 +6204,7 @@ Obtains the F matrix in triplet format.
     getafeftrip(task::MSKtask) :: (afeidx,varidx,val)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6133,6 +6221,7 @@ Obtains a single coefficient in g.
     getafeg(task::MSKtask,afeidx::T0) where {T0<:Integer}  :: g
 
 Arguments:
+
     afeidx::Int64 Element index.
     task::MSKtask An optimization task.
 
@@ -6148,6 +6237,7 @@ Obtains a sequence of coefficients from the vector g.
     getafegslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: g
 
 Arguments:
+
     first::Int64 First index in the sequence.
     last::Int64 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -6164,6 +6254,7 @@ Obtains a single coefficient in linear constraint matrix.
     getaij(task::MSKtask,i::T0,j::T1) where {T0<:Integer,T1<:Integer}  :: aij
 
 Arguments:
+
     i::Int32 Row index of the coefficient to be returned.
     j::Int32 Column index of the coefficient to be returned.
     task::MSKtask An optimization task.
@@ -6180,6 +6271,7 @@ Obtains the number non-zeros in a rectangular piece of the linear constraint mat
     getapiecenumnz(task::MSKtask,firsti::T0,lasti::T1,firstj::T2,lastj::T3) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Integer}  :: numnz
 
 Arguments:
+
     firsti::Int32 Index of the first row in the rectangular piece.
     firstj::Int32 Index of the first column in the rectangular piece.
     lasti::Int32 Index of the last row plus one in the rectangular piece.
@@ -6198,6 +6290,7 @@ Obtains one row of the linear constraint matrix.
     getarow(task::MSKtask,i::T0) where {T0<:Integer}  :: (nzi,subi,vali)
 
 Arguments:
+
     i::Int32 Index of the row.
     task::MSKtask An optimization task.
 
@@ -6215,6 +6308,7 @@ Obtains the number of non-zero elements in one row of the linear constraint matr
     getarownumnz(task::MSKtask,i::T0) where {T0<:Integer}  :: nzi
 
 Arguments:
+
     i::Int32 Index of the row.
     task::MSKtask An optimization task.
 
@@ -6230,6 +6324,7 @@ Obtains a sequence of rows from the coefficient matrix.
     getarowslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (ptrb,ptre,sub,val)
 
 Arguments:
+
     first::Int32 Index of the first row in the sequence.
     last::Int32 Index of the last row in the sequence plus one.
     task::MSKtask An optimization task.
@@ -6249,6 +6344,7 @@ Obtains the number of non-zeros in a slice of rows of the coefficient matrix.
     getarowslicenumnz(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: numnz
 
 Arguments:
+
     first::Int32 Index of the first row in the sequence.
     last::Int32 Index of the last row plus one in the sequence.
     task::MSKtask An optimization task.
@@ -6265,6 +6361,7 @@ Obtains a sequence of rows from the coefficient matrix in sparse triplet format.
     getarowslicetrip(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (subi,subj,val)
 
 Arguments:
+
     first::Int32 Index of the first row in the sequence.
     last::Int32 Index of the last row in the sequence plus one.
     task::MSKtask An optimization task.
@@ -6282,6 +6379,7 @@ Obtains the A matrix in sparse triplet format.
     getatrip(task::MSKtask) :: (subi,subj,val)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6297,6 +6395,7 @@ Gets the current A matrix truncation threshold.
     getatruncatetol(task::MSKtask) :: tolzero
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6310,6 +6409,7 @@ Obtains barA in block triplet form.
     getbarablocktriplet(task::MSKtask) :: (num,subi,subj,subk,subl,valijkl)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6329,6 +6429,7 @@ Obtains information about an element in barA.
     getbaraidx(task::MSKtask,idx::T0) where {T0<:Integer}  :: (i,j,num,sub,weights)
 
 Arguments:
+
     idx::Int64 Position of the element in the vectorized form.
     task::MSKtask An optimization task.
 
@@ -6348,6 +6449,7 @@ Obtains information about an element in barA.
     getbaraidxij(task::MSKtask,idx::T0) where {T0<:Integer}  :: (i,j)
 
 Arguments:
+
     idx::Int64 Position of the element in the vectorized form.
     task::MSKtask An optimization task.
 
@@ -6364,6 +6466,7 @@ Obtains the number of terms in the weighted sum that form a particular element i
     getbaraidxinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: num
 
 Arguments:
+
     idx::Int64 The internal position of the element for which information should be obtained.
     task::MSKtask An optimization task.
 
@@ -6378,6 +6481,7 @@ Obtains the sparsity pattern of the barA matrix.
     getbarasparsity(task::MSKtask) :: (numnz,idxij)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6392,6 +6496,7 @@ Obtains barC in block triplet form.
     getbarcblocktriplet(task::MSKtask) :: (num,subj,subk,subl,valjkl)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6410,6 +6515,7 @@ Obtains information about an element in barc.
     getbarcidx(task::MSKtask,idx::T0) where {T0<:Integer}  :: (j,num,sub,weights)
 
 Arguments:
+
     idx::Int64 Index of the element for which information should be obtained.
     task::MSKtask An optimization task.
 
@@ -6428,6 +6534,7 @@ Obtains information about an element in barc.
     getbarcidxinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: num
 
 Arguments:
+
     idx::Int64 Index of the element for which information should be obtained. The value is an index of a symmetric sparse variable.
     task::MSKtask An optimization task.
 
@@ -6443,6 +6550,7 @@ Obtains the row index of an element in barc.
     getbarcidxj(task::MSKtask,idx::T0) where {T0<:Integer}  :: j
 
 Arguments:
+
     idx::Int64 Index of the element for which information should be obtained.
     task::MSKtask An optimization task.
 
@@ -6457,6 +6565,7 @@ Get the positions of the nonzero elements in barc.
     getbarcsparsity(task::MSKtask) :: (numnz,idxj)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6472,6 +6581,7 @@ Obtains the dual solution for a semidefinite variable.
     getbarsj(task::MSKtask,whichsol::Soltype,j::T0) where {T0<:Integer}  :: barsj
 
 Arguments:
+
     j::Int32 Index of the semidefinite variable.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -6488,6 +6598,7 @@ Obtains the dual solution for a sequence of semidefinite variables.
     getbarsslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where {T0<:Integer,T1<:Integer,T2<:Integer}  :: barsslice
 
 Arguments:
+
     first::Int32 Index of the first semidefinite variable in the slice.
     last::Int32 Index of the last semidefinite variable in the slice plus one.
     slicesize::Int64 Denotes the length of the array barsslice.
@@ -6506,6 +6617,7 @@ Obtains the name of a semidefinite variable.
     getbarvarname(task::MSKtask,i::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     i::Int32 Index of the variable.
     task::MSKtask An optimization task.
 
@@ -6520,6 +6632,7 @@ Obtains the index of semidefinite variable from its name.
     getbarvarnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
 
 Arguments:
+
     somename::AbstractString The name of the variable.
     task::MSKtask An optimization task.
 
@@ -6536,6 +6649,7 @@ Obtains the length of the name of a semidefinite variable.
     getbarvarnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     i::Int32 Index of the variable.
     task::MSKtask An optimization task.
 
@@ -6551,6 +6665,7 @@ Obtains the primal solution for a semidefinite variable.
     getbarxj(task::MSKtask,whichsol::Soltype,j::T0) where {T0<:Integer}  :: barxj
 
 Arguments:
+
     j::Int32 Index of the semidefinite variable.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -6567,6 +6682,7 @@ Obtains the primal solution for a sequence of semidefinite variables.
     getbarxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slicesize::T2) where {T0<:Integer,T1<:Integer,T2<:Integer}  :: barxslice
 
 Arguments:
+
     first::Int32 Index of the first semidefinite variable in the slice.
     last::Int32 Index of the last semidefinite variable in the slice plus one.
     slicesize::Int64 Denotes the length of the array barxslice.
@@ -6584,6 +6700,7 @@ Obtains all objective coefficients.
     getc(task::MSKtask) :: c
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6597,6 +6714,7 @@ Obtains the fixed term in the objective.
     getcfix(task::MSKtask) :: cfix
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6611,6 +6729,7 @@ Obtains one objective coefficient.
     getcj(task::MSKtask,j::T0) where {T0<:Integer}  :: cj
 
 Arguments:
+
     j::Int32 Index of the variable for which the c coefficient should be obtained.
     task::MSKtask An optimization task.
 
@@ -6626,6 +6745,7 @@ Obtains a sequence of coefficients from the objective.
     getclist(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: c
 
 Arguments:
+
     subj::Vector{Int32} A list of variable indexes.
     task::MSKtask An optimization task.
 
@@ -6640,6 +6760,7 @@ Obtains a short description of a response code.
     getcodedesc(code::Rescode) :: (symname,str)
 
 Arguments:
+
     code::Rescode A valid response code.
 
 Returns:
@@ -6655,6 +6776,7 @@ Obtains bound information for one constraint.
     getconbound(task::MSKtask,i::T0) where {T0<:Integer}  :: (bk,bl,bu)
 
 Arguments:
+
     i::Int32 Index of the constraint for which the bound information should be obtained.
     task::MSKtask An optimization task.
 
@@ -6672,6 +6794,7 @@ Obtains bounds information for a slice of the constraints.
     getconboundslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (bk,bl,bu)
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -6690,6 +6813,7 @@ Obtains a cone.
     getcone(task::MSKtask,k::T0) where {T0<:Integer}  :: (ct,conepar,nummem,submem)
 
 Arguments:
+
     k::Int32 Index of the cone.
     task::MSKtask An optimization task.
 
@@ -6708,6 +6832,7 @@ Obtains information about a cone.
     getconeinfo(task::MSKtask,k::T0) where {T0<:Integer}  :: (ct,conepar,nummem)
 
 Arguments:
+
     k::Int32 Index of the cone.
     task::MSKtask An optimization task.
 
@@ -6725,6 +6850,7 @@ Obtains the name of a cone.
     getconename(task::MSKtask,i::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     i::Int32 Index of the cone.
     task::MSKtask An optimization task.
 
@@ -6739,6 +6865,7 @@ Checks whether the name has been assigned to any cone.
     getconenameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
 
 Arguments:
+
     somename::AbstractString The name which should be checked.
     task::MSKtask An optimization task.
 
@@ -6755,6 +6882,7 @@ Obtains the length of the name of a cone.
     getconenamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     i::Int32 Index of the cone.
     task::MSKtask An optimization task.
 
@@ -6770,6 +6898,7 @@ Obtains the name of a constraint.
     getconname(task::MSKtask,i::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     i::Int32 Index of the constraint.
     task::MSKtask An optimization task.
 
@@ -6784,6 +6913,7 @@ Checks whether the name has been assigned to any constraint.
     getconnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
 
 Arguments:
+
     somename::AbstractString The name which should be checked.
     task::MSKtask An optimization task.
 
@@ -6800,6 +6930,7 @@ Obtains the length of the name of a constraint.
     getconnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     i::Int32 Index of the constraint.
     task::MSKtask An optimization task.
 
@@ -6815,6 +6946,7 @@ Obtains a sequence of coefficients from the objective.
     getcslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: c
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -6831,6 +6963,7 @@ Obtains the dimension of a symmetric matrix variable.
     getdimbarvarj(task::MSKtask,j::T0) where {T0<:Integer}  :: dimbarvarj
 
 Arguments:
+
     j::Int32 Index of the semidefinite variable whose dimension is requested.
     task::MSKtask An optimization task.
 
@@ -6846,6 +6979,7 @@ Obtains the list of affine expression indexes in a disjunctive constraint.
     getdjcafeidxlist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: afeidxlist
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6861,6 +6995,7 @@ Obtains the optional constant term vector of a disjunctive constraint.
     getdjcb(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: b
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6876,6 +7011,7 @@ Obtains the list of domain indexes in a disjunctive constraint.
     getdjcdomainidxlist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: domidxlist
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6891,6 +7027,7 @@ Obtains the name of a disjunctive constraint.
     getdjcname(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     djcidx::Int64 Index of a disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6906,6 +7043,7 @@ Obtains the length of the name of a disjunctive constraint.
     getdjcnamelen(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     djcidx::Int64 Index of a disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6921,6 +7059,7 @@ Obtains the number of affine expressions in the disjunctive constraint.
     getdjcnumafe(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numafe
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6935,6 +7074,7 @@ Obtains the number of affine expressions in all disjunctive constraints.
     getdjcnumafetot(task::MSKtask) :: numafetot
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6949,6 +7089,7 @@ Obtains the number of domains in the disjunctive constraint.
     getdjcnumdomain(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numdomain
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6963,6 +7104,7 @@ Obtains the number of domains in all disjunctive constraints.
     getdjcnumdomaintot(task::MSKtask) :: numdomaintot
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -6977,6 +7119,7 @@ Obtains the number terms in the disjunctive constraint.
     getdjcnumterm(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: numterm
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -6991,6 +7134,7 @@ Obtains the number of terms in all disjunctive constraints.
     getdjcnumtermtot(task::MSKtask) :: numtermtot
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7004,6 +7148,7 @@ Obtains full data of all disjunctive constraints.
     getdjcs(task::MSKtask) :: (domidxlist,afeidxlist,b,termsizelist,numterms)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7022,6 +7167,7 @@ Obtains the list of term sizes in a disjunctive constraint.
     getdjctermsizelist(task::MSKtask,djcidx::T0) where {T0<:Integer}  :: termsizelist
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     task::MSKtask An optimization task.
 
@@ -7037,6 +7183,7 @@ Obtains the dimension of the domain.
     getdomainn(task::MSKtask,domidx::T0) where {T0<:Integer}  :: n
 
 Arguments:
+
     domidx::Int64 Index of the domain.
     task::MSKtask An optimization task.
 
@@ -7052,6 +7199,7 @@ Obtains the name of a domain.
     getdomainname(task::MSKtask,domidx::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     domidx::Int64 Index of a domain.
     task::MSKtask An optimization task.
 
@@ -7067,6 +7215,7 @@ Obtains the length of the name of a domain.
     getdomainnamelen(task::MSKtask,domidx::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     domidx::Int64 Index of a domain.
     task::MSKtask An optimization task.
 
@@ -7082,6 +7231,7 @@ Returns the type of the domain.
     getdomaintype(task::MSKtask,domidx::T0) where {T0<:Integer}  :: domtype
 
 Arguments:
+
     domidx::Int64 Index of the domain.
     task::MSKtask An optimization task.
 
@@ -7096,6 +7246,7 @@ Obtains a double information item.
     getdouinf(task::MSKtask,whichdinf::Dinfitem) :: dvalue
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichdinf::Dinfitem Specifies a double information item.
 
@@ -7110,6 +7261,7 @@ Obtains a double parameter.
     getdouparam(task::MSKtask,param::Dparam) :: parvalue
 
 Arguments:
+
     param::Dparam Which parameter.
     task::MSKtask An optimization task.
 
@@ -7124,6 +7276,7 @@ Computes the dual objective value associated with the solution.
     getdualobj(task::MSKtask,whichsol::Soltype) :: dualobj
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -7138,6 +7291,7 @@ Compute norms of the dual solution.
     getdualsolutionnorms(task::MSKtask,whichsol::Soltype) :: (nrmy,nrmslc,nrmsuc,nrmslx,nrmsux,nrmsnx,nrmbars)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -7159,6 +7313,7 @@ Computes the violation of the dual solution for set of affine conic constraints.
     getdviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     accidxlist::Vector{Int64} An array of indexes of conic constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7175,6 +7330,7 @@ Computes the violation of dual solution for a set of semidefinite variables.
     getdviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of barx variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7191,6 +7347,7 @@ Computes the violation of a dual solution associated with a set of constraints.
     getdviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7207,6 +7364,7 @@ Computes the violation of a solution for set of dual conic constraints.
     getdviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of conic constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7223,6 +7381,7 @@ Computes the violation of a dual solution associated with a set of scalar variab
     getdviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of x variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7238,6 +7397,7 @@ Obtains an infeasible subproblem.
     getinfeasiblesubproblem(task::MSKtask,whichsol::Soltype) :: inftask
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Which solution to use when determining the infeasible subproblem.
 
@@ -7253,6 +7413,7 @@ Obtains the name of an information item.
     getinfname(task::MSKtask,inftype::Inftype,whichinf::T0) where {T0<:Integer}  :: infname
 
 Arguments:
+
     inftype::Inftype Type of the information item.
     task::MSKtask An optimization task.
     whichinf::Int32 An information item.
@@ -7268,6 +7429,7 @@ Obtains an integer information item.
     getintinf(task::MSKtask,whichiinf::Iinfitem) :: ivalue
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichiinf::Iinfitem Specifies an integer information item.
 
@@ -7282,6 +7444,7 @@ Obtains an integer parameter.
     getintparam(task::MSKtask,param::Iparam) :: parvalue
 
 Arguments:
+
     param::Iparam Which parameter.
     task::MSKtask An optimization task.
 
@@ -7296,6 +7459,7 @@ Obtains the last error code and error message reported in MOSEK.
     getlasterror(task::MSKtask) :: (lastrescode,lastmsglen,lastmsg)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7312,6 +7476,7 @@ Obtains the length of one semidefinite variable.
     getlenbarvarj(task::MSKtask,j::T0) where {T0<:Integer}  :: lenbarvarj
 
 Arguments:
+
     j::Int32 Index of the semidefinite variable whose length if requested.
     task::MSKtask An optimization task.
 
@@ -7326,6 +7491,7 @@ Obtains a long integer information item.
     getlintinf(task::MSKtask,whichliinf::Liinfitem) :: ivalue
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichliinf::Liinfitem Specifies a long information item.
 
@@ -7340,6 +7506,7 @@ Obtains number of preallocated non-zeros in the linear constraint matrix.
     getmaxnumanz(task::MSKtask) :: maxnumanz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7353,6 +7520,7 @@ Obtains maximum number of symmetric matrix variables for which space is currentl
     getmaxnumbarvar(task::MSKtask) :: maxnumbarvar
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7366,6 +7534,7 @@ Obtains the number of preallocated constraints in the optimization task.
     getmaxnumcon(task::MSKtask) :: maxnumcon
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7379,6 +7548,7 @@ Obtains the number of preallocated cones in the optimization task.
     getmaxnumcone(task::MSKtask) :: maxnumcone
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7392,6 +7562,7 @@ Obtains the number of preallocated non-zeros for all quadratic terms in objectiv
     getmaxnumqnz(task::MSKtask) :: maxnumqnz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7405,6 +7576,7 @@ Obtains the maximum number variables allowed.
     getmaxnumvar(task::MSKtask) :: maxnumvar
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7418,6 +7590,7 @@ Obtains information about the amount of memory used by a task.
     getmemusage(task::MSKtask) :: (meminuse,maxmemuse)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7432,6 +7605,7 @@ Obtains a named double information item.
     getnadouinf(task::MSKtask,infitemname::AbstractString) :: dvalue
 
 Arguments:
+
     infitemname::AbstractString The name of a double information item.
     task::MSKtask An optimization task.
 
@@ -7446,6 +7620,7 @@ Obtains a double parameter.
     getnadouparam(task::MSKtask,paramname::AbstractString) :: parvalue
 
 Arguments:
+
     paramname::AbstractString Name of a parameter.
     task::MSKtask An optimization task.
 
@@ -7460,6 +7635,7 @@ Obtains a named integer information item.
     getnaintinf(task::MSKtask,infitemname::AbstractString) :: ivalue
 
 Arguments:
+
     infitemname::AbstractString The name of an integer information item.
     task::MSKtask An optimization task.
 
@@ -7474,6 +7650,7 @@ Obtains an integer parameter.
     getnaintparam(task::MSKtask,paramname::AbstractString) :: parvalue
 
 Arguments:
+
     paramname::AbstractString Name of a parameter.
     task::MSKtask An optimization task.
 
@@ -7489,6 +7666,7 @@ Obtains a string parameter.
     getnastrparam(task::MSKtask,paramname::Union{Nothing,AbstractString},sizeparamname::T0) where {T0<:Integer}  :: (len,parvalue)
 
 Arguments:
+
     paramname::AbstractString Name of a parameter.
     sizeparamname::Int32 Size of the name buffer.
     task::MSKtask An optimization task.
@@ -7505,6 +7683,7 @@ Obtains the number of affine conic constraints.
     getnumacc(task::MSKtask) :: num
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7518,6 +7697,7 @@ Obtains the number of affine expressions.
     getnumafe(task::MSKtask) :: numafe
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7531,6 +7711,7 @@ Obtains the number of non-zeros in the coefficient matrix.
     getnumanz(task::MSKtask) :: numanz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7544,6 +7725,7 @@ Obtains the number of non-zeros in the coefficient matrix.
     getnumanz64(task::MSKtask) :: numanz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7557,6 +7739,7 @@ Obtains an upper bound on the number of scalar elements in the block triplet for
     getnumbarablocktriplets(task::MSKtask) :: num
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7570,6 +7753,7 @@ Get the number of nonzero elements in barA.
     getnumbaranz(task::MSKtask) :: nz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7583,6 +7767,7 @@ Obtains an upper bound on the number of elements in the block triplet form of ba
     getnumbarcblocktriplets(task::MSKtask) :: num
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7596,6 +7781,7 @@ Obtains the number of nonzero elements in barc.
     getnumbarcnz(task::MSKtask) :: nz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7609,6 +7795,7 @@ Obtains the number of semidefinite variables.
     getnumbarvar(task::MSKtask) :: numbarvar
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7622,6 +7809,7 @@ Obtains the number of constraints.
     getnumcon(task::MSKtask) :: numcon
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7635,6 +7823,7 @@ Obtains the number of cones.
     getnumcone(task::MSKtask) :: numcone
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7649,6 +7838,7 @@ Obtains the number of members in a cone.
     getnumconemem(task::MSKtask,k::T0) where {T0<:Integer}  :: nummem
 
 Arguments:
+
     k::Int32 Index of the cone.
     task::MSKtask An optimization task.
 
@@ -7663,6 +7853,7 @@ Obtains the number of disjunctive constraints.
     getnumdjc(task::MSKtask) :: num
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7676,6 +7867,7 @@ Obtain the number of domains defined.
     getnumdomain(task::MSKtask) :: numdomain
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7689,6 +7881,7 @@ Obtains the number of integer-constrained variables.
     getnumintvar(task::MSKtask) :: numintvar
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7702,6 +7895,7 @@ Obtains the number of parameters of a given type.
     getnumparam(task::MSKtask,partype::Parametertype) :: numparam
 
 Arguments:
+
     partype::Parametertype Parameter type.
     task::MSKtask An optimization task.
 
@@ -7717,6 +7911,7 @@ Obtains the number of non-zero quadratic terms in a constraint.
     getnumqconknz(task::MSKtask,k::T0) where {T0<:Integer}  :: numqcnz
 
 Arguments:
+
     k::Int32 Index of the constraint for which the number quadratic terms should be obtained.
     task::MSKtask An optimization task.
 
@@ -7731,6 +7926,7 @@ Obtains the number of non-zero quadratic terms in the objective.
     getnumqobjnz(task::MSKtask) :: numqonz
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7744,6 +7940,7 @@ Obtains the number of symmetric matrices stored.
     getnumsymmat(task::MSKtask) :: num
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7757,6 +7954,7 @@ Obtains the number of variables.
     getnumvar(task::MSKtask) :: numvar
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7770,6 +7968,7 @@ Obtains the name assigned to the objective function.
     getobjname(task::MSKtask) :: objname
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7783,6 +7982,7 @@ Obtains the length of the name assigned to the objective function.
     getobjnamelen(task::MSKtask) :: len
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7796,6 +7996,7 @@ Gets the objective sense.
     getobjsense(task::MSKtask) :: sense
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7810,6 +8011,7 @@ Obtains the name of a parameter.
     getparamname(task::MSKtask,partype::Parametertype,param::T0) where {T0<:Integer}  :: parname
 
 Arguments:
+
     param::Int32 Which parameter.
     partype::Parametertype Parameter type.
     task::MSKtask An optimization task.
@@ -7826,6 +8028,7 @@ Obtains the exponent vector of a power domain.
     getpowerdomainalpha(task::MSKtask,domidx::T0) where {T0<:Integer}  :: alpha
 
 Arguments:
+
     domidx::Int64 Index of the domain.
     task::MSKtask An optimization task.
 
@@ -7841,6 +8044,7 @@ Obtains structural information about a power domain.
     getpowerdomaininfo(task::MSKtask,domidx::T0) where {T0<:Integer}  :: (n,nleft)
 
 Arguments:
+
     domidx::Int64 Index of the domain.
     task::MSKtask An optimization task.
 
@@ -7856,6 +8060,7 @@ Computes the primal objective value for the desired solution.
     getprimalobj(task::MSKtask,whichsol::Soltype) :: primalobj
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -7870,6 +8075,7 @@ Compute norms of the primal solution.
     getprimalsolutionnorms(task::MSKtask,whichsol::Soltype) :: (nrmxc,nrmxx,nrmbarx)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -7886,6 +8092,7 @@ Obtains the problem type.
     getprobtype(task::MSKtask) :: probtype
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -7899,6 +8106,7 @@ Obtains the problem status.
     getprosta(task::MSKtask,whichsol::Soltype) :: problemsta
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -7914,6 +8122,7 @@ Computes the violation of a solution for set of affine conic constraints.
     getpviolacc(task::MSKtask,whichsol::Soltype,accidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     accidxlist::Vector{Int64} An array of indexes of conic constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7930,6 +8139,7 @@ Computes the violation of a primal solution for a list of semidefinite variables
     getpviolbarvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of barX variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7946,6 +8156,7 @@ Computes the violation of a primal solution associated to a constraint.
     getpviolcon(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7962,6 +8173,7 @@ Computes the violation of a solution for set of conic constraints.
     getpviolcones(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of conic constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7978,6 +8190,7 @@ Computes the violation of a solution for set of disjunctive constraints.
     getpvioldjc(task::MSKtask,whichsol::Soltype,djcidxlist::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     djcidxlist::Vector{Int64} An array of indexes of disjunctive constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -7994,6 +8207,7 @@ Computes the violation of a primal solution for a list of scalar variables.
     getpviolvar(task::MSKtask,whichsol::Soltype,sub::T0) where {T0<:AbstractVector{<:Integer}}  :: viol
 
 Arguments:
+
     sub::Vector{Int32} An array of indexes of x variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -8010,6 +8224,7 @@ Obtains all the quadratic terms in a constraint.
     getqconk(task::MSKtask,k::T0) where {T0<:Integer}  :: (numqcnz,qcsubi,qcsubj,qcval)
 
 Arguments:
+
     k::Int32 Which constraint.
     task::MSKtask An optimization task.
 
@@ -8027,6 +8242,7 @@ Obtains all the quadratic terms in the objective.
     getqobj(task::MSKtask) :: (numqonz,qosubi,qosubj,qoval)
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -8044,6 +8260,7 @@ Obtains one coefficient from the quadratic term of the objective
     getqobjij(task::MSKtask,i::T0,j::T1) where {T0<:Integer,T1<:Integer}  :: qoij
 
 Arguments:
+
     i::Int32 Row index of the coefficient.
     j::Int32 Column index of coefficient.
     task::MSKtask An optimization task.
@@ -8060,6 +8277,7 @@ Obtains the reduced costs for a sequence of variables.
     getreducedcosts(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: redcosts
 
 Arguments:
+
     first::Int32 The index of the first variable in the sequence.
     last::Int32 The index of the last variable in the sequence plus 1.
     task::MSKtask An optimization task.
@@ -8076,6 +8294,7 @@ Obtains the status keys for the constraints.
     getskc(task::MSKtask,whichsol::Soltype) :: skc
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8091,6 +8310,7 @@ Obtains the status keys for a slice of the constraints.
     getskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: skc
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8107,6 +8327,7 @@ Obtains the status keys for the conic constraints.
     getskn(task::MSKtask,whichsol::Soltype) :: skn
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8121,6 +8342,7 @@ Obtains the status keys for the scalar variables.
     getskx(task::MSKtask,whichsol::Soltype) :: skx
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8136,6 +8358,7 @@ Obtains the status keys for a slice of the scalar variables.
     getskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: skx
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8152,6 +8375,7 @@ Obtains the slc vector for a solution.
     getslc(task::MSKtask,whichsol::Soltype) :: slc
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8167,6 +8391,7 @@ Obtains a slice of the slc vector for a solution.
     getslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: slc
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8183,6 +8408,7 @@ Obtains the slx vector for a solution.
     getslx(task::MSKtask,whichsol::Soltype) :: slx
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8198,6 +8424,7 @@ Obtains a slice of the slx vector for a solution.
     getslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: slx
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8214,6 +8441,7 @@ Obtains the snx vector for a solution.
     getsnx(task::MSKtask,whichsol::Soltype) :: snx
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8229,6 +8457,7 @@ Obtains a slice of the snx vector for a solution.
     getsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: snx
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8245,6 +8474,7 @@ Obtains the solution status.
     getsolsta(task::MSKtask,whichsol::Soltype) :: solutionsta
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8259,6 +8489,7 @@ Obtains the complete solution.
     getsolution(task::MSKtask,whichsol::Soltype) :: (problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8285,6 +8516,7 @@ Obtains information about of a solution.
     getsolutioninfo(task::MSKtask,whichsol::Soltype) :: (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8309,6 +8541,7 @@ Obtains information about of a solution.
     getsolutioninfonew(task::MSKtask,whichsol::Soltype) :: (pobj,pviolcon,pviolvar,pviolbarvar,pviolcone,pviolacc,pvioldjc,pviolitg,dobj,dviolcon,dviolvar,dviolbarvar,dviolcone,dviolacc)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8336,6 +8569,7 @@ Obtains the complete solution.
     getsolutionnew(task::MSKtask,whichsol::Soltype) :: (problemsta,solutionsta,skc,skx,skn,xc,xx,y,slc,suc,slx,sux,snx,doty)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8364,6 +8598,7 @@ Obtains a slice of the solution.
     getsolutionslice(task::MSKtask,whichsol::Soltype,solitem::Solitem,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: values
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     solitem::Solitem Which part of the solution is required.
@@ -8382,6 +8617,7 @@ Gets a single symmetric matrix from the matrix store.
     getsparsesymmat(task::MSKtask,idx::T0) where {T0<:Integer}  :: (subi,subj,valij)
 
 Arguments:
+
     idx::Int64 Index of the matrix to retrieve.
     task::MSKtask An optimization task.
 
@@ -8398,6 +8634,7 @@ Obtains the value of a string parameter.
     getstrparam(task::MSKtask,param::Sparam) :: (len,parvalue)
 
 Arguments:
+
     param::Sparam Which parameter.
     task::MSKtask An optimization task.
 
@@ -8413,6 +8650,7 @@ Obtains the length of a string parameter.
     getstrparamlen(task::MSKtask,param::Sparam) :: len
 
 Arguments:
+
     param::Sparam Which parameter.
     task::MSKtask An optimization task.
 
@@ -8427,6 +8665,7 @@ Obtains the suc vector for a solution.
     getsuc(task::MSKtask,whichsol::Soltype) :: suc
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8442,6 +8681,7 @@ Obtains a slice of the suc vector for a solution.
     getsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: suc
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8458,6 +8698,7 @@ Obtains the sux vector for a solution.
     getsux(task::MSKtask,whichsol::Soltype) :: sux
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8473,6 +8714,7 @@ Obtains a slice of the sux vector for a solution.
     getsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: sux
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8490,6 +8732,7 @@ Obtains information about a matrix from the symmetric matrix storage.
     getsymmatinfo(task::MSKtask,idx::T0) where {T0<:Integer}  :: (dim,nz,mattype)
 
 Arguments:
+
     idx::Int64 Index of the matrix for which information is requested.
     task::MSKtask An optimization task.
 
@@ -8506,6 +8749,7 @@ Obtains the task name.
     gettaskname(task::MSKtask) :: taskname
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -8519,6 +8763,7 @@ Obtains the length the task name.
     gettasknamelen(task::MSKtask) :: len
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -8533,6 +8778,7 @@ Obtains bound information for one variable.
     getvarbound(task::MSKtask,i::T0) where {T0<:Integer}  :: (bk,bl,bu)
 
 Arguments:
+
     i::Int32 Index of the variable for which the bound information should be obtained.
     task::MSKtask An optimization task.
 
@@ -8550,6 +8796,7 @@ Obtains bounds information for a slice of the variables.
     getvarboundslice(task::MSKtask,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: (bk,bl,bu)
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8568,6 +8815,7 @@ Obtains the name of a variable.
     getvarname(task::MSKtask,j::T0) where {T0<:Integer}  :: name
 
 Arguments:
+
     j::Int32 Index of a variable.
     task::MSKtask An optimization task.
 
@@ -8582,6 +8830,7 @@ Checks whether the name has been assigned to any variable.
     getvarnameindex(task::MSKtask,somename::AbstractString) :: (asgn,index)
 
 Arguments:
+
     somename::AbstractString The name which should be checked.
     task::MSKtask An optimization task.
 
@@ -8598,6 +8847,7 @@ Obtains the length of the name of a variable.
     getvarnamelen(task::MSKtask,i::T0) where {T0<:Integer}  :: len
 
 Arguments:
+
     i::Int32 Index of a variable.
     task::MSKtask An optimization task.
 
@@ -8613,6 +8863,7 @@ Gets the variable type of one variable.
     getvartype(task::MSKtask,j::T0) where {T0<:Integer}  :: vartype
 
 Arguments:
+
     j::Int32 Index of the variable.
     task::MSKtask An optimization task.
 
@@ -8628,6 +8879,7 @@ Obtains the variable type for one or more variables.
     getvartypelist(task::MSKtask,subj::T0) where {T0<:AbstractVector{<:Integer}}  :: vartype
 
 Arguments:
+
     subj::Vector{Int32} A list of variable indexes.
     task::MSKtask An optimization task.
 
@@ -8654,6 +8906,7 @@ Obtains the xc vector for a solution.
     getxc(task::MSKtask,whichsol::Soltype) :: xc
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8669,6 +8922,7 @@ Obtains a slice of the xc vector for a solution.
     getxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: xc
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8685,6 +8939,7 @@ Obtains the xx vector for a solution.
     getxx(task::MSKtask,whichsol::Soltype) :: xx
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8700,6 +8955,7 @@ Obtains a slice of the xx vector for a solution.
     getxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: xx
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8716,6 +8972,7 @@ Obtains the y vector for a solution.
     gety(task::MSKtask,whichsol::Soltype) :: y
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -8731,6 +8988,7 @@ Obtains a slice of the y vector for a solution.
     getyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1) where {T0<:Integer,T1<:Integer}  :: y
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -8747,6 +9005,7 @@ Obtains a information item string identifier.
     iinfitemtostr(item::Iinfitem) :: str
 
 Arguments:
+
     item::Iinfitem Information item.
 
 Returns:
@@ -8760,6 +9019,7 @@ Prints the infeasibility report to an output stream.
     infeasibilityreport(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
     whichstream::Streamtype Index of the stream.
@@ -8772,6 +9032,7 @@ Prepare a task for basis solver.
     initbasissolve(task::MSKtask) :: basis
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -8787,6 +9048,7 @@ Input the linear part of an optimization task in one function call.
     inputdata(task::MSKtask,maxnumcon::T0,maxnumvar::T1,c::T2,cfix::T3,A:: SparseMatrixCSC{Float64},bkc::Vector{Boundkey},blc::T8,buc::T9,bkx::Vector{Boundkey},blx::T10,bux::T11)
 
 Arguments:
+
     A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
     aptrb::Vector{Int64} Row or column start pointers.
     aptre::Vector{Int64} Row or column end pointers.
@@ -8812,6 +9074,7 @@ Checks a double parameter name.
     isdouparname(task::MSKtask,parname::AbstractString) :: param
 
 Arguments:
+
     parname::AbstractString Parameter name.
     task::MSKtask An optimization task.
 
@@ -8826,6 +9089,7 @@ Checks an integer parameter name.
     isintparname(task::MSKtask,parname::AbstractString) :: param
 
 Arguments:
+
     parname::AbstractString Parameter name.
     task::MSKtask An optimization task.
 
@@ -8840,6 +9104,7 @@ Checks a string parameter name.
     isstrparname(task::MSKtask,parname::AbstractString) :: param
 
 Arguments:
+
     parname::AbstractString Parameter name.
     task::MSKtask An optimization task.
 
@@ -8861,6 +9126,7 @@ Obtains a information item string identifier.
     liinfitemtostr(item::Liinfitem) :: str
 
 Arguments:
+
     item::Liinfitem Information item.
 
 Returns:
@@ -8879,6 +9145,7 @@ Directs all output from a stream to a file.
     linkfiletostream(whichstream::Streamtype,filename::Union{Nothing,AbstractString},append::T0) where {T0<:Integer} 
 
 Arguments:
+
     append::Int32 If this argument is 0 the file will be overwritten, otherwise it will be appended to.
     env::MSKenv The MOSEK environment.
     filename::AbstractString A valid file name.
@@ -8893,6 +9160,7 @@ Prints a short summary of a specified solution.
     onesolutionsummary(task::MSKtask,whichstream::Streamtype,whichsol::Soltype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
     whichstream::Streamtype Index of the stream.
@@ -8905,6 +9173,7 @@ Optimizes the problem.
     optimize(task::MSKtask) :: trmcode
 
 Arguments:
+
     task::MSKtask An optimization task.
 
 Returns:
@@ -8921,6 +9190,7 @@ Optimize a number of tasks in parallel using a specified number of threads.
     optimizebatch(israce::Bool,maxtime::T0,numthreads::T1,task::Vector{MSKtask}) where {T0<:Number,T1<:Integer}  :: (trmcode,rcode)
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     israce::Bool If nonzero, then the function is terminated after the first task has been completed.
     maxtime::Float64 Time limit for the function.
@@ -8939,6 +9209,7 @@ Offload the optimization task to a solver server and wait for the solution.
     optimizermt(task::MSKtask,address::AbstractString,accesstoken::AbstractString) :: trmcode
 
 Arguments:
+
     accesstoken::AbstractString Access token.
     address::AbstractString Address of the OptServer.
     task::MSKtask An optimization task.
@@ -8954,6 +9225,7 @@ Prints a short summary with optimizer statistics from last optimization.
     optimizersummary(task::MSKtask,whichstream::Streamtype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
 """
@@ -8966,6 +9238,7 @@ Repairs a primal infeasible optimization problem by adjusting the bounds on the 
     primalrepair(task::MSKtask,wlc::T0,wuc::T1,wlx::T2,wux::T3) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     task::MSKtask An optimization task.
     wlc::Union{Nothing,Vector{Float64}} Weights associated with relaxing lower bounds on the constraints.
     wlx::Union{Nothing,Vector{Float64}} Weights associated with relaxing the lower bounds of the variables.
@@ -8981,6 +9254,7 @@ Perform sensitivity analysis on bounds.
     primalsensitivity(task::MSKtask,subi::T0,marki::Vector{Mark},subj::T1,markj::Vector{Mark}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer}}  :: (leftpricei,rightpricei,leftrangei,rightrangei,leftpricej,rightpricej,leftrangej,rightrangej)
 
 Arguments:
+
     marki::Vector{Mark} Mark which constraint bounds to analyze.
     markj::Vector{Mark} Mark which variable bounds to analyze.
     subi::Vector{Int32} Indexes of constraints to analyze.
@@ -9005,6 +9279,7 @@ Prints the current parameter settings.
     printparam(task::MSKtask)
 
 Arguments:
+
     task::MSKtask An optimization task.
 """
 function printparam end
@@ -9015,6 +9290,7 @@ Obtains a string containing the name of a given problem type.
     probtypetostr(task::MSKtask,probtype::Problemtype) :: str
 
 Arguments:
+
     probtype::Problemtype Problem type.
     task::MSKtask An optimization task.
 
@@ -9029,6 +9305,7 @@ Obtains a string containing the name of a given problem status.
     prostatostr(task::MSKtask,problemsta::Prosta) :: str
 
 Arguments:
+
     problemsta::Prosta Problem status.
     task::MSKtask An optimization task.
 
@@ -9044,9 +9321,10 @@ Puts an affine conic constraint.
     putacc(task::MSKtask,accidx::T0,domidx::T1,afeidxlist::T2,b::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     accidx::Int64 Affine conic constraint index.
     afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidx::Int64 Domain index.
     task::MSKtask An optimization task.
 """
@@ -9059,8 +9337,9 @@ Puts the constant vector b in an affine conic constraint.
     putaccb(task::MSKtask,accidx::T0,b::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
 
 Arguments:
+
     accidx::Int64 Affine conic constraint index.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     task::MSKtask An optimization task.
 """
 function putaccb end
@@ -9072,6 +9351,7 @@ Sets one element in the b vector of an affine conic constraint.
     putaccbj(task::MSKtask,accidx::T0,j::T1,bj::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
 
 Arguments:
+
     accidx::Int64 Affine conic constraint index.
     bj::Float64 The new value of b[j].
     j::Int64 The index of an element in b to change.
@@ -9086,6 +9366,7 @@ Puts the doty vector for a solution.
     putaccdoty(task::MSKtask,whichsol::Soltype,accidx::T0) where {T0<:Integer}  :: doty
 
 Arguments:
+
     accidx::Int64 The index of the affine conic constraint.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -9102,9 +9383,10 @@ Puts a number of affine conic constraints.
     putacclist(task::MSKtask,accidxs::T0,domidxs::T1,afeidxlist::T2,b::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     accidxs::Vector{Int64} Affine conic constraint indices.
     afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidxs::Vector{Int64} Domain indices.
     task::MSKtask An optimization task.
 """
@@ -9117,6 +9399,7 @@ Sets the name of an affine conic constraint.
     putaccname(task::MSKtask,accidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     accidx::Int64 Index of the affine conic constraint.
     name::Union{Nothing,AbstractString} The name of the affine conic constraint.
     task::MSKtask An optimization task.
@@ -9130,6 +9413,7 @@ Replaces all elements in one column of the linear constraint matrix.
     putacol(task::MSKtask,j::T0,subj::T1,valj::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     j::Int32 Column index.
     subj::Vector{Int32} Row indexes of non-zero values in column.
     task::MSKtask An optimization task.
@@ -9145,6 +9429,7 @@ Replaces all elements in several columns the linear constraint matrix.
     putacollist(task::MSKtask,sub::T0,A:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
     asub::Vector{Int32} Row indexes
     aval::Vector{Float64} Coefficient values.
@@ -9163,6 +9448,7 @@ Replaces all elements in a sequence of columns the linear constraint matrix.
     putacolslice(task::MSKtask,first::T0,last::T1,A:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
     asub::Vector{Int32} Row indexes
     aval::Vector{Float64} Coefficient values.
@@ -9181,6 +9467,7 @@ Inputs barF in block triplet form.
     putafebarfblocktriplet(task::MSKtask,afeidx::T0,barvaridx::T1,subk::T2,subl::T3,valkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Constraint index.
     barvaridx::Vector{Int32} Symmetric matrix variable index.
     subk::Vector{Int32} Block row index.
@@ -9197,6 +9484,7 @@ Inputs one entry in barF.
     putafebarfentry(task::MSKtask,afeidx::T0,barvaridx::T1,termidx::T2,termweight::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Int64 Row index of barF.
     barvaridx::Int32 Semidefinite variable index.
     task::MSKtask An optimization task.
@@ -9212,6 +9500,7 @@ Inputs a list of entries in barF.
     putafebarfentrylist(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Row indexes of barF.
     barvaridx::Vector{Int32} Semidefinite variable indexes.
     numterm::Vector{Int64} Number of terms in the weighted sums.
@@ -9229,6 +9518,7 @@ Inputs a row of barF.
     putafebarfrow(task::MSKtask,afeidx::T0,barvaridx::T1,numterm::T2,ptrterm::T3,termidx::T4,termweight::T5) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Integer},T5<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Int64 Row index of barF.
     barvaridx::Vector{Int32} Semidefinite variable indexes.
     numterm::Vector{Int64} Number of terms in the weighted sums.
@@ -9246,6 +9536,7 @@ Replaces all elements in one column of the F matrix in the affine expressions.
     putafefcol(task::MSKtask,varidx::T0,afeidx::T1,val::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Row indexes of non-zero values in the column.
     task::MSKtask An optimization task.
     val::Vector{Float64} New non-zero values in the column.
@@ -9260,6 +9551,7 @@ Replaces one entry in F.
     putafefentry(task::MSKtask,afeidx::T0,varidx::T1,value::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
 
 Arguments:
+
     afeidx::Int64 Row index in F.
     task::MSKtask An optimization task.
     value::Float64 Value of the entry.
@@ -9274,6 +9566,7 @@ Replaces a list of entries in F.
     putafefentrylist(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Row indices in F.
     task::MSKtask An optimization task.
     val::Vector{Float64} Values of the entries in F.
@@ -9288,6 +9581,7 @@ Replaces all elements in one row of the F matrix in the affine expressions.
     putafefrow(task::MSKtask,afeidx::T0,varidx::T1,val::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Int64 Row index.
     task::MSKtask An optimization task.
     val::Vector{Float64} New non-zero values in the row.
@@ -9302,6 +9596,7 @@ Replaces all elements in a number of rows of the F matrix in the affine expressi
     putafefrowlist(task::MSKtask,afeidx::T0,numnzrow::T1,ptrrow::T2,varidx::T3,val::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Row indices.
     numnzrow::Vector{Int32} Number of non-zeros in each row.
     ptrrow::Vector{Int64} Pointer to the first nonzero in each row.
@@ -9318,6 +9613,7 @@ Replaces one element in the g vector in the affine expressions.
     putafeg(task::MSKtask,afeidx::T0,g::T1) where {T0<:Integer,T1<:Number} 
 
 Arguments:
+
     afeidx::Int64 Row index.
     g::Float64 New value for the element of g.
     task::MSKtask An optimization task.
@@ -9331,6 +9627,7 @@ Replaces a list of elements in the g vector in the affine expressions.
     putafeglist(task::MSKtask,afeidx::T0,g::T1) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number}} 
 
 Arguments:
+
     afeidx::Vector{Int64} Indices of entries in g.
     g::Vector{Float64} New values for the elements of g.
     task::MSKtask An optimization task.
@@ -9344,6 +9641,7 @@ Modifies a slice of the vector g.
     putafegslice(task::MSKtask,first::T0,last::T1,slice::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int64 First index in the sequence.
     last::Int64 Last index plus 1 in the sequence.
     slice::Vector{Float64} The slice of g as a dense vector.
@@ -9358,6 +9656,7 @@ Changes a single value in the linear coefficient matrix.
     putaij(task::MSKtask,i::T0,j::T1,aij::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
 
 Arguments:
+
     aij::Float64 New coefficient.
     i::Int32 Constraint (row) index.
     j::Int32 Variable (column) index.
@@ -9372,6 +9671,7 @@ Changes one or more coefficients in the linear constraint matrix.
     putaijlist(task::MSKtask,subi::T0,subj::T1,valij::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     subi::Vector{Int32} Constraint (row) indices.
     subj::Vector{Int32} Variable (column) indices.
     task::MSKtask An optimization task.
@@ -9386,6 +9686,7 @@ Replaces all elements in one row of the linear constraint matrix.
     putarow(task::MSKtask,i::T0,subi::T1,vali::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     i::Int32 Row index.
     subi::Vector{Int32} Column indexes of non-zero values in row.
     task::MSKtask An optimization task.
@@ -9401,6 +9702,7 @@ Replaces all elements in several rows of the linear constraint matrix.
     putarowlist(task::MSKtask,sub::T0,At:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
     asub::Vector{Int32} Variable indexes.
     aval::Vector{Float64} Coefficient values.
@@ -9419,6 +9721,7 @@ Replaces all elements in several rows the linear constraint matrix.
     putarowslice(task::MSKtask,first::T0,last::T1,At:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     At::SparseMatrixCSC{{Float64} Transposed matrix defining the row values. Note that for efficiency reasons the *columns* of this matrix defines the *rows* to be replaced
     asub::Vector{Int32} Column indexes of new elements.
     aval::Vector{Float64} Coefficient values.
@@ -9437,6 +9740,7 @@ Truncates all elements in A below a certain tolerance to zero.
     putatruncatetol(task::MSKtask,tolzero::T0) where {T0<:Number} 
 
 Arguments:
+
     task::MSKtask An optimization task.
     tolzero::Float64 Truncation tolerance.
 """
@@ -9449,6 +9753,7 @@ Inputs barA in block triplet form.
     putbarablocktriplet(task::MSKtask,subi::T0,subj::T1,subk::T2,subl::T3,valijkl::T4) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number}} 
 
 Arguments:
+
     subi::Vector{Int32} Constraint index.
     subj::Vector{Int32} Symmetric matrix variable index.
     subk::Vector{Int32} Block row index.
@@ -9465,6 +9770,7 @@ Inputs an element of barA.
     putbaraij(task::MSKtask,i::T0,j::T1,sub::T2,weights::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     i::Int32 Row index of barA.
     j::Int32 Column index of barA.
     sub::Vector{Int64} Element indexes in matrix storage.
@@ -9481,6 +9787,7 @@ Inputs list of elements of barA.
     putbaraijlist(task::MSKtask,subi::T0,subj::T1,A:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
     alphaptrb::Vector{Int64} Start entries for terms in the weighted sum.
     alphaptre::Vector{Int64} End entries for terms in the weighted sum.
@@ -9500,6 +9807,7 @@ Replace a set of rows of barA
     putbararowlist(task::MSKtask,subi::T0,A:: SparseMatrixCSC{Float64},matidx::T5,weights::T6)
 
 Arguments:
+
     A::SparseMatrixCSC{{Float64} Sparse matrix defining the column values
     matidx::Vector{Int64} Matrix indexes for weighted sum of matrixes.
     nummat::Vector{Int64} Number of entries in weighted sum of matrixes.
@@ -9519,6 +9827,7 @@ Inputs barC in block triplet form.
     putbarcblocktriplet(task::MSKtask,subj::T0,subk::T1,subl::T2,valjkl::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     subj::Vector{Int32} Symmetric matrix variable index.
     subk::Vector{Int32} Block row index.
     subl::Vector{Int32} Block column index.
@@ -9534,6 +9843,7 @@ Changes one element in barc.
     putbarcj(task::MSKtask,j::T0,sub::T1,weights::T2) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     j::Int32 Index of the element in barc` that should be changed.
     sub::Vector{Int64} sub is list of indexes of those symmetric matrices appearing in sum.
     task::MSKtask An optimization task.
@@ -9548,6 +9858,7 @@ Sets the dual solution for a semidefinite variable.
     putbarsj(task::MSKtask,whichsol::Soltype,j::T0,barsj::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
 
 Arguments:
+
     barsj::Vector{Float64} Value of the j'th variable of barx.
     j::Int32 Index of the semidefinite variable.
     task::MSKtask An optimization task.
@@ -9562,6 +9873,7 @@ Sets the name of a semidefinite variable.
     putbarvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     j::Int32 Index of the variable.
     name::Union{Nothing,AbstractString} The variable name.
     task::MSKtask An optimization task.
@@ -9575,6 +9887,7 @@ Sets the primal solution for a semidefinite variable.
     putbarxj(task::MSKtask,whichsol::Soltype,j::T0,barxj::T1) where {T0<:Integer,T1<:AbstractVector{<:Number}} 
 
 Arguments:
+
     barxj::Vector{Float64} Value of the j'th variable of barx.
     j::Int32 Index of the semidefinite variable.
     task::MSKtask An optimization task.
@@ -9589,6 +9902,7 @@ Replaces the fixed term in the objective.
     putcfix(task::MSKtask,cfix::T0) where {T0<:Number} 
 
 Arguments:
+
     cfix::Float64 Fixed term in the objective.
     task::MSKtask An optimization task.
 """
@@ -9601,6 +9915,7 @@ Modifies one linear coefficient in the objective.
     putcj(task::MSKtask,j::T0,cj::T1) where {T0<:Integer,T1<:Number} 
 
 Arguments:
+
     cj::Float64 New coefficient value.
     j::Int32 Index of the variable whose objective coefficient should be changed.
     task::MSKtask An optimization task.
@@ -9614,6 +9929,7 @@ Modifies a part of the linear objective coefficients.
     putclist(task::MSKtask,subj::T0,val::T1) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number}} 
 
 Arguments:
+
     subj::Vector{Int32} Indices of variables for which objective coefficients should be changed.
     task::MSKtask An optimization task.
     val::Vector{Float64} New numerical values for the objective coefficients that should be modified.
@@ -9627,6 +9943,7 @@ Changes the bound for one constraint.
     putconbound(task::MSKtask,i::T0,bkc::Boundkey,blc::T1,buc::T2) where {T0<:Integer,T1<:Number,T2<:Number} 
 
 Arguments:
+
     bkc::Boundkey New bound key.
     blc::Float64 New lower bound.
     buc::Float64 New upper bound.
@@ -9642,6 +9959,7 @@ Changes the bounds of a list of constraints.
     putconboundlist(task::MSKtask,sub::T0,bkc::Vector{Boundkey},blc::T1,buc::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     bkc::Vector{Boundkey} Bound keys for the constraints.
     blc::Vector{Float64} Lower bounds for the constraints.
     buc::Vector{Float64} Upper bounds for the constraints.
@@ -9657,6 +9975,7 @@ Changes the bounds of a list of constraints.
     putconboundlistconst(task::MSKtask,sub::T0,bkc::Boundkey,blc::T1,buc::T2) where {T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number} 
 
 Arguments:
+
     bkc::Boundkey New bound key for all constraints in the list.
     blc::Float64 New lower bound for all constraints in the list.
     buc::Float64 New upper bound for all constraints in the list.
@@ -9672,6 +9991,7 @@ Changes the bounds for a slice of the constraints.
     putconboundslice(task::MSKtask,first::T0,last::T1,bkc::Vector{Boundkey},blc::T2,buc::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     bkc::Vector{Boundkey} Bound keys for the constraints.
     blc::Vector{Float64} Lower bounds for the constraints.
     buc::Vector{Float64} Upper bounds for the constraints.
@@ -9688,6 +10008,7 @@ Changes the bounds for a slice of the constraints.
     putconboundsliceconst(task::MSKtask,first::T0,last::T1,bkc::Boundkey,blc::T2,buc::T3) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:Number} 
 
 Arguments:
+
     bkc::Boundkey New bound key for all constraints in the slice.
     blc::Float64 New lower bound for all constraints in the slice.
     buc::Float64 New upper bound for all constraints in the slice.
@@ -9704,6 +10025,7 @@ Replaces a conic constraint.
     putcone(task::MSKtask,k::T0,ct::Conetype,conepar::T1,submem::T2) where {T0<:Integer,T1<:Number,T2<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     conepar::Float64 For the power cone it denotes the exponent alpha. For other cone types it is unused and can be set to 0.
     ct::Conetype Specifies the type of the cone.
     k::Int32 Index of the cone.
@@ -9719,6 +10041,7 @@ Sets the name of a cone.
     putconename(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     j::Int32 Index of the cone.
     name::Union{Nothing,AbstractString} The name of the cone.
     task::MSKtask An optimization task.
@@ -9732,6 +10055,7 @@ Sets the name of a constraint.
     putconname(task::MSKtask,i::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     i::Int32 Index of the constraint.
     name::Union{Nothing,AbstractString} The name of the constraint.
     task::MSKtask An optimization task.
@@ -9745,6 +10069,7 @@ Sets the primal and dual solution information for a single constraint.
     putconsolutioni(task::MSKtask,i::T0,whichsol::Soltype,sk::Stakey,x::T1,sl::T2,su::T3) where {T0<:Integer,T1<:Number,T2<:Number,T3<:Number} 
 
 Arguments:
+
     i::Int32 Index of the constraint.
     sk::Stakey Status key of the constraint.
     sl::Float64 Solution value of the dual variable associated with the lower bound.
@@ -9762,6 +10087,7 @@ Modifies a slice of the linear objective coefficients.
     putcslice(task::MSKtask,first::T0,last::T1,slice::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First element in the slice of c.
     last::Int32 Last element plus 1 of the slice in c to be changed.
     slice::Vector{Float64} New numerical values for the objective coefficients that should be modified.
@@ -9776,8 +10102,9 @@ Inputs a disjunctive constraint.
     putdjc(task::MSKtask,djcidx::T0,domidxlist::T1,afeidxlist::T2,b::T3,termsizelist::T4) where {T0<:Integer,T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions.
     djcidx::Int64 Index of the disjunctive constraint.
     domidxlist::Vector{Int64} List of domain indexes.
     task::MSKtask An optimization task.
@@ -9792,6 +10119,7 @@ Sets the name of a disjunctive constraint.
     putdjcname(task::MSKtask,djcidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     djcidx::Int64 Index of the disjunctive constraint.
     name::Union{Nothing,AbstractString} The name of the disjunctive constraint.
     task::MSKtask An optimization task.
@@ -9805,8 +10133,9 @@ Inputs a slice of disjunctive constraints.
     putdjcslice(task::MSKtask,idxfirst::T0,idxlast::T1,domidxlist::T2,afeidxlist::T3,b::T4,termsizelist::T5,termsindjc::T6) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Integer},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Integer},T6<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     afeidxlist::Vector{Int64} List of affine expression indexes.
-    b::Union{Nothing,Vector{Float64}} The vector of constant terms added to affine expressions. Optional.
+    b::Union{Nothing,Vector{Float64}} The vector of constant terms modifying affine expressions. Optional.
     domidxlist::Vector{Int64} List of domain indexes.
     idxfirst::Int64 Index of the first disjunctive constraint in the slice.
     idxlast::Int64 Index of the last disjunctive constraint in the slice plus 1.
@@ -9823,6 +10152,7 @@ Sets the name of a domain.
     putdomainname(task::MSKtask,domidx::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     domidx::Int64 Index of the domain.
     name::Union{Nothing,AbstractString} The name of the domain.
     task::MSKtask An optimization task.
@@ -9836,6 +10166,7 @@ Sets a double parameter.
     putdouparam(task::MSKtask,param::Dparam,parvalue::T0) where {T0<:Number} 
 
 Arguments:
+
     param::Dparam Which parameter.
     parvalue::Float64 Parameter value.
     task::MSKtask An optimization task.
@@ -9849,6 +10180,7 @@ Sets an integer parameter.
     putintparam(task::MSKtask,param::Iparam,parvalue::T0) where {T0<:Integer} 
 
 Arguments:
+
     param::Iparam Which parameter.
     parvalue::Int32 Parameter value.
     task::MSKtask An optimization task.
@@ -9864,6 +10196,7 @@ Input a runtime license code.
     putlicensecode(code::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     code::Union{Nothing,Vector{Int32}} A license key string.
     env::MSKenv The MOSEK environment.
 """
@@ -9878,6 +10211,7 @@ Enables debug information for the license system.
     putlicensedebug(licdebug::T0) where {T0<:Integer} 
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     licdebug::Int32 Enable output of license check-out debug information.
 """
@@ -9890,6 +10224,7 @@ Set the path to the license file.
     putlicensepath(licensepath::Union{Nothing,AbstractString})
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     licensepath::Union{Nothing,AbstractString} A path specifying where to search for the license.
 """
@@ -9904,6 +10239,7 @@ Control whether mosek should wait for an available license if no license is avai
     putlicensewait(licwait::T0) where {T0<:Integer} 
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
     licwait::Int32 Enable waiting for a license.
 """
@@ -9916,6 +10252,7 @@ Sets the number of preallocated affine conic constraints.
     putmaxnumacc(task::MSKtask,maxnumacc::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumacc::Int64 Number of preallocated affine conic constraints.
     task::MSKtask An optimization task.
 """
@@ -9928,6 +10265,7 @@ Sets the number of preallocated affine expressions in the optimization task.
     putmaxnumafe(task::MSKtask,maxnumafe::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumafe::Int64 Number of preallocated affine expressions.
     task::MSKtask An optimization task.
 """
@@ -9940,6 +10278,7 @@ Sets the number of preallocated non-zero entries in the linear coefficient matri
     putmaxnumanz(task::MSKtask,maxnumanz::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumanz::Int64 New size of the storage reserved for storing the linear coefficient matrix.
     task::MSKtask An optimization task.
 """
@@ -9952,6 +10291,7 @@ Sets the number of preallocated symmetric matrix variables.
     putmaxnumbarvar(task::MSKtask,maxnumbarvar::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumbarvar::Int32 Number of preallocated symmetric matrix variables.
     task::MSKtask An optimization task.
 """
@@ -9964,6 +10304,7 @@ Sets the number of preallocated constraints in the optimization task.
     putmaxnumcon(task::MSKtask,maxnumcon::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumcon::Int32 Number of preallocated constraints in the optimization task.
     task::MSKtask An optimization task.
 """
@@ -9976,6 +10317,7 @@ Sets the number of preallocated conic constraints in the optimization task.
     putmaxnumcone(task::MSKtask,maxnumcone::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumcone::Int32 Number of preallocated conic constraints in the optimization task.
     task::MSKtask An optimization task.
 """
@@ -9988,6 +10330,7 @@ Sets the number of preallocated disjunctive constraints.
     putmaxnumdjc(task::MSKtask,maxnumdjc::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumdjc::Int64 Number of preallocated disjunctive constraints in the task.
     task::MSKtask An optimization task.
 """
@@ -10000,6 +10343,7 @@ Sets the number of preallocated domains in the optimization task.
     putmaxnumdomain(task::MSKtask,maxnumdomain::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumdomain::Int64 Number of preallocated domains.
     task::MSKtask An optimization task.
 """
@@ -10012,6 +10356,7 @@ Sets the number of preallocated non-zero entries in quadratic terms.
     putmaxnumqnz(task::MSKtask,maxnumqnz::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumqnz::Int64 Number of non-zero elements preallocated in quadratic coefficient matrices.
     task::MSKtask An optimization task.
 """
@@ -10024,6 +10369,7 @@ Sets the number of preallocated variables in the optimization task.
     putmaxnumvar(task::MSKtask,maxnumvar::T0) where {T0<:Integer} 
 
 Arguments:
+
     maxnumvar::Int32 Number of preallocated variables in the optimization task.
     task::MSKtask An optimization task.
 """
@@ -10036,6 +10382,7 @@ Sets a double parameter.
     putnadouparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where {T0<:Number} 
 
 Arguments:
+
     paramname::AbstractString Name of a parameter.
     parvalue::Float64 Parameter value.
     task::MSKtask An optimization task.
@@ -10049,6 +10396,7 @@ Sets an integer parameter.
     putnaintparam(task::MSKtask,paramname::Union{Nothing,AbstractString},parvalue::T0) where {T0<:Integer} 
 
 Arguments:
+
     paramname::AbstractString Name of a parameter.
     parvalue::Int32 Parameter value.
     task::MSKtask An optimization task.
@@ -10061,6 +10409,7 @@ Sets a string parameter.
     putnastrparam(task::MSKtask,paramname::AbstractString,parvalue::AbstractString)
 
 Arguments:
+
     paramname::AbstractString Name of a parameter.
     parvalue::AbstractString Parameter value.
     task::MSKtask An optimization task.
@@ -10073,6 +10422,7 @@ Assigns a new name to the objective.
     putobjname(task::MSKtask,objname::AbstractString)
 
 Arguments:
+
     objname::AbstractString Name of the objective.
     task::MSKtask An optimization task.
 """
@@ -10084,6 +10434,7 @@ Sets the objective sense.
     putobjsense(task::MSKtask,sense::Objsense)
 
 Arguments:
+
     sense::Objsense The objective sense of the task
     task::MSKtask An optimization task.
 """
@@ -10095,6 +10446,7 @@ Specify an OptServer for remote calls.
     putoptserverhost(task::MSKtask,host::Union{Nothing,AbstractString})
 
 Arguments:
+
     host::Union{Nothing,AbstractString} A URL specifying the optimization server to be used.
     task::MSKtask An optimization task.
 """
@@ -10106,6 +10458,7 @@ Modifies the value of parameter.
     putparam(task::MSKtask,parname::AbstractString,parvalue::AbstractString)
 
 Arguments:
+
     parname::AbstractString Parameter name.
     parvalue::AbstractString Parameter value.
     task::MSKtask An optimization task.
@@ -10119,6 +10472,7 @@ Replaces all quadratic terms in constraints.
     putqcon(task::MSKtask,qcsubk::T0,qcsubi::T1,qcsubj::T2,qcval::T3) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     qcsubi::Vector{Int32} Row subscripts for quadratic constraint matrix.
     qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
     qcsubk::Vector{Int32} Constraint subscripts for quadratic coefficients.
@@ -10135,6 +10489,7 @@ Replaces all quadratic terms in a single constraint.
     putqconk(task::MSKtask,k::T0,Qk:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     k::Int32 The constraint in which the new quadratic elements are inserted.
     qcsubi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
     qcsubj::Vector{Int32} Column subscripts for quadratic constraint matrix.
@@ -10151,6 +10506,7 @@ Replaces all quadratic terms in the objective.
     putqobj(task::MSKtask,Qk:: SparseMatrixCSC{Float64})
 
 Arguments:
+
     qosubi::SparseMatrixCSC{Float64} Sparse matrix defining the column values
     qosubj::Vector{Int32} Column subscripts for quadratic objective coefficients.
     qoval::Vector{Float64} Quadratic objective coefficient values.
@@ -10165,6 +10521,7 @@ Replaces one coefficient in the quadratic term in the objective.
     putqobjij(task::MSKtask,i::T0,j::T1,qoij::T2) where {T0<:Integer,T1<:Integer,T2<:Number} 
 
 Arguments:
+
     i::Int32 Row index for the coefficient to be replaced.
     j::Int32 Column index for the coefficient to be replaced.
     qoij::Float64 The new coefficient value.
@@ -10178,6 +10535,7 @@ Sets the status keys for the constraints.
     putskc(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey})
 
 Arguments:
+
     skc::Vector{Stakey} Status keys for the constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10191,6 +10549,7 @@ Sets the status keys for a slice of the constraints.
     putskcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skc::Vector{Stakey}) where {T0<:Integer,T1<:Integer} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     skc::Vector{Stakey} Status keys for the constraints.
@@ -10205,6 +10564,7 @@ Sets the status keys for the scalar variables.
     putskx(task::MSKtask,whichsol::Soltype,skx::Vector{Stakey})
 
 Arguments:
+
     skx::Vector{Stakey} Status keys for the variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10218,6 +10578,7 @@ Sets the status keys for a slice of the variables.
     putskxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,skx::Vector{Stakey}) where {T0<:Integer,T1<:Integer} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     skx::Vector{Stakey} Status keys for the variables.
@@ -10233,6 +10594,7 @@ Sets the slc vector for a solution.
     putslc(task::MSKtask,whichsol::Soltype,slc::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10246,6 +10608,7 @@ Sets a slice of the slc vector for a solution.
     putslcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     slc::Vector{Float64} Dual variables corresponding to the lower bounds on the constraints.
@@ -10261,6 +10624,7 @@ Sets the slx vector for a solution.
     putslx(task::MSKtask,whichsol::Soltype,slx::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10274,6 +10638,7 @@ Sets a slice of the slx vector for a solution.
     putslxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,slx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     slx::Vector{Float64} Dual variables corresponding to the lower bounds on the variables.
@@ -10289,6 +10654,7 @@ Sets the snx vector for a solution.
     putsnx(task::MSKtask,whichsol::Soltype,sux::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10302,6 +10668,7 @@ Sets a slice of the snx vector for a solution.
     putsnxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,snx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     snx::Vector{Float64} Dual variables corresponding to the conic constraints on the variables.
@@ -10317,6 +10684,7 @@ Inserts a solution.
     putsolution(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::T0,xx::T1,y::T2,slc::T3,suc::T4,slx::T5,sux::T6,snx::T7) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Number},T6<:AbstractVector{<:Number},T7<:AbstractVector{<:Number}} 
 
 Arguments:
+
     skc::Vector{Stakey} Status keys for the constraints.
     skn::Vector{Stakey} Status keys for the conic constraints.
     skx::Vector{Stakey} Status keys for the variables.
@@ -10340,6 +10708,7 @@ Inserts a solution.
     putsolutionnew(task::MSKtask,whichsol::Soltype,skc::Vector{Stakey},skx::Vector{Stakey},skn::Vector{Stakey},xc::T0,xx::T1,y::T2,slc::T3,suc::T4,slx::T5,sux::T6,snx::T7,doty::T8) where {T0<:AbstractVector{<:Number},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number},T4<:AbstractVector{<:Number},T5<:AbstractVector{<:Number},T6<:AbstractVector{<:Number},T7<:AbstractVector{<:Number},T8<:AbstractVector{<:Number}} 
 
 Arguments:
+
     doty::Union{Nothing,Vector{Float64}} Dual variables corresponding to affine conic constraints.
     skc::Vector{Stakey} Status keys for the constraints.
     skn::Vector{Stakey} Status keys for the conic constraints.
@@ -10364,6 +10733,7 @@ Inputs the dual variable of a solution.
     putsolutionyi(task::MSKtask,i::T0,whichsol::Soltype,y::T1) where {T0<:Integer,T1<:Number} 
 
 Arguments:
+
     i::Int32 Index of the dual variable.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10377,6 +10747,7 @@ Sets a string parameter.
     putstrparam(task::MSKtask,param::Sparam,parvalue::AbstractString)
 
 Arguments:
+
     param::Sparam Which parameter.
     parvalue::AbstractString Parameter value.
     task::MSKtask An optimization task.
@@ -10390,6 +10761,7 @@ Sets the suc vector for a solution.
     putsuc(task::MSKtask,whichsol::Soltype,suc::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10403,6 +10775,7 @@ Sets a slice of the suc vector for a solution.
     putsucslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,suc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     suc::Vector{Float64} Dual variables corresponding to the upper bounds on the constraints.
@@ -10418,6 +10791,7 @@ Sets the sux vector for a solution.
     putsux(task::MSKtask,whichsol::Soltype,sux::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10431,6 +10805,7 @@ Sets a slice of the sux vector for a solution.
     putsuxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,sux::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     sux::Vector{Float64} Dual variables corresponding to the upper bounds on the variables.
@@ -10445,6 +10820,7 @@ Assigns a new name to the task.
     puttaskname(task::MSKtask,taskname::AbstractString)
 
 Arguments:
+
     task::MSKtask An optimization task.
     taskname::AbstractString Name assigned to the task.
 """
@@ -10457,6 +10833,7 @@ Changes the bounds for one variable.
     putvarbound(task::MSKtask,j::T0,bkx::Boundkey,blx::T1,bux::T2) where {T0<:Integer,T1<:Number,T2<:Number} 
 
 Arguments:
+
     bkx::Boundkey New bound key.
     blx::Float64 New lower bound.
     bux::Float64 New upper bound.
@@ -10472,6 +10849,7 @@ Changes the bounds of a list of variables.
     putvarboundlist(task::MSKtask,sub::T0,bkx::Vector{Boundkey},blx::T1,bux::T2) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Number},T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     bkx::Vector{Boundkey} Bound keys for the variables.
     blx::Vector{Float64} Lower bounds for the variables.
     bux::Vector{Float64} Upper bounds for the variables.
@@ -10487,6 +10865,7 @@ Changes the bounds of a list of variables.
     putvarboundlistconst(task::MSKtask,sub::T0,bkx::Boundkey,blx::T1,bux::T2) where {T0<:AbstractVector{<:Integer},T1<:Number,T2<:Number} 
 
 Arguments:
+
     bkx::Boundkey New bound key for all variables in the list.
     blx::Float64 New lower bound for all variables in the list.
     bux::Float64 New upper bound for all variables in the list.
@@ -10502,6 +10881,7 @@ Changes the bounds for a slice of the variables.
     putvarboundslice(task::MSKtask,first::T0,last::T1,bkx::Vector{Boundkey},blx::T2,bux::T3) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     bkx::Vector{Boundkey} Bound keys for the variables.
     blx::Vector{Float64} Lower bounds for the variables.
     bux::Vector{Float64} Upper bounds for the variables.
@@ -10518,6 +10898,7 @@ Changes the bounds for a slice of the variables.
     putvarboundsliceconst(task::MSKtask,first::T0,last::T1,bkx::Boundkey,blx::T2,bux::T3) where {T0<:Integer,T1<:Integer,T2<:Number,T3<:Number} 
 
 Arguments:
+
     bkx::Boundkey New bound key for all variables in the slice.
     blx::Float64 New lower bound for all variables in the slice.
     bux::Float64 New upper bound for all variables in the slice.
@@ -10534,6 +10915,7 @@ Sets the name of a variable.
     putvarname(task::MSKtask,j::T0,name::Union{Nothing,AbstractString}) where {T0<:Integer} 
 
 Arguments:
+
     j::Int32 Index of the variable.
     name::Union{Nothing,AbstractString} The variable name.
     task::MSKtask An optimization task.
@@ -10547,6 +10929,7 @@ Sets the primal and dual solution information for a single variable.
     putvarsolutionj(task::MSKtask,j::T0,whichsol::Soltype,sk::Stakey,x::T1,sl::T2,su::T3,sn::T4) where {T0<:Integer,T1<:Number,T2<:Number,T3<:Number,T4<:Number} 
 
 Arguments:
+
     j::Int32 Index of the variable.
     sk::Stakey Status key of the variable.
     sl::Float64 Solution value of the dual variable associated with the lower bound.
@@ -10565,6 +10948,7 @@ Sets the variable type of one variable.
     putvartype(task::MSKtask,j::T0,vartype::Variabletype) where {T0<:Integer} 
 
 Arguments:
+
     j::Int32 Index of the variable.
     task::MSKtask An optimization task.
     vartype::Variabletype The new variable type.
@@ -10578,6 +10962,7 @@ Sets the variable type for one or more variables.
     putvartypelist(task::MSKtask,subj::T0,vartype::Vector{Variabletype}) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     subj::Vector{Int32} A list of variable indexes for which the variable type should be changed.
     task::MSKtask An optimization task.
     vartype::Vector{Variabletype} A list of variable types.
@@ -10590,6 +10975,7 @@ Sets the xc vector for a solution.
     putxc(task::MSKtask,whichsol::Soltype) :: xc
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -10605,6 +10991,7 @@ Sets a slice of the xc vector for a solution.
     putxcslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xc::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -10620,6 +11007,7 @@ Sets the xx vector for a solution.
     putxx(task::MSKtask,whichsol::Soltype,xx::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
     xx::Vector{Float64} Primal variable solution.
@@ -10633,6 +11021,7 @@ Sets a slice of the xx vector for a solution.
     putxxslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,xx::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -10648,6 +11037,7 @@ Sets the y vector for a solution.
     puty(task::MSKtask,whichsol::Soltype,y::T0) where {T0<:AbstractVector{<:Number}} 
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
     y::Vector{Float64} Vector of dual variables corresponding to the constraints.
@@ -10661,6 +11051,7 @@ Sets a slice of the y vector for a solution.
     putyslice(task::MSKtask,whichsol::Soltype,first::T0,last::T1,y::T2) where {T0<:Integer,T1<:Integer,T2<:AbstractVector{<:Number}} 
 
 Arguments:
+
     first::Int32 First index in the sequence.
     last::Int32 Last index plus 1 in the sequence.
     task::MSKtask An optimization task.
@@ -10675,6 +11066,7 @@ Read a binary dump of the task solution and information items.
     readbsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
 
 Arguments:
+
     compress::Compresstype Data compression type.
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
@@ -10687,6 +11079,7 @@ Reads problem data from a file.
     readdata(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -10698,6 +11091,7 @@ Reads problem data from a file.
     readdataformat(task::MSKtask,filename::AbstractString,format::Dataformat,compress::Compresstype)
 
 Arguments:
+
     compress::Compresstype File compression type.
     filename::AbstractString A valid file name.
     format::Dataformat File data format.
@@ -10711,6 +11105,7 @@ Reads a solution from a JSOL file.
     readjsonsol(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -10722,6 +11117,7 @@ Load task data from a string in JSON format.
     readjsonstring(task::MSKtask,data::AbstractString)
 
 Arguments:
+
     data::AbstractString Problem data in text format.
     task::MSKtask An optimization task.
 """
@@ -10733,6 +11129,7 @@ Load task data from a string in LP format.
     readlpstring(task::MSKtask,data::AbstractString)
 
 Arguments:
+
     data::AbstractString Problem data in text format.
     task::MSKtask An optimization task.
 """
@@ -10744,6 +11141,7 @@ Load task data from a string in OPF format.
     readopfstring(task::MSKtask,data::AbstractString)
 
 Arguments:
+
     data::AbstractString Problem data in text format.
     task::MSKtask An optimization task.
 """
@@ -10755,6 +11153,7 @@ Reads a parameter file.
     readparamfile(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -10766,6 +11165,7 @@ Load task data from a string in PTF format.
     readptfstring(task::MSKtask,data::AbstractString)
 
 Arguments:
+
     data::AbstractString Problem data in text format.
     task::MSKtask An optimization task.
 """
@@ -10777,6 +11177,7 @@ Reads a solution from a file.
     readsolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -10789,6 +11190,7 @@ Read solution file in format determined by the filename
     readsolutionfile(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -10800,6 +11202,7 @@ Prints information about last file read.
     readsummary(task::MSKtask,whichstream::Streamtype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
 """
@@ -10811,6 +11214,7 @@ Load task data from a file.
     readtask(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -10823,6 +11227,7 @@ Removes a number of symmetric matrices.
     removebarvars(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     subset::Vector{Int32} Indexes of symmetric matrices which should be removed.
     task::MSKtask An optimization task.
 """
@@ -10835,6 +11240,7 @@ Removes a number of conic constraints from the problem.
     removecones(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     subset::Vector{Int32} Indexes of cones which should be removed.
     task::MSKtask An optimization task.
 """
@@ -10847,6 +11253,7 @@ Removes a number of constraints.
     removecons(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     subset::Vector{Int32} Indexes of constraints which should be removed.
     task::MSKtask An optimization task.
 """
@@ -10859,6 +11266,7 @@ Removes a number of variables.
     removevars(task::MSKtask,subset::T0) where {T0<:AbstractVector{<:Integer}} 
 
 Arguments:
+
     subset::Vector{Int32} Indexes of variables which should be removed.
     task::MSKtask An optimization task.
 """
@@ -10870,6 +11278,7 @@ Obtains a response code string identifier.
     rescodetostr(res::Rescode) :: str
 
 Arguments:
+
     res::Rescode Response code.
 
 Returns:
@@ -10884,6 +11293,7 @@ Reset the license expiry reporting startpoint.
     resetexpirylicenses()
 
 Arguments:
+
     env::MSKenv The MOSEK environment.
 """
 function resetexpirylicenses end
@@ -10895,6 +11305,7 @@ Resizes an optimization task.
     resizetask(task::MSKtask,maxnumcon::T0,maxnumvar::T1,maxnumcone::T2,maxnumanz::T3,maxnumqnz::T4) where {T0<:Integer,T1<:Integer,T2<:Integer,T3<:Integer,T4<:Integer} 
 
 Arguments:
+
     maxnumanz::Int64 New maximum number of linear non-zero elements.
     maxnumcon::Int32 New maximum number of constraints.
     maxnumcone::Int32 New maximum number of cones.
@@ -10910,6 +11321,7 @@ Creates a sensitivity report.
     sensitivityreport(task::MSKtask,whichstream::Streamtype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
 """
@@ -10921,6 +11333,7 @@ Resets all parameter values.
     setdefaults(task::MSKtask)
 
 Arguments:
+
     task::MSKtask An optimization task.
 """
 function setdefaults end
@@ -10931,6 +11344,7 @@ Checks whether a solution is defined.
     solutiondef(task::MSKtask,whichsol::Soltype) :: isdef
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 
@@ -10945,6 +11359,7 @@ Prints a short summary of the current solutions.
     solutionsummary(task::MSKtask,whichstream::Streamtype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichstream::Streamtype Index of the stream.
 """
@@ -10957,6 +11372,7 @@ Solve a linear equation system involving a basis matrix.
     solvewithbasis(task::MSKtask,transp::Bool,numnz::T0,sub::Vector{Int32},val::Vector{Float64}) where {T0<:Integer}  :: numnzout
 
 Arguments:
+
     numnz::Int32 Input (number of non-zeros in right-hand side).
     sub::Vector{Int32} Input (indexes of non-zeros in right-hand side) and output (indexes of non-zeros in solution vector).
     task::MSKtask An optimization task.
@@ -10977,6 +11393,7 @@ Solves a sparse triangular system of linear equations.
     sparsetriangularsolvedense(transposed::Transpose,lnzc::T0,lptrc::T1,lsubc::T2,lvalc::T3,b::Vector{Float64}) where {T0<:AbstractVector{<:Integer},T1<:AbstractVector{<:Integer},T2<:AbstractVector{<:Integer},T3<:AbstractVector{<:Number}} 
 
 Arguments:
+
     b::Vector{Float64} The right-hand side of linear equation system to be solved as a dense vector.
     env::MSKenv The MOSEK environment.
     lnzc::Vector{Int32} lnzc[j] is the number of nonzeros in column j.
@@ -10993,6 +11410,7 @@ Obtains a cone type code.
     strtoconetype(task::MSKtask,str::AbstractString) :: conetype
 
 Arguments:
+
     str::AbstractString String corresponding to the cone type code.
     task::MSKtask An optimization task.
 
@@ -11007,6 +11425,7 @@ Obtains a status key.
     strtosk(task::MSKtask,str::AbstractString) :: sk
 
 Arguments:
+
     str::AbstractString A status key abbreviation string.
     task::MSKtask An optimization task.
 
@@ -11021,6 +11440,7 @@ Update the information items related to the solution.
     updatesolutioninfo(task::MSKtask,whichsol::Soltype)
 
 Arguments:
+
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
 """
@@ -11032,6 +11452,7 @@ Write a binary dump of the task solution and information items.
     writebsolution(task::MSKtask,filename::AbstractString,compress::Compresstype)
 
 Arguments:
+
     compress::Compresstype Data compression type.
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
@@ -11044,6 +11465,7 @@ Writes problem data to a file.
     writedata(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -11055,6 +11477,7 @@ Writes a solution to a JSON file.
     writejsonsol(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -11066,6 +11489,7 @@ Writes all the parameters to a parameter file.
     writeparamfile(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -11077,6 +11501,7 @@ Write a solution to a file.
     writesolution(task::MSKtask,whichsol::Soltype,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
     whichsol::Soltype Selects a solution.
@@ -11089,6 +11514,7 @@ Write solution file in format determined by the filename
     writesolutionfile(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """
@@ -11100,6 +11526,7 @@ Write a complete binary dump of the task data.
     writetask(task::MSKtask,filename::AbstractString)
 
 Arguments:
+
     filename::AbstractString A valid file name.
     task::MSKtask An optimization task.
 """

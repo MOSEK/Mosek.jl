@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.1.11
+# Target: Mosek 10.1.24
 export
   Basindtype,
   MSK_BI_NEVER,
@@ -3511,7 +3511,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_BASIS_REL_TOL_S`. Maximum relative dual bound violation allowed in an optimal basic solution.
 * `MSK_DPAR_BASIS_TOL_S`. Maximum absolute dual bound violation in an optimal basic solution.
 * `MSK_DPAR_BASIS_TOL_X`. Maximum absolute primal bound violation allowed in an optimal basic solution.
-* `MSK_DPAR_CHECK_CONVEXITY_REL_TOL`. Convexity check tolerance.
+* `MSK_DPAR_CHECK_CONVEXITY_REL_TOL`. Not in use.
 * `MSK_DPAR_DATA_SYM_MAT_TOL`. Zero tolerance threshold for symmetric matrices.
 * `MSK_DPAR_DATA_SYM_MAT_TOL_HUGE`. Data tolerance threshold.
 * `MSK_DPAR_DATA_SYM_MAT_TOL_LARGE`. Data tolerance threshold.
@@ -3611,7 +3611,7 @@ Possible Values: Any number between 1.0e-9 and +inf.
 const MSK_DPAR_BASIS_TOL_X = Dparam(3)
 
 """
-Convexity check tolerance.
+Not in use.
 
 Default value: `1e-10`
 
