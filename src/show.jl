@@ -30,6 +30,10 @@ Base.show(io::IOContext, t::Task) =
     end
 
 function showlimited(f::IO, t::Mosek.Task, limit :: Int)
+    if t.task == C_NULL
+        print(f, "Uninitialized Mosek task")
+        return
+    end
     numvar    = getnumvar(t)
     numbarvar = getnumbarvar(t)
     numcon    = getnumcon(t)

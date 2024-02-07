@@ -76,7 +76,7 @@ mutable struct Task
 
         r = @msk_ccall(putcallbackfunc, Cint, (Ptr{Nothing}, Ptr{Nothing}, Any), task.task, task.callbackfunc, task)
         if r != MSK_RES_OK.value
-            throw(MosekError(r,getlasterrormsg(t)))
+            throw(MosekError(r,getlasterrormsg(task)))
         end
 
         task
@@ -173,13 +173,13 @@ __init__() = (global msk_global_env = makeenv())
 
 """
     maketask(;env::Env = msk_global_env, filename::String = "")
-    
+
 Create a task. If `filename` is not 0-length, initialize the task from this file.
 
     maketask(func :: Function;env::Env = msk_global_env, filename::String = "")
 
 Create a task. If `filename` is not 0-length, initialize the task from
-this file. The `func` parameter is a function 
+this file. The `func` parameter is a function
 
 ```julia
 func(task :: Task) :: Any
@@ -272,21 +272,21 @@ end
 function getlasterrormsg(task::Task)
   lastrescode = Ref{Int32}()
   sizelastmsg = Ref{Int64}()
-  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,0,C_NULL))
+  if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,0,sizelastmsg,C_NULL))
     ""
   else
     lastmsg = Array{UInt8}(undef,sizelastmsg[]+1)
-    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,sizelastmsg,length(lastmasg),lastmsg))
+    if 0 != disable_sigint(()->ccall((:MSK_getlasterror64,libmosek),Int32,(Ptr{Nothing},Ref{Int32},Int64,Ref{Int64},Ptr{UInt8},),task.task,lastrescode,length(lastmsg),sizelastmsg,lastmsg))
       ""
     else
       lastmsg_len = findfirst(_c->_c==0,lastmsg)
-      if lastmsg_len === nothing 
-        String(lastmsg) 
-      else 
-        String(lastmsg[1:lastmsg_len-1]) 
+      if lastmsg_len === nothing
+        String(lastmsg)
+      else
+        String(lastmsg[1:lastmsg_len-1])
       end
     end
-  end   
+  end
 end
 #function getlasterrormsg(task::Ptr{Nothing})
 #  lastrescode = Ref{Int32}()
@@ -299,13 +299,13 @@ end
 #      ""
 #    else
 #      lastmsg_len = findfirst(_c->_c==0,lastmsg)
-#      if lastmsg_len === nothing 
-#        String(lastmsg) 
-#      else 
-#        String(lastmsg[1:lastmsg_len-1]) 
+#      if lastmsg_len === nothing
+#        String(lastmsg)
+#      else
+#        String(lastmsg[1:lastmsg_len-1])
 #      end
 #    end
-#  end   
+#  end
 #end
 
 
