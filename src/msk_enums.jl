@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 10.1.24
+# Target: Mosek 10.2.0
 export
   Basindtype,
   MSK_BI_NEVER,
