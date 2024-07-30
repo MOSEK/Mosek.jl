@@ -3583,9 +3583,9 @@ macro MSK_readdata(task,filename)
      nothing
   end
 end
-macro MSK_readdatacb(task,hread,h,format,compress,path)
+macro MSK_readdatahandle(task,hread,h,format,compress,path)
   quote
-     local res = disable_sigint(()->ccall((:MSK_readdatacb,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,Int32,Ptr{UInt8},),$(esc(task)),$(esc(hread)),$(esc(h)),$(esc(format)),$(esc(compress)),$(esc(path))))
+     local res = disable_sigint(()->ccall((:MSK_readdatahandle,libmosek),Int32,(Ptr{Nothing},Ptr{Cvoid},Any,Int32,Int32,Ptr{UInt8},),$(esc(task)),$(esc(hread)),$(esc(h)),$(esc(format)),$(esc(compress)),$(esc(path))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -3916,6 +3916,15 @@ macro MSK_getinfeasiblesubproblem(task,whichsol,inftask)
      nothing
   end
 end
+macro MSK_getdualproblem(task,dualtask)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getdualproblem,libmosek),Int32,(Ptr{Nothing},Ref{Ptr{Nothing}},),$(esc(task)),$(esc(dualtask))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_writesolution(task,whichsol,filename)
   quote
      local res = disable_sigint(()->ccall((:MSK_writesolution,libmosek),Int32,(Ptr{Nothing},Int32,Ptr{UInt8},),$(esc(task)),$(esc(whichsol)),$(esc(filename))))
@@ -3988,6 +3997,15 @@ macro MSK_asyncoptimize(task,address,accesstoken,token)
      nothing
   end
 end
+macro MSK_asyncgetlog(task,addr,accesstoken,token)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_asyncgetlog,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ptr{UInt8},),$(esc(task)),$(esc(addr)),$(esc(accesstoken)),$(esc(token))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_asyncstop(task,address,accesstoken,token)
   quote
      local res = disable_sigint(()->ccall((:MSK_asyncstop,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},Ptr{UInt8},Ptr{UInt8},),$(esc(task)),$(esc(address)),$(esc(accesstoken)),$(esc(token))))
@@ -4036,6 +4054,24 @@ end
 macro MSK_callbackcodetostr(code,callbackcodestr)
   quote
      local res = disable_sigint(()->ccall((:MSK_callbackcodetostr,libmosek),Int32,(Int32,Ptr{UInt8},),$(esc(code)),$(esc(callbackcodestr))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_globalenvinitialize(maxnumalloc,dbgfile)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_globalenvinitialize,libmosek),Int32,(Int64,Ptr{UInt8},),$(esc(maxnumalloc)),$(esc(dbgfile))))
+     if res != 0
+       throw(MosekError(res,""))
+     end
+     nothing
+  end
+end
+macro MSK_globalenvfinalize()
+  quote
+     local res = disable_sigint(()->ccall((:MSK_globalenvfinalize,libmosek),Int32,()))
      if res != 0
        throw(MosekError(res,""))
      end
