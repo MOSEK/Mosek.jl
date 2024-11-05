@@ -3322,9 +3322,27 @@ macro MSK_putdouparam(task,param,parvalue)
      nothing
   end
 end
+macro MSK_resetdouparam(task,param)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_resetdouparam,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(param))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_putintparam(task,param,parvalue)
   quote
      local res = disable_sigint(()->ccall((:MSK_putintparam,libmosek),Int32,(Ptr{Nothing},Int32,Int32,),$(esc(task)),$(esc(param)),$(esc(parvalue))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_resetintparam(task,param)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_resetintparam,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(param))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -3547,6 +3565,15 @@ macro MSK_putstrparam(task,param,parvalue)
      nothing
   end
 end
+macro MSK_resetstrparam(task,param)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_resetstrparam,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(param))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_puttaskname(task,taskname)
   quote
      local res = disable_sigint(()->ccall((:MSK_puttaskname,libmosek),Int32,(Ptr{Nothing},Ptr{UInt8},),$(esc(task)),$(esc(taskname))))
@@ -3682,9 +3709,9 @@ macro MSK_getmemusagetask(task,meminuse,maxmemuse)
      nothing
   end
 end
-macro MSK_setdefaults(task)
+macro MSK_resetparameters(task)
   quote
-     local res = disable_sigint(()->ccall((:MSK_setdefaults,libmosek),Int32,(Ptr{Nothing},),$(esc(task))))
+     local res = disable_sigint(()->ccall((:MSK_resetparameters,libmosek),Int32,(Ptr{Nothing},),$(esc(task))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
