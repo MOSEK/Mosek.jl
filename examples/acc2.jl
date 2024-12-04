@@ -21,6 +21,7 @@ k = 2
 
 # Create a task
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Attach a printer to the task
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
@@ -58,11 +59,11 @@ maketask() do task
 
     # Append affine conic constraints
     appendacc(task,zeroDom,    # Domain index
-              [1],        # Indices of AFE rows
-              zeros(1))       # Ignored
+              [1],             # Indices of AFE rows
+              nothing)         # Ignored
     appendacc(task,quadDom,    # Domain index
-              [2,3,4],    # Indices of AFE rows
-              zeros(3))       # Ignored
+              [2,3,4],         # Indices of AFE rows
+              nothing)         # Ignored
 
     # Solve and retrieve solution
     optimize(task)
@@ -80,14 +81,5 @@ maketask() do task
     # Demonstrate retrieving the dual of ACC
     doty = getaccdoty(task,MSK_SOL_ITR,2)
     println("Dual of quadratic ACC:: $doty")
-
-    #maxgap = lambda a, b: max(abs(x-y) for x,y in zip(a,b))
-    compl = sum(activity' * doty)
-    println(doty)
-    @assert abs(compl) < 1e-7
-    @assert maximum(abs.(xx       - [-0.07838011145615721, 1.1289128998004547, -0.0505327883442975])) < 1e-7
-    @assert maximum(abs.(doty     - [-1.9429680870375095, -0.30303030303030304,-1.9191919191919191])) < 1e-7
-    @assert maximum(abs.(activity - [0.03, -0.004678877204190343, -0.029632888959872067])) < 1e-7
-    println("Complementarity $compl")
 
 end

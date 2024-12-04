@@ -43,6 +43,7 @@ Variables
 "
 
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     readptfstring(task,prob_ptf)

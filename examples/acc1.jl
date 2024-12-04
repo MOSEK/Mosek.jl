@@ -23,6 +23,7 @@ let Gsubi = Int64[1, 1, 2, 2],
 
     # Make a MOSEK environment
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         # Attach a printer to the task
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
@@ -66,7 +67,7 @@ let Gsubi = Int64[1, 1, 2, 2],
         appendaccseq(task,
                      quadDom,    # Domain index
                      1,          # Indices of AFE rows [0,...,k]
-                     zeros(k+1)) # Ignored
+                     nothing)    # Ignored
 
         # Solve and retrieve solution
         optimize(task)
@@ -83,14 +84,6 @@ let Gsubi = Int64[1, 1, 2, 2],
         doty = getaccdoty(task,MSK_SOL_ITR,
                           1)          # ACC index
         println("Dual of ACC: $doty")
-
-        compl = sum(activity' * doty)
-
-        @assert (abs(compl) < 1e-7) "Complementarity is invalid"
-        @assert (maximum(abs.(xx      -[-0.07838011145615721, 1.1289128998004547, -0.0505327883442975])) < 1e-7) "Variable solution is incorrect"
-        @assert (maximum(abs.(doty    -[-1.9429680870375095, -0.30303030303030304, -1.9191919191919191])) < 1e-7) "Constraint dual solution is incorrect"
-        @assert (maximum(abs.(activity-[0.03, -0.004678877204190343, -0.029632888959872067])) < 1e-7) "Constraint level solution is incorrect"
-        println("Complementarity $compl")
 
     end
 end

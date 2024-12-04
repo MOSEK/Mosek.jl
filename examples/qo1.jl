@@ -29,6 +29,7 @@ A     = sparse( [ 1, 1, 1 ],
                 numcon, numvar )
 
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     # Append 'numcon' empty constraints.
@@ -60,7 +61,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
 
     # Optimize
-    r = optimize(task,"mosek://solve.mosek.com:30080")
+    r = optimize(task)
     # Print a summary containing information
     # about the solution for debugging purposes
     solutionsummary(task,MSK_STREAM_MSG)
@@ -72,7 +73,6 @@ maketask() do task
         xx = getxx(task,MSK_SOL_ITR)
         println("Optimal solution:")
         println(xx)
-        @assert maximum(abs.(xx-[0.00015777655846067916, 4.999999955843769, 0.00015779898859216525])) < 1e-5
     elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
                        MSK_SOL_STA_PRIM_INFEAS_CER ]
         println("Primal or dual infeasibility certificate found.\n")

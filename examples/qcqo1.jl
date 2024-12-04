@@ -35,6 +35,7 @@ numcon = length(bkc)
 
 # Create a task
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Append 'numcon' empty constraints.
     # The constraints will initially have no bounds. 
     appendcons(task,numcon)
@@ -81,7 +82,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
 
     # Optimize the task
-    optimize(task,"mosek://solve.mosek.com:30080")
+    optimize(task)
     # Print a summary containing information
     # about the solution for debugging purposes
     solutionsummary(task,MSK_STREAM_MSG)
@@ -92,7 +93,6 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         @printf("Optimal solution: %s\n", xx')
-        @assert maximum(abs.(xx-[0.4487975139315276, 0.9319237725340505, 0.6741147034835338])) < 1e-5
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER

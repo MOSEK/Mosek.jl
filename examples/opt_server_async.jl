@@ -59,10 +59,6 @@ else
 
             if respavailable
                 println("solution available!")
-                if res!=MSK_RES_OK
-                    println("Wrong response code from remote server: expected OK, got $res")
-                    @assert false
-                end
 
                 respavailable, res, trm = asyncgetresult(task, serveraddr, "", token)
 

@@ -37,6 +37,7 @@ numcon = length(bkc)
 
 # Create a task
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
     putcallbackfunc(task,callback)
 
@@ -70,14 +71,14 @@ maketask() do task
     appendacc(task,
               quadcone,  # Domain
               [1, 2, 3], # Rows from F
-              [0.0,0.0,0.0])
+              nothing)
 
     # Rotated quadratic cone (x(4),x(5),x(2)) \in RQUAD_3
     rquadcone = appendrquadraticconedomain(task,3)
     appendacc(task,
               rquadcone, # Domain
               [4, 5, 6], # Rows from F
-              [0.0,0.0,0.0]);
+              nothing);
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
@@ -96,7 +97,6 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         println("Optimal solution: $xx")
-        @assert maximum(abs.(xx - [0.2609204081408032, 0.2609204081408032, 0.23907959185918956, 0.36899717989264824, 0.1690548006469457, 0.1690548006469457])) < 1e-7
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.\n")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER

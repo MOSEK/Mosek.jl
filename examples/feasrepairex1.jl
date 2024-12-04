@@ -32,6 +32,7 @@ if length(ARGS) < 1
 else
     filename = ARGS[1]
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
         if filename != "-"

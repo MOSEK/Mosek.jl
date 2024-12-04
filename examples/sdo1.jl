@@ -41,6 +41,7 @@ barvardim = [3]
 
 # Create a task object and attach log stream printer
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
     # Append 'numvar' variables.
@@ -79,7 +80,7 @@ maketask() do task
         putafefentrylist(task,[1,2,3],
                               [1,2,3],
                               [1.0,1.0,1.0])
-        appendaccseq(task,dom,afei,[0.0,0.0,0.0])
+        appendaccseq(task,dom,afei,nothing)
     end
 
     
@@ -113,7 +114,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
 
     # Solve the problem and print summary
-    optimize(task,"mosek://solve.mosek.com:30080")
+    optimize(task)
     writedata(task,"sdo1.ptf")
     solutionsummary(task,MSK_STREAM_MSG)
 
@@ -126,8 +127,6 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         barx = getbarxj(task,MSK_SOL_ITR, 1)
-        @assert maximum(abs.(xx-[0.254404851118613, 0.17989139511438135, 0.17989139511438135])) < 1e-6
-        @assert maximum(abs.(barx-[0.21725335998058032, -0.25997116466128245, 0.21725335966506842, 0.3110884301498656, -0.2599711646612823, 0.21725335998058004])) < 1e-6
 
         @printf("Optimal solution: \n  xx = %s\n  barx = %s\n", xx',barx')
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER

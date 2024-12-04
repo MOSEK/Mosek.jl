@@ -59,6 +59,7 @@ let numcon = Int32(2),
     # basis = new int[numvar];
 
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
         # Put A matrix and factor A. Call this function only once for a

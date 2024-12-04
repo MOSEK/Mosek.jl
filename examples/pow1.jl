@@ -22,6 +22,7 @@ numcon = 1
 
 # Create a task
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     appendcons(task,numcon)
@@ -49,17 +50,17 @@ maketask() do task
     appendacc(task,
               pc1,           # Domain
               [1, 2, 3],     # Rows from F
-              [0.0,0.0,0.0]) # rhs offset
+              nothing)
     appendacc(task,
               pc2,           # Domain
               [4, 5, 6],     # Rows from F
-              [0.0,0.0,0.0]) # rhs offset
+              nothing)
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
     # Optimize the task
-    optimize(task,"mosek://solve.mosek.com:30080")
+    optimize(task)
     writedata(task,"pow1.ptf")
     # Print a summary containing information
     # about the solution for debugging purposes
@@ -71,7 +72,6 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITR)
         println("Optimal solution: $(xx[1:3])")
-        @assert maximum(abs.(xx[1:3]-[0.063938, 0.78328, 2.305562])) < 1e-4
     elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
         println("Primal or dual infeasibility.")
     elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER

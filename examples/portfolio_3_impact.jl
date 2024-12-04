@@ -15,6 +15,7 @@ function portfolio( mu :: Vector{Float64},
                     m  :: Vector{Float64})
     (k,n) = size(GT)
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         # Directs the log task stream
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
@@ -93,7 +94,7 @@ function portfolio( mu :: Vector{Float64},
             # Add the quadratic domain of dimension k+1
 
             # Add the constraint
-            appendaccseq(task,qdom,1,zeros(k+1))
+            appendaccseq(task,qdom,1,nothing)
             putaccname(task,acci+1, "risk")
         end
 
@@ -128,6 +129,12 @@ function portfolio( mu :: Vector{Float64},
         putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
         optimize(task)
+
+        # Check if the interior point solution is an optimal point
+        if getsolsta(task, MSK_SOL_ITR) != MSK_SOL_STA_OPTIMAL
+            # See https://docs.mosek.com/latest/juliaapi/accessing-solution.html about handling solution statuses.
+            error("Solution not optimal")
+        end
 
         # Display solution summary for quick inspection of results
         solutionsummary(task,MSK_STREAM_LOG)

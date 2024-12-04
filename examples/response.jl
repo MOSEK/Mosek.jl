@@ -34,43 +34,48 @@ Variables
     x3 [0;+inf]
 "
 
-maketask() do task
-    putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
+try
+    maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
+        putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
-    if length(ARGS) < 1
-        readptfstring(task,cqo1_ptf)
-    else
-        readdata(task,ARGS[1])
+        if length(ARGS) < 1
+            readptfstring(task,cqo1_ptf)
+        else
+            readdata(task,ARGS[1])
+        end
+
+        # (Optional) uncomment to see what happens when solution status is unknown
+        # putintparam(task,MSK_IPAR_INTPNT_MAX_ITERATIONS, 1)
+
+
+        # Optimize
+        trmcode = optimize(task)
+        solutionsummary(task,MSK_STREAM_LOG)
+
+        # We expect solution status OPTIMAL
+        solsta = getsolsta(task,MSK_SOL_ITR)
+
+        if solsta == MSK_SOL_STA_OPTIMAL
+            # Optimal solution. Fetch and print it.
+            println("An optimal interior-point solution is located.")
+            numvar = getnumvar(task)
+            xx = getxx(task,MSK_SOL_ITR)
+            println("x = $xx")
+        elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
+            println("Dual infeasibility certificate found.")
+        elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
+            println("Primal infeasibility certificate found.")
+        elseif solsta == MSK_SOL_STA_UNKNOWN
+            # The solutions status is unknown. The termination code
+            # indicates why the optimizer terminated prematurely.
+            println("The solution status is unknown.")
+            (symname, desc) = getcodedesc(trmcode)
+            println("   Termination code: $symname $desc")
+        else
+            println("An unexpected solution status $solsta is obtained.")
+        end
     end
-
-    # (Optional) uncomment to see what happens when solution status is unknown
-    # putintparam(task,MSK_IPAR_INTPNT_MAX_ITERATIONS, 1)
-
-
-    # Optimize
-    trmcode = optimize(task)
-    solutionsummary(task,MSK_STREAM_LOG)
-
-    # We expect solution status OPTIMAL
-    solsta = getsolsta(task,MSK_SOL_ITR)
-
-    if solsta == MSK_SOL_STA_OPTIMAL
-        # Optimal solution. Fetch and print it.
-        println("An optimal interior-point solution is located.")
-        numvar = getnumvar(task)
-        xx = getxx(task,MSK_SOL_ITR)
-        println("x = $xx")
-    elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER
-        println("Dual infeasibility certificate found.")
-    elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER
-        println("Primal infeasibility certificate found.")
-    elseif solsta == MSK_SOL_STA_UNKNOWN
-        # The solutions status is unknown. The termination code
-        # indicates why the optimizer terminated prematurely.
-        println("The solution status is unknown.")
-        (symname, desc) = getcodedesc(trmcode)
-        println("   Termination code: $symname $desc")
-    else
-        println("An unexpected solution status $solsta is obtained.")
-    end
+catch e
+    println("En error occurred: $(e.rcode), $(e.msg)")
 end

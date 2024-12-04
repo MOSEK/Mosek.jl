@@ -16,6 +16,7 @@ function portfolio( mu :: Vector{Float64},
                     GT :: Array{Float64,2})
     (k,n) = size(GT)
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         # Directs the log task stream
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
@@ -69,7 +70,7 @@ function portfolio( mu :: Vector{Float64},
         # Add the quadratic domain of dimension k+1
         qdom = appendquadraticconedomain(task,n + k + 1)
         # Add the constraint
-        appendaccseq(task,qdom,1,zeros(n+k+1))
+        appendaccseq(task,qdom,1,nothing)
         putaccname(task,1, "risk")
 
         # Objective: maximize expected return mu^T x
@@ -81,6 +82,11 @@ function portfolio( mu :: Vector{Float64},
             putafeg(task,1, gamma)
 
             optimize(task)
+
+            if getsolsta(task, MSK_SOL_ITR) != MSK_SOL_STA_OPTIMAL
+                # See https://docs.mosek.com/latest/juliaapi/accessing-solution.html about handling solution statuses.
+                error("Solution not optimal")
+            end
 
             writedata(task,"portfolio_6_factor-$(gamma).ptf");
 

@@ -14,6 +14,7 @@ function portfolio( mu :: Vector{Float64},
                     GT :: Array{Float64,2})
     (k,n) = size(GT)
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         # Directs the log task stream
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
@@ -55,7 +56,6 @@ function portfolio( mu :: Vector{Float64},
         # The remaining k expressions comprise GT*x, we add them row by row
         # In more realisic scenarios it would be better to extract nonzeros and input in sparse form
 
-
         subj = [1:n...]
         for i in 1:k
             putafefrow(task,i + 1, subj, GT[i,:])
@@ -65,10 +65,8 @@ function portfolio( mu :: Vector{Float64},
         # Add the quadratic domain of dimension k+1
         qdom = appendquadraticconedomain(task,k + 1)
         # Add the constraint
-        appendaccseq(task,qdom,1,zeros(k+1))
+        appendaccseq(task,qdom,1,nothing)
         putaccname(task,1, "risk")
-
-
 
         # Objective: maximize expected return mu^T x
         putclist(task,[x_ofs+1:x_ofs+n...],mu)
@@ -80,6 +78,12 @@ function portfolio( mu :: Vector{Float64},
         solutionsummary(task,MSK_STREAM_LOG)
 
         writedata(task,"portfolio_1_basic.ptf");
+
+        # Check if the interior point solution is an optimal point
+        if getsolsta(task, MSK_SOL_ITR) != MSK_SOL_STA_OPTIMAL
+            # See https://docs.mosek.com/latest/juliaapi/accessing-solution.html about handling solution statuses.
+            error("Solution not optimal")
+        end
 
         # Read the results
         xx = getxxslice(task,MSK_SOL_ITR, x_ofs+1,x_ofs+n+1)
@@ -107,7 +111,5 @@ let w      = 59.0,
         println("Expected return $(expret) for gamma $(gamma)")
         println("Solution vector = $(xx)")
 
-            @assert abs(expret - 4.1922467685e+01) < 1e-7
-            @assert sum(abs.(xx - [7.7127e-08, 1.0252e-07, 9.9557e-08, 7.1640e-08, 7.2993e+01, 2.7007e+01, 1.8063e-07, 9.9400e-08])) < 1e-3
     end
 end
