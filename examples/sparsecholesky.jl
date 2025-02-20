@@ -18,7 +18,7 @@ function printsparse(n          :: Int32,
     println("P = $(perm)")
     println("diag(D) = $(diag)")
 
-    l = zeros(Int32,(n,n))
+    l = zeros(Float64,(n,n))
     for j in 1:n
         for i in lptrc[j]:lptrc[j]+lnzc[j]-1
             l[lsubc[i],j] = lvalc[i]
@@ -32,11 +32,11 @@ function main()
     # Observe that anzc, aptrc, asubc and avalc only specify the lower triangular part.
     n     = Int32(4)
     anzc  = Int32[4, 1, 1, 1]
-    asubc = Int32[0, 1, 2, 3,
-                     1,
-                        2,
-                           3]
-    aptrc = Int64[0, 4, 5, 6]
+    asubc = Int32[1, 2, 3, 4,
+                     2,
+                        3,
+                           4]
+    aptrc = Int64[1, 5, 6, 7]
     avalc = Float64[4.0, 1.0, 1.0, 1.0,
                          1.0,
                               1.0,
@@ -60,11 +60,12 @@ function main()
     x = b[perm]
 
     # Compute  inv(L)*x.
+    @show x
     sparsetriangularsolvedense(MSK_TRANSPOSE_NO,  lnzc, lptrc, lsubc, lvalc, x)
     # Compute  inv(L^T)*x.
     sparsetriangularsolvedense(MSK_TRANSPOSE_YES, lnzc, lptrc, lsubc, lvalc, x)
 
-    println("\nSolution A x = b, x = $([ x[j] for i in 1..n for j in 1..n if perm[j] == i ])")
+    println("\nSolution A x = b, x = $([ x[j] for i in 1:n for j in 1:n if perm[j] == i ])")
 
     n     = Int32(3)
     anzc  = Int32[3, 2, 1]

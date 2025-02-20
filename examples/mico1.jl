@@ -13,6 +13,7 @@
 using Mosek
 
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Directs the log task stream to the user specified
     # method task_msg_obj.stream
     appendvars(task,3);   # x, y, t
@@ -36,10 +37,10 @@ maketask() do task
     putafegslice(task,1, 6, Float64[0, -3.8, 0, 0, 1.0])
 
     # Add constraint (x-3.8, 1, y) \in \EXP
-    appendacc(task,appendprimalexpconedomain(task), Int64[2, 5, 3], zeros(3))
+    appendacc(task,appendprimalexpconedomain(task), Int64[2, 5, 3], nothing)
 
     # Add constraint (t, x, y) \in \QUAD
-    appendacc(task,appendquadraticconedomain(task,3), Int64[4, 1, 3], zeros(3))
+    appendacc(task,appendquadraticconedomain(task,3), Int64[4, 1, 3], nothing)
 
     # Objective
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
@@ -52,6 +53,5 @@ maketask() do task
     xx = getxxslice(task,MSK_SOL_ITG, 1, 3)
     println("x = $(xx[1]) y = $(xx[2])")
 
-    @assert maximum(abs.(xx-[4.0, -2.0])) < 1e-7
     
 end

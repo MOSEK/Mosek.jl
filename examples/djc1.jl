@@ -15,6 +15,7 @@ using Mosek
 
 
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Append free variables
     numvar = 4
     appendvars(task,numvar)
@@ -54,14 +55,14 @@ maketask() do task
     putdjc(task,1,                                        # DJC index
                 [rminus1, zero2, rminus1, zero2],         # Domains     (domidxlist)
                 [1, 5, 6, 2, 3, 4],                       # AFE indices (afeidxlist)
-                zeros(6),                                 # Unused
+                nothing,                                  # Unused
                 [2, 2] )                                  # Term sizes  (termsizelist)
 
     # Second disjunctive constraint
     putdjc(task,2,                                        # DJC index
                 [zero1, zero1, zero1, zero1],             # Domains     (domidxlist)
                 [7, 8, 9, 10],                            # AFE indices (afeidxlist)
-                zeros(4),                                 # Unused
+                nothing,                                  # Unused
                 [1, 1, 1, 1] )                            # Term sizes  (termidxlist)
 
     # Useful for debugging
@@ -88,5 +89,4 @@ maketask() do task
     end
     @assert maximum(abs.(xx - [0.0, 0.0, -12.5, 2.5])) < 1e-7
 
-    @assert maximum(abs.(xx-[0.0, 0.0, -12.5, 2.5])) < 1e-7
 end

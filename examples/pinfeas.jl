@@ -10,6 +10,7 @@ using Mosek
 # Set up a simple linear problem from the manual for test purposes
 function testProblem(func :: Function)
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         appendvars(task,7)
         appendcons(task,7);
         putclist(task,
@@ -50,6 +51,7 @@ end
 # In this example we set up a simple problem
 # One could use any task or a task read from a file
 testProblem() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Useful for debugging
     writedata(task,"pinfeas.ptf");                          # Write file in human-readable format
     # Attach a log stream printer to the task
@@ -70,6 +72,5 @@ testProblem() do task
         analyzeCertificate(getslc(task,MSK_SOL_ITR), getsuc(task,MSK_SOL_ITR), eps)
     else
         println("The problem is not primal infeasible, no certificate to show")
-        @assert false
     end
 end

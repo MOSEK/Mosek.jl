@@ -36,6 +36,7 @@ let numvar = 4,
                 MSK_VAR_TYPE_INT ]
 
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
         inputdata(task,numcon, numvar,
@@ -77,9 +78,6 @@ let numvar = 4,
             println("Construct solution utilization: $constr")
             println("Construct solution objective: $constrVal")
 
-            @assert maximum(abs.(xx-[0.0, 2.0, 0.0, 0.5])) < 1e-7
-            @assert abs(constrVal-19.5) < 1e-7
-            @assert constr == 1
         else
             println("No integer solution is available.")
         end

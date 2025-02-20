@@ -39,6 +39,7 @@ let numcon = 3,
                3.0, 3.0, 2.0 ]
 
     maketask() do task          # 126
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
         # Append the constraints.
         appendcons(task,numcon)
