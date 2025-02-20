@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.0.2
+# Target: Mosek 11.0.8
 export
   Basindtype,
   MSK_BI_NEVER,
@@ -1628,19 +1628,19 @@ Base.convert(::Type{Int},x::Mark) = Int(x.value)
 """
     Simprecision
 
-Exprimental. Usage not recommended.
+Experimental. Usage not recommended.
 
-* `MSK_SIM_PRECISION_NORMAL`. Exprimental. Usage not recommended.
-* `MSK_SIM_PRECISION_EXTENDED`. Exprimental. Usage not recommended.
+* `MSK_SIM_PRECISION_NORMAL`. Experimental. Usage not recommended.
+* `MSK_SIM_PRECISION_EXTENDED`. Experimental. Usage not recommended.
 """
 struct Simprecision <: MosekEnum
   value :: Int32
 end # simprecision
 
-"Exprimental. Usage not recommended."
+"Experimental. Usage not recommended."
 const MSK_SIM_PRECISION_NORMAL = Simprecision(0)
 
-"Exprimental. Usage not recommended."
+"Experimental. Usage not recommended."
 const MSK_SIM_PRECISION_EXTENDED = Simprecision(1)
 tostr(v::Simprecision) = if v.value == 0 "Mosek.MSK_SIM_PRECISION_NORMAL"
   elseif v.value == 1 "Mosek.MSK_SIM_PRECISION_EXTENDED"
@@ -3692,7 +3692,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_INTPNT_TOL_STEP_SIZE`. Minimal step size tolerance for the interior-point optimizer.
 * `MSK_DPAR_LOWER_OBJ_CUT`. Objective bound.
 * `MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH`. Objective bound.
-* `MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR`. Controlls the maximum size of the clqiue table as a factor of the number of nonzeros in the A matrix.
+* `MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR`. Controlls the maximum size of the clique table as a factor of the number of nonzeros in the A matrix.
 * `MSK_DPAR_MIO_DJC_MAX_BIGM`. Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
 * `MSK_DPAR_MIO_MAX_TIME`. Time limit for the mixed-integer optimizer.
 * `MSK_DPAR_MIO_REL_GAP_CONST`. This value is used to compute the relative gap for the solution to an integer optimization problem.
@@ -3711,8 +3711,8 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL`. This parameter determines when columns are dropped in incomplete Cholesky factorization during reformulation of quadratic problems.
 * `MSK_DPAR_SEMIDEFINITE_TOL_APPROX`. Tolerance to define a matrix to be positive semidefinite.
 * `MSK_DPAR_SIM_LU_TOL_REL_PIV`. Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
-* `MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED`. Exprimental. Usage not recommended.
-* `MSK_DPAR_SIM_PRECISION_SCALING_NORMAL`. Exprimental. Usage not recommended.
+* `MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED`. Experimental. Usage not recommended.
+* `MSK_DPAR_SIM_PRECISION_SCALING_NORMAL`. Experimental. Usage not recommended.
 * `MSK_DPAR_SIMPLEX_ABS_TOL_PIV`. Absolute pivot tolerance employed by the simplex optimizers.
 * `MSK_DPAR_UPPER_OBJ_CUT`. Objective bound.
 * `MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH`. Objective bound.
@@ -4103,7 +4103,7 @@ Possible Values: Any number between -inf and +inf.
 const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH = Dparam(39)
 
 """
-Controlls the maximum size of the clqiue table as a factor of the number of nonzeros in the A matrix.
+Controlls the maximum size of the clique table as a factor of the number of nonzeros in the A matrix.
 
 Default value: `-1`
 
@@ -4274,7 +4274,7 @@ Possible Values: Any number between 1.0e-6 and 0.999999.
 const MSK_DPAR_SIM_LU_TOL_REL_PIV = Dparam(58)
 
 """
-Exprimental. Usage not recommended.
+Experimental. Usage not recommended.
 
 Default value: `2.0`
 
@@ -4283,7 +4283,7 @@ Possible Values: Any number between 1.0 and +inf.
 const MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED = Dparam(59)
 
 """
-Exprimental. Usage not recommended.
+Experimental. Usage not recommended.
 
 Default value: `1.0`
 
@@ -5659,7 +5659,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_SIM_MAX_ITERATIONS`. Maximum number of iterations that can be used by a simplex optimizer.
 * `MSK_IPAR_SIM_MAX_NUM_SETBACKS`. Controls how many set-backs that are allowed within a simplex optimizer.
 * `MSK_IPAR_SIM_NON_SINGULAR`. Controls if the simplex optimizer ensures a non-singular basis, if possible.
-* `MSK_IPAR_SIM_PRECISION`. 
+* `MSK_IPAR_SIM_PRECISION`. Experimental. Usage not recommended.
 * `MSK_IPAR_SIM_PRECISION_BOOST`. Controls whether the simplex optimizer is allowed to boost the precision.
 * `MSK_IPAR_SIM_PRIMAL_CRASH`. Controls the simplex crash.
 * `MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD`. An experimental feature.
@@ -7393,14 +7393,14 @@ Possible values:
 const MSK_IPAR_SIM_NON_SINGULAR = Iparam(149)
 
 """
-
+Experimental. Usage not recommended.
 
 Default value: `normal`
 
 Possible values:
 
-* `MSK_SIM_PRECISION_NORMAL`. Exprimental. Usage not recommended.
-* `MSK_SIM_PRECISION_EXTENDED`. Exprimental. Usage not recommended.
+* `MSK_SIM_PRECISION_NORMAL`. Experimental. Usage not recommended.
+* `MSK_SIM_PRECISION_EXTENDED`. Experimental. Usage not recommended.
 """
 const MSK_IPAR_SIM_PRECISION = Iparam(150)
 
@@ -12697,7 +12697,7 @@ The enumeration type containing all string parameters.
 * `MSK_SPAR_INT_SOL_FILE_NAME`. Name of the int solution file.
 * `MSK_SPAR_ITR_SOL_FILE_NAME`. Name of the itr solution file.
 * `MSK_SPAR_MIO_DEBUG_STRING`. For internal debugging purposes.
-* `MSK_SPAR_PARAM_COMMENT_SIGN`. Solution file comment character.
+* `MSK_SPAR_PARAM_COMMENT_SIGN`. Parameter file comment character.
 * `MSK_SPAR_PARAM_READ_FILE_NAME`. Modifications to the parameter database is read from this file.
 * `MSK_SPAR_PARAM_WRITE_FILE_NAME`. The parameter database is written to this file.
 * `MSK_SPAR_READ_MPS_BOU_NAME`. Name of the BOUNDS vector used. An empty name means that the first BOUNDS vector is used.
@@ -12781,9 +12781,9 @@ Possible Values: Any valid string.
 const MSK_SPAR_MIO_DEBUG_STRING = Sparam(5)
 
 """
-Solution file comment character.
+Parameter file comment character.
 
-Default value: "`%`"
+Default value: "`%%`"
 
 Possible Values: Any valid string.
 
