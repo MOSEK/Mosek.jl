@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.0.8
+# Target: Mosek 11.0.20
 export
   Basindtype,
   MSK_BI_NEVER,
@@ -3695,7 +3695,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR`. Controlls the maximum size of the clique table as a factor of the number of nonzeros in the A matrix.
 * `MSK_DPAR_MIO_DJC_MAX_BIGM`. Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
 * `MSK_DPAR_MIO_MAX_TIME`. Time limit for the mixed-integer optimizer.
-* `MSK_DPAR_MIO_REL_GAP_CONST`. This value is used to compute the relative gap for the solution to an integer optimization problem.
+* `MSK_DPAR_MIO_REL_GAP_CONST`. This value is used to compute the relative gap for the solution to a mixed-integer optimization problem.
 * `MSK_DPAR_MIO_TOL_ABS_GAP`. Absolute optimality tolerance employed by the mixed-integer optimizer.
 * `MSK_DPAR_MIO_TOL_ABS_RELAX_INT`. Integer feasibility tolerance.
 * `MSK_DPAR_MIO_TOL_FEAS`. Feasibility tolerance for mixed integer solver.
@@ -4130,7 +4130,7 @@ Possible Values: Any number between -inf and +inf.
 const MSK_DPAR_MIO_MAX_TIME = Dparam(42)
 
 """
-This value is used to compute the relative gap for the solution to an integer optimization problem.
+This value is used to compute the relative gap for the solution to a mixed-integer optimization problem.
 
 Default value: `1.0e-10`
 
