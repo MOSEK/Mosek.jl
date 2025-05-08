@@ -14,7 +14,6 @@ mskplatform,distroext =
     end
   elseif Sys.ARCH == :x86_64
     if     Sys.islinux()   "linux64x86",".tar.bz2"
-    elseif Sys.isapple()   "osx64x86",  ".tar.bz2"
     elseif Sys.iswindows() "win64x86",  ".zip"
     else   error("Platform not supported on AMD64")
     end
@@ -54,7 +53,6 @@ function findlibs(path::AbstractString,mskvmajor::AbstractString,mskvminor::Abst
             end
         elseif Sys.ARCH == :x86_64
             if     Sys.islinux()   "libmosek64.so.$(mskvmajor).$(mskvminor)"
-            elseif Sys.isapple()   "libmosek64.$(mskvmajor).$(mskvminor).dylib"
             elseif Sys.iswindows() "mosek64_$(mskvmajor)_$(mskvminor).dll"
             else   error("Unexpected platform for AMD64")
             end
