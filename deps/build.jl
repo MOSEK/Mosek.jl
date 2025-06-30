@@ -16,6 +16,7 @@ mskplatform,distroext =
     if     Sys.islinux()   "linux64x86",".tar.bz2"
     elseif Sys.isapple()   "osx64x86",  ".tar.bz2"
     elseif Sys.iswindows() "win64x86",  ".zip"
+    elseif Sys.isapple()   "osx64x86",  ".tar.bz2" #! avoid macos error
     else   error("Platform not supported on AMD64")
     end
   elseif Sys.ARCH == :aarch64
