@@ -26,6 +26,7 @@
 using Mosek
 
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putobjname(task,"solvebasis")
 
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
@@ -75,7 +76,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
 
-    r = optimize(task,"mosek://solve.mosek.com:30080")
+    r = optimize(task)
     if r != MSK_RES_OK
         println("Mosek warning: $r")
     end

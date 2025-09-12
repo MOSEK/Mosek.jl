@@ -71,6 +71,7 @@ function optimizeconcurrent(tasks::Vector{Mosek.Task})
 
     # Set a callback function
     for t in tasks
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putcallbackfunc(t, callback)
     end
 
@@ -103,7 +104,8 @@ end
 # If none task is considered successful returns -1.
 function optimizeconcurrent(task, optimizers)
     # Choose various optimizers for cloned tasks
-    tasks = Mosek.Task[ let t = maketask()
+    tasks = Mosek.Task[ let t = maketask(task)
+                            # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
                             putintparam(t,MSK_IPAR_OPTIMIZER, opt)
                             t
                         end for opt in optimizers ]
@@ -190,6 +192,7 @@ end
 #   argv[1]: (optional) time limit
 function main(fname::String,tlimit)
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
         if fname != "-"
             readdata(task,fname)
@@ -247,12 +250,10 @@ Variables
     @x3 [0;+inf]
 """
 
-let fname = if length(ARGS) < 1 "-" else ARGS[1] end,
+let fname = if length(ARGS) < 1 "../data/25fv47.mps" else ARGS[1] end,
     tlimit = if length(ARGS) < 2 Nothing else parse(Float64,ARGS[2]) end
 
-    if false
-        main(fname,tlimit)
-    else
-        println!("Disabled: concurrent1.jl. Example is broken.")
-    end
+    optimize(maketask()) # Just to initialize the thread pool from the main thread
+
+    main(fname,tlimit)
 end

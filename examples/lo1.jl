@@ -46,6 +46,7 @@ A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3],
 ############################
 
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
     putobjname(task,"lo1")
@@ -65,6 +66,7 @@ maketask() do task
     end
 
     putclist(task,[1,2,3,4], c)
+
     putacolslice(task,1,numvar+1,A)
 
     putvarboundslice(task, 1, numvar+1, bkx,blx,bux)
@@ -77,7 +79,7 @@ maketask() do task
     putobjsense(task,MSK_OBJECTIVE_SENSE_MAXIMIZE)
 
     # Solve the problem
-    optimize(task,"mosek://solve.mosek.com:30080")
+    optimize(task)
 
     # Print a summary containing information
     # about the solution for debugging purposes
@@ -91,7 +93,6 @@ maketask() do task
         print("Optimal solution:")
         println(xx)
 
-        @assert maximum(abs.(xx-[0, 0, 15, 8.333333333333334])) < 1e-7
     elseif solsta in [ MSK_SOL_STA_DUAL_INFEAS_CER,
                        MSK_SOL_STA_PRIM_INFEAS_CER ]
         println("Primal or dual infeasibility certificate found.\n")

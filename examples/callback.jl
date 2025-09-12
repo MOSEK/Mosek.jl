@@ -95,6 +95,7 @@ else
     filename = ARGS[2]
 
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         readdata(task,filename)
 
         if     slvr == "psim"

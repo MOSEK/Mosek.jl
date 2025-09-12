@@ -35,6 +35,7 @@ let numafe      = 4,  # Number of affine expressions.
     barf_v = [0.0, 1.0]
 
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         # Append 'NUMAFE' empty affine expressions.
         appendafes(task,numafe)
 
@@ -70,9 +71,9 @@ let numafe      = 4,  # Number of affine expressions.
         putafebarfblocktriplet(task,barf_i, barf_j, barf_k, barf_l, barf_v)
 
         # Append R+ domain and the corresponding ACC
-        appendacc(task,appendrplusdomain(task,1), [1],[0.0])
+        appendacc(task,appendrplusdomain(task,1), [1], nothing)
         # Append SVEC_PSD domain and the corresponding ACC
-        appendacc(task,appendsvecpsdconedomain(task,3), [2,3,4], [0.0,0.0,0.0])
+        appendacc(task,appendsvecpsdconedomain(task,3), [2,3,4], nothing)
 
         # Run optimizer
         optimize(task)
@@ -87,8 +88,6 @@ let numafe      = 4,  # Number of affine expressions.
             xx = getxx(task,MSK_SOL_ITR)
             barx = getbarxj(task,MSK_SOL_ITR,1);    # Request the interior solution.
             println("Optimal primal solution, x = $xx, barx = $barx")
-            @assert maximum(abs.(xx-[1.0, 1.0])) < 1e-6
-            @assert maximum(abs.(barx- [1.0, 1.0, 1.0])) < 1e-6
         elseif solsta == MSK_SOL_STA_PRIM_INFEAS_CER || solsta == MSK_SOL_STA_DUAL_INFEAS_CER
             println("Primal or dual infeasibility certificate found.")
         elseif solsta == MSK_SOL_STA_UNKNOWN

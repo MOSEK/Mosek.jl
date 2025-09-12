@@ -15,6 +15,7 @@ else
         outfile = if length(ARGS) > 1 ARGS[2] else Nothing end
 
         maketask() do task
+            # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
             putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
             # We assume that a problem file was given as the first command

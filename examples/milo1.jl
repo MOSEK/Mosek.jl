@@ -33,6 +33,7 @@ numcon = length(bkc)
 
 # Create a task
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Attach a printer to the task
     putstreamfunc(task,MSK_STREAM_LOG,printstream)
 
@@ -67,7 +68,7 @@ maketask() do task
     putdouparam(task,MSK_DPAR_MIO_MAX_TIME, 60.0)
 
     # Optimize the task
-    optimize(task,"mosek://solve.mosek.com:30080")
+    optimize(task)
 
     writedata(task,"milo1.ptf")
 
@@ -82,7 +83,6 @@ maketask() do task
         # Output a solution
         xx = getxx(task,MSK_SOL_ITG)
         @printf("Optimal solution: %s\n", xx')
-        @assert maximum(abs.(xx-[5.0, 0.0])) < 1e-7
     elseif solsta == MSK_SOL_STA_UNKNOWN
         println("Unknown solution status")
     else

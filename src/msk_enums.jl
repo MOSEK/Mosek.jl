@@ -1,12 +1,11 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.0.0
+# Target: Mosek 12.0.0
 export
   Basindtype,
   MSK_BI_NEVER,
   MSK_BI_ALWAYS,
   MSK_BI_NO_ERROR,
   MSK_BI_IF_FEASIBLE,
-  MSK_BI_RESERVERED,
   Boundkey,
   MSK_BK_LO,
   MSK_BK_UP,
@@ -49,12 +48,6 @@ export
   MSK_INTPNT_HOTSTART_PRIMAL,
   MSK_INTPNT_HOTSTART_DUAL,
   MSK_INTPNT_HOTSTART_PRIMAL_DUAL,
-  Purify,
-  MSK_PURIFY_NONE,
-  MSK_PURIFY_PRIMAL,
-  MSK_PURIFY_DUAL,
-  MSK_PURIFY_PRIMAL_DUAL,
-  MSK_PURIFY_AUTO,
   Callbackcode,
   MSK_CALLBACK_BEGIN_BI,
   MSK_CALLBACK_BEGIN_CONIC,
@@ -63,20 +56,24 @@ export
   MSK_CALLBACK_BEGIN_DUAL_SETUP_BI,
   MSK_CALLBACK_BEGIN_DUAL_SIMPLEX,
   MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI,
+  MSK_CALLBACK_BEGIN_DUALIZER,
   MSK_CALLBACK_BEGIN_FOLDING,
-  MSK_CALLBACK_BEGIN_FOLDING_BI,
-  MSK_CALLBACK_BEGIN_FOLDING_BI_DUAL,
-  MSK_CALLBACK_BEGIN_FOLDING_BI_INITIALIZE,
-  MSK_CALLBACK_BEGIN_FOLDING_BI_OPTIMIZER,
-  MSK_CALLBACK_BEGIN_FOLDING_BI_PRIMAL,
+  MSK_CALLBACK_BEGIN_GP_ORDER,
   MSK_CALLBACK_BEGIN_INFEAS_ANA,
   MSK_CALLBACK_BEGIN_INITIALIZE_BI,
   MSK_CALLBACK_BEGIN_INTPNT,
+  MSK_CALLBACK_BEGIN_INTPNT_SETUP,
   MSK_CALLBACK_BEGIN_LICENSE_WAIT,
+  MSK_CALLBACK_BEGIN_LOCAL_ORDER,
   MSK_CALLBACK_BEGIN_MIO,
   MSK_CALLBACK_BEGIN_OPTIMIZE_BI,
+  MSK_CALLBACK_BEGIN_OPTIMIZE_BI_128BIT,
   MSK_CALLBACK_BEGIN_OPTIMIZER,
+  MSK_CALLBACK_BEGIN_OPTIMIZER_128BIT,
+  MSK_CALLBACK_BEGIN_ORDER,
   MSK_CALLBACK_BEGIN_PRESOLVE,
+  MSK_CALLBACK_BEGIN_PRESOLVE_ELIMINATOR,
+  MSK_CALLBACK_BEGIN_PRESOLVE_LINEAR_DEPENDENCIES,
   MSK_CALLBACK_BEGIN_PRIMAL_BI,
   MSK_CALLBACK_BEGIN_PRIMAL_REPAIR,
   MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY,
@@ -89,6 +86,20 @@ export
   MSK_CALLBACK_BEGIN_SIMPLEX,
   MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX,
   MSK_CALLBACK_BEGIN_TO_CONIC,
+  MSK_CALLBACK_BEGIN_UNDUALIZE_BI,
+  MSK_CALLBACK_BEGIN_UNDUALIZE_BI_DUAL,
+  MSK_CALLBACK_BEGIN_UNDUALIZE_BI_INITIALIZE,
+  MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE,
+  MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE_128BIT,
+  MSK_CALLBACK_BEGIN_UNDUALIZE_BI_PRIMAL,
+  MSK_CALLBACK_BEGIN_UNDUALIZING,
+  MSK_CALLBACK_BEGIN_UNFOLD_BI,
+  MSK_CALLBACK_BEGIN_UNFOLD_BI_DUAL,
+  MSK_CALLBACK_BEGIN_UNFOLD_BI_INITIALIZE,
+  MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE,
+  MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE_128BIT,
+  MSK_CALLBACK_BEGIN_UNFOLD_BI_PRIMAL,
+  MSK_CALLBACK_BEGIN_UNFOLDING,
   MSK_CALLBACK_BEGIN_WRITE,
   MSK_CALLBACK_CONIC,
   MSK_CALLBACK_DECOMP_MIO,
@@ -100,20 +111,24 @@ export
   MSK_CALLBACK_END_DUAL_SETUP_BI,
   MSK_CALLBACK_END_DUAL_SIMPLEX,
   MSK_CALLBACK_END_DUAL_SIMPLEX_BI,
+  MSK_CALLBACK_END_DUALIZER,
   MSK_CALLBACK_END_FOLDING,
-  MSK_CALLBACK_END_FOLDING_BI,
-  MSK_CALLBACK_END_FOLDING_BI_DUAL,
-  MSK_CALLBACK_END_FOLDING_BI_INITIALIZE,
-  MSK_CALLBACK_END_FOLDING_BI_OPTIMIZER,
-  MSK_CALLBACK_END_FOLDING_BI_PRIMAL,
+  MSK_CALLBACK_END_GP_ORDER,
   MSK_CALLBACK_END_INFEAS_ANA,
   MSK_CALLBACK_END_INITIALIZE_BI,
   MSK_CALLBACK_END_INTPNT,
+  MSK_CALLBACK_END_INTPNT_SETUP,
   MSK_CALLBACK_END_LICENSE_WAIT,
+  MSK_CALLBACK_END_LOCAL_ORDER,
   MSK_CALLBACK_END_MIO,
   MSK_CALLBACK_END_OPTIMIZE_BI,
+  MSK_CALLBACK_END_OPTIMIZE_BI_128BIT,
   MSK_CALLBACK_END_OPTIMIZER,
+  MSK_CALLBACK_END_OPTIMIZER_128BIT,
+  MSK_CALLBACK_END_ORDER,
   MSK_CALLBACK_END_PRESOLVE,
+  MSK_CALLBACK_END_PRESOLVE_ELIMINATOR,
+  MSK_CALLBACK_END_PRESOLVE_LINEAR_DEPENDENCIES,
   MSK_CALLBACK_END_PRIMAL_BI,
   MSK_CALLBACK_END_PRIMAL_REPAIR,
   MSK_CALLBACK_END_PRIMAL_SENSITIVITY,
@@ -127,10 +142,22 @@ export
   MSK_CALLBACK_END_SIMPLEX_BI,
   MSK_CALLBACK_END_SOLVE_ROOT_RELAX,
   MSK_CALLBACK_END_TO_CONIC,
+  MSK_CALLBACK_END_UNDUALIZE_BI,
+  MSK_CALLBACK_END_UNDUALIZE_BI_DUAL,
+  MSK_CALLBACK_END_UNDUALIZE_BI_INITIALIZE,
+  MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE,
+  MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE_128BIT,
+  MSK_CALLBACK_END_UNDUALIZE_BI_PRIMAL,
+  MSK_CALLBACK_END_UNDUALIZING,
+  MSK_CALLBACK_END_UNFOLD_BI,
+  MSK_CALLBACK_END_UNFOLD_BI_DUAL,
+  MSK_CALLBACK_END_UNFOLD_BI_INITIALIZE,
+  MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE,
+  MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE_128BIT,
+  MSK_CALLBACK_END_UNFOLD_BI_PRIMAL,
+  MSK_CALLBACK_END_UNFOLDING,
   MSK_CALLBACK_END_WRITE,
-  MSK_CALLBACK_FOLDING_BI_DUAL,
-  MSK_CALLBACK_FOLDING_BI_OPTIMIZER,
-  MSK_CALLBACK_FOLDING_BI_PRIMAL,
+  MSK_CALLBACK_GP_ORDER,
   MSK_CALLBACK_HEARTBEAT,
   MSK_CALLBACK_IM_DUAL_SENSIVITY,
   MSK_CALLBACK_IM_DUAL_SIMPLEX,
@@ -140,21 +167,31 @@ export
   MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX,
   MSK_CALLBACK_IM_MIO_INTPNT,
   MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX,
-  MSK_CALLBACK_IM_ORDER,
   MSK_CALLBACK_IM_PRIMAL_SENSIVITY,
   MSK_CALLBACK_IM_PRIMAL_SIMPLEX,
   MSK_CALLBACK_IM_READ,
   MSK_CALLBACK_IM_ROOT_CUTGEN,
   MSK_CALLBACK_IM_SIMPLEX,
   MSK_CALLBACK_INTPNT,
+  MSK_CALLBACK_LOCAL_ORDER,
   MSK_CALLBACK_NEW_INT_MIO,
   MSK_CALLBACK_OPTIMIZE_BI,
+  MSK_CALLBACK_OPTIMIZE_BI_128BIT,
+  MSK_CALLBACK_ORDER,
   MSK_CALLBACK_PRIMAL_SIMPLEX,
   MSK_CALLBACK_QO_REFORMULATE,
   MSK_CALLBACK_READ_OPF,
   MSK_CALLBACK_READ_OPF_SECTION,
   MSK_CALLBACK_RESTART_MIO,
   MSK_CALLBACK_SOLVING_REMOTE,
+  MSK_CALLBACK_UNDUALIZE_BI_DUAL,
+  MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE,
+  MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE_128BIT,
+  MSK_CALLBACK_UNDUALIZE_BI_PRIMAL,
+  MSK_CALLBACK_UNFOLD_BI_DUAL,
+  MSK_CALLBACK_UNFOLD_BI_OPTIMIZE,
+  MSK_CALLBACK_UNFOLD_BI_OPTIMIZE_128BIT,
+  MSK_CALLBACK_UNFOLD_BI_PRIMAL,
   MSK_CALLBACK_UPDATE_DUAL_BI,
   MSK_CALLBACK_UPDATE_DUAL_SIMPLEX,
   MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI,
@@ -216,13 +253,10 @@ export
   MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY,
   MSK_DINF_BI_CLEAN_TIME,
   MSK_DINF_BI_DUAL_TIME,
+  MSK_DINF_BI_OPTIMIZE_128BIT_TIME,
+  MSK_DINF_BI_OPTIMIZE_TIME,
   MSK_DINF_BI_PRIMAL_TIME,
   MSK_DINF_BI_TIME,
-  MSK_DINF_FOLDING_BI_OPTIMIZE_TIME,
-  MSK_DINF_FOLDING_BI_UNFOLD_DUAL_TIME,
-  MSK_DINF_FOLDING_BI_UNFOLD_INITIALIZE_TIME,
-  MSK_DINF_FOLDING_BI_UNFOLD_PRIMAL_TIME,
-  MSK_DINF_FOLDING_BI_UNFOLD_TIME,
   MSK_DINF_FOLDING_FACTOR,
   MSK_DINF_FOLDING_TIME,
   MSK_DINF_INTPNT_DUAL_FEAS,
@@ -232,6 +266,7 @@ export
   MSK_DINF_INTPNT_ORDER_TIME,
   MSK_DINF_INTPNT_PRIMAL_FEAS,
   MSK_DINF_INTPNT_PRIMAL_OBJ,
+  MSK_DINF_INTPNT_SETUP_TIME,
   MSK_DINF_INTPNT_TIME,
   MSK_DINF_MIO_CLIQUE_SELECTION_TIME,
   MSK_DINF_MIO_CLIQUE_SEPARATION_TIME,
@@ -328,6 +363,18 @@ export
   MSK_DINF_SOL_ITR_PVIOLCONES,
   MSK_DINF_SOL_ITR_PVIOLVAR,
   MSK_DINF_TO_CONIC_TIME,
+  MSK_DINF_UNDUALIZE_BI_DUAL_TIME,
+  MSK_DINF_UNDUALIZE_BI_INITIALIZE_TIME,
+  MSK_DINF_UNDUALIZE_BI_OPTIMIZE_128BIT_TIME,
+  MSK_DINF_UNDUALIZE_BI_OPTIMIZE_TIME,
+  MSK_DINF_UNDUALIZE_BI_PRIMAL_TIME,
+  MSK_DINF_UNDUALIZE_BI_TIME,
+  MSK_DINF_UNFOLD_BI_DUAL_TIME,
+  MSK_DINF_UNFOLD_BI_INITIALIZE_TIME,
+  MSK_DINF_UNFOLD_BI_OPTIMIZE_128BIT_TIME,
+  MSK_DINF_UNFOLD_BI_OPTIMIZE_TIME,
+  MSK_DINF_UNFOLD_BI_PRIMAL_TIME,
+  MSK_DINF_UNFOLD_BI_TIME,
   MSK_DINF_WRITE_DATA_TIME,
   Feature,
   MSK_FEATURE_PTS,
@@ -349,6 +396,7 @@ export
   MSK_DPAR_DATA_TOL_QIJ,
   MSK_DPAR_DATA_TOL_X,
   MSK_DPAR_FOLDING_TOL_EQ,
+  MSK_DPAR_HEARTBEAT_SIM_FREQ_TICKS,
   MSK_DPAR_INTPNT_CO_TOL_DFEAS,
   MSK_DPAR_INTPNT_CO_TOL_INFEAS,
   MSK_DPAR_INTPNT_CO_TOL_MU_RED,
@@ -371,6 +419,7 @@ export
   MSK_DPAR_INTPNT_TOL_REL_GAP,
   MSK_DPAR_INTPNT_TOL_REL_STEP,
   MSK_DPAR_INTPNT_TOL_STEP_SIZE,
+  MSK_DPAR_LOG_SIM_FREQ_TICKS,
   MSK_DPAR_LOWER_OBJ_CUT,
   MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH,
   MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR,
@@ -420,6 +469,14 @@ export
   MSK_LIINF_RD_NUMDJC,
   MSK_LIINF_RD_NUMQNZ,
   MSK_LIINF_SIMPLEX_ITER,
+  MSK_LIINF_UNDUALIZE_BI_DUAL_ITER,
+  MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER,
+  MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER_128BIT,
+  MSK_LIINF_UNDUALIZE_BI_PRIMAL_ITER,
+  MSK_LIINF_UNFOLD_BI_DUAL_ITER,
+  MSK_LIINF_UNFOLD_BI_OPTIMIZE_128BIT_ITER,
+  MSK_LIINF_UNFOLD_BI_OPTIMIZE_ITER,
+  MSK_LIINF_UNFOLD_BI_PRIMAL_ITER,
   Iinfitem,
   MSK_IINF_ANA_PRO_NUM_CON,
   MSK_IINF_ANA_PRO_NUM_CON_EQ,
@@ -589,10 +646,10 @@ export
   MSK_IPAR_INTPNT_HOTSTART,
   MSK_IPAR_INTPNT_MAX_ITERATIONS,
   MSK_IPAR_INTPNT_MAX_NUM_COR,
+  MSK_IPAR_INTPNT_NOT_IN_USE,
   MSK_IPAR_INTPNT_OFF_COL_TRH,
   MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS,
   MSK_IPAR_INTPNT_ORDER_METHOD,
-  MSK_IPAR_INTPNT_PURIFY,
   MSK_IPAR_INTPNT_REGULARIZATION_USE,
   MSK_IPAR_INTPNT_SCALING,
   MSK_IPAR_INTPNT_SOLVE_FORM,
@@ -694,7 +751,6 @@ export
   MSK_IPAR_PTF_WRITE_PARAMETERS,
   MSK_IPAR_PTF_WRITE_SINGLE_PSD_TERMS,
   MSK_IPAR_PTF_WRITE_SOLUTIONS,
-  MSK_IPAR_PTF_WRITE_TRANSFORM,
   MSK_IPAR_READ_ASYNC,
   MSK_IPAR_READ_DEBUG,
   MSK_IPAR_READ_KEEP_FREE_CON,
@@ -706,6 +762,7 @@ export
   MSK_IPAR_SENSITIVITY_ALL,
   MSK_IPAR_SENSITIVITY_TYPE,
   MSK_IPAR_SIM_BASIS_FACTOR_USE,
+  MSK_IPAR_SIM_CACHE,
   MSK_IPAR_SIM_DEGEN,
   MSK_IPAR_SIM_DETECT_PWL,
   MSK_IPAR_SIM_DUAL_CRASH,
@@ -749,6 +806,7 @@ export
   MSK_IPAR_WRITE_INT_VARIABLES,
   MSK_IPAR_WRITE_JSON_INDENTATION,
   MSK_IPAR_WRITE_LP_FULL_OBJ,
+  MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS,
   MSK_IPAR_WRITE_LP_LINE_WIDTH,
   MSK_IPAR_WRITE_MPS_FORMAT,
   MSK_IPAR_WRITE_MPS_INT,
@@ -813,6 +871,7 @@ export
   MSK_OPTIMIZER_INTPNT,
   MSK_OPTIMIZER_MIXED_INT,
   MSK_OPTIMIZER_NEW_DUAL_SIMPLEX,
+  MSK_OPTIMIZER_NEW_INTPNT,
   MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX,
   MSK_OPTIMIZER_PRIMAL_SIMPLEX,
   Orderingtype,
@@ -831,7 +890,6 @@ export
   MSK_FOLDING_MODE_FREE,
   MSK_FOLDING_MODE_FREE_UNLESS_BASIC,
   MSK_FOLDING_MODE_FORCE,
-  MSK_FOLDING_MODE_ONLY,
   Parametertype,
   MSK_PAR_INVALID_TYPE,
   MSK_PAR_DOU_TYPE,
@@ -909,10 +967,6 @@ export
   MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES,
   MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES,
   MSK_RES_WRN_DUPLICATE_CONE_NAMES,
-  MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES,
-  MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES,
-  MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES,
-  MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES,
   MSK_RES_WRN_ANA_LARGE_BOUNDS,
   MSK_RES_WRN_ANA_C_ZERO,
   MSK_RES_WRN_ANA_EMPTY_COLS,
@@ -990,7 +1044,12 @@ export
   MSK_RES_ERR_SPACE_NO_INFO,
   MSK_RES_ERR_DIMENSION_SPECIFICATION,
   MSK_RES_ERR_AXIS_NAME_SPECIFICATION,
+  MSK_RES_ERR_READ_PREMATURE_EOF,
   MSK_RES_ERR_READ_FORMAT,
+  MSK_RES_ERR_WRITE_LP_INVALID_VAR_NAMES,
+  MSK_RES_ERR_WRITE_LP_DUPLICATE_VAR_NAMES,
+  MSK_RES_ERR_WRITE_LP_INVALID_CON_NAMES,
+  MSK_RES_ERR_WRITE_LP_DUPLICATE_CON_NAMES,
   MSK_RES_ERR_MPS_FILE,
   MSK_RES_ERR_MPS_INV_FIELD,
   MSK_RES_ERR_MPS_INV_MARKER,
@@ -1225,6 +1284,8 @@ export
   MSK_RES_ERR_TASK_INCOMPATIBLE,
   MSK_RES_ERR_TASK_INVALID,
   MSK_RES_ERR_TASK_WRITE,
+  MSK_RES_ERR_READ_WRITE,
+  MSK_RES_ERR_TASK_PREMATURE_EOF,
   MSK_RES_ERR_LU_MAX_NUM_TRIES,
   MSK_RES_ERR_INVALID_UTF8,
   MSK_RES_ERR_INVALID_WCHAR,
@@ -1364,9 +1425,13 @@ export
   MSK_RES_ERR_SERVER_ADDRESS,
   MSK_RES_ERR_SERVER_CERTIFICATE,
   MSK_RES_ERR_SERVER_TLS_CLIENT,
+  MSK_RES_ERR_TLS_FAIL,
+  MSK_RES_ERR_TLS_CONFIGURATION,
+  MSK_RES_ERR_SERVER_TLS_HANDSHAKE,
   MSK_RES_ERR_SERVER_ACCESS_TOKEN,
   MSK_RES_ERR_SERVER_PROBLEM_SIZE,
   MSK_RES_ERR_SERVER_HARD_TIMEOUT,
+  MSK_RES_ERR_SERVER_VERSION_MISMATCH,
   MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX,
   MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST,
   MSK_RES_ERR_DUPLICATE_FIJ,
@@ -1522,7 +1587,6 @@ Basis identification
 * `MSK_BI_ALWAYS`. Basis identification is always performed even if the interior-point optimizer terminates abnormally.
 * `MSK_BI_NO_ERROR`. Basis identification is performed if the interior-point optimizer terminates without an error.
 * `MSK_BI_IF_FEASIBLE`. Basis identification is not performed if the interior-point optimizer terminates with a problem status saying that the problem is primal or dual infeasible.
-* `MSK_BI_RESERVERED`. Not currently in use.
 """
 struct Basindtype <: MosekEnum
   value :: Int32
@@ -1539,24 +1603,19 @@ const MSK_BI_NO_ERROR = Basindtype(2)
 
 "Basis identification is not performed if the interior-point optimizer terminates with a problem status saying that the problem is primal or dual infeasible."
 const MSK_BI_IF_FEASIBLE = Basindtype(3)
-
-"Not currently in use."
-const MSK_BI_RESERVERED = Basindtype(4)
 tostr(v::Basindtype) = if v.value == 0 "Mosek.MSK_BI_NEVER"
   elseif v.value == 1 "Mosek.MSK_BI_ALWAYS"
   elseif v.value == 2 "Mosek.MSK_BI_NO_ERROR"
   elseif v.value == 3 "Mosek.MSK_BI_IF_FEASIBLE"
-  elseif v.value == 4 "Mosek.MSK_BI_RESERVERED"
   else "Mosek.Basindtype(?)"
   end
 const Basindtype_members = Basindtype[
     MSK_BI_NEVER,
     MSK_BI_ALWAYS,
     MSK_BI_NO_ERROR,
-    MSK_BI_IF_FEASIBLE,
-    MSK_BI_RESERVERED ]
+    MSK_BI_IF_FEASIBLE ]
 members(::Type{Basindtype}) = Basindtype_members
-Base.length(::Type{Basindtype}) = 5
+Base.length(::Type{Basindtype}) = 4
 Base.convert(::Type{Int},x::Basindtype) = Int(x.value)
 """
     Boundkey
@@ -1633,19 +1692,19 @@ Base.convert(::Type{Int},x::Mark) = Int(x.value)
 """
     Simprecision
 
-TBD
+Experimental. Usage not recommended.
 
-* `MSK_SIM_PRECISION_NORMAL`. TBD
-* `MSK_SIM_PRECISION_EXTENDED`. TBD
+* `MSK_SIM_PRECISION_NORMAL`. Experimental. Usage not recommended.
+* `MSK_SIM_PRECISION_EXTENDED`. Experimental. Usage not recommended.
 """
 struct Simprecision <: MosekEnum
   value :: Int32
 end # simprecision
 
-"TBD"
+"Experimental. Usage not recommended."
 const MSK_SIM_PRECISION_NORMAL = Simprecision(0)
 
-"TBD"
+"Experimental. Usage not recommended."
 const MSK_SIM_PRECISION_EXTENDED = Simprecision(1)
 tostr(v::Simprecision) = if v.value == 0 "Mosek.MSK_SIM_PRECISION_NORMAL"
   elseif v.value == 1 "Mosek.MSK_SIM_PRECISION_EXTENDED"
@@ -1901,51 +1960,6 @@ members(::Type{Intpnthotstart}) = Intpnthotstart_members
 Base.length(::Type{Intpnthotstart}) = 4
 Base.convert(::Type{Int},x::Intpnthotstart) = Int(x.value)
 """
-    Purify
-
-Solution purification employed optimizer.
-
-* `MSK_PURIFY_NONE`. The optimizer performs no solution purification.
-* `MSK_PURIFY_PRIMAL`. The optimizer purifies the primal solution.
-* `MSK_PURIFY_DUAL`. The optimizer purifies the dual solution.
-* `MSK_PURIFY_PRIMAL_DUAL`. The optimizer purifies both the primal and dual solution.
-* `MSK_PURIFY_AUTO`. TBD
-"""
-struct Purify <: MosekEnum
-  value :: Int32
-end # purify
-
-"The optimizer performs no solution purification."
-const MSK_PURIFY_NONE = Purify(0)
-
-"The optimizer purifies the primal solution."
-const MSK_PURIFY_PRIMAL = Purify(1)
-
-"The optimizer purifies the dual solution."
-const MSK_PURIFY_DUAL = Purify(2)
-
-"The optimizer purifies both the primal and dual solution."
-const MSK_PURIFY_PRIMAL_DUAL = Purify(3)
-
-"TBD"
-const MSK_PURIFY_AUTO = Purify(4)
-tostr(v::Purify) = if v.value == 0 "Mosek.MSK_PURIFY_NONE"
-  elseif v.value == 1 "Mosek.MSK_PURIFY_PRIMAL"
-  elseif v.value == 2 "Mosek.MSK_PURIFY_DUAL"
-  elseif v.value == 3 "Mosek.MSK_PURIFY_PRIMAL_DUAL"
-  elseif v.value == 4 "Mosek.MSK_PURIFY_AUTO"
-  else "Mosek.Purify(?)"
-  end
-const Purify_members = Purify[
-    MSK_PURIFY_NONE,
-    MSK_PURIFY_PRIMAL,
-    MSK_PURIFY_DUAL,
-    MSK_PURIFY_PRIMAL_DUAL,
-    MSK_PURIFY_AUTO ]
-members(::Type{Purify}) = Purify_members
-Base.length(::Type{Purify}) = 5
-Base.convert(::Type{Int},x::Purify) = Int(x.value)
-"""
     Callbackcode
 
 Progress callback codes
@@ -1957,20 +1971,24 @@ Progress callback codes
 * `MSK_CALLBACK_BEGIN_DUAL_SETUP_BI`. The callback function is called when the dual BI phase is started.
 * `MSK_CALLBACK_BEGIN_DUAL_SIMPLEX`. The callback function is called when the dual simplex optimizer started.
 * `MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI`. The callback function is called from within the basis identification procedure when the dual simplex clean-up phase is started.
+* `MSK_CALLBACK_BEGIN_DUALIZER`. The callback function is called when the dualizer is started.
 * `MSK_CALLBACK_BEGIN_FOLDING`. The calback function is called at the beginning of folding.
-* `MSK_CALLBACK_BEGIN_FOLDING_BI`. TBD
-* `MSK_CALLBACK_BEGIN_FOLDING_BI_DUAL`. TBD
-* `MSK_CALLBACK_BEGIN_FOLDING_BI_INITIALIZE`. TBD
-* `MSK_CALLBACK_BEGIN_FOLDING_BI_OPTIMIZER`. TBD
-* `MSK_CALLBACK_BEGIN_FOLDING_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_BEGIN_GP_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_BEGIN_INFEAS_ANA`. The callback function is called when the infeasibility analyzer is started.
 * `MSK_CALLBACK_BEGIN_INITIALIZE_BI`. The callback function is called from within the basis identification procedure when the initialization phase is started.
 * `MSK_CALLBACK_BEGIN_INTPNT`. The callback function is called when the interior-point optimizer is started.
+* `MSK_CALLBACK_BEGIN_INTPNT_SETUP`. The callback function is called when the interior-point optimizer setup is started.
 * `MSK_CALLBACK_BEGIN_LICENSE_WAIT`. Begin waiting for license.
+* `MSK_CALLBACK_BEGIN_LOCAL_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_BEGIN_MIO`. The callback function is called when the mixed-integer optimizer is started.
 * `MSK_CALLBACK_BEGIN_OPTIMIZE_BI`. TBD.
+* `MSK_CALLBACK_BEGIN_OPTIMIZE_BI_128BIT`. TBD.
 * `MSK_CALLBACK_BEGIN_OPTIMIZER`. The callback function is called when the optimizer is started.
+* `MSK_CALLBACK_BEGIN_OPTIMIZER_128BIT`. The callback function is called when the optimizer is started.
+* `MSK_CALLBACK_BEGIN_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_BEGIN_PRESOLVE`. The callback function is called when the presolve is started.
+* `MSK_CALLBACK_BEGIN_PRESOLVE_ELIMINATOR`. TBD
+* `MSK_CALLBACK_BEGIN_PRESOLVE_LINEAR_DEPENDENCIES`. TBD
 * `MSK_CALLBACK_BEGIN_PRIMAL_BI`. The callback function is called from within the basis identification procedure when the primal phase is started.
 * `MSK_CALLBACK_BEGIN_PRIMAL_REPAIR`. Begin primal feasibility repair.
 * `MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY`. Primal sensitivity analysis is started.
@@ -1983,6 +2001,20 @@ Progress callback codes
 * `MSK_CALLBACK_BEGIN_SIMPLEX`. The callback function is called when the simplex optimizer is started.
 * `MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX`. The callback function is called when solution of root relaxation is started.
 * `MSK_CALLBACK_BEGIN_TO_CONIC`. Begin conic reformulation.
+* `MSK_CALLBACK_BEGIN_UNDUALIZE_BI`. TBD
+* `MSK_CALLBACK_BEGIN_UNDUALIZE_BI_DUAL`. TBD
+* `MSK_CALLBACK_BEGIN_UNDUALIZE_BI_INITIALIZE`. TBD
+* `MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE`. TBD
+* `MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE_128BIT`. TBD
+* `MSK_CALLBACK_BEGIN_UNDUALIZE_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_BEGIN_UNDUALIZING`. The callback function is called when undualizing is started.
+* `MSK_CALLBACK_BEGIN_UNFOLD_BI`. TBD
+* `MSK_CALLBACK_BEGIN_UNFOLD_BI_DUAL`. TBD
+* `MSK_CALLBACK_BEGIN_UNFOLD_BI_INITIALIZE`. TBD
+* `MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE`. TBD
+* `MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE_128BIT`. TBD
+* `MSK_CALLBACK_BEGIN_UNFOLD_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_BEGIN_UNFOLDING`. The calback function is called at the beginning of unfolding.
 * `MSK_CALLBACK_BEGIN_WRITE`. MOSEK has started writing a problem file.
 * `MSK_CALLBACK_CONIC`. The callback function is called from within the conic optimizer after the information database has been updated.
 * `MSK_CALLBACK_DECOMP_MIO`. The callback function is called when the dedicated algorithm for independent blocks inside the mixed-integer solver is started.
@@ -1994,20 +2026,24 @@ Progress callback codes
 * `MSK_CALLBACK_END_DUAL_SETUP_BI`. The callback function is called when the dual BI phase is terminated.
 * `MSK_CALLBACK_END_DUAL_SIMPLEX`. The callback function is called when the dual simplex optimizer is terminated.
 * `MSK_CALLBACK_END_DUAL_SIMPLEX_BI`. The callback function is called from within the basis identification procedure when the dual clean-up phase is terminated.
+* `MSK_CALLBACK_END_DUALIZER`. The callback function is called when the dualizer is terminated.
 * `MSK_CALLBACK_END_FOLDING`. The calback function is called at the end of folding.
-* `MSK_CALLBACK_END_FOLDING_BI`. TBD
-* `MSK_CALLBACK_END_FOLDING_BI_DUAL`. TBD
-* `MSK_CALLBACK_END_FOLDING_BI_INITIALIZE`. TBD
-* `MSK_CALLBACK_END_FOLDING_BI_OPTIMIZER`. TBD
-* `MSK_CALLBACK_END_FOLDING_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_END_GP_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_END_INFEAS_ANA`. The callback function is called when the infeasibility analyzer is terminated.
 * `MSK_CALLBACK_END_INITIALIZE_BI`. The callback function is called from within the basis identification procedure when the initialization phase is terminated.
 * `MSK_CALLBACK_END_INTPNT`. The callback function is called when the interior-point optimizer is terminated.
+* `MSK_CALLBACK_END_INTPNT_SETUP`. The callback function is called when the interior-point optimizer setup is terminated.
 * `MSK_CALLBACK_END_LICENSE_WAIT`. End waiting for license.
+* `MSK_CALLBACK_END_LOCAL_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_END_MIO`. The callback function is called when the mixed-integer optimizer is terminated.
 * `MSK_CALLBACK_END_OPTIMIZE_BI`. TBD.
+* `MSK_CALLBACK_END_OPTIMIZE_BI_128BIT`. TBD.
 * `MSK_CALLBACK_END_OPTIMIZER`. The callback function is called when the optimizer is terminated.
+* `MSK_CALLBACK_END_OPTIMIZER_128BIT`. The callback function is called when the optimizer is terminated.
+* `MSK_CALLBACK_END_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_END_PRESOLVE`. The callback function is called when the presolve is completed.
+* `MSK_CALLBACK_END_PRESOLVE_ELIMINATOR`. TBD
+* `MSK_CALLBACK_END_PRESOLVE_LINEAR_DEPENDENCIES`. TBD
 * `MSK_CALLBACK_END_PRIMAL_BI`. The callback function is called from within the basis identification procedure when the primal phase is terminated.
 * `MSK_CALLBACK_END_PRIMAL_REPAIR`. End primal feasibility repair.
 * `MSK_CALLBACK_END_PRIMAL_SENSITIVITY`. Primal sensitivity analysis is terminated.
@@ -2021,10 +2057,22 @@ Progress callback codes
 * `MSK_CALLBACK_END_SIMPLEX_BI`. The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated.
 * `MSK_CALLBACK_END_SOLVE_ROOT_RELAX`. The callback function is called when solution of root relaxation is terminated.
 * `MSK_CALLBACK_END_TO_CONIC`. End conic reformulation.
+* `MSK_CALLBACK_END_UNDUALIZE_BI`. TBD
+* `MSK_CALLBACK_END_UNDUALIZE_BI_DUAL`. TBD
+* `MSK_CALLBACK_END_UNDUALIZE_BI_INITIALIZE`. TBD
+* `MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE`. TBD
+* `MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE_128BIT`. TBD
+* `MSK_CALLBACK_END_UNDUALIZE_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_END_UNDUALIZING`. The callback function is called when undualizing is terminated.
+* `MSK_CALLBACK_END_UNFOLD_BI`. TBD
+* `MSK_CALLBACK_END_UNFOLD_BI_DUAL`. TBD
+* `MSK_CALLBACK_END_UNFOLD_BI_INITIALIZE`. TBD
+* `MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE`. TBD
+* `MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE_128BIT`. TBD
+* `MSK_CALLBACK_END_UNFOLD_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_END_UNFOLDING`. The calback function is called at the end of unfolding.
 * `MSK_CALLBACK_END_WRITE`. MOSEK has finished writing a problem file.
-* `MSK_CALLBACK_FOLDING_BI_DUAL`. TBD
-* `MSK_CALLBACK_FOLDING_BI_OPTIMIZER`. TBD
-* `MSK_CALLBACK_FOLDING_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_GP_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_HEARTBEAT`. A heartbeat callback.
 * `MSK_CALLBACK_IM_DUAL_SENSIVITY`. The callback function is called at an intermediate stage of the dual sensitivity analysis.
 * `MSK_CALLBACK_IM_DUAL_SIMPLEX`. The callback function is called at an intermediate point in the dual simplex optimizer.
@@ -2034,21 +2082,31 @@ Progress callback codes
 * `MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX`. The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer.
 * `MSK_CALLBACK_IM_MIO_INTPNT`. The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer.
 * `MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX`. The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer.
-* `MSK_CALLBACK_IM_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_IM_PRIMAL_SENSIVITY`. The callback function is called at an intermediate stage of the primal sensitivity analysis.
 * `MSK_CALLBACK_IM_PRIMAL_SIMPLEX`. The callback function is called at an intermediate point in the primal simplex optimizer.
 * `MSK_CALLBACK_IM_READ`. Intermediate stage in reading.
 * `MSK_CALLBACK_IM_ROOT_CUTGEN`. The callback is called from within root cut generation at an intermediate stage.
 * `MSK_CALLBACK_IM_SIMPLEX`. The callback function is called from within the simplex optimizer at an intermediate point.
 * `MSK_CALLBACK_INTPNT`. The callback function is called from within the interior-point optimizer after the information database has been updated.
+* `MSK_CALLBACK_LOCAL_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_NEW_INT_MIO`. The callback function is called after a new integer solution has been located by the mixed-integer optimizer.
 * `MSK_CALLBACK_OPTIMIZE_BI`. TBD.
+* `MSK_CALLBACK_OPTIMIZE_BI_128BIT`. TBD.
+* `MSK_CALLBACK_ORDER`. The callback function is called from within the matrix ordering procedure at an intermediate point.
 * `MSK_CALLBACK_PRIMAL_SIMPLEX`. The callback function is called from within the primal simplex optimizer.
 * `MSK_CALLBACK_QO_REFORMULATE`. The callback function is called at an intermediate stage of the conic quadratic reformulation.
 * `MSK_CALLBACK_READ_OPF`. The callback function is called from the OPF reader.
 * `MSK_CALLBACK_READ_OPF_SECTION`. A chunk of Q non-zeros has been read from a problem file.
 * `MSK_CALLBACK_RESTART_MIO`. The callback function is called when the mixed-integer optimizer is restarted.
 * `MSK_CALLBACK_SOLVING_REMOTE`. The callback function is called while the task is being solved on a remote server.
+* `MSK_CALLBACK_UNDUALIZE_BI_DUAL`. TBD
+* `MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE`. TBD
+* `MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE_128BIT`. TBD
+* `MSK_CALLBACK_UNDUALIZE_BI_PRIMAL`. TBD
+* `MSK_CALLBACK_UNFOLD_BI_DUAL`. TBD
+* `MSK_CALLBACK_UNFOLD_BI_OPTIMIZE`. TBD
+* `MSK_CALLBACK_UNFOLD_BI_OPTIMIZE_128BIT`. TBD
+* `MSK_CALLBACK_UNFOLD_BI_PRIMAL`. TBD
 * `MSK_CALLBACK_UPDATE_DUAL_BI`. The callback function is called from within the basis identification procedure at an intermediate point in the dual phase.
 * `MSK_CALLBACK_UPDATE_DUAL_SIMPLEX`. The callback function is called in the dual simplex optimizer.
 * `MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI`. The callback function is called from within the basis identification procedure at an intermediate point in the dual simplex clean-up phase.
@@ -2084,308 +2142,440 @@ const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX = Callbackcode(5)
 "The callback function is called from within the basis identification procedure when the dual simplex clean-up phase is started."
 const MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI = Callbackcode(6)
 
+"The callback function is called when the dualizer is started."
+const MSK_CALLBACK_BEGIN_DUALIZER = Callbackcode(7)
+
 "The calback function is called at the beginning of folding."
-const MSK_CALLBACK_BEGIN_FOLDING = Callbackcode(7)
+const MSK_CALLBACK_BEGIN_FOLDING = Callbackcode(8)
 
-"TBD"
-const MSK_CALLBACK_BEGIN_FOLDING_BI = Callbackcode(8)
-
-"TBD"
-const MSK_CALLBACK_BEGIN_FOLDING_BI_DUAL = Callbackcode(9)
-
-"TBD"
-const MSK_CALLBACK_BEGIN_FOLDING_BI_INITIALIZE = Callbackcode(10)
-
-"TBD"
-const MSK_CALLBACK_BEGIN_FOLDING_BI_OPTIMIZER = Callbackcode(11)
-
-"TBD"
-const MSK_CALLBACK_BEGIN_FOLDING_BI_PRIMAL = Callbackcode(12)
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_BEGIN_GP_ORDER = Callbackcode(9)
 
 "The callback function is called when the infeasibility analyzer is started."
-const MSK_CALLBACK_BEGIN_INFEAS_ANA = Callbackcode(13)
+const MSK_CALLBACK_BEGIN_INFEAS_ANA = Callbackcode(10)
 
 "The callback function is called from within the basis identification procedure when the initialization phase is started."
-const MSK_CALLBACK_BEGIN_INITIALIZE_BI = Callbackcode(14)
+const MSK_CALLBACK_BEGIN_INITIALIZE_BI = Callbackcode(11)
 
 "The callback function is called when the interior-point optimizer is started."
-const MSK_CALLBACK_BEGIN_INTPNT = Callbackcode(15)
+const MSK_CALLBACK_BEGIN_INTPNT = Callbackcode(12)
+
+"The callback function is called when the interior-point optimizer setup is started."
+const MSK_CALLBACK_BEGIN_INTPNT_SETUP = Callbackcode(13)
 
 "Begin waiting for license."
-const MSK_CALLBACK_BEGIN_LICENSE_WAIT = Callbackcode(16)
+const MSK_CALLBACK_BEGIN_LICENSE_WAIT = Callbackcode(14)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_BEGIN_LOCAL_ORDER = Callbackcode(15)
 
 "The callback function is called when the mixed-integer optimizer is started."
-const MSK_CALLBACK_BEGIN_MIO = Callbackcode(17)
+const MSK_CALLBACK_BEGIN_MIO = Callbackcode(16)
 
 "TBD."
-const MSK_CALLBACK_BEGIN_OPTIMIZE_BI = Callbackcode(18)
+const MSK_CALLBACK_BEGIN_OPTIMIZE_BI = Callbackcode(17)
+
+"TBD."
+const MSK_CALLBACK_BEGIN_OPTIMIZE_BI_128BIT = Callbackcode(18)
 
 "The callback function is called when the optimizer is started."
 const MSK_CALLBACK_BEGIN_OPTIMIZER = Callbackcode(19)
 
-"The callback function is called when the presolve is started."
-const MSK_CALLBACK_BEGIN_PRESOLVE = Callbackcode(20)
-
-"The callback function is called from within the basis identification procedure when the primal phase is started."
-const MSK_CALLBACK_BEGIN_PRIMAL_BI = Callbackcode(21)
-
-"Begin primal feasibility repair."
-const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR = Callbackcode(22)
-
-"Primal sensitivity analysis is started."
-const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY = Callbackcode(23)
-
-"The callback function is called when the primal BI setup is started."
-const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI = Callbackcode(24)
-
-"The callback function is called when the primal simplex optimizer is started."
-const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX = Callbackcode(25)
-
-"The callback function is called from within the basis identification procedure when the primal simplex clean-up phase is started."
-const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI = Callbackcode(26)
-
-"Begin QCQO reformulation."
-const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE = Callbackcode(27)
-
-"MOSEK has started reading a problem file."
-const MSK_CALLBACK_BEGIN_READ = Callbackcode(28)
-
-"The callback function is called when root cut generation is started."
-const MSK_CALLBACK_BEGIN_ROOT_CUTGEN = Callbackcode(29)
-
-"The callback function is called when the simplex optimizer is started."
-const MSK_CALLBACK_BEGIN_SIMPLEX = Callbackcode(30)
-
-"The callback function is called when solution of root relaxation is started."
-const MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX = Callbackcode(31)
-
-"Begin conic reformulation."
-const MSK_CALLBACK_BEGIN_TO_CONIC = Callbackcode(32)
-
-"MOSEK has started writing a problem file."
-const MSK_CALLBACK_BEGIN_WRITE = Callbackcode(33)
-
-"The callback function is called from within the conic optimizer after the information database has been updated."
-const MSK_CALLBACK_CONIC = Callbackcode(34)
-
-"The callback function is called when the dedicated algorithm for independent blocks inside the mixed-integer solver is started."
-const MSK_CALLBACK_DECOMP_MIO = Callbackcode(35)
-
-"The callback function is called from within the dual simplex optimizer."
-const MSK_CALLBACK_DUAL_SIMPLEX = Callbackcode(36)
-
-"The callback function is called when the basis identification procedure is terminated."
-const MSK_CALLBACK_END_BI = Callbackcode(37)
-
-"The callback function is called when the conic optimizer is terminated."
-const MSK_CALLBACK_END_CONIC = Callbackcode(38)
-
-"The callback function is called from within the basis identification procedure when the dual phase is terminated."
-const MSK_CALLBACK_END_DUAL_BI = Callbackcode(39)
-
-"Dual sensitivity analysis is terminated."
-const MSK_CALLBACK_END_DUAL_SENSITIVITY = Callbackcode(40)
-
-"The callback function is called when the dual BI phase is terminated."
-const MSK_CALLBACK_END_DUAL_SETUP_BI = Callbackcode(41)
-
-"The callback function is called when the dual simplex optimizer is terminated."
-const MSK_CALLBACK_END_DUAL_SIMPLEX = Callbackcode(42)
-
-"The callback function is called from within the basis identification procedure when the dual clean-up phase is terminated."
-const MSK_CALLBACK_END_DUAL_SIMPLEX_BI = Callbackcode(43)
-
-"The calback function is called at the end of folding."
-const MSK_CALLBACK_END_FOLDING = Callbackcode(44)
-
-"TBD"
-const MSK_CALLBACK_END_FOLDING_BI = Callbackcode(45)
-
-"TBD"
-const MSK_CALLBACK_END_FOLDING_BI_DUAL = Callbackcode(46)
-
-"TBD"
-const MSK_CALLBACK_END_FOLDING_BI_INITIALIZE = Callbackcode(47)
-
-"TBD"
-const MSK_CALLBACK_END_FOLDING_BI_OPTIMIZER = Callbackcode(48)
-
-"TBD"
-const MSK_CALLBACK_END_FOLDING_BI_PRIMAL = Callbackcode(49)
-
-"The callback function is called when the infeasibility analyzer is terminated."
-const MSK_CALLBACK_END_INFEAS_ANA = Callbackcode(50)
-
-"The callback function is called from within the basis identification procedure when the initialization phase is terminated."
-const MSK_CALLBACK_END_INITIALIZE_BI = Callbackcode(51)
-
-"The callback function is called when the interior-point optimizer is terminated."
-const MSK_CALLBACK_END_INTPNT = Callbackcode(52)
-
-"End waiting for license."
-const MSK_CALLBACK_END_LICENSE_WAIT = Callbackcode(53)
-
-"The callback function is called when the mixed-integer optimizer is terminated."
-const MSK_CALLBACK_END_MIO = Callbackcode(54)
-
-"TBD."
-const MSK_CALLBACK_END_OPTIMIZE_BI = Callbackcode(55)
-
-"The callback function is called when the optimizer is terminated."
-const MSK_CALLBACK_END_OPTIMIZER = Callbackcode(56)
-
-"The callback function is called when the presolve is completed."
-const MSK_CALLBACK_END_PRESOLVE = Callbackcode(57)
-
-"The callback function is called from within the basis identification procedure when the primal phase is terminated."
-const MSK_CALLBACK_END_PRIMAL_BI = Callbackcode(58)
-
-"End primal feasibility repair."
-const MSK_CALLBACK_END_PRIMAL_REPAIR = Callbackcode(59)
-
-"Primal sensitivity analysis is terminated."
-const MSK_CALLBACK_END_PRIMAL_SENSITIVITY = Callbackcode(60)
-
-"The callback function is called when the primal BI setup is terminated."
-const MSK_CALLBACK_END_PRIMAL_SETUP_BI = Callbackcode(61)
-
-"The callback function is called when the primal simplex optimizer is terminated."
-const MSK_CALLBACK_END_PRIMAL_SIMPLEX = Callbackcode(62)
-
-"The callback function is called from within the basis identification procedure when the primal clean-up phase is terminated."
-const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI = Callbackcode(63)
-
-"End QCQO reformulation."
-const MSK_CALLBACK_END_QCQO_REFORMULATE = Callbackcode(64)
-
-"MOSEK has finished reading a problem file."
-const MSK_CALLBACK_END_READ = Callbackcode(65)
-
-"The callback function is called when root cut generation is terminated."
-const MSK_CALLBACK_END_ROOT_CUTGEN = Callbackcode(66)
-
-"The callback function is called when the simplex optimizer is terminated."
-const MSK_CALLBACK_END_SIMPLEX = Callbackcode(67)
-
-"The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated."
-const MSK_CALLBACK_END_SIMPLEX_BI = Callbackcode(68)
-
-"The callback function is called when solution of root relaxation is terminated."
-const MSK_CALLBACK_END_SOLVE_ROOT_RELAX = Callbackcode(69)
-
-"End conic reformulation."
-const MSK_CALLBACK_END_TO_CONIC = Callbackcode(70)
-
-"MOSEK has finished writing a problem file."
-const MSK_CALLBACK_END_WRITE = Callbackcode(71)
-
-"TBD"
-const MSK_CALLBACK_FOLDING_BI_DUAL = Callbackcode(72)
-
-"TBD"
-const MSK_CALLBACK_FOLDING_BI_OPTIMIZER = Callbackcode(73)
-
-"TBD"
-const MSK_CALLBACK_FOLDING_BI_PRIMAL = Callbackcode(74)
-
-"A heartbeat callback."
-const MSK_CALLBACK_HEARTBEAT = Callbackcode(75)
-
-"The callback function is called at an intermediate stage of the dual sensitivity analysis."
-const MSK_CALLBACK_IM_DUAL_SENSIVITY = Callbackcode(76)
-
-"The callback function is called at an intermediate point in the dual simplex optimizer."
-const MSK_CALLBACK_IM_DUAL_SIMPLEX = Callbackcode(77)
-
-"MOSEK is waiting for a license."
-const MSK_CALLBACK_IM_LICENSE_WAIT = Callbackcode(78)
-
-"The callback function is called from within the LU factorization procedure at an intermediate point."
-const MSK_CALLBACK_IM_LU = Callbackcode(79)
-
-"The callback function is called at an intermediate point in the mixed-integer optimizer."
-const MSK_CALLBACK_IM_MIO = Callbackcode(80)
-
-"The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer."
-const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX = Callbackcode(81)
-
-"The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer."
-const MSK_CALLBACK_IM_MIO_INTPNT = Callbackcode(82)
-
-"The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer."
-const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX = Callbackcode(83)
+"The callback function is called when the optimizer is started."
+const MSK_CALLBACK_BEGIN_OPTIMIZER_128BIT = Callbackcode(20)
 
 "The callback function is called from within the matrix ordering procedure at an intermediate point."
-const MSK_CALLBACK_IM_ORDER = Callbackcode(84)
+const MSK_CALLBACK_BEGIN_ORDER = Callbackcode(21)
 
-"The callback function is called at an intermediate stage of the primal sensitivity analysis."
-const MSK_CALLBACK_IM_PRIMAL_SENSIVITY = Callbackcode(85)
+"The callback function is called when the presolve is started."
+const MSK_CALLBACK_BEGIN_PRESOLVE = Callbackcode(22)
 
-"The callback function is called at an intermediate point in the primal simplex optimizer."
-const MSK_CALLBACK_IM_PRIMAL_SIMPLEX = Callbackcode(86)
+"TBD"
+const MSK_CALLBACK_BEGIN_PRESOLVE_ELIMINATOR = Callbackcode(23)
 
-"Intermediate stage in reading."
-const MSK_CALLBACK_IM_READ = Callbackcode(87)
+"TBD"
+const MSK_CALLBACK_BEGIN_PRESOLVE_LINEAR_DEPENDENCIES = Callbackcode(24)
 
-"The callback is called from within root cut generation at an intermediate stage."
-const MSK_CALLBACK_IM_ROOT_CUTGEN = Callbackcode(88)
+"The callback function is called from within the basis identification procedure when the primal phase is started."
+const MSK_CALLBACK_BEGIN_PRIMAL_BI = Callbackcode(25)
 
-"The callback function is called from within the simplex optimizer at an intermediate point."
-const MSK_CALLBACK_IM_SIMPLEX = Callbackcode(89)
+"Begin primal feasibility repair."
+const MSK_CALLBACK_BEGIN_PRIMAL_REPAIR = Callbackcode(26)
 
-"The callback function is called from within the interior-point optimizer after the information database has been updated."
-const MSK_CALLBACK_INTPNT = Callbackcode(90)
+"Primal sensitivity analysis is started."
+const MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY = Callbackcode(27)
 
-"The callback function is called after a new integer solution has been located by the mixed-integer optimizer."
-const MSK_CALLBACK_NEW_INT_MIO = Callbackcode(91)
+"The callback function is called when the primal BI setup is started."
+const MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI = Callbackcode(28)
+
+"The callback function is called when the primal simplex optimizer is started."
+const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX = Callbackcode(29)
+
+"The callback function is called from within the basis identification procedure when the primal simplex clean-up phase is started."
+const MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI = Callbackcode(30)
+
+"Begin QCQO reformulation."
+const MSK_CALLBACK_BEGIN_QCQO_REFORMULATE = Callbackcode(31)
+
+"MOSEK has started reading a problem file."
+const MSK_CALLBACK_BEGIN_READ = Callbackcode(32)
+
+"The callback function is called when root cut generation is started."
+const MSK_CALLBACK_BEGIN_ROOT_CUTGEN = Callbackcode(33)
+
+"The callback function is called when the simplex optimizer is started."
+const MSK_CALLBACK_BEGIN_SIMPLEX = Callbackcode(34)
+
+"The callback function is called when solution of root relaxation is started."
+const MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX = Callbackcode(35)
+
+"Begin conic reformulation."
+const MSK_CALLBACK_BEGIN_TO_CONIC = Callbackcode(36)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNDUALIZE_BI = Callbackcode(37)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNDUALIZE_BI_DUAL = Callbackcode(38)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNDUALIZE_BI_INITIALIZE = Callbackcode(39)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE = Callbackcode(40)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE_128BIT = Callbackcode(41)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNDUALIZE_BI_PRIMAL = Callbackcode(42)
+
+"The callback function is called when undualizing is started."
+const MSK_CALLBACK_BEGIN_UNDUALIZING = Callbackcode(43)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNFOLD_BI = Callbackcode(44)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNFOLD_BI_DUAL = Callbackcode(45)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNFOLD_BI_INITIALIZE = Callbackcode(46)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE = Callbackcode(47)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE_128BIT = Callbackcode(48)
+
+"TBD"
+const MSK_CALLBACK_BEGIN_UNFOLD_BI_PRIMAL = Callbackcode(49)
+
+"The calback function is called at the beginning of unfolding."
+const MSK_CALLBACK_BEGIN_UNFOLDING = Callbackcode(50)
+
+"MOSEK has started writing a problem file."
+const MSK_CALLBACK_BEGIN_WRITE = Callbackcode(51)
+
+"The callback function is called from within the conic optimizer after the information database has been updated."
+const MSK_CALLBACK_CONIC = Callbackcode(52)
+
+"The callback function is called when the dedicated algorithm for independent blocks inside the mixed-integer solver is started."
+const MSK_CALLBACK_DECOMP_MIO = Callbackcode(53)
+
+"The callback function is called from within the dual simplex optimizer."
+const MSK_CALLBACK_DUAL_SIMPLEX = Callbackcode(54)
+
+"The callback function is called when the basis identification procedure is terminated."
+const MSK_CALLBACK_END_BI = Callbackcode(55)
+
+"The callback function is called when the conic optimizer is terminated."
+const MSK_CALLBACK_END_CONIC = Callbackcode(56)
+
+"The callback function is called from within the basis identification procedure when the dual phase is terminated."
+const MSK_CALLBACK_END_DUAL_BI = Callbackcode(57)
+
+"Dual sensitivity analysis is terminated."
+const MSK_CALLBACK_END_DUAL_SENSITIVITY = Callbackcode(58)
+
+"The callback function is called when the dual BI phase is terminated."
+const MSK_CALLBACK_END_DUAL_SETUP_BI = Callbackcode(59)
+
+"The callback function is called when the dual simplex optimizer is terminated."
+const MSK_CALLBACK_END_DUAL_SIMPLEX = Callbackcode(60)
+
+"The callback function is called from within the basis identification procedure when the dual clean-up phase is terminated."
+const MSK_CALLBACK_END_DUAL_SIMPLEX_BI = Callbackcode(61)
+
+"The callback function is called when the dualizer is terminated."
+const MSK_CALLBACK_END_DUALIZER = Callbackcode(62)
+
+"The calback function is called at the end of folding."
+const MSK_CALLBACK_END_FOLDING = Callbackcode(63)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_END_GP_ORDER = Callbackcode(64)
+
+"The callback function is called when the infeasibility analyzer is terminated."
+const MSK_CALLBACK_END_INFEAS_ANA = Callbackcode(65)
+
+"The callback function is called from within the basis identification procedure when the initialization phase is terminated."
+const MSK_CALLBACK_END_INITIALIZE_BI = Callbackcode(66)
+
+"The callback function is called when the interior-point optimizer is terminated."
+const MSK_CALLBACK_END_INTPNT = Callbackcode(67)
+
+"The callback function is called when the interior-point optimizer setup is terminated."
+const MSK_CALLBACK_END_INTPNT_SETUP = Callbackcode(68)
+
+"End waiting for license."
+const MSK_CALLBACK_END_LICENSE_WAIT = Callbackcode(69)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_END_LOCAL_ORDER = Callbackcode(70)
+
+"The callback function is called when the mixed-integer optimizer is terminated."
+const MSK_CALLBACK_END_MIO = Callbackcode(71)
 
 "TBD."
-const MSK_CALLBACK_OPTIMIZE_BI = Callbackcode(92)
+const MSK_CALLBACK_END_OPTIMIZE_BI = Callbackcode(72)
+
+"TBD."
+const MSK_CALLBACK_END_OPTIMIZE_BI_128BIT = Callbackcode(73)
+
+"The callback function is called when the optimizer is terminated."
+const MSK_CALLBACK_END_OPTIMIZER = Callbackcode(74)
+
+"The callback function is called when the optimizer is terminated."
+const MSK_CALLBACK_END_OPTIMIZER_128BIT = Callbackcode(75)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_END_ORDER = Callbackcode(76)
+
+"The callback function is called when the presolve is completed."
+const MSK_CALLBACK_END_PRESOLVE = Callbackcode(77)
+
+"TBD"
+const MSK_CALLBACK_END_PRESOLVE_ELIMINATOR = Callbackcode(78)
+
+"TBD"
+const MSK_CALLBACK_END_PRESOLVE_LINEAR_DEPENDENCIES = Callbackcode(79)
+
+"The callback function is called from within the basis identification procedure when the primal phase is terminated."
+const MSK_CALLBACK_END_PRIMAL_BI = Callbackcode(80)
+
+"End primal feasibility repair."
+const MSK_CALLBACK_END_PRIMAL_REPAIR = Callbackcode(81)
+
+"Primal sensitivity analysis is terminated."
+const MSK_CALLBACK_END_PRIMAL_SENSITIVITY = Callbackcode(82)
+
+"The callback function is called when the primal BI setup is terminated."
+const MSK_CALLBACK_END_PRIMAL_SETUP_BI = Callbackcode(83)
+
+"The callback function is called when the primal simplex optimizer is terminated."
+const MSK_CALLBACK_END_PRIMAL_SIMPLEX = Callbackcode(84)
+
+"The callback function is called from within the basis identification procedure when the primal clean-up phase is terminated."
+const MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI = Callbackcode(85)
+
+"End QCQO reformulation."
+const MSK_CALLBACK_END_QCQO_REFORMULATE = Callbackcode(86)
+
+"MOSEK has finished reading a problem file."
+const MSK_CALLBACK_END_READ = Callbackcode(87)
+
+"The callback function is called when root cut generation is terminated."
+const MSK_CALLBACK_END_ROOT_CUTGEN = Callbackcode(88)
+
+"The callback function is called when the simplex optimizer is terminated."
+const MSK_CALLBACK_END_SIMPLEX = Callbackcode(89)
+
+"The callback function is called from within the basis identification procedure when the simplex clean-up phase is terminated."
+const MSK_CALLBACK_END_SIMPLEX_BI = Callbackcode(90)
+
+"The callback function is called when solution of root relaxation is terminated."
+const MSK_CALLBACK_END_SOLVE_ROOT_RELAX = Callbackcode(91)
+
+"End conic reformulation."
+const MSK_CALLBACK_END_TO_CONIC = Callbackcode(92)
+
+"TBD"
+const MSK_CALLBACK_END_UNDUALIZE_BI = Callbackcode(93)
+
+"TBD"
+const MSK_CALLBACK_END_UNDUALIZE_BI_DUAL = Callbackcode(94)
+
+"TBD"
+const MSK_CALLBACK_END_UNDUALIZE_BI_INITIALIZE = Callbackcode(95)
+
+"TBD"
+const MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE = Callbackcode(96)
+
+"TBD"
+const MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE_128BIT = Callbackcode(97)
+
+"TBD"
+const MSK_CALLBACK_END_UNDUALIZE_BI_PRIMAL = Callbackcode(98)
+
+"The callback function is called when undualizing is terminated."
+const MSK_CALLBACK_END_UNDUALIZING = Callbackcode(99)
+
+"TBD"
+const MSK_CALLBACK_END_UNFOLD_BI = Callbackcode(100)
+
+"TBD"
+const MSK_CALLBACK_END_UNFOLD_BI_DUAL = Callbackcode(101)
+
+"TBD"
+const MSK_CALLBACK_END_UNFOLD_BI_INITIALIZE = Callbackcode(102)
+
+"TBD"
+const MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE = Callbackcode(103)
+
+"TBD"
+const MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE_128BIT = Callbackcode(104)
+
+"TBD"
+const MSK_CALLBACK_END_UNFOLD_BI_PRIMAL = Callbackcode(105)
+
+"The calback function is called at the end of unfolding."
+const MSK_CALLBACK_END_UNFOLDING = Callbackcode(106)
+
+"MOSEK has finished writing a problem file."
+const MSK_CALLBACK_END_WRITE = Callbackcode(107)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_GP_ORDER = Callbackcode(108)
+
+"A heartbeat callback."
+const MSK_CALLBACK_HEARTBEAT = Callbackcode(109)
+
+"The callback function is called at an intermediate stage of the dual sensitivity analysis."
+const MSK_CALLBACK_IM_DUAL_SENSIVITY = Callbackcode(110)
+
+"The callback function is called at an intermediate point in the dual simplex optimizer."
+const MSK_CALLBACK_IM_DUAL_SIMPLEX = Callbackcode(111)
+
+"MOSEK is waiting for a license."
+const MSK_CALLBACK_IM_LICENSE_WAIT = Callbackcode(112)
+
+"The callback function is called from within the LU factorization procedure at an intermediate point."
+const MSK_CALLBACK_IM_LU = Callbackcode(113)
+
+"The callback function is called at an intermediate point in the mixed-integer optimizer."
+const MSK_CALLBACK_IM_MIO = Callbackcode(114)
+
+"The callback function is called at an intermediate point in the mixed-integer optimizer while running the dual simplex optimizer."
+const MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX = Callbackcode(115)
+
+"The callback function is called at an intermediate point in the mixed-integer optimizer while running the interior-point optimizer."
+const MSK_CALLBACK_IM_MIO_INTPNT = Callbackcode(116)
+
+"The callback function is called at an intermediate point in the mixed-integer optimizer while running the primal simplex optimizer."
+const MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX = Callbackcode(117)
+
+"The callback function is called at an intermediate stage of the primal sensitivity analysis."
+const MSK_CALLBACK_IM_PRIMAL_SENSIVITY = Callbackcode(118)
+
+"The callback function is called at an intermediate point in the primal simplex optimizer."
+const MSK_CALLBACK_IM_PRIMAL_SIMPLEX = Callbackcode(119)
+
+"Intermediate stage in reading."
+const MSK_CALLBACK_IM_READ = Callbackcode(120)
+
+"The callback is called from within root cut generation at an intermediate stage."
+const MSK_CALLBACK_IM_ROOT_CUTGEN = Callbackcode(121)
+
+"The callback function is called from within the simplex optimizer at an intermediate point."
+const MSK_CALLBACK_IM_SIMPLEX = Callbackcode(122)
+
+"The callback function is called from within the interior-point optimizer after the information database has been updated."
+const MSK_CALLBACK_INTPNT = Callbackcode(123)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_LOCAL_ORDER = Callbackcode(124)
+
+"The callback function is called after a new integer solution has been located by the mixed-integer optimizer."
+const MSK_CALLBACK_NEW_INT_MIO = Callbackcode(125)
+
+"TBD."
+const MSK_CALLBACK_OPTIMIZE_BI = Callbackcode(126)
+
+"TBD."
+const MSK_CALLBACK_OPTIMIZE_BI_128BIT = Callbackcode(127)
+
+"The callback function is called from within the matrix ordering procedure at an intermediate point."
+const MSK_CALLBACK_ORDER = Callbackcode(128)
 
 "The callback function is called from within the primal simplex optimizer."
-const MSK_CALLBACK_PRIMAL_SIMPLEX = Callbackcode(93)
+const MSK_CALLBACK_PRIMAL_SIMPLEX = Callbackcode(129)
 
 "The callback function is called at an intermediate stage of the conic quadratic reformulation."
-const MSK_CALLBACK_QO_REFORMULATE = Callbackcode(94)
+const MSK_CALLBACK_QO_REFORMULATE = Callbackcode(130)
 
 "The callback function is called from the OPF reader."
-const MSK_CALLBACK_READ_OPF = Callbackcode(95)
+const MSK_CALLBACK_READ_OPF = Callbackcode(131)
 
 "A chunk of Q non-zeros has been read from a problem file."
-const MSK_CALLBACK_READ_OPF_SECTION = Callbackcode(96)
+const MSK_CALLBACK_READ_OPF_SECTION = Callbackcode(132)
 
 "The callback function is called when the mixed-integer optimizer is restarted."
-const MSK_CALLBACK_RESTART_MIO = Callbackcode(97)
+const MSK_CALLBACK_RESTART_MIO = Callbackcode(133)
 
 "The callback function is called while the task is being solved on a remote server."
-const MSK_CALLBACK_SOLVING_REMOTE = Callbackcode(98)
+const MSK_CALLBACK_SOLVING_REMOTE = Callbackcode(134)
+
+"TBD"
+const MSK_CALLBACK_UNDUALIZE_BI_DUAL = Callbackcode(135)
+
+"TBD"
+const MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE = Callbackcode(136)
+
+"TBD"
+const MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE_128BIT = Callbackcode(137)
+
+"TBD"
+const MSK_CALLBACK_UNDUALIZE_BI_PRIMAL = Callbackcode(138)
+
+"TBD"
+const MSK_CALLBACK_UNFOLD_BI_DUAL = Callbackcode(139)
+
+"TBD"
+const MSK_CALLBACK_UNFOLD_BI_OPTIMIZE = Callbackcode(140)
+
+"TBD"
+const MSK_CALLBACK_UNFOLD_BI_OPTIMIZE_128BIT = Callbackcode(141)
+
+"TBD"
+const MSK_CALLBACK_UNFOLD_BI_PRIMAL = Callbackcode(142)
 
 "The callback function is called from within the basis identification procedure at an intermediate point in the dual phase."
-const MSK_CALLBACK_UPDATE_DUAL_BI = Callbackcode(99)
+const MSK_CALLBACK_UPDATE_DUAL_BI = Callbackcode(143)
 
 "The callback function is called in the dual simplex optimizer."
-const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX = Callbackcode(100)
+const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX = Callbackcode(144)
 
 "The callback function is called from within the basis identification procedure at an intermediate point in the dual simplex clean-up phase."
-const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI = Callbackcode(101)
+const MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI = Callbackcode(145)
 
 "The callback function is called from within the presolve procedure."
-const MSK_CALLBACK_UPDATE_PRESOLVE = Callbackcode(102)
+const MSK_CALLBACK_UPDATE_PRESOLVE = Callbackcode(146)
 
 "The callback function is called from within the basis identification procedure at an intermediate point in the primal phase."
-const MSK_CALLBACK_UPDATE_PRIMAL_BI = Callbackcode(103)
+const MSK_CALLBACK_UPDATE_PRIMAL_BI = Callbackcode(147)
 
 "The callback function is called  in the primal simplex optimizer."
-const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX = Callbackcode(104)
+const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX = Callbackcode(148)
 
 "The callback function is called from within the basis identification procedure at an intermediate point in the primal simplex clean-up phase."
-const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI = Callbackcode(105)
+const MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI = Callbackcode(149)
 
 "The callback function is called from simplex optimizer."
-const MSK_CALLBACK_UPDATE_SIMPLEX = Callbackcode(106)
+const MSK_CALLBACK_UPDATE_SIMPLEX = Callbackcode(150)
 
 "The callback function is called from the OPF writer."
-const MSK_CALLBACK_WRITE_OPF = Callbackcode(107)
+const MSK_CALLBACK_WRITE_OPF = Callbackcode(151)
 tostr(v::Callbackcode) = if v.value == 0 "Mosek.MSK_CALLBACK_BEGIN_BI"
   elseif v.value == 1 "Mosek.MSK_CALLBACK_BEGIN_CONIC"
   elseif v.value == 2 "Mosek.MSK_CALLBACK_BEGIN_DUAL_BI"
@@ -2393,107 +2583,151 @@ tostr(v::Callbackcode) = if v.value == 0 "Mosek.MSK_CALLBACK_BEGIN_BI"
   elseif v.value == 4 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SETUP_BI"
   elseif v.value == 5 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX"
   elseif v.value == 6 "Mosek.MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI"
-  elseif v.value == 7 "Mosek.MSK_CALLBACK_BEGIN_FOLDING"
-  elseif v.value == 8 "Mosek.MSK_CALLBACK_BEGIN_FOLDING_BI"
-  elseif v.value == 9 "Mosek.MSK_CALLBACK_BEGIN_FOLDING_BI_DUAL"
-  elseif v.value == 10 "Mosek.MSK_CALLBACK_BEGIN_FOLDING_BI_INITIALIZE"
-  elseif v.value == 11 "Mosek.MSK_CALLBACK_BEGIN_FOLDING_BI_OPTIMIZER"
-  elseif v.value == 12 "Mosek.MSK_CALLBACK_BEGIN_FOLDING_BI_PRIMAL"
-  elseif v.value == 13 "Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA"
-  elseif v.value == 14 "Mosek.MSK_CALLBACK_BEGIN_INITIALIZE_BI"
-  elseif v.value == 15 "Mosek.MSK_CALLBACK_BEGIN_INTPNT"
-  elseif v.value == 16 "Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT"
-  elseif v.value == 17 "Mosek.MSK_CALLBACK_BEGIN_MIO"
-  elseif v.value == 18 "Mosek.MSK_CALLBACK_BEGIN_OPTIMIZE_BI"
+  elseif v.value == 7 "Mosek.MSK_CALLBACK_BEGIN_DUALIZER"
+  elseif v.value == 8 "Mosek.MSK_CALLBACK_BEGIN_FOLDING"
+  elseif v.value == 9 "Mosek.MSK_CALLBACK_BEGIN_GP_ORDER"
+  elseif v.value == 10 "Mosek.MSK_CALLBACK_BEGIN_INFEAS_ANA"
+  elseif v.value == 11 "Mosek.MSK_CALLBACK_BEGIN_INITIALIZE_BI"
+  elseif v.value == 12 "Mosek.MSK_CALLBACK_BEGIN_INTPNT"
+  elseif v.value == 13 "Mosek.MSK_CALLBACK_BEGIN_INTPNT_SETUP"
+  elseif v.value == 14 "Mosek.MSK_CALLBACK_BEGIN_LICENSE_WAIT"
+  elseif v.value == 15 "Mosek.MSK_CALLBACK_BEGIN_LOCAL_ORDER"
+  elseif v.value == 16 "Mosek.MSK_CALLBACK_BEGIN_MIO"
+  elseif v.value == 17 "Mosek.MSK_CALLBACK_BEGIN_OPTIMIZE_BI"
+  elseif v.value == 18 "Mosek.MSK_CALLBACK_BEGIN_OPTIMIZE_BI_128BIT"
   elseif v.value == 19 "Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER"
-  elseif v.value == 20 "Mosek.MSK_CALLBACK_BEGIN_PRESOLVE"
-  elseif v.value == 21 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI"
-  elseif v.value == 22 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"
-  elseif v.value == 23 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"
-  elseif v.value == 24 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"
-  elseif v.value == 25 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"
-  elseif v.value == 26 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"
-  elseif v.value == 27 "Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"
-  elseif v.value == 28 "Mosek.MSK_CALLBACK_BEGIN_READ"
-  elseif v.value == 29 "Mosek.MSK_CALLBACK_BEGIN_ROOT_CUTGEN"
-  elseif v.value == 30 "Mosek.MSK_CALLBACK_BEGIN_SIMPLEX"
-  elseif v.value == 31 "Mosek.MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX"
-  elseif v.value == 32 "Mosek.MSK_CALLBACK_BEGIN_TO_CONIC"
-  elseif v.value == 33 "Mosek.MSK_CALLBACK_BEGIN_WRITE"
-  elseif v.value == 34 "Mosek.MSK_CALLBACK_CONIC"
-  elseif v.value == 35 "Mosek.MSK_CALLBACK_DECOMP_MIO"
-  elseif v.value == 36 "Mosek.MSK_CALLBACK_DUAL_SIMPLEX"
-  elseif v.value == 37 "Mosek.MSK_CALLBACK_END_BI"
-  elseif v.value == 38 "Mosek.MSK_CALLBACK_END_CONIC"
-  elseif v.value == 39 "Mosek.MSK_CALLBACK_END_DUAL_BI"
-  elseif v.value == 40 "Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY"
-  elseif v.value == 41 "Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI"
-  elseif v.value == 42 "Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX"
-  elseif v.value == 43 "Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI"
-  elseif v.value == 44 "Mosek.MSK_CALLBACK_END_FOLDING"
-  elseif v.value == 45 "Mosek.MSK_CALLBACK_END_FOLDING_BI"
-  elseif v.value == 46 "Mosek.MSK_CALLBACK_END_FOLDING_BI_DUAL"
-  elseif v.value == 47 "Mosek.MSK_CALLBACK_END_FOLDING_BI_INITIALIZE"
-  elseif v.value == 48 "Mosek.MSK_CALLBACK_END_FOLDING_BI_OPTIMIZER"
-  elseif v.value == 49 "Mosek.MSK_CALLBACK_END_FOLDING_BI_PRIMAL"
-  elseif v.value == 50 "Mosek.MSK_CALLBACK_END_INFEAS_ANA"
-  elseif v.value == 51 "Mosek.MSK_CALLBACK_END_INITIALIZE_BI"
-  elseif v.value == 52 "Mosek.MSK_CALLBACK_END_INTPNT"
-  elseif v.value == 53 "Mosek.MSK_CALLBACK_END_LICENSE_WAIT"
-  elseif v.value == 54 "Mosek.MSK_CALLBACK_END_MIO"
-  elseif v.value == 55 "Mosek.MSK_CALLBACK_END_OPTIMIZE_BI"
-  elseif v.value == 56 "Mosek.MSK_CALLBACK_END_OPTIMIZER"
-  elseif v.value == 57 "Mosek.MSK_CALLBACK_END_PRESOLVE"
-  elseif v.value == 58 "Mosek.MSK_CALLBACK_END_PRIMAL_BI"
-  elseif v.value == 59 "Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR"
-  elseif v.value == 60 "Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY"
-  elseif v.value == 61 "Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI"
-  elseif v.value == 62 "Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX"
-  elseif v.value == 63 "Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"
-  elseif v.value == 64 "Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE"
-  elseif v.value == 65 "Mosek.MSK_CALLBACK_END_READ"
-  elseif v.value == 66 "Mosek.MSK_CALLBACK_END_ROOT_CUTGEN"
-  elseif v.value == 67 "Mosek.MSK_CALLBACK_END_SIMPLEX"
-  elseif v.value == 68 "Mosek.MSK_CALLBACK_END_SIMPLEX_BI"
-  elseif v.value == 69 "Mosek.MSK_CALLBACK_END_SOLVE_ROOT_RELAX"
-  elseif v.value == 70 "Mosek.MSK_CALLBACK_END_TO_CONIC"
-  elseif v.value == 71 "Mosek.MSK_CALLBACK_END_WRITE"
-  elseif v.value == 72 "Mosek.MSK_CALLBACK_FOLDING_BI_DUAL"
-  elseif v.value == 73 "Mosek.MSK_CALLBACK_FOLDING_BI_OPTIMIZER"
-  elseif v.value == 74 "Mosek.MSK_CALLBACK_FOLDING_BI_PRIMAL"
-  elseif v.value == 75 "Mosek.MSK_CALLBACK_HEARTBEAT"
-  elseif v.value == 76 "Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY"
-  elseif v.value == 77 "Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX"
-  elseif v.value == 78 "Mosek.MSK_CALLBACK_IM_LICENSE_WAIT"
-  elseif v.value == 79 "Mosek.MSK_CALLBACK_IM_LU"
-  elseif v.value == 80 "Mosek.MSK_CALLBACK_IM_MIO"
-  elseif v.value == 81 "Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"
-  elseif v.value == 82 "Mosek.MSK_CALLBACK_IM_MIO_INTPNT"
-  elseif v.value == 83 "Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"
-  elseif v.value == 84 "Mosek.MSK_CALLBACK_IM_ORDER"
-  elseif v.value == 85 "Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY"
-  elseif v.value == 86 "Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX"
-  elseif v.value == 87 "Mosek.MSK_CALLBACK_IM_READ"
-  elseif v.value == 88 "Mosek.MSK_CALLBACK_IM_ROOT_CUTGEN"
-  elseif v.value == 89 "Mosek.MSK_CALLBACK_IM_SIMPLEX"
-  elseif v.value == 90 "Mosek.MSK_CALLBACK_INTPNT"
-  elseif v.value == 91 "Mosek.MSK_CALLBACK_NEW_INT_MIO"
-  elseif v.value == 92 "Mosek.MSK_CALLBACK_OPTIMIZE_BI"
-  elseif v.value == 93 "Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX"
-  elseif v.value == 94 "Mosek.MSK_CALLBACK_QO_REFORMULATE"
-  elseif v.value == 95 "Mosek.MSK_CALLBACK_READ_OPF"
-  elseif v.value == 96 "Mosek.MSK_CALLBACK_READ_OPF_SECTION"
-  elseif v.value == 97 "Mosek.MSK_CALLBACK_RESTART_MIO"
-  elseif v.value == 98 "Mosek.MSK_CALLBACK_SOLVING_REMOTE"
-  elseif v.value == 99 "Mosek.MSK_CALLBACK_UPDATE_DUAL_BI"
-  elseif v.value == 100 "Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"
-  elseif v.value == 101 "Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"
-  elseif v.value == 102 "Mosek.MSK_CALLBACK_UPDATE_PRESOLVE"
-  elseif v.value == 103 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI"
-  elseif v.value == 104 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"
-  elseif v.value == 105 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"
-  elseif v.value == 106 "Mosek.MSK_CALLBACK_UPDATE_SIMPLEX"
-  elseif v.value == 107 "Mosek.MSK_CALLBACK_WRITE_OPF"
+  elseif v.value == 20 "Mosek.MSK_CALLBACK_BEGIN_OPTIMIZER_128BIT"
+  elseif v.value == 21 "Mosek.MSK_CALLBACK_BEGIN_ORDER"
+  elseif v.value == 22 "Mosek.MSK_CALLBACK_BEGIN_PRESOLVE"
+  elseif v.value == 23 "Mosek.MSK_CALLBACK_BEGIN_PRESOLVE_ELIMINATOR"
+  elseif v.value == 24 "Mosek.MSK_CALLBACK_BEGIN_PRESOLVE_LINEAR_DEPENDENCIES"
+  elseif v.value == 25 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_BI"
+  elseif v.value == 26 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_REPAIR"
+  elseif v.value == 27 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY"
+  elseif v.value == 28 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SETUP_BI"
+  elseif v.value == 29 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX"
+  elseif v.value == 30 "Mosek.MSK_CALLBACK_BEGIN_PRIMAL_SIMPLEX_BI"
+  elseif v.value == 31 "Mosek.MSK_CALLBACK_BEGIN_QCQO_REFORMULATE"
+  elseif v.value == 32 "Mosek.MSK_CALLBACK_BEGIN_READ"
+  elseif v.value == 33 "Mosek.MSK_CALLBACK_BEGIN_ROOT_CUTGEN"
+  elseif v.value == 34 "Mosek.MSK_CALLBACK_BEGIN_SIMPLEX"
+  elseif v.value == 35 "Mosek.MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX"
+  elseif v.value == 36 "Mosek.MSK_CALLBACK_BEGIN_TO_CONIC"
+  elseif v.value == 37 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZE_BI"
+  elseif v.value == 38 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZE_BI_DUAL"
+  elseif v.value == 39 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZE_BI_INITIALIZE"
+  elseif v.value == 40 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE"
+  elseif v.value == 41 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE_128BIT"
+  elseif v.value == 42 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZE_BI_PRIMAL"
+  elseif v.value == 43 "Mosek.MSK_CALLBACK_BEGIN_UNDUALIZING"
+  elseif v.value == 44 "Mosek.MSK_CALLBACK_BEGIN_UNFOLD_BI"
+  elseif v.value == 45 "Mosek.MSK_CALLBACK_BEGIN_UNFOLD_BI_DUAL"
+  elseif v.value == 46 "Mosek.MSK_CALLBACK_BEGIN_UNFOLD_BI_INITIALIZE"
+  elseif v.value == 47 "Mosek.MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE"
+  elseif v.value == 48 "Mosek.MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE_128BIT"
+  elseif v.value == 49 "Mosek.MSK_CALLBACK_BEGIN_UNFOLD_BI_PRIMAL"
+  elseif v.value == 50 "Mosek.MSK_CALLBACK_BEGIN_UNFOLDING"
+  elseif v.value == 51 "Mosek.MSK_CALLBACK_BEGIN_WRITE"
+  elseif v.value == 52 "Mosek.MSK_CALLBACK_CONIC"
+  elseif v.value == 53 "Mosek.MSK_CALLBACK_DECOMP_MIO"
+  elseif v.value == 54 "Mosek.MSK_CALLBACK_DUAL_SIMPLEX"
+  elseif v.value == 55 "Mosek.MSK_CALLBACK_END_BI"
+  elseif v.value == 56 "Mosek.MSK_CALLBACK_END_CONIC"
+  elseif v.value == 57 "Mosek.MSK_CALLBACK_END_DUAL_BI"
+  elseif v.value == 58 "Mosek.MSK_CALLBACK_END_DUAL_SENSITIVITY"
+  elseif v.value == 59 "Mosek.MSK_CALLBACK_END_DUAL_SETUP_BI"
+  elseif v.value == 60 "Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX"
+  elseif v.value == 61 "Mosek.MSK_CALLBACK_END_DUAL_SIMPLEX_BI"
+  elseif v.value == 62 "Mosek.MSK_CALLBACK_END_DUALIZER"
+  elseif v.value == 63 "Mosek.MSK_CALLBACK_END_FOLDING"
+  elseif v.value == 64 "Mosek.MSK_CALLBACK_END_GP_ORDER"
+  elseif v.value == 65 "Mosek.MSK_CALLBACK_END_INFEAS_ANA"
+  elseif v.value == 66 "Mosek.MSK_CALLBACK_END_INITIALIZE_BI"
+  elseif v.value == 67 "Mosek.MSK_CALLBACK_END_INTPNT"
+  elseif v.value == 68 "Mosek.MSK_CALLBACK_END_INTPNT_SETUP"
+  elseif v.value == 69 "Mosek.MSK_CALLBACK_END_LICENSE_WAIT"
+  elseif v.value == 70 "Mosek.MSK_CALLBACK_END_LOCAL_ORDER"
+  elseif v.value == 71 "Mosek.MSK_CALLBACK_END_MIO"
+  elseif v.value == 72 "Mosek.MSK_CALLBACK_END_OPTIMIZE_BI"
+  elseif v.value == 73 "Mosek.MSK_CALLBACK_END_OPTIMIZE_BI_128BIT"
+  elseif v.value == 74 "Mosek.MSK_CALLBACK_END_OPTIMIZER"
+  elseif v.value == 75 "Mosek.MSK_CALLBACK_END_OPTIMIZER_128BIT"
+  elseif v.value == 76 "Mosek.MSK_CALLBACK_END_ORDER"
+  elseif v.value == 77 "Mosek.MSK_CALLBACK_END_PRESOLVE"
+  elseif v.value == 78 "Mosek.MSK_CALLBACK_END_PRESOLVE_ELIMINATOR"
+  elseif v.value == 79 "Mosek.MSK_CALLBACK_END_PRESOLVE_LINEAR_DEPENDENCIES"
+  elseif v.value == 80 "Mosek.MSK_CALLBACK_END_PRIMAL_BI"
+  elseif v.value == 81 "Mosek.MSK_CALLBACK_END_PRIMAL_REPAIR"
+  elseif v.value == 82 "Mosek.MSK_CALLBACK_END_PRIMAL_SENSITIVITY"
+  elseif v.value == 83 "Mosek.MSK_CALLBACK_END_PRIMAL_SETUP_BI"
+  elseif v.value == 84 "Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX"
+  elseif v.value == 85 "Mosek.MSK_CALLBACK_END_PRIMAL_SIMPLEX_BI"
+  elseif v.value == 86 "Mosek.MSK_CALLBACK_END_QCQO_REFORMULATE"
+  elseif v.value == 87 "Mosek.MSK_CALLBACK_END_READ"
+  elseif v.value == 88 "Mosek.MSK_CALLBACK_END_ROOT_CUTGEN"
+  elseif v.value == 89 "Mosek.MSK_CALLBACK_END_SIMPLEX"
+  elseif v.value == 90 "Mosek.MSK_CALLBACK_END_SIMPLEX_BI"
+  elseif v.value == 91 "Mosek.MSK_CALLBACK_END_SOLVE_ROOT_RELAX"
+  elseif v.value == 92 "Mosek.MSK_CALLBACK_END_TO_CONIC"
+  elseif v.value == 93 "Mosek.MSK_CALLBACK_END_UNDUALIZE_BI"
+  elseif v.value == 94 "Mosek.MSK_CALLBACK_END_UNDUALIZE_BI_DUAL"
+  elseif v.value == 95 "Mosek.MSK_CALLBACK_END_UNDUALIZE_BI_INITIALIZE"
+  elseif v.value == 96 "Mosek.MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE"
+  elseif v.value == 97 "Mosek.MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE_128BIT"
+  elseif v.value == 98 "Mosek.MSK_CALLBACK_END_UNDUALIZE_BI_PRIMAL"
+  elseif v.value == 99 "Mosek.MSK_CALLBACK_END_UNDUALIZING"
+  elseif v.value == 100 "Mosek.MSK_CALLBACK_END_UNFOLD_BI"
+  elseif v.value == 101 "Mosek.MSK_CALLBACK_END_UNFOLD_BI_DUAL"
+  elseif v.value == 102 "Mosek.MSK_CALLBACK_END_UNFOLD_BI_INITIALIZE"
+  elseif v.value == 103 "Mosek.MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE"
+  elseif v.value == 104 "Mosek.MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE_128BIT"
+  elseif v.value == 105 "Mosek.MSK_CALLBACK_END_UNFOLD_BI_PRIMAL"
+  elseif v.value == 106 "Mosek.MSK_CALLBACK_END_UNFOLDING"
+  elseif v.value == 107 "Mosek.MSK_CALLBACK_END_WRITE"
+  elseif v.value == 108 "Mosek.MSK_CALLBACK_GP_ORDER"
+  elseif v.value == 109 "Mosek.MSK_CALLBACK_HEARTBEAT"
+  elseif v.value == 110 "Mosek.MSK_CALLBACK_IM_DUAL_SENSIVITY"
+  elseif v.value == 111 "Mosek.MSK_CALLBACK_IM_DUAL_SIMPLEX"
+  elseif v.value == 112 "Mosek.MSK_CALLBACK_IM_LICENSE_WAIT"
+  elseif v.value == 113 "Mosek.MSK_CALLBACK_IM_LU"
+  elseif v.value == 114 "Mosek.MSK_CALLBACK_IM_MIO"
+  elseif v.value == 115 "Mosek.MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX"
+  elseif v.value == 116 "Mosek.MSK_CALLBACK_IM_MIO_INTPNT"
+  elseif v.value == 117 "Mosek.MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX"
+  elseif v.value == 118 "Mosek.MSK_CALLBACK_IM_PRIMAL_SENSIVITY"
+  elseif v.value == 119 "Mosek.MSK_CALLBACK_IM_PRIMAL_SIMPLEX"
+  elseif v.value == 120 "Mosek.MSK_CALLBACK_IM_READ"
+  elseif v.value == 121 "Mosek.MSK_CALLBACK_IM_ROOT_CUTGEN"
+  elseif v.value == 122 "Mosek.MSK_CALLBACK_IM_SIMPLEX"
+  elseif v.value == 123 "Mosek.MSK_CALLBACK_INTPNT"
+  elseif v.value == 124 "Mosek.MSK_CALLBACK_LOCAL_ORDER"
+  elseif v.value == 125 "Mosek.MSK_CALLBACK_NEW_INT_MIO"
+  elseif v.value == 126 "Mosek.MSK_CALLBACK_OPTIMIZE_BI"
+  elseif v.value == 127 "Mosek.MSK_CALLBACK_OPTIMIZE_BI_128BIT"
+  elseif v.value == 128 "Mosek.MSK_CALLBACK_ORDER"
+  elseif v.value == 129 "Mosek.MSK_CALLBACK_PRIMAL_SIMPLEX"
+  elseif v.value == 130 "Mosek.MSK_CALLBACK_QO_REFORMULATE"
+  elseif v.value == 131 "Mosek.MSK_CALLBACK_READ_OPF"
+  elseif v.value == 132 "Mosek.MSK_CALLBACK_READ_OPF_SECTION"
+  elseif v.value == 133 "Mosek.MSK_CALLBACK_RESTART_MIO"
+  elseif v.value == 134 "Mosek.MSK_CALLBACK_SOLVING_REMOTE"
+  elseif v.value == 135 "Mosek.MSK_CALLBACK_UNDUALIZE_BI_DUAL"
+  elseif v.value == 136 "Mosek.MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE"
+  elseif v.value == 137 "Mosek.MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE_128BIT"
+  elseif v.value == 138 "Mosek.MSK_CALLBACK_UNDUALIZE_BI_PRIMAL"
+  elseif v.value == 139 "Mosek.MSK_CALLBACK_UNFOLD_BI_DUAL"
+  elseif v.value == 140 "Mosek.MSK_CALLBACK_UNFOLD_BI_OPTIMIZE"
+  elseif v.value == 141 "Mosek.MSK_CALLBACK_UNFOLD_BI_OPTIMIZE_128BIT"
+  elseif v.value == 142 "Mosek.MSK_CALLBACK_UNFOLD_BI_PRIMAL"
+  elseif v.value == 143 "Mosek.MSK_CALLBACK_UPDATE_DUAL_BI"
+  elseif v.value == 144 "Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX"
+  elseif v.value == 145 "Mosek.MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI"
+  elseif v.value == 146 "Mosek.MSK_CALLBACK_UPDATE_PRESOLVE"
+  elseif v.value == 147 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_BI"
+  elseif v.value == 148 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX"
+  elseif v.value == 149 "Mosek.MSK_CALLBACK_UPDATE_PRIMAL_SIMPLEX_BI"
+  elseif v.value == 150 "Mosek.MSK_CALLBACK_UPDATE_SIMPLEX"
+  elseif v.value == 151 "Mosek.MSK_CALLBACK_WRITE_OPF"
   else "Mosek.Callbackcode(?)"
   end
 const Callbackcode_members = Callbackcode[
@@ -2504,20 +2738,24 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_BEGIN_DUAL_SETUP_BI,
     MSK_CALLBACK_BEGIN_DUAL_SIMPLEX,
     MSK_CALLBACK_BEGIN_DUAL_SIMPLEX_BI,
+    MSK_CALLBACK_BEGIN_DUALIZER,
     MSK_CALLBACK_BEGIN_FOLDING,
-    MSK_CALLBACK_BEGIN_FOLDING_BI,
-    MSK_CALLBACK_BEGIN_FOLDING_BI_DUAL,
-    MSK_CALLBACK_BEGIN_FOLDING_BI_INITIALIZE,
-    MSK_CALLBACK_BEGIN_FOLDING_BI_OPTIMIZER,
-    MSK_CALLBACK_BEGIN_FOLDING_BI_PRIMAL,
+    MSK_CALLBACK_BEGIN_GP_ORDER,
     MSK_CALLBACK_BEGIN_INFEAS_ANA,
     MSK_CALLBACK_BEGIN_INITIALIZE_BI,
     MSK_CALLBACK_BEGIN_INTPNT,
+    MSK_CALLBACK_BEGIN_INTPNT_SETUP,
     MSK_CALLBACK_BEGIN_LICENSE_WAIT,
+    MSK_CALLBACK_BEGIN_LOCAL_ORDER,
     MSK_CALLBACK_BEGIN_MIO,
     MSK_CALLBACK_BEGIN_OPTIMIZE_BI,
+    MSK_CALLBACK_BEGIN_OPTIMIZE_BI_128BIT,
     MSK_CALLBACK_BEGIN_OPTIMIZER,
+    MSK_CALLBACK_BEGIN_OPTIMIZER_128BIT,
+    MSK_CALLBACK_BEGIN_ORDER,
     MSK_CALLBACK_BEGIN_PRESOLVE,
+    MSK_CALLBACK_BEGIN_PRESOLVE_ELIMINATOR,
+    MSK_CALLBACK_BEGIN_PRESOLVE_LINEAR_DEPENDENCIES,
     MSK_CALLBACK_BEGIN_PRIMAL_BI,
     MSK_CALLBACK_BEGIN_PRIMAL_REPAIR,
     MSK_CALLBACK_BEGIN_PRIMAL_SENSITIVITY,
@@ -2530,6 +2768,20 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_BEGIN_SIMPLEX,
     MSK_CALLBACK_BEGIN_SOLVE_ROOT_RELAX,
     MSK_CALLBACK_BEGIN_TO_CONIC,
+    MSK_CALLBACK_BEGIN_UNDUALIZE_BI,
+    MSK_CALLBACK_BEGIN_UNDUALIZE_BI_DUAL,
+    MSK_CALLBACK_BEGIN_UNDUALIZE_BI_INITIALIZE,
+    MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE,
+    MSK_CALLBACK_BEGIN_UNDUALIZE_BI_OPTIMIZE_128BIT,
+    MSK_CALLBACK_BEGIN_UNDUALIZE_BI_PRIMAL,
+    MSK_CALLBACK_BEGIN_UNDUALIZING,
+    MSK_CALLBACK_BEGIN_UNFOLD_BI,
+    MSK_CALLBACK_BEGIN_UNFOLD_BI_DUAL,
+    MSK_CALLBACK_BEGIN_UNFOLD_BI_INITIALIZE,
+    MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE,
+    MSK_CALLBACK_BEGIN_UNFOLD_BI_OPTIMIZE_128BIT,
+    MSK_CALLBACK_BEGIN_UNFOLD_BI_PRIMAL,
+    MSK_CALLBACK_BEGIN_UNFOLDING,
     MSK_CALLBACK_BEGIN_WRITE,
     MSK_CALLBACK_CONIC,
     MSK_CALLBACK_DECOMP_MIO,
@@ -2541,20 +2793,24 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_END_DUAL_SETUP_BI,
     MSK_CALLBACK_END_DUAL_SIMPLEX,
     MSK_CALLBACK_END_DUAL_SIMPLEX_BI,
+    MSK_CALLBACK_END_DUALIZER,
     MSK_CALLBACK_END_FOLDING,
-    MSK_CALLBACK_END_FOLDING_BI,
-    MSK_CALLBACK_END_FOLDING_BI_DUAL,
-    MSK_CALLBACK_END_FOLDING_BI_INITIALIZE,
-    MSK_CALLBACK_END_FOLDING_BI_OPTIMIZER,
-    MSK_CALLBACK_END_FOLDING_BI_PRIMAL,
+    MSK_CALLBACK_END_GP_ORDER,
     MSK_CALLBACK_END_INFEAS_ANA,
     MSK_CALLBACK_END_INITIALIZE_BI,
     MSK_CALLBACK_END_INTPNT,
+    MSK_CALLBACK_END_INTPNT_SETUP,
     MSK_CALLBACK_END_LICENSE_WAIT,
+    MSK_CALLBACK_END_LOCAL_ORDER,
     MSK_CALLBACK_END_MIO,
     MSK_CALLBACK_END_OPTIMIZE_BI,
+    MSK_CALLBACK_END_OPTIMIZE_BI_128BIT,
     MSK_CALLBACK_END_OPTIMIZER,
+    MSK_CALLBACK_END_OPTIMIZER_128BIT,
+    MSK_CALLBACK_END_ORDER,
     MSK_CALLBACK_END_PRESOLVE,
+    MSK_CALLBACK_END_PRESOLVE_ELIMINATOR,
+    MSK_CALLBACK_END_PRESOLVE_LINEAR_DEPENDENCIES,
     MSK_CALLBACK_END_PRIMAL_BI,
     MSK_CALLBACK_END_PRIMAL_REPAIR,
     MSK_CALLBACK_END_PRIMAL_SENSITIVITY,
@@ -2568,10 +2824,22 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_END_SIMPLEX_BI,
     MSK_CALLBACK_END_SOLVE_ROOT_RELAX,
     MSK_CALLBACK_END_TO_CONIC,
+    MSK_CALLBACK_END_UNDUALIZE_BI,
+    MSK_CALLBACK_END_UNDUALIZE_BI_DUAL,
+    MSK_CALLBACK_END_UNDUALIZE_BI_INITIALIZE,
+    MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE,
+    MSK_CALLBACK_END_UNDUALIZE_BI_OPTIMIZE_128BIT,
+    MSK_CALLBACK_END_UNDUALIZE_BI_PRIMAL,
+    MSK_CALLBACK_END_UNDUALIZING,
+    MSK_CALLBACK_END_UNFOLD_BI,
+    MSK_CALLBACK_END_UNFOLD_BI_DUAL,
+    MSK_CALLBACK_END_UNFOLD_BI_INITIALIZE,
+    MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE,
+    MSK_CALLBACK_END_UNFOLD_BI_OPTIMIZE_128BIT,
+    MSK_CALLBACK_END_UNFOLD_BI_PRIMAL,
+    MSK_CALLBACK_END_UNFOLDING,
     MSK_CALLBACK_END_WRITE,
-    MSK_CALLBACK_FOLDING_BI_DUAL,
-    MSK_CALLBACK_FOLDING_BI_OPTIMIZER,
-    MSK_CALLBACK_FOLDING_BI_PRIMAL,
+    MSK_CALLBACK_GP_ORDER,
     MSK_CALLBACK_HEARTBEAT,
     MSK_CALLBACK_IM_DUAL_SENSIVITY,
     MSK_CALLBACK_IM_DUAL_SIMPLEX,
@@ -2581,21 +2849,31 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_IM_MIO_DUAL_SIMPLEX,
     MSK_CALLBACK_IM_MIO_INTPNT,
     MSK_CALLBACK_IM_MIO_PRIMAL_SIMPLEX,
-    MSK_CALLBACK_IM_ORDER,
     MSK_CALLBACK_IM_PRIMAL_SENSIVITY,
     MSK_CALLBACK_IM_PRIMAL_SIMPLEX,
     MSK_CALLBACK_IM_READ,
     MSK_CALLBACK_IM_ROOT_CUTGEN,
     MSK_CALLBACK_IM_SIMPLEX,
     MSK_CALLBACK_INTPNT,
+    MSK_CALLBACK_LOCAL_ORDER,
     MSK_CALLBACK_NEW_INT_MIO,
     MSK_CALLBACK_OPTIMIZE_BI,
+    MSK_CALLBACK_OPTIMIZE_BI_128BIT,
+    MSK_CALLBACK_ORDER,
     MSK_CALLBACK_PRIMAL_SIMPLEX,
     MSK_CALLBACK_QO_REFORMULATE,
     MSK_CALLBACK_READ_OPF,
     MSK_CALLBACK_READ_OPF_SECTION,
     MSK_CALLBACK_RESTART_MIO,
     MSK_CALLBACK_SOLVING_REMOTE,
+    MSK_CALLBACK_UNDUALIZE_BI_DUAL,
+    MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE,
+    MSK_CALLBACK_UNDUALIZE_BI_OPTIMIZE_128BIT,
+    MSK_CALLBACK_UNDUALIZE_BI_PRIMAL,
+    MSK_CALLBACK_UNFOLD_BI_DUAL,
+    MSK_CALLBACK_UNFOLD_BI_OPTIMIZE,
+    MSK_CALLBACK_UNFOLD_BI_OPTIMIZE_128BIT,
+    MSK_CALLBACK_UNFOLD_BI_PRIMAL,
     MSK_CALLBACK_UPDATE_DUAL_BI,
     MSK_CALLBACK_UPDATE_DUAL_SIMPLEX,
     MSK_CALLBACK_UPDATE_DUAL_SIMPLEX_BI,
@@ -2606,7 +2884,7 @@ const Callbackcode_members = Callbackcode[
     MSK_CALLBACK_UPDATE_SIMPLEX,
     MSK_CALLBACK_WRITE_OPF ]
 members(::Type{Callbackcode}) = Callbackcode_members
-Base.length(::Type{Callbackcode}) = 108
+Base.length(::Type{Callbackcode}) = 152
 Base.convert(::Type{Int},x::Callbackcode) = Int(x.value)
 """
     Compresstype
@@ -2967,13 +3245,10 @@ Double information items
 * `MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY`. Density percentage of the scalarized constraint matrix.
 * `MSK_DINF_BI_CLEAN_TIME`. Time spent within the clean-up phase of the basis identification procedure since its invocation (in seconds).
 * `MSK_DINF_BI_DUAL_TIME`. Time spent within the dual phase basis identification procedure since its invocation (in seconds).
+* `MSK_DINF_BI_OPTIMIZE_128BIT_TIME`. TBD
+* `MSK_DINF_BI_OPTIMIZE_TIME`. TBD
 * `MSK_DINF_BI_PRIMAL_TIME`. Time spent within the primal phase of the basis identification procedure since its invocation (in seconds).
 * `MSK_DINF_BI_TIME`. Time spent within the basis identification procedure since its invocation (in seconds).
-* `MSK_DINF_FOLDING_BI_OPTIMIZE_TIME`. TBD
-* `MSK_DINF_FOLDING_BI_UNFOLD_DUAL_TIME`. TBD
-* `MSK_DINF_FOLDING_BI_UNFOLD_INITIALIZE_TIME`. TBD
-* `MSK_DINF_FOLDING_BI_UNFOLD_PRIMAL_TIME`. TBD
-* `MSK_DINF_FOLDING_BI_UNFOLD_TIME`. TBD
 * `MSK_DINF_FOLDING_FACTOR`. Problem size after folding as a fraction of the original size.
 * `MSK_DINF_FOLDING_TIME`. Total time spent in folding for continuous problems (in seconds).
 * `MSK_DINF_INTPNT_DUAL_FEAS`. Dual feasibility measure reported by the interior-point optimizer.
@@ -2983,6 +3258,7 @@ Double information items
 * `MSK_DINF_INTPNT_ORDER_TIME`. Order time (in seconds).
 * `MSK_DINF_INTPNT_PRIMAL_FEAS`. Primal feasibility measure reported by the interior-point optimizer.
 * `MSK_DINF_INTPNT_PRIMAL_OBJ`. Primal objective value reported by the interior-point optimizer.
+* `MSK_DINF_INTPNT_SETUP_TIME`. Interior-point optimizer setup time (in seconds).
 * `MSK_DINF_INTPNT_TIME`. Time spent within the interior-point optimizer since its invocation (in seconds).
 * `MSK_DINF_MIO_CLIQUE_SELECTION_TIME`. Selection time for clique cuts (in seconds).
 * `MSK_DINF_MIO_CLIQUE_SEPARATION_TIME`. Separation time for clique cuts (in seconds).
@@ -3079,6 +3355,18 @@ Double information items
 * `MSK_DINF_SOL_ITR_PVIOLCONES`. Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_SOL_ITR_PVIOLVAR`. Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo.
 * `MSK_DINF_TO_CONIC_TIME`. Time spent in the last to conic reformulation (in seconds).
+* `MSK_DINF_UNDUALIZE_BI_DUAL_TIME`. TBD
+* `MSK_DINF_UNDUALIZE_BI_INITIALIZE_TIME`. TBD
+* `MSK_DINF_UNDUALIZE_BI_OPTIMIZE_128BIT_TIME`. TBD
+* `MSK_DINF_UNDUALIZE_BI_OPTIMIZE_TIME`. TBD
+* `MSK_DINF_UNDUALIZE_BI_PRIMAL_TIME`. TBD
+* `MSK_DINF_UNDUALIZE_BI_TIME`. TBD
+* `MSK_DINF_UNFOLD_BI_DUAL_TIME`. TBD
+* `MSK_DINF_UNFOLD_BI_INITIALIZE_TIME`. TBD
+* `MSK_DINF_UNFOLD_BI_OPTIMIZE_128BIT_TIME`. TBD
+* `MSK_DINF_UNFOLD_BI_OPTIMIZE_TIME`. TBD
+* `MSK_DINF_UNFOLD_BI_PRIMAL_TIME`. TBD
+* `MSK_DINF_UNFOLD_BI_TIME`. TBD
 * `MSK_DINF_WRITE_DATA_TIME`. Time spent writing the data file (in seconds).
 """
 struct Dinfitem <: MosekEnum
@@ -3094,473 +3382,510 @@ const MSK_DINF_BI_CLEAN_TIME = Dinfitem(1)
 "Time spent within the dual phase basis identification procedure since its invocation (in seconds)."
 const MSK_DINF_BI_DUAL_TIME = Dinfitem(2)
 
+"TBD"
+const MSK_DINF_BI_OPTIMIZE_128BIT_TIME = Dinfitem(3)
+
+"TBD"
+const MSK_DINF_BI_OPTIMIZE_TIME = Dinfitem(4)
+
 "Time spent within the primal phase of the basis identification procedure since its invocation (in seconds)."
-const MSK_DINF_BI_PRIMAL_TIME = Dinfitem(3)
+const MSK_DINF_BI_PRIMAL_TIME = Dinfitem(5)
 
 "Time spent within the basis identification procedure since its invocation (in seconds)."
-const MSK_DINF_BI_TIME = Dinfitem(4)
-
-"TBD"
-const MSK_DINF_FOLDING_BI_OPTIMIZE_TIME = Dinfitem(5)
-
-"TBD"
-const MSK_DINF_FOLDING_BI_UNFOLD_DUAL_TIME = Dinfitem(6)
-
-"TBD"
-const MSK_DINF_FOLDING_BI_UNFOLD_INITIALIZE_TIME = Dinfitem(7)
-
-"TBD"
-const MSK_DINF_FOLDING_BI_UNFOLD_PRIMAL_TIME = Dinfitem(8)
-
-"TBD"
-const MSK_DINF_FOLDING_BI_UNFOLD_TIME = Dinfitem(9)
+const MSK_DINF_BI_TIME = Dinfitem(6)
 
 "Problem size after folding as a fraction of the original size."
-const MSK_DINF_FOLDING_FACTOR = Dinfitem(10)
+const MSK_DINF_FOLDING_FACTOR = Dinfitem(7)
 
 "Total time spent in folding for continuous problems (in seconds)."
-const MSK_DINF_FOLDING_TIME = Dinfitem(11)
+const MSK_DINF_FOLDING_TIME = Dinfitem(8)
 
 "Dual feasibility measure reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_DUAL_FEAS = Dinfitem(12)
+const MSK_DINF_INTPNT_DUAL_FEAS = Dinfitem(9)
 
 "Dual objective value reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_DUAL_OBJ = Dinfitem(13)
+const MSK_DINF_INTPNT_DUAL_OBJ = Dinfitem(10)
 
 "An estimate of the number of flops used in the factorization."
-const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS = Dinfitem(14)
+const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS = Dinfitem(11)
 
 "A measure of optimality of the solution."
-const MSK_DINF_INTPNT_OPT_STATUS = Dinfitem(15)
+const MSK_DINF_INTPNT_OPT_STATUS = Dinfitem(12)
 
 "Order time (in seconds)."
-const MSK_DINF_INTPNT_ORDER_TIME = Dinfitem(16)
+const MSK_DINF_INTPNT_ORDER_TIME = Dinfitem(13)
 
 "Primal feasibility measure reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_PRIMAL_FEAS = Dinfitem(17)
+const MSK_DINF_INTPNT_PRIMAL_FEAS = Dinfitem(14)
 
 "Primal objective value reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_PRIMAL_OBJ = Dinfitem(18)
+const MSK_DINF_INTPNT_PRIMAL_OBJ = Dinfitem(15)
+
+"Interior-point optimizer setup time (in seconds)."
+const MSK_DINF_INTPNT_SETUP_TIME = Dinfitem(16)
 
 "Time spent within the interior-point optimizer since its invocation (in seconds)."
-const MSK_DINF_INTPNT_TIME = Dinfitem(19)
+const MSK_DINF_INTPNT_TIME = Dinfitem(17)
 
 "Selection time for clique cuts (in seconds)."
-const MSK_DINF_MIO_CLIQUE_SELECTION_TIME = Dinfitem(20)
+const MSK_DINF_MIO_CLIQUE_SELECTION_TIME = Dinfitem(18)
 
 "Separation time for clique cuts (in seconds)."
-const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME = Dinfitem(21)
+const MSK_DINF_MIO_CLIQUE_SEPARATION_TIME = Dinfitem(19)
 
 "Selection time for CMIR cuts (in seconds)."
-const MSK_DINF_MIO_CMIR_SELECTION_TIME = Dinfitem(22)
+const MSK_DINF_MIO_CMIR_SELECTION_TIME = Dinfitem(20)
 
 "Separation time for CMIR cuts (in seconds)."
-const MSK_DINF_MIO_CMIR_SEPARATION_TIME = Dinfitem(23)
+const MSK_DINF_MIO_CMIR_SEPARATION_TIME = Dinfitem(21)
 
 "Optimal objective value corresponding to the feasible solution."
-const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ = Dinfitem(24)
+const MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ = Dinfitem(22)
 
 "Value of the dual bound after presolve but before cut generation."
-const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE = Dinfitem(25)
+const MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE = Dinfitem(23)
 
 "Selection time for GMI cuts (in seconds)."
-const MSK_DINF_MIO_GMI_SELECTION_TIME = Dinfitem(26)
+const MSK_DINF_MIO_GMI_SELECTION_TIME = Dinfitem(24)
 
 "Separation time for GMI cuts (in seconds)."
-const MSK_DINF_MIO_GMI_SEPARATION_TIME = Dinfitem(27)
+const MSK_DINF_MIO_GMI_SEPARATION_TIME = Dinfitem(25)
 
 "Selection time for implied bound cuts (in seconds)."
-const MSK_DINF_MIO_IMPLIED_BOUND_SELECTION_TIME = Dinfitem(28)
+const MSK_DINF_MIO_IMPLIED_BOUND_SELECTION_TIME = Dinfitem(26)
 
 "Separation time for implied bound cuts (in seconds)."
-const MSK_DINF_MIO_IMPLIED_BOUND_SEPARATION_TIME = Dinfitem(29)
+const MSK_DINF_MIO_IMPLIED_BOUND_SEPARATION_TIME = Dinfitem(27)
 
 "Optimal objective value corresponding to the user provided initial solution."
-const MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ = Dinfitem(30)
+const MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ = Dinfitem(28)
 
 "Selection time for knapsack cover (in seconds)."
-const MSK_DINF_MIO_KNAPSACK_COVER_SELECTION_TIME = Dinfitem(31)
+const MSK_DINF_MIO_KNAPSACK_COVER_SELECTION_TIME = Dinfitem(29)
 
 "Separation time for knapsack cover (in seconds)."
-const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME = Dinfitem(32)
+const MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME = Dinfitem(30)
 
 "Selection time for lift-and-project cuts (in seconds)."
-const MSK_DINF_MIO_LIPRO_SELECTION_TIME = Dinfitem(33)
+const MSK_DINF_MIO_LIPRO_SELECTION_TIME = Dinfitem(31)
 
 "Separation time for lift-and-project cuts (in seconds)."
-const MSK_DINF_MIO_LIPRO_SEPARATION_TIME = Dinfitem(34)
+const MSK_DINF_MIO_LIPRO_SEPARATION_TIME = Dinfitem(32)
 
 "If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the absolute gap."
-const MSK_DINF_MIO_OBJ_ABS_GAP = Dinfitem(35)
+const MSK_DINF_MIO_OBJ_ABS_GAP = Dinfitem(33)
 
 "The best bound on the objective value known."
-const MSK_DINF_MIO_OBJ_BOUND = Dinfitem(36)
+const MSK_DINF_MIO_OBJ_BOUND = Dinfitem(34)
 
 "The primal objective value corresponding to the best integer feasible solution."
-const MSK_DINF_MIO_OBJ_INT = Dinfitem(37)
+const MSK_DINF_MIO_OBJ_INT = Dinfitem(35)
 
 "If the mixed-integer optimizer has computed a feasible solution and a bound, this contains the relative gap."
-const MSK_DINF_MIO_OBJ_REL_GAP = Dinfitem(38)
+const MSK_DINF_MIO_OBJ_REL_GAP = Dinfitem(36)
 
 "Total time for probing (in seconds)."
-const MSK_DINF_MIO_PROBING_TIME = Dinfitem(39)
+const MSK_DINF_MIO_PROBING_TIME = Dinfitem(37)
 
 "Total time for cut selection (in seconds)."
-const MSK_DINF_MIO_ROOT_CUT_SELECTION_TIME = Dinfitem(40)
+const MSK_DINF_MIO_ROOT_CUT_SELECTION_TIME = Dinfitem(38)
 
 "Total time for cut separation (in seconds)."
-const MSK_DINF_MIO_ROOT_CUT_SEPARATION_TIME = Dinfitem(41)
+const MSK_DINF_MIO_ROOT_CUT_SEPARATION_TIME = Dinfitem(39)
 
 "Time spent in the contiuous optimizer while processing the root node relaxation (in seconds)."
-const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME = Dinfitem(42)
+const MSK_DINF_MIO_ROOT_OPTIMIZER_TIME = Dinfitem(40)
 
 "Time spent presolving the problem at the root node (in seconds)."
-const MSK_DINF_MIO_ROOT_PRESOLVE_TIME = Dinfitem(43)
+const MSK_DINF_MIO_ROOT_PRESOLVE_TIME = Dinfitem(41)
 
 "Time spent processing the root node (in seconds)."
-const MSK_DINF_MIO_ROOT_TIME = Dinfitem(44)
+const MSK_DINF_MIO_ROOT_TIME = Dinfitem(42)
 
 "Total time for symmetry detection (in seconds)."
-const MSK_DINF_MIO_SYMMETRY_DETECTION_TIME = Dinfitem(45)
+const MSK_DINF_MIO_SYMMETRY_DETECTION_TIME = Dinfitem(43)
 
 "Degree to which the problem is affected by detected symmetry."
-const MSK_DINF_MIO_SYMMETRY_FACTOR = Dinfitem(46)
+const MSK_DINF_MIO_SYMMETRY_FACTOR = Dinfitem(44)
 
 "Time spent in the mixed-integer optimizer (in seconds)."
-const MSK_DINF_MIO_TIME = Dinfitem(47)
+const MSK_DINF_MIO_TIME = Dinfitem(45)
 
 "If the objective cut is used, then this information item has the value of the cut."
-const MSK_DINF_MIO_USER_OBJ_CUT = Dinfitem(48)
+const MSK_DINF_MIO_USER_OBJ_CUT = Dinfitem(46)
 
 "Total number of ticks spent in the optimizer since it was invoked. It is strictly negative if it is not available."
-const MSK_DINF_OPTIMIZER_TICKS = Dinfitem(49)
+const MSK_DINF_OPTIMIZER_TICKS = Dinfitem(47)
 
 "Total time spent in the optimizer since it was invoked (in seconds)."
-const MSK_DINF_OPTIMIZER_TIME = Dinfitem(50)
+const MSK_DINF_OPTIMIZER_TIME = Dinfitem(48)
 
 "Total time spent in the eliminator since the presolve was invoked (in seconds)."
-const MSK_DINF_PRESOLVE_ELI_TIME = Dinfitem(51)
+const MSK_DINF_PRESOLVE_ELI_TIME = Dinfitem(49)
 
 "Total time spent  in the linear dependency checker since the presolve was invoked (in seconds)."
-const MSK_DINF_PRESOLVE_LINDEP_TIME = Dinfitem(52)
+const MSK_DINF_PRESOLVE_LINDEP_TIME = Dinfitem(50)
 
 "Total time spent in the presolve since it was invoked (in seconds)."
-const MSK_DINF_PRESOLVE_TIME = Dinfitem(53)
+const MSK_DINF_PRESOLVE_TIME = Dinfitem(51)
 
 "Total perturbation of the bounds of the primal problem."
-const MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION = Dinfitem(54)
+const MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION = Dinfitem(52)
 
 "The optimal objective value of the penalty function."
-const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ = Dinfitem(55)
+const MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ = Dinfitem(53)
 
 "Maximum absolute diagonal perturbation occurring during the QCQO reformulation."
-const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION = Dinfitem(56)
+const MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION = Dinfitem(54)
 
 "Time spent with conic quadratic reformulation (in seconds)."
-const MSK_DINF_QCQO_REFORMULATE_TIME = Dinfitem(57)
+const MSK_DINF_QCQO_REFORMULATE_TIME = Dinfitem(55)
 
 "Worst Cholesky column scaling."
-const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING = Dinfitem(58)
+const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING = Dinfitem(56)
 
 "Worst Cholesky diagonal scaling."
-const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING = Dinfitem(59)
+const MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING = Dinfitem(57)
 
 "Time spent reading the data file (in seconds)."
-const MSK_DINF_READ_DATA_TIME = Dinfitem(60)
+const MSK_DINF_READ_DATA_TIME = Dinfitem(58)
 
 "The total real time in seconds spent when optimizing on a server by the process performing the optimization on the server (in seconds)."
-const MSK_DINF_REMOTE_TIME = Dinfitem(61)
+const MSK_DINF_REMOTE_TIME = Dinfitem(59)
 
 "Time spent in the dual simplex optimizer since invoking it (in seconds)."
-const MSK_DINF_SIM_DUAL_TIME = Dinfitem(62)
+const MSK_DINF_SIM_DUAL_TIME = Dinfitem(60)
 
 "Feasibility measure reported by the simplex optimizer."
-const MSK_DINF_SIM_FEAS = Dinfitem(63)
+const MSK_DINF_SIM_FEAS = Dinfitem(61)
 
 "Objective value reported by the simplex optimizer."
-const MSK_DINF_SIM_OBJ = Dinfitem(64)
+const MSK_DINF_SIM_OBJ = Dinfitem(62)
 
 "Time spent in the primal simplex optimizer since invoking it (in seconds)."
-const MSK_DINF_SIM_PRIMAL_TIME = Dinfitem(65)
+const MSK_DINF_SIM_PRIMAL_TIME = Dinfitem(63)
 
 "Time spent in the simplex optimizer since invoking it (in seconds)."
-const MSK_DINF_SIM_TIME = Dinfitem(66)
+const MSK_DINF_SIM_TIME = Dinfitem(64)
 
 "Dual objective value of the basic solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_BAS_DUAL_OBJ = Dinfitem(67)
+const MSK_DINF_SOL_BAS_DUAL_OBJ = Dinfitem(65)
 
 "Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_BAS_DVIOLCON = Dinfitem(68)
+const MSK_DINF_SOL_BAS_DVIOLCON = Dinfitem(66)
 
 "Maximal dual bound violation for xx in the basic solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_BAS_DVIOLVAR = Dinfitem(69)
+const MSK_DINF_SOL_BAS_DVIOLVAR = Dinfitem(67)
 
 "Infinity norm of barx in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_BARX = Dinfitem(70)
+const MSK_DINF_SOL_BAS_NRM_BARX = Dinfitem(68)
 
 "Infinity norm of slc in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_SLC = Dinfitem(71)
+const MSK_DINF_SOL_BAS_NRM_SLC = Dinfitem(69)
 
 "Infinity norm of slx in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_SLX = Dinfitem(72)
+const MSK_DINF_SOL_BAS_NRM_SLX = Dinfitem(70)
 
 "Infinity norm of suc in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_SUC = Dinfitem(73)
+const MSK_DINF_SOL_BAS_NRM_SUC = Dinfitem(71)
 
 "Infinity norm of sux in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_SUX = Dinfitem(74)
+const MSK_DINF_SOL_BAS_NRM_SUX = Dinfitem(72)
 
 "Infinity norm of xc in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_XC = Dinfitem(75)
+const MSK_DINF_SOL_BAS_NRM_XC = Dinfitem(73)
 
 "Infinity norm of xx in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_XX = Dinfitem(76)
+const MSK_DINF_SOL_BAS_NRM_XX = Dinfitem(74)
 
 "Infinity norm of Y in the basic solution."
-const MSK_DINF_SOL_BAS_NRM_Y = Dinfitem(77)
+const MSK_DINF_SOL_BAS_NRM_Y = Dinfitem(75)
 
 "Primal objective value of the basic solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_BAS_PRIMAL_OBJ = Dinfitem(78)
+const MSK_DINF_SOL_BAS_PRIMAL_OBJ = Dinfitem(76)
 
 "Maximal primal bound violation for xc in the basic solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_BAS_PVIOLCON = Dinfitem(79)
+const MSK_DINF_SOL_BAS_PVIOLCON = Dinfitem(77)
 
 "Maximal primal bound violation for xx in the basic solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_BAS_PVIOLVAR = Dinfitem(80)
+const MSK_DINF_SOL_BAS_PVIOLVAR = Dinfitem(78)
 
 "Infinity norm of barx in the integer solution."
-const MSK_DINF_SOL_ITG_NRM_BARX = Dinfitem(81)
+const MSK_DINF_SOL_ITG_NRM_BARX = Dinfitem(79)
 
 "Infinity norm of xc in the integer solution."
-const MSK_DINF_SOL_ITG_NRM_XC = Dinfitem(82)
+const MSK_DINF_SOL_ITG_NRM_XC = Dinfitem(80)
 
 "Infinity norm of xx in the integer solution."
-const MSK_DINF_SOL_ITG_NRM_XX = Dinfitem(83)
+const MSK_DINF_SOL_ITG_NRM_XX = Dinfitem(81)
 
 "Primal objective value of the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PRIMAL_OBJ = Dinfitem(84)
+const MSK_DINF_SOL_ITG_PRIMAL_OBJ = Dinfitem(82)
 
 "Maximal primal violation for affine conic constraints in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLACC = Dinfitem(85)
+const MSK_DINF_SOL_ITG_PVIOLACC = Dinfitem(83)
 
 "Maximal primal bound violation for barx in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLBARVAR = Dinfitem(86)
+const MSK_DINF_SOL_ITG_PVIOLBARVAR = Dinfitem(84)
 
 "Maximal primal bound violation for xc in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLCON = Dinfitem(87)
+const MSK_DINF_SOL_ITG_PVIOLCON = Dinfitem(85)
 
 "Maximal primal violation for primal conic constraints in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLCONES = Dinfitem(88)
+const MSK_DINF_SOL_ITG_PVIOLCONES = Dinfitem(86)
 
 "Maximal primal violation for disjunctive constraints in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLDJC = Dinfitem(89)
+const MSK_DINF_SOL_ITG_PVIOLDJC = Dinfitem(87)
 
 "Maximal violation for the integer constraints in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLITG = Dinfitem(90)
+const MSK_DINF_SOL_ITG_PVIOLITG = Dinfitem(88)
 
 "Maximal primal bound violation for xx in the integer solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITG_PVIOLVAR = Dinfitem(91)
+const MSK_DINF_SOL_ITG_PVIOLVAR = Dinfitem(89)
 
 "Dual objective value of the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_DUAL_OBJ = Dinfitem(92)
+const MSK_DINF_SOL_ITR_DUAL_OBJ = Dinfitem(90)
 
 "Maximal dual violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_DVIOLACC = Dinfitem(93)
+const MSK_DINF_SOL_ITR_DVIOLACC = Dinfitem(91)
 
 "Maximal dual bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_DVIOLBARVAR = Dinfitem(94)
+const MSK_DINF_SOL_ITR_DVIOLBARVAR = Dinfitem(92)
 
 "Maximal dual bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_DVIOLCON = Dinfitem(95)
+const MSK_DINF_SOL_ITR_DVIOLCON = Dinfitem(93)
 
 "Maximal dual violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_DVIOLCONES = Dinfitem(96)
+const MSK_DINF_SOL_ITR_DVIOLCONES = Dinfitem(94)
 
 "Maximal dual bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_DVIOLVAR = Dinfitem(97)
+const MSK_DINF_SOL_ITR_DVIOLVAR = Dinfitem(95)
 
 "Infinity norm of bars in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_BARS = Dinfitem(98)
+const MSK_DINF_SOL_ITR_NRM_BARS = Dinfitem(96)
 
 "Infinity norm of barx in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_BARX = Dinfitem(99)
+const MSK_DINF_SOL_ITR_NRM_BARX = Dinfitem(97)
 
 "Infinity norm of slc in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_SLC = Dinfitem(100)
+const MSK_DINF_SOL_ITR_NRM_SLC = Dinfitem(98)
 
 "Infinity norm of slx in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_SLX = Dinfitem(101)
+const MSK_DINF_SOL_ITR_NRM_SLX = Dinfitem(99)
 
 "Infinity norm of snx in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_SNX = Dinfitem(102)
+const MSK_DINF_SOL_ITR_NRM_SNX = Dinfitem(100)
 
 "Infinity norm of suc in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_SUC = Dinfitem(103)
+const MSK_DINF_SOL_ITR_NRM_SUC = Dinfitem(101)
 
 "Infinity norm of sux in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_SUX = Dinfitem(104)
+const MSK_DINF_SOL_ITR_NRM_SUX = Dinfitem(102)
 
 "Infinity norm of xc in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_XC = Dinfitem(105)
+const MSK_DINF_SOL_ITR_NRM_XC = Dinfitem(103)
 
 "Infinity norm of xx in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_XX = Dinfitem(106)
+const MSK_DINF_SOL_ITR_NRM_XX = Dinfitem(104)
 
 "Infinity norm of Y in the interior-point solution."
-const MSK_DINF_SOL_ITR_NRM_Y = Dinfitem(107)
+const MSK_DINF_SOL_ITR_NRM_Y = Dinfitem(105)
 
 "Primal objective value of the interior-point solution."
-const MSK_DINF_SOL_ITR_PRIMAL_OBJ = Dinfitem(108)
+const MSK_DINF_SOL_ITR_PRIMAL_OBJ = Dinfitem(106)
 
 "Maximal primal violation for affine conic constraints in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_PVIOLACC = Dinfitem(109)
+const MSK_DINF_SOL_ITR_PVIOLACC = Dinfitem(107)
 
 "Maximal primal bound violation for barx in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_PVIOLBARVAR = Dinfitem(110)
+const MSK_DINF_SOL_ITR_PVIOLBARVAR = Dinfitem(108)
 
 "Maximal primal bound violation for xc in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_PVIOLCON = Dinfitem(111)
+const MSK_DINF_SOL_ITR_PVIOLCON = Dinfitem(109)
 
 "Maximal primal violation for conic constraints in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_PVIOLCONES = Dinfitem(112)
+const MSK_DINF_SOL_ITR_PVIOLCONES = Dinfitem(110)
 
 "Maximal primal bound violation for xx in the interior-point solution. Updated by the function updatesolutioninfo."
-const MSK_DINF_SOL_ITR_PVIOLVAR = Dinfitem(113)
+const MSK_DINF_SOL_ITR_PVIOLVAR = Dinfitem(111)
 
 "Time spent in the last to conic reformulation (in seconds)."
-const MSK_DINF_TO_CONIC_TIME = Dinfitem(114)
+const MSK_DINF_TO_CONIC_TIME = Dinfitem(112)
+
+"TBD"
+const MSK_DINF_UNDUALIZE_BI_DUAL_TIME = Dinfitem(113)
+
+"TBD"
+const MSK_DINF_UNDUALIZE_BI_INITIALIZE_TIME = Dinfitem(114)
+
+"TBD"
+const MSK_DINF_UNDUALIZE_BI_OPTIMIZE_128BIT_TIME = Dinfitem(115)
+
+"TBD"
+const MSK_DINF_UNDUALIZE_BI_OPTIMIZE_TIME = Dinfitem(116)
+
+"TBD"
+const MSK_DINF_UNDUALIZE_BI_PRIMAL_TIME = Dinfitem(117)
+
+"TBD"
+const MSK_DINF_UNDUALIZE_BI_TIME = Dinfitem(118)
+
+"TBD"
+const MSK_DINF_UNFOLD_BI_DUAL_TIME = Dinfitem(119)
+
+"TBD"
+const MSK_DINF_UNFOLD_BI_INITIALIZE_TIME = Dinfitem(120)
+
+"TBD"
+const MSK_DINF_UNFOLD_BI_OPTIMIZE_128BIT_TIME = Dinfitem(121)
+
+"TBD"
+const MSK_DINF_UNFOLD_BI_OPTIMIZE_TIME = Dinfitem(122)
+
+"TBD"
+const MSK_DINF_UNFOLD_BI_PRIMAL_TIME = Dinfitem(123)
+
+"TBD"
+const MSK_DINF_UNFOLD_BI_TIME = Dinfitem(124)
 
 "Time spent writing the data file (in seconds)."
-const MSK_DINF_WRITE_DATA_TIME = Dinfitem(115)
+const MSK_DINF_WRITE_DATA_TIME = Dinfitem(125)
 tostr(v::Dinfitem) = if v.value == 0 "Mosek.MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY"
   elseif v.value == 1 "Mosek.MSK_DINF_BI_CLEAN_TIME"
   elseif v.value == 2 "Mosek.MSK_DINF_BI_DUAL_TIME"
-  elseif v.value == 3 "Mosek.MSK_DINF_BI_PRIMAL_TIME"
-  elseif v.value == 4 "Mosek.MSK_DINF_BI_TIME"
-  elseif v.value == 5 "Mosek.MSK_DINF_FOLDING_BI_OPTIMIZE_TIME"
-  elseif v.value == 6 "Mosek.MSK_DINF_FOLDING_BI_UNFOLD_DUAL_TIME"
-  elseif v.value == 7 "Mosek.MSK_DINF_FOLDING_BI_UNFOLD_INITIALIZE_TIME"
-  elseif v.value == 8 "Mosek.MSK_DINF_FOLDING_BI_UNFOLD_PRIMAL_TIME"
-  elseif v.value == 9 "Mosek.MSK_DINF_FOLDING_BI_UNFOLD_TIME"
-  elseif v.value == 10 "Mosek.MSK_DINF_FOLDING_FACTOR"
-  elseif v.value == 11 "Mosek.MSK_DINF_FOLDING_TIME"
-  elseif v.value == 12 "Mosek.MSK_DINF_INTPNT_DUAL_FEAS"
-  elseif v.value == 13 "Mosek.MSK_DINF_INTPNT_DUAL_OBJ"
-  elseif v.value == 14 "Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"
-  elseif v.value == 15 "Mosek.MSK_DINF_INTPNT_OPT_STATUS"
-  elseif v.value == 16 "Mosek.MSK_DINF_INTPNT_ORDER_TIME"
-  elseif v.value == 17 "Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS"
-  elseif v.value == 18 "Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ"
-  elseif v.value == 19 "Mosek.MSK_DINF_INTPNT_TIME"
-  elseif v.value == 20 "Mosek.MSK_DINF_MIO_CLIQUE_SELECTION_TIME"
-  elseif v.value == 21 "Mosek.MSK_DINF_MIO_CLIQUE_SEPARATION_TIME"
-  elseif v.value == 22 "Mosek.MSK_DINF_MIO_CMIR_SELECTION_TIME"
-  elseif v.value == 23 "Mosek.MSK_DINF_MIO_CMIR_SEPARATION_TIME"
-  elseif v.value == 24 "Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"
-  elseif v.value == 25 "Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"
-  elseif v.value == 26 "Mosek.MSK_DINF_MIO_GMI_SELECTION_TIME"
-  elseif v.value == 27 "Mosek.MSK_DINF_MIO_GMI_SEPARATION_TIME"
-  elseif v.value == 28 "Mosek.MSK_DINF_MIO_IMPLIED_BOUND_SELECTION_TIME"
-  elseif v.value == 29 "Mosek.MSK_DINF_MIO_IMPLIED_BOUND_SEPARATION_TIME"
-  elseif v.value == 30 "Mosek.MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ"
-  elseif v.value == 31 "Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SELECTION_TIME"
-  elseif v.value == 32 "Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME"
-  elseif v.value == 33 "Mosek.MSK_DINF_MIO_LIPRO_SELECTION_TIME"
-  elseif v.value == 34 "Mosek.MSK_DINF_MIO_LIPRO_SEPARATION_TIME"
-  elseif v.value == 35 "Mosek.MSK_DINF_MIO_OBJ_ABS_GAP"
-  elseif v.value == 36 "Mosek.MSK_DINF_MIO_OBJ_BOUND"
-  elseif v.value == 37 "Mosek.MSK_DINF_MIO_OBJ_INT"
-  elseif v.value == 38 "Mosek.MSK_DINF_MIO_OBJ_REL_GAP"
-  elseif v.value == 39 "Mosek.MSK_DINF_MIO_PROBING_TIME"
-  elseif v.value == 40 "Mosek.MSK_DINF_MIO_ROOT_CUT_SELECTION_TIME"
-  elseif v.value == 41 "Mosek.MSK_DINF_MIO_ROOT_CUT_SEPARATION_TIME"
-  elseif v.value == 42 "Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"
-  elseif v.value == 43 "Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME"
-  elseif v.value == 44 "Mosek.MSK_DINF_MIO_ROOT_TIME"
-  elseif v.value == 45 "Mosek.MSK_DINF_MIO_SYMMETRY_DETECTION_TIME"
-  elseif v.value == 46 "Mosek.MSK_DINF_MIO_SYMMETRY_FACTOR"
-  elseif v.value == 47 "Mosek.MSK_DINF_MIO_TIME"
-  elseif v.value == 48 "Mosek.MSK_DINF_MIO_USER_OBJ_CUT"
-  elseif v.value == 49 "Mosek.MSK_DINF_OPTIMIZER_TICKS"
-  elseif v.value == 50 "Mosek.MSK_DINF_OPTIMIZER_TIME"
-  elseif v.value == 51 "Mosek.MSK_DINF_PRESOLVE_ELI_TIME"
-  elseif v.value == 52 "Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME"
-  elseif v.value == 53 "Mosek.MSK_DINF_PRESOLVE_TIME"
-  elseif v.value == 54 "Mosek.MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION"
-  elseif v.value == 55 "Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"
-  elseif v.value == 56 "Mosek.MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION"
-  elseif v.value == 57 "Mosek.MSK_DINF_QCQO_REFORMULATE_TIME"
-  elseif v.value == 58 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"
-  elseif v.value == 59 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"
-  elseif v.value == 60 "Mosek.MSK_DINF_READ_DATA_TIME"
-  elseif v.value == 61 "Mosek.MSK_DINF_REMOTE_TIME"
-  elseif v.value == 62 "Mosek.MSK_DINF_SIM_DUAL_TIME"
-  elseif v.value == 63 "Mosek.MSK_DINF_SIM_FEAS"
-  elseif v.value == 64 "Mosek.MSK_DINF_SIM_OBJ"
-  elseif v.value == 65 "Mosek.MSK_DINF_SIM_PRIMAL_TIME"
-  elseif v.value == 66 "Mosek.MSK_DINF_SIM_TIME"
-  elseif v.value == 67 "Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ"
-  elseif v.value == 68 "Mosek.MSK_DINF_SOL_BAS_DVIOLCON"
-  elseif v.value == 69 "Mosek.MSK_DINF_SOL_BAS_DVIOLVAR"
-  elseif v.value == 70 "Mosek.MSK_DINF_SOL_BAS_NRM_BARX"
-  elseif v.value == 71 "Mosek.MSK_DINF_SOL_BAS_NRM_SLC"
-  elseif v.value == 72 "Mosek.MSK_DINF_SOL_BAS_NRM_SLX"
-  elseif v.value == 73 "Mosek.MSK_DINF_SOL_BAS_NRM_SUC"
-  elseif v.value == 74 "Mosek.MSK_DINF_SOL_BAS_NRM_SUX"
-  elseif v.value == 75 "Mosek.MSK_DINF_SOL_BAS_NRM_XC"
-  elseif v.value == 76 "Mosek.MSK_DINF_SOL_BAS_NRM_XX"
-  elseif v.value == 77 "Mosek.MSK_DINF_SOL_BAS_NRM_Y"
-  elseif v.value == 78 "Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ"
-  elseif v.value == 79 "Mosek.MSK_DINF_SOL_BAS_PVIOLCON"
-  elseif v.value == 80 "Mosek.MSK_DINF_SOL_BAS_PVIOLVAR"
-  elseif v.value == 81 "Mosek.MSK_DINF_SOL_ITG_NRM_BARX"
-  elseif v.value == 82 "Mosek.MSK_DINF_SOL_ITG_NRM_XC"
-  elseif v.value == 83 "Mosek.MSK_DINF_SOL_ITG_NRM_XX"
-  elseif v.value == 84 "Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ"
-  elseif v.value == 85 "Mosek.MSK_DINF_SOL_ITG_PVIOLACC"
-  elseif v.value == 86 "Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR"
-  elseif v.value == 87 "Mosek.MSK_DINF_SOL_ITG_PVIOLCON"
-  elseif v.value == 88 "Mosek.MSK_DINF_SOL_ITG_PVIOLCONES"
-  elseif v.value == 89 "Mosek.MSK_DINF_SOL_ITG_PVIOLDJC"
-  elseif v.value == 90 "Mosek.MSK_DINF_SOL_ITG_PVIOLITG"
-  elseif v.value == 91 "Mosek.MSK_DINF_SOL_ITG_PVIOLVAR"
-  elseif v.value == 92 "Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ"
-  elseif v.value == 93 "Mosek.MSK_DINF_SOL_ITR_DVIOLACC"
-  elseif v.value == 94 "Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR"
-  elseif v.value == 95 "Mosek.MSK_DINF_SOL_ITR_DVIOLCON"
-  elseif v.value == 96 "Mosek.MSK_DINF_SOL_ITR_DVIOLCONES"
-  elseif v.value == 97 "Mosek.MSK_DINF_SOL_ITR_DVIOLVAR"
-  elseif v.value == 98 "Mosek.MSK_DINF_SOL_ITR_NRM_BARS"
-  elseif v.value == 99 "Mosek.MSK_DINF_SOL_ITR_NRM_BARX"
-  elseif v.value == 100 "Mosek.MSK_DINF_SOL_ITR_NRM_SLC"
-  elseif v.value == 101 "Mosek.MSK_DINF_SOL_ITR_NRM_SLX"
-  elseif v.value == 102 "Mosek.MSK_DINF_SOL_ITR_NRM_SNX"
-  elseif v.value == 103 "Mosek.MSK_DINF_SOL_ITR_NRM_SUC"
-  elseif v.value == 104 "Mosek.MSK_DINF_SOL_ITR_NRM_SUX"
-  elseif v.value == 105 "Mosek.MSK_DINF_SOL_ITR_NRM_XC"
-  elseif v.value == 106 "Mosek.MSK_DINF_SOL_ITR_NRM_XX"
-  elseif v.value == 107 "Mosek.MSK_DINF_SOL_ITR_NRM_Y"
-  elseif v.value == 108 "Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ"
-  elseif v.value == 109 "Mosek.MSK_DINF_SOL_ITR_PVIOLACC"
-  elseif v.value == 110 "Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR"
-  elseif v.value == 111 "Mosek.MSK_DINF_SOL_ITR_PVIOLCON"
-  elseif v.value == 112 "Mosek.MSK_DINF_SOL_ITR_PVIOLCONES"
-  elseif v.value == 113 "Mosek.MSK_DINF_SOL_ITR_PVIOLVAR"
-  elseif v.value == 114 "Mosek.MSK_DINF_TO_CONIC_TIME"
-  elseif v.value == 115 "Mosek.MSK_DINF_WRITE_DATA_TIME"
+  elseif v.value == 3 "Mosek.MSK_DINF_BI_OPTIMIZE_128BIT_TIME"
+  elseif v.value == 4 "Mosek.MSK_DINF_BI_OPTIMIZE_TIME"
+  elseif v.value == 5 "Mosek.MSK_DINF_BI_PRIMAL_TIME"
+  elseif v.value == 6 "Mosek.MSK_DINF_BI_TIME"
+  elseif v.value == 7 "Mosek.MSK_DINF_FOLDING_FACTOR"
+  elseif v.value == 8 "Mosek.MSK_DINF_FOLDING_TIME"
+  elseif v.value == 9 "Mosek.MSK_DINF_INTPNT_DUAL_FEAS"
+  elseif v.value == 10 "Mosek.MSK_DINF_INTPNT_DUAL_OBJ"
+  elseif v.value == 11 "Mosek.MSK_DINF_INTPNT_FACTOR_NUM_FLOPS"
+  elseif v.value == 12 "Mosek.MSK_DINF_INTPNT_OPT_STATUS"
+  elseif v.value == 13 "Mosek.MSK_DINF_INTPNT_ORDER_TIME"
+  elseif v.value == 14 "Mosek.MSK_DINF_INTPNT_PRIMAL_FEAS"
+  elseif v.value == 15 "Mosek.MSK_DINF_INTPNT_PRIMAL_OBJ"
+  elseif v.value == 16 "Mosek.MSK_DINF_INTPNT_SETUP_TIME"
+  elseif v.value == 17 "Mosek.MSK_DINF_INTPNT_TIME"
+  elseif v.value == 18 "Mosek.MSK_DINF_MIO_CLIQUE_SELECTION_TIME"
+  elseif v.value == 19 "Mosek.MSK_DINF_MIO_CLIQUE_SEPARATION_TIME"
+  elseif v.value == 20 "Mosek.MSK_DINF_MIO_CMIR_SELECTION_TIME"
+  elseif v.value == 21 "Mosek.MSK_DINF_MIO_CMIR_SEPARATION_TIME"
+  elseif v.value == 22 "Mosek.MSK_DINF_MIO_CONSTRUCT_SOLUTION_OBJ"
+  elseif v.value == 23 "Mosek.MSK_DINF_MIO_DUAL_BOUND_AFTER_PRESOLVE"
+  elseif v.value == 24 "Mosek.MSK_DINF_MIO_GMI_SELECTION_TIME"
+  elseif v.value == 25 "Mosek.MSK_DINF_MIO_GMI_SEPARATION_TIME"
+  elseif v.value == 26 "Mosek.MSK_DINF_MIO_IMPLIED_BOUND_SELECTION_TIME"
+  elseif v.value == 27 "Mosek.MSK_DINF_MIO_IMPLIED_BOUND_SEPARATION_TIME"
+  elseif v.value == 28 "Mosek.MSK_DINF_MIO_INITIAL_FEASIBLE_SOLUTION_OBJ"
+  elseif v.value == 29 "Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SELECTION_TIME"
+  elseif v.value == 30 "Mosek.MSK_DINF_MIO_KNAPSACK_COVER_SEPARATION_TIME"
+  elseif v.value == 31 "Mosek.MSK_DINF_MIO_LIPRO_SELECTION_TIME"
+  elseif v.value == 32 "Mosek.MSK_DINF_MIO_LIPRO_SEPARATION_TIME"
+  elseif v.value == 33 "Mosek.MSK_DINF_MIO_OBJ_ABS_GAP"
+  elseif v.value == 34 "Mosek.MSK_DINF_MIO_OBJ_BOUND"
+  elseif v.value == 35 "Mosek.MSK_DINF_MIO_OBJ_INT"
+  elseif v.value == 36 "Mosek.MSK_DINF_MIO_OBJ_REL_GAP"
+  elseif v.value == 37 "Mosek.MSK_DINF_MIO_PROBING_TIME"
+  elseif v.value == 38 "Mosek.MSK_DINF_MIO_ROOT_CUT_SELECTION_TIME"
+  elseif v.value == 39 "Mosek.MSK_DINF_MIO_ROOT_CUT_SEPARATION_TIME"
+  elseif v.value == 40 "Mosek.MSK_DINF_MIO_ROOT_OPTIMIZER_TIME"
+  elseif v.value == 41 "Mosek.MSK_DINF_MIO_ROOT_PRESOLVE_TIME"
+  elseif v.value == 42 "Mosek.MSK_DINF_MIO_ROOT_TIME"
+  elseif v.value == 43 "Mosek.MSK_DINF_MIO_SYMMETRY_DETECTION_TIME"
+  elseif v.value == 44 "Mosek.MSK_DINF_MIO_SYMMETRY_FACTOR"
+  elseif v.value == 45 "Mosek.MSK_DINF_MIO_TIME"
+  elseif v.value == 46 "Mosek.MSK_DINF_MIO_USER_OBJ_CUT"
+  elseif v.value == 47 "Mosek.MSK_DINF_OPTIMIZER_TICKS"
+  elseif v.value == 48 "Mosek.MSK_DINF_OPTIMIZER_TIME"
+  elseif v.value == 49 "Mosek.MSK_DINF_PRESOLVE_ELI_TIME"
+  elseif v.value == 50 "Mosek.MSK_DINF_PRESOLVE_LINDEP_TIME"
+  elseif v.value == 51 "Mosek.MSK_DINF_PRESOLVE_TIME"
+  elseif v.value == 52 "Mosek.MSK_DINF_PRESOLVE_TOTAL_PRIMAL_PERTURBATION"
+  elseif v.value == 53 "Mosek.MSK_DINF_PRIMAL_REPAIR_PENALTY_OBJ"
+  elseif v.value == 54 "Mosek.MSK_DINF_QCQO_REFORMULATE_MAX_PERTURBATION"
+  elseif v.value == 55 "Mosek.MSK_DINF_QCQO_REFORMULATE_TIME"
+  elseif v.value == 56 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_COLUMN_SCALING"
+  elseif v.value == 57 "Mosek.MSK_DINF_QCQO_REFORMULATE_WORST_CHOLESKY_DIAG_SCALING"
+  elseif v.value == 58 "Mosek.MSK_DINF_READ_DATA_TIME"
+  elseif v.value == 59 "Mosek.MSK_DINF_REMOTE_TIME"
+  elseif v.value == 60 "Mosek.MSK_DINF_SIM_DUAL_TIME"
+  elseif v.value == 61 "Mosek.MSK_DINF_SIM_FEAS"
+  elseif v.value == 62 "Mosek.MSK_DINF_SIM_OBJ"
+  elseif v.value == 63 "Mosek.MSK_DINF_SIM_PRIMAL_TIME"
+  elseif v.value == 64 "Mosek.MSK_DINF_SIM_TIME"
+  elseif v.value == 65 "Mosek.MSK_DINF_SOL_BAS_DUAL_OBJ"
+  elseif v.value == 66 "Mosek.MSK_DINF_SOL_BAS_DVIOLCON"
+  elseif v.value == 67 "Mosek.MSK_DINF_SOL_BAS_DVIOLVAR"
+  elseif v.value == 68 "Mosek.MSK_DINF_SOL_BAS_NRM_BARX"
+  elseif v.value == 69 "Mosek.MSK_DINF_SOL_BAS_NRM_SLC"
+  elseif v.value == 70 "Mosek.MSK_DINF_SOL_BAS_NRM_SLX"
+  elseif v.value == 71 "Mosek.MSK_DINF_SOL_BAS_NRM_SUC"
+  elseif v.value == 72 "Mosek.MSK_DINF_SOL_BAS_NRM_SUX"
+  elseif v.value == 73 "Mosek.MSK_DINF_SOL_BAS_NRM_XC"
+  elseif v.value == 74 "Mosek.MSK_DINF_SOL_BAS_NRM_XX"
+  elseif v.value == 75 "Mosek.MSK_DINF_SOL_BAS_NRM_Y"
+  elseif v.value == 76 "Mosek.MSK_DINF_SOL_BAS_PRIMAL_OBJ"
+  elseif v.value == 77 "Mosek.MSK_DINF_SOL_BAS_PVIOLCON"
+  elseif v.value == 78 "Mosek.MSK_DINF_SOL_BAS_PVIOLVAR"
+  elseif v.value == 79 "Mosek.MSK_DINF_SOL_ITG_NRM_BARX"
+  elseif v.value == 80 "Mosek.MSK_DINF_SOL_ITG_NRM_XC"
+  elseif v.value == 81 "Mosek.MSK_DINF_SOL_ITG_NRM_XX"
+  elseif v.value == 82 "Mosek.MSK_DINF_SOL_ITG_PRIMAL_OBJ"
+  elseif v.value == 83 "Mosek.MSK_DINF_SOL_ITG_PVIOLACC"
+  elseif v.value == 84 "Mosek.MSK_DINF_SOL_ITG_PVIOLBARVAR"
+  elseif v.value == 85 "Mosek.MSK_DINF_SOL_ITG_PVIOLCON"
+  elseif v.value == 86 "Mosek.MSK_DINF_SOL_ITG_PVIOLCONES"
+  elseif v.value == 87 "Mosek.MSK_DINF_SOL_ITG_PVIOLDJC"
+  elseif v.value == 88 "Mosek.MSK_DINF_SOL_ITG_PVIOLITG"
+  elseif v.value == 89 "Mosek.MSK_DINF_SOL_ITG_PVIOLVAR"
+  elseif v.value == 90 "Mosek.MSK_DINF_SOL_ITR_DUAL_OBJ"
+  elseif v.value == 91 "Mosek.MSK_DINF_SOL_ITR_DVIOLACC"
+  elseif v.value == 92 "Mosek.MSK_DINF_SOL_ITR_DVIOLBARVAR"
+  elseif v.value == 93 "Mosek.MSK_DINF_SOL_ITR_DVIOLCON"
+  elseif v.value == 94 "Mosek.MSK_DINF_SOL_ITR_DVIOLCONES"
+  elseif v.value == 95 "Mosek.MSK_DINF_SOL_ITR_DVIOLVAR"
+  elseif v.value == 96 "Mosek.MSK_DINF_SOL_ITR_NRM_BARS"
+  elseif v.value == 97 "Mosek.MSK_DINF_SOL_ITR_NRM_BARX"
+  elseif v.value == 98 "Mosek.MSK_DINF_SOL_ITR_NRM_SLC"
+  elseif v.value == 99 "Mosek.MSK_DINF_SOL_ITR_NRM_SLX"
+  elseif v.value == 100 "Mosek.MSK_DINF_SOL_ITR_NRM_SNX"
+  elseif v.value == 101 "Mosek.MSK_DINF_SOL_ITR_NRM_SUC"
+  elseif v.value == 102 "Mosek.MSK_DINF_SOL_ITR_NRM_SUX"
+  elseif v.value == 103 "Mosek.MSK_DINF_SOL_ITR_NRM_XC"
+  elseif v.value == 104 "Mosek.MSK_DINF_SOL_ITR_NRM_XX"
+  elseif v.value == 105 "Mosek.MSK_DINF_SOL_ITR_NRM_Y"
+  elseif v.value == 106 "Mosek.MSK_DINF_SOL_ITR_PRIMAL_OBJ"
+  elseif v.value == 107 "Mosek.MSK_DINF_SOL_ITR_PVIOLACC"
+  elseif v.value == 108 "Mosek.MSK_DINF_SOL_ITR_PVIOLBARVAR"
+  elseif v.value == 109 "Mosek.MSK_DINF_SOL_ITR_PVIOLCON"
+  elseif v.value == 110 "Mosek.MSK_DINF_SOL_ITR_PVIOLCONES"
+  elseif v.value == 111 "Mosek.MSK_DINF_SOL_ITR_PVIOLVAR"
+  elseif v.value == 112 "Mosek.MSK_DINF_TO_CONIC_TIME"
+  elseif v.value == 113 "Mosek.MSK_DINF_UNDUALIZE_BI_DUAL_TIME"
+  elseif v.value == 114 "Mosek.MSK_DINF_UNDUALIZE_BI_INITIALIZE_TIME"
+  elseif v.value == 115 "Mosek.MSK_DINF_UNDUALIZE_BI_OPTIMIZE_128BIT_TIME"
+  elseif v.value == 116 "Mosek.MSK_DINF_UNDUALIZE_BI_OPTIMIZE_TIME"
+  elseif v.value == 117 "Mosek.MSK_DINF_UNDUALIZE_BI_PRIMAL_TIME"
+  elseif v.value == 118 "Mosek.MSK_DINF_UNDUALIZE_BI_TIME"
+  elseif v.value == 119 "Mosek.MSK_DINF_UNFOLD_BI_DUAL_TIME"
+  elseif v.value == 120 "Mosek.MSK_DINF_UNFOLD_BI_INITIALIZE_TIME"
+  elseif v.value == 121 "Mosek.MSK_DINF_UNFOLD_BI_OPTIMIZE_128BIT_TIME"
+  elseif v.value == 122 "Mosek.MSK_DINF_UNFOLD_BI_OPTIMIZE_TIME"
+  elseif v.value == 123 "Mosek.MSK_DINF_UNFOLD_BI_PRIMAL_TIME"
+  elseif v.value == 124 "Mosek.MSK_DINF_UNFOLD_BI_TIME"
+  elseif v.value == 125 "Mosek.MSK_DINF_WRITE_DATA_TIME"
   else "Mosek.Dinfitem(?)"
   end
 const Dinfitem_members = Dinfitem[
     MSK_DINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_DENSITY,
     MSK_DINF_BI_CLEAN_TIME,
     MSK_DINF_BI_DUAL_TIME,
+    MSK_DINF_BI_OPTIMIZE_128BIT_TIME,
+    MSK_DINF_BI_OPTIMIZE_TIME,
     MSK_DINF_BI_PRIMAL_TIME,
     MSK_DINF_BI_TIME,
-    MSK_DINF_FOLDING_BI_OPTIMIZE_TIME,
-    MSK_DINF_FOLDING_BI_UNFOLD_DUAL_TIME,
-    MSK_DINF_FOLDING_BI_UNFOLD_INITIALIZE_TIME,
-    MSK_DINF_FOLDING_BI_UNFOLD_PRIMAL_TIME,
-    MSK_DINF_FOLDING_BI_UNFOLD_TIME,
     MSK_DINF_FOLDING_FACTOR,
     MSK_DINF_FOLDING_TIME,
     MSK_DINF_INTPNT_DUAL_FEAS,
@@ -3570,6 +3895,7 @@ const Dinfitem_members = Dinfitem[
     MSK_DINF_INTPNT_ORDER_TIME,
     MSK_DINF_INTPNT_PRIMAL_FEAS,
     MSK_DINF_INTPNT_PRIMAL_OBJ,
+    MSK_DINF_INTPNT_SETUP_TIME,
     MSK_DINF_INTPNT_TIME,
     MSK_DINF_MIO_CLIQUE_SELECTION_TIME,
     MSK_DINF_MIO_CLIQUE_SEPARATION_TIME,
@@ -3666,9 +3992,21 @@ const Dinfitem_members = Dinfitem[
     MSK_DINF_SOL_ITR_PVIOLCONES,
     MSK_DINF_SOL_ITR_PVIOLVAR,
     MSK_DINF_TO_CONIC_TIME,
+    MSK_DINF_UNDUALIZE_BI_DUAL_TIME,
+    MSK_DINF_UNDUALIZE_BI_INITIALIZE_TIME,
+    MSK_DINF_UNDUALIZE_BI_OPTIMIZE_128BIT_TIME,
+    MSK_DINF_UNDUALIZE_BI_OPTIMIZE_TIME,
+    MSK_DINF_UNDUALIZE_BI_PRIMAL_TIME,
+    MSK_DINF_UNDUALIZE_BI_TIME,
+    MSK_DINF_UNFOLD_BI_DUAL_TIME,
+    MSK_DINF_UNFOLD_BI_INITIALIZE_TIME,
+    MSK_DINF_UNFOLD_BI_OPTIMIZE_128BIT_TIME,
+    MSK_DINF_UNFOLD_BI_OPTIMIZE_TIME,
+    MSK_DINF_UNFOLD_BI_PRIMAL_TIME,
+    MSK_DINF_UNFOLD_BI_TIME,
     MSK_DINF_WRITE_DATA_TIME ]
 members(::Type{Dinfitem}) = Dinfitem_members
-Base.length(::Type{Dinfitem}) = 116
+Base.length(::Type{Dinfitem}) = 126
 Base.convert(::Type{Int},x::Dinfitem) = Int(x.value)
 """
     Feature
@@ -3718,6 +4056,7 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_DATA_TOL_QIJ`. Data tolerance threshold.
 * `MSK_DPAR_DATA_TOL_X`. Data tolerance threshold.
 * `MSK_DPAR_FOLDING_TOL_EQ`. Tolerance for coefficient equality during folding.
+* `MSK_DPAR_HEARTBEAT_SIM_FREQ_TICKS`. Controls heartbeat frequency for the new simplex optimizers.
 * `MSK_DPAR_INTPNT_CO_TOL_DFEAS`. Dual feasibility tolerance used by the interior-point optimizer for conic problems.
 * `MSK_DPAR_INTPNT_CO_TOL_INFEAS`. Infeasibility tolerance used by the interior-point optimizer for conic problems.
 * `MSK_DPAR_INTPNT_CO_TOL_MU_RED`. Relative complementarity gap tolerance used by the interior-point optimizer for conic problems.
@@ -3740,12 +4079,13 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_INTPNT_TOL_REL_GAP`. Relative gap termination tolerance used by the interior-point optimizer for linear problems.
 * `MSK_DPAR_INTPNT_TOL_REL_STEP`. Relative step size to the boundary for linear and quadratic optimization problems.
 * `MSK_DPAR_INTPNT_TOL_STEP_SIZE`. Minimal step size tolerance for the interior-point optimizer.
+* `MSK_DPAR_LOG_SIM_FREQ_TICKS`. Controls logging frequency for the new simplex optimizers.
 * `MSK_DPAR_LOWER_OBJ_CUT`. Objective bound.
 * `MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH`. Objective bound.
-* `MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR`. Controlls the maximum size of the clqiue table as a factor of the number of nonzeros in the A matrix.
+* `MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR`. Controlls the maximum size of the clique table as a factor of the number of nonzeros in the A matrix.
 * `MSK_DPAR_MIO_DJC_MAX_BIGM`. Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
 * `MSK_DPAR_MIO_MAX_TIME`. Time limit for the mixed-integer optimizer.
-* `MSK_DPAR_MIO_REL_GAP_CONST`. This value is used to compute the relative gap for the solution to an integer optimization problem.
+* `MSK_DPAR_MIO_REL_GAP_CONST`. This value is used to compute the relative gap for the solution to a mixed-integer optimization problem.
 * `MSK_DPAR_MIO_TOL_ABS_GAP`. Absolute optimality tolerance employed by the mixed-integer optimizer.
 * `MSK_DPAR_MIO_TOL_ABS_RELAX_INT`. Integer feasibility tolerance.
 * `MSK_DPAR_MIO_TOL_FEAS`. Feasibility tolerance for mixed integer solver.
@@ -3761,8 +4101,8 @@ The enumeration type containing all double parameters.
 * `MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL`. This parameter determines when columns are dropped in incomplete Cholesky factorization during reformulation of quadratic problems.
 * `MSK_DPAR_SEMIDEFINITE_TOL_APPROX`. Tolerance to define a matrix to be positive semidefinite.
 * `MSK_DPAR_SIM_LU_TOL_REL_PIV`. Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
-* `MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED`. TBD.
-* `MSK_DPAR_SIM_PRECISION_SCALING_NORMAL`. TBD.
+* `MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED`. Experimental. Usage not recommended.
+* `MSK_DPAR_SIM_PRECISION_SCALING_NORMAL`. Experimental. Usage not recommended.
 * `MSK_DPAR_SIMPLEX_ABS_TOL_PIV`. Absolute pivot tolerance employed by the simplex optimizers.
 * `MSK_DPAR_UPPER_OBJ_CUT`. Objective bound.
 * `MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH`. Objective bound.
@@ -3916,6 +4256,15 @@ Possible Values: Any number between 0.0 and +inf.
 const MSK_DPAR_FOLDING_TOL_EQ = Dparam(15)
 
 """
+Controls heartbeat frequency for the new simplex optimizers.
+
+Default value: `1.0e9`
+
+Possible Values: Any number between -1 and +inf.
+"""
+const MSK_DPAR_HEARTBEAT_SIM_FREQ_TICKS = Dparam(16)
+
+"""
 Dual feasibility tolerance used by the interior-point optimizer for conic problems.
 
 Default value: `1.0e-8`
@@ -3925,7 +4274,7 @@ Possible Values: Any number between 0.0 and 1.0.
 See also:
 * `MSK_DPAR_INTPNT_CO_TOL_NEAR_REL`. Optimality tolerance used by the interior-point optimizer for conic problems.
 """
-const MSK_DPAR_INTPNT_CO_TOL_DFEAS = Dparam(16)
+const MSK_DPAR_INTPNT_CO_TOL_DFEAS = Dparam(17)
 
 """
 Infeasibility tolerance used by the interior-point optimizer for conic problems.
@@ -3934,7 +4283,7 @@ Default value: `1.0e-12`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_CO_TOL_INFEAS = Dparam(17)
+const MSK_DPAR_INTPNT_CO_TOL_INFEAS = Dparam(18)
 
 """
 Relative complementarity gap tolerance used by the interior-point optimizer for conic problems.
@@ -3943,7 +4292,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_CO_TOL_MU_RED = Dparam(18)
+const MSK_DPAR_INTPNT_CO_TOL_MU_RED = Dparam(19)
 
 """
 Optimality tolerance used by the interior-point optimizer for conic problems.
@@ -3952,7 +4301,7 @@ Default value: `1000`
 
 Possible Values: Any number between 1.0 and +inf.
 """
-const MSK_DPAR_INTPNT_CO_TOL_NEAR_REL = Dparam(19)
+const MSK_DPAR_INTPNT_CO_TOL_NEAR_REL = Dparam(20)
 
 """
 Primal feasibility tolerance used by the interior-point optimizer for conic problems.
@@ -3964,7 +4313,7 @@ Possible Values: Any number between 0.0 and 1.0.
 See also:
 * `MSK_DPAR_INTPNT_CO_TOL_NEAR_REL`. Optimality tolerance used by the interior-point optimizer for conic problems.
 """
-const MSK_DPAR_INTPNT_CO_TOL_PFEAS = Dparam(20)
+const MSK_DPAR_INTPNT_CO_TOL_PFEAS = Dparam(21)
 
 """
 Relative gap termination tolerance used by the interior-point optimizer for conic problems.
@@ -3976,7 +4325,7 @@ Possible Values: Any number between 0.0 and 1.0.
 See also:
 * `MSK_DPAR_INTPNT_CO_TOL_NEAR_REL`. Optimality tolerance used by the interior-point optimizer for conic problems.
 """
-const MSK_DPAR_INTPNT_CO_TOL_REL_GAP = Dparam(21)
+const MSK_DPAR_INTPNT_CO_TOL_REL_GAP = Dparam(22)
 
 """
 Dual feasibility tolerance used by the interior-point optimizer for quadratic problems.
@@ -3988,7 +4337,7 @@ Possible Values: Any number between 0.0 and 1.0.
 See also:
 * `MSK_DPAR_INTPNT_QO_TOL_NEAR_REL`. Optimality tolerance used by the interior-point optimizer for quadratic problems.
 """
-const MSK_DPAR_INTPNT_QO_TOL_DFEAS = Dparam(22)
+const MSK_DPAR_INTPNT_QO_TOL_DFEAS = Dparam(23)
 
 """
 Infeasibility tolerance used by the interior-point optimizer for quadratic problems.
@@ -3997,7 +4346,7 @@ Default value: `1.0e-12`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_QO_TOL_INFEAS = Dparam(23)
+const MSK_DPAR_INTPNT_QO_TOL_INFEAS = Dparam(24)
 
 """
 Relative complementarity gap tolerance used by the interior-point optimizer for quadratic problems.
@@ -4006,7 +4355,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_QO_TOL_MU_RED = Dparam(24)
+const MSK_DPAR_INTPNT_QO_TOL_MU_RED = Dparam(25)
 
 """
 Optimality tolerance used by the interior-point optimizer for quadratic problems.
@@ -4015,7 +4364,7 @@ Default value: `1000`
 
 Possible Values: Any number between 1.0 and +inf.
 """
-const MSK_DPAR_INTPNT_QO_TOL_NEAR_REL = Dparam(25)
+const MSK_DPAR_INTPNT_QO_TOL_NEAR_REL = Dparam(26)
 
 """
 Primal feasibility tolerance used by the interior-point optimizer for quadratic problems.
@@ -4027,7 +4376,7 @@ Possible Values: Any number between 0.0 and 1.0.
 See also:
 * `MSK_DPAR_INTPNT_QO_TOL_NEAR_REL`. Optimality tolerance used by the interior-point optimizer for quadratic problems.
 """
-const MSK_DPAR_INTPNT_QO_TOL_PFEAS = Dparam(26)
+const MSK_DPAR_INTPNT_QO_TOL_PFEAS = Dparam(27)
 
 """
 Relative gap termination tolerance used by the interior-point optimizer for quadratic problems.
@@ -4039,7 +4388,7 @@ Possible Values: Any number between 0.0 and 1.0.
 See also:
 * `MSK_DPAR_INTPNT_QO_TOL_NEAR_REL`. Optimality tolerance used by the interior-point optimizer for quadratic problems.
 """
-const MSK_DPAR_INTPNT_QO_TOL_REL_GAP = Dparam(27)
+const MSK_DPAR_INTPNT_QO_TOL_REL_GAP = Dparam(28)
 
 """
 Dual feasibility tolerance used by the interior-point optimizer for linear problems.
@@ -4048,7 +4397,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_TOL_DFEAS = Dparam(28)
+const MSK_DPAR_INTPNT_TOL_DFEAS = Dparam(29)
 
 """
 Controls the interior-point dual starting point.
@@ -4057,7 +4406,7 @@ Default value: `1.0`
 
 Possible Values: Any number between 1.0e-4 and +inf.
 """
-const MSK_DPAR_INTPNT_TOL_DSAFE = Dparam(29)
+const MSK_DPAR_INTPNT_TOL_DSAFE = Dparam(30)
 
 """
 Infeasibility tolerance used by the interior-point optimizer for linear problems.
@@ -4066,7 +4415,7 @@ Default value: `1.0e-10`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_TOL_INFEAS = Dparam(30)
+const MSK_DPAR_INTPNT_TOL_INFEAS = Dparam(31)
 
 """
 Relative complementarity gap tolerance used by the interior-point optimizer for linear problems.
@@ -4075,7 +4424,7 @@ Default value: `1.0e-16`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_TOL_MU_RED = Dparam(31)
+const MSK_DPAR_INTPNT_TOL_MU_RED = Dparam(32)
 
 """
 Interior-point centering aggressiveness.
@@ -4084,7 +4433,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and 0.9999.
 """
-const MSK_DPAR_INTPNT_TOL_PATH = Dparam(32)
+const MSK_DPAR_INTPNT_TOL_PATH = Dparam(33)
 
 """
 Primal feasibility tolerance used by the interior-point optimizer for linear problems.
@@ -4093,7 +4442,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_TOL_PFEAS = Dparam(33)
+const MSK_DPAR_INTPNT_TOL_PFEAS = Dparam(34)
 
 """
 Controls the interior-point primal starting point.
@@ -4102,7 +4451,7 @@ Default value: `1.0`
 
 Possible Values: Any number between 1.0e-4 and +inf.
 """
-const MSK_DPAR_INTPNT_TOL_PSAFE = Dparam(34)
+const MSK_DPAR_INTPNT_TOL_PSAFE = Dparam(35)
 
 """
 Relative gap termination tolerance used by the interior-point optimizer for linear problems.
@@ -4111,7 +4460,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 1.0e-14 and +inf.
 """
-const MSK_DPAR_INTPNT_TOL_REL_GAP = Dparam(35)
+const MSK_DPAR_INTPNT_TOL_REL_GAP = Dparam(36)
 
 """
 Relative step size to the boundary for linear and quadratic optimization problems.
@@ -4120,7 +4469,7 @@ Default value: `0.9999`
 
 Possible Values: Any number between 1.0e-4 and 0.999999.
 """
-const MSK_DPAR_INTPNT_TOL_REL_STEP = Dparam(36)
+const MSK_DPAR_INTPNT_TOL_REL_STEP = Dparam(37)
 
 """
 Minimal step size tolerance for the interior-point optimizer.
@@ -4129,7 +4478,16 @@ Default value: `1.0e-6`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_INTPNT_TOL_STEP_SIZE = Dparam(37)
+const MSK_DPAR_INTPNT_TOL_STEP_SIZE = Dparam(38)
+
+"""
+Controls logging frequency for the new simplex optimizers.
+
+Default value: `1.0e11`
+
+Possible Values: Any number between -1 and +inf.
+"""
+const MSK_DPAR_LOG_SIM_FREQ_TICKS = Dparam(39)
 
 """
 Objective bound.
@@ -4141,7 +4499,7 @@ Possible Values: Any number between -inf and +inf.
 See also:
 * `MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH`. Objective bound.
 """
-const MSK_DPAR_LOWER_OBJ_CUT = Dparam(38)
+const MSK_DPAR_LOWER_OBJ_CUT = Dparam(40)
 
 """
 Objective bound.
@@ -4150,16 +4508,16 @@ Default value: `-0.5e30`
 
 Possible Values: Any number between -inf and +inf.
 """
-const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH = Dparam(39)
+const MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH = Dparam(41)
 
 """
-Controlls the maximum size of the clqiue table as a factor of the number of nonzeros in the A matrix.
+Controlls the maximum size of the clique table as a factor of the number of nonzeros in the A matrix.
 
 Default value: `-1`
 
 Possible Values: Any number between -1 and +inf.
 """
-const MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR = Dparam(40)
+const MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR = Dparam(42)
 
 """
 Maximum allowed big-M value when reformulating disjunctive constraints to linear constraints.
@@ -4168,7 +4526,7 @@ Default value: `1.0e6`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_DPAR_MIO_DJC_MAX_BIGM = Dparam(41)
+const MSK_DPAR_MIO_DJC_MAX_BIGM = Dparam(43)
 
 """
 Time limit for the mixed-integer optimizer.
@@ -4177,16 +4535,16 @@ Default value: `-1.0`
 
 Possible Values: Any number between -inf and +inf.
 """
-const MSK_DPAR_MIO_MAX_TIME = Dparam(42)
+const MSK_DPAR_MIO_MAX_TIME = Dparam(44)
 
 """
-This value is used to compute the relative gap for the solution to an integer optimization problem.
+This value is used to compute the relative gap for the solution to a mixed-integer optimization problem.
 
 Default value: `1.0e-10`
 
 Possible Values: Any number between 1.0e-15 and +inf.
 """
-const MSK_DPAR_MIO_REL_GAP_CONST = Dparam(43)
+const MSK_DPAR_MIO_REL_GAP_CONST = Dparam(45)
 
 """
 Absolute optimality tolerance employed by the mixed-integer optimizer.
@@ -4195,7 +4553,7 @@ Default value: `0.0`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_MIO_TOL_ABS_GAP = Dparam(44)
+const MSK_DPAR_MIO_TOL_ABS_GAP = Dparam(46)
 
 """
 Integer feasibility tolerance.
@@ -4204,7 +4562,7 @@ Default value: `1.0e-5`
 
 Possible Values: Any number between 1e-9 and +inf.
 """
-const MSK_DPAR_MIO_TOL_ABS_RELAX_INT = Dparam(45)
+const MSK_DPAR_MIO_TOL_ABS_RELAX_INT = Dparam(47)
 
 """
 Feasibility tolerance for mixed integer solver.
@@ -4213,7 +4571,7 @@ Default value: `1.0e-6`
 
 Possible Values: Any number between 1e-9 and 1e-3.
 """
-const MSK_DPAR_MIO_TOL_FEAS = Dparam(46)
+const MSK_DPAR_MIO_TOL_FEAS = Dparam(48)
 
 """
 Controls cut generation for mixed-integer optimizer.
@@ -4222,7 +4580,7 @@ Default value: `0.0`
 
 Possible Values: Any number between 0.0 and 1.0.
 """
-const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT = Dparam(47)
+const MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT = Dparam(49)
 
 """
 Relative optimality tolerance employed by the mixed-integer optimizer.
@@ -4231,7 +4589,7 @@ Default value: `1.0e-4`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_MIO_TOL_REL_GAP = Dparam(48)
+const MSK_DPAR_MIO_TOL_REL_GAP = Dparam(50)
 
 """
 Solver ticks limit.
@@ -4240,7 +4598,7 @@ Default value: `-1.0`
 
 Possible Values: Any number between -inf and +inf.
 """
-const MSK_DPAR_OPTIMIZER_MAX_TICKS = Dparam(49)
+const MSK_DPAR_OPTIMIZER_MAX_TICKS = Dparam(51)
 
 """
 Solver time limit.
@@ -4249,7 +4607,7 @@ Default value: `-1.0`
 
 Possible Values: Any number between -inf and +inf.
 """
-const MSK_DPAR_OPTIMIZER_MAX_TIME = Dparam(50)
+const MSK_DPAR_OPTIMIZER_MAX_TIME = Dparam(52)
 
 """
 Absolute tolerance employed by the linear dependency checker.
@@ -4258,7 +4616,7 @@ Default value: `1.0e-6`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP = Dparam(51)
+const MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP = Dparam(53)
 
 """
 The presolve is allowed to perturb a bound on a constraint or variable by this amount if it removes an infeasibility.
@@ -4267,7 +4625,7 @@ Default value: `1.0e-6`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION = Dparam(52)
+const MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION = Dparam(54)
 
 """
 Relative tolerance employed by the linear dependency checker.
@@ -4276,7 +4634,7 @@ Default value: `1.0e-10`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP = Dparam(53)
+const MSK_DPAR_PRESOLVE_TOL_REL_LINDEP = Dparam(55)
 
 """
 Absolute zero tolerance employed for slack variables in the presolve.
@@ -4285,7 +4643,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_PRESOLVE_TOL_S = Dparam(54)
+const MSK_DPAR_PRESOLVE_TOL_S = Dparam(56)
 
 """
 Absolute zero tolerance employed for variables in the presolve.
@@ -4294,7 +4652,7 @@ Default value: `1.0e-8`
 
 Possible Values: Any number between 0.0 and +inf.
 """
-const MSK_DPAR_PRESOLVE_TOL_X = Dparam(55)
+const MSK_DPAR_PRESOLVE_TOL_X = Dparam(57)
 
 """
 This parameter determines when columns are dropped in incomplete Cholesky factorization during reformulation of quadratic problems.
@@ -4303,7 +4661,7 @@ Default value: `1e-15`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL = Dparam(56)
+const MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL = Dparam(58)
 
 """
 Tolerance to define a matrix to be positive semidefinite.
@@ -4312,7 +4670,7 @@ Default value: `1.0e-10`
 
 Possible Values: Any number between 1.0e-15 and +inf.
 """
-const MSK_DPAR_SEMIDEFINITE_TOL_APPROX = Dparam(57)
+const MSK_DPAR_SEMIDEFINITE_TOL_APPROX = Dparam(59)
 
 """
 Relative pivot tolerance employed when computing the LU factorization of the basis matrix.
@@ -4321,25 +4679,25 @@ Default value: `0.01`
 
 Possible Values: Any number between 1.0e-6 and 0.999999.
 """
-const MSK_DPAR_SIM_LU_TOL_REL_PIV = Dparam(58)
+const MSK_DPAR_SIM_LU_TOL_REL_PIV = Dparam(60)
 
 """
-TBD.
+Experimental. Usage not recommended.
 
 Default value: `2.0`
 
 Possible Values: Any number between 1.0 and +inf.
 """
-const MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED = Dparam(59)
+const MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED = Dparam(61)
 
 """
-TBD.
+Experimental. Usage not recommended.
 
 Default value: `1.0`
 
 Possible Values: Any number between 1.0 and +inf.
 """
-const MSK_DPAR_SIM_PRECISION_SCALING_NORMAL = Dparam(60)
+const MSK_DPAR_SIM_PRECISION_SCALING_NORMAL = Dparam(62)
 
 """
 Absolute pivot tolerance employed by the simplex optimizers.
@@ -4348,7 +4706,7 @@ Default value: `1.0e-7`
 
 Possible Values: Any number between 1.0e-12 and +inf.
 """
-const MSK_DPAR_SIMPLEX_ABS_TOL_PIV = Dparam(61)
+const MSK_DPAR_SIMPLEX_ABS_TOL_PIV = Dparam(63)
 
 """
 Objective bound.
@@ -4360,7 +4718,7 @@ Possible Values: Any number between -inf and +inf.
 See also:
 * `MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH`. Objective bound.
 """
-const MSK_DPAR_UPPER_OBJ_CUT = Dparam(62)
+const MSK_DPAR_UPPER_OBJ_CUT = Dparam(64)
 
 """
 Objective bound.
@@ -4369,7 +4727,7 @@ Default value: `0.5e30`
 
 Possible Values: Any number between -inf and +inf.
 """
-const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH = Dparam(63)
+const MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH = Dparam(65)
 tostr(v::Dparam) = if v.value == 0 "Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL"
   elseif v.value == 1 "Mosek.MSK_DPAR_BASIS_REL_TOL_S"
   elseif v.value == 2 "Mosek.MSK_DPAR_BASIS_TOL_S"
@@ -4386,54 +4744,56 @@ tostr(v::Dparam) = if v.value == 0 "Mosek.MSK_DPAR_ANA_SOL_INFEAS_TOL"
   elseif v.value == 13 "Mosek.MSK_DPAR_DATA_TOL_QIJ"
   elseif v.value == 14 "Mosek.MSK_DPAR_DATA_TOL_X"
   elseif v.value == 15 "Mosek.MSK_DPAR_FOLDING_TOL_EQ"
-  elseif v.value == 16 "Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS"
-  elseif v.value == 17 "Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS"
-  elseif v.value == 18 "Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED"
-  elseif v.value == 19 "Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"
-  elseif v.value == 20 "Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS"
-  elseif v.value == 21 "Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP"
-  elseif v.value == 22 "Mosek.MSK_DPAR_INTPNT_QO_TOL_DFEAS"
-  elseif v.value == 23 "Mosek.MSK_DPAR_INTPNT_QO_TOL_INFEAS"
-  elseif v.value == 24 "Mosek.MSK_DPAR_INTPNT_QO_TOL_MU_RED"
-  elseif v.value == 25 "Mosek.MSK_DPAR_INTPNT_QO_TOL_NEAR_REL"
-  elseif v.value == 26 "Mosek.MSK_DPAR_INTPNT_QO_TOL_PFEAS"
-  elseif v.value == 27 "Mosek.MSK_DPAR_INTPNT_QO_TOL_REL_GAP"
-  elseif v.value == 28 "Mosek.MSK_DPAR_INTPNT_TOL_DFEAS"
-  elseif v.value == 29 "Mosek.MSK_DPAR_INTPNT_TOL_DSAFE"
-  elseif v.value == 30 "Mosek.MSK_DPAR_INTPNT_TOL_INFEAS"
-  elseif v.value == 31 "Mosek.MSK_DPAR_INTPNT_TOL_MU_RED"
-  elseif v.value == 32 "Mosek.MSK_DPAR_INTPNT_TOL_PATH"
-  elseif v.value == 33 "Mosek.MSK_DPAR_INTPNT_TOL_PFEAS"
-  elseif v.value == 34 "Mosek.MSK_DPAR_INTPNT_TOL_PSAFE"
-  elseif v.value == 35 "Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP"
-  elseif v.value == 36 "Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP"
-  elseif v.value == 37 "Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE"
-  elseif v.value == 38 "Mosek.MSK_DPAR_LOWER_OBJ_CUT"
-  elseif v.value == 39 "Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"
-  elseif v.value == 40 "Mosek.MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR"
-  elseif v.value == 41 "Mosek.MSK_DPAR_MIO_DJC_MAX_BIGM"
-  elseif v.value == 42 "Mosek.MSK_DPAR_MIO_MAX_TIME"
-  elseif v.value == 43 "Mosek.MSK_DPAR_MIO_REL_GAP_CONST"
-  elseif v.value == 44 "Mosek.MSK_DPAR_MIO_TOL_ABS_GAP"
-  elseif v.value == 45 "Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT"
-  elseif v.value == 46 "Mosek.MSK_DPAR_MIO_TOL_FEAS"
-  elseif v.value == 47 "Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"
-  elseif v.value == 48 "Mosek.MSK_DPAR_MIO_TOL_REL_GAP"
-  elseif v.value == 49 "Mosek.MSK_DPAR_OPTIMIZER_MAX_TICKS"
-  elseif v.value == 50 "Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME"
-  elseif v.value == 51 "Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"
-  elseif v.value == 52 "Mosek.MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION"
-  elseif v.value == 53 "Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"
-  elseif v.value == 54 "Mosek.MSK_DPAR_PRESOLVE_TOL_S"
-  elseif v.value == 55 "Mosek.MSK_DPAR_PRESOLVE_TOL_X"
-  elseif v.value == 56 "Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"
-  elseif v.value == 57 "Mosek.MSK_DPAR_SEMIDEFINITE_TOL_APPROX"
-  elseif v.value == 58 "Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV"
-  elseif v.value == 59 "Mosek.MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED"
-  elseif v.value == 60 "Mosek.MSK_DPAR_SIM_PRECISION_SCALING_NORMAL"
-  elseif v.value == 61 "Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV"
-  elseif v.value == 62 "Mosek.MSK_DPAR_UPPER_OBJ_CUT"
-  elseif v.value == 63 "Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"
+  elseif v.value == 16 "Mosek.MSK_DPAR_HEARTBEAT_SIM_FREQ_TICKS"
+  elseif v.value == 17 "Mosek.MSK_DPAR_INTPNT_CO_TOL_DFEAS"
+  elseif v.value == 18 "Mosek.MSK_DPAR_INTPNT_CO_TOL_INFEAS"
+  elseif v.value == 19 "Mosek.MSK_DPAR_INTPNT_CO_TOL_MU_RED"
+  elseif v.value == 20 "Mosek.MSK_DPAR_INTPNT_CO_TOL_NEAR_REL"
+  elseif v.value == 21 "Mosek.MSK_DPAR_INTPNT_CO_TOL_PFEAS"
+  elseif v.value == 22 "Mosek.MSK_DPAR_INTPNT_CO_TOL_REL_GAP"
+  elseif v.value == 23 "Mosek.MSK_DPAR_INTPNT_QO_TOL_DFEAS"
+  elseif v.value == 24 "Mosek.MSK_DPAR_INTPNT_QO_TOL_INFEAS"
+  elseif v.value == 25 "Mosek.MSK_DPAR_INTPNT_QO_TOL_MU_RED"
+  elseif v.value == 26 "Mosek.MSK_DPAR_INTPNT_QO_TOL_NEAR_REL"
+  elseif v.value == 27 "Mosek.MSK_DPAR_INTPNT_QO_TOL_PFEAS"
+  elseif v.value == 28 "Mosek.MSK_DPAR_INTPNT_QO_TOL_REL_GAP"
+  elseif v.value == 29 "Mosek.MSK_DPAR_INTPNT_TOL_DFEAS"
+  elseif v.value == 30 "Mosek.MSK_DPAR_INTPNT_TOL_DSAFE"
+  elseif v.value == 31 "Mosek.MSK_DPAR_INTPNT_TOL_INFEAS"
+  elseif v.value == 32 "Mosek.MSK_DPAR_INTPNT_TOL_MU_RED"
+  elseif v.value == 33 "Mosek.MSK_DPAR_INTPNT_TOL_PATH"
+  elseif v.value == 34 "Mosek.MSK_DPAR_INTPNT_TOL_PFEAS"
+  elseif v.value == 35 "Mosek.MSK_DPAR_INTPNT_TOL_PSAFE"
+  elseif v.value == 36 "Mosek.MSK_DPAR_INTPNT_TOL_REL_GAP"
+  elseif v.value == 37 "Mosek.MSK_DPAR_INTPNT_TOL_REL_STEP"
+  elseif v.value == 38 "Mosek.MSK_DPAR_INTPNT_TOL_STEP_SIZE"
+  elseif v.value == 39 "Mosek.MSK_DPAR_LOG_SIM_FREQ_TICKS"
+  elseif v.value == 40 "Mosek.MSK_DPAR_LOWER_OBJ_CUT"
+  elseif v.value == 41 "Mosek.MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH"
+  elseif v.value == 42 "Mosek.MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR"
+  elseif v.value == 43 "Mosek.MSK_DPAR_MIO_DJC_MAX_BIGM"
+  elseif v.value == 44 "Mosek.MSK_DPAR_MIO_MAX_TIME"
+  elseif v.value == 45 "Mosek.MSK_DPAR_MIO_REL_GAP_CONST"
+  elseif v.value == 46 "Mosek.MSK_DPAR_MIO_TOL_ABS_GAP"
+  elseif v.value == 47 "Mosek.MSK_DPAR_MIO_TOL_ABS_RELAX_INT"
+  elseif v.value == 48 "Mosek.MSK_DPAR_MIO_TOL_FEAS"
+  elseif v.value == 49 "Mosek.MSK_DPAR_MIO_TOL_REL_DUAL_BOUND_IMPROVEMENT"
+  elseif v.value == 50 "Mosek.MSK_DPAR_MIO_TOL_REL_GAP"
+  elseif v.value == 51 "Mosek.MSK_DPAR_OPTIMIZER_MAX_TICKS"
+  elseif v.value == 52 "Mosek.MSK_DPAR_OPTIMIZER_MAX_TIME"
+  elseif v.value == 53 "Mosek.MSK_DPAR_PRESOLVE_TOL_ABS_LINDEP"
+  elseif v.value == 54 "Mosek.MSK_DPAR_PRESOLVE_TOL_PRIMAL_INFEAS_PERTURBATION"
+  elseif v.value == 55 "Mosek.MSK_DPAR_PRESOLVE_TOL_REL_LINDEP"
+  elseif v.value == 56 "Mosek.MSK_DPAR_PRESOLVE_TOL_S"
+  elseif v.value == 57 "Mosek.MSK_DPAR_PRESOLVE_TOL_X"
+  elseif v.value == 58 "Mosek.MSK_DPAR_QCQO_REFORMULATE_REL_DROP_TOL"
+  elseif v.value == 59 "Mosek.MSK_DPAR_SEMIDEFINITE_TOL_APPROX"
+  elseif v.value == 60 "Mosek.MSK_DPAR_SIM_LU_TOL_REL_PIV"
+  elseif v.value == 61 "Mosek.MSK_DPAR_SIM_PRECISION_SCALING_EXTENDED"
+  elseif v.value == 62 "Mosek.MSK_DPAR_SIM_PRECISION_SCALING_NORMAL"
+  elseif v.value == 63 "Mosek.MSK_DPAR_SIMPLEX_ABS_TOL_PIV"
+  elseif v.value == 64 "Mosek.MSK_DPAR_UPPER_OBJ_CUT"
+  elseif v.value == 65 "Mosek.MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH"
   else "Mosek.Dparam(?)"
   end
 const Dparam_members = Dparam[
@@ -4453,6 +4813,7 @@ const Dparam_members = Dparam[
     MSK_DPAR_DATA_TOL_QIJ,
     MSK_DPAR_DATA_TOL_X,
     MSK_DPAR_FOLDING_TOL_EQ,
+    MSK_DPAR_HEARTBEAT_SIM_FREQ_TICKS,
     MSK_DPAR_INTPNT_CO_TOL_DFEAS,
     MSK_DPAR_INTPNT_CO_TOL_INFEAS,
     MSK_DPAR_INTPNT_CO_TOL_MU_RED,
@@ -4475,6 +4836,7 @@ const Dparam_members = Dparam[
     MSK_DPAR_INTPNT_TOL_REL_GAP,
     MSK_DPAR_INTPNT_TOL_REL_STEP,
     MSK_DPAR_INTPNT_TOL_STEP_SIZE,
+    MSK_DPAR_LOG_SIM_FREQ_TICKS,
     MSK_DPAR_LOWER_OBJ_CUT,
     MSK_DPAR_LOWER_OBJ_CUT_FINITE_TRH,
     MSK_DPAR_MIO_CLIQUE_TABLE_SIZE_FACTOR,
@@ -4502,7 +4864,7 @@ const Dparam_members = Dparam[
     MSK_DPAR_UPPER_OBJ_CUT,
     MSK_DPAR_UPPER_OBJ_CUT_FINITE_TRH ]
 members(::Type{Dparam}) = Dparam_members
-Base.length(::Type{Dparam}) = 64
+Base.length(::Type{Dparam}) = 66
 Base.convert(::Type{Int},x::Dparam) = Int(x.value)
 """
     Liinfitem
@@ -4531,6 +4893,14 @@ Long integer information items.
 * `MSK_LIINF_RD_NUMDJC`. Number of disjuncive constraints.
 * `MSK_LIINF_RD_NUMQNZ`. Number of Q non-zeros.
 * `MSK_LIINF_SIMPLEX_ITER`. Number of iterations performed by the simplex optimizer.
+* `MSK_LIINF_UNDUALIZE_BI_DUAL_ITER`. Number of dual pivots performed in the basis identification.
+* `MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER`. Number of clean iterations performed in the basis identification.
+* `MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER_128BIT`. Number of clean iterations performed in the basis identification.
+* `MSK_LIINF_UNDUALIZE_BI_PRIMAL_ITER`. Number of primal pivots performed in the basis identification.
+* `MSK_LIINF_UNFOLD_BI_DUAL_ITER`. Number of dual pivots performed in the basis identification.
+* `MSK_LIINF_UNFOLD_BI_OPTIMIZE_128BIT_ITER`. Number of clean iterations performed in the basis identification.
+* `MSK_LIINF_UNFOLD_BI_OPTIMIZE_ITER`. Number of clean iterations performed in the basis identification.
+* `MSK_LIINF_UNFOLD_BI_PRIMAL_ITER`. Number of primal pivots performed in the basis identification.
 """
 struct Liinfitem <: MosekEnum
   value :: Int32
@@ -4601,6 +4971,30 @@ const MSK_LIINF_RD_NUMQNZ = Liinfitem(20)
 
 "Number of iterations performed by the simplex optimizer."
 const MSK_LIINF_SIMPLEX_ITER = Liinfitem(21)
+
+"Number of dual pivots performed in the basis identification."
+const MSK_LIINF_UNDUALIZE_BI_DUAL_ITER = Liinfitem(22)
+
+"Number of clean iterations performed in the basis identification."
+const MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER = Liinfitem(23)
+
+"Number of clean iterations performed in the basis identification."
+const MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER_128BIT = Liinfitem(24)
+
+"Number of primal pivots performed in the basis identification."
+const MSK_LIINF_UNDUALIZE_BI_PRIMAL_ITER = Liinfitem(25)
+
+"Number of dual pivots performed in the basis identification."
+const MSK_LIINF_UNFOLD_BI_DUAL_ITER = Liinfitem(26)
+
+"Number of clean iterations performed in the basis identification."
+const MSK_LIINF_UNFOLD_BI_OPTIMIZE_128BIT_ITER = Liinfitem(27)
+
+"Number of clean iterations performed in the basis identification."
+const MSK_LIINF_UNFOLD_BI_OPTIMIZE_ITER = Liinfitem(28)
+
+"Number of primal pivots performed in the basis identification."
+const MSK_LIINF_UNFOLD_BI_PRIMAL_ITER = Liinfitem(29)
 tostr(v::Liinfitem) = if v.value == 0 "Mosek.MSK_LIINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_COLUMNS"
   elseif v.value == 1 "Mosek.MSK_LIINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_NZ"
   elseif v.value == 2 "Mosek.MSK_LIINF_ANA_PRO_SCALARIZED_CONSTRAINT_MATRIX_NUM_ROWS"
@@ -4623,6 +5017,14 @@ tostr(v::Liinfitem) = if v.value == 0 "Mosek.MSK_LIINF_ANA_PRO_SCALARIZED_CONSTR
   elseif v.value == 19 "Mosek.MSK_LIINF_RD_NUMDJC"
   elseif v.value == 20 "Mosek.MSK_LIINF_RD_NUMQNZ"
   elseif v.value == 21 "Mosek.MSK_LIINF_SIMPLEX_ITER"
+  elseif v.value == 22 "Mosek.MSK_LIINF_UNDUALIZE_BI_DUAL_ITER"
+  elseif v.value == 23 "Mosek.MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER"
+  elseif v.value == 24 "Mosek.MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER_128BIT"
+  elseif v.value == 25 "Mosek.MSK_LIINF_UNDUALIZE_BI_PRIMAL_ITER"
+  elseif v.value == 26 "Mosek.MSK_LIINF_UNFOLD_BI_DUAL_ITER"
+  elseif v.value == 27 "Mosek.MSK_LIINF_UNFOLD_BI_OPTIMIZE_128BIT_ITER"
+  elseif v.value == 28 "Mosek.MSK_LIINF_UNFOLD_BI_OPTIMIZE_ITER"
+  elseif v.value == 29 "Mosek.MSK_LIINF_UNFOLD_BI_PRIMAL_ITER"
   else "Mosek.Liinfitem(?)"
   end
 const Liinfitem_members = Liinfitem[
@@ -4647,9 +5049,17 @@ const Liinfitem_members = Liinfitem[
     MSK_LIINF_RD_NUMANZ,
     MSK_LIINF_RD_NUMDJC,
     MSK_LIINF_RD_NUMQNZ,
-    MSK_LIINF_SIMPLEX_ITER ]
+    MSK_LIINF_SIMPLEX_ITER,
+    MSK_LIINF_UNDUALIZE_BI_DUAL_ITER,
+    MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER,
+    MSK_LIINF_UNDUALIZE_BI_OPTIMIZE_ITER_128BIT,
+    MSK_LIINF_UNDUALIZE_BI_PRIMAL_ITER,
+    MSK_LIINF_UNFOLD_BI_DUAL_ITER,
+    MSK_LIINF_UNFOLD_BI_OPTIMIZE_128BIT_ITER,
+    MSK_LIINF_UNFOLD_BI_OPTIMIZE_ITER,
+    MSK_LIINF_UNFOLD_BI_PRIMAL_ITER ]
 members(::Type{Liinfitem}) = Liinfitem_members
-Base.length(::Type{Liinfitem}) = 22
+Base.length(::Type{Liinfitem}) = 30
 Base.convert(::Type{Int},x::Liinfitem) = Int(x.value)
 """
     Iinfitem
@@ -5565,14 +5975,14 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_AUTO_UPDATE_SOL_INFO`. Controls whether the solution information items are automatically updated after an optimization is performed.
 * `MSK_IPAR_BASIS_SOLVE_USE_PLUS_ONE`. Controls the sign of the columns in the basis matrix corresponding to slack variables.
 * `MSK_IPAR_BI_CLEAN_OPTIMIZER`. Controls which simplex optimizer is used in the clean-up phase.
-* `MSK_IPAR_BI_IGNORE_MAX_ITER`. Turns on basis identification in case the interior-point optimizer is terminated due to maximum number of iterations.
+* `MSK_IPAR_BI_IGNORE_MAX_ITER`. Basis identification is performed even if the interior-point optimizer is terminated due to maximum number of iterations.
 * `MSK_IPAR_BI_IGNORE_NUM_ERROR`. Turns on basis identification in case the interior-point optimizer is terminated due to a numerical problem.
 * `MSK_IPAR_BI_MAX_ITERATIONS`. Maximum number of iterations after basis identification.
 * `MSK_IPAR_CACHE_LICENSE`. Control license caching.
 * `MSK_IPAR_COMPRESS_STATFILE`. Control compression of stat files.
 * `MSK_IPAR_FOLDING_USE`. Controls how to use folding.
 * `MSK_IPAR_GETDUAL_CONVERT_LMIS`. Detect LMIs and optimize their dualization.
-* `MSK_IPAR_HEARTBEAT_SIM_FREQ_TICKS`. Controls heartbeat frequency for the new simplex optimizers.
+* `MSK_IPAR_HEARTBEAT_SIM_FREQ_TICKS`. Deprecated.
 * `MSK_IPAR_INFEAS_GENERIC_NAMES`. Controls the contents of the infeasibility report.
 * `MSK_IPAR_INFEAS_REPORT_AUTO`. Turns the feasibility report on or off.
 * `MSK_IPAR_INFEAS_REPORT_LEVEL`. Controls the contents of the infeasibility report.
@@ -5581,10 +5991,10 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_INTPNT_HOTSTART`. Currently not in use.
 * `MSK_IPAR_INTPNT_MAX_ITERATIONS`. Controls the maximum number of iterations allowed in the interior-point optimizer.
 * `MSK_IPAR_INTPNT_MAX_NUM_COR`. Maximum number of correction steps.
+* `MSK_IPAR_INTPNT_NOT_IN_USE`. Currently not in use.
 * `MSK_IPAR_INTPNT_OFF_COL_TRH`. Controls the aggressiveness of the offending column detection.
 * `MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS`. This parameter controls the number of random seeds tried.
 * `MSK_IPAR_INTPNT_ORDER_METHOD`. Controls the ordering strategy.
-* `MSK_IPAR_INTPNT_PURIFY`. Currently not in use.
 * `MSK_IPAR_INTPNT_REGULARIZATION_USE`. Controls whether regularization is allowed.
 * `MSK_IPAR_INTPNT_SCALING`. Controls how the problem is scaled before the interior-point optimizer is used.
 * `MSK_IPAR_INTPNT_SOLVE_FORM`. Controls whether the primal or the dual problem is solved.
@@ -5614,7 +6024,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_LOG_SENSITIVITY_OPT`. Control logging in sensitivity analyzer.
 * `MSK_IPAR_LOG_SIM`. Controls the amount of log information from the simplex optimizers.
 * `MSK_IPAR_LOG_SIM_FREQ`. Controls simplex logging frequency.
-* `MSK_IPAR_LOG_SIM_FREQ_GIGA_TICKS`. Controls logging frequency for the new simplex optimizers.
+* `MSK_IPAR_LOG_SIM_FREQ_GIGA_TICKS`. Deprecated.
 * `MSK_IPAR_LOG_STORAGE`. Controls the memory related log information.
 * `MSK_IPAR_MAX_NUM_WARNINGS`. Each warning is shown a limited number of times controlled by this parameter. A negative value is identical to infinite number of times.
 * `MSK_IPAR_MIO_BRANCH_DIR`. Controls whether the mixed-integer optimizer is branching up or down by default.
@@ -5686,7 +6096,6 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_PTF_WRITE_PARAMETERS`. Controls whether parameters section is written in PTF files.
 * `MSK_IPAR_PTF_WRITE_SINGLE_PSD_TERMS`. Controls whether PSD terms with a coefficient matrix of just one non-zero are written as a single term instead of as a matrix term.
 * `MSK_IPAR_PTF_WRITE_SOLUTIONS`. Controls whether solution section is written in PTF files.
-* `MSK_IPAR_PTF_WRITE_TRANSFORM`. Controls if simple transformation are done when writing PTF files.
 * `MSK_IPAR_READ_ASYNC`. Controls whether files are read using synchronous or asynchronous reader.
 * `MSK_IPAR_READ_DEBUG`. Turns on additional debugging information when reading files.
 * `MSK_IPAR_READ_KEEP_FREE_CON`. Controls whether the free constraints are included in the problem. Applies to MPS files.
@@ -5698,6 +6107,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_SENSITIVITY_ALL`. Controls sensitivity report behavior.
 * `MSK_IPAR_SENSITIVITY_TYPE`. Controls which type of sensitivity analysis is to be performed.
 * `MSK_IPAR_SIM_BASIS_FACTOR_USE`. Controls whether an LU factorization of the basis is used in a hot-start.
+* `MSK_IPAR_SIM_CACHE`. TBD
 * `MSK_IPAR_SIM_DEGEN`. Controls how aggressively degeneration is handled.
 * `MSK_IPAR_SIM_DETECT_PWL`. Not in use.
 * `MSK_IPAR_SIM_DUAL_CRASH`. Controls whether crashing is performed in the dual simplex optimizer.
@@ -5710,7 +6120,7 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_SIM_MAX_ITERATIONS`. Maximum number of iterations that can be used by a simplex optimizer.
 * `MSK_IPAR_SIM_MAX_NUM_SETBACKS`. Controls how many set-backs that are allowed within a simplex optimizer.
 * `MSK_IPAR_SIM_NON_SINGULAR`. Controls if the simplex optimizer ensures a non-singular basis, if possible.
-* `MSK_IPAR_SIM_PRECISION`. 
+* `MSK_IPAR_SIM_PRECISION`. Experimental. Usage not recommended.
 * `MSK_IPAR_SIM_PRECISION_BOOST`. Controls whether the simplex optimizer is allowed to boost the precision.
 * `MSK_IPAR_SIM_PRIMAL_CRASH`. Controls the simplex crash.
 * `MSK_IPAR_SIM_PRIMAL_PHASEONE_METHOD`. An experimental feature.
@@ -5740,7 +6150,8 @@ The enumeration type containing all integer parameters.
 * `MSK_IPAR_WRITE_INT_HEAD`. Controls the integer solution file format.
 * `MSK_IPAR_WRITE_INT_VARIABLES`. Controls the integer solution file format.
 * `MSK_IPAR_WRITE_JSON_INDENTATION`. When set, the JSON task and solution files are written with indentation for better readability.
-* `MSK_IPAR_WRITE_LP_FULL_OBJ`. Write full linear objective
+* `MSK_IPAR_WRITE_LP_FULL_OBJ`. Write full linear objective.
+* `MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS`. Ignore free constraints while writing a LP formatted file.
 * `MSK_IPAR_WRITE_LP_LINE_WIDTH`. Controls the LP output file format.
 * `MSK_IPAR_WRITE_MPS_FORMAT`. Controls in which format the MPS file is written.
 * `MSK_IPAR_WRITE_MPS_INT`. Controls the output file data.
@@ -5823,18 +6234,19 @@ Possible values:
 
 * `MSK_OPTIMIZER_FREE`. The optimizer is chosen automatically.
 * `MSK_OPTIMIZER_INTPNT`. The interior-point optimizer is used.
+* `MSK_OPTIMIZER_NEW_INTPNT`. The new experimental interior-point optimizer is used.
 * `MSK_OPTIMIZER_CONIC`. The optimizer for problems having conic constraints.
 * `MSK_OPTIMIZER_PRIMAL_SIMPLEX`. The primal simplex optimizer is used.
 * `MSK_OPTIMIZER_DUAL_SIMPLEX`. The dual simplex optimizer is used.
-* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new primal simplex optimizer is used. It is not recommended to use this option.
-* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new dual simplex optimizer is used.
+* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new experimental primal simplex optimizer is used. It is not recommended to use this option.
+* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new experimental dual simplex optimizer is used.
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
 """
 const MSK_IPAR_BI_CLEAN_OPTIMIZER = Iparam(5)
 
 """
-Turns on basis identification in case the interior-point optimizer is terminated due to maximum number of iterations.
+Basis identification is performed even if the interior-point optimizer is terminated due to maximum number of iterations.
 
 Default value: `OFF`
 
@@ -5893,7 +6305,7 @@ const MSK_IPAR_COMPRESS_STATFILE = Iparam(10)
 """
 Controls how to use folding.
 
-Default value: `FREE_UNLESS_BASIC`
+Default value: `FREE`
 
 Possible values:
 
@@ -5901,7 +6313,6 @@ Possible values:
 * `MSK_FOLDING_MODE_FREE`. The solver decides on the usage and amount of folding.
 * `MSK_FOLDING_MODE_FREE_UNLESS_BASIC`. If only the interior-point solution is requested then the solver decides; if the basic solution is requested then folding is disabled.
 * `MSK_FOLDING_MODE_FORCE`. Full folding is always performed regardless of workload.
-* `MSK_FOLDING_MODE_ONLY`. (A development stage option for testing of fold itself, remove for release). Like FREE, but the optimizer exits after folding.
 """
 const MSK_IPAR_FOLDING_USE = Iparam(11)
 
@@ -5918,9 +6329,9 @@ Possible values:
 const MSK_IPAR_GETDUAL_CONVERT_LMIS = Iparam(12)
 
 """
-Controls heartbeat frequency for the new simplex optimizers.
+Deprecated.
 
-Default value: `1000000`
+Default value: `100000000`
 
 Possible Values: Any number between -1 and +inf.
 """
@@ -5970,10 +6381,9 @@ Possible values:
 * `MSK_BI_ALWAYS`. Basis identification is always performed even if the interior-point optimizer terminates abnormally.
 * `MSK_BI_NO_ERROR`. Basis identification is performed if the interior-point optimizer terminates without an error.
 * `MSK_BI_IF_FEASIBLE`. Basis identification is not performed if the interior-point optimizer terminates with a problem status saying that the problem is primal or dual infeasible.
-* `MSK_BI_RESERVERED`. Not currently in use.
 
 See also:
-* `MSK_IPAR_BI_IGNORE_MAX_ITER`. Turns on basis identification in case the interior-point optimizer is terminated due to maximum number of iterations.
+* `MSK_IPAR_BI_IGNORE_MAX_ITER`. Basis identification is performed even if the interior-point optimizer is terminated due to maximum number of iterations.
 * `MSK_IPAR_BI_IGNORE_NUM_ERROR`. Turns on basis identification in case the interior-point optimizer is terminated due to a numerical problem.
 * `MSK_IPAR_BI_MAX_ITERATIONS`. Maximum number of iterations after basis identification.
 * `MSK_IPAR_BI_CLEAN_OPTIMIZER`. Controls which simplex optimizer is used in the clean-up phase.
@@ -6025,13 +6435,25 @@ Possible Values: Any number between -1 and +inf.
 const MSK_IPAR_INTPNT_MAX_NUM_COR = Iparam(21)
 
 """
+Currently not in use.
+
+Default value: `OFF`
+
+Possible values:
+
+* `MSK_ON`. Switch the option on.
+* `MSK_OFF`. Switch the option off.
+"""
+const MSK_IPAR_INTPNT_NOT_IN_USE = Iparam(22)
+
+"""
 Controls the aggressiveness of the offending column detection.
 
 Default value: `40`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_INTPNT_OFF_COL_TRH = Iparam(22)
+const MSK_IPAR_INTPNT_OFF_COL_TRH = Iparam(23)
 
 """
 This parameter controls the number of random seeds tried.
@@ -6040,7 +6462,7 @@ Default value: `0`
 
 Possible Values: Any number between 0 and +inf.
 """
-const MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS = Iparam(23)
+const MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS = Iparam(24)
 
 """
 Controls the ordering strategy.
@@ -6056,22 +6478,7 @@ Possible values:
 * `MSK_ORDER_METHOD_FORCE_GRAPHPAR`. Always use the graph partitioning based ordering even if it is worse than the approximate minimum local fill ordering.
 * `MSK_ORDER_METHOD_NONE`. No ordering is used. Note using this value almost always leads to a significantly slow down.
 """
-const MSK_IPAR_INTPNT_ORDER_METHOD = Iparam(24)
-
-"""
-Currently not in use.
-
-Default value: `none`
-
-Possible values:
-
-* `MSK_PURIFY_NONE`. The optimizer performs no solution purification.
-* `MSK_PURIFY_PRIMAL`. The optimizer purifies the primal solution.
-* `MSK_PURIFY_DUAL`. The optimizer purifies the dual solution.
-* `MSK_PURIFY_PRIMAL_DUAL`. The optimizer purifies both the primal and dual solution.
-* `MSK_PURIFY_AUTO`. TBD
-"""
-const MSK_IPAR_INTPNT_PURIFY = Iparam(25)
+const MSK_IPAR_INTPNT_ORDER_METHOD = Iparam(25)
 
 """
 Controls whether regularization is allowed.
@@ -6373,7 +6780,7 @@ Possible Values: Any number between 0 and +inf.
 const MSK_IPAR_LOG_SIM_FREQ = Iparam(54)
 
 """
-Controls logging frequency for the new simplex optimizers.
+Deprecated.
 
 Default value: `100`
 
@@ -6673,11 +7080,12 @@ Possible values:
 
 * `MSK_OPTIMIZER_FREE`. The optimizer is chosen automatically.
 * `MSK_OPTIMIZER_INTPNT`. The interior-point optimizer is used.
+* `MSK_OPTIMIZER_NEW_INTPNT`. The new experimental interior-point optimizer is used.
 * `MSK_OPTIMIZER_CONIC`. The optimizer for problems having conic constraints.
 * `MSK_OPTIMIZER_PRIMAL_SIMPLEX`. The primal simplex optimizer is used.
 * `MSK_OPTIMIZER_DUAL_SIMPLEX`. The dual simplex optimizer is used.
-* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new primal simplex optimizer is used. It is not recommended to use this option.
-* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new dual simplex optimizer is used.
+* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new experimental primal simplex optimizer is used. It is not recommended to use this option.
+* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new experimental dual simplex optimizer is used.
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
 """
@@ -6803,11 +7211,12 @@ Possible values:
 
 * `MSK_OPTIMIZER_FREE`. The optimizer is chosen automatically.
 * `MSK_OPTIMIZER_INTPNT`. The interior-point optimizer is used.
+* `MSK_OPTIMIZER_NEW_INTPNT`. The new experimental interior-point optimizer is used.
 * `MSK_OPTIMIZER_CONIC`. The optimizer for problems having conic constraints.
 * `MSK_OPTIMIZER_PRIMAL_SIMPLEX`. The primal simplex optimizer is used.
 * `MSK_OPTIMIZER_DUAL_SIMPLEX`. The dual simplex optimizer is used.
-* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new primal simplex optimizer is used. It is not recommended to use this option.
-* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new dual simplex optimizer is used.
+* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new experimental primal simplex optimizer is used. It is not recommended to use this option.
+* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new experimental dual simplex optimizer is used.
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
 """
@@ -6997,11 +7406,12 @@ Possible values:
 
 * `MSK_OPTIMIZER_FREE`. The optimizer is chosen automatically.
 * `MSK_OPTIMIZER_INTPNT`. The interior-point optimizer is used.
+* `MSK_OPTIMIZER_NEW_INTPNT`. The new experimental interior-point optimizer is used.
 * `MSK_OPTIMIZER_CONIC`. The optimizer for problems having conic constraints.
 * `MSK_OPTIMIZER_PRIMAL_SIMPLEX`. The primal simplex optimizer is used.
 * `MSK_OPTIMIZER_DUAL_SIMPLEX`. The dual simplex optimizer is used.
-* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new primal simplex optimizer is used. It is not recommended to use this option.
-* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new dual simplex optimizer is used.
+* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new experimental primal simplex optimizer is used. It is not recommended to use this option.
+* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new experimental dual simplex optimizer is used.
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
 """
@@ -7131,11 +7541,12 @@ Possible values:
 
 * `MSK_OPTIMIZER_FREE`. The optimizer is chosen automatically.
 * `MSK_OPTIMIZER_INTPNT`. The interior-point optimizer is used.
+* `MSK_OPTIMIZER_NEW_INTPNT`. The new experimental interior-point optimizer is used.
 * `MSK_OPTIMIZER_CONIC`. The optimizer for problems having conic constraints.
 * `MSK_OPTIMIZER_PRIMAL_SIMPLEX`. The primal simplex optimizer is used.
 * `MSK_OPTIMIZER_DUAL_SIMPLEX`. The dual simplex optimizer is used.
-* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new primal simplex optimizer is used. It is not recommended to use this option.
-* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new dual simplex optimizer is used.
+* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new experimental primal simplex optimizer is used. It is not recommended to use this option.
+* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new experimental dual simplex optimizer is used.
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
 """
@@ -7178,18 +7589,6 @@ Possible values:
 const MSK_IPAR_PTF_WRITE_SOLUTIONS = Iparam(126)
 
 """
-Controls if simple transformation are done when writing PTF files.
-
-Default value: `ON`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_PTF_WRITE_TRANSFORM = Iparam(127)
-
-"""
 Controls whether files are read using synchronous or asynchronous reader.
 
 Default value: `OFF`
@@ -7199,7 +7598,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_READ_ASYNC = Iparam(128)
+const MSK_IPAR_READ_ASYNC = Iparam(127)
 
 """
 Turns on additional debugging information when reading files.
@@ -7211,7 +7610,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_READ_DEBUG = Iparam(129)
+const MSK_IPAR_READ_DEBUG = Iparam(128)
 
 """
 Controls whether the free constraints are included in the problem. Applies to MPS files.
@@ -7223,7 +7622,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_READ_KEEP_FREE_CON = Iparam(130)
+const MSK_IPAR_READ_KEEP_FREE_CON = Iparam(129)
 
 """
 Controls how strictly the MPS file reader interprets the MPS format.
@@ -7237,7 +7636,7 @@ Possible values:
 * `MSK_MPS_FORMAT_FREE`. It is assumed that the input file satisfies the free MPS format. This implies that spaces are not allowed in names. Otherwise the format is free.
 * `MSK_MPS_FORMAT_CPLEX`. The CPLEX compatible version of the MPS format is employed.
 """
-const MSK_IPAR_READ_MPS_FORMAT = Iparam(131)
+const MSK_IPAR_READ_MPS_FORMAT = Iparam(130)
 
 """
 Controls the maximal number of characters allowed in one line of the MPS file.
@@ -7246,7 +7645,7 @@ Default value: `1024`
 
 Possible Values: Any number between 80 and +inf.
 """
-const MSK_IPAR_READ_MPS_WIDTH = Iparam(132)
+const MSK_IPAR_READ_MPS_WIDTH = Iparam(131)
 
 """
 Controls what information is used from the task files.
@@ -7258,7 +7657,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_READ_TASK_IGNORE_PARAM = Iparam(133)
+const MSK_IPAR_READ_TASK_IGNORE_PARAM = Iparam(132)
 
 """
 Use compression when sending data to an optimization server
@@ -7272,7 +7671,7 @@ Possible values:
 * `MSK_COMPRESS_GZIP`. The type of compression used is gzip compatible.
 * `MSK_COMPRESS_ZSTD`. The type of compression used is zstd compatible.
 """
-const MSK_IPAR_REMOTE_USE_COMPRESSION = Iparam(134)
+const MSK_IPAR_REMOTE_USE_COMPRESSION = Iparam(133)
 
 """
 Removes unused solutions before the optimization is performed.
@@ -7284,7 +7683,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS = Iparam(135)
+const MSK_IPAR_REMOVE_UNUSED_SOLUTIONS = Iparam(134)
 
 """
 Controls sensitivity report behavior.
@@ -7296,7 +7695,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SENSITIVITY_ALL = Iparam(136)
+const MSK_IPAR_SENSITIVITY_ALL = Iparam(135)
 
 """
 Controls which type of sensitivity analysis is to be performed.
@@ -7307,7 +7706,7 @@ Possible values:
 
 * `MSK_SENSITIVITY_TYPE_BASIS`. Basis sensitivity analysis is performed.
 """
-const MSK_IPAR_SENSITIVITY_TYPE = Iparam(137)
+const MSK_IPAR_SENSITIVITY_TYPE = Iparam(136)
 
 """
 Controls whether an LU factorization of the basis is used in a hot-start.
@@ -7319,7 +7718,19 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_SIM_BASIS_FACTOR_USE = Iparam(138)
+const MSK_IPAR_SIM_BASIS_FACTOR_USE = Iparam(137)
+
+"""
+TBD
+
+Default value: `OFF`
+
+Possible values:
+
+* `MSK_ON`. Switch the option on.
+* `MSK_OFF`. Switch the option off.
+"""
+const MSK_IPAR_SIM_CACHE = Iparam(138)
 
 """
 Controls how aggressively degeneration is handled.
@@ -7398,8 +7809,8 @@ Default value: `OFF`
 
 Possible values:
 
-* `MSK_SIM_EXPLOIT_DUPVEC_ON`. Allow the simplex optimizer to exploit duplicated columns.
 * `MSK_SIM_EXPLOIT_DUPVEC_OFF`. Disallow the simplex optimizer to exploit duplicated columns.
+* `MSK_SIM_EXPLOIT_DUPVEC_ON`. Allow the simplex optimizer to exploit duplicated columns.
 * `MSK_SIM_EXPLOIT_DUPVEC_FREE`. The simplex optimizer can choose freely.
 """
 const MSK_IPAR_SIM_EXPLOIT_DUPVEC = Iparam(145)
@@ -7460,14 +7871,14 @@ Possible values:
 const MSK_IPAR_SIM_NON_SINGULAR = Iparam(150)
 
 """
-
+Experimental. Usage not recommended.
 
 Default value: `normal`
 
 Possible values:
 
-* `MSK_SIM_PRECISION_NORMAL`. TBD
-* `MSK_SIM_PRECISION_EXTENDED`. TBD
+* `MSK_SIM_PRECISION_NORMAL`. Experimental. Usage not recommended.
+* `MSK_SIM_PRECISION_EXTENDED`. Experimental. Usage not recommended.
 """
 const MSK_IPAR_SIM_PRECISION = Iparam(151)
 
@@ -7542,8 +7953,8 @@ Default value: `OFF`
 
 Possible values:
 
-* `MSK_SIM_REFORMULATION_ON`. Allow the simplex optimizer to reformulate the problem.
 * `MSK_SIM_REFORMULATION_OFF`. Disallow the simplex optimizer to reformulate the problem.
+* `MSK_SIM_REFORMULATION_ON`. Allow the simplex optimizer to reformulate the problem.
 * `MSK_SIM_REFORMULATION_FREE`. The simplex optimizer can choose freely.
 * `MSK_SIM_REFORMULATION_AGGRESSIVE`. The simplex optimizer should use an aggressive reformulation strategy.
 """
@@ -7800,7 +8211,7 @@ Possible values:
 const MSK_IPAR_WRITE_JSON_INDENTATION = Iparam(180)
 
 """
-Write full linear objective
+Write full linear objective.
 
 Default value: `ON`
 
@@ -7812,13 +8223,25 @@ Possible values:
 const MSK_IPAR_WRITE_LP_FULL_OBJ = Iparam(181)
 
 """
+Ignore free constraints while writing a LP formatted file.
+
+Default value: `OFF`
+
+Possible values:
+
+* `MSK_ON`. Switch the option on.
+* `MSK_OFF`. Switch the option off.
+"""
+const MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS = Iparam(182)
+
+"""
 Controls the LP output file format.
 
 Default value: `80`
 
 Possible Values: Any number between 40 and +inf.
 """
-const MSK_IPAR_WRITE_LP_LINE_WIDTH = Iparam(182)
+const MSK_IPAR_WRITE_LP_LINE_WIDTH = Iparam(183)
 
 """
 Controls in which format the MPS file is written.
@@ -7832,7 +8255,7 @@ Possible values:
 * `MSK_MPS_FORMAT_FREE`. It is assumed that the input file satisfies the free MPS format. This implies that spaces are not allowed in names. Otherwise the format is free.
 * `MSK_MPS_FORMAT_CPLEX`. The CPLEX compatible version of the MPS format is employed.
 """
-const MSK_IPAR_WRITE_MPS_FORMAT = Iparam(183)
+const MSK_IPAR_WRITE_MPS_FORMAT = Iparam(184)
 
 """
 Controls the output file data.
@@ -7844,7 +8267,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_MPS_INT = Iparam(184)
+const MSK_IPAR_WRITE_MPS_INT = Iparam(185)
 
 """
 Controls the solution file format.
@@ -7856,7 +8279,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_BARVARIABLES = Iparam(185)
+const MSK_IPAR_WRITE_SOL_BARVARIABLES = Iparam(186)
 
 """
 Controls the solution file format.
@@ -7868,7 +8291,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_CONSTRAINTS = Iparam(186)
+const MSK_IPAR_WRITE_SOL_CONSTRAINTS = Iparam(187)
 
 """
 Controls solution file format.
@@ -7880,7 +8303,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_HEAD = Iparam(187)
+const MSK_IPAR_WRITE_SOL_HEAD = Iparam(188)
 
 """
 Controls whether the user specified names are employed even if they are invalid names.
@@ -7892,7 +8315,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = Iparam(188)
+const MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES = Iparam(189)
 
 """
 Controls the solution file format.
@@ -7904,7 +8327,7 @@ Possible values:
 * `MSK_ON`. Switch the option on.
 * `MSK_OFF`. Switch the option off.
 """
-const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(189)
+const MSK_IPAR_WRITE_SOL_VARIABLES = Iparam(190)
 tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 1 "Mosek.MSK_IPAR_ANA_SOL_PRINT_VIOLATED"
   elseif v.value == 2 "Mosek.MSK_IPAR_AUTO_SORT_A_BEFORE_OPT"
@@ -7927,10 +8350,10 @@ tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 19 "Mosek.MSK_IPAR_INTPNT_HOTSTART"
   elseif v.value == 20 "Mosek.MSK_IPAR_INTPNT_MAX_ITERATIONS"
   elseif v.value == 21 "Mosek.MSK_IPAR_INTPNT_MAX_NUM_COR"
-  elseif v.value == 22 "Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH"
-  elseif v.value == 23 "Mosek.MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS"
-  elseif v.value == 24 "Mosek.MSK_IPAR_INTPNT_ORDER_METHOD"
-  elseif v.value == 25 "Mosek.MSK_IPAR_INTPNT_PURIFY"
+  elseif v.value == 22 "Mosek.MSK_IPAR_INTPNT_NOT_IN_USE"
+  elseif v.value == 23 "Mosek.MSK_IPAR_INTPNT_OFF_COL_TRH"
+  elseif v.value == 24 "Mosek.MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS"
+  elseif v.value == 25 "Mosek.MSK_IPAR_INTPNT_ORDER_METHOD"
   elseif v.value == 26 "Mosek.MSK_IPAR_INTPNT_REGULARIZATION_USE"
   elseif v.value == 27 "Mosek.MSK_IPAR_INTPNT_SCALING"
   elseif v.value == 28 "Mosek.MSK_IPAR_INTPNT_SOLVE_FORM"
@@ -8032,18 +8455,18 @@ tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 124 "Mosek.MSK_IPAR_PTF_WRITE_PARAMETERS"
   elseif v.value == 125 "Mosek.MSK_IPAR_PTF_WRITE_SINGLE_PSD_TERMS"
   elseif v.value == 126 "Mosek.MSK_IPAR_PTF_WRITE_SOLUTIONS"
-  elseif v.value == 127 "Mosek.MSK_IPAR_PTF_WRITE_TRANSFORM"
-  elseif v.value == 128 "Mosek.MSK_IPAR_READ_ASYNC"
-  elseif v.value == 129 "Mosek.MSK_IPAR_READ_DEBUG"
-  elseif v.value == 130 "Mosek.MSK_IPAR_READ_KEEP_FREE_CON"
-  elseif v.value == 131 "Mosek.MSK_IPAR_READ_MPS_FORMAT"
-  elseif v.value == 132 "Mosek.MSK_IPAR_READ_MPS_WIDTH"
-  elseif v.value == 133 "Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM"
-  elseif v.value == 134 "Mosek.MSK_IPAR_REMOTE_USE_COMPRESSION"
-  elseif v.value == 135 "Mosek.MSK_IPAR_REMOVE_UNUSED_SOLUTIONS"
-  elseif v.value == 136 "Mosek.MSK_IPAR_SENSITIVITY_ALL"
-  elseif v.value == 137 "Mosek.MSK_IPAR_SENSITIVITY_TYPE"
-  elseif v.value == 138 "Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE"
+  elseif v.value == 127 "Mosek.MSK_IPAR_READ_ASYNC"
+  elseif v.value == 128 "Mosek.MSK_IPAR_READ_DEBUG"
+  elseif v.value == 129 "Mosek.MSK_IPAR_READ_KEEP_FREE_CON"
+  elseif v.value == 130 "Mosek.MSK_IPAR_READ_MPS_FORMAT"
+  elseif v.value == 131 "Mosek.MSK_IPAR_READ_MPS_WIDTH"
+  elseif v.value == 132 "Mosek.MSK_IPAR_READ_TASK_IGNORE_PARAM"
+  elseif v.value == 133 "Mosek.MSK_IPAR_REMOTE_USE_COMPRESSION"
+  elseif v.value == 134 "Mosek.MSK_IPAR_REMOVE_UNUSED_SOLUTIONS"
+  elseif v.value == 135 "Mosek.MSK_IPAR_SENSITIVITY_ALL"
+  elseif v.value == 136 "Mosek.MSK_IPAR_SENSITIVITY_TYPE"
+  elseif v.value == 137 "Mosek.MSK_IPAR_SIM_BASIS_FACTOR_USE"
+  elseif v.value == 138 "Mosek.MSK_IPAR_SIM_CACHE"
   elseif v.value == 139 "Mosek.MSK_IPAR_SIM_DEGEN"
   elseif v.value == 140 "Mosek.MSK_IPAR_SIM_DETECT_PWL"
   elseif v.value == 141 "Mosek.MSK_IPAR_SIM_DUAL_CRASH"
@@ -8087,14 +8510,15 @@ tostr(v::Iparam) = if v.value == 0 "Mosek.MSK_IPAR_ANA_SOL_BASIS"
   elseif v.value == 179 "Mosek.MSK_IPAR_WRITE_INT_VARIABLES"
   elseif v.value == 180 "Mosek.MSK_IPAR_WRITE_JSON_INDENTATION"
   elseif v.value == 181 "Mosek.MSK_IPAR_WRITE_LP_FULL_OBJ"
-  elseif v.value == 182 "Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH"
-  elseif v.value == 183 "Mosek.MSK_IPAR_WRITE_MPS_FORMAT"
-  elseif v.value == 184 "Mosek.MSK_IPAR_WRITE_MPS_INT"
-  elseif v.value == 185 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
-  elseif v.value == 186 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
-  elseif v.value == 187 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
-  elseif v.value == 188 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
-  elseif v.value == 189 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
+  elseif v.value == 182 "Mosek.MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS"
+  elseif v.value == 183 "Mosek.MSK_IPAR_WRITE_LP_LINE_WIDTH"
+  elseif v.value == 184 "Mosek.MSK_IPAR_WRITE_MPS_FORMAT"
+  elseif v.value == 185 "Mosek.MSK_IPAR_WRITE_MPS_INT"
+  elseif v.value == 186 "Mosek.MSK_IPAR_WRITE_SOL_BARVARIABLES"
+  elseif v.value == 187 "Mosek.MSK_IPAR_WRITE_SOL_CONSTRAINTS"
+  elseif v.value == 188 "Mosek.MSK_IPAR_WRITE_SOL_HEAD"
+  elseif v.value == 189 "Mosek.MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES"
+  elseif v.value == 190 "Mosek.MSK_IPAR_WRITE_SOL_VARIABLES"
   else "Mosek.Iparam(?)"
   end
 const Iparam_members = Iparam[
@@ -8120,10 +8544,10 @@ const Iparam_members = Iparam[
     MSK_IPAR_INTPNT_HOTSTART,
     MSK_IPAR_INTPNT_MAX_ITERATIONS,
     MSK_IPAR_INTPNT_MAX_NUM_COR,
+    MSK_IPAR_INTPNT_NOT_IN_USE,
     MSK_IPAR_INTPNT_OFF_COL_TRH,
     MSK_IPAR_INTPNT_ORDER_GP_NUM_SEEDS,
     MSK_IPAR_INTPNT_ORDER_METHOD,
-    MSK_IPAR_INTPNT_PURIFY,
     MSK_IPAR_INTPNT_REGULARIZATION_USE,
     MSK_IPAR_INTPNT_SCALING,
     MSK_IPAR_INTPNT_SOLVE_FORM,
@@ -8225,7 +8649,6 @@ const Iparam_members = Iparam[
     MSK_IPAR_PTF_WRITE_PARAMETERS,
     MSK_IPAR_PTF_WRITE_SINGLE_PSD_TERMS,
     MSK_IPAR_PTF_WRITE_SOLUTIONS,
-    MSK_IPAR_PTF_WRITE_TRANSFORM,
     MSK_IPAR_READ_ASYNC,
     MSK_IPAR_READ_DEBUG,
     MSK_IPAR_READ_KEEP_FREE_CON,
@@ -8237,6 +8660,7 @@ const Iparam_members = Iparam[
     MSK_IPAR_SENSITIVITY_ALL,
     MSK_IPAR_SENSITIVITY_TYPE,
     MSK_IPAR_SIM_BASIS_FACTOR_USE,
+    MSK_IPAR_SIM_CACHE,
     MSK_IPAR_SIM_DEGEN,
     MSK_IPAR_SIM_DETECT_PWL,
     MSK_IPAR_SIM_DUAL_CRASH,
@@ -8280,6 +8704,7 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_INT_VARIABLES,
     MSK_IPAR_WRITE_JSON_INDENTATION,
     MSK_IPAR_WRITE_LP_FULL_OBJ,
+    MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS,
     MSK_IPAR_WRITE_LP_LINE_WIDTH,
     MSK_IPAR_WRITE_MPS_FORMAT,
     MSK_IPAR_WRITE_MPS_INT,
@@ -8289,7 +8714,7 @@ const Iparam_members = Iparam[
     MSK_IPAR_WRITE_SOL_IGNORE_INVALID_NAMES,
     MSK_IPAR_WRITE_SOL_VARIABLES ]
 members(::Type{Iparam}) = Iparam_members
-Base.length(::Type{Iparam}) = 190
+Base.length(::Type{Iparam}) = 191
 Base.convert(::Type{Int},x::Iparam) = Int(x.value)
 """
     Branchdir
@@ -8680,8 +9105,9 @@ Optimizer types
 * `MSK_OPTIMIZER_FREE_SIMPLEX`. One of the simplex optimizers is used.
 * `MSK_OPTIMIZER_INTPNT`. The interior-point optimizer is used.
 * `MSK_OPTIMIZER_MIXED_INT`. The mixed-integer optimizer.
-* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new dual simplex optimizer is used.
-* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new primal simplex optimizer is used. It is not recommended to use this option.
+* `MSK_OPTIMIZER_NEW_DUAL_SIMPLEX`. The new experimental dual simplex optimizer is used.
+* `MSK_OPTIMIZER_NEW_INTPNT`. The new experimental interior-point optimizer is used.
+* `MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX`. The new experimental primal simplex optimizer is used. It is not recommended to use this option.
 * `MSK_OPTIMIZER_PRIMAL_SIMPLEX`. The primal simplex optimizer is used.
 """
 struct Optimizertype <: MosekEnum
@@ -8706,14 +9132,17 @@ const MSK_OPTIMIZER_INTPNT = Optimizertype(4)
 "The mixed-integer optimizer."
 const MSK_OPTIMIZER_MIXED_INT = Optimizertype(5)
 
-"The new dual simplex optimizer is used."
+"The new experimental dual simplex optimizer is used."
 const MSK_OPTIMIZER_NEW_DUAL_SIMPLEX = Optimizertype(6)
 
-"The new primal simplex optimizer is used. It is not recommended to use this option."
-const MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX = Optimizertype(7)
+"The new experimental interior-point optimizer is used."
+const MSK_OPTIMIZER_NEW_INTPNT = Optimizertype(7)
+
+"The new experimental primal simplex optimizer is used. It is not recommended to use this option."
+const MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX = Optimizertype(8)
 
 "The primal simplex optimizer is used."
-const MSK_OPTIMIZER_PRIMAL_SIMPLEX = Optimizertype(8)
+const MSK_OPTIMIZER_PRIMAL_SIMPLEX = Optimizertype(9)
 tostr(v::Optimizertype) = if v.value == 0 "Mosek.MSK_OPTIMIZER_CONIC"
   elseif v.value == 1 "Mosek.MSK_OPTIMIZER_DUAL_SIMPLEX"
   elseif v.value == 2 "Mosek.MSK_OPTIMIZER_FREE"
@@ -8721,8 +9150,9 @@ tostr(v::Optimizertype) = if v.value == 0 "Mosek.MSK_OPTIMIZER_CONIC"
   elseif v.value == 4 "Mosek.MSK_OPTIMIZER_INTPNT"
   elseif v.value == 5 "Mosek.MSK_OPTIMIZER_MIXED_INT"
   elseif v.value == 6 "Mosek.MSK_OPTIMIZER_NEW_DUAL_SIMPLEX"
-  elseif v.value == 7 "Mosek.MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX"
-  elseif v.value == 8 "Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX"
+  elseif v.value == 7 "Mosek.MSK_OPTIMIZER_NEW_INTPNT"
+  elseif v.value == 8 "Mosek.MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX"
+  elseif v.value == 9 "Mosek.MSK_OPTIMIZER_PRIMAL_SIMPLEX"
   else "Mosek.Optimizertype(?)"
   end
 const Optimizertype_members = Optimizertype[
@@ -8733,10 +9163,11 @@ const Optimizertype_members = Optimizertype[
     MSK_OPTIMIZER_INTPNT,
     MSK_OPTIMIZER_MIXED_INT,
     MSK_OPTIMIZER_NEW_DUAL_SIMPLEX,
+    MSK_OPTIMIZER_NEW_INTPNT,
     MSK_OPTIMIZER_NEW_PRIMAL_SIMPLEX,
     MSK_OPTIMIZER_PRIMAL_SIMPLEX ]
 members(::Type{Optimizertype}) = Optimizertype_members
-Base.length(::Type{Optimizertype}) = 9
+Base.length(::Type{Optimizertype}) = 10
 Base.convert(::Type{Int},x::Optimizertype) = Int(x.value)
 """
     Orderingtype
@@ -8831,7 +9262,6 @@ Method of folding (symmetry detection for continuous problems).
 * `MSK_FOLDING_MODE_FREE`. The solver decides on the usage and amount of folding.
 * `MSK_FOLDING_MODE_FREE_UNLESS_BASIC`. If only the interior-point solution is requested then the solver decides; if the basic solution is requested then folding is disabled.
 * `MSK_FOLDING_MODE_FORCE`. Full folding is always performed regardless of workload.
-* `MSK_FOLDING_MODE_ONLY`. (A development stage option for testing of fold itself, remove for release). Like FREE, but the optimizer exits after folding.
 """
 struct Foldingmode <: MosekEnum
   value :: Int32
@@ -8848,24 +9278,19 @@ const MSK_FOLDING_MODE_FREE_UNLESS_BASIC = Foldingmode(2)
 
 "Full folding is always performed regardless of workload."
 const MSK_FOLDING_MODE_FORCE = Foldingmode(3)
-
-"(A development stage option for testing of fold itself, remove for release). Like FREE, but the optimizer exits after folding."
-const MSK_FOLDING_MODE_ONLY = Foldingmode(4)
 tostr(v::Foldingmode) = if v.value == 0 "Mosek.MSK_FOLDING_MODE_OFF"
   elseif v.value == 1 "Mosek.MSK_FOLDING_MODE_FREE"
   elseif v.value == 2 "Mosek.MSK_FOLDING_MODE_FREE_UNLESS_BASIC"
   elseif v.value == 3 "Mosek.MSK_FOLDING_MODE_FORCE"
-  elseif v.value == 4 "Mosek.MSK_FOLDING_MODE_ONLY"
   else "Mosek.Foldingmode(?)"
   end
 const Foldingmode_members = Foldingmode[
     MSK_FOLDING_MODE_OFF,
     MSK_FOLDING_MODE_FREE,
     MSK_FOLDING_MODE_FREE_UNLESS_BASIC,
-    MSK_FOLDING_MODE_FORCE,
-    MSK_FOLDING_MODE_ONLY ]
+    MSK_FOLDING_MODE_FORCE ]
 members(::Type{Foldingmode}) = Foldingmode_members
-Base.length(::Type{Foldingmode}) = 5
+Base.length(::Type{Foldingmode}) = 4
 Base.convert(::Type{Int},x::Foldingmode) = Int(x.value)
 """
     Parametertype
@@ -9109,10 +9534,6 @@ The enumeration type containing all response codes.
 * `MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES`. Two variable names are identical.
 * `MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES`. Two barvariable names are identical.
 * `MSK_RES_WRN_DUPLICATE_CONE_NAMES`. Two cone names are identical.
-* `MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES`. LP file will be written with generic variable names.
-* `MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES`. LP file will be written with generic variable names.
-* `MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES`. LP file will be written with generic constraint names.
-* `MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES`. LP file will be written with generic constraint names.
 * `MSK_RES_WRN_ANA_LARGE_BOUNDS`. Warn against very large bounds.
 * `MSK_RES_WRN_ANA_C_ZERO`. Warn against all objective coefficients being zero.
 * `MSK_RES_WRN_ANA_EMPTY_COLS`. Warn against empty columns.
@@ -9190,7 +9611,12 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_SPACE_NO_INFO`. No available information about the space usage.
 * `MSK_RES_ERR_DIMENSION_SPECIFICATION`. Invalid dimension specification
 * `MSK_RES_ERR_AXIS_NAME_SPECIFICATION`. Invalid axis names specification
+* `MSK_RES_ERR_READ_PREMATURE_EOF`. Encountered premature end-of-file in input stream.
 * `MSK_RES_ERR_READ_FORMAT`. The specified format cannot be read.
+* `MSK_RES_ERR_WRITE_LP_INVALID_VAR_NAMES`. Invalid variable name. Cannot write valid LP file.
+* `MSK_RES_ERR_WRITE_LP_DUPLICATE_VAR_NAMES`. Duplicate variable names. Cannot write valid LP file.
+* `MSK_RES_ERR_WRITE_LP_INVALID_CON_NAMES`. Invalid constraint name. Cannot write valid LP file.
+* `MSK_RES_ERR_WRITE_LP_DUPLICATE_CON_NAMES`. Duplicate constraint names. Cannot write valid LP file.
 * `MSK_RES_ERR_MPS_FILE`. An error occurred while reading an MPS file.
 * `MSK_RES_ERR_MPS_INV_FIELD`. Invalid field occurred while reading an MPS file.
 * `MSK_RES_ERR_MPS_INV_MARKER`. An invalid marker has been specified in the MPS file.
@@ -9425,6 +9851,8 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_TASK_INCOMPATIBLE`. The Task file is incompatible with this platform.
 * `MSK_RES_ERR_TASK_INVALID`. The Task file is invalid.
 * `MSK_RES_ERR_TASK_WRITE`. Failed to write the task file.
+* `MSK_RES_ERR_READ_WRITE`. Failed to read or write due to an I/O error.
+* `MSK_RES_ERR_TASK_PREMATURE_EOF`. The Task file ended prematurely.
 * `MSK_RES_ERR_LU_MAX_NUM_TRIES`. Could not compute the LU factors of the matrix within the maximum number of allowed tries.
 * `MSK_RES_ERR_INVALID_UTF8`. An invalid UTF8 string is encountered.
 * `MSK_RES_ERR_INVALID_WCHAR`. An invalid wchar string is encountered.
@@ -9564,9 +9992,13 @@ The enumeration type containing all response codes.
 * `MSK_RES_ERR_SERVER_ADDRESS`. Invalid address
 * `MSK_RES_ERR_SERVER_CERTIFICATE`. Invalid TLS certificate format or path
 * `MSK_RES_ERR_SERVER_TLS_CLIENT`. Failed to create TLS client
+* `MSK_RES_ERR_TLS_FAIL`. TLS initialization failed
+* `MSK_RES_ERR_TLS_CONFIGURATION`. TLS configuration failed
+* `MSK_RES_ERR_SERVER_TLS_HANDSHAKE`. TLS handshake failed
 * `MSK_RES_ERR_SERVER_ACCESS_TOKEN`. Invalid access token
 * `MSK_RES_ERR_SERVER_PROBLEM_SIZE`. The problem is too large.
 * `MSK_RES_ERR_SERVER_HARD_TIMEOUT`. The hard timeout limit was reached on solver server
+* `MSK_RES_ERR_SERVER_VERSION_MISMATCH`. Solution file version from server not supported.
 * `MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX`. An element in a sparse matrix is specified twice.
 * `MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST`. An index is specified twice in an affine expression list.
 * `MSK_RES_ERR_DUPLICATE_FIJ`. An element in the F matrix is specified twice.
@@ -9765,18 +10197,6 @@ const MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES = Rescode(852)
 
 "Two cone names are identical."
 const MSK_RES_WRN_DUPLICATE_CONE_NAMES = Rescode(853)
-
-"LP file will be written with generic variable names."
-const MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES = Rescode(854)
-
-"LP file will be written with generic variable names."
-const MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES = Rescode(855)
-
-"LP file will be written with generic constraint names."
-const MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES = Rescode(856)
-
-"LP file will be written with generic constraint names."
-const MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES = Rescode(857)
 
 "Warn against very large bounds."
 const MSK_RES_WRN_ANA_LARGE_BOUNDS = Rescode(900)
@@ -10009,8 +10429,23 @@ const MSK_RES_ERR_DIMENSION_SPECIFICATION = Rescode(1082)
 "Invalid axis names specification"
 const MSK_RES_ERR_AXIS_NAME_SPECIFICATION = Rescode(1083)
 
+"Encountered premature end-of-file in input stream."
+const MSK_RES_ERR_READ_PREMATURE_EOF = Rescode(1089)
+
 "The specified format cannot be read."
 const MSK_RES_ERR_READ_FORMAT = Rescode(1090)
+
+"Invalid variable name. Cannot write valid LP file."
+const MSK_RES_ERR_WRITE_LP_INVALID_VAR_NAMES = Rescode(1091)
+
+"Duplicate variable names. Cannot write valid LP file."
+const MSK_RES_ERR_WRITE_LP_DUPLICATE_VAR_NAMES = Rescode(1092)
+
+"Invalid constraint name. Cannot write valid LP file."
+const MSK_RES_ERR_WRITE_LP_INVALID_CON_NAMES = Rescode(1093)
+
+"Duplicate constraint names. Cannot write valid LP file."
+const MSK_RES_ERR_WRITE_LP_DUPLICATE_CON_NAMES = Rescode(1094)
 
 "An error occurred while reading an MPS file."
 const MSK_RES_ERR_MPS_FILE = Rescode(1100)
@@ -10714,6 +11149,12 @@ const MSK_RES_ERR_TASK_INVALID = Rescode(2561)
 "Failed to write the task file."
 const MSK_RES_ERR_TASK_WRITE = Rescode(2562)
 
+"Failed to read or write due to an I/O error."
+const MSK_RES_ERR_READ_WRITE = Rescode(2563)
+
+"The Task file ended prematurely."
+const MSK_RES_ERR_TASK_PREMATURE_EOF = Rescode(2564)
+
 "Could not compute the LU factors of the matrix within the maximum number of allowed tries."
 const MSK_RES_ERR_LU_MAX_NUM_TRIES = Rescode(2800)
 
@@ -11131,14 +11572,26 @@ const MSK_RES_ERR_SERVER_CERTIFICATE = Rescode(8005)
 "Failed to create TLS client"
 const MSK_RES_ERR_SERVER_TLS_CLIENT = Rescode(8006)
 
+"TLS initialization failed"
+const MSK_RES_ERR_TLS_FAIL = Rescode(8007)
+
+"TLS configuration failed"
+const MSK_RES_ERR_TLS_CONFIGURATION = Rescode(8008)
+
+"TLS handshake failed"
+const MSK_RES_ERR_SERVER_TLS_HANDSHAKE = Rescode(8009)
+
 "Invalid access token"
-const MSK_RES_ERR_SERVER_ACCESS_TOKEN = Rescode(8007)
+const MSK_RES_ERR_SERVER_ACCESS_TOKEN = Rescode(8020)
 
 "The problem is too large."
-const MSK_RES_ERR_SERVER_PROBLEM_SIZE = Rescode(8008)
+const MSK_RES_ERR_SERVER_PROBLEM_SIZE = Rescode(8021)
 
 "The hard timeout limit was reached on solver server"
-const MSK_RES_ERR_SERVER_HARD_TIMEOUT = Rescode(8009)
+const MSK_RES_ERR_SERVER_HARD_TIMEOUT = Rescode(8022)
+
+"Solution file version from server not supported."
+const MSK_RES_ERR_SERVER_VERSION_MISMATCH = Rescode(8023)
 
 "An element in a sparse matrix is specified twice."
 const MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX = Rescode(20050)
@@ -11313,10 +11766,6 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 851 "Mosek.MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES"
   elseif v.value == 852 "Mosek.MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES"
   elseif v.value == 853 "Mosek.MSK_RES_WRN_DUPLICATE_CONE_NAMES"
-  elseif v.value == 854 "Mosek.MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES"
-  elseif v.value == 855 "Mosek.MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES"
-  elseif v.value == 856 "Mosek.MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES"
-  elseif v.value == 857 "Mosek.MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES"
   elseif v.value == 900 "Mosek.MSK_RES_WRN_ANA_LARGE_BOUNDS"
   elseif v.value == 901 "Mosek.MSK_RES_WRN_ANA_C_ZERO"
   elseif v.value == 902 "Mosek.MSK_RES_WRN_ANA_EMPTY_COLS"
@@ -11394,7 +11843,12 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 1081 "Mosek.MSK_RES_ERR_SPACE_NO_INFO"
   elseif v.value == 1082 "Mosek.MSK_RES_ERR_DIMENSION_SPECIFICATION"
   elseif v.value == 1083 "Mosek.MSK_RES_ERR_AXIS_NAME_SPECIFICATION"
+  elseif v.value == 1089 "Mosek.MSK_RES_ERR_READ_PREMATURE_EOF"
   elseif v.value == 1090 "Mosek.MSK_RES_ERR_READ_FORMAT"
+  elseif v.value == 1091 "Mosek.MSK_RES_ERR_WRITE_LP_INVALID_VAR_NAMES"
+  elseif v.value == 1092 "Mosek.MSK_RES_ERR_WRITE_LP_DUPLICATE_VAR_NAMES"
+  elseif v.value == 1093 "Mosek.MSK_RES_ERR_WRITE_LP_INVALID_CON_NAMES"
+  elseif v.value == 1094 "Mosek.MSK_RES_ERR_WRITE_LP_DUPLICATE_CON_NAMES"
   elseif v.value == 1100 "Mosek.MSK_RES_ERR_MPS_FILE"
   elseif v.value == 1101 "Mosek.MSK_RES_ERR_MPS_INV_FIELD"
   elseif v.value == 1102 "Mosek.MSK_RES_ERR_MPS_INV_MARKER"
@@ -11629,6 +12083,8 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 2560 "Mosek.MSK_RES_ERR_TASK_INCOMPATIBLE"
   elseif v.value == 2561 "Mosek.MSK_RES_ERR_TASK_INVALID"
   elseif v.value == 2562 "Mosek.MSK_RES_ERR_TASK_WRITE"
+  elseif v.value == 2563 "Mosek.MSK_RES_ERR_READ_WRITE"
+  elseif v.value == 2564 "Mosek.MSK_RES_ERR_TASK_PREMATURE_EOF"
   elseif v.value == 2800 "Mosek.MSK_RES_ERR_LU_MAX_NUM_TRIES"
   elseif v.value == 2900 "Mosek.MSK_RES_ERR_INVALID_UTF8"
   elseif v.value == 2901 "Mosek.MSK_RES_ERR_INVALID_WCHAR"
@@ -11768,9 +12224,13 @@ tostr(v::Rescode) = if v.value == 0 "Mosek.MSK_RES_OK"
   elseif v.value == 8004 "Mosek.MSK_RES_ERR_SERVER_ADDRESS"
   elseif v.value == 8005 "Mosek.MSK_RES_ERR_SERVER_CERTIFICATE"
   elseif v.value == 8006 "Mosek.MSK_RES_ERR_SERVER_TLS_CLIENT"
-  elseif v.value == 8007 "Mosek.MSK_RES_ERR_SERVER_ACCESS_TOKEN"
-  elseif v.value == 8008 "Mosek.MSK_RES_ERR_SERVER_PROBLEM_SIZE"
-  elseif v.value == 8009 "Mosek.MSK_RES_ERR_SERVER_HARD_TIMEOUT"
+  elseif v.value == 8007 "Mosek.MSK_RES_ERR_TLS_FAIL"
+  elseif v.value == 8008 "Mosek.MSK_RES_ERR_TLS_CONFIGURATION"
+  elseif v.value == 8009 "Mosek.MSK_RES_ERR_SERVER_TLS_HANDSHAKE"
+  elseif v.value == 8020 "Mosek.MSK_RES_ERR_SERVER_ACCESS_TOKEN"
+  elseif v.value == 8021 "Mosek.MSK_RES_ERR_SERVER_PROBLEM_SIZE"
+  elseif v.value == 8022 "Mosek.MSK_RES_ERR_SERVER_HARD_TIMEOUT"
+  elseif v.value == 8023 "Mosek.MSK_RES_ERR_SERVER_VERSION_MISMATCH"
   elseif v.value == 20050 "Mosek.MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX"
   elseif v.value == 20060 "Mosek.MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST"
   elseif v.value == 20100 "Mosek.MSK_RES_ERR_DUPLICATE_FIJ"
@@ -11866,10 +12326,6 @@ const Rescode_members = Rescode[
     MSK_RES_WRN_DUPLICATE_VARIABLE_NAMES,
     MSK_RES_WRN_DUPLICATE_BARVARIABLE_NAMES,
     MSK_RES_WRN_DUPLICATE_CONE_NAMES,
-    MSK_RES_WRN_WRITE_LP_INVALID_VAR_NAMES,
-    MSK_RES_WRN_WRITE_LP_DUPLICATE_VAR_NAMES,
-    MSK_RES_WRN_WRITE_LP_INVALID_CON_NAMES,
-    MSK_RES_WRN_WRITE_LP_DUPLICATE_CON_NAMES,
     MSK_RES_WRN_ANA_LARGE_BOUNDS,
     MSK_RES_WRN_ANA_C_ZERO,
     MSK_RES_WRN_ANA_EMPTY_COLS,
@@ -11947,7 +12403,12 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_SPACE_NO_INFO,
     MSK_RES_ERR_DIMENSION_SPECIFICATION,
     MSK_RES_ERR_AXIS_NAME_SPECIFICATION,
+    MSK_RES_ERR_READ_PREMATURE_EOF,
     MSK_RES_ERR_READ_FORMAT,
+    MSK_RES_ERR_WRITE_LP_INVALID_VAR_NAMES,
+    MSK_RES_ERR_WRITE_LP_DUPLICATE_VAR_NAMES,
+    MSK_RES_ERR_WRITE_LP_INVALID_CON_NAMES,
+    MSK_RES_ERR_WRITE_LP_DUPLICATE_CON_NAMES,
     MSK_RES_ERR_MPS_FILE,
     MSK_RES_ERR_MPS_INV_FIELD,
     MSK_RES_ERR_MPS_INV_MARKER,
@@ -12182,6 +12643,8 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_TASK_INCOMPATIBLE,
     MSK_RES_ERR_TASK_INVALID,
     MSK_RES_ERR_TASK_WRITE,
+    MSK_RES_ERR_READ_WRITE,
+    MSK_RES_ERR_TASK_PREMATURE_EOF,
     MSK_RES_ERR_LU_MAX_NUM_TRIES,
     MSK_RES_ERR_INVALID_UTF8,
     MSK_RES_ERR_INVALID_WCHAR,
@@ -12321,9 +12784,13 @@ const Rescode_members = Rescode[
     MSK_RES_ERR_SERVER_ADDRESS,
     MSK_RES_ERR_SERVER_CERTIFICATE,
     MSK_RES_ERR_SERVER_TLS_CLIENT,
+    MSK_RES_ERR_TLS_FAIL,
+    MSK_RES_ERR_TLS_CONFIGURATION,
+    MSK_RES_ERR_SERVER_TLS_HANDSHAKE,
     MSK_RES_ERR_SERVER_ACCESS_TOKEN,
     MSK_RES_ERR_SERVER_PROBLEM_SIZE,
     MSK_RES_ERR_SERVER_HARD_TIMEOUT,
+    MSK_RES_ERR_SERVER_VERSION_MISMATCH,
     MSK_RES_ERR_DUPLICATE_INDEX_IN_A_SPARSE_MATRIX,
     MSK_RES_ERR_DUPLICATE_INDEX_IN_AFEIDX_LIST,
     MSK_RES_ERR_DUPLICATE_FIJ,
@@ -12366,7 +12833,7 @@ const Rescode_members = Rescode[
     MSK_RES_TRM_SERVER_MAX_TIME,
     MSK_RES_TRM_SERVER_MAX_MEMORY ]
 members(::Type{Rescode}) = Rescode_members
-Base.length(::Type{Rescode}) = 550
+Base.length(::Type{Rescode}) = 557
 Base.convert(::Type{Int},x::Rescode) = Int(x.value)
 """
     Rescodetype
@@ -12754,7 +13221,7 @@ The enumeration type containing all string parameters.
 * `MSK_SPAR_INT_SOL_FILE_NAME`. Name of the int solution file.
 * `MSK_SPAR_ITR_SOL_FILE_NAME`. Name of the itr solution file.
 * `MSK_SPAR_MIO_DEBUG_STRING`. For internal debugging purposes.
-* `MSK_SPAR_PARAM_COMMENT_SIGN`. Solution file comment character.
+* `MSK_SPAR_PARAM_COMMENT_SIGN`. Parameter file comment character.
 * `MSK_SPAR_PARAM_READ_FILE_NAME`. Modifications to the parameter database is read from this file.
 * `MSK_SPAR_PARAM_WRITE_FILE_NAME`. The parameter database is written to this file.
 * `MSK_SPAR_READ_MPS_BOU_NAME`. Name of the BOUNDS vector used. An empty name means that the first BOUNDS vector is used.
@@ -12838,9 +13305,9 @@ Possible Values: Any valid string.
 const MSK_SPAR_MIO_DEBUG_STRING = Sparam(5)
 
 """
-Solution file comment character.
+Parameter file comment character.
 
-Default value: "`%`"
+Default value: "`%%`"
 
 Possible Values: Any valid string.
 

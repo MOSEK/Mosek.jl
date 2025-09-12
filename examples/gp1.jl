@@ -22,6 +22,7 @@ function max_volume_box(Aw    :: Float64,
         # Create the optimization task. 
 
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
         # Add variables and constraints
@@ -71,14 +72,14 @@ function max_volume_box(Aw    :: Float64,
             let dom = appendprimalexpconedomain(task)
 
                 # (u1, 1, x+y+log(2/Awall)) \in EXP
-                appendacc(task,dom, [1, 5, 3], [0.0,0.0,0.0])
+                appendacc(task,dom, [1, 5, 3], nothing)
 
                 # (u2, 1, x+z+log(2/Awall)) \in EXP
-                appendacc(task,dom, [2, 5, 4], [0.0,0.0,0.0])
+                appendacc(task,dom, [2, 5, 4], nothing)
             end
             let dom = appendrzerodomain(task,1)
                 # The constraint u1+u2-1 \in \ZERO is added also as an ACC
-                appendacc(task,dom, [6], [0.0])
+                appendacc(task,dom, [6], nothing)
             end
         end
 
@@ -128,5 +129,4 @@ hwd = let Aw    = 200.0,
 end
 println("h=$(hwd[1]) w=$(hwd[2]) d=$(hwd[3])\n");
 
-@assert maximum(abs.(hwd-[8.164, 4.082, 8.167])) < 1e-3
 

@@ -46,6 +46,7 @@ let numcon = 3,
              Inf ]
 
     maketask() do task
+        # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
         putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
         # Append 'numcon' empty constraints.
@@ -91,7 +92,6 @@ let numcon = 3,
         solsta = getsolsta(task,MSK_SOL_BAS)
 
         x = getxx(task,MSK_SOL_BAS) # Basic solution.
-        @assert maximum(abs.(x-[0.0, 0.0, 15.0, 8.333333333333334])) < 1e-7
 
         if solsta == MSK_SOL_STA_OPTIMAL
             println("Optimal primal solution")

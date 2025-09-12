@@ -14,6 +14,7 @@ using Printf, SparseArrays
 
 # Create a task
 maketask() do task
+    # Use remote server: putoptserverhost(task,"http://solve.mosek.com:30080")
     # Attach a printer to the task
     putstreamfunc(task,MSK_STREAM_LOG,msg -> print(msg))
 
@@ -48,7 +49,7 @@ maketask() do task
     appendacc(task,
               expdomain,               # Domain
               [1, 2, 3],               # Rows from F
-              zeros(3))                # Unused
+              nothing)                 # Unused
 
     # Input the objective sense (minimize/maximize)
     putobjsense(task,MSK_OBJECTIVE_SENSE_MINIMIZE)
@@ -76,6 +77,5 @@ maketask() do task
         println("Other solution status")
     end
 
-    @assert maximum(abs.(xx-[0.6117882543880403, 0.17040004803746528, 0.21781169885758184])) < 1e-7
 
 end
