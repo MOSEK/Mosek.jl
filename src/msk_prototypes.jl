@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.0.0
+# Target: Mosek 11.1.10
 macro MSK_analyzeproblem(task,whichstream)
   quote
      local res = disable_sigint(()->ccall((:MSK_analyzeproblem,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(whichstream))))
@@ -544,6 +544,15 @@ end
 macro MSK_getintparam(task,param,parvalue)
   quote
      local res = disable_sigint(()->ccall((:MSK_getintparam,libmosek),Int32,(Ptr{Nothing},Int32,Ref{Int32},),$(esc(task)),$(esc(param)),$(esc(parvalue))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_getlintparam(task,param,parvalue)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_getlintparam,libmosek),Int32,(Ptr{Nothing},Int32,Ref{Int64},),$(esc(task)),$(esc(param)),$(esc(parvalue))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -3214,9 +3223,27 @@ macro MSK_appendprimalpowerconedomain(task,n,nleft,alpha,domidx)
      nothing
   end
 end
+macro MSK_appendprimalpowerconedomainseq(task,num,n,nleft,alpha,domidxlist)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_appendprimalpowerconedomainseq,libmosek),Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},Ptr{Float64},Ptr{Int64},),$(esc(task)),$(esc(num)),$(esc(n)),$(esc(nleft)),$(esc(alpha)),$(esc(domidxlist))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
 macro MSK_appenddualpowerconedomain(task,n,nleft,alpha,domidx)
   quote
      local res = disable_sigint(()->ccall((:MSK_appenddualpowerconedomain,libmosek),Int32,(Ptr{Nothing},Int64,Int64,Ptr{Float64},Ref{Int64},),$(esc(task)),$(esc(n)),$(esc(nleft)),$(esc(alpha)),$(esc(domidx))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_appenddualpowerconedomainseq(task,num,n,nleft,alpha,domidxlist)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_appenddualpowerconedomainseq,libmosek),Int32,(Ptr{Nothing},Int64,Ptr{Int64},Ptr{Int64},Ptr{Float64},Ptr{Int64},),$(esc(task)),$(esc(num)),$(esc(n)),$(esc(nleft)),$(esc(alpha)),$(esc(domidxlist))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
@@ -3334,6 +3361,15 @@ end
 macro MSK_putintparam(task,param,parvalue)
   quote
      local res = disable_sigint(()->ccall((:MSK_putintparam,libmosek),Int32,(Ptr{Nothing},Int32,Int32,),$(esc(task)),$(esc(param)),$(esc(parvalue))))
+     if res != 0
+       throw(MosekError(res,getlasterrormsg($(esc(task)))))
+     end
+     nothing
+  end
+end
+macro MSK_putlintparam(task,param,parvalue)
+  quote
+     local res = disable_sigint(()->ccall((:MSK_putlintparam,libmosek),Int32,(Ptr{Nothing},Int32,Int64,),$(esc(task)),$(esc(param)),$(esc(parvalue))))
      if res != 0
        throw(MosekError(res,getlasterrormsg($(esc(task)))))
      end
