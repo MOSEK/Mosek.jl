@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.1.10
+# Target: Mosek 11.2.0
 export
   analyzeproblem,
   analyzenames,
