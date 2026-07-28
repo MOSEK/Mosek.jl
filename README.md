@@ -53,8 +53,8 @@ Use the Julia package manager to install Mosek.jl:
 Pkg.add("Mosek")
 ```
 
-The `Mosek.jl` package requires the MOSEK distribution binaries run. Upon
-installation it will attempt to either local an installed MOSEK or download and
+The `Mosek.jl` package requires the MOSEK distribution binaries to run.
+Upon installation, it will attempt to either find a local installed MOSEK or download and
 install from the MOSEK website (www.mosek.com):
 
 1. If the environment variable `MOSEKBINDIR` is defined, the installer will
