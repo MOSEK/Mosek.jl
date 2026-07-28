@@ -104,7 +104,8 @@ possible.
 You can see if the MOSEK distro was installed internally this way:
 
 ```julia
-is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f readstring(f) == "internal" end
+using Mosek
+is_internal = open(joinpath(dirname(pathof(Mosek)), "..", "deps","inst_method"), "r") do f read(f, String) == "internal" end
 ```
 
 
