@@ -53,8 +53,8 @@ Use the Julia package manager to install Mosek.jl:
 Pkg.add("Mosek")
 ```
 
-The `Mosek.jl` package requires the MOSEK distribution binaries run. Upon
-installation it will attempt to either local an installed MOSEK or download and
+The `Mosek.jl` package requires the MOSEK distribution binaries to run.
+Upon installation, it will attempt to either find a local installed MOSEK or download and
 install from the MOSEK website (www.mosek.com):
 
 1. If the environment variable `MOSEKBINDIR` is defined, the installer will
@@ -104,7 +104,8 @@ possible.
 You can see if the MOSEK distro was installed internally this way:
 
 ```julia
-is_internal = open(joinpath(Pkg.dir("Mosek"),"deps","inst_method"),"r") do f readstring(f) == "internal" end
+using Mosek
+is_internal = open(joinpath(dirname(pathof(Mosek)), "..", "deps","inst_method"), "r") do f read(f, String) == "internal" end
 ```
 
 
