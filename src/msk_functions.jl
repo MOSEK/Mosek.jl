@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.2.0
+# Target: Mosek 11.2.3
 export
   analyzeproblem,
   analyzenames,
@@ -17613,7 +17613,7 @@ end
 function getinfeasiblesubproblem(task::MSKtask,whichsol::Soltype)
   inftask_ = Ref{Ptr{Nothing}}()
   @MSK_getinfeasiblesubproblem(task.task,whichsol.value,inftask_)
-  inftask = Task(inftask_[],False)
+  inftask = Task(inftask_[],false)
   inftask
 end
 
@@ -17621,7 +17621,7 @@ end
 function getdualproblem(task::MSKtask)
   dualtask_ = Ref{Ptr{Nothing}}()
   @MSK_getdualproblem(task.task,dualtask_)
-  dualtask = Task(dualtask_[],False)
+  dualtask = Task(dualtask_[],false)
   dualtask
 end
 

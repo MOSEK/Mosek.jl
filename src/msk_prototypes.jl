@@ -1,5 +1,5 @@
 # Contents of this file is generated. Do not edit by hand
-# Target: Mosek 11.2.0
+# Target: Mosek 11.2.3
 macro MSK_analyzeproblem(task,whichstream)
   quote
      local res = disable_sigint(()->ccall((:MSK_analyzeproblem,libmosek),Int32,(Ptr{Nothing},Int32,),$(esc(task)),$(esc(whichstream))))
