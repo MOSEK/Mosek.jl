@@ -18,12 +18,16 @@ else
         # We assume that a problem file was given as the first command
         # line argument (received in `args')
         readdata(task,filename)
+        
         # Solve the problem
         optimize(task)
-        # System.Out.Println (a summary of the solution
+        
+        # Print a summary of the solution
         solutionsummary(task,MSK_STREAM_LOG)
 
-        solsta = getsolsta(task,MSK_SOL_BAS)
+        # The solution to analyze
+        whichsol = MSK_SOL_BAS
+        solsta = getsolsta(task,whichsol)
 
         (pobj,
          pviolcon,
@@ -35,7 +39,7 @@ else
          dviolcon,
          dviolvar,
          dviolbarvar,
-         dviolcones) = getsolutioninfo(task,MSK_SOL_BAS)
+         dviolcones) = getsolutioninfo(task,whichsol)
 
         if solsta == MSK_SOL_STA_OPTIMAL
             abs_obj_gap     = abs(dobj - pobj)
@@ -82,11 +86,11 @@ else
                 numvar = getnumvar(task)
                 println("Optimal primal solution")
 
-                xx = getxxslice(task,MSK_SOL_BAS,1,numvar+1)
+                xx = getxxslice(task,whichsol,1,numvar+1)
                 println("  xx = $xx")
             else
                 # print etailed information about the solution
-                analyzesolution(task,MSK_STREAM_LOG, MSK_SOL_BAS)
+                analyzesolution(task,MSK_STREAM_LOG, whichsol)
             end
         elseif solsta == MSK_SOL_STA_DUAL_INFEAS_CER || solsta == MSK_SOL_STA_PRIM_INFEAS_CER
             println("Primal or dual infeasibility certificate found.")

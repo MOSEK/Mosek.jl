@@ -18,6 +18,6 @@ maketask() do task
 
     optimize(task)                                  # Optimize
 
-    x = getxx(task, MSK_SOL_ITR)                    # Get solution
+    x = getxx(task, MSK_SOL_BAS)                    # Get solution
     println("Solution x = $(x[1])")                 # Print solution
 end

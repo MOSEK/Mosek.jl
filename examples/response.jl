@@ -53,6 +53,9 @@ try
         trmcode = optimize(task)
         solutionsummary(task,MSK_STREAM_LOG)
 
+        # Ensure that the interior-point solution is always present
+        putintparam(task,MSK_IPAR_REQUEST_INTPNT, MSK_ON)
+
         # We expect solution status OPTIMAL
         solsta = getsolsta(task,MSK_SOL_ITR)
 

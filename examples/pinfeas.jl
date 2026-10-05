@@ -61,15 +61,15 @@ testProblem() do task
     optimize(task)
     solutionsummary(task,MSK_STREAM_LOG)
 
-    # Check problem status, we use the interior point solution
-    if getprosta(task,MSK_SOL_ITR) == MSK_PRO_STA_PRIM_INFEAS
+    # Check problem status, we use the basic solution (BAS)
+    if getprosta(task,MSK_SOL_BAS) == MSK_PRO_STA_PRIM_INFEAS
         # Set the tolerance at which we consider a dual value as essential
         eps = 1e-7
         println("Variable bounds important for infeasibility: ");
-        analyzeCertificate(getslx(task,MSK_SOL_ITR), getsux(task,MSK_SOL_ITR), eps)
+        analyzeCertificate(getslx(task,MSK_SOL_BAS), getsux(task,MSK_SOL_BAS), eps)
 
         println("Constraint bounds important for infeasibility: ")
-        analyzeCertificate(getslc(task,MSK_SOL_ITR), getsuc(task,MSK_SOL_ITR), eps)
+        analyzeCertificate(getslc(task,MSK_SOL_BAS), getsuc(task,MSK_SOL_BAS), eps)
     else
         println("The problem is not primal infeasible, no certificate to show")
     end
