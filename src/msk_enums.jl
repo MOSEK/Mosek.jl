@@ -3442,34 +3442,31 @@ const MSK_DINF_FIXING_MAX_PERTURBATION = Dinfitem(8)
 const MSK_DINF_FIXING_TOTAL_PERTURBATION = Dinfitem(9)
 
 "Problem size after folding as a fraction of the original size."
-const MSK_DINF_FOLDING_FACTOR = Dinfitem(7)
+const MSK_DINF_FOLDING_FACTOR = Dinfitem(10)
 
 "Total time spent in folding for continuous problems (in seconds)."
-const MSK_DINF_FOLDING_TIME = Dinfitem(8)
+const MSK_DINF_FOLDING_TIME = Dinfitem(11)
 
 "Dual feasibility measure reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_DUAL_FEAS = Dinfitem(9)
+const MSK_DINF_INTPNT_DUAL_FEAS = Dinfitem(12)
 
 "Dual objective value reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_DUAL_OBJ = Dinfitem(10)
+const MSK_DINF_INTPNT_DUAL_OBJ = Dinfitem(13)
 
 "An estimate of the number of flops used in the factorization."
-const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS = Dinfitem(11)
+const MSK_DINF_INTPNT_FACTOR_NUM_FLOPS = Dinfitem(14)
 
 "A measure of optimality of the solution."
-const MSK_DINF_INTPNT_OPT_STATUS = Dinfitem(12)
+const MSK_DINF_INTPNT_OPT_STATUS = Dinfitem(15)
 
 "Order time (in seconds)."
-const MSK_DINF_INTPNT_ORDER_TIME = Dinfitem(13)
+const MSK_DINF_INTPNT_ORDER_TIME = Dinfitem(16)
 
 "Primal feasibility measure reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_PRIMAL_FEAS = Dinfitem(14)
+const MSK_DINF_INTPNT_PRIMAL_FEAS = Dinfitem(17)
 
 "Primal objective value reported by the interior-point optimizer."
-const MSK_DINF_INTPNT_PRIMAL_OBJ = Dinfitem(15)
-
-"Interior-point optimizer setup time (in seconds)."
-const MSK_DINF_INTPNT_SETUP_TIME = Dinfitem(16)
+const MSK_DINF_INTPNT_PRIMAL_OBJ = Dinfitem(18)
 
 "Interior-point optimizer setup time."
 const MSK_DINF_INTPNT_SETUP_TIME = Dinfitem(19)
@@ -6533,18 +6530,6 @@ Possible values:
 const MSK_IPAR_INTPNT_NOT_IN_USE = Iparam(23)
 
 """
-Currently not in use.
-
-Default value: `OFF`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_INTPNT_NOT_IN_USE = Iparam(22)
-
-"""
 Controls the aggressiveness of the offending column detection.
 
 Default value: `40`
@@ -8285,18 +8270,6 @@ Possible values:
 * `MSK_OFF`. Switch the option off.
 """
 const MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS = Iparam(179)
-
-"""
-Ignore free constraints while writing a LP formatted file.
-
-Default value: `OFF`
-
-Possible values:
-
-* `MSK_ON`. Switch the option on.
-* `MSK_OFF`. Switch the option off.
-"""
-const MSK_IPAR_WRITE_LP_IGNORE_FREE_CONSTRAINTS = Iparam(182)
 
 """
 Controls the LP output file format.
