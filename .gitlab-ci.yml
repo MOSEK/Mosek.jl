@@ -35,9 +35,7 @@ build-job:       # This job runs in the build stage, which runs first.
       import Pkg
       Pkg.develop(path=".")
       Pkg.build("Mosek")
+      print(Mosek.getversion())
       Pkg.test("Mosek")
-      import Mosek
-      t = Mosek.newtask()
-      print(Mosek.getversion(t))
       EOF
       julia test.jl
