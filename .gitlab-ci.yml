@@ -32,7 +32,7 @@ build-job:       # This job runs in the build stage, which runs first.
       export MOSEKLM_LICENSE_FILE=
       julia << EOF 
       import Pkg
-      Pkg.dev(".")
+      Pkg.develop(".")
       Pkg.build("Mosek")
       Pkg.test("Mosek")
       import Mosek
