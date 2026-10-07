@@ -30,7 +30,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - |
       apt-get update && apt-get install -y bzip2
       curl -o mosek.lic http://files.mosek.intranet/docs/lic/mosek12-1.lic
-      export MOSEKLM_LICENSE_FILE=
+      export MOSEKLM_LICENSE_FILE=$(pwd)/mosek.lic
       cat << EOF > test.jl
       import Pkg
       Pkg.develop(path=".")
