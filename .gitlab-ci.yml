@@ -28,11 +28,12 @@ build-job:       # This job runs in the build stage, which runs first.
     - docker-runner
   script:
     - |
+      ln -s Mosek $(pwd)
       curl -o mosek.lic http://files.mosek.intranet/docs/lic/mosek12-1.lic
       export MOSEKLM_LICENSE_FILE=
       cat << EOF > test.jl
       import Pkg
-      Pkg.develop(".")
+      Pkg.develop("./Mosek/")
       Pkg.build("Mosek")
       Pkg.test("Mosek")
       import Mosek
