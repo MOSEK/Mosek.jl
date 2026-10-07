@@ -34,12 +34,12 @@ numvar = length(bkx)
 numcon = length(bkc)
 
 # Objective coefficients
-c = [ 3.0, 1.0, 5.0, 1.0 ] 
+c = [ 3.0, 1.0, 5.0, 1.0 ]
 
 # Below is the sparse representation of the A
-# matrix stored by column. 
-A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3], 
-           [1, 1, 2, 2, 2, 3, 3, 4, 4], 
+# matrix stored by column.
+A = sparse([1, 2, 1, 2, 3, 1, 2, 2, 3],
+           [1, 1, 2, 2, 2, 3, 3, 4, 4],
            [3.0, 2.0, 1.0, 1.0, 2.0, 2.0, 3.0, 1.0, 3.0 ],
            numcon,numvar)
 
@@ -52,14 +52,14 @@ maketask() do task
     putobjname(task,"lo1")
 
     # Append 'numcon' empty constraints.
-    # The constraints will initially have no bounds. 
+    # The constraints will initially have no bounds.
     appendcons(task,numcon)
     for i=1:numcon
         putconname(task,i,@sprintf("c%02d",i))
     end
 
     # Append 'numvar' variables.
-    # The variables will initially be fixed at zero (x=0). 
+    # The variables will initially be fixed at zero (x=0).
     appendvars(task,numvar)
     for j=1:numvar
         putvarname(task,j,@sprintf("x%02d",j))

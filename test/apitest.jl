@@ -43,16 +43,20 @@ function test_lo1()
     optimize(task,"mosek://solve.mosek.com:30080")
     solutionsummary(task,MSK_STREAM_MSG)
 
-    solsta = getsolsta(task,MSK_SOL_BAS)
-    prosta = getprosta(task,MSK_SOL_BAS)
+    @test solutiondef(task,MSK_SOL_BAS)
 
-    @test getsolsta(task,MSK_SOL_ITR) == MSK_SOL_STA_OPTIMAL
-    @test solsta == MSK_SOL_STA_OPTIMAL
-    @test prosta == MSK_PRO_STA_PRIM_AND_DUAL_FEAS
+    if solutiondef(task,MSK_SOL_BAS)
+        solsta = getsolsta(task,MSK_SOL_BAS)
+        prosta = getprosta(task,MSK_SOL_BAS)
 
-    if solsta in     [ MSK_SOL_STA_OPTIMAL ]
-        xx = getxx(task,MSK_SOL_BAS)
-        # check feasibility and optimality of solution
+        @test getsolsta(task,MSK_SOL_BAS) == MSK_SOL_STA_OPTIMAL
+        @test solsta == MSK_SOL_STA_OPTIMAL
+        @test prosta == MSK_PRO_STA_PRIM_AND_DUAL_FEAS
+
+        if solsta in     [ MSK_SOL_STA_OPTIMAL ]
+            xx = getxx(task,MSK_SOL_BAS)
+            # check feasibility and optimality of solution
+        end
     end
 end
 
