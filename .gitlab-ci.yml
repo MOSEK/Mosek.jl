@@ -30,7 +30,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - |
       curl -o mosek.lic http://files.mosek.intranet/docs/lic/mosek12-1.lic
       export MOSEKLM_LICENSE_FILE=
-      julia << EOF 
+      cat << EOF > test.jl
       import Pkg
       Pkg.develop(".")
       Pkg.build("Mosek")
@@ -39,4 +39,5 @@ build-job:       # This job runs in the build stage, which runs first.
       t = Mosek.newtask()
       Mosek.getversion(t)
       EOF
+      julia test.jl
   
